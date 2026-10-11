@@ -5,19 +5,17 @@ import { createHash } from "node:crypto";
 import {
   closeSync,
   createReadStream,
-  existsSync,
   lstatSync,
   mkdirSync,
   mkdtempSync,
   openSync,
-  readFileSync,
   readSync,
   readdirSync,
   realpathSync,
   statSync,
   writeFileSync,
 } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const assets = {
@@ -45,12 +43,13 @@ const fileName = `Synara-1.0.1-${arch}.dmg`;
 const dmg = join(owned, fileName);
 const save = (name, value) =>
   writeFileSync(join(evidence, name), JSON.stringify(value, null, 2) + "\n");
-function command(label, program, args, { timeout = 30_000, required = true } = {}) {
+function command(label, program, args, { timeout = 30_000, required = true, input } = {}) {
   const result = spawnSync(program, args, {
     encoding: "utf8",
     timeout,
     shell: false,
     maxBuffer: 32 * 1024 * 1024,
+    input,
   });
   writeFileSync(join(evidence, label + ".log"), (result.stdout ?? "") + (result.stderr ?? ""));
   const outcome = {
@@ -118,7 +117,40 @@ function isMachO(path) {
     "bfbafeca",
   ]).has(buffer.toString("hex"));
 }
+function ownedAttachments(info) {
+  assert.ok(Array.isArray(info.images), "hdiutil info did not expose an image inventory");
+  return info.images.flatMap((image) => {
+    const ownedImage =
+      typeof image["image-path"] === "string" && resolve(image["image-path"]) === resolve(dmg);
+    const entities = image["system-entities"];
+    if (!Array.isArray(entities)) {
+      assert.equal(ownedImage, false, "Owned image has no device inventory; cleanup is unproven");
+      return [];
+    }
+    const ownedMount = entities.some(
+      (entity) =>
+        typeof entity["mount-point"] === "string" &&
+        resolve(entity["mount-point"]) === resolve(mount),
+    );
+    if (!ownedImage && !ownedMount) return [];
+    const device = ownedImage
+      ? entities.find((entity) => /^\/dev\/disk\d+$/.test(entity["dev-entry"] ?? ""))?.["dev-entry"]
+      : undefined;
+    const target = device ?? (ownedMount ? mount : undefined);
+    assert.ok(target, "Owned image has no observed whole device or owned mount to detach");
+    return [{ image: image["image-path"] ?? null, target, ownedImage, ownedMount }];
+  });
+}
+function imageInventory(label) {
+  const info = command(label, "/usr/bin/hdiutil", ["info", "-plist"]);
+  return JSON.parse(
+    command(label + "-json", "/usr/bin/plutil", ["-convert", "json", "-o", "-", "-"], {
+      input: info.stdout,
+    }).stdout,
+  );
+}
 let attached = false;
+let attachAttempted = false;
 let failure;
 try {
   sourceIntegrity();
@@ -148,6 +180,8 @@ try {
       "20",
       "--max-time",
       "600",
+      "--max-filesize",
+      String(asset.bytes),
       "--output",
       dmg,
       url,
@@ -159,6 +193,7 @@ try {
   assert.equal(actual.bytes, asset.bytes);
   assert.equal(actual.sha256, asset.sha256);
   command("dmg-verify", "/usr/bin/hdiutil", ["verify", dmg], { timeout: 180_000 });
+  attachAttempted = true;
   command(
     "attach-readonly",
     "/usr/bin/hdiutil",
@@ -237,22 +272,44 @@ try {
   failure = error;
   save("original-inspection-failure.json", { message: String(error), stack: error.stack });
 } finally {
-  if (attached || existsSync(join(mount, "Synara.app"))) {
-    attached = true;
-    const detach = command("detach-owned-mount", "/usr/bin/hdiutil", ["detach", mount], {
-      timeout: 60_000,
-      required: false,
-    });
-    if (detach.status !== 0 || detach.error !== null)
-      failure ??= new Error("Owned read-only mount did not detach; raw result retained");
-  }
-  save("cleanup.json", {
-    attachedDuringInspection: attached,
-    detached: attached
-      ? JSON.parse(readFileSync(join(evidence, "detach-owned-mount.json"), "utf8")).status === 0
-      : null,
+  const cleanup = {
+    attachAttempted,
+    attachCommandSucceeded: attached,
+    observed: [],
+    detaches: [],
+    remaining: null,
+    error: null,
     ownedRoot: owned,
-  });
+  };
+  if (attachAttempted) {
+    try {
+      cleanup.observed = ownedAttachments(imageInventory("cleanup-image-inventory"));
+      for (const [index, target] of [
+        ...new Set(cleanup.observed.map((image) => image.target)),
+      ].entries()) {
+        const result = command(`detach-owned-${index}`, "/usr/bin/hdiutil", ["detach", target], {
+          timeout: 60_000,
+          required: false,
+        });
+        cleanup.detaches.push({
+          target,
+          status: result.status,
+          signal: result.signal,
+          error: result.error,
+        });
+      }
+      cleanup.remaining = ownedAttachments(imageInventory("cleanup-final-inventory"));
+      assert.equal(cleanup.remaining.length, 0, "Owned image attachment remains");
+      for (const result of cleanup.detaches) {
+        assert.equal(result.error, null);
+        assert.equal(result.status, 0);
+      }
+    } catch (error) {
+      cleanup.error = String(error);
+      failure ??= error;
+    }
+  }
+  save("cleanup.json", cleanup);
 }
 if (failure) {
   console.error(failure);
