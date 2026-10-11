@@ -50,6 +50,21 @@ async function observeCookieEvidence(
   await new Promise<void>((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
   );
+  // Capture the actual completed finite CSS transitions without changing them.
+  // The shared dialog's 200ms transition is independent of reduced-motion input.
+  await vi.waitFor(
+    () => {
+      const running = document
+        .getAnimations()
+        .filter(
+          (animation) =>
+            Number.isFinite(animation.effect?.getComputedTiming().endTime) &&
+            (animation.pending || animation.playState === "running"),
+        );
+      expect(running).toHaveLength(0);
+    },
+    { timeout: 2_000 },
+  );
   const geometry = (element: Element) => {
     const box = element.getBoundingClientRect();
     return { x: box.x, y: box.y, width: box.width, height: box.height };
@@ -67,6 +82,7 @@ async function observeCookieEvidence(
     documentWidth: document.documentElement.scrollWidth,
     dialog: Array.from(document.querySelectorAll('[role="dialog"]')).map((element) => ({
       text: element.textContent,
+      opacity: getComputedStyle(element).opacity,
       box: geometry(element),
     })),
     selects: Array.from(document.querySelectorAll("select")).map((element) => ({
