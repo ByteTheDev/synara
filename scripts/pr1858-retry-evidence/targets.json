@@ -1,0 +1,28 @@
+[
+  {
+    "id": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "trackedFiles": 9025,
+    "expectedSelected": 1,
+    "phases": ["00-initial", "01-answer-actions"],
+    "canonicalFixtureBlob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+  },
+  {
+    "id": "after",
+    "source": "daa687ac0f4289b57bffa5e7f2003a15637534d9",
+    "tree": "989a0ab35256fac46ed6f4af6dc9cdc6507eae12",
+    "trackedFiles": 9035,
+    "expectedSelected": 6,
+    "phases": [
+      "00-initial",
+      "01-answer-actions",
+      "02-effort-menu",
+      "03-confirmation",
+      "04-latest-attempt",
+      "05-previous-attempt",
+      "06-returned-latest"
+    ],
+    "canonicalFixtureBlob": "36af6ac90ce7f33a28305df444a676b82d09f901"
+  }
+]

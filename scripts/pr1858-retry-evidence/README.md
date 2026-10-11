@@ -1,0 +1,17 @@
+# Source-pinned retry UI evidence for PR #1858
+
+This isolated workflow compares main 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94 with repaired feature head daa687ac0f4289b57bffa5e7f2003a15637534d9. The Before head predates the retry feature. Both jobs use exactly the same appended capture fixture, initial thread, viewport, production CSS, router and ChatView.
+
+Before checks that the retry action is absent and captures the settled answer and hovered actions. After performs real pointer interactions through the effort menu and confirmation dialog, asserts the precise edit-and-resend command, then exercises the real answer pager after an explicitly controlled server read-model update. It captures seven phases, including the current effort, confirmation, latest answer, previous answer and return to latest.
+
+The native API is the canonical component fixture. It acknowledges the dispatched request, and the capture fixture then supplies a subsequent read model with a prior-answer receipt. This is component behavior evidence. It does not execute a provider, create Git checkpoints, prove durable persistence, or restore a native workspace. Separate repaired server regression controls cover those code boundaries.
+
+The After job also runs the five unchanged, independently reviewed canonical effort-retry browser cases. Its exact selected count is six. Before runs one capture case. All other canonical tests remain byte-for-byte present in the copied fixture and are reported as unselected, not passed. The appended suite can be removed to recover the original canonical fixture exactly; tracked source is never edited.
+
+The driver verifies the immutable commit, tree and every tracked raw Git blob and file mode before and after execution. It allows untracked files only inside this job's explicit frozen evidence/live-output directories and the separately Git-verified driver checkout after removing its byte-verified fixture and config. The driver itself is tied to the actual workflow SHA.
+
+The live Vitest JSON is written under RUNNER_TEMP outside uploads. Browser images/video and console/exits use a separate workspace directory because Vite restricts screenshot paths. Verification freezes each regular live file once as a bounded read-only byte-prefix copy, recording capture times, initial/end sizes, SHA256 and possible tails; only the fixed copies are parsed, hashed and uploaded. Hidden or unexpected inventory entries and changing/truncated snapshots fail verification. The workflow preserves the actual Vitest and tee exits. Verification requires all selected assertions, the exact screenshot phases and dimensions, one browser recording with actual ffprobe dimensions/duration and unchanged source. Failed tests, missing images, unexpected source changes and incomplete execution remain failures; the always-uploaded artifact retains the original results.
+
+Artifacts include original and observed fixtures, the exact append/config, provenance, full console and JSON results, actual exits, original PNGs and WebM, complete-source proof receipts and per-file SHA256/Git hashes. Fixed fixture timestamps describe settled turns and do not measure test duration or model latency. This Before/After pair is feature presentation; the separately retained RED-to-GREEN controls establish the specific repaired backend defects.
+
+No release, main mutation, auto-merge, provider credential use or native provider success is part of this driver.
