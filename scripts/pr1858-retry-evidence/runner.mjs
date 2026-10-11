@@ -329,6 +329,7 @@ function verify() {
   let report = null;
   let selected = [];
   let observations = [];
+  let focusTraces = [];
   const snapshots = [];
   const attempt = (fn) => {
     try {
@@ -439,6 +440,46 @@ function verify() {
     }
   });
   attempt(() => {
+    const log = readFileSync(path.join(output, "vitest.log"), "utf8").replace(
+      /\u001b\[[0-9;]*m/g,
+      "",
+    );
+    const prefix = "PR1858_FOCUS_TRACE ";
+    focusTraces = log
+      .split("\n")
+      .filter((line) => line.includes(prefix))
+      .map((line) => JSON.parse(line.slice(line.indexOf(prefix) + prefix.length)));
+    writeJson("focus-traces.json", focusTraces);
+    assert.equal(focusTraces.length, target.expectedSelected, "Every selected case has one trace.");
+    assert.equal(new Set(focusTraces.map((trace) => trace.testName)).size, focusTraces.length);
+    for (const trace of focusTraces) {
+      assert.equal(trace.schemaVersion, 1);
+      assert.equal(trace.side, target.id);
+      assert.equal(trace.source, target.source);
+      assert(
+        selected.some((test) => test.fullName.endsWith(" " + trace.testName)),
+        "A focus trace must belong to an actual selected canonical or capture case.",
+      );
+      assert.equal(trace.cap, 512);
+      assert.equal(trace.droppedEvents, 0, "A truncated observer trace is incomplete evidence.");
+      assert.equal(trace.observerErrors, 0);
+      assert.equal(trace.owned, true, "Observer ownership changed before restoration.");
+      assert.equal(trace.restored, true, "All native method identities must be restored.");
+      assert(trace.events.length >= 2 && trace.events.length <= trace.cap);
+      assert.equal(trace.events[0].kind, "observer-installed");
+      assert.equal(trace.events.at(-1).kind, "observer-finishing");
+      for (const [index, event] of trace.events.entries()) {
+        assert.equal(event.sequence, index);
+        assert(Number.isFinite(event.elapsedMs));
+        if (index) assert(event.elapsedMs >= trace.events[index - 1].elapsedMs);
+        assert(Number.isInteger(event.menuCount) && event.menuCount >= 0);
+        assert.equal(typeof event.hasDocumentFocus, "boolean");
+      }
+      assert(Array.isArray(trace.pendingObservedRafs));
+      assert(trace.pendingObservedRafs.every(Number.isInteger));
+    }
+  });
+  attempt(() => {
     const files = walkFiles(output);
     const pngs = files.filter((relative) => relative.endsWith(".png"));
     assert.deepEqual(pngs.sort(), target.phases.map((name) => name + ".png").sort());
@@ -515,6 +556,7 @@ function verify() {
     })),
     unselectedTests: report?.numPendingTests ?? null,
     observations,
+    focusTraces,
     sourceProof: proof,
     files,
   };

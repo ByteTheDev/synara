@@ -1,3 +1,190 @@
+// Observer-only diagnostics cover the original selected cases as well as the
+// appended capture. Native callbacks still run once with their original
+// receiver/arguments; no focus, DOM, click, deadline or test assertion changes.
+beforeEach((context) => {
+  const events: Array<Record<string, unknown>> = [];
+  const cap = 512;
+  let droppedEvents = 0;
+  let observerErrors = 0;
+  let activeRaf: number | null = null;
+  const trackedRafs = new Set<number>();
+  const focusDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "focus");
+  const rafDescriptor = Object.getOwnPropertyDescriptor(window, "requestAnimationFrame");
+  const cancelDescriptor = Object.getOwnPropertyDescriptor(window, "cancelAnimationFrame");
+  if (!focusDescriptor || typeof focusDescriptor.value !== "function") {
+    throw new Error("A restorable native focus descriptor is required.");
+  }
+  const originalFocus = HTMLElement.prototype.focus;
+  const originalRaf = window.requestAnimationFrame;
+  const originalCancel = window.cancelAnimationFrame;
+
+  function elementSummary(value: EventTarget | null) {
+    if (!(value instanceof Element)) return null;
+    return {
+      tag: value.tagName,
+      role: value.getAttribute("role"),
+      contentEditable: value.getAttribute("contenteditable"),
+      retryTrigger: value.matches('button[aria-label="Retry with different effort"]'),
+      expanded: value.getAttribute("aria-expanded"),
+    };
+  }
+
+  function callerFrames(): Array<{ file: string; line: number; column: number }> {
+    const frames: Array<{ file: string; line: number; column: number }> = [];
+    for (const match of (new Error().stack ?? "").matchAll(
+      /[\\/](?<file>[A-Za-z0-9._-]+\.(?:tsx?|m?js))(?:\?[^:\s)]*)?:(?<line>\d+):(?<column>\d+)/g,
+    )) {
+      const groups = match.groups;
+      if (groups && frames.length < 16) {
+        frames.push({
+          file: groups.file!,
+          line: Number(groups.line),
+          column: Number(groups.column),
+        });
+      }
+    }
+    return frames;
+  }
+
+  function record(kind: string, detail: Record<string, unknown> = {}) {
+    try {
+      if (events.length >= cap) {
+        droppedEvents += 1;
+        return;
+      }
+      events.push({
+        sequence: events.length,
+        elapsedMs: performance.now(),
+        kind,
+        hasDocumentFocus: document.hasFocus(),
+        activeElement: elementSummary(document.activeElement),
+        menuCount: document.querySelectorAll('[role="menu"]').length,
+        activeRaf,
+        ...detail,
+      });
+    } catch {
+      observerErrors += 1;
+    }
+  }
+
+  const observedFocus: typeof originalFocus = function (this: HTMLElement, ...args) {
+    record("focus-call", { target: elementSummary(this), callers: callerFrames() });
+    try {
+      return Reflect.apply(originalFocus, this, args);
+    } finally {
+      record("focus-return", { target: elementSummary(this) });
+    }
+  };
+  const observedRaf: typeof originalRaf = function (this: Window, callback) {
+    const callers = callerFrames();
+    const fromChatView = callers.some((frame) => frame.file === "ChatView.tsx");
+    if (!fromChatView) return Reflect.apply(originalRaf, this, [callback]);
+    const frameId = Reflect.apply(originalRaf, this, [
+      function (this: Window, timestamp: number) {
+        trackedRafs.delete(frameId);
+        const previousRaf = activeRaf;
+        activeRaf = frameId;
+        record("raf-callback-enter", { frameId, callers });
+        try {
+          return Reflect.apply(callback, this, [timestamp]);
+        } finally {
+          record("raf-callback-return", { frameId });
+          activeRaf = previousRaf;
+        }
+      },
+    ]) as number;
+    trackedRafs.add(frameId);
+    record("raf-request", { frameId, callers });
+    return frameId;
+  };
+  const observedCancel: typeof originalCancel = function (this: Window, frameId) {
+    if (trackedRafs.delete(frameId)) record("raf-cancel", { frameId });
+    return Reflect.apply(originalCancel, this, [frameId]);
+  };
+  const onWindowFocus = () => record("window-focus");
+  const onWindowBlur = () => record("window-blur");
+  const onFocusIn = (event: FocusEvent) =>
+    record("focusin", {
+      target: elementSummary(event.target),
+      relatedTarget: elementSummary(event.relatedTarget),
+    });
+  let menuCount = document.querySelectorAll('[role="menu"]').length;
+  const observer = new MutationObserver(() => {
+    const nextCount = document.querySelectorAll('[role="menu"]').length;
+    if (nextCount !== menuCount) {
+      record("menu-count-change", { previousMenuCount: menuCount, nextMenuCount: nextCount });
+      menuCount = nextCount;
+    }
+  });
+
+  onTestFinished(() => {
+    record("observer-finishing");
+    observer.disconnect();
+    window.removeEventListener("focus", onWindowFocus);
+    window.removeEventListener("blur", onWindowBlur);
+    document.removeEventListener("focusin", onFocusIn, true);
+    const owned =
+      HTMLElement.prototype.focus === observedFocus &&
+      window.requestAnimationFrame === observedRaf &&
+      window.cancelAnimationFrame === observedCancel;
+    if (HTMLElement.prototype.focus === observedFocus && focusDescriptor) {
+      Object.defineProperty(HTMLElement.prototype, "focus", focusDescriptor);
+    }
+    if (window.requestAnimationFrame === observedRaf) {
+      if (rafDescriptor) Object.defineProperty(window, "requestAnimationFrame", rafDescriptor);
+      else Reflect.deleteProperty(window, "requestAnimationFrame");
+    }
+    if (window.cancelAnimationFrame === observedCancel) {
+      if (cancelDescriptor) Object.defineProperty(window, "cancelAnimationFrame", cancelDescriptor);
+      else Reflect.deleteProperty(window, "cancelAnimationFrame");
+    }
+    const restored =
+      HTMLElement.prototype.focus === originalFocus &&
+      window.requestAnimationFrame === originalRaf &&
+      window.cancelAnimationFrame === originalCancel;
+    console.log(
+      "PR1858_FOCUS_TRACE " +
+        JSON.stringify({
+          schemaVersion: 1,
+          side: import.meta.env.VITE_PR1858_SIDE,
+          source: import.meta.env.VITE_PR1858_SOURCE,
+          testName: context.task.name,
+          suiteName: context.task.suite?.name ?? null,
+          cap,
+          droppedEvents,
+          observerErrors,
+          owned,
+          restored,
+          pendingObservedRafs: [...trackedRafs],
+          events,
+          qualification:
+            "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied.",
+        }),
+    );
+  });
+  Object.defineProperty(HTMLElement.prototype, "focus", {
+    ...focusDescriptor,
+    value: observedFocus,
+  });
+  Object.defineProperty(window, "requestAnimationFrame", {
+    configurable: true,
+    writable: true,
+    ...rafDescriptor,
+    value: observedRaf,
+  });
+  Object.defineProperty(window, "cancelAnimationFrame", {
+    configurable: true,
+    writable: true,
+    ...cancelDescriptor,
+    value: observedCancel,
+  });
+  window.addEventListener("focus", onWindowFocus);
+  window.addEventListener("blur", onWindowBlur);
+  document.addEventListener("focusin", onFocusIn, true);
+  observer.observe(document.body, { childList: true, subtree: true });
+  record("observer-installed");
+});
+
 describe("PR1858 review evidence", () => {
   it("uses the real retry menu and prior-answer pager", async () => {
     const side = import.meta.env.VITE_PR1858_SIDE;
