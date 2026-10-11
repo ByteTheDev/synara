@@ -73,6 +73,17 @@ function assertSources() {
   }
   assert.equal(run("git", ["rev-parse", "HEAD^{tree}"]), sourceTree);
 }
+async function verifyIconCatalog() {
+  const catalog = join(process.env.RUNNER_TEMP, "mac-dock-icon", "Assets.car");
+  assert.equal(process.env.SYNARA_MAC_ICON_CATALOG, catalog);
+  assert.equal(readFileSync(join(dirname(catalog), "source-commit.txt"), "utf8").trim(), sourceSha);
+  const expected = readFileSync(join(dirname(catalog), "Assets.car.sha256"), "utf8").trim();
+  assert.match(expected, /^[0-9a-f]{64} [ *]Assets\.car$/);
+  const sha256 = await digest(catalog);
+  assert.equal(sha256, expected.slice(0, 64));
+  assert.ok(statSync(catalog).size > 0);
+  return { sourceSha, sha256, bytes: statSync(catalog).size };
+}
 const state = () => JSON.parse(readFileSync(statePath, "utf8"));
 function native(mode, setup) {
   return run(setup.helper, [mode, setup.configurationPath], {
@@ -84,6 +95,7 @@ const corePaths = [
   "Contents/MacOS/Synara",
   "Contents/Resources/app.asar",
   "Contents/Resources/icon.icns",
+  "Contents/Resources/Assets.car",
 ];
 async function coreHashes(appPath) {
   return Object.fromEntries(
@@ -92,7 +104,10 @@ async function coreHashes(appPath) {
 }
 async function main() {
   // Cleanup must still run if an earlier source-integrity assertion failed.
-  if (phase !== "cleanup") assertSources();
+  if (phase !== "cleanup") {
+    assertSources();
+    save("compiled-icon-receipt.json", await verifyIconCatalog());
+  }
   if (phase === "prepare") {
     assert.equal(run("git", ["status", "--porcelain=v1", "--untracked-files=all"]), "");
     assert.ok(!existsSync(statePath), "Refuse to overwrite an existing experiment");
@@ -162,6 +177,7 @@ async function main() {
       driverScriptSha256: await digest(fileURLToPath(import.meta.url)),
       nativeScriptSha256: await digest(join(driver, ".github/scripts/mac-dock-lifecycle.swift")),
       workflowSha256: await digest(join(driver, ".github/workflows/mac-dock-capture.yml")),
+      compiledIcon: await verifyIconCatalog(),
       qualification:
         "Exact current-main production-flavor unsigned macOS package and ordinary existing screen access. Actual running/closed screenshots use a saved/restored disposable Dock layout. Original author/current asset exports are separately labelled; original author application was not built/rendered. No permission request, TCC or accessibility changes, authenticated provider session, signing, release, or upgrade/cache-transition claim.",
     });
@@ -280,6 +296,7 @@ async function main() {
     assert.equal(embedded.synaraDesktopFlavor, "production");
     assert.equal(embedded.version, setup.version);
     const hashes = await coreHashes(setup.appPath);
+    assert.equal(hashes["Contents/Resources/Assets.car"], (await verifyIconCatalog()).sha256);
     save("package-identity.json", {
       sourceSha,
       sourceTree,

@@ -12,7 +12,42 @@ concurrency:
   group: mac-dock-capture-${{ github.ref }}
   cancel-in-progress: false
 jobs:
+  build_mac_icon:
+    name: Compile exact-main Icon Composer catalog
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ec8c940e07582454a475250ade40147e3c89d59f
+          persist-credentials: false
+      - name: Compile and fingerprint current-main production icon
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = ec8c940e07582454a475250ade40147e3c89d59f
+          git diff --exit-code HEAD --
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          xcodebuild -version
+          mkdir -p "$RUNNER_TEMP/mac-dock-icon"
+          xcrun actool assets/prod/Synara.icon --compile "$RUNNER_TEMP/mac-dock-icon" --platform macosx --minimum-deployment-target 26.0 --app-icon Synara --include-all-app-icons --output-partial-info-plist "$RUNNER_TEMP/icon-partial.plist" --output-format human-readable-text
+          test -s "$RUNNER_TEMP/mac-dock-icon/Assets.car"
+          printf '%s\n' ec8c940e07582454a475250ade40147e3c89d59f > "$RUNNER_TEMP/mac-dock-icon/source-commit.txt"
+          (
+            cd "$RUNNER_TEMP/mac-dock-icon"
+            shasum -a 256 Assets.car > Assets.car.sha256
+          )
+          git diff --exit-code HEAD --
+      - uses: actions/upload-artifact@v7
+        with:
+          name: mac-dock-icon-${{ github.sha }}
+          path: ${{ runner.temp }}/mac-dock-icon
+          retention-days: 14
+          if-no-files-found: error
   capture:
+    needs: build_mac_icon
     name: Actual Dock lifecycle on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 50
@@ -53,6 +88,20 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: source/package.json
+      - name: Download current-run exact-main icon catalog
+        uses: actions/download-artifact@v8
+        with:
+          name: mac-dock-icon-${{ github.sha }}
+          path: ${{ runner.temp }}/mac-dock-icon
+      - name: Verify icon source and integrity before building
+        run: |
+          set -euo pipefail
+          test "$(cat "$RUNNER_TEMP/mac-dock-icon/source-commit.txt")" = ec8c940e07582454a475250ade40147e3c89d59f
+          (
+            cd "$RUNNER_TEMP/mac-dock-icon"
+            shasum -a 256 -c Assets.car.sha256
+          )
+          printf 'SYNARA_MAC_ICON_CATALOG=%s\n' "$RUNNER_TEMP/mac-dock-icon/Assets.car" >> "$GITHUB_ENV"
       - name: Compile native observer and verify existing display access
         id: prepare
         run: node ../driver/.github/scripts/mac-dock-capture.mjs prepare
