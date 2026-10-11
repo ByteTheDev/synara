@@ -1,0 +1,4 @@
+2026-10-11 19:41:15.882 Synara Helper[29738:75475] XPC error for connection com.apple.backupd.sandbox.xpc: Connection invalid
+2026-10-11 19:41:15.884 Synara Helper[29738:75475] XPC error for connection com.apple.backupd.sandbox.xpc: Connection invalid
+2026-10-11 19:41:15.885 Synara Helper[29738:75475] XPC error for connection com.apple.backupd.sandbox.xpc: Connection invalid
+Waiting for the debugger to disconnect...

@@ -1,0 +1,1429 @@
+{
+  "before": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "currentMain": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+  "files": [
+    {
+      "path": "apps/desktop/src/agentCursorPreference.test.ts",
+      "bytes": 3809,
+      "sha256": "a525e8705336b980f11d7c7798463bb83acc15bd3e4bf78cf79924d0509b3e30",
+      "gitBlob": "420c549a00e1cb525a73b952f0beefaff26fb489"
+    },
+    {
+      "path": "apps/desktop/src/agentCursorPreference.ts",
+      "bytes": 3270,
+      "sha256": "fe06cf947c5967ab1df411cd3834e28a480bdbc67129c273bdde7fd8188849b8",
+      "gitBlob": "346b5d3807c8f2b64e46070fa3cc6095d43e9621"
+    },
+    {
+      "path": "apps/desktop/src/appSnapIpc.ts",
+      "bytes": 7005,
+      "sha256": "75ee5ef36ef92ede0253727ddb3ebd8cc747c91f1dedfa43532fa70d4941d07a",
+      "gitBlob": "8497f6882242af83787a9fcf6836b6555b588b60"
+    },
+    {
+      "path": "apps/desktop/src/appSnapManager.test.ts",
+      "bytes": 85334,
+      "sha256": "5d721b70579d2621e55d613fc7da3c171b76ef82b0ae95020aef1b61e3bfa71f",
+      "gitBlob": "5a98ff056c323476727cd5dd737e44cd64b70cd1"
+    },
+    {
+      "path": "apps/desktop/src/appSnapManager.ts",
+      "bytes": 85264,
+      "sha256": "684d843a08be0639d366b603ac9ad0426405fe7c5b2723a3a581f5f3ef6880c4",
+      "gitBlob": "9a22260fe705334588a1e5b1f773be87e56883d7"
+    },
+    {
+      "path": "apps/desktop/src/audioLevelMonitor.test.ts",
+      "bytes": 7347,
+      "sha256": "545e94ff5bd18583e9f22c1a58bdf2b0d7c19c95139330a32c21ce195745140d",
+      "gitBlob": "1d62609d9b755218a13b8a3934fadce9a2e5307c"
+    },
+    {
+      "path": "apps/desktop/src/audioLevelMonitor.ts",
+      "bytes": 9247,
+      "sha256": "eb0935068e03cb779bc1d940efcc08fdeacd812b59faf06b382e06547b73791b",
+      "gitBlob": "96d14a4e6e548660aaa7a1dd106ff4ed3295ab39"
+    },
+    {
+      "path": "apps/desktop/src/backendIssueDetector.ts",
+      "bytes": 1423,
+      "sha256": "f0e9fe397a2de5b97676d150f401765d60e163c8853d946cd8d72cf1d877ec4e",
+      "gitBlob": "45e00b53c6562220f3c27740146e854359e4fc1b"
+    },
+    {
+      "path": "apps/desktop/src/backendNodeOptions.test.ts",
+      "bytes": 2272,
+      "sha256": "29bae443bebd20768f9fcf018658d42a92ffaf43af7f749a1db9d52e827061b5",
+      "gitBlob": "faae4a433a49c263eca21db542fcf26d03cbfc28"
+    },
+    {
+      "path": "apps/desktop/src/backendNodeOptions.ts",
+      "bytes": 2424,
+      "sha256": "6e1eadd9b0e6e4245ea2890e51a631b69cc019e0c97340bc91a005984314d665",
+      "gitBlob": "a61b62fc4740cf13ba66c451a1342d6f0d2ab542"
+    },
+    {
+      "path": "apps/desktop/src/backendProcessOutput.test.ts",
+      "bytes": 2586,
+      "sha256": "a1195e43b0c293caf70f49208b81af43ce5a2cd540105ae9ea94eb2dbf9735f0",
+      "gitBlob": "2e66b3aa38c60167286545b97eef062f420cd66e"
+    },
+    {
+      "path": "apps/desktop/src/backendProcessOutput.ts",
+      "bytes": 2445,
+      "sha256": "413638eab89f8dd75d2347d47132234daf813823dcf1db0e8a38e672dfb0e057",
+      "gitBlob": "e53f9c00f202d0b9e6b696daf10ee7de4b2a67fa"
+    },
+    {
+      "path": "apps/desktop/src/backendReadiness.test.ts",
+      "bytes": 4808,
+      "sha256": "d866ea7cc27fe8ef8a19a7338fc6851256ff03c4f89b07ad6645cb2b4169bc8c",
+      "gitBlob": "71fe8fce6fd01544b2e0b80d0e8bfdb822fdb068"
+    },
+    {
+      "path": "apps/desktop/src/backendReadiness.ts",
+      "bytes": 3553,
+      "sha256": "1169010c496e7528cd55baf539ff020d32e596f030cc66ca71c3d30e02095489",
+      "gitBlob": "f74993bbabc62e85472466760df769c2c2eca97c"
+    },
+    {
+      "path": "apps/desktop/src/backendShutdown.posix.integration.test.ts",
+      "bytes": 5643,
+      "sha256": "29129e1f8d8aa93cd46a76865ab3732b6786b8f736e9311b343554f709e34ca1",
+      "gitBlob": "0c67bf5b5278ad25b745ad4ff858147e4e8c09bc"
+    },
+    {
+      "path": "apps/desktop/src/backendShutdown.test.ts",
+      "bytes": 29479,
+      "sha256": "c121c9182ae3684914432fd7e3e261bf5e53bd8a1b56c9b6b67c83bc9b617f1f",
+      "gitBlob": "e34f6a1568c906b07a71b45d7d371ec62863f45d"
+    },
+    {
+      "path": "apps/desktop/src/backendShutdown.ts",
+      "bytes": 16454,
+      "sha256": "ef75deb5d7509fb8c879341b020a0dade4cc06762cfbd2b18d31a4d561e36c8d",
+      "gitBlob": "0a9febdb49046afa429422370d81d575a71f8b74"
+    },
+    {
+      "path": "apps/desktop/src/backendShutdown.windows.integration.test.ts",
+      "bytes": 24465,
+      "sha256": "5d3c09f60756282fffaa60f415ff23afb46f21bce14fc969eb79c899a613bdb9",
+      "gitBlob": "74df1bbaebc5490317a270c8e63cda431f9ad784"
+    },
+    {
+      "path": "apps/desktop/src/backendStartupBlock.test.ts",
+      "bytes": 7583,
+      "sha256": "a466a29d47e6fa712cfe8ecafb798ff47c6df001d3723cc74336e4d48a00233c",
+      "gitBlob": "be54760c48ec5ff690febf9ffef0ba733eaa8831"
+    },
+    {
+      "path": "apps/desktop/src/backendStartupBlock.ts",
+      "bytes": 4710,
+      "sha256": "9aac20899ce0e4c57bced0cbb6a557984ad3136af787e0228c72046858fc1bfd",
+      "gitBlob": "f37ad03ac894766f710b1a48181d4e11ed6e3931"
+    },
+    {
+      "path": "apps/desktop/src/backendStartupReadiness.test.ts",
+      "bytes": 5647,
+      "sha256": "ad87ec062285d46e03bac78c6b2abd9377e3569f5e6319e2e38f5ad762f54f10",
+      "gitBlob": "0b229ea983573470b5e216ec11e61355d2f03e11"
+    },
+    {
+      "path": "apps/desktop/src/backendStartupReadiness.ts",
+      "bytes": 3279,
+      "sha256": "5021fd3dd7507b54a427c40ea8aa31cd9697f18b8cc9efa77a5abf87c4d5f82f",
+      "gitBlob": "8d898b5c122aedd1111866b124078fa82aba101d"
+    },
+    {
+      "path": "apps/desktop/src/backendSupervisionPolicy.test.ts",
+      "bytes": 7418,
+      "sha256": "10e40abc0cdc31eceb4c13300d10a9b5a44e81ad3cd83ba73d0204141d34ac0a",
+      "gitBlob": "506ac6a1aa66117a7b06de068ce86f1a8aba021b"
+    },
+    {
+      "path": "apps/desktop/src/backendSupervisionPolicy.ts",
+      "bytes": 5867,
+      "sha256": "67094e5a342799352c92c13110a4942af5807b0fb44a586ae51a70e4ee8fca2b",
+      "gitBlob": "ee5e10f5d15127dad8b6b3f0180f3b1bf18a94fa"
+    },
+    {
+      "path": "apps/desktop/src/betaChannel.test.ts",
+      "bytes": 18332,
+      "sha256": "a0f2e42fa2ac0e250ce765201b9082446c3a743c2fd7029e373b9549f233ddca",
+      "gitBlob": "8cc5e939dc9d8b9da4b4c63ddfb8c43e80d1d1c5"
+    },
+    {
+      "path": "apps/desktop/src/betaChannel.ts",
+      "bytes": 21817,
+      "sha256": "8699f02110edd7caa96d1b8e433c53abe0d608c1374c32242aa3df7549aac684",
+      "gitBlob": "b98a320c73052c0a064dab5e12681b4edab574a7"
+    },
+    {
+      "path": "apps/desktop/src/betaDiagnostics.test.ts",
+      "bytes": 37018,
+      "sha256": "ee27e6fa91b0e40b28332281aa1273f1ca670850e55ea8b6dceb86d8c07019e4",
+      "gitBlob": "d6d554ecc05e224897c8c3036b569cf0090903d1"
+    },
+    {
+      "path": "apps/desktop/src/betaDiagnostics.ts",
+      "bytes": 36741,
+      "sha256": "6ab01a72e162e5167c9d0df190c348c2b75979d91600a039c1f10efbfd602049",
+      "gitBlob": "818d1d44d197b22d5fac422bc17fb86a56a9b826"
+    },
+    {
+      "path": "apps/desktop/src/betaInstaller.test.ts",
+      "bytes": 20319,
+      "sha256": "7a24f18f2ef1bc1266e92d597718eedb9a0d11be589992aaeffbe597e408015f",
+      "gitBlob": "5342bcb68afdeee30c7e46141fca169008f44d6e"
+    },
+    {
+      "path": "apps/desktop/src/betaInstaller.ts",
+      "bytes": 19634,
+      "sha256": "bdb6ce51f2fda45cf6f5f8d2cb76b18f40d64d69925e29edc58b9b7e160e3849",
+      "gitBlob": "0197ed3630a19894d135b0b03f4e427bb629d981"
+    },
+    {
+      "path": "apps/desktop/src/betaRendererDiagnostics.test.ts",
+      "bytes": 3037,
+      "sha256": "cb48ce212441cc6fd7299b3ce4d1246792581b7d46e85cc3a2811019be0dd8fb",
+      "gitBlob": "a962382aa03aadadb9606ec29bf518aad0df338b"
+    },
+    {
+      "path": "apps/desktop/src/betaRendererDiagnostics.ts",
+      "bytes": 3232,
+      "sha256": "741a0b54b7d1bf80f61dee0621c0fec7ec2493cee87dc35dafa988009c9086ac",
+      "gitBlob": "1d1dfafdc63a0f5dd5a3577cb6111dd1e536cf6a"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/coordinator.test.ts",
+      "bytes": 17132,
+      "sha256": "5f333d9dd0b979bb3ba6f56ca65e7f7112b766f5684165f5b61048004067e616",
+      "gitBlob": "d933a001d10f3cfcbaf5943314908335fabbba6e"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/coordinator.ts",
+      "bytes": 18987,
+      "sha256": "a723238e645feb83b095286df162d1e7297c55fe0464fd5e328de98fb568f7fc",
+      "gitBlob": "6e97117483a9fec85455940070b6acf7bf96efde"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/elementInspection.test.ts",
+      "bytes": 4384,
+      "sha256": "bf09b878b8886f301d28fbbf5d184799245e4a2f0b84e6dbc5ff1972b63035cd",
+      "gitBlob": "0ccca27bbc01f3febc4b9a89e2d6c1d2791f89e9"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/elementInspection.ts",
+      "bytes": 7270,
+      "sha256": "5691d7fdb8b387e6c1af8dea3cf294656a3898178c1bbf3de5ea88ce3bac0bc1",
+      "gitBlob": "13e2207de05b58a140b7fe0dee120aa6ff8fb52b"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/guestIdentity.ts",
+      "bytes": 780,
+      "sha256": "e4598d6b52ca82b0a3c6413e9ad973dd91912469f9ab7b0a1ab6b6c42572acf0",
+      "gitBlob": "fb65bd24373819af8e5a8b97c379193bf38f35a1"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/guestPreload.ts",
+      "bytes": 51570,
+      "sha256": "13d23f263766973e3d784cdbf1976dc21355c79b60cb7db5f306afc9edb70d1c",
+      "gitBlob": "1788e68d411bd8546d2d5e427bd36fd6203b2ecf"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/guestProtocol.ts",
+      "bytes": 3463,
+      "sha256": "3254b0ce400e698468355725baf10b7a3bc604daceaf973f34a3687dca954c9c",
+      "gitBlob": "2b120af12d6705debf79082f9bac311b49842df5"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/protocol.test.ts",
+      "bytes": 8518,
+      "sha256": "21aaa9969036b91f2875dd08ccd4a927f9818a2ebb7e525cfeb64ec93e0f8223",
+      "gitBlob": "612e1a85a74b7d9f8cdc2e4060a14f1d13ab7239"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/protocol.ts",
+      "bytes": 11606,
+      "sha256": "e123bc05228daa83b12ead2a14d74e6f4a8f7761526e66d7ba1b511f0e7754d8",
+      "gitBlob": "ffb5a68ad0419c8856cea2cc81025eeea70cae5e"
+    },
+    {
+      "path": "apps/desktop/src/browserAnnotations/webviewSecurity.ts",
+      "bytes": 814,
+      "sha256": "bd18c09afb2d652209cb0f0a6ae91f5fbefd2f81aaf02c199b856f217c878d73",
+      "gitBlob": "04c26901c199e5b490dc23b139985903ecad7e9d"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightCdp.test.ts",
+      "bytes": 27418,
+      "sha256": "e47c4771939b302feec70366eba95cf12766902623b466571033c0d02b1f33a0",
+      "gitBlob": "374da23e82ceb03b13555a70086e5a31362a7b6d"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightCdp.ts",
+      "bytes": 15911,
+      "sha256": "fe91ab91705dcf3e71a9efcc1cfcd2dccb99fd2826ad792a3e11d82dcc9bde24",
+      "gitBlob": "86bcae5a208ab2bd75bc96e39dc80862543910b9"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightConnection.ts",
+      "bytes": 4447,
+      "sha256": "d3ddfbff41b0f1b7a04edf4e75793f3fe2d388b821a69889cc764b2543d1ccb4",
+      "gitBlob": "640d4c37801c9a0c10468cd8a26f34047f13a703"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightCookieReader.test.ts",
+      "bytes": 4008,
+      "sha256": "15ab32aec3ce8ce42fcf40f6c3d3d57eb5b50afb92129f8c332082d87cc36ed8",
+      "gitBlob": "a936cf91faad917f63593f7f412e70bac92e5ac0"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightFocus.test.ts",
+      "bytes": 4066,
+      "sha256": "32375528eb2b606b5618eb07a7a54787dcf5af9603453e1dd8db64cc28cc0a14",
+      "gitBlob": "4431890ea3b127c10a0abce7a80f1abc1e2d70c6"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightFocus.ts",
+      "bytes": 1813,
+      "sha256": "7dbd06d875b39ee16e4e223398d6ee385d23d827674fe338003f75b5febfbe2b",
+      "gitBlob": "c4bbd50c98eb805df9e42cb49555bf95614fe87c"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightHostTarget.test.ts",
+      "bytes": 16279,
+      "sha256": "cf6c124fe55748b38bec7c996bc8f55fdc790f4e3b4e2385ceef7e398bbd401c",
+      "gitBlob": "ef320ebed0749774bd638118ea154d5db179d238"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightHostTarget.ts",
+      "bytes": 6714,
+      "sha256": "74b9bf84a96bd16891e0e09aefba4e324d038fb424f0fb1ae5e44b15450ebfc8",
+      "gitBlob": "8839b13e446b3a943c3874402726918e003787e4"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightInput.test.ts",
+      "bytes": 3821,
+      "sha256": "ca84648ca4636f56eb7dc21c1d61eac401367474b890ae57ffb1ac4a9de28b6e",
+      "gitBlob": "ee172b39a27619ed2b402b004b29cddfff59b5c4"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightInput.ts",
+      "bytes": 1870,
+      "sha256": "8c57795e52bcbe755aa7e3df4354a891e3d0cae3a53b263784bd6c343e20f3c9",
+      "gitBlob": "0605be3c29b53bcb82d3dc3c79497a10ebdd9afa"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightKeyboardPolicy.test.ts",
+      "bytes": 5142,
+      "sha256": "add05ed0440dc7760d52f3415c2e616bead800ca51f5cd2fe545ac41b6b2330a",
+      "gitBlob": "61f1ce7d99253bdaa27b7d86f79e122e410a8d6a"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightKeyboardPolicy.ts",
+      "bytes": 5816,
+      "sha256": "2abdf82b551637f60102f239acae4e3b10d24671ee0fb9995f6041d4176538ab",
+      "gitBlob": "848a6abab3e342fefb714653953cf3f0ebfba9e1"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightLocator.test.ts",
+      "bytes": 1919,
+      "sha256": "edad06e95fa4fca82d0d8818f3a310d37c691eeae1e6ae65ee89db6b2d4bd499",
+      "gitBlob": "fdb8f3c29fc62de3dc7b048d0711e0f166e9950c"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightLocator.ts",
+      "bytes": 908,
+      "sha256": "077f7de63dc73a50e3d6794f21f1512e401db80d87dbfa8c13bf14cd39c9a363",
+      "gitBlob": "4ff398190fa4ace95b331627be4c4d3ee5d75697"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightNetworkGuard.test.ts",
+      "bytes": 8768,
+      "sha256": "753c22954483c36fd2f3b129ca3ebe099cf40c7f5105631d98c9c96e6c7a3827",
+      "gitBlob": "1f4624ec0ff2a27401d5c23d7cc87d047e94bbf7"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightNetworkGuard.ts",
+      "bytes": 5848,
+      "sha256": "50de25bb2b89e0e580a8c7df6ebce7ad6df402495762b386da2dc57262e142bc",
+      "gitBlob": "b15c362cc9a97d7309a7c960ef7631f0fb8adcb1"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightRuntime.test.ts",
+      "bytes": 11049,
+      "sha256": "241269d4d6f2113307c543df776314840a13ba882d13dceeb76a51212bc9933f",
+      "gitBlob": "c08f5a421e84f0f0e07385e8ee8924ef84d22757"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/betterwrightRuntime.ts",
+      "bytes": 5101,
+      "sha256": "feb2cd4ecd277c8596c24845936038721ada4e3dfed6a61a7b83178f6524c015",
+      "gitBlob": "6c7bc792a26dfcf15d7ee797459906d5b98d4549"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserCookieImport.test.ts",
+      "bytes": 13109,
+      "sha256": "a2d71f5b60114ae0a194851ddb686fac8bb965a806b23342d14918ef05662f94",
+      "gitBlob": "f85fe62ab34005c61828404b9f11d31c657483f3"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserCookieImport.ts",
+      "bytes": 7184,
+      "sha256": "1ff5ab511a92bdade30c3853c9f7ee93556860fe596865cd46e61bfb5f1c68d3",
+      "gitBlob": "5ebc318e6805149fe74b95efbf4d70497681d47f"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserDiagnostics.test.ts",
+      "bytes": 12956,
+      "sha256": "4d8b3301e91ed3b76b0cb4060f2b07f550f1a6cf8b1f7554f6e0fccfa3e8f337",
+      "gitBlob": "1a970a9a4b7aae30646532a8b8d0321ae2d7dcbb"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserDiagnostics.ts",
+      "bytes": 14489,
+      "sha256": "0abe2783e423dd38611fc7f23626ae3fdddfd7112264b6c74ac7a3cc40dfbc4e",
+      "gitBlob": "8bad3ffea256f65fd77a5b09ad9447a8ac7ef793"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserManagerAutomation.test.ts",
+      "bytes": 78899,
+      "sha256": "096810abb706828318985e31a48888b0167ad261651cc3be5ef046b541ce50de",
+      "gitBlob": "a1262b3977c4084ce9a43ff62d1196ae50d50117"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserSessionRestore.test.ts",
+      "bytes": 10553,
+      "sha256": "111c3fa709673173c63ae3dae378756455fb19f0f12aaa7fd2238ad726fc8228",
+      "gitBlob": "f1c51bee85a39bec9cc1a27c3689a869cf475d16"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserSessionRestore.ts",
+      "bytes": 10036,
+      "sha256": "8c553132e8dfe293338dcea2f5fde9093bfe807f06522b8491c2f7aeb099e3c5",
+      "gitBlob": "c29aa1cafa8a37dbf6e356f25fee9c3efc46b8ba"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserShutdown.test.ts",
+      "bytes": 1931,
+      "sha256": "5d10d8ff02a2f4db133a62d314301b5abc60b3c9675f8d4d3552d58a776f9c2e",
+      "gitBlob": "e0618cc8b6f2d5b1eab3bba23786d02df4f567c7"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserShutdown.ts",
+      "bytes": 781,
+      "sha256": "1f039e994fbc02f7fb6574cfaf47fd0810f8a96c37447cef66bdfc55d09b1b3e",
+      "gitBlob": "0d6c141c2aba3a358f9ee7ef35a9d403df4792da"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserVault.test.ts",
+      "bytes": 14283,
+      "sha256": "7921de9d15bbdeeede51c8e7e6a6e38505f74955dcb6c2425bd75ab65bd7ab20",
+      "gitBlob": "f224a84184f1f55b520fcd39e3c128e9a1f7f568"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserVault.ts",
+      "bytes": 12160,
+      "sha256": "6daf8e79d16c13ce44b11d5e807ed63b9782bfabf64039ce629b9944b3391d69",
+      "gitBlob": "97ec2b41a4b60969440defbef129d2cd2f234a43"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserVaultCapture.runtime.test.ts",
+      "bytes": 5451,
+      "sha256": "419061c633a51a9d42b4198727010edba8919a9f4cf256e8a2ea6be3fd3617f4",
+      "gitBlob": "a3c92f0389fe6fefd0746bdf78e46bfb515e8407"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserVaultCapture.test.ts",
+      "bytes": 3787,
+      "sha256": "c830edb5b2e780962ad25075e618246e82df6255dbfb97ab4522ad4796bfe51f",
+      "gitBlob": "be6395cac5383aaf32824171a6ce5cfe5ea4de2b"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/browserVaultCapture.ts",
+      "bytes": 7894,
+      "sha256": "392a8d7ed780e3d742cdef78cf5f2d19c76882c166d9b01117140bc8480a4246",
+      "gitBlob": "17f7f03664d17e27baea343c073a15c69fac646f"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/cdpRuntime.test.ts",
+      "bytes": 3656,
+      "sha256": "a12735e8012758ce276c85e7880e4b8ff604864c3d0e25107fc2ae841b66e543",
+      "gitBlob": "54642260759b14e1babd1c592dacfb1ad8cdfdba"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/cdpRuntime.ts",
+      "bytes": 10363,
+      "sha256": "1c322ef65168648e2bff4818081fff568d492dc0d8bc076339eea123c3f1fd15",
+      "gitBlob": "ca30382d72da3ad910e81b7af9f8d4c3670efcf1"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/desktopBrowserAutomationHost.test.ts",
+      "bytes": 44110,
+      "sha256": "aaca16dd93981f265104a8091782a20caa27bf09a063a132972fbdc1376349ae",
+      "gitBlob": "9a0cf37c045be995d6686c01cf51fe4f58a49311"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/desktopBrowserAutomationHost.ts",
+      "bytes": 50796,
+      "sha256": "073ba12a96d0958525561650a2d7fc84616ff8689b7381d0eccbcf91ac674e14",
+      "gitBlob": "ac744f37c15e0f0e8e5c96625ebb258e70a46c72"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/dialogHandling.test.ts",
+      "bytes": 14629,
+      "sha256": "c5c228aa05ae0b5589905bea006cd4edf1425ca29903a7e1a8b66b4758dc5a5f",
+      "gitBlob": "eecba838401f88d70a55f8a856dda81b47997a42"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/dialogHandling.ts",
+      "bytes": 12891,
+      "sha256": "42c5d66828d9ef914c6a411761f506bcd39611d78bb97d64e623716da82f05e3",
+      "gitBlob": "a6a7a36cfa215692f33310c31c02f0704c347f55"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/electronCookieSession.ts",
+      "bytes": 1628,
+      "sha256": "099af09e647ae7d180b978588884de3e5ddfbf89dec7e8fbcab80b3e00226179",
+      "gitBlob": "d82aa78bdd860a7a9d358c1925872a9820645f9f"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/hostErrors.ts",
+      "bytes": 780,
+      "sha256": "b5dbfcb267be9cbd7a702782928a78b5050f52244c72af3b654edabf2b72590d",
+      "gitBlob": "fd948fe62b6f9db5ea37cb5b77b741fcc8941aed"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/navigationHistory.test.ts",
+      "bytes": 7139,
+      "sha256": "c35d443c96e315164d76f34afd539ccc898413d437373f54a1575c75c2dc4c51",
+      "gitBlob": "20a02784194abc3cd712776c0f7d23e97afaefe1"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/navigationHistory.ts",
+      "bytes": 3961,
+      "sha256": "d023970ab940f5bbdee1d9cb7026d2e2eb841bc7a292e02905f7c88280cdaeb1",
+      "gitBlob": "700c025993598e121613461e68c612254910a4e9"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/navigationTracker.ts",
+      "bytes": 16888,
+      "sha256": "783a263a7c83528a9310ebdc19993ed38ca48a81f6929bb82c6ce1e525810802",
+      "gitBlob": "b174846ed822c1a21d456571fc485ce730471902"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/screenshotCapture.test.ts",
+      "bytes": 5008,
+      "sha256": "a7e95048e5782aaf8ed921be6ff75019f4bf651dacf3f8dba63cd40792779add",
+      "gitBlob": "238e5853c301717281bf503f3c9e470363e7daf6"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/screenshotCapture.ts",
+      "bytes": 6054,
+      "sha256": "b5ae78419c5854f063e575edc513d892b815eb736e5f0df52f7679540c1008a9",
+      "gitBlob": "e0136f3ffcfafb11f6a573aab588bbae68d7178b"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/vaultKeyProtection.test.ts",
+      "bytes": 6248,
+      "sha256": "3d4a0542a962afe58877b0b64c57c7338b12d497eae3d1ae5d2c9005f63b1b38",
+      "gitBlob": "d46bff87b8bd8974148126c74415b802a9d6d8b2"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/vaultKeyProtection.ts",
+      "bytes": 9092,
+      "sha256": "bfcaa3f20bcaa49ae040cd38dadf2c7072afb9841b56d0e34e508aae1e842f88",
+      "gitBlob": "f5879c8479abd13768df329fb3b239dd773bfba4"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/waitAndEvaluate.test.ts",
+      "bytes": 5038,
+      "sha256": "f575262c645ea237486e9cb843e9f8606e2478629f94055323db7e1ab870a6c5",
+      "gitBlob": "60851d163c6d109778530a53b4828878b909139f"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/waitAndEvaluate.ts",
+      "bytes": 1920,
+      "sha256": "1cdecdc508fd3e9839d6f823c54e43446b364546df0b93c1763c0bd10a955a82",
+      "gitBlob": "2129ca7f32812319a0f94b84339f5fa91fee9d93"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/workspaceUpload.test.ts",
+      "bytes": 17125,
+      "sha256": "e4279b659117046160e0ea6004d1cbd925dae06c33ca140308e62cb0bd3b4dcd",
+      "gitBlob": "8be0162cab8f969fb535326ac3dd36034ba6583d"
+    },
+    {
+      "path": "apps/desktop/src/browserAutomation/workspaceUpload.ts",
+      "bytes": 24081,
+      "sha256": "16bf79ec8acff6a9482977de07e6e41695cb5316149917902c0d951f6243a808",
+      "gitBlob": "e21d7de627137e63587ddbd5fc9d501fc37b4d14"
+    },
+    {
+      "path": "apps/desktop/src/browserIpc.ts",
+      "bytes": 7357,
+      "sha256": "f7608efb813ebb5e2576dce398cd565e35b95eb5d387a760b2168df0add07f4e",
+      "gitBlob": "9662700e956cb938bd8c35b1e084117522fbb64c"
+    },
+    {
+      "path": "apps/desktop/src/browserManager.test.ts",
+      "bytes": 21710,
+      "sha256": "2879620cb8a99a7b1ed70981abbf41f015f6c03636199f0dcaa2d3023a6f717e",
+      "gitBlob": "d2b03771ab5d6576c63cb2b432c05c7e5a81c087"
+    },
+    {
+      "path": "apps/desktop/src/browserManager.ts",
+      "bytes": 139811,
+      "sha256": "f1b7fa3f5d528d5501c48ee5e00a1ccd50fb19e688646e93428f3bc00191208c",
+      "gitBlob": "a0c5ba20693f055c582b4bb9c37bea4f0184f036"
+    },
+    {
+      "path": "apps/desktop/src/browserSessionPolicy.test.ts",
+      "bytes": 9488,
+      "sha256": "62437b135ef87df5916c1014b4eadf8568d8b30d17894277c985bba079b8c013",
+      "gitBlob": "45150ea8eb2703c6c153f3047c3d09d13a198ee6"
+    },
+    {
+      "path": "apps/desktop/src/browserSessionPolicy.ts",
+      "bytes": 8482,
+      "sha256": "71821d8f52fb007b5b0b6718205df90f48117bc72f350e75e79575e96a92c49a",
+      "gitBlob": "17fa7279a7e67ff758d19cfbedfe101b7f1de0fa"
+    },
+    {
+      "path": "apps/desktop/src/browserUsePipeServer.test.ts",
+      "bytes": 16799,
+      "sha256": "5256788795161bf90161360c9dfe880c17b79164665797400a2c63cacfcc4333",
+      "gitBlob": "cbfa34c80d56a1ad87b9ca8c781938fd850a9e48"
+    },
+    {
+      "path": "apps/desktop/src/browserUsePipeServer.ts",
+      "bytes": 19954,
+      "sha256": "20fc7c275401c67edb4a168969ed652c85516bae03d96dbd4a35c84b32299ef4",
+      "gitBlob": "f620431ad179d31a0affa85f5eb166ee2076d454"
+    },
+    {
+      "path": "apps/desktop/src/browserVaultIpc.test.ts",
+      "bytes": 3272,
+      "sha256": "418c9e3e0bd2ddec40f6eff43bc9ac1d275f4098506485958cced88f14c82efd",
+      "gitBlob": "e4867e3488b14776e664f3ba7cf30c12b4712786"
+    },
+    {
+      "path": "apps/desktop/src/browserVaultIpc.ts",
+      "bytes": 2972,
+      "sha256": "5cee05f0a0fe61ba604e28ed71c9b811391abaae00a050e8b78da91b5bd28509",
+      "gitBlob": "c31b617ce6409bc504e94221a9b6208c1c01892b"
+    },
+    {
+      "path": "apps/desktop/src/browserWebMcp/guestBridge.test.ts",
+      "bytes": 6791,
+      "sha256": "6113993a6f47c41df5dac8862d7a68346344f37bbb64ad0958194a7e7ae29ce2",
+      "gitBlob": "033dea78c72cebe477fb53aa3788f920f8b06b0e"
+    },
+    {
+      "path": "apps/desktop/src/browserWebMcp/guestBridge.ts",
+      "bytes": 28146,
+      "sha256": "67d8caff9577c4c5c7ce6343bddba844ed64e32deeb31e4d35418a1192571295",
+      "gitBlob": "76570be65024f6355dcb91363b010f12ace8bfd5"
+    },
+    {
+      "path": "apps/desktop/src/browserWebMcp/guestBridgeLegacyNative.test.ts",
+      "bytes": 2227,
+      "sha256": "b59660d6255c32aacc0cfad179fe30bd2e2020b2d4808ba9f90684b69ae5fbe2",
+      "gitBlob": "906e88e7867bf51f2191dc7a8fdbf78a19af38ba"
+    },
+    {
+      "path": "apps/desktop/src/browserWebMcp/guestBridgeSecurity.test.ts",
+      "bytes": 3023,
+      "sha256": "1322a9f43f25f33c1e53a1c2219abcf627f47f4d69e268cb9e59dc71329f7b2e",
+      "gitBlob": "c9980ff6130d96caefb8444a2018fe0bbb52a917"
+    },
+    {
+      "path": "apps/desktop/src/bundleSwapDetection.test.ts",
+      "bytes": 2162,
+      "sha256": "d413b92a9d1dfc731a0816cb89b4f01aa33142fe13129191f8c28a0189778d40",
+      "gitBlob": "e2076390d52456f865bf1d6adc815f7b11b1e3de"
+    },
+    {
+      "path": "apps/desktop/src/bundleSwapDetection.ts",
+      "bytes": 2441,
+      "sha256": "6d65271915d0f7ac971b9e77d71551f8762cbffa61bb46298722aa968f45fece",
+      "gitBlob": "d2eda2987f1d3248aca1e811278c28148506bcb3"
+    },
+    {
+      "path": "apps/desktop/src/clipboardPermissions.test.ts",
+      "bytes": 2580,
+      "sha256": "d20eb2ea25f8a59667311d4d9d0bead579827ffe6ee58d0e74a179d1e126c5fb",
+      "gitBlob": "2c5dc8afabeb9198b20c871f3aad8a736d4671a2"
+    },
+    {
+      "path": "apps/desktop/src/clipboardPermissions.ts",
+      "bytes": 1572,
+      "sha256": "95906358b85d75be4154b745132a4036f1206bbfd2ceaea9bb711d32caad3aa0",
+      "gitBlob": "7c19e0afd0702f5c6f2fbdda961b3b2604c58b6f"
+    },
+    {
+      "path": "apps/desktop/src/computerDesktopLifecycle.test.ts",
+      "bytes": 1828,
+      "sha256": "b29b75fff5cf5fa70fabf582ace3a8cb7020af8fa8f0d44e790f4629c4621d73",
+      "gitBlob": "fe7cf13470641b2d0bf25b06521e19888aac9d72"
+    },
+    {
+      "path": "apps/desktop/src/computerDesktopLifecycle.ts",
+      "bytes": 1507,
+      "sha256": "9708aa550085e9a98770f0932102745581f8c366182382a073c90e73b08b3ae9",
+      "gitBlob": "b00b463c4943e6e4450f937be701f3bdd500e638"
+    },
+    {
+      "path": "apps/desktop/src/computerEmergencyStopNotice.ts",
+      "bytes": 3156,
+      "sha256": "d939dca063133ef22bea4b1a611b926cddfad0e91c595848816948efd68b9965",
+      "gitBlob": "037a335a9f607a12403ca92f1085b1a3d3bbf9ec"
+    },
+    {
+      "path": "apps/desktop/src/computerFrameTap.ts",
+      "bytes": 11111,
+      "sha256": "7de8b576109918708732e7fc25b81ec320e3a333cfddca40e10341f62f929165",
+      "gitBlob": "9348062e3656cafbf15ea38e29a02e9727b9b62c"
+    },
+    {
+      "path": "apps/desktop/src/computerShield.test.ts",
+      "bytes": 8245,
+      "sha256": "ad6814e4faa49489460c72d5cf14022dec58f4b603421475251ec311f83d2247",
+      "gitBlob": "cdfa36399c586acd96645ca1534e1072fb76fe7b"
+    },
+    {
+      "path": "apps/desktop/src/computerShield.ts",
+      "bytes": 11890,
+      "sha256": "fd7263c4f833647355bae01150a23e4208ea57fd06c3194292415cae0764f04e",
+      "gitBlob": "0af0230ed0dd77223fcb87535827e71a1ab44e86"
+    },
+    {
+      "path": "apps/desktop/src/confirmDialog.test.ts",
+      "bytes": 4399,
+      "sha256": "108c7834b429e1d220de0263de27a3a458d7fec1825dc012d3761795645691e0",
+      "gitBlob": "921759a0cd1e26374e97c7f22b5b73c7cb394429"
+    },
+    {
+      "path": "apps/desktop/src/confirmDialog.ts",
+      "bytes": 1535,
+      "sha256": "5426ac7fe97d033d814a5342d89ebd2555cf54a4ddafffed1cbac49bbdf76749",
+      "gitBlob": "062e06e7ca829f1411af1052c09ab9e0a3afa398"
+    },
+    {
+      "path": "apps/desktop/src/contextMenuTemplate.test.ts",
+      "bytes": 2241,
+      "sha256": "b63c1f546f9a90e7a3d6b281686449ed4a307d0f801e2df2789752e869fdeffd",
+      "gitBlob": "986c7bbdbe049b875e4b32a629a8207c20f8a873"
+    },
+    {
+      "path": "apps/desktop/src/contextMenuTemplate.ts",
+      "bytes": 2619,
+      "sha256": "fd7bbff40cb60608c91e7957ace49b76f59944d35435b366ab452b164e9ceed4",
+      "gitBlob": "0f0ad81ed1a2f966f3700a04b2a2f3e7bf816d15"
+    },
+    {
+      "path": "apps/desktop/src/cuaDriverHost.test.ts",
+      "bytes": 154037,
+      "sha256": "46a7a30b84286a6b2656f581cf44647b55a50d81d11d61edb3eee9d34ed947a8",
+      "gitBlob": "b45c5819bad489337a38b7a2595284df2c02e3f7"
+    },
+    {
+      "path": "apps/desktop/src/cuaDriverHost.ts",
+      "bytes": 127735,
+      "sha256": "83c96736b032cf2f134e45cebb21ff824a49382cb1595ac01d6e34bd5a35d71f",
+      "gitBlob": "923be709b0b9782907fc3360dc8cba960a5a335d"
+    },
+    {
+      "path": "apps/desktop/src/cuaDriverHostStandalone.ts",
+      "bytes": 6036,
+      "sha256": "e7db9ebc9acb068cfcb5a72a415598dad8cf019617bf99b28d4221cf836d7127",
+      "gitBlob": "7e2cce3d0d0f0d04292842f5ab865fdf0d4b5cb4"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/cancellation.ts",
+      "bytes": 11287,
+      "sha256": "81620e0008c27d1b3dbc071334b01061055fed322dac7eb249914f2a66cbd988",
+      "gitBlob": "9d88c536cc60ef91787af0d5d782f85ea04b6e76"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/electron.ts",
+      "bytes": 28268,
+      "sha256": "e71d24444e4e00ee22cab06c52078e3cf6aba5ceab3ca93832488870f56c981c",
+      "gitBlob": "d4c21eb2159432e42eb198f5ce9f196554b9084f"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/focusProbe.test.ts",
+      "bytes": 8494,
+      "sha256": "6dca24f578613d58a9722c132c8f54ee2df439b848a37c2f4ff4966582d089a6",
+      "gitBlob": "78aeb1f85e9d9042e1e18c7b18a683f6702450fa"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/focusProbe.ts",
+      "bytes": 16963,
+      "sha256": "902aaa66599b253a249116e4dd51bb3311b5e93284da05b1ad6ff626a9ab66e4",
+      "gitBlob": "38a33dc4bcd55e312e563b49049102915a72d076"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/gateway.ts",
+      "bytes": 10669,
+      "sha256": "d22643b8c100e0c22ca86d0888f74865367a1ba9310fe5eea977272067e817ad",
+      "gitBlob": "8ffb0ca24cec4d5b961a4ff3d43505c3a180823c"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/live.ts",
+      "bytes": 17232,
+      "sha256": "800cf7b3259297dfbc173d8d35535c08b98621f780a5da65901fe5f425a8bbe1",
+      "gitBlob": "9cc022467e84224f9e7d60707b6c3b9b628052f7"
+    },
+    {
+      "path": "apps/desktop/src/cuaFixtures/native.ts",
+      "bytes": 8466,
+      "sha256": "6525bc0a8c93a3c756b3ebf7d21ed8047a2adda570941fc67476d921e111577d",
+      "gitBlob": "145668ab0790a69d8142154000f2bfc7b993033d"
+    },
+    {
+      "path": "apps/desktop/src/cuaHostSocket.test.ts",
+      "bytes": 4980,
+      "sha256": "9aba8ce6bd8b06b6b541bba7a574de6e1b87d22d672035a78260ffccf2063f48",
+      "gitBlob": "3d6f02820984de2c3d621fd617536dea92896cff"
+    },
+    {
+      "path": "apps/desktop/src/cuaHostSocket.ts",
+      "bytes": 2135,
+      "sha256": "bc998a51178d70cef4db9650b5824f0dcd709f4436c3f4437cc851185c0bcb4c",
+      "gitBlob": "0656d253fa0d560348d96d17f02f0b5362c39ed0"
+    },
+    {
+      "path": "apps/desktop/src/cuaRuntimeOwnership.test.ts",
+      "bytes": 5877,
+      "sha256": "7e855688b056e9a403cd57e0099d2bbc1b9e210d7202b72ec0da374e6cfe9287",
+      "gitBlob": "104aeb5d2be3d1c26701baf0b8d87344dee774e7"
+    },
+    {
+      "path": "apps/desktop/src/cuaRuntimeOwnership.ts",
+      "bytes": 4556,
+      "sha256": "e7bf9a25534bc223156bb30462ae5d2c8a8eada3838e5a242fb4c9c532961cc4",
+      "gitBlob": "34ec668333446c31e035a6da9e29938ab77cfb2a"
+    },
+    {
+      "path": "apps/desktop/src/desktopAppIcon.test.ts",
+      "bytes": 9387,
+      "sha256": "254173caf1af4e3c4f80ee2500e1f38e16f0d1a6ad7a06b488915724edcabdb6",
+      "gitBlob": "6f45262047a072b9c224bbe0f53a9b4f626f5a5a"
+    },
+    {
+      "path": "apps/desktop/src/desktopAppIcon.ts",
+      "bytes": 3896,
+      "sha256": "c4bfd14dc3457fce723b8375a93ce86bcc07270107fe87e715134ec0421505f3",
+      "gitBlob": "85a507136b6f246947c7363b21ef4b6a3ebb52aa"
+    },
+    {
+      "path": "apps/desktop/src/desktopCustomTitleBar.test.ts",
+      "bytes": 3233,
+      "sha256": "31a9012cd7918288245fb88963c6192bca03d1722e996f9739727e4a730a905a",
+      "gitBlob": "41d5c8115dece497296639bfac116d280237a407"
+    },
+    {
+      "path": "apps/desktop/src/desktopCustomTitleBar.ts",
+      "bytes": 2494,
+      "sha256": "f4912886cd8cdd06134a9c2f303c655abf753f70acc22ef0a76cb5a694b5bc85",
+      "gitBlob": "599bdc8f513c56a84b11e62130caefbdddec7907"
+    },
+    {
+      "path": "apps/desktop/src/desktopMigrationRecovery.test.ts",
+      "bytes": 17391,
+      "sha256": "223fd4e2f291d7dded5f6b245049fb4b8c480897f41d741888f7cf516fba8666",
+      "gitBlob": "318838c3182146925084b5bb0847b32b3d082ac8"
+    },
+    {
+      "path": "apps/desktop/src/desktopMigrationRecovery.ts",
+      "bytes": 10622,
+      "sha256": "e53ee50f44de1ee247633a165a1232f2be550bbd382946ad98404a3fd11a8726",
+      "gitBlob": "7a58dc2fc0ebd1f1526ff16feb00c95a8f32c157"
+    },
+    {
+      "path": "apps/desktop/src/desktopProcessErrors.test.ts",
+      "bytes": 1453,
+      "sha256": "f03298bec1c4653ef18e25fc906bdf298e4a5458e3fa89ad0b9ee6c826ba64af",
+      "gitBlob": "374a7556bfc4ae71ffc34226cb4ca85c96d44417"
+    },
+    {
+      "path": "apps/desktop/src/desktopProcessErrors.ts",
+      "bytes": 545,
+      "sha256": "e1ad9841a5e320a40260c479c3955e74f90009fc7a73b6826df7e3481ac2cbbc",
+      "gitBlob": "02c356227c9a05508fa20dff9980343a5347293f"
+    },
+    {
+      "path": "apps/desktop/src/desktopQuitIntent.test.ts",
+      "bytes": 2808,
+      "sha256": "4f49a435dca50657ead9a95adb698aaa8efe6d3b5abe2f7400edcf0f2062fd08",
+      "gitBlob": "3cfc6a5d10b6ecf5b4781e5e5b68478a953373d2"
+    },
+    {
+      "path": "apps/desktop/src/desktopQuitIntent.ts",
+      "bytes": 2453,
+      "sha256": "b1aa1722e44748eef9403e39386ee0bbd0927ee804dab71c447845cfb5194e08",
+      "gitBlob": "daec9a3811f2aac19dd9ee1d45f5b5a1104b574a"
+    },
+    {
+      "path": "apps/desktop/src/desktopStaticProtocol.test.ts",
+      "bytes": 2424,
+      "sha256": "8f868f50270e91ca2ad1830d3e21c2c1d7172734ef8c06967b56ba6aa47cb2b4",
+      "gitBlob": "0cbeaa6b6d15502451b0d5924e2d2bbd135d56ea"
+    },
+    {
+      "path": "apps/desktop/src/desktopStaticProtocol.ts",
+      "bytes": 1929,
+      "sha256": "e903dcacdde25437a22961c4ba3b620776693607563bf9896b2bea56e13cb8bf",
+      "gitBlob": "430761cd69b34584d1684c6c78ac8300d18a4c05"
+    },
+    {
+      "path": "apps/desktop/src/desktopStorageMigration.test.ts",
+      "bytes": 2438,
+      "sha256": "8ee90b46701d45582739f7c81756c4e343de6b20d248b786b37c2931e2077d68",
+      "gitBlob": "8fde33fd2b60b48a6f92efd5b09093c98129c555"
+    },
+    {
+      "path": "apps/desktop/src/desktopStorageMigration.ts",
+      "bytes": 2792,
+      "sha256": "3f7eada2e33dbefcab814caf81c74bbe4447fc55a90acaf091bc7c11f9b0e378",
+      "gitBlob": "f7007de8321513dcb11be187c98f77edccd11bea"
+    },
+    {
+      "path": "apps/desktop/src/desktopUserDataProfile.test.ts",
+      "bytes": 9768,
+      "sha256": "3554472ee51d59e2c8406dc35721b8dc53b7e0bab644b4abbbfe09a523d2953b",
+      "gitBlob": "035493bfb841ebbc5b4d0add6ca9e4bb2f083fdd"
+    },
+    {
+      "path": "apps/desktop/src/desktopUserDataProfile.ts",
+      "bytes": 8911,
+      "sha256": "426aae929e5ca8eaa21d1c42eaf9e253ae8de5d61ff18c50986d103e1982e110",
+      "gitBlob": "2d224f2da2f753425c7781d25354df5c910bc2b1"
+    },
+    {
+      "path": "apps/desktop/src/desktopWsBridge.test.ts",
+      "bytes": 1007,
+      "sha256": "c0e244660f49f073b769f2b6eebd56e3250355f9ff48680fdc5924612674bf1c",
+      "gitBlob": "feaf0bf456970af1523f45dbe9eed079df268577"
+    },
+    {
+      "path": "apps/desktop/src/desktopWsBridge.ts",
+      "bytes": 601,
+      "sha256": "a124dd476dc663ddc4485a333bb4c05d3539400dc8cb218f6d36cdf0e103f84a",
+      "gitBlob": "c956e308216d6dbfbea2d194e9794b8734d40726"
+    },
+    {
+      "path": "apps/desktop/src/electronUpdaterSecurity.test.ts",
+      "bytes": 8638,
+      "sha256": "5e8850ee99171609d5effc5d2ffe07943788f084bfdd1ba1211e45822d52707d",
+      "gitBlob": "c9d8dfb35c836416826c486f07f7fdf237f74b76"
+    },
+    {
+      "path": "apps/desktop/src/electronUpdaterSecurity.ts",
+      "bytes": 9560,
+      "sha256": "bb01e8ea0de3a41e3c10e3941fd5ebf4912b601e29be8180017f85dfa0bbf1d8",
+      "gitBlob": "40f56c67905d0fdc4e5102758df2c030673f5438"
+    },
+    {
+      "path": "apps/desktop/src/escapeKillSwitchMonitor.test.ts",
+      "bytes": 10038,
+      "sha256": "8c28307d7f39f04cdebf1965e635c3b98b2defdaece20f29abd6beec57409f63",
+      "gitBlob": "16f89d41d627e8773d9900b4d64af08037cda4c5"
+    },
+    {
+      "path": "apps/desktop/src/escapeKillSwitchMonitor.ts",
+      "bytes": 8539,
+      "sha256": "0b3a4013d90434b5d6869e7da8e358599a27648373a650af5a9e43a4b6ef16c1",
+      "gitBlob": "b2207b842a149c1c91b879defcac8910d9238f16"
+    },
+    {
+      "path": "apps/desktop/src/exclusiveApplyQueue.test.ts",
+      "bytes": 1904,
+      "sha256": "73f7fe703eb1be04a0d45cac285a4ba147f9a6fb9d5ff8c6c5308475c1534bb5",
+      "gitBlob": "0c758ec005ca194e370413406ef2f4723385d87e"
+    },
+    {
+      "path": "apps/desktop/src/exclusiveApplyQueue.ts",
+      "bytes": 838,
+      "sha256": "7553c801ca041d8ec4873ae3e09a87afc13ee8405c7254c34697b7f1a2b56fa4",
+      "gitBlob": "748e494afb61a0fd34217125249169038c68677d"
+    },
+    {
+      "path": "apps/desktop/src/fixtures/posixBackendShutdown.mjs",
+      "bytes": 2843,
+      "sha256": "fd29a750187224500217839e6dcc213ae0d33ecd95556c3c4335fe4dd748010b",
+      "gitBlob": "d3e4a96e34203a1850c584c714572e07065ad76a"
+    },
+    {
+      "path": "apps/desktop/src/githubUpdateFeed.test.ts",
+      "bytes": 1507,
+      "sha256": "0a61d41a250b3d27e18ade66ded6a0950a4339bd38d6bd854f3c6bf668acd851",
+      "gitBlob": "cdbd5e8b2f2fe3633980c3afe85152afc35a078c"
+    },
+    {
+      "path": "apps/desktop/src/githubUpdateFeed.ts",
+      "bytes": 1380,
+      "sha256": "241c0a7d05cda0eecd8475dedd2da034fe2da218c940027742dad0a020894404",
+      "gitBlob": "998d95c50bc9dff94811226f7a6f35bfaad638ee"
+    },
+    {
+      "path": "apps/desktop/src/initialBackendWindowOpen.test.ts",
+      "bytes": 3326,
+      "sha256": "e4da58af0763046ce4fad36ed2078039ccbf79a24a53dd10d4e5b1d0053181e4",
+      "gitBlob": "26c13a8761142c1c6d179d847f012ba327e1370d"
+    },
+    {
+      "path": "apps/desktop/src/initialBackendWindowOpen.ts",
+      "bytes": 2126,
+      "sha256": "8bb34ec296fa63a3639ccc3378c110efd2321ed44f7d3f763f316dd80ff2147f",
+      "gitBlob": "214abf6f15ff62fed0fc16708b480ba621006a4b"
+    },
+    {
+      "path": "apps/desktop/src/ipcChannels.ts",
+      "bytes": 6579,
+      "sha256": "ad402c9949e114ef58d2433659607e73269268205fd77f31c9305f6a121a5eb1",
+      "gitBlob": "2a762b90b49dbb4105311cb95154ebc835a2105e"
+    },
+    {
+      "path": "apps/desktop/src/linuxCuaAdmission.test.ts",
+      "bytes": 11631,
+      "sha256": "061dd8e8f772e5f56880453696c028f67728b37e7a20f4a54ce197fb91491298",
+      "gitBlob": "5498e5209f9d9fcf18154972d0d9a3a6eba807ed"
+    },
+    {
+      "path": "apps/desktop/src/linuxCuaAdmission.ts",
+      "bytes": 6937,
+      "sha256": "9c9fae8afa15647c90a2db9f36390df1aee5ee3acba30f5e5125c654fcb1d72f",
+      "gitBlob": "db2929e4093d6fbb129261e0eedc571b46c6f628"
+    },
+    {
+      "path": "apps/desktop/src/linuxCuaDriverHost.test.ts",
+      "bytes": 4591,
+      "sha256": "642405668eb0df30ab76f49cf17920b1e4eb39b59326f4de172cbb4bd2bf6766",
+      "gitBlob": "f708961b80118253ec5ba5695977a2c9bf23e168"
+    },
+    {
+      "path": "apps/desktop/src/linuxCuaDriverHost.ts",
+      "bytes": 1728,
+      "sha256": "680537e95baca25fefcc4a0d6194035089d33cf95e7a51a044e8de5537b19c58",
+      "gitBlob": "3a85b3a3952c09679dbaa88d82c4c7eba2a14921"
+    },
+    {
+      "path": "apps/desktop/src/linuxEscapeKillSwitchMonitor.test.ts",
+      "bytes": 8325,
+      "sha256": "8a067df4d5efd5120ab4f92542cf4c467ee55a7d3e5a26de13a4e415a304f794",
+      "gitBlob": "bfba4a3eb5c0f8559926427715813aa24faa8912"
+    },
+    {
+      "path": "apps/desktop/src/linuxEscapeKillSwitchMonitor.ts",
+      "bytes": 6201,
+      "sha256": "6a7d4e972df057a20f992ca1efb2583f255a08392161e8e1516d192e5c1987f0",
+      "gitBlob": "c750ec7e1216652c0cf0d79f0cf839be0b0dd674"
+    },
+    {
+      "path": "apps/desktop/src/localHtmlPreviewProtocol.test.ts",
+      "bytes": 4612,
+      "sha256": "811c42bc59bd7d1d09a87e05f7ff045215a3ff35839c5751ba60801e1fdccda8",
+      "gitBlob": "4ff9a46eac2a9b09bcfbb3f1a43aa0dafdb11b13"
+    },
+    {
+      "path": "apps/desktop/src/localHtmlPreviewProtocol.ts",
+      "bytes": 5620,
+      "sha256": "25a3412467de048faa4a0a9ad07c99d25c70077dbc5d5d4ce4410b54a5e8304e",
+      "gitBlob": "240a1b5eee0c5b44e47df170954e35fbc042dcba"
+    },
+    {
+      "path": "apps/desktop/src/macAppIcon.native.test.ts",
+      "bytes": 2072,
+      "sha256": "367e6dee639936a5df45f920d9933859b0f67f288939cc5ba7634aa0a1525cbb",
+      "gitBlob": "758b634357f3d9d1539dcafcbef3494124bbf185"
+    },
+    {
+      "path": "apps/desktop/src/macAppIcon.test.ts",
+      "bytes": 5905,
+      "sha256": "5f745cd49386fff93bc681bcf92f45d02e0301448e7035fa5350792a648a99ef",
+      "gitBlob": "b4567dae79c899ef08afb77f30900f6cb7870554"
+    },
+    {
+      "path": "apps/desktop/src/macAppIcon.ts",
+      "bytes": 3259,
+      "sha256": "c9949a92936ef4baa1b1aa43c90d619b0c0b19a6224afda747cce7e03e7b0377",
+      "gitBlob": "be15ffcfc93f226a3eb296be2092acdaac2781f5"
+    },
+    {
+      "path": "apps/desktop/src/macIconCacheRefresh.test.ts",
+      "bytes": 2461,
+      "sha256": "5ae94da44cef9106a1e4a01b72cdb5a568c493b6cdb848d26b1ae79f7ef36fd4",
+      "gitBlob": "62f5ee25ae54c630fc06e60f91edc16c6747c158"
+    },
+    {
+      "path": "apps/desktop/src/macIconCacheRefresh.ts",
+      "bytes": 2385,
+      "sha256": "371a8387b7606ceba19fb8ed3f2f74234bf71e54a003a906f1974e772206a5b7",
+      "gitBlob": "6216aa6473d042d61170f6240afbe7e5efb6eb97"
+    },
+    {
+      "path": "apps/desktop/src/macUpdateDiagnostics.ts",
+      "bytes": 5081,
+      "sha256": "b8e97139905af1f4e56e7025ec3dae026ff38308273dd79db4b63b9acca97936",
+      "gitBlob": "4d3353644c7a8cb93107436370cbbf5fae3fba39"
+    },
+    {
+      "path": "apps/desktop/src/main.ts",
+      "bytes": 230576,
+      "sha256": "c412b4cf5d704dadda53e54e71006a2ea8f989438e5035c194b95ee782ec5c3a",
+      "gitBlob": "2b5b7a547b0b30c4f886a098dcc9554eabca1682"
+    },
+    {
+      "path": "apps/desktop/src/mediaPermissions.test.ts",
+      "bytes": 3342,
+      "sha256": "c45632def9523ac4cfa873b68be7d3937dd5c1932ea02e777c6f01f052dda303",
+      "gitBlob": "329a327c9390a9c3f638cc65106ac20ea873af13"
+    },
+    {
+      "path": "apps/desktop/src/mediaPermissions.ts",
+      "bytes": 2643,
+      "sha256": "738f857fdc10273655386d248fe15f04ea9a7cbb8d5f377e9d03b71e895c2fdb",
+      "gitBlob": "948b848da6a84024a8e54f87a906548e8b91c575"
+    },
+    {
+      "path": "apps/desktop/src/menuShortcuts.test.ts",
+      "bytes": 11643,
+      "sha256": "fe5c3a277d8e9957793a2d963dbf89e516ffd35fedf8326390ee24f6e7869ffd",
+      "gitBlob": "8e537ba72d340bc6cb84bc078c8f2ee8c60ce2e2"
+    },
+    {
+      "path": "apps/desktop/src/menuShortcuts.ts",
+      "bytes": 7628,
+      "sha256": "5d18c2e3819dd2702dca2eb4c70210f63a7ed69160590d7a7b197a3216f88b66",
+      "gitBlob": "12e54f6fe94dc6e62e6d041cbfcb34d80576e8a8"
+    },
+    {
+      "path": "apps/desktop/src/migrationBundleIdentity.test.ts",
+      "bytes": 1902,
+      "sha256": "9f1546bf163658c5636bcf34409f2e3e7d0e6dd873b7bb77312444db407ccb14",
+      "gitBlob": "1f51b24623bd30d92e1091d2c7ad30641ca2001a"
+    },
+    {
+      "path": "apps/desktop/src/migrationBundleIdentity.ts",
+      "bytes": 1308,
+      "sha256": "caa8ed2c4b864f0813f9f00c183e84d9a75402d0f69052d56a91b8def4e823f4",
+      "gitBlob": "fd700d91805cae438d9fd1b87eb0e621d926c854"
+    },
+    {
+      "path": "apps/desktop/src/migrationConsentHandoff.test.ts",
+      "bytes": 422,
+      "sha256": "a42f73d9fb7eda38656bb529d20a58d8bcb1044779e74c537085f4a9086fdf29",
+      "gitBlob": "f5a5fb144f1d003a983eeebd7708c003865be74c"
+    },
+    {
+      "path": "apps/desktop/src/migrationConsentHandoff.ts",
+      "bytes": 280,
+      "sha256": "c4e7af43a43cd5fcb4f82b33fa89fdf4109d026cc92b330a7980bd2894abc529",
+      "gitBlob": "47e8dee668434855a2a49e7371fd20bd5c28f582"
+    },
+    {
+      "path": "apps/desktop/src/notificationRetention.test.ts",
+      "bytes": 2237,
+      "sha256": "5889785984bacb5e1cf11cba430730c8fe4c73fcf20ef463cbd922f3d73bf72f",
+      "gitBlob": "e121c170781a9adfe929bdf7e7aec690455e8972"
+    },
+    {
+      "path": "apps/desktop/src/notificationRetention.ts",
+      "bytes": 2033,
+      "sha256": "218f2e2ad923f13c561cc40c6240093d924811633cfb243cc51d9e89d4fa9cc7",
+      "gitBlob": "ce6d95404c547d3a0d72d38cfeb919be1a93892b"
+    },
+    {
+      "path": "apps/desktop/src/preload.ts",
+      "bytes": 19749,
+      "sha256": "d4cc90145d200c47da28c473caca9e0277329b3f3b816dca565ff7f32994b204",
+      "gitBlob": "858e55c3193c8d336f5974d7b16c0349367fd488"
+    },
+    {
+      "path": "apps/desktop/src/rendererCrashRecovery.test.ts",
+      "bytes": 3657,
+      "sha256": "cfda08020b670e67ea40c2e7e1d67ea0eeb5fc6210adf5d2ba36c9dea8bdc935",
+      "gitBlob": "b5487947c12d8642edfeeb7f601fbae137e6cefa"
+    },
+    {
+      "path": "apps/desktop/src/rendererCrashRecovery.ts",
+      "bytes": 3975,
+      "sha256": "09d61b8f2c91f361bd3f8952d8928d06fbf5cf89a28a617144fd3700c942a3be",
+      "gitBlob": "3efa4109ff0a4b365fb35c6ef86696d07ca262cb"
+    },
+    {
+      "path": "apps/desktop/src/resumableUpdateDownload.test.ts",
+      "bytes": 18613,
+      "sha256": "d44b1d0978c1a44638c9afc44caf56f99c2af0eb7c54025c2e6b10d06786b311",
+      "gitBlob": "b49fff41349db1f383459a4b98de9ad7e983c0ac"
+    },
+    {
+      "path": "apps/desktop/src/resumableUpdateDownload.ts",
+      "bytes": 25274,
+      "sha256": "1c1d74d1a0e77492731442ba4787c79b8deb7ec30506e3732f1c1ae120e63688",
+      "gitBlob": "b6f566da2747e874fa7891323c86d8c408daf21a"
+    },
+    {
+      "path": "apps/desktop/src/resumableUpdateDownloadPolicy.ts",
+      "bytes": 6670,
+      "sha256": "b9474d9a95e8ca22c70d5325f89124c171f36dc10453a1ec0c0bbd7bce41086c",
+      "gitBlob": "e272cc2344a66afe882efdc952473d52ee9d9f7f"
+    },
+    {
+      "path": "apps/desktop/src/rotatingFileSink.test.ts",
+      "bytes": 2151,
+      "sha256": "b272de69957b069cc7ae99b592827609a853015901da21f611ff3670061c3980",
+      "gitBlob": "ebe0d9671a8f5b8f447ef65b7a2ab4e9321d8c60"
+    },
+    {
+      "path": "apps/desktop/src/runningChatsQuitGuard.test.ts",
+      "bytes": 8678,
+      "sha256": "0b06b32d9115f981d7e0cb9a938ff017689faed258d7973d6351f245ca39b0e2",
+      "gitBlob": "ebbe68df429ad82cf8105a65a1f4a84c9695ec79"
+    },
+    {
+      "path": "apps/desktop/src/runningChatsQuitGuard.ts",
+      "bytes": 7468,
+      "sha256": "448479a7c5171cb039f371d73caa686ae4ca49e91fcecf42c19298d2e888b367",
+      "gitBlob": "da81dd1c2ca7f1885bb196b0399ea80b8b78c104"
+    },
+    {
+      "path": "apps/desktop/src/runtimeArch.test.ts",
+      "bytes": 1394,
+      "sha256": "3953e2408423291ab8895ca171aa08d0e9278f03f741f741ff91e74464f83f18",
+      "gitBlob": "258a8fb21520929d68f8e771d16700c587052b67"
+    },
+    {
+      "path": "apps/desktop/src/runtimeArch.ts",
+      "bytes": 1106,
+      "sha256": "98894cfd4741a8a82f229b2c9e4a2870e3620ee18ccadce89c74f04e37fec74a",
+      "gitBlob": "8606776f61744af4c0d9334bcac856bd7df0b654"
+    },
+    {
+      "path": "apps/desktop/src/safariAccessIpc.test.ts",
+      "bytes": 4184,
+      "sha256": "a4348f4bf106143b6cc1d8e7777eb4a9800aa9dbd4c40521265b8d085486d6ae",
+      "gitBlob": "cd886c8eab5a5642a7083db4368a03c7e4e2c8ac"
+    },
+    {
+      "path": "apps/desktop/src/safariAccessIpc.ts",
+      "bytes": 2262,
+      "sha256": "2feac69ee2b83d0f9339bfdc80ef5247f4dd7f769d477d349a9140251368959a",
+      "gitBlob": "66da8230c1c901ed141feb2fc4e53e84e55fa7c3"
+    },
+    {
+      "path": "apps/desktop/src/serverListeningDetector.test.ts",
+      "bytes": 1112,
+      "sha256": "2bdc2320903f4e278205157c47df887b1a1169a714667a63281ed4b93a255892",
+      "gitBlob": "439ceca68618af0f46e901465d8e524818fc78b9"
+    },
+    {
+      "path": "apps/desktop/src/serverListeningDetector.ts",
+      "bytes": 1678,
+      "sha256": "2ba8a09d4c743b1cebda9b86d9b506d8e61caa12b66b43c47f3ccd27d80b0e3d",
+      "gitBlob": "0e58f07c799dd41e3dd810363cf2ab0d8a841ee7"
+    },
+    {
+      "path": "apps/desktop/src/showInFileManager.test.ts",
+      "bytes": 1594,
+      "sha256": "69f4af87829df6ba54c892fe1385a914c6656fc1d0c9537d7456aac55c11dad5",
+      "gitBlob": "ce902024145211475ccbb223e95198931ea1b6a5"
+    },
+    {
+      "path": "apps/desktop/src/showInFileManager.ts",
+      "bytes": 1028,
+      "sha256": "af953802f1d3a9e3ac74c923da4fec54df2ed25e43583104b29da5644d0f9bc4",
+      "gitBlob": "eb0bee01099c10ce55eb53cec4154b2c48488dfc"
+    },
+    {
+      "path": "apps/desktop/src/shutdownSignals.test.ts",
+      "bytes": 1807,
+      "sha256": "887572e8ae9ed040b56c79d0efb4c50ec893f952065ccafeb24445c0a56ee97d",
+      "gitBlob": "461cd100a5f38df2a9807d7d0dd62c4d6fc3cbcd"
+    },
+    {
+      "path": "apps/desktop/src/shutdownSignals.ts",
+      "bytes": 1064,
+      "sha256": "5b13515f8d08dd73b4806e669d9ad6e3ceae4d10c282102c71364ce52c27762a",
+      "gitBlob": "8cfbf4b27ad99eeca69efdb140cc1b2b7d1e331f"
+    },
+    {
+      "path": "apps/desktop/src/startupDiagnosticDialog.test.ts",
+      "bytes": 2244,
+      "sha256": "f2bd4b6381c0c7d94b2aa990cc35c1f57731dc6d258a8659972adcbc56469025",
+      "gitBlob": "a9bd1e04f365d7fe4724551c971301166e7f601b"
+    },
+    {
+      "path": "apps/desktop/src/startupDiagnosticDialog.ts",
+      "bytes": 1151,
+      "sha256": "63837483bb9c6e52a4c0eb9e0e891ae5766217b7cb995294c4834c2f771363c6",
+      "gitBlob": "4c83592265f70e5c39d7a6cb2b0b91ad2b7cbcf7"
+    },
+    {
+      "path": "apps/desktop/src/stopNativeHelper.ts",
+      "bytes": 1155,
+      "sha256": "67accce62665bd2e1871d428e7f9f79651cf4dcdfed6992a82fdb729cdee306d",
+      "gitBlob": "66f5b64616dacd8764dbcf56c980217b9f3d076c"
+    },
+    {
+      "path": "apps/desktop/src/syncShellEnvironment.test.ts",
+      "bytes": 10459,
+      "sha256": "c8b1aeac5b31978d0d9e1fc92f45080499411a72612af7d3da23aa253d8d40c1",
+      "gitBlob": "6546e0c97e0572bdc5c31012cae1ced497137cf3"
+    },
+    {
+      "path": "apps/desktop/src/syncShellEnvironment.ts",
+      "bytes": 4822,
+      "sha256": "a2f0c90b55d5f655fd4fcf2874312fe54a3ec5d17d1d1e230929632f0656ed16",
+      "gitBlob": "51c6e002b2322cf696cc3531697aab4833178389"
+    },
+    {
+      "path": "apps/desktop/src/updateArtifactIdentity.test.ts",
+      "bytes": 2276,
+      "sha256": "1ebf18ea840cb0c31dd2488e649f789e532586b648af5baef40839604274fa0a",
+      "gitBlob": "e94f9897f63f6046b2a316c98259efe900b7f814"
+    },
+    {
+      "path": "apps/desktop/src/updateArtifactIdentity.ts",
+      "bytes": 3485,
+      "sha256": "bbbe369b0dd56ff4b5e60638ae90bee33306611853bc52af8ddb936867527c94",
+      "gitBlob": "8af09d2cb9d99420854656fab6d50f193d7f0797"
+    },
+    {
+      "path": "apps/desktop/src/updateInstallMarker.test.ts",
+      "bytes": 8817,
+      "sha256": "5b0d82e0f4167716d5db54cec25a75ca4e3647711d47e7b1fc886b773595457f",
+      "gitBlob": "d73e6bd092fa70cb8750eefcf2956054ab5933ae"
+    },
+    {
+      "path": "apps/desktop/src/updateInstallMarker.ts",
+      "bytes": 8078,
+      "sha256": "fb7911496382d1d9c6e93fae92b7f09e1821b1c46e2159da8aa1523b840e7f0f",
+      "gitBlob": "18dd1046e2d499eb5435c73fc569bccdff037727"
+    },
+    {
+      "path": "apps/desktop/src/updateInstallPreparation.test.ts",
+      "bytes": 1272,
+      "sha256": "17f289a73cbe3160f66930486bed7abcf514eb5e8ea8a8cd359ddc0f0f8dc182",
+      "gitBlob": "3ce28b89d38faa5473e37b680028b8610d11c526"
+    },
+    {
+      "path": "apps/desktop/src/updateInstallPreparation.ts",
+      "bytes": 1309,
+      "sha256": "6db8eb83424853eaef8ec285727a2a098861f3e850a753f2d49eb125580ae421",
+      "gitBlob": "58a4c0363d3485f4d1aa7ebb28f0dfff23be521a"
+    },
+    {
+      "path": "apps/desktop/src/updateMachine.test.ts",
+      "bytes": 7275,
+      "sha256": "128c54da8dfaab5e2099a754cae105b311f9a0173f81364492349c57ebc69ac9",
+      "gitBlob": "094ebbc9b6989f150b86516f96bf7418ed15969e"
+    },
+    {
+      "path": "apps/desktop/src/updateMachine.ts",
+      "bytes": 4511,
+      "sha256": "f6d0a5d3151200d78fe14e69f577a9f53b10ece845e0e1956a0687fb3a7a80bf",
+      "gitBlob": "d30e3ac6c0a263602a1e427b771f8d93a2459483"
+    },
+    {
+      "path": "apps/desktop/src/updatePendingCache.test.ts",
+      "bytes": 4438,
+      "sha256": "fe5958c7586b3325829741d2a8029b1577f1ffda83d3373e4166527d15b56316",
+      "gitBlob": "94533653461e53d5bce00563282701a7f684f632"
+    },
+    {
+      "path": "apps/desktop/src/updatePendingCache.ts",
+      "bytes": 2749,
+      "sha256": "1c23becfcaf914cb8eedce677b2b05568c4071b9cc059781b283f123ee696078",
+      "gitBlob": "14d010db47c237883bd011d3730107fe7a748dcd"
+    },
+    {
+      "path": "apps/desktop/src/updateState.test.ts",
+      "bytes": 12589,
+      "sha256": "684da0955021fe132f13c6ce8eb7fe62b3ee1b12461509b672d2894ef523eb1a",
+      "gitBlob": "b0b7c9fd98d9891627c23ee2e67c5d38448bc8b1"
+    },
+    {
+      "path": "apps/desktop/src/updateState.ts",
+      "bytes": 7926,
+      "sha256": "fd41e4596a1f16ed62c07fab6c5cc00578ebff4a03468f960c7ae544af28cef6",
+      "gitBlob": "ef7d52cd96845c9c58d9c84c735f9b9245e666b1"
+    },
+    {
+      "path": "apps/desktop/src/voiceTranscription.test.ts",
+      "bytes": 1779,
+      "sha256": "f1fc4885c311ab484114348b4ab68a8a11f79401b363fc19941cf7ef499ac765",
+      "gitBlob": "a83cd73fba957380e837452f0541af3e65be3135"
+    },
+    {
+      "path": "apps/desktop/src/voiceTranscription.ts",
+      "bytes": 9178,
+      "sha256": "293f03ad5eb64cbe095aa3808bb835a8f0e9e33212fdc97f32a3a0817ae91921",
+      "gitBlob": "567919fbcd98fe201c0a17190fb474ef45ef281e"
+    },
+    {
+      "path": "apps/desktop/src/windowMaterial.test.ts",
+      "bytes": 2921,
+      "sha256": "3c3528762831a029146c7ca08c92a8ccef89299549e2fe74bd3e4c2e2f638826",
+      "gitBlob": "62b0a04fe7155db198bd2e94e4ba05b252556d0c"
+    },
+    {
+      "path": "apps/desktop/src/windowMaterial.ts",
+      "bytes": 2315,
+      "sha256": "40bf757e6229cb8d108b61a2ecb0bd1d0a93151f1c37fc9e23f0c6b34c7dd014",
+      "gitBlob": "a75c080c47d23b1f848ddf9e1afe2c9f8c056cf1"
+    },
+    {
+      "path": "apps/desktop/src/windowState.test.ts",
+      "bytes": 2772,
+      "sha256": "562306f46bb9bafe31fb262b0e2c897cde55a1c58d9cde5fc8493b8a652791b2",
+      "gitBlob": "70782d747c2f7d8a6331b335e90f6cee13df3893"
+    },
+    {
+      "path": "apps/desktop/src/windowState.ts",
+      "bytes": 3981,
+      "sha256": "f610c3b7dbf49ff58dc2f4d0aff7ff3a0d240adda04f960240560a3d2c406ade",
+      "gitBlob": "9c8ef6548de2418432686b21ea98d6db2fe08321"
+    },
+    {
+      "path": "apps/desktop/src/windowsShellAppUserModel.test.ts",
+      "bytes": 2484,
+      "sha256": "2562951d1a0d3305b86a0f916df70ee97881a2f5af1b86213cc0eacb8ca1b794",
+      "gitBlob": "e9c35d42af83684be27f2f8c74125367ee1b3458"
+    },
+    {
+      "path": "apps/desktop/src/windowsShellAppUserModel.ts",
+      "bytes": 12931,
+      "sha256": "814ffa6d0f643a92084037fe15800b123b8b384f3a8fcd5480e50e0a7e50c7c8",
+      "gitBlob": "ebfc24ae106dbcc78a52fa71972afd7edecada09"
+    },
+    {
+      "path": "apps/desktop/src/windowsShellIco.test.ts",
+      "bytes": 1809,
+      "sha256": "01aff98fe0ec4969bbdac577a381c44085110886131c0c71268b4acc14693cea",
+      "gitBlob": "c84c7ea265ab7f3c4f106b5afd30d520b8dcec91"
+    },
+    {
+      "path": "apps/desktop/src/windowsShellIco.ts",
+      "bytes": 5082,
+      "sha256": "ab04a3f8bdbc7897941dc526c9e37d5538273b50f22ee6bff0661d68aabe976b",
+      "gitBlob": "fe49c52097359bb47cb23fe9141ef168805c927d"
+    },
+    {
+      "path": "apps/desktop/src/windowsTaskbarIcon.test.ts",
+      "bytes": 13616,
+      "sha256": "dee9e651bb79e211511ddb55547bfb74ffa33a6f7759221f889f49297c9cf166",
+      "gitBlob": "2af7014c16b36ea933f82789813bee0ea1e5f007"
+    },
+    {
+      "path": "apps/desktop/src/windowsTaskbarIcon.ts",
+      "bytes": 8569,
+      "sha256": "7edcd3f4b2a44ad305fc7cb893d9de1251967788fefbc291ab38809a1c72575a",
+      "gitBlob": "acac30dc3069f7ebfaf42db3792b0c3ed574fbda"
+    }
+  ],
+  "qualification": "All 237 desktop source files are byte-identical between captured Before and current main. Packaging, dependencies, release version and server/UI inputs changed separately; this does not claim a new current-main native package or replace exact ec8/ac0 source labels."
+}

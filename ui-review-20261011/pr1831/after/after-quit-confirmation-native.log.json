@@ -1,0 +1,11 @@
+{
+  "command": "/Users/runner/work/_temp/always-on-top-owned-kzZDcE/always-on-top-screen",
+  "args": [
+    "capture",
+    "/Users/runner/work/_temp/always-on-top-owned-kzZDcE/capture-config.json",
+    "after-quit-confirmation"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}

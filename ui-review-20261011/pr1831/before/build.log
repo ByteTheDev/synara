@@ -1,0 +1,1703 @@
+$ node scripts/build-desktop-artifact.ts --platform mac --target dmg --arch "arm64" --flavor production --build-version "1.0.2-beta.1" --source-commit "ec8c940e07582454a475250ade40147e3c89d59f" "--lockfile-sha256" "e04d95a03e02e86d0c78fed226bdb9faa3519e0eb8a73868c7434f08df567879" --verbose --output-dir /Users/runner/work/_temp/always-on-top-packages
+[19:28:57.944] INFO (#1): [desktop-artifact] Packaging stage: /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u
+[19:28:57.952] INFO (#1): [desktop-artifact] Building desktop/server/web artifacts...
+[build-timing] {"stage":"javascript-build","kind":"local","event":"start","at":"2026-10-11T19:28:57.954Z"}
+$ turbo run build --filter=@synara/desktop --filter=@synara/cli
+
+Attention:
+Turborepo now collects completely anonymous telemetry regarding usage.
+This information is used to shape the Turborepo roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://turborepo.dev/docs/telemetry
+
+ WARNING  An issue occurred while attempting to parse /Users/runner/work/synara/synara/source/bun.lock. Turborepo will still function, but some features may not be available:
+   x Could not resolve workspace.
+  |-> Unable to convert from json: invalid type: map, expected a string at
+  |   line 246 column 27
+  `-> invalid type: map, expected a string at line 246 column 27
+
+
+   • Packages in scope: @synara/cli, @synara/desktop
+   • Running build in 2 packages
+   • Remote caching disabled
+
+::group::@synara/contracts:build
+cache miss, executing 394c72d4a674f98c
+$ tsdown src/index.ts --format esm,cjs --dts --clean
+[34mℹ[39m tsdown [2mv0.20.3[22m powered by rolldown [2mv1.0.0-rc.3[22m
+[34mℹ[39m entry: [34msrc/index.ts[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m Build start
+[34mℹ[39m [33m[CJS][39m [2mdist/[22m[1mindex.cjs[22m  [2m697.91 kB[22m [2m│ gzip: 113.83 kB[22m
+[34mℹ[39m [33m[CJS][39m 1 files, total: 697.91 kB
+[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - tsdown:report (57%)
+  - tsdown:external (43%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[34mℹ[39m [33m[CJS][39m [2mdist/[22m[32m[1mindex.d.cts[22m[39m  [2m7147.10 kB[22m
+[34mℹ[39m [33m[CJS][39m 1 files, total: 7147.10 kB
+[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - rolldown-plugin-dts:resolver (51%)
+  - rolldown-plugin-dts:generate (41%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[32m✔[39m Build complete in [32m24236ms[39m
+[34mℹ[39m [34m[ESM][39m [2mdist/[22m[1mindex.mjs[22m    [2m 594.92 kB[22m [2m│ gzip: 106.20 kB[22m
+[34mℹ[39m [34m[ESM][39m [2mdist/[22m[32m[1mindex.d.mts[22m[39m  [2m7147.10 kB[22m
+[34mℹ[39m [34m[ESM][39m 2 files, total: 7742.02 kB
+[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - rolldown-plugin-dts:generate (37%)
+  - rolldown-plugin-dts:fake-js (34%)
+  - rolldown-plugin-dts:resolver (29%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[32m✔[39m Build complete in [32m24247ms[39m
+::endgroup::
+::group::@synara/desktop:build
+cache miss, executing 0e4159194f3e6554
+$ tsdown
+[34mℹ[39m tsdown [2mv0.20.3[22m powered by rolldown [2mv1.0.0-rc.3[22m
+[34mℹ[39m config file: [4m/Users/runner/work/synara/synara/source/apps/desktop/tsdown.config.mts[24m 
+[34mℹ[39m entry: [34msrc/main.ts[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/browserAnnotations/guestPreload.ts[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/cuaDriverHostStandalone.ts[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m entry: [34msrc/preload.ts[39m
+[34mℹ[39m tsconfig: [34mtsconfig.json[39m
+[34mℹ[39m Build start
+[34mℹ[39m [2mdist-electron/[22m[1mpreload.js[22m  [2m25.37 kB[22m [2m│ gzip: 5.09 kB[22m
+[34mℹ[39m 1 files, total: 25.37 kB
+[32m✔[39m Build complete in [32m111ms[39m
+[34mℹ[39m [2mdist-electron/[22m[1mguestPreload.js[22m  [2m81.47 kB[22m [2m│ gzip: 22.27 kB[22m
+[34mℹ[39m 1 files, total: 81.47 kB
+[34mℹ[39m Granting execute permission to [4mdist-electron/cuaDriverHostStandalone.js[24m
+[32m✔[39m Build complete in [32m114ms[39m
+[34mℹ[39m [2mdist-electron/[22m[1mcuaDriverHostStandalone.js[22m  [2m111.80 kB[22m [2m│ gzip: 30.21 kB[22m
+[34mℹ[39m 1 files, total: 111.80 kB
+[32m✔[39m Build complete in [32m125ms[39m
+[34mℹ[39m [2mdist-electron/[22m[1mmain.js[22m  [2m1629.73 kB[22m
+[34mℹ[39m 1 files, total: 1629.73 kB
+[32m✔[39m Build complete in [32m149ms[39m
+::endgroup::
+::group::@synara/web:build
+cache miss, executing 4b667752781b6539
+$ vite build
+[36mvite v8.1.5 [32mbuilding client environment for production...[36m[39m
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[33m[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `vite:css`. See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+[39m
+[2K
+transforming...✓ 9410 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/assets/composerImagePreparation.worker-Df3P1uw2.js               1.52 kB
+dist/index.html                                                       3.53 kB │ gzip:   1.40 kB
+dist/assets/KaTeX_Size3-Regular-CTq5MqoE.woff                         4.42 kB
+dist/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2                        4.92 kB
+dist/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2                        5.20 kB
+dist/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2                        5.46 kB
+dist/assets/KaTeX_Size4-Regular-BF-4gkZK.woff                         5.98 kB
+dist/assets/KaTeX_Size2-Regular-oD1tc_U0.woff                         6.18 kB
+dist/assets/KaTeX_Size1-Regular-C195tn64.woff                         6.49 kB
+dist/assets/KaTeX_Caligraphic-Regular-Di6jR-x-.woff2                  6.90 kB
+dist/assets/KaTeX_Caligraphic-Bold-Dq_IR9rO.woff2                     6.91 kB
+dist/assets/jetbrains-mono-vietnamese-wght-normal-Bt-aOZkq.woff2      7.50 kB
+dist/assets/KaTeX_Size3-Regular-DgpXs0kz.ttf                          7.58 kB
+dist/assets/KaTeX_Caligraphic-Regular-CTRA-rTL.woff                   7.65 kB
+dist/assets/KaTeX_Caligraphic-Bold-BEiXGLvX.woff                      7.71 kB
+dist/assets/jetbrains-mono-greek-wght-normal-Bw9x6K1M.woff2           9.00 kB
+dist/assets/KaTeX_Script-Regular-D3wIWfF6.woff2                       9.64 kB
+dist/assets/KaTeX_SansSerif-Regular-DDBCnlJ7.woff2                   10.34 kB
+dist/assets/KaTeX_Size4-Regular-DWFBv043.ttf                         10.36 kB
+dist/assets/KaTeX_Script-Regular-D5yQViql.woff                       10.58 kB
+dist/assets/KaTeX_Fraktur-Regular-CTYiF6lA.woff2                     11.31 kB
+dist/assets/KaTeX_Fraktur-Bold-CL6g_b3V.woff2                        11.34 kB
+dist/assets/KaTeX_Size2-Regular-B7gKUWhC.ttf                         11.50 kB
+dist/assets/KaTeX_SansSerif-Italic-C3H0VqGB.woff2                    12.02 kB
+dist/assets/jetbrains-mono-cyrillic-wght-normal-D73BlboJ.woff2       12.10 kB
+dist/assets/KaTeX_SansSerif-Bold-D1sUS0GD.woff2                      12.21 kB
+dist/assets/KaTeX_Size1-Regular-Dbsnue_I.ttf                         12.22 kB
+dist/assets/KaTeX_SansSerif-Regular-CS6fqUqJ.woff                    12.31 kB
+dist/assets/KaTeX_Caligraphic-Regular-wX97UBjC.ttf                   12.34 kB
+dist/assets/KaTeX_Caligraphic-Bold-ATXxdsX0.ttf                      12.36 kB
+dist/assets/KaTeX_Fraktur-Regular-Dxdc4cR9.woff                      13.20 kB
+dist/assets/KaTeX_Fraktur-Bold-BsDP51OF.woff                         13.29 kB
+dist/assets/KaTeX_Typewriter-Regular-CO6r4hn1.woff2                  13.56 kB
+dist/assets/KaTeX_SansSerif-Italic-DN2j7dab.woff                     14.11 kB
+dist/assets/KaTeX_SansSerif-Bold-DbIhKOiC.woff                       14.40 kB
+dist/assets/jetbrains-mono-latin-ext-wght-normal-DBQx-q_a.woff2      15.19 kB
+dist/assets/KaTeX_Typewriter-Regular-C0xS9mPB.woff                   16.02 kB
+dist/assets/KaTeX_Math-BoldItalic-CZnvNsCZ.woff2                     16.40 kB
+dist/assets/KaTeX_Math-Italic-t53AETM-.woff2                         16.44 kB
+dist/assets/KaTeX_Script-Regular-C5JkGWo-.ttf                        16.64 kB
+dist/assets/KaTeX_Main-BoldItalic-DxDJ3AOS.woff2                     16.78 kB
+dist/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2                         16.98 kB
+dist/assets/KaTeX_Math-BoldItalic-iY-2wyZ7.woff                      18.66 kB
+dist/assets/KaTeX_Math-Italic-DA0__PXp.woff                          18.74 kB
+dist/assets/KaTeX_Main-BoldItalic-SpSLRI95.woff                      19.41 kB
+dist/assets/KaTeX_SansSerif-Regular-BNo7hRIc.ttf                     19.43 kB
+dist/assets/KaTeX_Fraktur-Regular-CB_wures.ttf                       19.57 kB
+dist/assets/KaTeX_Fraktur-Bold-BdnERNNW.ttf                          19.58 kB
+dist/assets/KaTeX_Main-Italic-BMLOBm91.woff                          19.67 kB
+dist/assets/KaTeX_SansSerif-Italic-YYjJ1zSn.ttf                      22.36 kB
+dist/assets/KaTeX_SansSerif-Bold-CFMepnvq.ttf                        24.50 kB
+dist/assets/KaTeX_Main-Bold-Cx986IdX.woff2                           25.32 kB
+dist/assets/KaTeX_Main-Regular-B22Nviop.woff2                        26.27 kB
+dist/assets/KaTeX_Typewriter-Regular-D3Ib7_Hf.ttf                    27.55 kB
+dist/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2                         28.07 kB
+dist/assets/KaTeX_Main-Bold-Jm3AIy58.woff                            29.91 kB
+dist/assets/KaTeX_Main-Regular-Dr94JaBh.woff                         30.77 kB
+dist/assets/KaTeX_Math-BoldItalic-B3XSjfu4.ttf                       31.19 kB
+dist/assets/KaTeX_Math-Italic-flOr_0UB.ttf                           31.30 kB
+dist/assets/KaTeX_Main-BoldItalic-DzxPMmG6.ttf                       32.96 kB
+dist/assets/KaTeX_AMS-Regular-DMm9YOAa.woff                          33.51 kB
+dist/assets/KaTeX_Main-Italic-3WenGoN9.ttf                           33.58 kB
+dist/assets/jetbrains-mono-latin-wght-normal-B9CIFXIH.woff2          40.40 kB
+dist/assets/KaTeX_Main-Bold-waoOVXN0.ttf                             51.33 kB
+dist/assets/KaTeX_Main-Regular-ypZvNtVU.ttf                          53.58 kB
+dist/assets/KaTeX_AMS-Regular-DRggAlZN.ttf                           63.63 kB
+dist/assets/worker-CZbxxU35.js                                      833.69 kB
+dist/assets/pdf.worker.min-Dr1KORA9.mjs                           1,286.28 kB
+dist/assets/TerminalViewport-BrP-ENHg.css                             3.93 kB │ gzip:   1.01 kB
+dist/assets/ChatMarkdown-CSceNpVM.css                                28.84 kB │ gzip:   7.92 kB
+dist/assets/main-Cn8BNOuH.css                                       444.56 kB │ gzip:  62.07 kB
+dist/assets/syntaxHighlightingLimits-Cd4nnnRh.js                      0.02 kB │ gzip:   0.04 kB
+dist/assets/_chat.plugins-DvqR7Miv.js                                 0.07 kB │ gzip:   0.09 kB
+dist/assets/threadDisplayProvider-N-qyJQ_t.js                         0.08 kB │ gzip:   0.09 kB
+dist/assets/dockTerminalScope-ErVrpHw2.js                             0.08 kB │ gzip:   0.10 kB
+dist/assets/env-jW24S9HL.js                                           0.09 kB │ gzip:   0.10 kB
+dist/assets/pullRequestText-G-phHzXL.js                               0.16 kB │ gzip:   0.14 kB
+dist/assets/projectImportDialogStore-C-RTrbOG.js                      0.18 kB │ gzip:   0.15 kB
+dist/assets/automationStatus-BAlsXRW_.js                              0.19 kB │ gzip:   0.14 kB
+dist/assets/terminalFocus-7D2P9nm2.js                                 0.21 kB │ gzip:   0.18 kB
+dist/assets/chatRouteRecovery-Bn4ehjpP.js                             0.23 kB │ gzip:   0.18 kB
+dist/assets/_chat.automations-DBHnWW3Q.js                             0.24 kB │ gzip:   0.21 kB
+dist/assets/_chat.pull-requests-DBHnWW3Q.js                           0.24 kB │ gzip:   0.21 kB
+dist/assets/editorCenterMode-DCZFWmWk.js                              0.25 kB │ gzip:   0.17 kB
+dist/assets/_chat.kanban.index-BrThWmjm.js                            0.26 kB │ gzip:   0.23 kB
+dist/assets/persistedRecord-CkEFKwqi.js                               0.27 kB │ gzip:   0.21 kB
+dist/assets/useNavigate-D_s3qU8s.js                                   0.27 kB │ gzip:   0.21 kB
+dist/assets/useControlled-BmpI7QTu.js                                 0.28 kB │ gzip:   0.23 kB
+dist/assets/tabStrip-CPtQdzxI.js                                      0.31 kB │ gzip:   0.20 kB
+dist/assets/_chat.kanban._projectId-CnjQjbgW.js                       0.32 kB │ gzip:   0.24 kB
+dist/assets/computerInvocation-7GIir9Dr.js                            0.38 kB │ gzip:   0.26 kB
+dist/assets/visibleInterval-Ck_5Hlk2.js                               0.40 kB │ gzip:   0.23 kB
+dist/assets/terminalStateCleanup-Ca_5hy8a.js                          0.41 kB │ gzip:   0.25 kB
+dist/assets/explorerRevealRequestStore-SmiRDYUV.js                    0.42 kB │ gzip:   0.28 kB
+dist/assets/DisclosureChevron-CHHTyBds.js                             0.43 kB │ gzip:   0.31 kB
+dist/assets/diagnosticIssue-C6UeGlHt.js                               0.45 kB │ gzip:   0.28 kB
+dist/assets/terminalContextComposerRegistry-CyEt6HAq.js               0.45 kB │ gzip:   0.26 kB
+dist/assets/desktopZoom-CAZaJqGv.js                                   0.47 kB │ gzip:   0.29 kB
+dist/assets/editableEventTarget-Vni6OTQq.js                           0.48 kB │ gzip:   0.32 kB
+dist/assets/localServers-BU0Bc6zh.js                                  0.52 kB │ gzip:   0.33 kB
+dist/assets/codeowners-C8r90Shi.js                                    0.54 kB │ gzip:   0.31 kB
+dist/assets/projectTerminalRunner-CRXqfbtK.js                         0.54 kB │ gzip:   0.33 kB
+dist/assets/DiffTruncationWarning-v7xlKzKZ.js                         0.54 kB │ gzip:   0.36 kB
+dist/assets/errorMessages-CHp8Wtc7.js                                 0.55 kB │ gzip:   0.32 kB
+dist/assets/routeRestoreRefreshCoordinator-CewP_A0d.js                0.56 kB │ gzip:   0.33 kB
+dist/assets/fileRowStyles-BPgKGpqY.js                                 0.58 kB │ gzip:   0.32 kB
+dist/assets/relativeTime-CPSqnbHE.js                                  0.65 kB │ gzip:   0.37 kB
+dist/assets/PanelStateMessage-BYi4JjEO.js                             0.65 kB │ gzip:   0.41 kB
+dist/assets/useHandleNewChat-BDemiD3X.js                              0.65 kB │ gzip:   0.42 kB
+dist/assets/useHandleNewGroupChat-BIvJklFK.js                         0.66 kB │ gzip:   0.43 kB
+dist/assets/skeleton-5SwGbDBk.js                                      0.67 kB │ gzip:   0.44 kB
+dist/assets/useMutationState-CayIwOSe.js                              0.67 kB │ gzip:   0.40 kB
+dist/assets/DisclosureRegion-CHWIKzem.js                              0.67 kB │ gzip:   0.42 kB
+dist/assets/RouteInsetSurface-imMtsBGz.js                             0.70 kB │ gzip:   0.41 kB
+dist/assets/shellsession-7yDc5bRL.js                                  0.71 kB │ gzip:   0.43 kB
+dist/assets/status-chip-BMdGQ9Uq.js                                   0.71 kB │ gzip:   0.42 kB
+dist/assets/tsv-sltzmVWM.js                                           0.73 kB │ gzip:   0.33 kB
+dist/assets/browserDownload-DXmumTAt.js                               0.74 kB │ gzip:   0.47 kB
+dist/assets/editorPreferences-CHhs-siA.js                             0.75 kB │ gzip:   0.48 kB
+dist/assets/useRadioGroupKeyboardNav-pLGoWrQg.js                      0.76 kB │ gzip:   0.51 kB
+dist/assets/startContainerChat-jtGAweJQ.js                            0.76 kB │ gzip:   0.46 kB
+dist/assets/terminalCloseConfirmation-nwmDact6.js                     0.76 kB │ gzip:   0.38 kB
+dist/assets/useRefreshOnWindowReturn-CeiEE5ih.js                      0.79 kB │ gzip:   0.46 kB
+dist/assets/diff-stat-Y_71ShpH.js                                     0.81 kB │ gzip:   0.50 kB
+dist/assets/threadArchive-8KUCB-BR.js                                 0.81 kB │ gzip:   0.42 kB
+dist/assets/composerDropPaths-DhEzgNBF.js                             0.82 kB │ gzip:   0.47 kB
+dist/assets/html-derivative-CiB5OWIU.js                               0.84 kB │ gzip:   0.45 kB
+dist/assets/DiffStatLabel-DB4o80Pj.js                                 0.95 kB │ gzip:   0.47 kB
+dist/assets/DockFilePane-DiQZ9WRV.js                                  0.96 kB │ gzip:   0.52 kB
+dist/assets/projectScripts-k63dIeU3.js                                0.97 kB │ gzip:   0.55 kB
+dist/assets/RouteSurface-DqBQQuBq.js                                  0.97 kB │ gzip:   0.57 kB
+dist/assets/git-rebase-BoEFFOTR.js                                    0.98 kB │ gzip:   0.44 kB
+dist/assets/qmldir-DCQb3MpD.js                                        0.99 kB │ gzip:   0.44 kB
+dist/assets/fa6-BnUHzKow.js                                           1.01 kB │ gzip:   0.53 kB
+dist/assets/PullRequestDiffStat-DaHaOL-E.js                           1.02 kB │ gzip:   0.61 kB
+dist/assets/rolldown-runtime-aKtaBQYM.js                              1.08 kB │ gzip:   0.62 kB
+dist/assets/storage-2HiI8ryS.js                                       1.09 kB │ gzip:   0.58 kB
+dist/assets/diffRenderModeStore-CwIHvLm9.js                           1.09 kB │ gzip:   0.54 kB
+dist/assets/spinner-CsddY3Sk.js                                       1.09 kB │ gzip:   0.61 kB
+dist/assets/csv-Dx-8-gkx.js                                           1.13 kB │ gzip:   0.36 kB
+dist/assets/composerImageSource-BWVksu95.js                           1.20 kB │ gzip:   0.58 kB
+dist/assets/focusedChatContext-Cou71fi9.js                            1.21 kB │ gzip:   0.70 kB
+dist/assets/appNavigation-BtsIP130.js                                 1.22 kB │ gzip:   0.63 kB
+dist/assets/git-commit-BSykSTBG.js                                    1.22 kB │ gzip:   0.52 kB
+dist/assets/timestampFormat-Dfzb9vxd.js                               1.25 kB │ gzip:   0.56 kB
+dist/assets/path-Czj45Flj.js                                          1.27 kB │ gzip:   0.55 kB
+dist/assets/DiffWorkerPoolProvider-DMkaUKHr.js                        1.30 kB │ gzip:   0.78 kB
+dist/assets/disclosureMotion-CTk_aG-M.js                              1.34 kB │ gzip:   0.53 kB
+dist/assets/xsl-BisjTPeX.js                                           1.36 kB │ gzip:   0.49 kB
+dist/assets/ProjectImportDialog-e6HBVhgT.js                           1.36 kB │ gzip:   0.78 kB
+dist/assets/PullRequestWarningNote-NSCjftX7.js                        1.36 kB │ gzip:   0.78 kB
+dist/assets/search-input-Bzl6P9kW.js                                  1.36 kB │ gzip:   0.82 kB
+dist/assets/button-group-DXUP9J6n.js                                  1.39 kB │ gzip:   0.70 kB
+dist/assets/dotenv-_5a1GRtc.js                                        1.41 kB │ gzip:   0.52 kB
+dist/assets/archiveThreadWorktreeCleanup-BJ4tFKmN.js                  1.43 kB │ gzip:   0.76 kB
+dist/assets/DockPaneHeader-Bctxw3PO.js                                1.43 kB │ gzip:   0.77 kB
+dist/assets/useWindowFolderDrop-BCK1gcTJ.js                           1.44 kB │ gzip:   0.68 kB
+dist/assets/textarea-Bwzn1jZR.js                                      1.44 kB │ gzip:   0.80 kB
+dist/assets/sparql-D_iOobhT.js                                        1.47 kB │ gzip:   0.81 kB
+dist/assets/threadEnvironment-VDB7zcOV.js                             1.48 kB │ gzip:   0.55 kB
+dist/assets/browserPanelBoundsSync-ByQvQG41.js                        1.51 kB │ gzip:   0.66 kB
+dist/assets/ini-B5eOa1yu.js                                           1.51 kB │ gzip:   0.49 kB
+dist/assets/terminalSession-uD9yGm7x.js                               1.54 kB │ gzip:   0.78 kB
+dist/assets/logic-CGCQStrP.js                                         1.59 kB │ gzip:   0.68 kB
+dist/assets/TasksViewSwitch-CdEjWEM_.js                               1.62 kB │ gzip:   0.91 kB
+dist/assets/useDebouncedValue-4FbU5EbQ.js                             1.64 kB │ gzip:   0.77 kB
+dist/assets/githubInboxQueryOptions-BPKAq0Tm.js                       1.64 kB │ gzip:   0.72 kB
+dist/assets/AutomationProposalActions-BI6Q0vgf.js                     1.64 kB │ gzip:   0.91 kB
+dist/assets/fortran-fixed-form-DEKoE2YW.js                            1.66 kB │ gzip:   0.68 kB
+dist/assets/chatSelectionActions-BfQQyX4O.js                          1.66 kB │ gzip:   0.77 kB
+dist/assets/announcementSheetSlot-DkgsAczh.js                         1.67 kB │ gzip:   0.82 kB
+dist/assets/with-selector-DldUyZB3.js                                 1.67 kB │ gzip:   0.74 kB
+dist/assets/pullRequestList.logic-_vzDVwuu.js                         1.71 kB │ gzip:   0.80 kB
+dist/assets/docker-IyjqRm3v.js                                        1.73 kB │ gzip:   0.59 kB
+dist/assets/hxml-B0Qn7Nwc.js                                          1.74 kB │ gzip:   0.87 kB
+dist/assets/FileEntryIcon-CiX9d_mg.js                                 1.74 kB │ gzip:   0.88 kB
+dist/assets/icon-button-C1hw9SDp.js                                   1.76 kB │ gzip:   0.93 kB
+dist/assets/SynaraLogo-Dbzxr372.js                                    1.77 kB │ gzip:   1.09 kB
+dist/assets/desktop-Dlh5hvp9.js                                       1.82 kB │ gzip:   0.75 kB
+dist/assets/appSnap.logic-DCKGCxP9.js                                 1.82 kB │ gzip:   0.78 kB
+dist/assets/SpaceIcon-G__g7M5m.js                                     1.87 kB │ gzip:   0.99 kB
+dist/assets/binaryFrameSource-CG4QVH3U.js                             1.89 kB │ gzip:   0.94 kB
+dist/assets/projectCreation-Y45FzVh3.js                               1.91 kB │ gzip:   0.94 kB
+dist/assets/pin-DkR5wf7e.js                                           1.92 kB │ gzip:   0.84 kB
+dist/assets/useDesktopTopBarGutter-_baSdvMm.js                        1.94 kB │ gzip:   0.95 kB
+dist/assets/feedbackDialogStore-jf_Zj5hn.js                           2.00 kB │ gzip:   0.90 kB
+dist/assets/syntaxHighlighting-DqhZfznh.js                            2.07 kB │ gzip:   1.00 kB
+dist/assets/projectPaths-BeLwDFLC.js                                  2.08 kB │ gzip:   0.88 kB
+dist/assets/useProviderStatusRefresh-dDL0rpSC.js                      2.09 kB │ gzip:   1.06 kB
+dist/assets/kbd-Br_g22sP.js                                           2.09 kB │ gzip:   0.99 kB
+dist/assets/settingsPanelStyles-CZUMmw2R.js                           2.09 kB │ gzip:   1.07 kB
+dist/assets/providerCliProfiles-C69C31YH.js                           2.12 kB │ gzip:   0.93 kB
+dist/assets/useOpenInteractionType-Db7WMjmI.js                        2.13 kB │ gzip:   1.04 kB
+dist/assets/erb-Cf6O-5cp.js                                           2.13 kB │ gzip:   0.62 kB
+dist/assets/wenyan-C8pVoKbM.js                                        2.15 kB │ gzip:   1.08 kB
+dist/assets/jssm-DXw9l8Rf.js                                          2.23 kB │ gzip:   0.61 kB
+dist/assets/useTerminalSurfaceController-BlWSQ0X6.js                  2.23 kB │ gzip:   1.08 kB
+dist/assets/AppRailUsage.logic-D0cMQ-K4.js                            2.26 kB │ gzip:   1.21 kB
+dist/assets/useLabelableId-dEdEVmgK.js                                2.29 kB │ gzip:   1.10 kB
+dist/assets/edge-B3AKxkZw.js                                          2.30 kB │ gzip:   0.68 kB
+dist/assets/badge-DO9Pv7W5.js                                         2.32 kB │ gzip:   1.00 kB
+dist/assets/useLocalStorage-Da_5Iw9e.js                               2.33 kB │ gzip:   1.13 kB
+dist/assets/reg-CRGYupPL.js                                           2.33 kB │ gzip:   0.69 kB
+dist/assets/useMutation-C_F0CLij.js                                   2.34 kB │ gzip:   0.96 kB
+dist/assets/providerReactQuery-DEAgIGPG.js                            2.34 kB │ gzip:   1.10 kB
+dist/assets/ThreadTerminalDrawer-DHa6ad43.js                          2.37 kB │ gzip:   1.18 kB
+dist/assets/_chat.index-CisA1Xt5.js                                   2.40 kB │ gzip:   1.27 kB
+dist/assets/useButton-LXoBab_3.js                                     2.49 kB │ gzip:   1.14 kB
+dist/assets/diff-woXpYk--.js                                          2.56 kB │ gzip:   0.68 kB
+dist/assets/gleam-CSRkHgEL.js                                         2.57 kB │ gzip:   0.81 kB
+dist/assets/alert-B7qDP_0r.js                                         2.60 kB │ gzip:   0.93 kB
+dist/assets/composerMentions-BS5bRXBp.js                              2.61 kB │ gzip:   1.14 kB
+dist/assets/PullRequestDockPane-l3Ne_Oyc.js                           2.63 kB │ gzip:   1.39 kB
+dist/assets/fixedShortcuts-D3eLgPuW.js                                2.63 kB │ gzip:   0.76 kB
+dist/assets/hy-CZbG8q4J.js                                            2.64 kB │ gzip:   1.17 kB
+dist/assets/terminal-links-DjSrbKEQ.js                                2.64 kB │ gzip:   1.27 kB
+dist/assets/spacesUiStore-ikoDhrJ6.js                                 2.73 kB │ gzip:   0.89 kB
+dist/assets/PullRequestCodeTab-B45TVs_L.js                            2.76 kB │ gzip:   1.46 kB
+dist/assets/chatReferences-0eYeNICM.js                                2.80 kB │ gzip:   1.26 kB
+dist/assets/openscad-BUDT5pXO.js                                      2.81 kB │ gzip:   1.00 kB
+dist/assets/_chat.automations.index-IvXkP4h3.js                       2.82 kB │ gzip:   1.41 kB
+dist/assets/log-BNLmms1o.js                                           2.84 kB │ gzip:   0.89 kB
+dist/assets/json-BR4Rnigm.js                                          2.89 kB │ gzip:   0.82 kB
+dist/assets/_chat.automations._automationId-DvEMvATX.js               2.92 kB │ gzip:   1.47 kB
+dist/assets/cairo-DLTphjLi.js                                         2.93 kB │ gzip:   0.80 kB
+dist/assets/Sidebar.uiState-CK83fS6x.js                               2.93 kB │ gzip:   0.97 kB
+dist/assets/berry-DKpUyyne.js                                         2.99 kB │ gzip:   0.80 kB
+dist/assets/jsonl-CmCQp5Yx.js                                         3.00 kB │ gzip:   0.78 kB
+dist/assets/threadDetailSubscriptionRetention-CxXu-tG4.js             3.02 kB │ gzip:   1.27 kB
+dist/assets/jsonc-CYpm1nAK.js                                         3.10 kB │ gzip:   0.78 kB
+dist/assets/logo-Cluzi2Zq.js                                          3.12 kB │ gzip:   1.46 kB
+dist/assets/DockTerminalPane-CkElwxZX.js                              3.17 kB │ gzip:   1.49 kB
+dist/assets/_chat.hubs.index-CITfdPUK.js                              3.20 kB │ gzip:   1.63 kB
+dist/assets/_chat.index-CsyEMSop.js                                   3.22 kB │ gzip:   1.55 kB
+dist/assets/po-BiJDBrnU.js                                            3.23 kB │ gzip:   0.90 kB
+dist/assets/json5-BR5RXkoi.js                                         3.24 kB │ gzip:   0.82 kB
+dist/assets/mipsasm-BMqwQI7S.js                                       3.25 kB │ gzip:   1.17 kB
+dist/assets/SidebarPanelTitle-nKriejTc.js                             3.25 kB │ gzip:   1.51 kB
+dist/assets/DiffPanelShell-DqaumH5l.js                                3.27 kB │ gzip:   1.17 kB
+dist/assets/tasl-DMoTqEGO.js                                          3.28 kB │ gzip:   0.84 kB
+dist/assets/genie-CV2tkWYe.js                                         3.34 kB │ gzip:   1.20 kB
+dist/assets/rel-BtDbiS_P.js                                           3.36 kB │ gzip:   1.10 kB
+dist/assets/vala-zf12oZj6.js                                          3.36 kB │ gzip:   1.18 kB
+dist/assets/LocalServerIdentity-CYOmopgB.js                           3.37 kB │ gzip:   1.64 kB
+dist/assets/mutation-B4_mpKEW.js                                      3.38 kB │ gzip:   1.13 kB
+dist/assets/splunk-BC2Px7Mm.js                                        3.42 kB │ gzip:   1.51 kB
+dist/assets/providerDiscovery-iZ9FWEfT.js                             3.48 kB │ gzip:   1.54 kB
+dist/assets/hurl-t2Noz7ZH.js                                          3.51 kB │ gzip:   1.09 kB
+dist/assets/contextMenuIcons-CZB9XVU1.js                              3.55 kB │ gzip:   1.69 kB
+dist/assets/fluent-C03EYrpw.js                                        3.60 kB │ gzip:   0.89 kB
+dist/assets/settingsNavigation-fwxlrNRp.js                            3.60 kB │ gzip:   1.45 kB
+dist/assets/ssh-config-BgfXC-Er.js                                    3.61 kB │ gzip:   1.59 kB
+dist/assets/jsonnet-CJTPZ8u_.js                                       3.61 kB │ gzip:   1.03 kB
+dist/assets/PickerPanelShell-CdrEHYzy.js                              3.61 kB │ gzip:   1.73 kB
+dist/assets/kdl-CsD5j6eV.js                                           3.62 kB │ gzip:   1.03 kB
+dist/assets/narrat-_X_XdTYD.js                                        3.66 kB │ gzip:   1.09 kB
+dist/assets/turtle-ByJddavk.js                                        3.69 kB │ gzip:   0.96 kB
+dist/assets/glsl-C_G5c1Eg.js                                          3.69 kB │ gzip:   1.46 kB
+dist/assets/terminalThreads-CebE9u4S.js                               3.71 kB │ gzip:   1.55 kB
+dist/assets/RestoreOrCreateChatRoute-B3-g0myJ.js                      3.78 kB │ gzip:   1.83 kB
+dist/assets/ProjectSidebarIcon-CzBEIE1X.js                            3.80 kB │ gzip:   1.84 kB
+dist/assets/zenscript-BnlCZFoB.js                                     3.90 kB │ gzip:   1.28 kB
+dist/assets/ron-VUp2lXgN.js                                           3.90 kB │ gzip:   0.97 kB
+dist/assets/ProjectMenuPicker-0qhXizqg.js                             3.91 kB │ gzip:   1.68 kB
+dist/assets/gn-ilITqXS6.js                                            3.99 kB │ gzip:   1.47 kB
+dist/assets/pascal-4ZHwLPI5.js                                        4.14 kB │ gzip:   1.67 kB
+dist/assets/platform-DxVmt_Tx.js                                      4.14 kB │ gzip:   1.78 kB
+dist/assets/useProvisionComputer-7RiSXq9r.js                          4.17 kB │ gzip:   1.94 kB
+dist/assets/ProviderSignInDialog-8W_5_jyY.js                          4.18 kB │ gzip:   1.88 kB
+dist/assets/matchContext-VGD4tFLK.js                                  4.18 kB │ gzip:   1.89 kB
+dist/assets/FileDiffView-sASxI40O.js                                  4.27 kB │ gzip:   1.93 kB
+dist/assets/DockExplorerPane-CrSbbH9c.js                              4.31 kB │ gzip:   1.90 kB
+dist/assets/useProjectFileChangeSubscription-cF9w97pq.js              4.34 kB │ gzip:   1.93 kB
+dist/assets/input-_8WyndC9.js                                         4.35 kB │ gzip:   2.14 kB
+dist/assets/alert-dialog-CKRQrEvM.js                                  4.40 kB │ gzip:   1.58 kB
+dist/assets/_chat.tasks.index-CM8SdaA5.js                             4.40 kB │ gzip:   2.20 kB
+dist/assets/http-KMelYz-E.js                                          4.41 kB │ gzip:   1.06 kB
+dist/assets/tcl-CZd0xW_V.js                                           4.42 kB │ gzip:   1.50 kB
+dist/assets/file-icons-BiZ-8LM5.js                                    4.47 kB │ gzip:   1.43 kB
+dist/assets/nextflow-BJtWHP5T.js                                      4.50 kB │ gzip:   1.16 kB
+dist/assets/rosmsg-CAekHB0j.js                                        4.51 kB │ gzip:   1.05 kB
+dist/assets/glassOverlayCutout-BJmtIKW5.js                            4.54 kB │ gzip:   2.03 kB
+dist/assets/polar-C7UOKdEL.js                                         4.66 kB │ gzip:   1.12 kB
+dist/assets/sdbl-bTVj8UrX.js                                          4.69 kB │ gzip:   2.00 kB
+dist/assets/EnvironmentRow-C-lmEflj.js                                4.72 kB │ gzip:   1.90 kB
+dist/assets/command-8ZBi8S_j.js                                       4.72 kB │ gzip:   1.57 kB
+dist/assets/input-group-DKkkbkM5.js                                   4.74 kB │ gzip:   1.59 kB
+dist/assets/fennel-DQxkIbk2.js                                        4.76 kB │ gzip:   1.53 kB
+dist/assets/ThemeModePicker-Civji6OW.js                               4.76 kB │ gzip:   1.88 kB
+dist/assets/bibtex-Ci_nEsc7.js                                        4.78 kB │ gzip:   0.83 kB
+dist/assets/_chat.kanban._projectId-DXP78IKi.js                       4.82 kB │ gzip:   2.33 kB
+dist/assets/useProviderStatusesForLocalConfig-DnwRZSdc.js             4.87 kB │ gzip:   2.02 kB
+dist/assets/threadCreatePromotion-C0DmxSFe.js                         4.94 kB │ gzip:   1.48 kB
+dist/assets/llvm-Cm23YOpf.js                                          5.04 kB │ gzip:   2.01 kB
+dist/assets/-automations.list-B-279CqW.js                             5.05 kB │ gzip:   2.50 kB
+dist/assets/esm-Cvqcqvnh.js                                           5.06 kB │ gzip:   2.01 kB
+dist/assets/wgsl-BsKzXJz4.js                                          5.13 kB │ gzip:   1.38 kB
+dist/assets/gdresource-C0sCabJj.js                                    5.28 kB │ gzip:   1.33 kB
+dist/assets/useProjectAgentSummaries-CzS4yw_k.js                      5.29 kB │ gzip:   1.80 kB
+dist/assets/zig-CMLA9XwU.js                                           5.33 kB │ gzip:   1.55 kB
+dist/assets/qml-zX3ZIatO.js                                           5.33 kB │ gzip:   1.38 kB
+dist/assets/workspaceEditorSession-DBluRI14.js                        5.35 kB │ gzip:   1.96 kB
+dist/assets/dax-BkyTk9wS.js                                           5.35 kB │ gzip:   2.21 kB
+dist/assets/bicep-CUHmPFLl.js                                         5.37 kB │ gzip:   1.14 kB
+dist/assets/xml-Dffjbsn9.js                                           5.44 kB │ gzip:   1.24 kB
+dist/assets/awk-BWXHIvNe.js                                           5.45 kB │ gzip:   1.37 kB
+dist/assets/useCommittedPathname-zn5G7nTE.js                          5.49 kB │ gzip:   2.39 kB
+dist/assets/coq-BrsZFFmf.js                                           5.54 kB │ gzip:   1.91 kB
+dist/assets/jinja-BWZMBFtB.js                                         5.62 kB │ gzip:   1.36 kB
+dist/assets/lean-CewbzKMR.js                                          5.77 kB │ gzip:   1.91 kB
+dist/assets/moonbit-CaWjb8XO.js                                       5.89 kB │ gzip:   1.67 kB
+dist/assets/powerquery-DNMTfnFr.js                                    5.89 kB │ gzip:   1.51 kB
+dist/assets/shaderlab-TOUzSsQk.js                                     5.91 kB │ gzip:   2.08 kB
+dist/assets/verilog-CiiDBU1e.js                                       5.92 kB │ gzip:   1.89 kB
+dist/assets/cypher-ClKdZ_lG.js                                        5.94 kB │ gzip:   1.71 kB
+dist/assets/getFiletypeFromFileName-DAxPv0-z.js                       6.00 kB │ gzip:   2.72 kB
+dist/assets/draftThreadDispatch-DnOO6QXC.js                           6.04 kB │ gzip:   2.60 kB
+dist/assets/pullRequestReactQuery-CG3fjmcm.js                         6.07 kB │ gzip:   2.17 kB
+dist/assets/vb-Djn5o6TS.js                                            6.08 kB │ gzip:   2.33 kB
+dist/assets/serverReactQuery-BRwF7pCO.js                              6.15 kB │ gzip:   2.02 kB
+dist/assets/red-CJ3rzSJv.js                                           6.25 kB │ gzip:   1.59 kB
+dist/assets/min-dark-BSWPekZh.js                                      6.28 kB │ gzip:   1.70 kB
+dist/assets/gdshader-CBce3t8t.js                                      6.31 kB │ gzip:   1.72 kB
+dist/assets/prisma-BsRQq5mF.js                                        6.32 kB │ gzip:   1.38 kB
+dist/assets/ara-4CJ0cIlV.js                                           6.35 kB │ gzip:   1.80 kB
+dist/assets/clojure-DqKBuwfJ.js                                       6.40 kB │ gzip:   1.41 kB
+dist/assets/postcss-BXeXVLqQ.js                                       6.41 kB │ gzip:   1.90 kB
+dist/assets/toml-CcmNWLt0.js                                          6.41 kB │ gzip:   1.28 kB
+dist/assets/solarized-light-DSh2HLQt.js                               6.47 kB │ gzip:   1.71 kB
+dist/assets/proto-DB4EqR-F.js                                         6.54 kB │ gzip:   1.41 kB
+dist/assets/smalltalk-B16xEiuN.js                                     6.58 kB │ gzip:   1.61 kB
+dist/assets/r-TfvMjAgo.js                                             6.60 kB │ gzip:   1.83 kB
+dist/assets/LocalImagePreview-DFLgMDGR.js                             6.67 kB │ gzip:   2.78 kB
+dist/assets/computerProvisioning-DsLyPBbF.js                          6.68 kB │ gzip:   2.62 kB
+dist/assets/SidebarHeaderNavigationControls-DmGqC0aX.js               6.71 kB │ gzip:   2.95 kB
+dist/assets/talonscript-CohzipZa.js                                   6.75 kB │ gzip:   1.48 kB
+dist/assets/projectReactQuery-3BgaeXzc.js                             6.84 kB │ gzip:   2.15 kB
+dist/assets/solarized-dark-DV17i1UV.js                                6.84 kB │ gzip:   1.78 kB
+dist/assets/riscv-Ckw8ddFX.js                                         6.90 kB │ gzip:   1.97 kB
+dist/assets/soy-ffD6jNB2.js                                           6.92 kB │ gzip:   1.62 kB
+dist/assets/min-light-DDpmG2fV.js                                     6.96 kB │ gzip:   1.88 kB
+dist/assets/scheme-DQCgrYNe.js                                        7.16 kB │ gzip:   2.04 kB
+dist/assets/hlsl-Cvrh5tZx.js                                          7.25 kB │ gzip:   2.18 kB
+dist/assets/dialog-bEgs3On2.js                                        7.26 kB │ gzip:   2.77 kB
+dist/assets/checkbox-C3DuT5d4.js                                      7.33 kB │ gzip:   3.37 kB
+dist/assets/collapsible-DMxOg7_g.js                                   7.37 kB │ gzip:   2.94 kB
+dist/assets/qss-Fe1Jh2GI.js                                           7.46 kB │ gzip:   2.57 kB
+dist/assets/systemd-BxMlprV5.js                                       7.86 kB │ gzip:   2.54 kB
+dist/assets/monokai-CdkpiU2Y.js                                       7.88 kB │ gzip:   1.90 kB
+dist/assets/regexp-DsZ_xEeZ.js                                        8.05 kB │ gzip:   1.47 kB
+dist/assets/jsx-runtime-UdapZS51.js                                   8.07 kB │ gzip:   3.02 kB
+dist/assets/haml-DEE6k68a.js                                          8.33 kB │ gzip:   1.85 kB
+dist/assets/typst-DI99ib-x.js                                         8.38 kB │ gzip:   1.66 kB
+dist/assets/vue-html-BNdssdFA.js                                      8.47 kB │ gzip:   1.68 kB
+dist/assets/plsql-DGHpHOYJ.js                                         8.50 kB │ gzip:   2.99 kB
+dist/assets/dart-CnvKMtbv.js                                          8.61 kB │ gzip:   1.99 kB
+dist/assets/SettingControls-lJui1LBz.js                               8.71 kB │ gzip:   3.52 kB
+dist/assets/horizon-CE9ld1lL.js                                       8.77 kB │ gzip:   1.94 kB
+dist/assets/kotlin-DhhofPvG.js                                        8.77 kB │ gzip:   2.12 kB
+dist/assets/horizon-bright-DSNQnXHK.js                                8.78 kB │ gzip:   1.96 kB
+dist/assets/debouncer-CU--srDV.js                                     8.91 kB │ gzip:   2.90 kB
+dist/assets/make-Dixweg8N.js                                          8.95 kB │ gzip:   1.76 kB
+dist/assets/composerTraits-BEJNn44J.js                                8.97 kB │ gzip:   3.62 kB
+dist/assets/andromeeda-vGVdxbeo.js                                    9.01 kB │ gzip:   2.35 kB
+dist/assets/sas-DkQg1Vh4.js                                           9.06 kB │ gzip:   3.82 kB
+dist/assets/_chat._threadId-BG4lrVoi.js                               9.07 kB │ gzip:   4.24 kB
+dist/assets/dark-plus-Cs2F2srj.js                                     9.09 kB │ gzip:   2.10 kB
+dist/assets/slack-dark-DnToyrRv.js                                    9.11 kB │ gzip:   1.96 kB
+dist/assets/draftThreadCreate-C8zFepMs.js                             9.13 kB │ gzip:   3.23 kB
+dist/assets/sass-DXrisJhu.js                                          9.28 kB │ gzip:   2.48 kB
+dist/assets/plastic-DQwYfKfQ.js                                       9.29 kB │ gzip:   1.96 kB
+dist/assets/slack-ochin-B2OO5cIa.js                                   9.42 kB │ gzip:   2.08 kB
+dist/assets/lazyRouteComponent-BWErl6LB.js                            9.44 kB │ gzip:   3.65 kB
+dist/assets/tex-Brcbse73.js                                           9.67 kB │ gzip:   3.06 kB
+dist/assets/jison-m6HDNzGF.js                                         9.69 kB │ gzip:   1.86 kB
+dist/assets/cmake-Bj61d0ZC.js                                         9.84 kB │ gzip:   3.37 kB
+dist/assets/light-plus-DVQuIRkW.js                                    9.93 kB │ gzip:   2.27 kB
+dist/assets/computerPreviewStore-BIswue7p.js                         10.03 kB │ gzip:   3.71 kB
+dist/assets/inbox.logic-H7qXHRju.js                                  10.04 kB │ gzip:   3.85 kB
+dist/assets/hcl-Dh228itO.js                                          10.04 kB │ gzip:   1.93 kB
+dist/assets/autocomplete-Dvu9USmX.js                                 10.05 kB │ gzip:   3.28 kB
+dist/assets/rst-Cmmnw4HN.js                                          10.31 kB │ gzip:   2.25 kB
+dist/assets/pkl-ot-7Btpt.js                                          10.36 kB │ gzip:   1.37 kB
+dist/assets/beancount-D-usSTwE.js                                    10.36 kB │ gzip:   1.43 kB
+dist/assets/nextflow-groovy-DJMQeKeT.js                              10.43 kB │ gzip:   2.13 kB
+dist/assets/dream-maker-DW3nJb8Q.js                                  10.46 kB │ gzip:   2.25 kB
+dist/assets/raku-B3gFvitq.js                                         10.46 kB │ gzip:   2.94 kB
+dist/assets/index-Do-SCCxj.js                                        10.53 kB │ gzip:   4.81 kB
+dist/assets/yaml-CkzwBmUV.js                                         10.57 kB │ gzip:   2.32 kB
+dist/assets/keybindings-BlzrOjYJ.js                                  10.62 kB │ gzip:   3.46 kB
+dist/assets/just-Dy80aGvp.js                                         10.76 kB │ gzip:   2.60 kB
+dist/assets/composerSend-BY5kM6co.js                                 10.91 kB │ gzip:   4.49 kB
+dist/assets/elm-3YAtLuLr.js                                          10.94 kB │ gzip:   2.09 kB
+dist/assets/PrStateChip-Dcr1LdAP.js                                  11.16 kB │ gzip:   4.72 kB
+dist/assets/github-light-EUqPIrTm.js                                 11.18 kB │ gzip:   2.49 kB
+dist/assets/GitPanel-DCxbOQ3H.js                                     11.27 kB │ gzip:   4.53 kB
+dist/assets/prolog-iXnhIJG7.js                                       11.34 kB │ gzip:   3.84 kB
+dist/assets/terraform-DswuEJGm.js                                    11.38 kB │ gzip:   2.51 kB
+dist/assets/github-dark-C-LZuMrd.js                                  11.40 kB │ gzip:   2.53 kB
+dist/assets/puppet-CDv2pdJW.js                                       11.43 kB │ gzip:   2.10 kB
+dist/assets/laserwave-C_8bwKvT.js                                    11.49 kB │ gzip:   2.57 kB
+dist/assets/queuedComposerDrain-BbcqG8ez.js                          11.59 kB │ gzip:   3.90 kB
+dist/assets/gherkin-DExj1W_8.js                                      11.93 kB │ gzip:   5.04 kB
+dist/assets/wasm-ByWQv1Qj.js                                         12.00 kB │ gzip:   2.17 kB
+dist/assets/hjson-CxZEssPk.js                                        12.04 kB │ gzip:   1.64 kB
+dist/assets/handlebars-CV8NaARp.js                                   12.16 kB │ gzip:   2.38 kB
+dist/assets/splitViewStore-CGKoGUci.js                               12.29 kB │ gzip:   3.63 kB
+dist/assets/terminalStateStore-D_4p0oX6.js                           12.39 kB │ gzip:   3.03 kB
+dist/assets/ProjectImportPanel-DwF5piM9.js                           12.40 kB │ gzip:   4.07 kB
+dist/assets/apache-U0d_L8uA.js                                       12.44 kB │ gzip:   3.71 kB
+dist/assets/vesper-D5bVUKB1.js                                       12.68 kB │ gzip:   1.98 kB
+dist/assets/bat-Bo4NYOV-.js                                          12.88 kB │ gzip:   3.22 kB
+dist/assets/fish-BJitypiv.js                                         13.03 kB │ gzip:   1.73 kB
+dist/assets/v-DETTlOr0.js                                            13.20 kB │ gzip:   2.73 kB
+dist/assets/popover-CqKjV80Y.js                                      13.33 kB │ gzip:   5.00 kB
+dist/assets/_chat.pull-requests.index-CuZrVJv7.js                    13.44 kB │ gzip:   5.75 kB
+dist/assets/storeSelectors-BVa3ZVh7.js                               13.57 kB │ gzip:   4.56 kB
+dist/assets/vitesse-light-VbXTXTou.js                                13.61 kB │ gzip:   3.03 kB
+dist/assets/aurora-x-CDeNXAV0.js                                     13.65 kB │ gzip:   2.28 kB
+dist/assets/vitesse-black-fwtXNY1n.js                                13.67 kB │ gzip:   3.05 kB
+dist/assets/vitesse-dark-BZCL-v6S.js                                 13.75 kB │ gzip:   3.06 kB
+dist/assets/pug-D2jdYEMX.js                                          13.84 kB │ gzip:   2.58 kB
+dist/assets/latestProjectStore-CpF9dXlQ.js                           13.88 kB │ gzip:   5.57 kB
+dist/assets/scrollEdges-4g01uPV1.js                                  13.88 kB │ gzip:   5.44 kB
+dist/assets/luau-CNKltnaQ.js                                         13.95 kB │ gzip:   3.16 kB
+dist/assets/synthwave-84-nFMaYfgc.js                                 14.03 kB │ gzip:   2.85 kB
+dist/assets/github-light-default-BXViO-2h.js                         14.15 kB │ gzip:   3.02 kB
+dist/assets/clarity-SemFz856.js                                      14.26 kB │ gzip:   2.46 kB
+dist/assets/github-light-high-contrast-B68TUdTA.js                   14.27 kB │ gzip:   3.00 kB
+dist/assets/ClientOnly-CZhWeksH.js                                   14.35 kB │ gzip:   5.00 kB
+dist/assets/github-dark-dimmed-Bx1FflLF.js                           14.43 kB │ gzip:   3.11 kB
+dist/assets/github-dark-default-DXG-b-1a.js                          14.43 kB │ gzip:   3.12 kB
+dist/assets/useExpandedImagePreview-Cd3OWAEr.js                      14.59 kB │ gzip:   5.83 kB
+dist/assets/github-dark-high-contrast-B_tTalzw.js                    14.59 kB │ gzip:   3.07 kB
+dist/assets/useHandleNewThread-BE44abA4.js                           14.69 kB │ gzip:   5.10 kB
+dist/assets/gnuplot-7GGW24-e.js                                      14.77 kB │ gzip:   3.27 kB
+dist/assets/chatHeaderControls-CFDESJ5C.js                           15.00 kB │ gzip:   5.79 kB
+dist/assets/rust-Cfkwpbl8.js                                         15.06 kB │ gzip:   2.71 kB
+dist/assets/kusto-C7mF5XQf.js                                        15.16 kB │ gzip:   3.92 kB
+dist/assets/actionscript-3--17pq3dv.js                               15.19 kB │ gzip:   2.67 kB
+dist/assets/TerminalViewport-BSgn4fGB.js                             15.36 kB │ gzip:   6.21 kB
+dist/assets/nix-IvuFDN5E.js                                          15.50 kB │ gzip:   2.47 kB
+dist/assets/lua-DoLmf5X5.js                                          15.60 kB │ gzip:   3.19 kB
+dist/assets/DiffPanelPatchViewport-S26Ul8iy.js                       15.72 kB │ gzip:   5.44 kB
+dist/assets/useProviderModelCatalog-C4vjVcgu.js                      15.79 kB │ gzip:   6.06 kB
+dist/assets/abap-CLvhMVsD.js                                         15.84 kB │ gzip:   5.93 kB
+dist/assets/solidity-CKzVLygQ.js                                     16.06 kB │ gzip:   3.09 kB
+dist/assets/matlab-D7qyCx1q.js                                       16.07 kB │ gzip:   3.06 kB
+dist/assets/cue-CE9AQfxI.js                                          16.19 kB │ gzip:   2.04 kB
+dist/assets/elixir-CNF2MGlf.js                                       16.26 kB │ gzip:   2.76 kB
+dist/assets/odin-B1RWQWA5.js                                         16.50 kB │ gzip:   2.92 kB
+dist/assets/ts-tags-BGgwcEgP.js                                      16.54 kB │ gzip:   2.05 kB
+dist/assets/kanagawa-wave-CTweb8Dz.js                                17.12 kB │ gzip:   2.90 kB
+dist/assets/kanagawa-lotus-BN08jTvb.js                               17.12 kB │ gzip:   2.90 kB
+dist/assets/kanagawa-dragon-CXtmUGW6.js                              17.12 kB │ gzip:   2.92 kB
+dist/assets/workspaceExplorer-DOPltOl-.js                            17.18 kB │ gzip:   5.91 kB
+dist/assets/resolveAriaLabelledBy-BsbL4pXJ.js                        17.31 kB │ gzip:   7.08 kB
+dist/assets/threadTurnInterrupt-BIEKhe78.js                          17.43 kB │ gzip:   6.44 kB
+dist/assets/pendingInteractions-B_bKI2aA.js                          17.43 kB │ gzip:   5.66 kB
+dist/assets/move-B1IS1UjX.js                                         17.49 kB │ gzip:   3.06 kB
+dist/assets/BrowserVault-DPXU67LN.js                                 17.73 kB │ gzip:   5.19 kB
+dist/assets/ProviderUsageResetCredits-tWsvPnzn.js                    17.99 kB │ gzip:   6.61 kB
+dist/assets/graphql-C4A0vvLi.js                                      18.08 kB │ gzip:   2.54 kB
+dist/assets/liquid--IOrpmIN.js                                       18.10 kB │ gzip:   3.14 kB
+dist/assets/svelte-Doj0PyzA.js                                       18.24 kB │ gzip:   3.14 kB
+dist/assets/PluginLibrary-DYfpwgDF.js                                18.44 kB │ gzip:   6.36 kB
+dist/assets/material-theme-Bm3Qr25_.js                               18.61 kB │ gzip:   3.10 kB
+dist/assets/material-theme-darker-2IIEA8gg.js                        18.62 kB │ gzip:   3.10 kB
+dist/assets/material-theme-ocean-CHQ94UKr.js                         18.62 kB │ gzip:   3.12 kB
+dist/assets/material-theme-lighter-uhdI0v04.js                       18.63 kB │ gzip:   3.10 kB
+dist/assets/material-theme-palenight-B5W6OYN7.js                     18.63 kB │ gzip:   3.11 kB
+dist/assets/gdscript-Cp2uCuqX.js                                     18.98 kB │ gzip:   3.75 kB
+dist/assets/groovy-CacY0gHj.js                                       19.17 kB │ gzip:   3.59 kB
+dist/assets/mdc-Dg7EUBFM.js                                          19.54 kB │ gzip:   6.66 kB
+dist/assets/ayu-dark-DluEY0Gj.js                                     20.07 kB │ gzip:   3.93 kB
+dist/assets/ayu-mirage-Bqwy1Gya.js                                   20.08 kB │ gzip:   3.91 kB
+dist/assets/glimmer-js-CN_gus-v.js                                   20.08 kB │ gzip:   2.94 kB
+dist/assets/glimmer-ts-D70ur1mn.js                                   20.08 kB │ gzip:   2.93 kB
+dist/assets/powershell-DshXNtvi.js                                   20.14 kB │ gzip:   4.05 kB
+dist/assets/ayu-light-C3h-C4tm.js                                    20.14 kB │ gzip:   3.89 kB
+dist/assets/viml-DvXPmvsu.js                                         20.35 kB │ gzip:   6.73 kB
+dist/assets/nushell-DcLAeLz5.js                                      20.40 kB │ gzip:   5.21 kB
+dist/assets/snazzy-light-4G7pJPwS.js                                 20.77 kB │ gzip:   3.80 kB
+dist/assets/twig-DneNjZD-.js                                         20.90 kB │ gzip:   3.66 kB
+dist/assets/dracula-BHWKrbxM.js                                      21.06 kB │ gzip:   3.99 kB
+dist/assets/dracula-soft-5eyTD99u.js                                 21.07 kB │ gzip:   4.02 kB
+dist/assets/scroll-area-CmHoWrGd.js                                  21.12 kB │ gzip:   7.75 kB
+dist/assets/wit-DdvCle-K.js                                          21.46 kB │ gzip:   2.87 kB
+dist/assets/rose-pine-BthvhNj6.js                                    21.74 kB │ gzip:   3.86 kB
+dist/assets/rose-pine-moon-hon4tzzS.js                               21.75 kB │ gzip:   3.87 kB
+dist/assets/rose-pine-dawn-Dg85fqjY.js                               21.75 kB │ gzip:   3.88 kB
+dist/assets/mutationOptions-k8ngXG4-.js                              22.19 kB │ gzip:   7.37 kB
+dist/assets/nim-B0qb17y3.js                                          22.45 kB │ gzip:   3.15 kB
+dist/assets/common-lisp-Cv5bFMCO.js                                  22.57 kB │ gzip:   6.07 kB
+dist/assets/surrealql-BYCQQjoB.js                                    22.58 kB │ gzip:   4.31 kB
+dist/assets/gruvbox-dark-hard-C820rvS2.js                            22.63 kB │ gzip:   4.15 kB
+dist/assets/gruvbox-dark-soft-MrdJrrXF.js                            22.63 kB │ gzip:   4.15 kB
+dist/assets/gruvbox-light-hard-BC_s9l72.js                           22.63 kB │ gzip:   4.16 kB
+dist/assets/gruvbox-light-soft-BSMLrYjP.js                           22.63 kB │ gzip:   4.16 kB
+dist/assets/gruvbox-dark-medium-BPjhmG05.js                          22.63 kB │ gzip:   4.15 kB
+dist/assets/gruvbox-light-medium-BAWPOn9u.js                         22.63 kB │ gzip:   4.16 kB
+dist/assets/bird2-C6vDhewU.js                                        22.93 kB │ gzip:   4.65 kB
+dist/assets/sql-BhJlzgaw.js                                          23.47 kB │ gzip:   7.49 kB
+dist/assets/cadence-CQ2zXKGN.js                                      23.66 kB │ gzip:   3.65 kB
+dist/assets/astro-Cu9oDO7U.js                                        24.02 kB │ gzip:   7.59 kB
+dist/assets/apl-CIDkXO3o.js                                          24.02 kB │ gzip:   4.16 kB
+dist/assets/templ-BQ8jbVUL.js                                        24.06 kB │ gzip:   5.41 kB
+dist/assets/angular-html-CmqjH4sg.js                                 24.24 kB │ gzip:   3.99 kB
+dist/assets/vhdl-BroJfC0k.js                                         24.25 kB │ gzip:   3.86 kB
+dist/assets/vue-NEiqWLcu.js                                          24.48 kB │ gzip:   2.96 kB
+dist/assets/purescript-9MfHhQsQ.js                                   24.67 kB │ gzip:   3.24 kB
+dist/assets/typespec-BRdr0IET.js                                     25.03 kB │ gzip:   2.62 kB
+dist/assets/one-light-D7Lr4KcI.js                                    25.29 kB │ gzip:   3.63 kB
+dist/assets/fsharp-D13ZGOAj.js                                       25.30 kB │ gzip:   4.12 kB
+dist/assets/sidechatCreatorRegistry-CEDEvz1j.js                      25.35 kB │ gzip:   8.83 kB
+dist/assets/gitReactQuery-LKvncMqL.js                                25.42 kB │ gzip:   6.94 kB
+dist/assets/marko-1mGaS82U.js                                        25.48 kB │ gzip:   3.59 kB
+dist/assets/c3-CnJL0r0V.js                                           25.62 kB │ gzip:   3.85 kB
+dist/assets/sidebar-DoFF6wqu.js                                      25.89 kB │ gzip:   8.14 kB
+dist/assets/night-owl-light-eJ-hLW7d.js                              25.89 kB │ gzip:   4.23 kB
+dist/assets/system-verilog-DJ5XKQeo.js                               26.19 kB │ gzip:   4.82 kB
+dist/assets/providerUpdates-oqy1xe9R.js                              26.21 kB │ gzip:   9.89 kB
+dist/assets/nord-Cb4Vim4T.js                                         26.72 kB │ gzip:   4.35 kB
+dist/assets/codeql-oeQT6MSM.js                                       26.87 kB │ gzip:   3.79 kB
+dist/assets/scss-DVB_TI6g.js                                         27.26 kB │ gzip:   4.22 kB
+dist/assets/java-48s-QxCz.js                                         27.28 kB │ gzip:   4.31 kB
+dist/assets/coffee-BwZrgpS3.js                                       27.42 kB │ gzip:   6.35 kB
+dist/assets/razor-CckD6NgN.js                                        27.45 kB │ gzip:   3.54 kB
+dist/assets/scala-DKOlJaKm.js                                        28.87 kB │ gzip:   3.92 kB
+dist/assets/night-owl-DhmEMT88.js                                    28.91 kB │ gzip:   5.14 kB
+dist/assets/crystal-Bflnk9qu.js                                      29.41 kB │ gzip:   4.44 kB
+dist/assets/mermaid-Bk4SNUv9.js                                      29.50 kB │ gzip:   3.64 kB
+dist/assets/ProviderModelPicker-CywFCFio.js                          29.52 kB │ gzip:   9.88 kB
+dist/assets/applescript-CCn79oCD.js                                  29.56 kB │ gzip:   5.94 kB
+dist/assets/_chat.inbox-C0RpRnDa.js                                  30.27 kB │ gzip:  11.51 kB
+dist/assets/pierre-dark-CpLgRqie.js                                  30.54 kB │ gzip:   4.74 kB
+dist/assets/pierre-light-CoaEpmwp.js                                 30.54 kB │ gzip:   4.73 kB
+dist/assets/pierre-dark-soft-kZQmAZld.js                             30.55 kB │ gzip:   4.77 kB
+dist/assets/pierre-light-soft-lWLdNTOI.js                            30.55 kB │ gzip:   4.73 kB
+dist/assets/pierre-dark-tritanopia-CpjhbsIL.js                       30.56 kB │ gzip:   4.68 kB
+dist/assets/pierre-light-tritanopia-CEbqgOJL.js                      30.57 kB │ gzip:   4.69 kB
+dist/assets/pierre-dark-protanopia-deuteranopia-B35FxJx-.js          30.59 kB │ gzip:   4.76 kB
+dist/assets/pierre-light-protanopia-deuteranopia-0fSaH845.js         30.59 kB │ gzip:   4.72 kB
+dist/assets/julia-BjELGEtp.js                                        30.99 kB │ gzip:   4.30 kB
+dist/assets/stylus-B6D30XZt.js                                       31.06 kB │ gzip:   8.01 kB
+dist/assets/select-CGceYixu.js                                       32.10 kB │ gzip:  12.18 kB
+dist/assets/ChatView.logic-k86iKiwj.js                               32.81 kB │ gzip:  10.82 kB
+dist/assets/poimandres-DRFjx7u4.js                                   33.49 kB │ gzip:   5.49 kB
+dist/assets/one-dark-pro-CLwyXe_n.js                                 33.78 kB │ gzip:   5.50 kB
+dist/assets/bsl-BkkzgIyY.js                                          33.86 kB │ gzip:   8.34 kB
+dist/assets/ComboboxEmpty-DkJOY7Bx.js                                33.94 kB │ gzip:  12.17 kB
+dist/assets/OnboardingDialog--zD1zbRx.js                             34.11 kB │ gzip:  12.66 kB
+dist/assets/haxe-OTjmBuCE.js                                         35.15 kB │ gzip:   5.90 kB
+dist/assets/nginx-g4rjH0Wb.js                                        35.35 kB │ gzip:   4.45 kB
+dist/assets/houston-CsvMBhTu.js                                      35.41 kB │ gzip:   5.76 kB
+dist/assets/ProviderIcon-B44Ja08e.js                                 35.48 kB │ gzip:  14.17 kB
+dist/assets/tokyo-night-oM2G3aXe.js                                  35.66 kB │ gzip:   6.22 kB
+dist/assets/DevicePanel-DxoohbDg.js                                  36.68 kB │ gzip:  12.83 kB
+dist/assets/_chat.automations._automationId-i5UOhJAU.js              36.73 kB │ gzip:  12.38 kB
+dist/assets/erlang-Cphh6RMH.js                                       37.47 kB │ gzip:   4.36 kB
+dist/assets/ComposerPickerMenuPopup-DzYctdOl.js                      38.98 kB │ gzip:  12.33 kB
+dist/assets/cobol-Qjbrw2Jh.js                                        39.07 kB │ gzip:  10.89 kB
+dist/assets/EditorWorkspaceView-C_DV-KyH.js                          40.02 kB │ gzip:  13.01 kB
+dist/assets/asm-Cmm7eHzH.js                                          40.71 kB │ gzip:   8.16 kB
+dist/assets/haskell-D8IpX4py.js                                      41.48 kB │ gzip:   6.41 kB
+dist/assets/shellscript-BKHB0WaQ.js                                  41.54 kB │ gzip:   6.13 kB
+dist/assets/dist-BI-0dXBV.js                                         41.93 kB │ gzip:  11.76 kB
+dist/assets/useTheme-Bg8c1090.js                                     42.19 kB │ gzip:  10.59 kB
+dist/assets/diffRendering-Ce8BFsR0.js                                42.45 kB │ gzip:  13.78 kB
+dist/assets/perl-C__aaB4Y.js                                         43.14 kB │ gzip:   4.64 kB
+dist/assets/_chat.pull-requests.index-lkdr437i.js                    43.66 kB │ gzip:  16.36 kB
+dist/assets/d-qD-0Kul2.js                                            43.78 kB │ gzip:   8.43 kB
+dist/assets/pierre-dark-vibrant-CpQYzh95.js                          44.75 kB │ gzip:   5.28 kB
+dist/assets/pierre-light-vibrant-D80Fkn33.js                         44.76 kB │ gzip:   5.27 kB
+dist/assets/BrowserPanel-ewbtJKVY.js                                 45.31 kB │ gzip:  15.04 kB
+dist/assets/ruby-D8wAuAdZ.js                                         46.60 kB │ gzip:   5.70 kB
+dist/assets/go-rLFTqkRN.js                                           46.81 kB │ gzip:   5.14 kB
+dist/assets/apex-CGTLDQj6.js                                         46.97 kB │ gzip:   6.72 kB
+dist/assets/catppuccin-mocha-DYhrFGRu.js                             47.25 kB │ gzip:   7.98 kB
+dist/assets/catppuccin-latte-DwIHMF0Q.js                             47.25 kB │ gzip:   7.98 kB
+dist/assets/catppuccin-frappe-3VR1Za6u.js                            47.25 kB │ gzip:   7.99 kB
+dist/assets/catppuccin-macchiato-DYnBP6_5.js                         47.26 kB │ gzip:   7.99 kB
+dist/assets/TaskQuickAdd-CxeHcKL9.js                                 47.39 kB │ gzip:  16.50 kB
+dist/assets/ada-C5qYipkI.js                                          48.07 kB │ gzip:   5.96 kB
+dist/assets/Match-CSAaLEPV.js                                        48.89 kB │ gzip:  15.66 kB
+dist/assets/css-Br7ScedN.js                                          49.10 kB │ gzip:  11.96 kB
+dist/assets/imba-DsUTQ-LC.js                                         49.92 kB │ gzip:   9.47 kB
+dist/assets/GitActionsControl-CNqnXDOu.js                            52.19 kB │ gzip:  15.86 kB
+dist/assets/everforest-dark-sB-x3p7T.js                              53.74 kB │ gzip:   8.37 kB
+dist/assets/everforest-light-Df2xbC6M.js                             53.74 kB │ gzip:   8.36 kB
+dist/assets/wikitext-ClFFjSW2.js                                     55.87 kB │ gzip:   4.81 kB
+dist/assets/-automations.shared-B3qusCoN.js                          55.95 kB │ gzip:  18.00 kB
+dist/assets/stata-BglhDMa_.js                                        56.99 kB │ gzip:  12.39 kB
+dist/assets/html-DYX_1QLl.js                                         57.32 kB │ gzip:  11.78 kB
+dist/assets/ballerina-B7ZEbQpA.js                                    58.68 kB │ gzip:   8.10 kB
+dist/assets/markdown-BYOwaDjH.js                                     59.32 kB │ gzip:   5.66 kB
+dist/assets/ocaml-O90oeIOV.js                                        62.44 kB │ gzip:   5.04 kB
+dist/assets/tooltip-3QhUR_eJ.js                                      63.37 kB │ gzip:  22.42 kB
+dist/assets/TraitsPicker-CD8VcJ4T.js                                 67.00 kB │ gzip:  21.18 kB
+dist/assets/appSettings-DfhoDefC.js                                  69.25 kB │ gzip:  20.15 kB
+dist/assets/mojo-BgCJLMeH.js                                         69.79 kB │ gzip:   9.21 kB
+dist/assets/python-gzcpVVnB.js                                       69.94 kB │ gzip:   9.09 kB
+dist/assets/c-GX-8Jdhc.js                                            72.17 kB │ gzip:  10.56 kB
+dist/assets/latex-BUkKe18k.js                                        72.61 kB │ gzip:   6.68 kB
+dist/assets/vyper-CgoNMtux.js                                        74.64 kB │ gzip:  10.69 kB
+dist/assets/DiffPanel-oj7AJzTN.js                                    75.28 kB │ gzip:  26.29 kB
+dist/assets/hack-CxnsPMfr.js                                         80.18 kB │ gzip:  26.27 kB
+dist/assets/swift-DonLKvLd.js                                        86.68 kB │ gzip:  14.69 kB
+dist/assets/PullRequestDetailPanel-DsOamiGC.js                       88.66 kB │ gzip:  28.44 kB
+dist/assets/fortran-free-form-CYNrtFtB.js                            88.96 kB │ gzip:  11.18 kB
+dist/assets/csharp-Ct8U2NOr.js                                       89.68 kB │ gzip:  10.64 kB
+dist/assets/racket-DcIDlBhZ.js                                       92.38 kB │ gzip:  15.07 kB
+dist/assets/KanbanView-DDHNZbeB.js                                   95.67 kB │ gzip:  32.14 kB
+dist/assets/less-DVTAwKKz.js                                         97.62 kB │ gzip:  14.84 kB
+dist/assets/toast-DA1xjsNZ.js                                       100.33 kB │ gzip:  32.52 kB
+dist/assets/blade-DHSlTShV.js                                       104.97 kB │ gzip:  28.29 kB
+dist/assets/composerDraftStore-C3Q3VRQw.js                          105.35 kB │ gzip:  25.23 kB
+dist/assets/objective-c-D1A_Heim.js                                 105.40 kB │ gzip:  23.63 kB
+dist/assets/_chat._threadId-BlUvpANJ.js                             107.69 kB │ gzip:  37.18 kB
+dist/assets/projectFolders-4LiqV4Wh.js                              108.82 kB │ gzip:  35.61 kB
+dist/assets/php--s-83WwM.js                                         111.31 kB │ gzip:  28.65 kB
+dist/assets/FileDiff-l_WaQFFC.js                                    118.24 kB │ gzip:  30.23 kB
+dist/assets/WorkspaceFilePreview-ByRl-7MY.js                        129.21 kB │ gzip:  40.38 kB
+dist/assets/asciidoc-DE70LPWp.js                                    131.52 kB │ gzip:   9.31 kB
+dist/assets/middleware-CYUXqrzC.js                                  135.68 kB │ gzip:  48.83 kB
+dist/assets/mdx-DQZ5AkYe.js                                         136.10 kB │ gzip:  23.54 kB
+dist/assets/edit-BCl612VQ.js                                        151.73 kB │ gzip:  48.71 kB
+dist/assets/shared_highlighter-hWqecE-Z.js                          158.91 kB │ gzip:  51.87 kB
+dist/assets/Virtualizer-Di06gnVy.js                                 169.99 kB │ gzip:  41.92 kB
+dist/assets/objective-cpp-BsSzOQcm.js                               171.96 kB │ gzip:  30.98 kB
+dist/assets/javascript-DKHOs_Qr.js                                  174.89 kB │ gzip:  16.68 kB
+dist/assets/tsx-Cx2m7xRJ.js                                         175.60 kB │ gzip:  16.68 kB
+dist/assets/jsx-WCuNMwFY.js                                         177.85 kB │ gzip:  16.77 kB
+dist/assets/typescript-GMZNH4Kb.js                                  181.14 kB │ gzip:  16.29 kB
+dist/assets/angular-ts-CTeQYrp_.js                                  183.73 kB │ gzip:  16.78 kB
+dist/assets/vue-vine-DaU_EtPY.js                                    190.05 kB │ gzip:  18.07 kB
+dist/assets/composer-editor-mentions-D3dSyJQT.js                    210.88 kB │ gzip:  66.27 kB
+dist/assets/ComposerReferenceAttachments-DlAwRHnp.js                245.75 kB │ gzip:  77.10 kB
+dist/assets/store-Bzt6uK9a.js                                       248.43 kB │ gzip:  66.10 kB
+dist/assets/wolfram-DLL8P-h_.js                                     262.38 kB │ gzip:  77.63 kB
+dist/assets/logic-DFH20LCN.js                                       269.95 kB │ gzip:  84.75 kB
+dist/assets/_chat.settings-Ecxi2a-H.js                              326.23 kB │ gzip: 103.96 kB
+dist/assets/main-CIMwWDh0.js                                        332.87 kB │ gzip: 107.06 kB
+dist/assets/_chat-CPlgjq28.js                                       425.77 kB │ gzip: 143.83 kB
+dist/assets/pdf-QJXtqt29.js                                         468.42 kB │ gzip: 141.49 kB
+dist/assets/nativeApi-DU48ryqJ.js                                   479.98 kB │ gzip: 142.01 kB
+dist/assets/wasm-BnjxR4X6.js                                        622.32 kB │ gzip: 232.09 kB
+dist/assets/cpp-DsWtRxEW.js                                         626.13 kB │ gzip:  48.09 kB
+dist/assets/ChatMarkdown-1m1e95kg.js                                638.11 kB │ gzip: 193.79 kB
+dist/assets/emacs-lisp-B4R74twV.js                                  779.87 kB │ gzip: 197.55 kB
+dist/assets/terminalRuntimeRegistry-CNy_tg3y.js                     807.08 kB │ gzip: 226.60 kB
+dist/assets/SidechatDockPane-CzdSCNZX.js                          1,211.71 kB │ gzip: 397.95 kB
+
+[32m✓ built in 2m 24s[39m
+[33m[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 850 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[central-icons] central-icons-reversed: retained 321/1979, pruned 1658.
+[central-icons] central-icons-fill: retained 324/2035, pruned 1711.
+[precompress] emitted gzip+brotli sidecars for 753 files.
+::endgroup::
+::group::@synara/cli:build
+cache miss, executing 92654492d1ea18b9
+$ node scripts/cli.ts build
+[19:32:03.708] INFO (#1): [cli] Running tsdown...
+[19:32:04.568] INFO (#1): [cli] Bundled iOS Simulator helper sources into dist/device-helper
+[19:32:05.708] INFO (#1): [cli] Applied development icon overrides to dist/client
+[19:32:05.708] INFO (#1): [cli] Bundled web app into dist/client
+::endgroup::
+
+ Tasks:    4 successful, 4 total
+Cached:    0 cached, 4 total
+  Time:    3m7.558s 
+
+[build-timing] {"stage":"javascript-build","kind":"local","event":"complete","at":"2026-10-11T19:32:06.300Z","durationMs":188253}
+[19:32:06.310] INFO (#1): [desktop-artifact] Staging release app...
+[build-timing] {"stage":"platform-icons","kind":"local","event":"start","at":"2026-10-11T19:32:08.252Z"}
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/apps/desktop/resources/icon.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/apps/desktop/resources/dock-icon.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_16x16.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_16x16@2x.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_32x32.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_32x32@2x.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_128x128.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_128x128@2x.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_256x256.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_256x256@2x.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_512x512.png
+/Users/runner/work/synara/synara/source/assets/prod/black-macos-legacy-1024.png
+  /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-icon-build-QFRsf3/icon.iconset/icon_512x512@2x.png
+[build-timing] {"stage":"platform-icons","kind":"local","event":"complete","at":"2026-10-11T19:32:08.706Z","durationMs":454}
+[19:32:08.706] INFO (#1): [desktop-artifact] Verifying and staging pinned Cua Driver...
+[build-timing] {"stage":"cua-provision","kind":"local","event":"start","at":"2026-10-11T19:32:08.706Z"}
+[build-timing] {"stage":"cua-source-build","kind":"local","event":"start","at":"2026-10-11T19:32:09.176Z"}
+[build-timing] {"stage":"cua-git-init","kind":"local","event":"start","at":"2026-10-11T19:32:09.178Z"}
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: will change to "main" in Git 3.0. To configure the initial branch name
+hint: to use in all of your new repositories, which will suppress this warning,
+hint: call:
+hint:
+hint: 	git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint: 	git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Initialized empty Git repository in /private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/upstream/
+[build-timing] {"stage":"cua-git-init","kind":"local","event":"complete","at":"2026-10-11T19:32:09.238Z","durationMs":59}
+[build-timing] {"stage":"cua-git--C","kind":"download","event":"start","at":"2026-10-11T19:32:09.238Z"}
+From https://github.com/trycua/cua
+ * branch            7fe7c33f741ee2dd5961ba80044d59f93b48ba47 -> FETCH_HEAD
+[build-timing] {"stage":"cua-git--C","kind":"download","event":"complete","at":"2026-10-11T19:32:14.770Z","durationMs":5529}
+[build-timing] {"stage":"cua-git--C","kind":"local","event":"start","at":"2026-10-11T19:32:14.781Z"}
+[build-timing] {"stage":"cua-git--C","kind":"local","event":"complete","at":"2026-10-11T19:32:14.853Z","durationMs":72}
+[build-timing] {"stage":"cua-tar--xf","kind":"local","event":"start","at":"2026-10-11T19:32:14.855Z"}
+[build-timing] {"stage":"cua-tar--xf","kind":"local","event":"complete","at":"2026-10-11T19:32:15.064Z","durationMs":209}
+[build-timing] {"stage":"cua-patch---batch","kind":"local","event":"start","at":"2026-10-11T19:32:15.064Z"}
+patching file 'libs/cua-driver/rust/crates/cua-driver-sdk/Cargo.toml'
+patching file 'libs/cua-driver/rust/crates/cua-driver-contract/src/cursor.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-contract/src/desktop.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-contract/src/lib.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/action_record.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/authorization.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/background_input.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/engine.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/platform.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/pointer.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/prepare.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/semantic.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/store.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/tools.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/v2_tests.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/capture_scope.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/server.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/session_manifest.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/main.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/sdk_adapter.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/serve.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/telemetry.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/tests/standalone_browser_behavior_test.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/arc.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/compact_cursor.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/feel.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/lib.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/render_state.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/spring.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/theme.rs'
+patching file 'libs/cua-driver/rust/crates/cursor-overlay/src/theme_artifact.rs'
+patching file 'libs/cua-driver/rust/crates/platform-linux/src/tools/impl_.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/apps/mod.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/apps/nsworkspace.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/bindings.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/tree.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/background_mutation.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/browser/platform.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/cursor/overlay.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/cursor/state.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/ax_actions.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/keyboard.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/mod.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/mouse.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/skylight.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/target_guard.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/bring_to_front.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/check_input_ready.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/click.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/cursor_tools.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/drag.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/get_window_state.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/invoke_menu.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/launch_app.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/mod.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/press_key.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/px_frame.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/scroll.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/select_text.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/set_app_visibility.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/set_value.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/set_window_minimized.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/wait_for_settle.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/windows.rs'
+patching file 'libs/cua-driver/rust/crates/platform-windows/src/tools/impl_.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/cdp_ws.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/mod.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver-core/src/browser/cancellation.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/lib.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/spaces.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/list_spaces.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/focus_restore_policy.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/window_change_detector.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/focus_steal.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/mod.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/target_guard.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/ax_actions.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/keyboard.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/serve.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/modal_guard.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/mod.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/set_value.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/serve.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs'
+patching file 'libs/cua-driver/rust/crates/cua-driver/src/serve.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/browser/consent_ui.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/browser/platform.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/cursor/overlay.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/input/target_guard.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/launch_app.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/tools/mod.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/window_change_detector.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/windows.rs'
+patching file 'libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs'
+[build-timing] {"stage":"cua-patch---batch","kind":"local","event":"complete","at":"2026-10-11T19:32:15.240Z","durationMs":176}
+[build-timing] {"stage":"cua-cargo-build","kind":"local","event":"start","at":"2026-10-11T19:32:15.272Z"}
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded async-compat v0.2.5
+  Downloaded adler2 v2.0.1
+  Downloaded arrayref v0.3.9
+  Downloaded allocator-api2 v0.2.21
+  Downloaded askama_parser v0.14.0
+  Downloaded cipher v0.5.2
+  Downloaded anyhow v1.0.102
+  Downloaded apple-metal v0.6.0
+  Downloaded base64 v0.22.1
+  Downloaded basic-toml v0.1.10
+  Downloaded bit-vec v0.8.0
+  Downloaded askama v0.14.0
+  Downloaded bit-set v0.8.0
+  Downloaded async-trait v0.1.89
+  Downloaded autocfg v1.5.0
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded aead v0.6.1
+  Downloaded aho-corasick v1.1.4
+  Downloaded apple-cf v0.9.3
+  Downloaded arrayvec v0.7.6
+  Downloaded ref-cast v1.0.25
+  Downloaded sha1 v0.10.6
+  Downloaded strict-num v0.1.1
+  Downloaded serde_derive_internals v0.29.1
+  Downloaded thread_local v1.1.9
+  Downloaded uniffi_pipeline v0.31.0
+  Downloaded block-buffer v0.10.4
+  Downloaded bytemuck v1.25.0
+  Downloaded smawk v0.3.3
+  Downloaded ciborium-io v0.2.2
+  Downloaded cpufeatures v0.2.17
+  Downloaded embedded-io v0.6.1
+  Downloaded errno v0.3.14
+  Downloaded fax v0.2.7
+  Downloaded rustls-webpki v0.103.13
+  Downloaded serde v1.0.228
+  Downloaded serde_spanned v1.1.1
+  Downloaded tinystr v0.8.3
+  Downloaded toml_datetime v0.7.5+spec-1.1.0
+  Downloaded unicode-general-category v1.1.0
+  Downloaded uniffi v0.31.0
+  Downloaded uniffi_internal_macros v0.31.0
+  Downloaded unsafe-libyaml v0.2.11
+  Downloaded quick-error v2.0.1
+  Downloaded ahash v0.8.12
+  Downloaded askama_derive v0.14.0
+  Downloaded bitflags v2.11.1
+  Downloaded bytecount v0.6.9
+  Downloaded camino v1.2.4
+  Downloaded cfg-if v1.0.4
+  Downloaded chacha20 v0.10.1
+  Downloaded chrono v0.4.45
+  Downloaded ciborium v0.2.2
+  Downloaded clipboard-rs v0.3.5
+  Downloaded cmov v0.5.4
+  Downloaded cobs v0.3.0
+  Downloaded core-foundation-sys v0.8.7
+  Downloaded digest v0.10.7
+  Downloaded filetime v0.2.29
+  Downloaded find-msvc-tools v0.1.9
+  Downloaded fs-err v2.11.0
+  Downloaded getrandom v0.2.17
+  Downloaded getrandom v0.3.4
+  Downloaded regex v1.12.3
+  Downloaded sha2 v0.10.9
+  Downloaded static_assertions v1.1.0
+  Downloaded syn v2.0.117
+  Downloaded tempfile v3.27.0
+  Downloaded thiserror-impl v1.0.69
+  Downloaded tiny-skia v0.11.4
+  Downloaded tungstenite v0.24.0
+  Downloaded untrusted v0.9.0
+  Downloaded litrs v1.0.0
+  Downloaded num v0.4.3
+  Downloaded block2 v0.5.1
+  Downloaded block2 v0.6.2
+  Downloaded borrow-or-share v0.2.4
+  Downloaded byteorder-lite v0.1.0
+  Downloaded bytes v1.11.1
+  Downloaded cargo-platform v0.1.9
+  Downloaded cargo_metadata v0.19.2
+  Downloaded ciborium-ll v0.2.2
+  Downloaded cookie_store v0.22.1
+  Downloaded core-graphics-types v0.2.0
+  Downloaded crossbeam-queue v0.3.12
+  Downloaded crossbeam-utils v0.8.21
+  Downloaded crypto-common v0.1.7
+  Downloaded crypto-common v0.2.2
+  Downloaded ctutils v0.4.2
+  Downloaded document-features v0.2.12
+  Downloaded doom-fish-utils v0.3.2
+  Downloaded dyn-clone v1.0.20
+  Downloaded email_address v0.2.9
+  Downloaded embedded-io v0.4.0
+  Downloaded equivalent v1.0.2
+  Downloaded fdeflate v0.3.7
+  Downloaded foldhash v0.2.0
+  Downloaded foreign-types v0.5.0
+  Downloaded foreign-types-macros v0.2.3
+  Downloaded foreign-types-shared v0.3.1
+  Downloaded form_urlencoded v1.2.2
+  Downloaded fs2 v0.4.3
+  Downloaded futures-core v0.3.32
+  Downloaded futures-io v0.3.32
+  Downloaded futures-macro v0.3.32
+  Downloaded futures-sink v0.3.32
+  Downloaded ref-cast-impl v1.0.25
+  Downloaded ryu v1.0.23
+  Downloaded scroll v0.12.0
+  Downloaded scroll_derive v0.12.1
+  Downloaded security-framework v3.7.0
+  Downloaded serde_yaml_ng v0.10.0
+  Downloaded subtle v2.6.1
+  Downloaded textwrap v0.16.2
+  Downloaded thiserror v1.0.69
+  Downloaded thiserror v2.0.18
+  Downloaded time-core v0.1.8
+  Downloaded tiny-skia-path v0.11.4
+  Downloaded tokio-macros v2.7.0
+  Downloaded toml v0.9.12+spec-1.1.0
+  Downloaded toml_writer v1.1.2+spec-1.1.0
+  Downloaded tracing-log v0.2.0
+  Downloaded objc2-core-image v0.2.2
+  Downloaded percent-encoding v2.3.2
+  Downloaded objc2-cloud-kit v0.3.2
+  Downloaded potential_utf v0.1.5
+  Downloaded ureq-proto v0.6.0
+  Downloaded utf8-zero v0.8.1
+  Downloaded block-buffer v0.12.1
+  Downloaded byteorder v1.5.0
+  Downloaded chacha20poly1305 v0.11.0
+  Downloaded cookie v0.18.1
+  Downloaded core-foundation v0.10.1
+  Downloaded core-graphics v0.24.0
+  Downloaded crc32fast v1.5.0
+  Downloaded data-encoding v2.11.0
+  Downloaded deranged v0.5.8
+  Downloaded dispatch2 v0.3.1
+  Downloaded displaydoc v0.2.5
+  Downloaded fastrand v2.4.1
+  Downloaded fluent-uri v0.4.1
+  Downloaded futures-task v0.3.32
+  Downloaded generic-array v0.14.7
+  Downloaded rand_core v0.6.4
+  Downloaded rustc_version v0.4.1
+  Downloaded rustls-pki-types v1.14.1
+  Downloaded security-framework-sys v2.17.0
+  Downloaded semver v1.0.28
+  Downloaded shlex v1.3.0
+  Downloaded signal-hook-registry v1.4.8
+  Downloaded siphasher v1.0.2
+  Downloaded socket2 v0.6.3
+  Downloaded spin v0.10.1
+  Downloaded time-macros v0.2.27
+  Downloaded tokio-native-tls v0.3.1
+  Downloaded toml_parser v1.1.2+spec-1.1.0
+  Downloaded uniffi_macros v0.31.0
+  Downloaded uniffi_meta v0.31.0
+  Downloaded objc2-quartz-core v0.3.2
+  Downloaded parking_lot_core v0.9.12
+  Downloaded phf v0.12.1
+  Downloaded quote v1.0.45
+  Downloaded zerofrom v0.1.8
+  Downloaded glob v0.3.3
+  Downloaded globset v0.4.19
+  Downloaded httparse v1.10.1
+  Downloaded hybrid-array v0.4.14
+  Downloaded iana-time-zone v0.1.65
+  Downloaded num-cmp v0.1.0
+  Downloaded phf_shared v0.12.1
+  Downloaded pin-project-lite v0.2.17
+  Downloaded pkg-config v0.3.33
+  Downloaded plain v0.2.3
+  Downloaded poly1305 v0.9.1
+  Downloaded powerfmt v0.2.0
+  Downloaded cc v1.2.62
+  Downloaded coset v0.4.2
+  Downloaded flate2 v1.1.9
+  Downloaded fontdue v0.9.3
+  Downloaded fraction v0.15.4
+  Downloaded rand_core v0.10.1
+  Downloaded referencing v0.46.10
+  Downloaded serde_yaml v0.9.34+deprecated
+  Downloaded simd-adler32 v0.3.9
+  Downloaded synstructure v0.13.2
+  Downloaded unicode-ident v1.0.24
+  Downloaded proc-macro2 v1.0.106
+  Downloaded rand v0.8.6
+  Downloaded zerocopy-derive v0.8.48
+  Downloaded icu_collections v2.2.0
+  Downloaded log v0.4.29
+  Downloaded png v0.18.1
+  Downloaded postcard v1.1.3
+  Downloaded ppv-lite86 v0.2.21
+  Downloaded inout v0.2.2
+  Downloaded ipnet v2.12.0
+  Downloaded itoa v1.0.18
+  Downloaded jobserver v0.1.35
+  Downloaded jsonschema-regex v0.46.10
+  Downloaded lazy_static v1.5.0
+  Downloaded litemap v0.8.2
+  Downloaded matchers v0.2.0
+  Downloaded msvc_spectre_libs v0.1.3
+  Downloaded nu-ansi-term v0.50.3
+  Downloaded num-traits v0.2.19
+  Downloaded fancy-regex v0.18.0
+  Downloaded futures-util v0.3.32
+  Downloaded rand v0.10.2
+  Downloaded serde_core v1.0.228
+  Downloaded serde_json v1.0.149
+  Downloaded slab v0.4.12
+  Downloaded time v0.3.47
+  Downloaded tokio-tungstenite v0.24.0
+  Downloaded tracing-subscriber v0.3.23
+  Downloaded uniffi_udl v0.31.0
+  Downloaded ureq v3.3.0
+  Downloaded num-bigint v0.4.8
+  Downloaded utf8_iter v1.0.4
+  Downloaded lru v0.18.1
+  Downloaded memchr v2.8.0
+  Downloaded micromap v0.3.0
+  Downloaded minimal-lexical v0.2.1
+  Downloaded miniz_oxide v0.8.9
+  Downloaded mio v1.2.0
+  Downloaded objc2-core-data v0.2.2
+  Downloaded getrandom v0.4.2
+  Downloaded rand_chacha v0.3.1
+  Downloaded scopeguard v1.2.0
+  Downloaded serde_derive v1.0.228
+  Downloaded thiserror-impl v2.0.18
+  Downloaded typenum v1.20.0
+  Downloaded uniffi_core v0.31.0
+  Downloaded objc2-foundation v0.2.2
+  Downloaded goblin v0.8.2
+  Downloaded objc2-core-data v0.3.2
+  Downloaded objc2-core-video v0.3.2
+  Downloaded objc2-encode v4.1.0
+  Downloaded objc2-io-surface v0.3.2
+  Downloaded objc2-quartz-core v0.2.2
+  Downloaded outref v0.5.2
+  Downloaded uuid-simd v0.8.0
+  Downloaded version_check v0.9.5
+  Downloaded yoke-derive v0.8.2
+  Downloaded zerofrom-derive v0.1.7
+  Downloaded http v1.4.0
+  Downloaded icu_normalizer_data v2.2.0
+  Downloaded rustc-hash v2.1.3
+  Downloaded screencapturekit v8.0.1
+  Downloaded tracing-attributes v0.1.31
+  Downloaded ttf-parser v0.21.1
+  Downloaded uniffi_bindgen v0.31.0
+  Downloaded url v2.5.8
+  Downloaded moxcms v0.8.1
+  Downloaded num-integer v0.1.46
+  Downloaded objc2-metal v0.2.2
+  Downloaded vsimd v0.8.0
+  Downloaded weedle2 v5.0.0
+  Downloaded writeable v0.6.3
+  Downloaded zeroize v1.8.2
+  Downloaded zeroize_derive v1.5.0
+  Downloaded zerovec-derive v0.11.3
+  Downloaded hashbrown v0.16.1
+  Downloaded bstr v1.13.0
+  Downloaded smallvec v1.15.1
+  Downloaded tiff v0.11.3
+  Downloaded universal-hash v0.6.1
+  Downloaded objc2-app-kit v0.2.2
+  Downloaded jsonschema v0.46.10
+  Downloaded nom v7.1.3
+  Downloaded num-iter v0.1.46
+  Downloaded objc2 v0.6.4
+  Downloaded once_cell v1.21.4
+  Downloaded weezl v0.1.12
+  Downloaded yoke v0.8.2
+  Downloaded idna_adapter v1.2.2
+  Downloaded schemars v1.2.1
+  Downloaded sharded-slab v0.1.7
+  Downloaded tar v0.4.46
+  Downloaded tracing v0.1.44
+  Downloaded native-tls v0.2.18
+  Downloaded objc-sys v0.3.5
+  Downloaded objc2-core-image v0.3.2
+  Downloaded parking_lot v0.12.5
+  Downloaded uuid v1.23.1
+  Downloaded hash32 v0.2.1
+  Downloaded regex-syntax v0.8.10
+  Downloaded rustix v1.1.4
+  Downloaded tracing-core v0.1.36
+  Downloaded lock_api v0.4.14
+  Downloaded utf-8 v0.7.6
+  Downloaded objc2-core-graphics v0.3.2
+  Downloaded zerotrie v0.2.4
+  Downloaded schemars_derive v1.2.1
+  Downloaded icu_provider v2.2.0
+  Downloaded num-rational v0.4.2
+  Downloaded objc2-core-foundation v0.3.2
+  Downloaded objc2-core-text v0.3.2
+  Downloaded zune-jpeg v0.5.15
+  Downloaded icu_normalizer v2.2.0
+  Downloaded zerovec v0.11.6
+  Downloaded zstd v0.13.3
+  Downloaded indexmap v2.14.0
+  Downloaded hmac v0.12.1
+  Downloaded regex-automata v0.4.14
+  Downloaded icu_properties v2.2.0
+  Downloaded idna v1.1.0
+  Downloaded objc2 v0.5.2
+  Downloaded winnow v0.7.15
+  Downloaded zune-core v0.5.1
+  Downloaded num-complex v0.4.6
+  Downloaded winnow v1.0.3
+  Downloaded hkdf v0.12.4
+  Downloaded icu_properties_data v2.2.0
+  Downloaded rustls v0.23.40
+  Downloaded objc2-app-kit v0.3.2
+  Downloaded num-conv v0.2.1
+  Downloaded webpki-roots v1.0.7
+  Downloaded zstd-sys v2.0.16+zstd.1.5.7
+  Downloaded heck v0.5.0
+  Downloaded objc2-foundation v0.3.2
+  Downloaded icu_locale_core v2.2.0
+  Downloaded tokio v1.52.1
+  Downloaded zerocopy v0.8.48
+  Downloaded half v2.7.1
+  Downloaded heapless v0.7.17
+  Downloaded image v0.25.10
+  Downloaded zmij v1.0.21
+  Downloaded chrono-tz v0.10.4
+  Downloaded hashbrown v0.17.1
+  Downloaded pxfm v0.1.29
+  Downloaded libc v0.2.186
+  Downloaded ring v0.17.14
+  Downloaded regorus v0.10.1
+  Downloaded zstd-safe v7.2.4
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling libc v0.2.186
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.11.1
+   Compiling serde_core v1.0.228
+   Compiling syn v2.0.117
+   Compiling typenum v1.20.0
+   Compiling autocfg v1.5.0
+   Compiling getrandom v0.4.2
+   Compiling serde v1.0.228
+   Compiling once_cell v1.21.4
+   Compiling rand_core v0.10.1
+   Compiling memchr v2.8.0
+   Compiling version_check v0.9.5
+   Compiling zerocopy v0.8.48
+   Compiling itoa v1.0.18
+   Compiling synstructure v0.13.2
+   Compiling smallvec v1.15.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling num-traits v0.2.19
+   Compiling rustix v1.1.4
+   Compiling objc2-encode v4.1.0
+   Compiling anyhow v1.0.102
+   Compiling jobserver v0.1.35
+   Compiling serde_derive v1.0.228
+   Compiling zerocopy-derive v0.8.48
+   Compiling zerofrom-derive v0.1.7
+   Compiling zerofrom v0.1.8
+   Compiling yoke-derive v0.8.2
+   Compiling yoke v0.8.2
+   Compiling errno v0.3.14
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling parking_lot_core v0.9.12
+   Compiling pin-project-lite v0.2.17
+   Compiling cc v1.2.62
+   Compiling zerovec-derive v0.11.3
+   Compiling scopeguard v1.2.0
+   Compiling objc2 v0.6.4
+   Compiling zmij v1.0.21
+   Compiling core-foundation-sys v0.8.7
+   Compiling lock_api v0.4.14
+   Compiling zerovec v0.11.6
+   Compiling displaydoc v0.2.5
+   Compiling generic-array v0.14.7
+   Compiling hybrid-array v0.4.14
+   Compiling serde_json v1.0.149
+   Compiling bytes v1.11.1
+   Compiling parking_lot v0.12.5
+   Compiling zeroize_derive v1.5.0
+   Compiling equivalent v1.0.2
+   Compiling zeroize v1.8.2
+   Compiling futures-core v0.3.32
+   Compiling subtle v2.6.1
+   Compiling objc2-core-foundation v0.3.2
+   Compiling crypto-common v0.2.2
+   Compiling tinystr v0.8.3
+   Compiling getrandom v0.2.17
+   Compiling writeable v0.6.3
+   Compiling fastrand v2.4.1
+   Compiling simd-adler32 v0.3.9
+   Compiling litemap v0.8.2
+   Compiling ref-cast v1.0.25
+   Compiling regex-syntax v0.8.10
+   Compiling log v0.4.29
+   Compiling thiserror v2.0.18
+   Compiling hashbrown v0.17.1
+   Compiling crc32fast v1.5.0
+   Compiling icu_locale_core v2.2.0
+   Compiling indexmap v2.14.0
+   Compiling tempfile v3.27.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling zerotrie v0.2.4
+   Compiling potential_utf v0.1.5
+   Compiling signal-hook-registry v1.4.8
+   Compiling tokio-macros v2.7.0
+   Compiling ref-cast-impl v1.0.25
+   Compiling thiserror-impl v2.0.18
+   Compiling aho-corasick v1.1.4
+   Compiling mio v1.2.0
+   Compiling socket2 v0.6.3
+   Compiling utf8_iter v1.0.4
+   Compiling icu_normalizer_data v2.2.0
+   Compiling adler2 v2.0.1
+   Compiling icu_properties_data v2.2.0
+   Compiling miniz_oxide v0.8.9
+   Compiling icu_collections v2.2.0
+   Compiling tokio v1.52.1
+   Compiling regex-automata v0.4.14
+   Compiling icu_provider v2.2.0
+   Compiling digest v0.10.7
+   Compiling uniffi_internal_macros v0.31.0
+   Compiling inout v0.2.2
+   Compiling half v2.7.1
+   Compiling core-foundation v0.10.1
+   Compiling num-integer v0.1.46
+   Compiling semver v1.0.28
+   Compiling byteorder v1.5.0
+   Compiling rustc_version v0.4.1
+   Compiling flate2 v1.1.9
+   Compiling block2 v0.6.2
+   Compiling block-buffer v0.12.1
+   Compiling fs-err v2.11.0
+   Compiling heck v0.5.0
+   Compiling camino v1.2.4
+   Compiling winnow v1.0.3
+   Compiling getrandom v0.3.4
+   Compiling httparse v1.10.1
+   Compiling objc-sys v0.3.5
+   Compiling pkg-config v0.3.33
+   Compiling percent-encoding v2.3.2
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling toml_parser v1.1.2+spec-1.1.0
+   Compiling uniffi_pipeline v0.31.0
+   Compiling cipher v0.5.2
+   Compiling objc2-foundation v0.3.2
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling heapless v0.7.17
+   Compiling num-bigint v0.4.8
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling security-framework-sys v2.17.0
+   Compiling futures-macro v0.3.32
+   Compiling ahash v0.8.12
+   Compiling cpufeatures v0.2.17
+   Compiling zune-core v0.5.1
+   Compiling futures-io v0.3.32
+   Compiling native-tls v0.2.18
+   Compiling futures-task v0.3.32
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling slab v0.4.12
+   Compiling bytemuck v1.25.0
+   Compiling futures-sink v0.3.32
+   Compiling winnow v0.7.15
+   Compiling crossbeam-utils v0.8.21
+   Compiling siphasher v1.0.2
+   Compiling lazy_static v1.5.0
+   Compiling uniffi_meta v0.31.0
+   Compiling toml v0.9.12+spec-1.1.0
+   Compiling futures-util v0.3.32
+   Compiling async-compat v0.2.5
+   Compiling zune-jpeg v0.5.15
+   Compiling security-framework v3.7.0
+   Compiling num-rational v0.4.2
+   Compiling idna_adapter v1.2.2
+   Compiling chacha20 v0.10.1
+   Compiling hash32 v0.2.1
+   Compiling num-iter v0.1.46
+   Compiling fdeflate v0.3.7
+   Compiling rand_core v0.6.4
+   Compiling http v1.4.0
+   Compiling ppv-lite86 v0.2.21
+   Compiling cargo-platform v0.1.9
+   Compiling num-complex v0.4.6
+   Compiling serde_derive_internals v0.29.1
+   Compiling tracing-core v0.1.36
+   Compiling fax v0.2.7
+   Compiling weezl v0.1.12
+   Compiling data-encoding v2.11.0
+   Compiling cmov v0.5.4
+   Compiling borrow-or-share v0.2.4
+   Compiling allocator-api2 v0.2.21
+   Compiling unicode-general-category v1.1.0
+   Compiling thiserror v1.0.69
+   Compiling foldhash v0.2.0
+   Compiling pxfm v0.1.29
+   Compiling quick-error v2.0.1
+   Compiling bit-vec v0.8.0
+   Compiling static_assertions v1.1.0
+   Compiling uniffi_core v0.31.0
+   Compiling bit-set v0.8.0
+   Compiling moxcms v0.8.1
+   Compiling tiff v0.11.3
+   Compiling hashbrown v0.16.1
+   Compiling fluent-uri v0.4.1
+   Compiling ctutils v0.4.2
+   Compiling phf_shared v0.12.1
+   Compiling schemars_derive v1.2.1
+   Compiling num v0.4.3
+   Compiling rand_chacha v0.3.1
+   Compiling cargo_metadata v0.19.2
+   Compiling png v0.18.1
+   Compiling objc2 v0.5.2
+   Compiling uniffi_macros v0.31.0
+   Compiling idna v1.1.0
+   Compiling cobs v0.3.0
+   Compiling iana-time-zone v0.1.65
+   Compiling ring v0.17.14
+   Compiling thiserror-impl v1.0.69
+   Compiling tracing-attributes v0.1.31
+   Compiling unsafe-libyaml v0.2.11
+   Compiling dyn-clone v1.0.20
+   Compiling micromap v0.3.0
+   Compiling ryu v1.0.23
+   Compiling vsimd v0.8.0
+   Compiling chrono-tz v0.10.4
+   Compiling outref v0.5.2
+   Compiling byteorder-lite v0.1.0
+   Compiling msvc_spectre_libs v0.1.3
+   Compiling zstd-safe v7.2.4
+   Compiling ciborium-io v0.2.2
+   Compiling ciborium-ll v0.2.2
+   Compiling image v0.25.10
+   Compiling uuid-simd v0.8.0
+   Compiling referencing v0.46.10
+   Compiling tracing v0.1.44
+   Compiling schemars v1.2.1
+   Compiling chrono v0.4.45
+   Compiling crossbeam-queue v0.3.12
+   Compiling postcard v1.1.3
+   Compiling uniffi v0.31.0
+   Compiling block2 v0.5.1
+   Compiling rand v0.8.6
+   Compiling fraction v0.15.4
+   Compiling phf v0.12.1
+   Compiling universal-hash v0.6.1
+   Compiling fancy-regex v0.18.0
+   Compiling rand v0.10.2
+   Compiling sha1 v0.10.6
+   Compiling form_urlencoded v1.2.2
+   Compiling regex v1.12.3
+   Compiling jsonschema-regex v0.46.10
+   Compiling regorus v0.10.1
+   Compiling email_address v0.2.9
+   Compiling bstr v1.13.0
+   Compiling bytecount v0.6.9
+   Compiling strict-num v0.1.1
+   Compiling apple-cf v0.9.3
+   Compiling utf-8 v0.7.6
+   Compiling powerfmt v0.2.0
+   Compiling arrayref v0.3.9
+   Compiling apple-metal v0.6.0
+   Compiling base64 v0.22.1
+   Compiling num-cmp v0.1.0
+   Compiling jsonschema v0.46.10
+   Compiling tiny-skia-path v0.11.4
+   Compiling deranged v0.5.8
+   Compiling tungstenite v0.24.0
+   Compiling globset v0.4.19
+   Compiling url v2.5.8
+   Compiling uuid v1.23.1
+   Compiling poly1305 v0.9.1
+   Compiling objc2-foundation v0.2.2
+   Compiling cua-driver-contract v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver-contract)
+   Compiling doom-fish-utils v0.3.2
+   Compiling ciborium v0.2.2
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling tokio-native-tls v0.3.1
+   Compiling objc2-core-data v0.3.2
+   Compiling objc2-quartz-core v0.3.2
+   Compiling objc2-core-image v0.3.2
+   Compiling objc2-cloud-kit v0.3.2
+   Compiling sha2 v0.10.9
+   Compiling aead v0.6.1
+   Compiling hmac v0.12.1
+   Compiling objc2-core-video v0.3.2
+   Compiling objc2-core-text v0.3.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling rustls-pki-types v1.14.1
+   Compiling foreign-types-macros v0.2.3
+   Compiling num-conv v0.2.1
+   Compiling screencapturekit v8.0.1
+   Compiling lru v0.18.1
+   Compiling arrayvec v0.7.6
+   Compiling time-core v0.1.8
+   Compiling untrusted v0.9.0
+   Compiling ipnet v2.12.0
+   Compiling foreign-types-shared v0.3.1
+   Compiling spin v0.10.1
+   Compiling ttf-parser v0.21.1
+   Compiling fontdue v0.9.3
+   Compiling foreign-types v0.5.0
+   Compiling tiny-skia v0.11.4
+   Compiling time v0.3.47
+   Compiling objc2-app-kit v0.3.2
+   Compiling hkdf v0.12.4
+   Compiling chacha20poly1305 v0.11.0
+   Compiling tokio-tungstenite v0.24.0
+   Compiling coset v0.4.2
+   Compiling zstd v0.13.3
+   Compiling serde_yaml_ng v0.10.0
+   Compiling core-graphics-types v0.2.0
+   Compiling async-trait v0.1.89
+   Compiling fs2 v0.4.3
+   Compiling rustls v0.23.40
+   Compiling platform-macos v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/platform-macos)
+   Compiling cua-driver-core v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver-core)
+warning: method `as_str` is never used
+    --> crates/cua-driver-core/src/browser/tools.rs:1609:8
+     |
+1598 | impl TypeRoute {
+     | -------------- method in this implementation
+...
+1609 |     fn as_str(self) -> &'static str {
+     |        ^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling core-graphics v0.24.0
+   Compiling clipboard-rs v0.3.5
+   Compiling cursor-overlay v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cursor-overlay)
+   Compiling rustls-webpki v0.103.13
+   Compiling objc2-quartz-core v0.2.2
+   Compiling objc2-app-kit v0.2.2
+   Compiling pip-preview v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/pip-preview)
+   Compiling cua-driver-sdk v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver-sdk)
+warning: cua-driver-sdk@0.28.2: cargo:rustc-cdylib-link-arg was specified in the build script of cua-driver-sdk v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver-sdk), but that package does not contain a cdylib target
+
+Allowing this was an unintended change in the 1.50 release, and may become an error in the future. For more information, see <https://github.com/rust-lang/cargo/issues/9562>.
+warning: cua-driver-sdk@0.28.2: cargo:rustc-cdylib-link-arg was specified in the build script of cua-driver-sdk v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver-sdk), but that package does not contain a cdylib target
+
+Allowing this was an unintended change in the 1.50 release, and may become an error in the future. For more information, see <https://github.com/rust-lang/cargo/issues/9562>.
+warning: cua-driver-sdk@0.28.2: cargo:rustc-cdylib-link-arg was specified in the build script of cua-driver-sdk v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver-sdk), but that package does not contain a cdylib target
+
+Allowing this was an unintended change in the 1.50 release, and may become an error in the future. For more information, see <https://github.com/rust-lang/cargo/issues/9562>.
+warning: unnecessary `unsafe` block
+  --> crates/platform-macos/src/cursor/shape.rs:91:10
+   |
+91 |     Some(unsafe { data.bytes() }.to_vec())
+   |          ^^^^^^ unnecessary `unsafe` block
+   |
+   = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling webpki-roots v1.0.7
+   Compiling ureq-proto v0.6.0
+   Compiling tracing-log v0.2.0
+   Compiling sharded-slab v0.1.7
+   Compiling matchers v0.2.0
+   Compiling filetime v0.2.29
+   Compiling thread_local v1.1.9
+   Compiling nu-ansi-term v0.50.3
+   Compiling utf8-zero v0.8.1
+   Compiling cua-driver v0.28.2 (/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-cua-package-IYEOD0/build/libs/cua-driver/rust/crates/cua-driver)
+   Compiling ureq v3.3.0
+   Compiling tracing-subscriber v0.3.23
+   Compiling tar v0.4.46
+warning: function `shutdown` is never used
+    --> crates/cua-driver-sdk/src/abi.rs:1125:23
+     |
+1125 |         pub(super) fn shutdown(
+     |                       ^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cua-driver-core` (lib) generated 1 warning
+warning: `platform-macos` (lib) generated 1 warning
+warning: `cua-driver-sdk` (lib) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 6m 06s
+[build-timing] {"stage":"cua-cargo-build","kind":"local","event":"complete","at":"2026-10-11T19:38:22.125Z","durationMs":366671}
+[build-timing] {"stage":"cua-codesign---force","kind":"local","event":"start","at":"2026-10-11T19:38:23.246Z"}
+/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/apps/desktop/resources/cua-driver/cua-driver: replacing existing signature
+[build-timing] {"stage":"cua-codesign---force","kind":"local","event":"complete","at":"2026-10-11T19:38:23.339Z","durationMs":93}
+Cua 0.28.2 native revision 39 (arm64) staged at /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/apps/desktop/resources/cua-driver
+[build-timing] {"stage":"cua-source-build","kind":"local","event":"complete","at":"2026-10-11T19:38:23.371Z","durationMs":374008}
+[build-timing] {"stage":"cua-provision","kind":"local","event":"complete","at":"2026-10-11T19:38:23.949Z","durationMs":375055}
+[build-timing] {"stage":"appsnap-helper","kind":"local","event":"start","at":"2026-10-11T19:38:23.950Z"}
+[19:38:23.951] INFO (#1): [desktop-artifact] Building native AppSnap helper (arm64)...
+[appsnap] Built arm64 Swift helper for macOS 12.3+ at /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/apps/desktop/native/appsnap/build/synara-appsnap-helper
+[build-timing] {"stage":"appsnap-helper","kind":"local","event":"complete","at":"2026-10-11T19:38:42.036Z","durationMs":18078}
+[build-timing] {"stage":"window-material-addon","kind":"local","event":"start","at":"2026-10-11T19:38:42.038Z"}
+[19:38:42.042] INFO (#1): [desktop-artifact] Building native window-material addon (arm64)...
+[window-material] Built arm64 addon at /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/apps/desktop/native/window-material/build/synara-window-material.node
+[build-timing] {"stage":"window-material-addon","kind":"local","event":"complete","at":"2026-10-11T19:38:43.051Z","durationMs":1013}
+[build-timing] {"stage":"production-dependencies","kind":"local","event":"start","at":"2026-10-11T19:38:43.163Z"}
+[19:38:43.185] INFO (#1): [desktop-artifact] Installing staged production dependencies from the repository lockfile...
+bun install v1.4.2 (744846f84)
+Resolving dependencies
+Resolved, downloaded and extracted [84]
+
++ @effect/tsgo@0.41.0
++ @types/node@24.12.0 (v26.6.5 available)
++ @typescript/native@7.0.2
++ @vitest/coverage-v8@4.1.10
++ oxfmt@0.40.0
++ oxlint@1.56.0
++ turbo@2.10.5
++ vitest@4.1.10 (v5.0.3 available)
+
+1652 packages installed [15.76s]
+[19:38:58.987] INFO (#1): [desktop-artifact] Verifying staged patched dependencies...
+[build-timing] {"stage":"production-dependencies","kind":"local","event":"complete","at":"2026-10-11T19:38:59.040Z","durationMs":15871}
+[19:38:59.048] INFO (#1): [desktop-artifact] Building production mac/dmg (arch=arm64, version=1.0.2-beta.1)...
+[build-timing] {"stage":"electron-packaging","kind":"local","event":"start","at":"2026-10-11T19:38:59.053Z"}
+  • electron-builder  version=26.15.3 os=24.6.0
+  • loaded configuration  file=package.json ("build" field)
+  • packageManager not detected by file, falling back to environment detection  resolvedPackageManager=bun detected=/Users/runner/work/synara/synara/source
+  • executing @electron/rebuild  electronVersion=43.4.1 arch=arm64 buildFromSource=false workspaceRoot=/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • preparing       moduleName=msgpackr-extract arch=arm64
+  • finished        moduleName=msgpackr-extract arch=arm64
+  • preparing       moduleName=msgpackr-extract arch=arm64
+  • finished        moduleName=msgpackr-extract arch=arm64
+  • preparing       moduleName=msgpackr-extract arch=arm64
+  • finished        moduleName=msgpackr-extract arch=arm64
+  • preparing       moduleName=node-pty arch=arm64
+  • finished        moduleName=node-pty arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=arm64 electron=43.4.1 appOutDir=dist/mac-arm64
+  • downloaded      label=electron progress=100%
+  • downloaded electron zip extracted successfully  output=/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/dist/mac-arm64
+  • searching for node modules  pm=bun searchDir=/private/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app
+  • note: bun does not support any CLI for dependency tree extraction, utilizing file traversal collector instead
+  • using manual traversal of node_modules to build dependency tree
+  • missing optional dependencies  dependencies=["@anthropic-ai/claude-agent-sdk-linux-x64@0.3.259","@anthropic-ai/claude-agent-sdk-linux-arm64@0.3.259","@anthropic-ai/claude-agent-sdk-linux-x64-musl@0.3.259","@anthropic-ai/claude-agent-sdk-linux-arm64-musl@0.3.259","@anthropic-ai/claude-agent-sdk-darwin-x64@0.3.259","@anthropic-ai/claude-agent-sdk-win32-x64@0.3.259","@anthropic-ai/claude-agent-sdk-win32-arm64@0.3.259","@esbuild/aix-ppc64@0.28.2","@esbuild/android-arm@0.28.2","@esbuild/android-arm64@0.28.2","@esbuild/android-x64@0.28.2","@esbuild/darwin-x64@0.28.2","@esbuild/freebsd-arm64@0.28.2","@esbuild/freebsd-x64@0.28.2","@esbuild/linux-arm@0.28.2","@esbuild/linux-arm64@0.28.2","@esbuild/linux-ia32@0.28.2","@esbuild/linux-loong64@0.28.2","@esbuild/linux-mips64el@0.28.2","@esbuild/linux-ppc64@0.28.2","@esbuild/linux-riscv64@0.28.2","@esbuild/linux-s390x@0.28.2","@esbuild/linux-x64@0.28.2","@esbuild/netbsd-arm64@0.28.2","@esbuild/netbsd-x64@0.28.2","@esbuild/openbsd-arm64@0.28.2","@esbuild/openbsd-x64@0.28.2","@esbuild/openharmony-arm64@0.28.2","@esbuild/sunos-x64@0.28.2","@esbuild/win32-arm64@0.28.2","@esbuild/win32-ia32@0.28.2","@esbuild/win32-x64@0.28.2","@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.4","@msgpackr-extract/msgpackr-extract-linux-arm@3.0.4","@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.4","@msgpackr-extract/msgpackr-extract-linux-x64@3.0.4","@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4","@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.4","@msgpackr-extract/msgpackr-extract-linux-arm@3.0.4","@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.4","@msgpackr-extract/msgpackr-extract-linux-x64@3.0.4","@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4","@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.3","@msgpackr-extract/msgpackr-extract-linux-arm@3.0.3","@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.3","@msgpackr-extract/msgpackr-extract-linux-x64@3.0.3","@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3","rookie-cookies-darwin-x64@0.6.0","rookie-cookies-linux-arm64-gnu@0.6.0","rookie-cookies-linux-x64-gnu@0.6.0","rookie-cookies-win32-x64-msvc@0.6.0"]
+  • skipped macOS application code signing  reason=, see https://electron.build/code-signing CSC_IDENTITY_AUTO_DISCOVERY=false
+  • building        target=macOS zip arch=arm64 file=dist/Synara-1.0.2-beta.1-arm64.zip
+  • building        target=DMG arch=arm64 file=dist/Synara-1.0.2-beta.1-arm64.dmg
+  • downloaded      label=dmgbuild-bundle-arm64-75c8a6c.tar.gz progress=100%
+  • building block map  blockMapFile=dist/Synara-1.0.2-beta.1-arm64.zip.blockmap
+[build-timing] {"stage":"electron-packaging","kind":"local","event":"complete","at":"2026-10-11T19:40:50.676Z","durationMs":111624}
+[19:40:50.683] INFO (#1): [desktop-artifact] Rebuilding unsigned macOS DMG from the final app...
+[build-timing] {"stage":"dmg-ditto-/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/dist/mac-arm64/Synara.app","kind":"local","event":"start","at":"2026-10-11T19:40:50.686Z"}
+[build-timing] {"stage":"dmg-ditto-/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/dist/mac-arm64/Synara.app","kind":"local","event":"complete","at":"2026-10-11T19:40:52.071Z","durationMs":1385}
+[build-timing] {"stage":"dmg-hdiutil-create","kind":"local","event":"start","at":"2026-10-11T19:40:52.073Z"}
+created: /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/synara-desktop-production-mac-stage-yHyk9u/app/dist/Synara-1.0.2-beta.1-arm64.dmg
+[build-timing] {"stage":"dmg-hdiutil-create","kind":"local","event":"complete","at":"2026-10-11T19:41:09.624Z","durationMs":17556}
+[19:41:09.731] INFO (#1): [desktop-artifact] Repacking and validating macOS update zip...
+[build-timing] {"stage":"update-zip","kind":"local","event":"start","at":"2026-10-11T19:41:09.734Z"}
+[build-timing] {"stage":"update-zip","kind":"local","event":"complete","at":"2026-10-11T19:41:43.176Z","durationMs":33442}
+[19:41:43.176] INFO (#1): [desktop-artifact] Removed stale macOS zip blockmap (Synara-1.0.2-beta.1-arm64.zip.blockmap).
+[19:41:44.088] INFO (#1): [desktop-artifact] Done. Artifacts:
+  artifacts: [
+    '/Users/runner/work/_temp/always-on-top-packages/Synara-1.0.2-beta.1-arm64.dmg',
+    '/Users/runner/work/_temp/always-on-top-packages/Synara-1.0.2-beta.1-arm64.zip',
+    '/Users/runner/work/_temp/always-on-top-packages/builder-debug.yml',
+    '/Users/runner/work/_temp/always-on-top-packages/latest-mac.yml'
+  ]

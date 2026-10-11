@@ -1,0 +1,5 @@
+2026-10-11 19:42:26.555 Synara Helper[26385:68857] XPC error for connection com.apple.backupd.sandbox.xpc: Connection invalid
+2026-10-11 19:42:26.555 Synara Helper[26385:68857] XPC error for connection com.apple.backupd.sandbox.xpc: Connection invalid
+2026-10-11 19:42:26.556 Synara Helper[26385:68857] XPC error for connection com.apple.backupd.sandbox.xpc: Connection invalid
+[26371:1011/194239.089868:ERROR:base/process/process_mac.cc:98] task_policy_set TASK_SUPPRESSION_POLICY: (os/kern) invalid argument (4)
+Waiting for the debugger to disconnect...

@@ -1,0 +1,141 @@
+[
+  {
+    "name": "renderer-attachment",
+    "observation": {
+      "pid": 26371,
+      "profile": "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/state/home/Library/Application Support/synara",
+      "appPath": "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/expanded/Synara.app/Contents/Resources/app.asar",
+      "endpoint": "Fresh owned profile's ephemeral loopback Chromium endpoint",
+      "selection": "Exact live BrowserWindow URL; no first-window assumption"
+    }
+  },
+  {
+    "name": "renderer-selection",
+    "observation": {
+      "windowId": 1,
+      "url": "synara://app/index.html"
+    }
+  },
+  {
+    "name": "initial",
+    "observation": {
+      "appPath": "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/expanded/Synara.app/Contents/Resources/app.asar",
+      "electron": "43.4.1",
+      "windows": [
+        {
+          "id": 1,
+          "alwaysOnTop": false,
+          "visible": true
+        }
+      ],
+      "menu": null,
+      "viewItems": [
+        {
+          "label": "New Terminal Tab",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "",
+          "type": "separator",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Toggle Sidebar",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Toggle Browser",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "",
+          "type": "separator",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Reload",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Force Reload",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Toggle Developer Tools",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "",
+          "type": "separator",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Actual Size",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Zoom In",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Zoom In",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Zoom Out",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "",
+          "type": "separator",
+          "enabled": true,
+          "checked": false
+        },
+        {
+          "label": "Toggle Full Screen",
+          "type": "normal",
+          "enabled": true,
+          "checked": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "renderer-selection",
+    "observation": {
+      "windowId": 1,
+      "url": "synara://app/index.html#/5d73bf87-114f-4309-b86f-baa0542df037"
+    }
+  },
+  {
+    "name": "normal-quit-confirmation",
+    "observation": {
+      "visiblePrompt": true,
+      "visibleQuitButton": true,
+      "interaction": "Click the unchanged actual renderer Quit button"
+    }
+  }
+]

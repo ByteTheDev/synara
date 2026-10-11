@@ -1,0 +1,5 @@
+{
+  "message": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Get started', exact: true }) to be visible\n",
+  "stack": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Get started', exact: true }) to be visible\n\n    at showWindow (/Users/runner/work/synara/synara/driver/.github/scripts/always-on-top-capture.mjs:405:8)\n    at async main (/Users/runner/work/synara/synara/driver/.github/scripts/always-on-top-capture.mjs:476:5)\n    at async file:///Users/runner/work/synara/synara/driver/.github/scripts/always-on-top-capture.mjs:673:1",
+  "boundary": "Failure retained. The workflow's separate native cleanup still runs; no live UI success is claimed."
+}

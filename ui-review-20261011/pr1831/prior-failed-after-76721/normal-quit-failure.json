@@ -1,0 +1,6 @@
+{
+  "message": "TimeoutError: locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n  - waiting for getByText('Are you sure you want to quit?', { exact: true }) to be visible\n",
+  "actualExit": null,
+  "exitCode": null,
+  "signalCode": null
+}

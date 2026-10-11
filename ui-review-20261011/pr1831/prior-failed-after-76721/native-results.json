@@ -1,0 +1,8 @@
+{
+  "label": "after",
+  "sourceSha": "ac0e7f65b6860dbc4e7c308acbc01a886238f559",
+  "passed": false,
+  "normalQuit": false,
+  "observations": [],
+  "cleanupBoundary": "Separate always-running native cleanup targets only the owned app URL. Descendant teardown is runner-owned and unproven."
+}

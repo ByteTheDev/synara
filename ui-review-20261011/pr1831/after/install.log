@@ -1,0 +1,14 @@
+bun install v1.4.2 (744846f84)
+Resolving dependencies
+Resolved, downloaded and extracted [204]
+
++ @effect/tsgo@0.41.0
++ @types/node@24.12.0 (v26.6.5 available)
++ @typescript/native@7.0.2
++ @vitest/coverage-v8@4.1.10
++ oxfmt@0.40.0
++ oxlint@1.56.0
++ turbo@2.10.5
++ vitest@4.1.10 (v5.0.3 available)
+
+1154 packages installed [13.07s]

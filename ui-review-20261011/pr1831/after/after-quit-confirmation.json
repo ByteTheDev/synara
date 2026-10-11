@@ -1,0 +1,43 @@
+{
+  "applicationIsForeground" : true,
+  "applicationPid" : 29724,
+  "largeWindowPresent" : true,
+  "windows" : [
+    {
+      "kCGWindowAlpha" : 0.34805333614349365,
+      "kCGWindowBounds" : {
+        "Height" : 296,
+        "Width" : 228,
+        "X" : 54,
+        "Y" : 107
+      },
+      "kCGWindowIsOnscreen" : true,
+      "kCGWindowLayer" : 101,
+      "kCGWindowMemoryUsage" : 2288,
+      "kCGWindowName" : "",
+      "kCGWindowNumber" : 46,
+      "kCGWindowOwnerName" : "Synara",
+      "kCGWindowOwnerPID" : 29724,
+      "kCGWindowSharingState" : 1,
+      "kCGWindowStoreType" : 1
+    },
+    {
+      "kCGWindowAlpha" : 1,
+      "kCGWindowBounds" : {
+        "Height" : 660,
+        "Width" : 940,
+        "X" : 30,
+        "Y" : 48
+      },
+      "kCGWindowIsOnscreen" : true,
+      "kCGWindowLayer" : 0,
+      "kCGWindowMemoryUsage" : 2288,
+      "kCGWindowName" : "Synara",
+      "kCGWindowNumber" : 45,
+      "kCGWindowOwnerName" : "Synara",
+      "kCGWindowOwnerPID" : 29724,
+      "kCGWindowSharingState" : 1,
+      "kCGWindowStoreType" : 1
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "variant": "before",
+    "run": 38167803772,
+    "job": 114554480930,
+    "artifact": 11713601074,
+    "file": "always-on-top-before-296c.zip",
+    "bytes": 559842,
+    "sha256": "cf6a2a9f35f910053dcc6c7a17eff1ac66967e4a2d363f403cf745ce683532c7"
+  },
+  {
+    "variant": "after",
+    "run": 38167803772,
+    "job": 114554480893,
+    "artifact": 11714070072,
+    "file": "always-on-top-after-296c.zip",
+    "bytes": 982786,
+    "sha256": "bff351487f8818ba1e4a454727223746b9508a2403d249c05eac6b3e4f370b29"
+  },
+  {
+    "variant": "prior-failed-after",
+    "run": 38165415846,
+    "artifact": 11712291800,
+    "file": "artifact-11712291800.zip",
+    "sha256": "11f6d782e38e530666c38889a2c837e54a9314d2bfe661ccf2454a3488b102c4",
+    "bytes": 281262
+  }
+]

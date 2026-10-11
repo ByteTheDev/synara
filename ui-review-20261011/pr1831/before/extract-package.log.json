@@ -1,0 +1,12 @@
+{
+  "command": "/usr/bin/ditto",
+  "args": [
+    "-x",
+    "-k",
+    "/Users/runner/work/_temp/always-on-top-packages/Synara-1.0.2-beta.1-arm64.zip",
+    "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/expanded"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}

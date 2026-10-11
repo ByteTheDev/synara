@@ -1,0 +1,5 @@
+{
+  "message": "AssertionError [ERR_ASSERTION]: CAPTURE\n+ actual - expected\n\n+ 'failure'\n- 'success'\n",
+  "stack": "AssertionError [ERR_ASSERTION]: CAPTURE\n+ actual - expected\n\n+ 'failure'\n- 'success'\n\n    at main (file:///Users/runner/work/synara/synara/driver/.github/scripts/always-on-top-capture.mjs:261:14)\n    at file:///Users/runner/work/synara/synara/driver/.github/scripts/always-on-top-capture.mjs:673:7\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)",
+  "boundary": "Failure retained. The workflow's separate native cleanup still runs; no live UI success is claimed."
+}

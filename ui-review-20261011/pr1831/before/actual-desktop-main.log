@@ -1,0 +1,13 @@
+[2026-10-11T19:42:25.704Z] [desktop run=cb5cba1c922e] runtime log capture enabled logDir=/Users/runner/work/_temp/always-on-top-owned-4u4TLi/state/synara-home/userdata/logs
+[2026-10-11T19:42:25.775Z] [desktop run=cb5cba1c922e] app ready
+[2026-10-11T19:42:26.229Z] [desktop run=cb5cba1c922e] static snapshot created dir=/Users/runner/work/_temp/always-on-top-owned-4u4TLi/state/home/Library/Application Support/synara/static-snapshots/263714068-1791747589000-4099305 in 413ms
+[2026-10-11T19:42:26.230Z] [desktop run=cb5cba1c922e] bootstrap start
+[2026-10-11T19:42:26.273Z] [desktop run=cb5cba1c922e] bootstrap resolved backend endpoint port=49782
+[2026-10-11T19:42:26.326Z] [desktop run=cb5cba1c922e] bootstrap ipc handlers registered
+[2026-10-11T19:42:26.421Z] [desktop run=cb5cba1c922e] bootstrap backend start requested
+[2026-10-11T19:42:26.442Z] [desktop run=cb5cba1c922e] bootstrap main window created
+[2026-10-11T19:42:29.380Z] [desktop run=cb5cba1c922e] bootstrap backend ready source=http
+[2026-10-11T19:42:37.183Z] [desktop run=cb5cba1c922e] before-quit received
+[2026-10-11T19:42:38.685Z] [desktop run=cb5cba1c922e] before-quit shutdown start
+[2026-10-11T19:42:38.910Z] [desktop run=cb5cba1c922e] before-quit shutdown complete
+[2026-10-11T19:42:38.910Z] [desktop run=cb5cba1c922e] before-quit received

@@ -1,0 +1,11 @@
+{
+  "command": "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/always-on-top-screen",
+  "args": [
+    "cleanup",
+    "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/capture-config.json",
+    "before-cleanup"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}

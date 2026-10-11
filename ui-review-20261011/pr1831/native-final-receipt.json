@@ -1,0 +1,366 @@
+[
+  {
+    "variant": "before",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "driver": "296c27adfdc6fb74f869adae4d471e5b8d95415c",
+    "manifestFiles": 37,
+    "passed": true,
+    "images": [
+      {
+        "name": "before-menu.png",
+        "bytes": 182498,
+        "width": 1024,
+        "height": 768,
+        "sha256": "de1b4608d3634008174bd4bf34c0d56f8924cff1a310148d3036f76b07f63692"
+      },
+      {
+        "name": "before-stacking-off.png",
+        "bytes": 170442,
+        "width": 1024,
+        "height": 768,
+        "sha256": "7ffc3967e3d6940421fee425d0b101e698ec3c2de51c10dc380c9ac53f6bacb8"
+      }
+    ],
+    "states": [
+      {
+        "name": "initial",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": false,
+            "visible": true
+          }
+        ],
+        "menu": null
+      }
+    ],
+    "stacking": {
+      "stacking-off": {
+        "applicationIndex": 7,
+        "applicationPid": 26371,
+        "expected": "below",
+        "referenceIndex": 6,
+        "referenceIsForeground": true,
+        "referencePid": 27040,
+        "windows": [
+          {
+            "kCGWindowAlpha": 1,
+            "kCGWindowBounds": {
+              "Height": 388,
+              "Width": 560,
+              "X": 232,
+              "Y": 159
+            },
+            "kCGWindowIsOnscreen": true,
+            "kCGWindowLayer": 0,
+            "kCGWindowMemoryUsage": 2288,
+            "kCGWindowName": "Controlled reference window \u2014 verification only",
+            "kCGWindowNumber": 41,
+            "kCGWindowOwnerName": "always-on-top-screen",
+            "kCGWindowOwnerPID": 27040,
+            "kCGWindowSharingState": 1,
+            "kCGWindowStoreType": 1
+          },
+          {
+            "kCGWindowAlpha": 1,
+            "kCGWindowBounds": {
+              "Height": 660,
+              "Width": 940,
+              "X": 30,
+              "Y": 48
+            },
+            "kCGWindowIsOnscreen": true,
+            "kCGWindowLayer": 0,
+            "kCGWindowMemoryUsage": 2288,
+            "kCGWindowName": "Synara",
+            "kCGWindowNumber": 36,
+            "kCGWindowOwnerName": "Synara",
+            "kCGWindowOwnerPID": 26371,
+            "kCGWindowSharingState": 1,
+            "kCGWindowStoreType": 1
+          }
+        ]
+      }
+    },
+    "normalQuit": {
+      "normalQuit": true,
+      "actualExit": {
+        "code": 0,
+        "signal": null
+      },
+      "exitCode": 0,
+      "signalCode": null
+    },
+    "cleanup": {
+      "cleaned": true,
+      "boundary": "Only applications with the exact owned bundle URL; remaining descendant teardown is runner-owned and unproven."
+    }
+  },
+  {
+    "variant": "after",
+    "source": "ac0e7f65b6860dbc4e7c308acbc01a886238f559",
+    "driver": "296c27adfdc6fb74f869adae4d471e5b8d95415c",
+    "manifestFiles": 49,
+    "passed": true,
+    "images": [
+      {
+        "name": "after-menu-off.png",
+        "bytes": 168263,
+        "width": 1024,
+        "height": 768,
+        "sha256": "add2663b03bfe8940a1c1a08603e461a2e18111ee6204405b31a66a2d95c3165"
+      },
+      {
+        "name": "after-menu-on.png",
+        "bytes": 168637,
+        "width": 1024,
+        "height": 768,
+        "sha256": "134bc5d0f08926daa8f626ca9634affcde16d4855a365e7eec684dbca765ede8"
+      },
+      {
+        "name": "after-stacking-off.png",
+        "bytes": 170713,
+        "width": 1024,
+        "height": 768,
+        "sha256": "672965971ba163af1b49ece8e05bcde41544726613e7fec7eb5ec91aa3411535"
+      },
+      {
+        "name": "after-stacking-on.png",
+        "bytes": 132650,
+        "width": 1024,
+        "height": 768,
+        "sha256": "ad1f9d2a013929fbb0e16bdcad071af468f56829aa270eb8239d667903b81930"
+      },
+      {
+        "name": "after-menu-recreated.png",
+        "bytes": 163641,
+        "width": 1024,
+        "height": 768,
+        "sha256": "fcf8ce5e65fd237c442d2c7b4228ea3d0bfe607d781627080a95d9aa1b1e8dce"
+      }
+    ],
+    "states": [
+      {
+        "name": "initial",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": false,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": false,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "initial-off",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": false,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": false,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "production-menu-on",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": true,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": true,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "production-menu-off",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": false,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": false,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "external-native-change-on",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": true,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": true,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "external-native-change-off",
+        "windows": [
+          {
+            "id": 1,
+            "alwaysOnTop": false,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": false,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "controlled-window-destroyed",
+        "windows": [],
+        "menu": {
+          "enabled": false,
+          "checked": false,
+          "type": "checkbox"
+        }
+      },
+      {
+        "name": "recreated-window-off",
+        "windows": [
+          {
+            "id": 2,
+            "alwaysOnTop": false,
+            "visible": true
+          }
+        ],
+        "menu": {
+          "enabled": true,
+          "checked": false,
+          "type": "checkbox"
+        }
+      }
+    ],
+    "stacking": {
+      "stacking-off": {
+        "applicationIndex": 7,
+        "applicationPid": 29724,
+        "expected": "below",
+        "referenceIndex": 6,
+        "referenceIsForeground": true,
+        "referencePid": 30631,
+        "windows": [
+          {
+            "kCGWindowAlpha": 1,
+            "kCGWindowBounds": {
+              "Height": 388,
+              "Width": 560,
+              "X": 232,
+              "Y": 159
+            },
+            "kCGWindowIsOnscreen": true,
+            "kCGWindowLayer": 0,
+            "kCGWindowMemoryUsage": 2288,
+            "kCGWindowName": "Controlled reference window \u2014 verification only",
+            "kCGWindowNumber": 41,
+            "kCGWindowOwnerName": "always-on-top-screen",
+            "kCGWindowOwnerPID": 30631,
+            "kCGWindowSharingState": 1,
+            "kCGWindowStoreType": 1
+          },
+          {
+            "kCGWindowAlpha": 1,
+            "kCGWindowBounds": {
+              "Height": 660,
+              "Width": 940,
+              "X": 30,
+              "Y": 48
+            },
+            "kCGWindowIsOnscreen": true,
+            "kCGWindowLayer": 0,
+            "kCGWindowMemoryUsage": 2288,
+            "kCGWindowName": "Synara",
+            "kCGWindowNumber": 35,
+            "kCGWindowOwnerName": "Synara",
+            "kCGWindowOwnerPID": 29724,
+            "kCGWindowSharingState": 1,
+            "kCGWindowStoreType": 1
+          }
+        ]
+      },
+      "stacking-on": {
+        "applicationIndex": 6,
+        "applicationPid": 29724,
+        "expected": "above",
+        "referenceIndex": 7,
+        "referenceIsForeground": true,
+        "referencePid": 30836,
+        "windows": [
+          {
+            "kCGWindowAlpha": 1,
+            "kCGWindowBounds": {
+              "Height": 660,
+              "Width": 940,
+              "X": 30,
+              "Y": 48
+            },
+            "kCGWindowIsOnscreen": true,
+            "kCGWindowLayer": 3,
+            "kCGWindowMemoryUsage": 2288,
+            "kCGWindowName": "Synara",
+            "kCGWindowNumber": 35,
+            "kCGWindowOwnerName": "Synara",
+            "kCGWindowOwnerPID": 29724,
+            "kCGWindowSharingState": 1,
+            "kCGWindowStoreType": 1
+          },
+          {
+            "kCGWindowAlpha": 1,
+            "kCGWindowBounds": {
+              "Height": 388,
+              "Width": 560,
+              "X": 232,
+              "Y": 159
+            },
+            "kCGWindowIsOnscreen": true,
+            "kCGWindowLayer": 0,
+            "kCGWindowMemoryUsage": 2288,
+            "kCGWindowName": "Controlled reference window \u2014 verification only",
+            "kCGWindowNumber": 44,
+            "kCGWindowOwnerName": "always-on-top-screen",
+            "kCGWindowOwnerPID": 30836,
+            "kCGWindowSharingState": 1,
+            "kCGWindowStoreType": 1
+          }
+        ]
+      }
+    },
+    "normalQuit": {
+      "normalQuit": true,
+      "actualExit": {
+        "code": 0,
+        "signal": null
+      },
+      "exitCode": 0,
+      "signalCode": null
+    },
+    "cleanup": {
+      "cleaned": true,
+      "boundary": "Only applications with the exact owned bundle URL; remaining descendant teardown is runner-owned and unproven."
+    }
+  }
+]

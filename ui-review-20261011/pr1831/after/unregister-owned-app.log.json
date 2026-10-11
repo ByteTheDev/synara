@@ -1,0 +1,10 @@
+{
+  "command": "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister",
+  "args": [
+    "-u",
+    "/Users/runner/work/_temp/always-on-top-owned-kzZDcE/expanded/Synara.app"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}

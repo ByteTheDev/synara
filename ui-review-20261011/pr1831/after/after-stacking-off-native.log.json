@@ -1,0 +1,12 @@
+{
+  "command": "/Users/runner/work/_temp/always-on-top-owned-kzZDcE/always-on-top-screen",
+  "args": [
+    "reference",
+    "/Users/runner/work/_temp/always-on-top-owned-kzZDcE/capture-config.json",
+    "after-stacking-off",
+    "below"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}

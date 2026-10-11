@@ -1,0 +1,9 @@
+{
+  "normalQuit": true,
+  "actualExit": {
+    "code": 0,
+    "signal": null
+  },
+  "exitCode": 0,
+  "signalCode": null
+}

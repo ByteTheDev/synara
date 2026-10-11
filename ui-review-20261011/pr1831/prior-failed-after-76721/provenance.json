@@ -1,0 +1,21 @@
+{
+  "label": "after",
+  "sourceSha": "ac0e7f65b6860dbc4e7c308acbc01a886238f559",
+  "sourceTree": "57aefecc130961e170bc46ebfbafef8b6fd880eb",
+  "driverSha": "76721af9214756296f7e178e22a11f4d0a5d05da",
+  "driverTree": "3d87b5e1ca841f0cacd88df0f72883e51e31d0a0",
+  "run": "38165415846",
+  "version": "1.0.2-beta.1",
+  "lockfileSha256": "e04d95a03e02e86d0c78fed226bdb9faa3519e0eb8a73868c7434f08df567879",
+  "mainSha256": "790fa5cabd4d6a2c37640d1d0b309349c06b36b829b16a2d9f079eb1ec9b4908",
+  "canonicalStartupSha256": "4d88cdccfb35794c7f025b40a74fd0d9d1c5a5fe272a0fbaab4e806d3c423991",
+  "driverScriptSha256": "eef0ea06cf62a012b1d914a49e2e5fcc64e3b0dce5254353eaf9869f15a60118",
+  "nativeScriptSha256": "5e718939b1a763f3e024e4eacfaeea59cc33bf016459bbbe090f1631dc02accb",
+  "workflowSha256": "d1918b277d2f7324de818c057a3fdd9ed0be58c0160e7cb833f0a8bf10ec6b7a",
+  "compiledIcon": {
+    "sourceSha": "ac0e7f65b6860dbc4e7c308acbc01a886238f559",
+    "sha256": "f7b884a964ef9ce8bd3d0e03f5e420b285b804ccae9d7c12fc4dccc8b34fa5a6",
+    "bytes": 546152
+  },
+  "qualification": "Actual unsigned production macOS arm64 package. Playwright's main-process automation opens the unchanged native View submenu with Menu.popup and invokes its unchanged production click handler. Native window state/events and actual macOS screen/z-order are observed. A labelled temporary reference window tests stacking; controlled BrowserWindow.destroy and app activate event test recreation, not ordinary close-confirmation interaction. Actual normal app quit requires clicking the visible unchanged renderer Quit confirmation. No source/menu/reply mock, TCC/accessibility changes, provider session, signing, release, Windows/Linux runtime or Wayland claim."
+}

@@ -1,0 +1,13 @@
+{
+  "command": "/usr/bin/swiftc",
+  "args": [
+    "-swift-version",
+    "5",
+    "/Users/runner/work/synara/synara/driver/.github/scripts/always-on-top-screen.swift",
+    "-o",
+    "/Users/runner/work/_temp/always-on-top-owned-4u4TLi/always-on-top-screen"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null
+}
