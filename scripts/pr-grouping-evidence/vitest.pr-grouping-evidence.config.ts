@@ -18,6 +18,7 @@ export default defineConfig({
       viewport: { width: 960, height: 1100 },
       provider: playwright({
         contextOptions: {
+          viewport: { width: 960, height: 1100 },
           recordVideo: { dir: `${directory}/video`, size: { width: 960, height: 1100 } },
         },
       }),
