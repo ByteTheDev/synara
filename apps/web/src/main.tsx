@@ -6,6 +6,7 @@ import "@fontsource-variable/jetbrains-mono";
 import "./index.css";
 
 import { appHistory } from "./appNavigation";
+import { revealHubsRailItemOnce } from "./appSettings";
 import { getRouter } from "./router";
 import { APP_DISPLAY_NAME } from "./branding";
 import { isDesktopPresentation } from "~/lib/hosts/workspacePresentation";
@@ -17,6 +18,9 @@ import { installRendererErrorDiagnostics } from "./lib/rendererErrorDiagnostics"
 
 const disposeRendererDiagnostics = installRendererErrorDiagnostics();
 if (import.meta.hot) import.meta.hot.dispose(() => disposeRendererDiagnostics?.());
+
+// Before the first render: settings hooks read the stored rail on mount.
+revealHubsRailItemOnce();
 
 const router = getRouter(appHistory);
 const disposeProductNavigation = router.subscribe("onResolved", ({ toLocation, pathChanged }) => {

@@ -282,7 +282,7 @@ export function ActivityThreadRow({
               aria-hidden
             />
           )}
-          <span className="min-w-0 truncate text-ui-sm text-muted-foreground/80">
+          <span className="mr-auto min-w-0 truncate text-ui-sm text-muted-foreground/80">
             {resolveThreadProjectLabel(project)}
           </span>
           {isWorktree ? (
@@ -296,11 +296,11 @@ export function ActivityThreadRow({
               · {external.hostName}
             </span>
           ) : null}
-          <span className="ml-auto flex min-w-0 shrink-0 items-center gap-1.5">
+          <span className="flex min-w-0 shrink-[100] items-center gap-1.5">
             {pr && !external ? (
               <PrStateChip
                 pr={pr}
-                className="[&_svg]:size-2.5"
+                className="min-h-5 min-w-5 shrink-0 justify-center [&_svg]:size-3"
                 onOpen={(event) => onOpenPullRequest(event, pr)}
               />
             ) : null}
