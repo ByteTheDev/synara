@@ -35,8 +35,8 @@ jobs:
       - name: Checkout reviewed driver and pinned source ancestry
         uses: actions/checkout@v6
         with:
-          # The isolated driver and its exact feature source 392bc7e.
-          fetch-depth: 2
+          # The observer repair, its original driver, and exact source 392bc7e.
+          fetch-depth: 3
           persist-credentials: false
       - name: Setup unchanged workspace
         uses: ./.github/actions/setup-workspace

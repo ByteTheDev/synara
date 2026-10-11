@@ -7,13 +7,14 @@ import { join, resolve } from "node:path";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { ProviderInstanceId } from "@synara/contracts";
 import { Deferred, Effect, Exit, Layer, Scope } from "effect";
-import { ChildProcessSpawner } from "effect/unstable/process";
+import { type ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
 import { ServerSecretStore } from "../../auth/Services/ServerSecretStore.ts";
 import { CheckpointStoreLive } from "../../checkpointing/Layers/CheckpointStore.ts";
 import { CheckpointStore } from "../../checkpointing/Services/CheckpointStore.ts";
 import { GitCoreLive } from "../../git/Layers/GitCore.ts";
 import { GitCore } from "../../git/Services/GitCore.ts";
 import { ProviderSessionRuntimeRepositoryLive } from "../../persistence/Layers/ProviderSessionRuntime.ts";
+import { makeEffectProcessCommand } from "../../platform/effectProcessRuntime.ts";
 import {
   ProviderProcessExitUnprovenError,
   teardownProviderProcessTree,
@@ -37,6 +38,34 @@ import { TurnCheckpointCoordinatorLive } from "./TurnCheckpointCoordinator.ts";
 
 export const NATIVE_STARTUP_BOUNDARY = "native-startup-probe-before-prompt-write";
 export const NATIVE_STARTUP_INSTANCE = ProviderInstanceId.makeUnsafe("opencode_native_probe");
+
+export function assertNativeServerCommand(command: ChildProcess.Command, binary: string): void {
+  assert.equal(command._tag, "StandardCommand", "Expected one native server launch command");
+  if (command._tag !== "StandardCommand") return;
+  const serveIndex = command.args.lastIndexOf("serve");
+  assert.ok(serveIndex >= 0, "Expected the owned native serve operation");
+  const args = command.args.slice(serveIndex);
+  assert.equal(args.length, 5);
+  assert.equal(args[1], "--hostname");
+  assert.equal(args[2], "127.0.0.1");
+  assert.equal(args[3], "--port");
+  assert.ok(/^\d+$/u.test(args[4]!) && Number(args[4]) > 0 && Number(args[4]) < 65_536);
+  // Match the unchanged production planner, including its POSIX priority
+  // launcher. That shell execs the pinned binary and retains the owned PID.
+  const matchesPlan = [false, true].some((lowerPriority) => {
+    const expected = makeEffectProcessCommand(binary, args, {
+      ...command.options,
+      lowerPriority,
+    });
+    return (
+      expected._tag === "StandardCommand" &&
+      expected.command === command.command &&
+      expected.args.length === command.args.length &&
+      expected.args.every((arg, index) => arg === command.args[index])
+    );
+  });
+  assert.ok(matchesPlan, "Native launch must match the pinned binary's production command plan");
+}
 
 export function makeNativeStartupProbe(name: string) {
   assert.equal(process.env.SYNARA_NATIVE_STARTUP_PROBE, "1");
@@ -87,15 +116,10 @@ export function makeNativeStartupProbe(name: string) {
       // stdout/stderr, which remain exclusively owned by the production runtime.
       const observationScope = yield* Scope.Scope;
       return ChildProcessSpawner.make((command) =>
-        spawner.spawn(command).pipe(
+        Effect.sync(() => assertNativeServerCommand(command, binary)).pipe(
+          Effect.andThen(spawner.spawn(command)),
           Effect.tap((handle) =>
             Effect.gen(function* () {
-              if (
-                command._tag !== "StandardCommand" ||
-                command.command !== binary ||
-                command.args[0] !== "serve"
-              )
-                return;
               const child = {
                 handle,
                 pid: Number(handle.pid),
