@@ -1,0 +1,77 @@
+name: Native owned runtime preparation Before and After
+on:
+  push:
+    branches: [codex/runtime-windows-prepared-native-20261011]
+    paths:
+      - .github/workflows/windows-prepared-native.yml
+      - .github/scripts/windows-prepared-native/**
+permissions:
+  contents: read
+concurrency:
+  group: windows-prepared-native-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  native:
+    name: Native owned runtime ${{ matrix.label }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+        label: [before, after]
+        include:
+          - label: before
+            source: 110cc88e3ca24f54748d49fd7f20d4c434ee12a0
+          - label: after
+            source: e0dc656efd9f6b4e45999f7925d9122eadba1c06
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
+      PREPARED_NATIVE_LABEL: ${{ matrix.label }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout exact production source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          path: source
+          persist-credentials: false
+      - name: Checkout independently reviewed diagnostic
+        uses: actions/checkout@v6
+        with:
+          path: driver
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install exact frozen runtime dependencies with canonical serialized lifecycles
+        working-directory: source
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            export BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-install-cache"
+          fi
+          bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1
+      - name: Verify CLI integrity and execute the identical native fixture
+        run: node driver/.github/scripts/windows-prepared-native/runner.mjs
+      - name: Retain exact source, raw outcomes and immutable bounded evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: prepared-native-${{ matrix.label }}-${{ matrix.os }}-${{ github.sha }}
+          path: ${{ runner.temp }}/runtime-prepared-native-evidence/
+          if-no-files-found: error
+          retention-days: 30

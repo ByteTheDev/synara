@@ -1,0 +1,45 @@
+{
+  "version": "2.0.25",
+  "metadataDriver": "1bf02db1fe4e14172816978ad50dfcc206c81825",
+  "metadataRun": 38164333685,
+  "metadataArtifact": 11711667971,
+  "metadataArtifactSha256": "7f7a4d32f44a5106ef3a153fdbd1e8fa03b832f89cdbaceb1af826846bc871df",
+  "platforms": {
+    "linux-x64": {
+      "name": "@opencode/cli-linux-x64",
+      "os": "linux",
+      "url": "https://registry.npmjs.org/@opencode/cli-linux-x64/-/cli-linux-x64-2.0.25.tgz",
+      "archiveBytes": 97499517,
+      "unpackedBytes": 209901260,
+      "sha1": "d99c06a1e3ffd9fe4680f68be18cf6c15ef39e1b",
+      "sha256": "5b3e50ad1c06214aaf1c26eb30f90a15f66975a6e3e48fef5a31c34466e37b5a",
+      "sha512Base64": "GlqAQ1w5K+MHJ32oVl7Yxg5pE+NyZS2cjpuzGbk4LAmhDrqHbv9JVhwLCLKoPMASdWnHkzpj0W5hs8avYW4NVA==",
+      "metadataSha256": "c695bdf296ed60154707129ea27329a626c124857b6f222a0d368449631cbdec"
+    },
+    "windows-x64": {
+      "name": "@opencode/cli-windows-x64",
+      "os": "win32",
+      "url": "https://registry.npmjs.org/@opencode/cli-windows-x64/-/cli-windows-x64-2.0.25.tgz",
+      "archiveBytes": 99644112,
+      "unpackedBytes": 212355350,
+      "sha1": "b2ea737ca04e670ae19ce3d7a38bf552acc20834",
+      "sha256": "65bb6a47afb1d541daaf8ca8bb143ac91c5ff3e70287eb182400bd33d82a2b4d",
+      "sha512Base64": "EiC55LXubK+5mN+ZZedoWw0hn6QdiPB6QHydIqP/l3vLiLvrkmJXDVRUKnv3BCZEt7CVTm6+Ssv2SnSCZeWF4A==",
+      "metadataSha256": "581f112157b4540f6917c40e52547e947ae1b4f766b22ad6db08fa2fdfc109d9"
+    }
+  },
+  "sources": {
+    "before": {
+      "head": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+      "tree": "3c1d0c3aa2559fb37da21dc88025d3adf6ae7a90"
+    },
+    "after": {
+      "head": "e0dc656efd9f6b4e45999f7925d9122eadba1c06",
+      "tree": "758d4b075cf1ba9313518f540a1c1fe0922970fa"
+    }
+  },
+  "testPath": "apps/server/src/provider/Layers/PreparedRuntime.native.test.ts",
+  "fixtureBlob": "5867727c258c0bf5a9eef9a8db3004b26b81284d",
+  "fixtureSha256": "e653be67b848176343b5a64d2e381c32f6e59bc4fd782e3ad2850080a8ebd228",
+  "nativeTests": 3
+}
