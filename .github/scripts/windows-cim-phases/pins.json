@@ -13,9 +13,11 @@
     "packages/shared/src/executable.ts": "46b027390492f8e398723ca56dd7a1d3f5f5347d",
     "packages/shared/src/windowsProcess.ts": "affb2b34a50bbd034603ab609022001627ee528e"
   },
-  "probeBlob": "c61d1948a70b55b7b0368f863f29c52282bf1b92",
-  "probeSha256": "8df421a473ce9c409917e72486cfc7a56ce5988141f5cf82d5ab5cd24e9af62c",
-  "bundleSha256": "017cd8058c3c4541094e22b589ae9bd838e947fddd01ce28735a97dec8b8978b",
+  "probeBlob": "55e057cbb704051d31a76c61c6edb3b57c0f4b9e",
+  "probeSha256": "239a6d91106696b338d8b6215d08abcaa8ad9b1e3c849fb6b4a3935593b7a24a",
+  "bundleSha256": "3e31e85f84a5a847cd8318b00951030ee250b7aef5dc879f3961b6819ffc8f30",
   "productionScriptSha256": "38c726e2086f2a50311e8615cdd329ea83624423192e3f99a0c11cc515c24184",
-  "instrumentedScriptSha256": "f86b9722f31d67da4c09120f751a1f16802c928785e45a5aec08d79673006690"
+  "instrumentedScriptSha256": "f86b9722f31d67da4c09120f751a1f16802c928785e45a5aec08d79673006690",
+  "explicitImportScriptSha256": "022e3d1ba09299f281cf7222f203666140d58a67b205b507dcbfa5f5454343c8",
+  "systemModulePathScriptSha256": "ead2d11cbcdc5435041dbd1bde1e3f86328a31953761aae501d8c61af38af59b"
 }

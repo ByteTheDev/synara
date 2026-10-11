@@ -324,7 +324,7 @@ try {
       sha256: hash(readFileSync(join(driver, path))),
     })),
     qualification:
-      "Pinned production worker and parser under Node, with unchanged open-stdin control and explicit EOF/command-resolution instrumentation variants. All four use a separate15s diagnostic bound; production3s policy is unchanged. Private cwd/profile and writable module cache are held constant. No dependency install, provider execution, process rows, command arguments or environment values are published. Only aggregate counts, fixed phases and actual owned-child observations are retained; no descendant cleanup is inferred.",
+      "Pinned production worker and parser under Node, with unchanged open-stdin control and explicit EOF/command-resolution instrumentation variants, plus trusted system-module import/path experiments. All six use a separate15s diagnostic bound; production3s policy is unchanged. Private cwd/profile and writable module cache are held constant. No dependency install, provider execution, process rows, command arguments or environment values are published. Only aggregate counts, fixed phases and actual owned-child observations are retained; no descendant cleanup is inferred.",
   });
   const probe = readFileSync(join(scripts, "CimPhases.probe.ts"));
   assert.equal(blob(probe), pins.probeBlob);
@@ -362,7 +362,9 @@ try {
   try {
     await observe("worker", label === "node" ? process.execPath : "bun", [bundlePath], {
       cwd: working,
-      timeoutMs: 90_000,
+      // Six independent cases each retain their15s capture and5s close bounds.
+      // This is only the outer observer budget, not the production query policy.
+      timeoutMs: 150_000,
       env: {
         ...environment,
         SYNARA_WORKER_PHASES_DIAGNOSTIC: "1",
@@ -388,7 +390,7 @@ try {
   } catch (error) {
     failures.push(String(error));
   }
-  // Preserve all four actual results even when the unchanged control fails.
+  // Preserve all six actual results even when the unchanged controls fail.
   try {
     freeze("events.ndjson");
     const events = readFileSync(join(output, "events.ndjson"), "utf8")
@@ -402,7 +404,14 @@ try {
     assert.equal(qualified[0].defaultQueryTimeoutMs, 3_000);
     assert.equal(qualified[0].observationDeadlineMs, 15_000);
     assert.equal(qualified[0].closeDrainMs, 5_000);
-    assert.deepEqual(qualified[0].cases, ["exact-open", "exact-eof", "phased-open", "phased-eof"]);
+    assert.deepEqual(qualified[0].cases, [
+      "exact-open",
+      "exact-eof",
+      "phased-open",
+      "phased-eof",
+      "explicit-import-open",
+      "system-module-path-open",
+    ]);
     assert.equal(qualified[0].bun, null);
     const cases = events.filter((event) => event.kind === "case-result");
     const captures = events.filter((event) => event.kind === "capture-result");
@@ -419,7 +428,13 @@ try {
     for (const item of cases) {
       assert.equal(
         item.scriptSha256,
-        item.id.startsWith("exact") ? pins.productionScriptSha256 : pins.instrumentedScriptSha256,
+        item.id.startsWith("exact")
+          ? pins.productionScriptSha256
+          : item.id === "explicit-import-open"
+            ? pins.explicitImportScriptSha256
+            : item.id === "system-module-path-open"
+              ? pins.systemModulePathScriptSha256
+              : pins.instrumentedScriptSha256,
         "Every control must use its exact reviewed PowerShell script",
       );
     }

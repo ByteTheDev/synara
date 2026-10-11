@@ -14,9 +14,20 @@ import {
 
 type RecordObservation = (kind: string, fields: Record<string, unknown>) => void;
 type CommandPlan = { command: string; args: string[]; script: string };
-const CASES = ["exact-open", "exact-eof", "phased-open", "phased-eof"] as const;
+const CASES = [
+  "exact-open",
+  "exact-eof",
+  "phased-open",
+  "phased-eof",
+  "explicit-import-open",
+  "system-module-path-open",
+] as const;
 const PHASES = new Set([
   "before-command-resolution",
+  "before-explicit-import",
+  "explicit-import-completed",
+  "before-module-path-isolation",
+  "module-path-isolated",
   "command-resolved",
   "before-query",
   "first-row",
@@ -99,6 +110,42 @@ export function withCimPhaseMarkers(original: string): string {
       .replace(caughtReplacement, caught),
     original,
     "Instrumentation must reverse to every original script byte",
+  );
+  return modified;
+}
+
+// These experiments alter only this owned PowerShell process. They preserve
+// the already reviewed phase markers, complete original query and row protocol.
+export function withSystemCimModuleResolution(
+  phased: string,
+  mode: "explicit-import" | "system-module-path",
+): string {
+  const marker = "    [Console]::Error.WriteLine('@phase:before-command-resolution')";
+  const preparation =
+    mode === "explicit-import"
+      ? [
+          "    [Console]::Error.WriteLine('@phase:before-explicit-import')",
+          "    [Console]::Error.Flush()",
+          "    $cimManifest = [System.IO.Path]::Combine($PSHOME, 'Modules\\CimCmdlets\\CimCmdlets.psd1')",
+          "    if (-not [System.IO.File]::Exists($cimManifest)) { throw 'System CimCmdlets manifest is missing' }",
+          "    Import-Module -Name $cimManifest -ErrorAction Stop",
+          "    [Console]::Error.WriteLine('@phase:explicit-import-completed')",
+          "    [Console]::Error.Flush()",
+        ].join("\n")
+      : [
+          "    [Console]::Error.WriteLine('@phase:before-module-path-isolation')",
+          "    [Console]::Error.Flush()",
+          "    $env:PSModulePath = [System.IO.Path]::Combine($PSHOME, 'Modules')",
+          "    [Console]::Error.WriteLine('@phase:module-path-isolated')",
+          "    [Console]::Error.Flush()",
+        ].join("\n");
+  assert.equal(phased.split(marker).length, 2, "Exactly one reviewed resolution boundary");
+  const replacement = preparation + "\n" + marker;
+  const modified = phased.replace(marker, replacement);
+  assert.equal(
+    modified.replace(replacement, marker),
+    phased,
+    "Module experiment must reverse to all prior phase-instrumented bytes",
   );
   return modified;
 }
@@ -199,7 +246,7 @@ export async function runProbe(): Promise<void> {
     nativeProvider: false,
     exitProof: false,
     scope:
-      "Unchanged production worker controls versus explicitly instrumented command-resolution and stdin-EOF experiments. The15s diagnostic bound does not change the3s production policy. Only counts, fixed phases and actual owned-child exits are emitted.",
+      "Unchanged production and phase/EOF controls, plus explicit trusted system CimCmdlets import and system-module-path isolation experiments. The 15s diagnostic bound does not change the 3s production policy. Only counts, fixed phases and actual owned-child exits are emitted.",
   });
 
   for (const id of CASES) {
@@ -225,7 +272,13 @@ export async function runProbe(): Promise<void> {
         scriptSha256 = hash(observed.script);
       } else {
         assert.ok(plan, "No verified actual production command plan");
-        const script = withCimPhaseMarkers(plan.script);
+        const phased = withCimPhaseMarkers(plan.script);
+        const script =
+          id === "explicit-import-open"
+            ? withSystemCimModuleResolution(phased, "explicit-import")
+            : id === "system-module-path-open"
+              ? withSystemCimModuleResolution(phased, "system-module-path")
+              : phased;
         scriptSha256 = hash(script);
         const args = [...plan.args.slice(0, 4), Buffer.from(script, "utf16le").toString("base64")];
         const command = plan.command;
@@ -247,7 +300,13 @@ export async function runProbe(): Promise<void> {
       });
       record("case-start", {
         id,
-        instrumented: id.startsWith("phased"),
+        instrumented: !id.startsWith("exact"),
+        moduleResolution:
+          id === "explicit-import-open"
+            ? "explicit-system-manifest"
+            : id === "system-module-path-open"
+              ? "system-module-path-only"
+              : "automatic",
         closeRequestInput: id.endsWith("eof"),
         scriptSha256,
         originalScriptSha256: plan ? hash(plan.script) : null,
