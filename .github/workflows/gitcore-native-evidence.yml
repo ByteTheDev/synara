@@ -38,8 +38,11 @@ jobs:
         run: |
           # This affects checkout bytes only. Runtime Git configuration, including
           # the Windows runner's autocrlf default, remains unchanged for the tests.
-          git -c core.autocrlf=false checkout-index --force --all
-          git -C .pr-driver -c core.autocrlf=false checkout-index --force --all
+          for checkout in . .pr-driver; do
+            # Discard cached checkout stat information before rewriting every blob.
+            git -C "$checkout" read-tree HEAD
+            git -C "$checkout" -c core.autocrlf=false checkout-index --force --all --index
+          done
       - name: Install the source's frozen runtime workspace
         uses: ./.github/actions/setup-workspace
         with:
