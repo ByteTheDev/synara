@@ -17,12 +17,12 @@ import { fileURLToPath } from "node:url";
 
 const pins = {
   before: {
-    source: "25b55b0bec0914d81e4db54b27f953721b067b29",
-    tree: "00d8c27b49524a93e219c03c8639638e6415354c",
+    source: "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+    tree: "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822",
   },
   after: {
-    source: "6d3682aa9123d02b560131ae363e0b627e634447",
-    tree: "d6898a297b37af10ff79502796f3f207db3667e7",
+    source: "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
+    tree: "ba99b66e786402f80124c4cf7368512908dee17f",
   },
 };
 const variant = process.env.HOMEBREW_DOCS_VARIANT;

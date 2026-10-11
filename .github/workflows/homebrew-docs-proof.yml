@@ -26,7 +26,7 @@ jobs:
       - name: Checkout exact application source
         uses: actions/checkout@v6
         with:
-          ref: ${{ matrix.variant == 'before' && '25b55b0bec0914d81e4db54b27f953721b067b29' || '6d3682aa9123d02b560131ae363e0b627e634447' }}
+          ref: ${{ matrix.variant == 'before' && '3270dcf89bb60745ac568803a940cd7e7ac676a7' || '0d5f04b91d4bf7af72f6d9c017705183c3c89bef' }}
           path: source
           persist-credentials: false
       - name: Checkout exact capture driver
