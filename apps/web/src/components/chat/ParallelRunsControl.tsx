@@ -28,7 +28,14 @@ import {
   selectParallelRunAttempt,
 } from "~/lib/parallelRuns";
 import { Button } from "../ui/button";
-import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
+import {
+  Dialog,
+  DialogPopup,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+} from "../ui/dialog";
 import { Textarea } from "../ui/textarea";
 import { ProviderModelPicker } from "./ProviderModelPicker";
 import type { ComponentProps } from "react";
@@ -227,14 +234,20 @@ export function ParallelRunsControl(props: {
         }}
       >
         <DialogPopup className={runId ? "max-w-5xl" : undefined}>
-          <DialogTitle>{runId ? "Parallel attempts" : "Run the same task in parallel"}</DialogTitle>
-          <DialogDescription>
-            {runId
-              ? "Inspect each answer and its changes from the common base. Keeping an attempt archives the other conversations and preserves their branches and worktrees."
-              : "Choose two or three attempts. Each gets an independent thread and worktree from the same commit. Uncommitted source changes are excluded. The source conversation is kept for launch recovery. Its access mode applies to every attempt. Providers without Auto support use approval mode."}
-          </DialogDescription>
+          <DialogHeader>
+            <DialogTitle>
+              {runId ? "Parallel attempts" : "Run the same task in parallel"}
+            </DialogTitle>
+            <DialogDescription>
+              {runId
+                ? "Inspect each answer and its changes from the common base. Keeping an attempt archives the other conversations and preserves their branches and worktrees."
+                : "Choose two or three attempts. Each gets an independent thread and worktree from the same commit. Uncommitted source changes are excluded. The source conversation is kept for launch recovery. Its access mode applies to every attempt. Providers without Auto support use approval mode."}
+            </DialogDescription>
+          </DialogHeader>
           {runId ? (
-            <div className="grid gap-3 overflow-auto p-4 text-ui sm:grid-cols-3">
+            <div
+              className={`grid gap-3 overflow-auto p-4 text-ui ${attempts.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
+            >
               {attempts.map((attempt, index) => (
                 <section key={attempt.id} className="min-w-0 rounded-lg border p-3">
                   <h3 className="font-medium">
@@ -250,7 +263,10 @@ export function ParallelRunsControl(props: {
                   <pre className="max-h-64 overflow-auto whitespace-pre-wrap font-sans">
                     {details.data?.[index]?.thread?.messages.findLast(
                       (message) => message.role === "assistant",
-                    )?.text ?? "Waiting for an answer…"}
+                    )?.text ??
+                      (parallelAttemptSettled(attempt)
+                        ? "No final answer recorded."
+                        : "Waiting for an answer…")}
                   </pre>
                   <details className="my-2">
                     <summary>Changes from base</summary>
