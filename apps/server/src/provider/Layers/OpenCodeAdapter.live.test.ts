@@ -71,6 +71,12 @@ describe.runIf(live)("native OpenCode lifecycle", () => {
             attachments: [],
             modelSelection: { provider: "opencode", model },
           });
+          yield* wait(
+            (event) =>
+              event.threadId === first &&
+              event.turnId === interrupted.turnId &&
+              event.type === "content.delta",
+          );
           yield* adapter.interruptTurn(first, interrupted.turnId);
           yield* adapter.stopSession(first);
           yield* adapter.stopSession(first);
