@@ -32,10 +32,11 @@ jobs:
       GIT_CONFIG_KEY_1: core.eol
       GIT_CONFIG_VALUE_1: lf
     steps:
-      - name: Checkout reviewed driver and its immutable source parent
+      - name: Checkout reviewed driver and pinned source ancestry
         uses: actions/checkout@v6
         with:
-          fetch-depth: 2
+          # This child, the banner correction, the original driver, and source 872344c.
+          fetch-depth: 4
           persist-credentials: false
       - name: Setup unchanged workspace
         uses: ./.github/actions/setup-workspace
