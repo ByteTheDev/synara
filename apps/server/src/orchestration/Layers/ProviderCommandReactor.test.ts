@@ -22821,6 +22821,58 @@ describe("ProviderCommandReactor", () => {
     expect(harness.stopRuntimeSession).not.toHaveBeenCalled();
   });
 
+  it("keeps unrelated provider work usable when deleted-thread cleanup fails", async () => {
+    const manager = new ComputerManager({ backend: new FakeComputerBackend() });
+    const removed = vi
+      .spyOn(manager, "handleThreadRemoved")
+      .mockRejectedValueOnce(new Error("computer cleanup failed"));
+    try {
+      const harness = await createHarness({
+        computerService: {
+          supported: true,
+          availability: { kind: "available", backend: "fake" },
+          manager,
+        },
+      });
+      const threadId = ThreadId.makeUnsafe("thread-delete-cleanup-failure");
+      const now = new Date().toISOString();
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.create",
+          commandId: CommandId.makeUnsafe("cmd-create-cleanup-failure"),
+          threadId,
+          projectId: asProjectId("project-1"),
+          title: "Deleted thread",
+          modelSelection: { provider: "codex", model: "gpt-5.4" },
+          runtimeMode: "approval-required",
+          interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
+          branch: null,
+          worktreePath: null,
+          createdAt: now,
+        }),
+      );
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.delete",
+          commandId: CommandId.makeUnsafe("cmd-delete-cleanup-failure"),
+          threadId,
+        }),
+      );
+      await expect(harness.drain()).resolves.toBeUndefined();
+      expect(removed).toHaveBeenCalledWith(threadId);
+      await dispatchHarnessUserTurn(harness, {
+        messageId: "healthy-after-cleanup-failure",
+        text: "Continue",
+        createdAt: now,
+      });
+      await harness.drain();
+      expect(harness.sendTurn).toHaveBeenCalledTimes(1);
+      expect(harness.sendTurn.mock.calls[0]?.[0].threadId).toBe("thread-1");
+    } finally {
+      await manager.dispose();
+    }
+  });
+
   it("serializes archive cleanup through the durable provider intent source", async () => {
     const harness = await createHarness();
     const now = new Date().toISOString();

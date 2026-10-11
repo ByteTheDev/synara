@@ -7815,7 +7815,7 @@ const make = Effect.gen(function* () {
         return false;
       // Deletion cleanup is local and must still cancel queued work and clear caches.
       if (event.type === "thread.deleted") {
-        yield* processDomainEvent(event);
+        yield* processDomainEventSafely(event);
         return true;
       }
       const key = {
