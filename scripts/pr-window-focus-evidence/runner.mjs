@@ -100,6 +100,7 @@ if (command === "matrix") {
     "apps/web/src/components/ChatView.tsx",
     "apps/web/src/components/chat/ComposerModelPicker.tsx",
     "apps/web/src/components/chat/TraitsPicker.tsx",
+    "apps/web/src/components/BranchToolbar.tsx",
     "apps/web/src/components/chat/ComposerModelMenuTrigger.tsx",
     "apps/web/src/hooks/useTheme.ts",
     "apps/web/src/index.css",

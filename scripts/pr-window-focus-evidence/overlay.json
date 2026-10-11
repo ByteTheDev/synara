@@ -1,8 +1,8 @@
 {
   "fixture": {
     "path": "apps/web/src/components/ChatView.browser.tsx",
-    "blob": "5f913d0c0332a4adfec826ef66e5b9cd10935c07",
-    "sha256": "0f066877e19fa10f5209d76d27867263df7a4914dbf5dc8fc5c0b0365bd4d0e0"
+    "blob": "d86dd91606f75ca0a4ab5850cee5bda866b7ebeb",
+    "sha256": "8bc297ba2c0c2cfb6797837352febdb433579c3ff49d6e3e14adb7707fb79605"
   },
   "replacements": [
     {
@@ -15,16 +15,16 @@
     }
   ],
   "helperAnchor": "describe(\"ChatView transcript geometry (full app)\", () => {",
-  "testNamePattern": "preserves the (?:'model'|'traits'|model|traits) picker on first window activation$",
+  "testNamePattern": "preserves the (?:'model'|'permissions'|model|permissions) picker on first window activation$",
   "expectedCaseCount": 2,
   "expectedPhases": [
     "model-before-click",
     "model-after-click",
     "model-settled",
     "model-closed",
-    "traits-before-click",
-    "traits-after-click",
-    "traits-settled",
-    "traits-closed"
+    "permissions-before-click",
+    "permissions-after-click",
+    "permissions-settled",
+    "permissions-closed"
   ]
 }

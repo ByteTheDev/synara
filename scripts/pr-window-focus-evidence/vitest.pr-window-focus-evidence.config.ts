@@ -12,7 +12,7 @@ export default defineConfig({
     ...browserConfig.test,
     include: ["src/components/PrUiEvidence1841WindowFocus.browser.tsx"],
     testNamePattern:
-      "preserves the (?:'model'|'traits'|model|traits) picker on first window activation$",
+      "preserves the (?:'model'|'permissions'|model|permissions) picker on first window activation$",
     browser: {
       ...browserConfig.test?.browser,
       viewport: { width: 960, height: 1100 },

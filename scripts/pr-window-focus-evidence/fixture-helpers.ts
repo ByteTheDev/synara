@@ -4,8 +4,8 @@ async function captureWindowActivation(label: string, stage: string) {
   const source = import.meta.env.VITE_PR_FOCUS_SOURCE;
   if (!directory?.startsWith("/") || !["before", "after"].includes(variant))
     throw new Error("An explicit first-activation evidence target is required.");
-  const picker = label === "Change model and reasoning" ? "model" : "traits";
-  if (!["Change model and reasoning", "Change effort, context, and speed"].includes(label))
+  const picker = label === "Change model and reasoning" ? "model" : "permissions";
+  if (!["Change model and reasoning", "Full access"].includes(label))
     throw new Error("Unexpected first-activation control.");
   await document.fonts.ready;
   await waitForLayout();
