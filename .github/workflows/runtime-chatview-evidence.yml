@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: chatview-scroll-${{ matrix.case }}-${{ matrix.source }}
-          path: ${{ runner.temp }}/chatview-scroll-evidence/
+          path: ${{ github.workspace }}/.runtime-chatview-evidence/
           if-no-files-found: error
           retention-days: 30
 
