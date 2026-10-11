@@ -187,7 +187,9 @@ failed before reaching the candidate and does not establish an SDK build speedup
 macOS catalog only; `js` builds and records portable outputs only. These stages
 do not qualify an installer or provider runtime. Publication rejects any scope
 other than `platform=all, stage=artifact` and still requires every desktop gate.
-Server tarball preparation runs alongside desktop jobs; publication waits for both.
+Server tarball preparation starts after exact-source preflight and portable
+JavaScript, independently of quality checks and server tests. GitHub publication
+still waits for the tarball, every desktop job and both test gates.
 
 ### Release build caches and measurements
 

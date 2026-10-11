@@ -448,7 +448,7 @@ jobs:
   build_server_tarball:
     name: Build server tarball
     if: needs.preflight.outputs.build_server == 'true'
-    needs: [preflight, quality, server_tests, build_portable]
+    needs: [preflight, build_portable]
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:

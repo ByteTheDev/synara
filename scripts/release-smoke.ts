@@ -558,8 +558,11 @@ async function verifyReleaseWorkflowSafety(): Promise<void> {
     workflow.indexOf("  release:\n"),
   );
   const serverNeeds = serverJob.match(/    needs: \[(.+)\]/)?.[1]?.split(/,\s*/) ?? [];
-  for (const gate of ["preflight", "quality", "server_tests", "build_portable"])
+  for (const gate of ["preflight", "build_portable"])
     if (!serverNeeds.includes(gate)) throw new Error(`Server artifact does not await ${gate}.`);
+  for (const testGate of ["quality", "server_tests"])
+    if (serverNeeds.includes(testGate))
+      throw new Error(`Server artifact unnecessarily waits for ${testGate}.`);
   assertContains(
     serverJob,
     "permissions:\n      contents: read",
