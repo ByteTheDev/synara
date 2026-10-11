@@ -1,0 +1,40 @@
+name: Inspect actual stable macOS release for Homebrew PR 1198
+on:
+  push:
+    branches: [cleanup/20261011/pr1198-release-inspection]
+    paths:
+      - .github/scripts/inspect-homebrew-release.mjs
+      - .github/workflows/inspect-homebrew-release.yml
+permissions:
+  contents: read
+concurrency:
+  group: homebrew-release-inspection-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  inspect:
+    name: Read-only published ${{ matrix.arch }} DMG metadata and signing
+    runs-on: macos-15
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64, x64]
+    env:
+      RELEASE_ARCH: ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - name: Verify exact downloaded DMG and read actual native metadata
+        run: node .github/scripts/inspect-homebrew-release.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: homebrew-release-1198-${{ matrix.arch }}-${{ github.sha }}
+          path: ${{ runner.temp }}/homebrew-release-${{ matrix.arch }}
+          retention-days: 14
+          if-no-files-found: error
