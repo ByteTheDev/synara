@@ -1,0 +1,60 @@
+name: GitCore native filesystem evidence
+
+on:
+  push:
+    branches:
+      - cleanup/20261011/gitcore-native-1847-evidence
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gitcore-native-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native:
+    name: GitCore 144 cases (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - name: Check out exact reviewed application
+        uses: actions/checkout@v6
+        with:
+          ref: a1b087d984a39cf9df936d5da9465db9e7679600
+          persist-credentials: false
+      - name: Check out isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+      - name: Materialize committed source bytes
+        shell: bash
+        run: |
+          # This affects checkout bytes only. Runtime Git configuration, including
+          # the Windows runner's autocrlf default, remains unchanged for the tests.
+          git -c core.autocrlf=false checkout-index --force --all
+          git -C .pr-driver -c core.autocrlf=false checkout-index --force --all
+      - name: Install the source's frozen runtime workspace
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - name: Run all canonical GitCore tests and preserve receipts
+        env:
+          DRIVER_SHA: ${{ github.sha }}
+          CI: "true"
+        run: node .pr-driver/scripts/gitcore-native-evidence/runner.mjs
+      - name: Upload source, native environment and unfiltered test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitcore-1847-${{ matrix.os }}
+          path: gitcore-native-evidence/
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,181 @@
+import { spawn, spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, appendFileSync } from "node:fs";
+import path from "node:path";
+
+const SOURCE = "a1b087d984a39cf9df936d5da9465db9e7679600";
+const TREE = "6011b0c1b9d93e2dcbf9b78b79c981d587cf4a4b";
+const TEST = "apps/server/src/git/Layers/GitCore.test.ts";
+const TEST_SHA256 = "dd39624aa61c01ee63f20750d1cb03f14c5b288546b05943912bd703fdd86e41";
+const EXPECTED = new Map([
+  ["apps/server/src/git/Layers/GitCore.ts", "e3d6e5fdbabf51b1840964426161f779e4d4e31b"],
+  [TEST, "be5409007be3f448000f9d7aa714a0c32bb50d73"],
+  ["packages/shared/src/filesystemPlatform.ts", "8177805509291307814a721f0fc3fab9f69a037b"],
+  ["apps/marketing/content/docs/workflows/worktrees.mdx", "4ce7108bdb099272b9037b309b4d4acefbf54109"],
+  ["apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx", "c4a6cdef035ade671c26a63c6d03e03b4457dd5d"],
+]);
+const root = process.cwd();
+const driver = path.join(root, ".pr-driver");
+const output = path.join(root, "gitcore-native-evidence");
+mkdirSync(output, { recursive: true });
+const hash = (data, algorithm = "sha256") => createHash(algorithm).update(data).digest("hex");
+const blob = (data) => hash(Buffer.concat([Buffer.from(`blob ${data.length}\0`), data]), "sha1");
+const writeJson = (name, value) => writeFileSync(path.join(output, name), `${JSON.stringify(value, null, 2)}\n`);
+
+function command(executable, args, cwd = root, allowMissing = false) {
+  const result = spawnSync(executable, args, { cwd, encoding: "utf8", timeout: 30_000 });
+  const record = {
+    executable,
+    args,
+    status: result.status,
+    signal: result.signal,
+    stdout: result.stdout ?? "",
+    stderr: result.stderr ?? "",
+    error: result.error ? String(result.error) : null,
+  };
+  if (!allowMissing && result.status !== 0) throw new Error(JSON.stringify(record));
+  return record;
+}
+
+function guardSource() {
+  const head = command("git", ["rev-parse", "HEAD"]).stdout.trim();
+  const tree = command("git", ["rev-parse", "HEAD^{tree}"]).stdout.trim();
+  if (head !== SOURCE || tree !== TREE) throw new Error(`Unexpected source ${head}/${tree}`);
+  command("git", ["diff", "--exit-code", "HEAD", "--"]);
+  if (command("git", ["status", "--porcelain", "--untracked-files=no"]).stdout.trim()) {
+    throw new Error("Tracked source is not clean");
+  }
+  const files = [];
+  for (const [relative, expectedBlob] of EXPECTED) {
+    const data = readFileSync(path.join(root, relative));
+    const identity = { path: relative, bytes: data.length, gitBlob: blob(data), sha256: hash(data) };
+    if (identity.gitBlob !== expectedBlob) throw new Error(`Unexpected application bytes: ${relative}`);
+    if (relative === TEST && identity.sha256 !== TEST_SHA256) throw new Error("Canonical test SHA256 changed");
+    files.push(identity);
+  }
+  return { head, tree, files, trackedSourceClean: true };
+}
+
+function guardDriver() {
+  const expected = process.env.DRIVER_SHA;
+  if (!expected || !/^[a-f0-9]{40}$/u.test(expected)) throw new Error("Missing exact driver SHA");
+  const head = command("git", ["rev-parse", "HEAD"], driver).stdout.trim();
+  if (head !== expected) throw new Error("Wrong driver checkout");
+  command("git", ["diff", "--exit-code", "HEAD", "--"], driver);
+  return {
+    head,
+    tree: command("git", ["rev-parse", "HEAD^{tree}"], driver).stdout.trim(),
+    files: [
+      ".github/workflows/gitcore-native-evidence.yml",
+      "scripts/gitcore-native-evidence/runner.mjs",
+      "scripts/gitcore-native-evidence/README.md",
+    ].map((relative) => {
+      const data = readFileSync(path.join(driver, relative));
+      return { path: relative, bytes: data.length, gitBlob: blob(data), sha256: hash(data) };
+    }),
+  };
+}
+
+async function runTests() {
+  const args = [
+    "run", "test", "src/git/Layers/GitCore.test.ts",
+    "--reporter=default", "--reporter=json",
+    `--outputFile=${path.join(output, "results.json")}`,
+  ];
+  writeJson("command.json", { executable: "bun", args, cwd: "apps/server", timeoutMs: 1_200_000 });
+  writeFileSync(path.join(output, "vitest.log"), "");
+  return await new Promise((resolve) => {
+    let finished = false;
+    const child = spawn("bun", args, {
+      cwd: path.join(root, "apps/server"),
+      env: process.env,
+      stdio: ["ignore", "pipe", "pipe"],
+      timeout: 1_200_000,
+    });
+    const record = (data, stream) => {
+      appendFileSync(path.join(output, "vitest.log"), data);
+      stream.write(data);
+    };
+    child.stdout.on("data", (data) => record(data, process.stdout));
+    child.stderr.on("data", (data) => record(data, process.stderr));
+    const finish = (result) => {
+      if (finished) return;
+      finished = true;
+      writeJson("exit.json", result);
+      resolve(result);
+    };
+    child.on("error", (error) => finish({ code: 127, signal: null, error: String(error) }));
+    child.on("close", (code, signal) => finish({ code, signal, error: null }));
+  });
+}
+
+const errors = [];
+let exit = null;
+const receipt = {
+  source: SOURCE,
+  tree: TREE,
+  expectedCases: 144,
+  startedAt: new Date().toISOString(),
+  platform: process.platform,
+  arch: process.arch,
+  runnerOs: process.env.RUNNER_OS ?? null,
+  node: process.version,
+  qualification: "Unchanged full canonical suite on a native hosted runner. The existing adversarial-filename case returns early on Windows; this driver does not introduce skips. Specific failure injections already in the canonical fixture remain controlled boundaries.",
+};
+
+try {
+  receipt.before = guardSource();
+  receipt.driver = guardDriver();
+  receipt.environment = {
+    bun: command("bun", ["--version"]),
+    git: command("git", ["--version"]),
+    // Read only. No global or environment overrides normalize the test repos.
+    autocrlf: command("git", ["config", "--show-origin", "--get-all", "core.autocrlf"], root, true),
+    symlinks: command("git", ["config", "--show-origin", "--get-all", "core.symlinks"], root, true),
+    attributes: hash(readFileSync(path.join(root, ".gitattributes"))),
+    lock: hash(readFileSync(path.join(root, "bun.lock"))),
+    package: hash(readFileSync(path.join(root, "package.json"))),
+    serverPackage: hash(readFileSync(path.join(root, "apps/server/package.json"))),
+    setupAction: hash(readFileSync(path.join(root, ".github/actions/setup-workspace/action.yml"))),
+    testConfig: hash(readFileSync(path.join(root, "apps/server/vitest.config.ts"))),
+  };
+  writeJson("provenance.json", receipt);
+  exit = await runTests();
+  receipt.after = guardSource();
+  guardDriver();
+  if (exit.code !== 0 || exit.signal) errors.push(`Actual test exit ${JSON.stringify(exit)}`);
+  if (!existsSync(path.join(output, "results.json"))) throw new Error("Missing actual Vitest JSON report");
+  const report = JSON.parse(readFileSync(path.join(output, "results.json"), "utf8"));
+  receipt.results = {
+    success: report.success,
+    total: report.numTotalTests,
+    passed: report.numPassedTests,
+    failed: report.numFailedTests,
+    pending: report.numPendingTests,
+    todo: report.numTodoTests,
+    assertions: report.testResults.flatMap((suite) => suite.assertionResults.map((test) => ({
+      name: test.fullName,
+      status: test.status,
+      failureMessages: test.failureMessages,
+    }))),
+  };
+  if (report.success !== true || report.numTotalTests !== 144 || report.numPassedTests !== 144 ||
+      report.numFailedTests !== 0 || report.numPendingTests !== 0 || report.numTodoTests !== 0 ||
+      receipt.results.assertions.length !== 144 || receipt.results.assertions.some((test) => test.status !== "passed")) {
+    errors.push("The unfiltered 144-case suite did not fully pass");
+  }
+} catch (error) {
+  errors.push(error.stack ?? String(error));
+} finally {
+  receipt.finishedAt = new Date().toISOString();
+  receipt.exit = exit;
+  receipt.errors = errors;
+  writeJson("provenance.json", receipt);
+  const artifacts = readdirSync(output).sort().filter((name) => name !== "verified.json").map((name) => {
+    const data = readFileSync(path.join(output, name));
+    return { name, bytes: data.length, sha256: hash(data) };
+  });
+  writeJson("verified.json", { source: SOURCE, tree: TREE, driver: process.env.DRIVER_SHA ?? null, errors, artifacts });
+  if (errors.length) console.error(errors.join("\n"));
+  process.exitCode = exit?.code && exit.code > 0 ? exit.code : errors.length ? 1 : 0;
+}

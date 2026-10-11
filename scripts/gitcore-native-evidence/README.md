@@ -1,0 +1,11 @@
+# Exact-source native GitCore qualification for PR1847
+
+This isolated driver checks out reviewed feature `a1b087d984a39cf9df936d5da9465db9e7679600`, tree `6011b0c1b9d93e2dcbf9b78b79c981d587cf4a4b`, and executes the existing canonical `apps/server/src/git/Layers/GitCore.test.ts` with the source's unchanged test script and frozen runtime install on Ubuntu and Windows hosted runners.
+
+The exact 144-case fixture is Git blob `be5409007be3f448000f9d7aa714a0c32bb50d73`, SHA256 `dd39624aa61c01ee63f20750d1cb03f14c5b288546b05943912bd703fdd86e41`. No fixture is replaced, appended, selected, skipped, remounted or weakened by this driver. Both jobs require all 144 reported cases to pass with their actual process exit preserved. The original fixture's adversarial-filename case has an existing early return on Windows; a reported pass there does not establish Windows support for those filenames.
+
+The full source commit/tree, clean tracked state and five changed application blobs are checked before and after execution. The driver checkout is independently pinned to the triggering workflow SHA. The workflow materializes committed source bytes with checkout-index using a command-local autocrlf=false setting only. It does not change the global Git configuration or test-process environment; each runner's actual autocrlf and symlink configuration is recorded. Platform or line-ending failures remain failures.
+
+The suite uses real temporary Git repositories and filesystem links. The existing targeted file-link EPERM injection and isolated Git-command failure/interruption barriers remain controlled boundaries. Passing evidence may qualify real Windows junction behavior in the relevant cases, but does not establish native UI, live-provider sessions, or all Windows filesystem environments.
+
+Artifacts retain the unfiltered Vitest report, complete stdout/stderr log, original child exit/signal, runtime and source provenance, every case name/status, and SHA256 hashes. A test failure is never converted to success because it was expected. Jobs have a bounded runtime, and artifacts upload even after failure. The earlier source-boundary canonical failure and prior Linux Before/After controls remain separate evidence; this run is fresh qualification of the repaired current-main source.
