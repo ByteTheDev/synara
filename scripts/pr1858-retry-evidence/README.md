@@ -1,6 +1,6 @@
 # Source-pinned retry UI evidence for PR #1858
 
-This isolated workflow compares main 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94 with repaired feature head daa687ac0f4289b57bffa5e7f2003a15637534d9. The Before head predates the retry feature. Both jobs use exactly the same appended capture fixture, initial thread, viewport, production CSS, router and ChatView.
+This isolated workflow compares main 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94 with repaired feature head 21fe82fd87581515e975a75325ea6e791536ed23. The Before head predates the retry feature. Both jobs use exactly the same appended capture fixture, initial thread, viewport, production CSS, router and ChatView.
 
 Before checks that the retry action is absent and captures the settled answer and hovered actions. After performs real pointer interactions through the effort menu and confirmation dialog, asserts the precise edit-and-resend command, then exercises the real answer pager after an explicitly controlled server read-model update. It captures seven phases, including the current effort, confirmation, latest answer, previous answer and return to latest.
 
