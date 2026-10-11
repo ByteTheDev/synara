@@ -88,8 +88,7 @@ Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
 [33m[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugin `vite:css`. See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
 [39m
-[2K
-transforming...✓ 9410 modules transformed.
+[2Ktransforming...✓ 9410 modules transformed.
 rendering chunks...
 computing gzip size...
 dist/assets/composerImagePreparation.worker-Df3P1uw2.js               1.52 kB
