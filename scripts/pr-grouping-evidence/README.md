@@ -1,0 +1,9 @@
+# Activity grouping: exact-source full ChatView evidence
+
+This isolated diagnostic compares main `ec8c940e07582454a475250ade40147e3c89d59f` with feature `d9a84cc8a58abf49181ee28c3d800b7d0d2c6923` for PR #1827 (continuation of #892). It never changes production source.
+
+Both sources run a renamed copy of the exact reviewed After `ChatView.browser.tsx` fixture, Git blob `6e470f593c119400528ccd50cc7089b3cb601568`. Only additive screenshot and DOM/storage observations are inserted inside its two grouping cases. The complete original assertions, pointer interactions, Escape key, mount/cleanup, selected-group restoration and external storage event remain intact. The other cases in that same full fixture are filtered by their unchanged names; their filtered status is not counted as a passing test.
+
+The two cases exercise the actual ChatView route, Sidebar, activity list, production CSS and theme under the existing canonical MSW/orchestration fixtures. Screenshots occur before the original Project-selection assertions, so the original Before failure remains visible and remains a failing workflow job. A real context video records the interactions at 960 × 1100. These are controlled full-component captures, with no native desktop, account, provider or real cross-window synchronization claim. The external storage event is explicitly dispatched by the existing test.
+
+Seven phases can complete on a passing source: initial Time menu, selected Project, classic view, reopened activity menu, restored stored Project on mount, external Time selection, and Project after the external change. An early failure retains only phases reached. The original Vitest and tee exit codes, full log, JSON test report, overlay hashes, source/tree/blob identity, PNG/video hashes and actual observations are preserved. The verifier never converts an expected Before defect into a passing job.
