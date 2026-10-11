@@ -2388,11 +2388,12 @@ export default function ChatView({
         threadId,
         messageId: review.messageId,
         reviewId: review.reviewId,
-        decision,
+        decision: decision === "never" ? "continue" : decision,
         createdAt: new Date().toISOString(),
       });
+      if (decision === "never") updateSettings({ claudeConfirmColdCacheResume: false });
     },
-    [threadId],
+    [threadId, updateSettings],
   );
   const activeRootBranch = useMemo(
     () =>
@@ -6015,7 +6016,7 @@ export default function ChatView({
         <ComposerColumnFrame>
           {/* A bare wrapper keeps the normal-flow panels' -mb-px seam onto the input shell
                 via margin collapse. */}
-          <div>
+          <div data-composer-panels>
             <ComposerTransportNotice />
             {isSidechatExpired ? (
               <ExpiredSidechatNotice onStartNew={startReplacementSidechat} />
@@ -6581,6 +6582,7 @@ export default function ChatView({
                 thread={activeThread}
                 project={activeProject}
                 selection={selectedModelSelection}
+                catalog={{ runtimeModelsByProvider, runtimeModelsByProviderInstance }}
                 picker={{
                   providers: providerStatuses,
                   modelOptionsByProvider,

@@ -1,3 +1,4 @@
+import * as path from "node:path";
 import { canonicalizeJson } from "./orchestration/commandFingerprint";
 import { autoRuntimeModeSelectionIssue } from "@synara/shared/runtimeMode";
 import { createHash } from "node:crypto";
@@ -21,7 +22,10 @@ export function startParallelRun(
     git: GitCoreShape;
     query: ProjectionSnapshotQueryShape;
     dispatch: (
-      command: Extract<ClientOrchestrationCommand, { type: "thread.create" | "thread.turn.start" }>,
+      command: Extract<
+        ClientOrchestrationCommand,
+        { type: "thread.create" | "thread.turn.start" | "thread.meta.update" }
+      >,
     ) => Effect.Effect<unknown, unknown>;
   },
 ) {
@@ -76,13 +80,67 @@ export function startParallelRun(
           })).stdout.trim();
         if (!/^[a-f0-9]{40,64}$/u.test(base))
           return yield* Effect.fail(new Error("Cannot resolve the common base commit."));
-        const branches = yield* deps.git.listBranches({ cwd });
+        // Persist the canonical batch before any Git mutation. A reload can
+        // recover even a crash between the first worktree and its association.
         for (const [index, selection] of input.attempts.entries()) {
           if (existing.some((thread) => thread.id === threadIds[index])) continue;
           if (yield* deps.query.threadIdExistsIncludingDeleted(threadIds[index]!))
             return yield* Effect.fail(
               new Error("A previous attempt was deleted. Start a new run."),
             );
+          const branch = `synara/parallel/${input.runId}/${index + 1}`;
+          const createdAt = input.createdAt;
+          yield* deps.dispatch({
+            type: "thread.create",
+            commandId: CommandId.makeUnsafe(`parallel:${input.runId}:create:${index}`),
+            threadId: threadIds[index]!,
+            projectId: source.projectId,
+            title: `${input.prompt.slice(0, 72)} · Attempt ${index + 1}`,
+            modelSelection: selection,
+            runtimeMode: autoRuntimeModeSelectionIssue({
+              runtimeMode: input.runtimeMode,
+              modelSelection: selection,
+            })
+              ? "approval-required"
+              : input.runtimeMode,
+            interactionMode: input.interactionMode,
+            envMode: "worktree",
+            branch,
+            worktreePath: null,
+            sourceThreadId: input.sourceThreadId,
+            parallelRun: {
+              request: input,
+              runId: input.runId,
+              index,
+              count: input.attempts.length,
+              baseCommit: base,
+              requestHash,
+            },
+            createdAt,
+          });
+        }
+        const stagedPlaceholders = yield* deps.query.getThreadShellsByIds(threadIds);
+        const repositoryRoot = (yield* deps.git.execute({
+          cwd,
+          operation: "ParallelRuns.root",
+          args: ["rev-parse", "--show-toplevel"],
+          timeoutMs: 5_000,
+        })).stdout.trim();
+        const relativeCwd = path.relative(repositoryRoot, cwd);
+        if (
+          path.isAbsolute(relativeCwd) ||
+          relativeCwd === ".." ||
+          relativeCwd.startsWith(`..${path.sep}`)
+        )
+          return yield* Effect.fail(new Error("The source directory is outside its repository."));
+        const branches = yield* deps.git.listBranches({ cwd });
+        for (const [index] of input.attempts.entries()) {
+          if (
+            stagedPlaceholders.some(
+              (thread) => thread.id === threadIds[index] && thread.worktreePath,
+            )
+          )
+            continue;
           const branch = `synara/parallel/${input.runId}/${index + 1}`;
           const previous = branches.branches.find((entry) => entry.name === branch);
           let worktreePath: string;
@@ -113,34 +171,12 @@ export function startParallelRun(
               path: null,
             })).worktree.path;
           }
-          const createdAt = input.createdAt;
           yield* deps.dispatch({
-            type: "thread.create",
-            commandId: CommandId.makeUnsafe(`parallel:${input.runId}:create:${index}`),
+            type: "thread.meta.update",
+            commandId: CommandId.makeUnsafe(`parallel:${input.runId}:attach:${index}`),
             threadId: threadIds[index]!,
-            projectId: source.projectId,
-            title: `${input.prompt.slice(0, 72)} · Attempt ${index + 1}`,
-            modelSelection: selection,
-            runtimeMode: autoRuntimeModeSelectionIssue({
-              runtimeMode: input.runtimeMode,
-              modelSelection: selection,
-            })
-              ? "approval-required"
-              : input.runtimeMode,
-            interactionMode: input.interactionMode,
-            envMode: "worktree",
-            branch,
             worktreePath,
-            sourceThreadId: input.sourceThreadId,
-            parallelRun: {
-              request: input,
-              runId: input.runId,
-              index,
-              count: input.attempts.length,
-              baseCommit: base,
-              requestHash,
-            },
-            createdAt,
+            workingDirectory: path.resolve(worktreePath, relativeCwd),
           });
         }
         return base;

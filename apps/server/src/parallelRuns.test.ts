@@ -24,7 +24,7 @@ import { ProjectionSnapshotQuery } from "./orchestration/Services/ProjectionSnap
 import { OrchestrationEventStoreLive } from "./persistence/Layers/OrchestrationEventStore";
 import { OrchestrationCommandReceiptRepositoryLive } from "./persistence/Layers/OrchestrationCommandReceipts";
 import { ProviderRuntimeEventRepositoryLive } from "./persistence/Layers/ProviderRuntimeEvents";
-import { SqlitePersistenceMemory } from "./persistence/Layers/Sqlite";
+import { makeSqlitePersistenceLive } from "./persistence/Layers/Sqlite";
 import { ServerSettingsService } from "./serverSettings";
 import { startParallelRun } from "./parallelRuns";
 
@@ -39,6 +39,75 @@ const selection = Schema.decodeUnknownSync(ModelSelection)({
   instanceId: "codex",
   model: "gpt-5",
 });
+
+it("persists the entire batch before a real Git lock failure and preserves a nested working directory on recovery", async () => {
+  const h = await harness();
+  try {
+    const nested = path.join(h.repo, "packages", "app");
+    await fs.mkdir(nested, { recursive: true });
+    await fs.writeFile(path.join(nested, "package.txt"), "nested base");
+    git(h.repo, "add", ".");
+    git(h.repo, "commit", "-m", "nested project");
+    await h.runtime.runPromise(
+      h.engine.dispatch({
+        type: "thread.meta.update",
+        commandId: CommandId.makeUnsafe("nested-directory"),
+        threadId: h.input.sourceThreadId,
+        workingDirectory: nested,
+      }),
+    );
+    const base = git(h.repo, "rev-parse", "HEAD");
+    const lock = path.join(
+      h.repo,
+      ".git",
+      "refs",
+      "heads",
+      "synara",
+      "parallel",
+      h.input.runId,
+      "1.lock",
+    );
+    await fs.mkdir(path.dirname(lock), { recursive: true });
+    await fs.writeFile(lock, "held by another Git operation");
+    await expect(
+      h.runtime.runPromise(
+        startParallelRun(h.input, { git: h.core, query: h.query, dispatch: h.dispatch }),
+      ),
+    ).rejects.toThrow();
+    const pending = (await h.runtime.runPromise(h.query.getShellSnapshot())).threads.filter(
+      (thread) => thread.parallelRun?.runId === h.input.runId,
+    );
+    expect(pending).toHaveLength(3);
+    expect(
+      pending.every((thread) => !thread.worktreePath && !thread.latestTurn && !thread.session),
+    ).toBe(true);
+    expect(git(h.repo, "worktree", "list", "--porcelain").match(/^worktree /gm)).toHaveLength(1);
+    await fs.unlink(lock);
+    await fs.writeFile(path.join(h.repo, "later.txt"), "new source commit");
+    git(h.repo, "add", ".");
+    git(h.repo, "commit", "-m", "source moved");
+    const result = await h.runtime.runPromise(
+      startParallelRun(pending[0]!.parallelRun!.request!, {
+        git: h.core,
+        query: h.query,
+        dispatch: h.dispatch,
+      }),
+    );
+    expect(result.baseCommit).toBe(base);
+    const recovered = (await h.runtime.runPromise(h.query.getShellSnapshot())).threads.filter(
+      (thread) => thread.parallelRun?.runId === h.input.runId,
+    );
+    for (const thread of recovered) {
+      expect(thread.workingDirectory).toBe(path.join(thread.worktreePath!, "packages", "app"));
+      expect(await fs.readFile(path.join(thread.workingDirectory!, "package.txt"), "utf8")).toBe(
+        "nested base",
+      );
+      expect(git(thread.worktreePath!, "rev-parse", "HEAD")).toBe(base);
+    }
+  } finally {
+    await h.runtime.dispose();
+  }
+}, 30_000);
 
 async function harness() {
   const root = await fs.mkdtemp(path.join(tmpdir(), "synara-parallel-test-"));
@@ -60,7 +129,7 @@ async function harness() {
         Layer.provideMerge(OrchestrationEventStoreLive),
         Layer.provideMerge(OrchestrationCommandReceiptRepositoryLive),
         Layer.provideMerge(ProviderRuntimeEventRepositoryLive),
-        Layer.provideMerge(SqlitePersistenceMemory),
+        Layer.provideMerge(makeSqlitePersistenceLive(path.join(root, "parallel.sqlite"))),
         Layer.provide(ServerSettingsService.layerTest()),
       ),
       GitCoreLive,

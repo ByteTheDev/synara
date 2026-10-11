@@ -1,3 +1,5 @@
+import type { ProviderModelCatalog } from "~/hooks/useProviderModelCatalog";
+import { resolveRuntimeModelDescriptor } from "./runtimeModelCapabilities";
 import {
   ModelSelection,
   type OrchestrationStartParallelRunInput,
@@ -5,6 +7,7 @@ import {
   type ModelSlug,
   type ThreadId,
   type OrchestrationThread,
+  type ClientOrchestrationCommand,
 } from "@synara/contracts";
 import { useQuery } from "@tanstack/react-query";
 import { Schema } from "effect";
@@ -40,9 +43,17 @@ export function ParallelRunsControl(props: {
     | "loadingModelProviders"
     | "discoveryErrorsByProvider"
   >;
+  catalog?: Pick<
+    ProviderModelCatalog,
+    "runtimeModelsByProvider" | "runtimeModelsByProviderInstance"
+  >;
   onNavigate: (id: ThreadId) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [comparison, setComparison] = useState<{
+    create: Extract<ClientOrchestrationCommand, { type: "thread.create" }>;
+    start: Extract<ClientOrchestrationCommand, { type: "thread.turn.start" }>;
+  } | null>(null);
   const [prompt, setPrompt] = useState("");
   const [selections, setSelections] = useState<ModelSelection[]>([
     props.selection,
@@ -67,22 +78,21 @@ export function ParallelRunsControl(props: {
     enabled: open && !!runId,
     queryFn: async () => {
       const api = ensureNativeApi();
-      return Promise.all(
-        attempts.map(async (thread) => {
-          const detailPromise = api.orchestration.getThreadDetailSnapshot({ threadId: thread.id });
-          const diffPromise = thread.worktreePath
-            ? api.git
-                .readWorkingTreeDiff({
-                  cwd: thread.worktreePath,
-                  scope: "ref",
-                  compareRef: thread.parallelRun!.baseCommit,
-                })
-                .catch(() => null)
-            : null;
-          const [detail, diff] = await Promise.all([detailPromise, diffPromise]);
-          return { thread: detail?.thread ?? null, diff };
-        }),
-      );
+      const result = [];
+      for (const thread of attempts) {
+        const detail = await api.orchestration.getThreadDetailSnapshot({ threadId: thread.id });
+        const diff = thread.worktreePath
+          ? await api.git
+              .readWorkingTreeDiff({
+                cwd: thread.worktreePath,
+                scope: "ref",
+                compareRef: thread.parallelRun!.baseCommit,
+              })
+              .catch(() => null)
+          : null;
+        result.push({ thread: detail?.thread ?? null, diff });
+      }
+      return result;
     },
     refetchInterval: open && runId ? 3_000 : false,
   });
@@ -122,43 +132,58 @@ export function ParallelRunsControl(props: {
     });
   const compare = () =>
     perform(async () => {
-      const threads = details.data?.flatMap((value) => (value.thread ? [value.thread] : [])) ?? [];
-      if (threads.length !== attempts.length)
-        throw new Error("Wait for the attempt details to load.");
       const api = ensureNativeApi();
-      const id = newThreadId();
-      const createdAt = new Date().toISOString();
-      await api.orchestration.dispatchCommand({
-        type: "thread.create",
-        commandId: newCommandId(),
-        threadId: id,
-        projectId: props.project.id,
-        title: "Compare parallel attempts",
-        modelSelection: props.selection,
-        runtimeMode: "approval-required",
-        interactionMode: "default",
-        envMode: "local",
-        branch: null,
-        worktreePath: null,
-        createdAt,
-      });
-      await api.orchestration.dispatchCommand({
-        type: "thread.turn.start",
-        commandId: newCommandId(),
-        threadId: id,
-        message: {
-          messageId: newMessageId(),
-          role: "user",
-          text: parallelComparisonPrompt(threads as OrchestrationThread[]),
-          attachments: [],
-        },
-        modelSelection: props.selection,
-        runtimeMode: "approval-required",
-        interactionMode: "default",
-        createdAt,
-      });
+      let operation = comparison;
+      if (!operation) {
+        const threads: OrchestrationThread[] = [];
+        for (const attempt of attempts) {
+          const detail = await api.orchestration.getThreadDetailSnapshot({ threadId: attempt.id });
+          if (!detail?.thread || !parallelAttemptSettled(detail.thread))
+            throw new Error("Wait for all attempt details to settle before comparing.");
+          threads.push(detail.thread);
+        }
+        if (threads.length !== props.thread.parallelRun?.count)
+          throw new Error("Wait for every attempt to load.");
+        const id = newThreadId();
+        const createdAt = new Date().toISOString();
+        operation = {
+          create: {
+            type: "thread.create",
+            commandId: newCommandId(),
+            threadId: id,
+            projectId: props.project.id,
+            title: "Compare parallel attempts",
+            modelSelection: props.selection,
+            runtimeMode: "approval-required",
+            interactionMode: "default",
+            envMode: "local",
+            branch: null,
+            worktreePath: null,
+            createdAt,
+          },
+          start: {
+            type: "thread.turn.start",
+            commandId: newCommandId(),
+            threadId: id,
+            message: {
+              messageId: newMessageId(),
+              role: "user",
+              text: parallelComparisonPrompt(threads),
+              attachments: [],
+            },
+            modelSelection: props.selection,
+            runtimeMode: "approval-required",
+            interactionMode: "default",
+            createdAt,
+          },
+        };
+        setComparison(operation);
+      }
+      await api.orchestration.dispatchCommand(operation.create);
+      await api.orchestration.dispatchCommand(operation.start);
+      setComparison(null);
       setOpen(false);
-      props.onNavigate(id);
+      props.onNavigate(operation.create.threadId);
     });
   return (
     <>
@@ -267,6 +292,18 @@ export function ParallelRunsControl(props: {
                                 provider,
                                 model,
                                 instanceId: instanceId ?? provider,
+                                ...(provider === "claudeAgent"
+                                  ? {
+                                      supportsAutoMode: resolveRuntimeModelDescriptor({
+                                        provider,
+                                        model,
+                                        runtimeModels:
+                                          props.catalog?.runtimeModelsByProviderInstance[
+                                            instanceId ?? provider
+                                          ] ?? props.catalog?.runtimeModelsByProvider[provider],
+                                      })?.supportsAutoMode,
+                                    }
+                                  : {}),
                                 ...(provider === value.provider && value.options
                                   ? { options: value.options }
                                   : {}),
@@ -337,7 +374,7 @@ export function ParallelRunsControl(props: {
                   Stop all attempts
                 </Button>
                 <Button
-                  disabled={pending || !settled || !details.data}
+                  disabled={pending || (!comparison && (!settled || !details.data))}
                   onClick={() => void compare()}
                 >
                   Compare in new thread

@@ -14,12 +14,18 @@ uses the existing interrupt path. Wait for all attempts to settle before selecti
 one. **Keep this attempt** archives the other conversations and preserves their
 branches and files. Use the existing Worktrees settings panel for explicit removal.
 
-**Compare in new thread** sends the task, answer excerpts, branch names and
+**Compare in new thread** refreshes and validates settled answers, then sends the
+task, answer excerpts, branch names and
 worktree locations to the currently selected model in a new approval-mode chat.
 It asks for a recommendation; it does not merge code. Large answers are marked as
 excerpts, and the original conversations remain available for inspection. Task text,
 provider answers and repository references are sent as tagged untrusted JSON; they
-do not authorize tools, credential access or file changes.
+do not authorize tools, credential access or file changes. The budget applies to
+the escaped prompt, and retries reuse the original comparison operation IDs.
+
+The complete batch request is persisted before the first worktree is created.
+An attempt retains the source conversation's working directory relative to the
+repository root, including a nested package directory.
 
 All worktrees and threads are staged before provider turns are admitted. A lost
 acknowledgement can be retried with the original run id and command ids, so an
