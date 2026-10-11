@@ -1,0 +1,45 @@
+{
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+    "sha256": "ec34302f40f6e14470a3971d45b4c71d274ab2d2447e6720b39a6315b5ad9da5"
+  },
+  "replacements": [
+    {
+      "before": "import { type ComposerImageAttachment, useComposerDraftStore } from \"../composerDraftStore\";",
+      "after": "import { type ComposerImageAttachment, COMPOSER_DRAFT_STORAGE_KEY, useComposerDraftStore } from \"../composerDraftStore\";"
+    },
+    {
+      "before": "  if (tag === WS_METHODS.serverGetSettings) {\n    return createBrowserTestServerSettings(NOW_ISO);\n  }",
+      "after": "  if (tag === WS_METHODS.serverGetSettings) {\n    if (modelEvidenceActive) return modelEvidenceServerSettings();\n    return createBrowserTestServerSettings(NOW_ISO);\n  }"
+    }
+  ],
+  "helperAnchor": "describe(\"ChatView transcript geometry (full app)\", () => {",
+  "caseAnchor": "  it(\"keeps the active chat explicitly unread until the next visit\", async () => {",
+  "cases": [
+    {
+      "name": "qualifies configured Claude options in the full ChatView"
+    },
+    {
+      "name": "keeps sibling Claude model controls unconfigured in the full ChatView"
+    },
+    {
+      "name": "keeps unknown Claude model controls unconfigured in the full ChatView"
+    }
+  ],
+  "expectedPhases": [
+    "configured-thread",
+    "configured-menu",
+    "configured-effort",
+    "configured-high",
+    "configured-budget",
+    "configured-high-200k",
+    "configured-auto-200k",
+    "configured-rehydrated",
+    "configured-ultrathink",
+    "sibling-thread",
+    "sibling-menu",
+    "unknown-thread",
+    "unknown-menu"
+  ]
+}
