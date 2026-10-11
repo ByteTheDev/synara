@@ -1,0 +1,54 @@
+name: Observe exact-main library Git maintenance lifetime
+on:
+  push:
+    branches: [cleanup/20261011/library-maintenance-observation]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: library-maintenance-observation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 3270dcf89bb60745ac568803a940cd7e7ac676a7
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.19.0
+      - name: Guard exact source and Git version
+        id: prepare
+        run: node driver/.github/scripts/library-maintenance-observer.mjs prepare
+      - name: Install exact frozen workspace
+        id: install
+        working-directory: source
+        run: bun install --frozen-lockfile
+      - name: Preserve unchanged default Git fixture outcomes
+        if: ${{ always() && steps.install.outcome == 'success' }}
+        run: node driver/.github/scripts/library-maintenance-observer.mjs run default
+      - name: Observe the same fixture with foreground automatic maintenance
+        if: ${{ always() && steps.install.outcome == 'success' }}
+        run: node driver/.github/scripts/library-maintenance-observer.mjs run foreground
+      - name: Verify immutable source and retain actual exits and traces
+        if: ${{ always() && steps.prepare.outcome == 'success' }}
+        run: node driver/.github/scripts/library-maintenance-observer.mjs verify
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: library-maintenance-${{ github.sha }}
+          path: ${{ runner.temp }}/library-maintenance-evidence
+          include-hidden-files: true
+          if-no-files-found: error
