@@ -1,5 +1,30 @@
 # Remote connections — punto di ripartenza
 
+## Claude e recupero runtime — 11 ottobre 2026, aggiornamento successivo
+
+Integrato main `7003742` dopo il rebase precedente. Il runtime desktop usa Claude
+Agent SDK `0.3.296`; la conferma di ripresa è disattivata di default. Se abilitata,
+si applica alle sessioni grandi inattive, senza bloccare invii di agenti/automazioni.
+Incluse anche la riconciliazione degli avvii fermi e la ripresa del socket senza
+ripetere le mutazioni. Le connessioni remote rinegoziano la propria attachment.
+
+I client iPhone/iPad conservano `claudeCacheReview` negli snapshot e mostrano una
+scelta nativa nell'area di recupero del composer: riassunto, sessione completa,
+non chiedere più, annullamento. Il comando risponde al review del Mac proprietario:
+non crea un secondo turno. Una richiesta in attesa non scade come startup fallita;
+il composer e la coda attendono che venga risolta. Gli stati incerti non offrono
+un nuovo invio. La preferenza «non chiedere più» aggiorna soltanto Claude sul Mac
+proprietario. Le nuove versioni desktop e mobile vanno installate insieme per
+avere sia i fix del runtime sia la gestione della conferma sul telefono.
+
+Verifica: 17.397 test passati nei sei pacchetti interessati (server, web,
+shared, contracts, desktop, scripts), con 38 test già saltati; 29 test browser
+per conferma Claude e sidebar; formatting, lint, typecheck e controllo boundary
+Windows passati. Mobile: 254 test core; 19 test app su ciascun simulatore,
+con un test di integrazione a due desktop saltato per assenza delle fixture.
+Build finali iPhone/iPad passate. Non verificati una sessione Claude reale dopo
+70 minuti di inattività o un pacchetto Windows eseguito su Windows.
+
 ## Integrazione main e parità mobile — 11 ottobre 2026
 
 Branch aggiornato tramite rebase a `ec8c940e` di main. Il backup completo precedente
