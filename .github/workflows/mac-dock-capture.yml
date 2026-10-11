@@ -1,0 +1,107 @@
+name: Observe actual current-main Dock icon for PR 452
+on:
+  push:
+    branches: [cleanup/20261011/mac-dock-452-evidence]
+    paths:
+      - .github/workflows/mac-dock-capture.yml
+      - .github/scripts/mac-dock-capture.mjs
+      - .github/scripts/mac-dock-lifecycle.swift
+permissions:
+  contents: read
+concurrency:
+  group: mac-dock-capture-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  capture:
+    name: Actual Dock lifecycle on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26]
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      SYNARA_DESKTOP_SIGNED: "false"
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      SYNARA_DISABLE_AUTO_UPDATE: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ec8c940e07582454a475250ade40147e3c89d59f
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: diliprt/synara
+          ref: 01ca9a62f8bb222dda23d8c68181acdbf5ddd1fb
+          path: author
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Compile native observer and verify existing display access
+        id: prepare
+        run: node ../driver/.github/scripts/mac-dock-capture.mjs prepare
+      - name: Install frozen native packaging toolchain
+        run: |
+          set -euo pipefail
+          dock_rust_version=$(node -p 'require("./packages/shared/src/cuaDriverRelease.json").rustVersion')
+          rustup toolchain install "$dock_rust_version" --profile minimal
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$dock_rust_version" >> "$GITHUB_ENV"
+          bun install --frozen-lockfile --ignore-scripts --filter '!@synara/marketing' 2>&1 | tee "$DOCK_EVIDENCE/install.log"
+      - name: Build unchanged exact-main unsigned macOS application
+        id: build
+        timeout-minutes: 35
+        run: |
+          set -euo pipefail
+          dock_version=$(node -p 'require("./apps/server/package.json").version')
+          dock_lock=$(shasum -a 256 bun.lock | cut -d ' ' -f 1)
+          bun run dist:desktop:artifact -- --platform mac --target dmg --arch arm64 --flavor production \
+            --build-version "$dock_version" --source-commit ec8c940e07582454a475250ade40147e3c89d59f \
+            --lockfile-sha256 "$dock_lock" --verbose --output-dir "$RUNNER_TEMP/mac-dock-packages" \
+            2>&1 | tee "$DOCK_EVIDENCE/build.log"
+      - name: Keep canonical packaged imports and isolated startup assertions
+        id: startup
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          dock_version=$(node -p 'require("./apps/server/package.json").version')
+          node scripts/verify-packaged-desktop-startup.ts --assets-dir "$RUNNER_TEMP/mac-dock-packages" \
+            --platform mac --arch arm64 --version "$dock_version" 2>&1 | tee "$DOCK_EVIDENCE/canonical-startup.log"
+      - name: Capture actual closed, running and normally quit Dock icon
+        id: capture
+        if: ${{ !cancelled() && steps.startup.outcome == 'success' }}
+        run: node ../driver/.github/scripts/mac-dock-capture.mjs capture
+      - name: Restore disposable Dock state and unregister only the owned application
+        id: cleanup
+        if: always()
+        run: node ../driver/.github/scripts/mac-dock-capture.mjs cleanup
+      - name: Require actual lifecycle, clean source and retained screenshots
+        if: always()
+        env:
+          DOCK_BUILD_OUTCOME: ${{ steps.build.outcome }}
+          DOCK_STARTUP_OUTCOME: ${{ steps.startup.outcome }}
+          DOCK_CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
+          DOCK_CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+        run: node ../driver/.github/scripts/mac-dock-capture.mjs verify
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: mac-dock-452-${{ matrix.os }}-${{ github.sha }}
+          path: ${{ runner.temp }}/mac-dock-evidence
+          retention-days: 14
+          if-no-files-found: error
