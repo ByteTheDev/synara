@@ -1,0 +1,15 @@
+{
+  "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+  "sourceTree": "dc329a9fdf37a09b994cc8de54c1c627d5d38642",
+  "driver": "77bcc5a433881b6d24cb61f1be5cb20555149099",
+  "run": 38162987534,
+  "job": 114539667782,
+  "vitestExit": 0,
+  "teeExit": 0,
+  "passed": 3,
+  "failed": 0,
+  "unselected": 222,
+  "verificationErrors": [],
+  "observations": 6,
+  "qualification": "All three unchanged selected cases passed on both sources. This qualifies preserved project/stored-draft environment and controlled hydration behavior, not a reproduced Before failure. Other 222 cases were excluded by explicit test-name selection, not counted as passes."
+}

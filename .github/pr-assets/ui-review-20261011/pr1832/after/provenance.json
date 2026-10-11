@@ -1,0 +1,287 @@
+{
+  "target": {
+    "id": "pr1832-after",
+    "variant": "after",
+    "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+    "tree": "dc329a9fdf37a09b994cc8de54c1c627d5d38642"
+  },
+  "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+  "sourceTree": "dc329a9fdf37a09b994cc8de54c1c627d5d38642",
+  "driver": "77bcc5a433881b6d24cb61f1be5cb20555149099",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+    "sha256": "ec34302f40f6e14470a3971d45b4c71d274ab2d2447e6720b39a6315b5ad9da5"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+      "sha256": "ec34302f40f6e14470a3971d45b4c71d274ab2d2447e6720b39a6315b5ad9da5"
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.tsx",
+      "blob": "06594db921139944052c222b10b6d28f80d320c3",
+      "sha256": "ba0b6e88f03a9ceb4a6997feaa54ec477e880d0f1828a21c839040bca1b553a6"
+    },
+    {
+      "path": "apps/web/src/hooks/useHandleNewThread.ts",
+      "blob": "241cd7d450f3c1edf1b254d67c436484dcbd2960",
+      "sha256": "d8141e56f5f08d178e807f220e8003adf74510788ae84a53a1bb87db74b9cc08"
+    },
+    {
+      "path": "apps/web/src/composerDraftActions.ts",
+      "blob": "b2b80094bb0e8264bd22f81735fbe055b6e3a106",
+      "sha256": "64c3b0d75a06b40880c0df7630fecbfdde3159e30cbd56ef8a94ead0af04f5ee"
+    },
+    {
+      "path": "apps/web/src/projectEnvironmentStore.ts",
+      "blob": "a29664f6bf282cd325a98ec47747b7baf95fcbfb",
+      "sha256": "f61be34e44733073b43474d18c17ae1506540d16d55ff0007cf94c9f0597b74b"
+    },
+    {
+      "path": "apps/web/src/appSettings.ts",
+      "blob": "ebc57b6a6d3feab9c2368119848dbb30a000ec7b",
+      "sha256": "7e6df7ff50f2af7364036ab3c57ea60326733bc7766a03bd934d8380f7db3460"
+    },
+    {
+      "path": "packages/contracts/src/settings.ts",
+      "blob": "334d685d30bb3bb0fb69ab04f2b8782ebd32974e",
+      "sha256": "2ae2d43ad24d034b2962d81a7cfbae81c7723d72a3614f64f65158a971d74ed8"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1832ChatView.browser.tsx",
+      "sha256": "a382b1fccffadbb68455c0ed0b852e5d3c67aef5ce373441ae974f10d112744c"
+    },
+    {
+      "path": "apps/web/vitest.pr-sidebar-hydration-evidence.config.ts",
+      "sha256": "01148396987917ce67d64961214afc623a12e2039815a96b74bb67762bb406d0"
+    }
+  ],
+  "observerSha256": "190ba95bf9ce19ba646371d2226c227cb48c1d0e6ab765e43f54f6771d18d78d",
+  "helperSha256": "284dfa86128d151840f355b2b9d2bda0e6a9976123d5769b5e5c97d9ed39ef7d",
+  "applicationCodeModified": false,
+  "originalAssertionsAndInteractionsPreserved": true,
+  "qualification": "Actual full ChatView, Sidebar, draft state, CSS and theme under the canonical MSW/orchestration fixtures. Same three original test cases on both sources, with additive observations and original assertions unchanged. The two environment cases qualify regression preservation when the main control also passes. The hydration case uses explicit fixture/store state; no native desktop, live provider, or injected race reproduction claim.",
+  "status": "completed",
+  "actualExitCode": 0,
+  "exits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "e9f9061cc69a1ed155bd46d549cf41113cba97ff9895a8ca65639df5558c4f17",
+  "reportSha256": "1b9c2d5c01ac07ab3cc3276a40c1790f4a7f1346769358f39aa198f7724c4b39",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) keeps the project environment when global New thread creates a draft from Home",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) keeps the stored draft environment when global New thread reopens it from Home",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) does not open Add project before project hydration completes",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "filteredTests": 0,
+  "observations": [
+    {
+      "phase": "project-before-click",
+      "variant": "after",
+      "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "threadsHydrated": true,
+      "projectCount": 2,
+      "projectEnvironments": {
+        "project-1": "worktree"
+      },
+      "drafts": [],
+      "routedDraftPrompt": null,
+      "worktreeCheckboxChecked": null,
+      "loadingProjects": false,
+      "visibleDialogText": null
+    },
+    {
+      "phase": "project-worktree-draft",
+      "variant": "after",
+      "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+      "route": "/fd99fff9-719c-4e80-a440-bfc20cbf989d",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "threadsHydrated": true,
+      "projectCount": 2,
+      "projectEnvironments": {
+        "project-1": "worktree"
+      },
+      "drafts": [
+        {
+          "threadId": "fd99fff9-719c-4e80-a440-bfc20cbf989d",
+          "projectId": "project-1",
+          "envMode": "worktree",
+          "entryPoint": "chat"
+        }
+      ],
+      "routedDraftPrompt": null,
+      "worktreeCheckboxChecked": "true",
+      "loadingProjects": false,
+      "visibleDialogText": null
+    },
+    {
+      "phase": "draft-before-click",
+      "variant": "after",
+      "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "threadsHydrated": true,
+      "projectCount": 2,
+      "projectEnvironments": {
+        "project-1": "local"
+      },
+      "drafts": [
+        {
+          "threadId": "00000000-0000-4000-8000-000000000369",
+          "projectId": "project-1",
+          "envMode": "worktree",
+          "entryPoint": "chat"
+        }
+      ],
+      "routedDraftPrompt": null,
+      "worktreeCheckboxChecked": null,
+      "loadingProjects": false,
+      "visibleDialogText": null
+    },
+    {
+      "phase": "draft-worktree-draft",
+      "variant": "after",
+      "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+      "route": "/00000000-0000-4000-8000-000000000369",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "threadsHydrated": true,
+      "projectCount": 2,
+      "projectEnvironments": {
+        "project-1": "local"
+      },
+      "drafts": [
+        {
+          "threadId": "00000000-0000-4000-8000-000000000369",
+          "projectId": "project-1",
+          "envMode": "worktree",
+          "entryPoint": "chat"
+        }
+      ],
+      "routedDraftPrompt": "Preserve this Worktree draft",
+      "worktreeCheckboxChecked": "true",
+      "loadingProjects": false,
+      "visibleDialogText": null
+    },
+    {
+      "phase": "hydration-before-click",
+      "variant": "after",
+      "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "threadsHydrated": false,
+      "projectCount": 0,
+      "projectEnvironments": {},
+      "drafts": [],
+      "routedDraftPrompt": null,
+      "worktreeCheckboxChecked": null,
+      "loadingProjects": true,
+      "visibleDialogText": null
+    },
+    {
+      "phase": "hydration-after-click",
+      "variant": "after",
+      "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "threadsHydrated": false,
+      "projectCount": 0,
+      "projectEnvironments": {},
+      "drafts": [],
+      "routedDraftPrompt": null,
+      "worktreeCheckboxChecked": null,
+      "loadingProjects": true,
+      "visibleDialogText": null
+    }
+  ],
+  "files": [
+    {
+      "path": "draft-before-click.png",
+      "bytes": 60862,
+      "sha256": "4d14b913d9d4e88cd3a0a829ff89386bd4c2772aa9f6308debd0ed31e8fd310d"
+    },
+    {
+      "path": "draft-worktree-draft.png",
+      "bytes": 43290,
+      "sha256": "001909b3c4743bea43c754c4a84cafa5c0c91d01ebef7361e443a10715027d1c"
+    },
+    {
+      "path": "hydration-after-click.png",
+      "bytes": 18554,
+      "sha256": "ae78cfd3714086d5025afc8781abe0d0031db9f59329a7ae9a87f954a1263934"
+    },
+    {
+      "path": "hydration-before-click.png",
+      "bytes": 18554,
+      "sha256": "ae78cfd3714086d5025afc8781abe0d0031db9f59329a7ae9a87f954a1263934"
+    },
+    {
+      "path": "project-before-click.png",
+      "bytes": 60625,
+      "sha256": "6e5d477fcd71e3b955fc45cd35218c6d15f645bc4449f07daf2b081eeb1104f7"
+    },
+    {
+      "path": "project-worktree-draft.png",
+      "bytes": 44843,
+      "sha256": "5853487009413e2e39277ec44560b9004e0dd63d587a42f86785efbbea964b24"
+    },
+    {
+      "path": "video/page@040c70fa454dea1d384233e62ba9bfe5.webm",
+      "bytes": 545558,
+      "sha256": "bef5a36868691f6872aa4a7adfb7a7e14cd9b6bec8250fe5e604b99d01bcd0f3"
+    }
+  ]
+}

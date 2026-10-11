@@ -1,0 +1,32 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m6:15:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+[2m6:15:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[BABEL] Note: The code generator has deoptimised the styling of /home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1832ChatView.browser.tsx as it exceeds the max of 500KB.
+[90mstdout[2m | src/components/PrUiEvidence1832ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mkeeps the project environment when global New thread creates a draft from Home
+[22m[39mPR_SIDEBAR_OBSERVATION {"phase":"project-before-click","variant":"after","source":"4e1d1e040df853ddcaa8f30dabf8f913f67669ec","route":"/thread-browser-test","viewport":{"width":960,"height":1100},"documentClass":"","threadsHydrated":true,"projectCount":2,"projectEnvironments":{"project-1":"worktree"},"drafts":[],"routedDraftPrompt":null,"worktreeCheckboxChecked":null,"loadingProjects":false,"visibleDialogText":null}
+[90mstdout[2m | src/components/PrUiEvidence1832ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mkeeps the project environment when global New thread creates a draft from Home
+[22m[39mPR_SIDEBAR_OBSERVATION {"phase":"project-worktree-draft","variant":"after","source":"4e1d1e040df853ddcaa8f30dabf8f913f67669ec","route":"/fd99fff9-719c-4e80-a440-bfc20cbf989d","viewport":{"width":960,"height":1100},"documentClass":"","threadsHydrated":true,"projectCount":2,"projectEnvironments":{"project-1":"worktree"},"drafts":[{"threadId":"fd99fff9-719c-4e80-a440-bfc20cbf989d","projectId":"project-1","envMode":"worktree","entryPoint":"chat"}],"routedDraftPrompt":null,"worktreeCheckboxChecked":"true","loadingProjects":false,"visibleDialogText":null}
+[90mstdout[2m | src/components/PrUiEvidence1832ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mkeeps the stored draft environment when global New thread reopens it from Home
+[22m[39mPR_SIDEBAR_OBSERVATION {"phase":"draft-before-click","variant":"after","source":"4e1d1e040df853ddcaa8f30dabf8f913f67669ec","route":"/thread-browser-test","viewport":{"width":960,"height":1100},"documentClass":"","threadsHydrated":true,"projectCount":2,"projectEnvironments":{"project-1":"local"},"drafts":[{"threadId":"00000000-0000-4000-8000-000000000369","projectId":"project-1","envMode":"worktree","entryPoint":"chat"}],"routedDraftPrompt":null,"worktreeCheckboxChecked":null,"loadingProjects":false,"visibleDialogText":null}
+[90mstdout[2m | src/components/PrUiEvidence1832ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mkeeps the stored draft environment when global New thread reopens it from Home
+[22m[39mPR_SIDEBAR_OBSERVATION {"phase":"draft-worktree-draft","variant":"after","source":"4e1d1e040df853ddcaa8f30dabf8f913f67669ec","route":"/00000000-0000-4000-8000-000000000369","viewport":{"width":960,"height":1100},"documentClass":"","threadsHydrated":true,"projectCount":2,"projectEnvironments":{"project-1":"local"},"drafts":[{"threadId":"00000000-0000-4000-8000-000000000369","projectId":"project-1","envMode":"worktree","entryPoint":"chat"}],"routedDraftPrompt":"Preserve this Worktree draft","worktreeCheckboxChecked":"true","loadingProjects":false,"visibleDialogText":null}
+[90mstdout[2m | src/components/PrUiEvidence1832ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mdoes not open Add project before project hydration completes
+[22m[39mPR_SIDEBAR_OBSERVATION {"phase":"hydration-before-click","variant":"after","source":"4e1d1e040df853ddcaa8f30dabf8f913f67669ec","route":"/thread-browser-test","viewport":{"width":960,"height":1100},"documentClass":"","threadsHydrated":false,"projectCount":0,"projectEnvironments":{},"drafts":[],"routedDraftPrompt":null,"worktreeCheckboxChecked":null,"loadingProjects":true,"visibleDialogText":null}
+[90mstdout[2m | src/components/PrUiEvidence1832ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mdoes not open Add project before project hydration completes
+[22m[39mPR_SIDEBAR_OBSERVATION {"phase":"hydration-after-click","variant":"after","source":"4e1d1e040df853ddcaa8f30dabf8f913f67669ec","route":"/thread-browser-test","viewport":{"width":960,"height":1100},"documentClass":"","threadsHydrated":false,"projectCount":0,"projectEnvironments":{},"drafts":[],"routedDraftPrompt":null,"worktreeCheckboxChecked":null,"loadingProjects":true,"visibleDialogText":null}
+ [32m✓[39m [30m[43m chromium [49m[39m src/components/PrUiEvidence1832ChatView.browser.tsx [2m([22m[2m225 tests[22m[2m | [22m[33m222 skipped[39m[2m)[22m[33m 24480[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the project environment when global New thread creates a draft from Home [33m 20626[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps the stored draft environment when global New thread reopens it from Home [33m 2054[2mms[22m[39m
+     [33m[2m✓[22m[39m does not open Add project before project hydration completes [33m 1736[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[2m | [22m[33m222 skipped[39m[90m (225)[39m
+[2m   Start at [22m 18:15:37
+[2m   Duration [22m 115.20s[2m (transform 0ms, setup 0ms, import 85.84s, tests 24.48s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/synara/synara/.pr-sidebar-hydration-evidence/pr1832-after/vitest.json

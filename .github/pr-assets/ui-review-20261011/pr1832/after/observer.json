@@ -1,0 +1,62 @@
+{
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+    "sha256": "ec34302f40f6e14470a3971d45b4c71d274ab2d2447e6720b39a6315b5ad9da5"
+  },
+  "cases": [
+    {
+      "name": "keeps the project environment when global New thread creates a draft from Home",
+      "start": "  it(\"keeps the project environment when global New thread creates a draft from Home\", async () => {",
+      "end": "  it(\"keeps the stored draft environment when global New thread reopens it from Home\", async () => {",
+      "replacements": [
+        {
+          "before": "    try {\n",
+          "after": "    try {\n      await captureSidebarThreadEvidence(\"project-before-click\", mounted.router.state.location.pathname);\n"
+        },
+        {
+          "before": "      await expect.element(await waitForWorktreeCheckbox()).toHaveAttribute(\"aria-checked\", \"true\");\n",
+          "after": "      await expect.element(await waitForWorktreeCheckbox()).toHaveAttribute(\"aria-checked\", \"true\");\n      await captureSidebarThreadEvidence(\"project-worktree-draft\", mounted.router.state.location.pathname);\n"
+        }
+      ]
+    },
+    {
+      "name": "keeps the stored draft environment when global New thread reopens it from Home",
+      "start": "  it(\"keeps the stored draft environment when global New thread reopens it from Home\", async () => {",
+      "end": "  it(\"opens Add project when the global New thread action has no usable project target\", async () => {",
+      "replacements": [
+        {
+          "before": "    try {\n",
+          "after": "    try {\n      await captureSidebarThreadEvidence(\"draft-before-click\", mounted.router.state.location.pathname);\n"
+        },
+        {
+          "before": "      await expect.element(await waitForWorktreeCheckbox()).toHaveAttribute(\"aria-checked\", \"true\");\n",
+          "after": "      await expect.element(await waitForWorktreeCheckbox()).toHaveAttribute(\"aria-checked\", \"true\");\n      await captureSidebarThreadEvidence(\"draft-worktree-draft\", mounted.router.state.location.pathname);\n"
+        }
+      ]
+    },
+    {
+      "name": "does not open Add project before project hydration completes",
+      "start": "  it(\"does not open Add project before project hydration completes\", async () => {",
+      "end": "  it(\"lets an empty project draft switch to another open project\", async () => {",
+      "replacements": [
+        {
+          "before": "      await expect.element(page.getByLabelText(\"Loading projects\")).toBeInTheDocument();\n",
+          "after": "      await expect.element(page.getByLabelText(\"Loading projects\")).toBeInTheDocument();\n      await captureSidebarThreadEvidence(\"hydration-before-click\", mounted.router.state.location.pathname);\n"
+        },
+        {
+          "before": "      await newThreadButton.click();\n      await waitForLayout();\n",
+          "after": "      await newThreadButton.click();\n      await waitForLayout();\n      await captureSidebarThreadEvidence(\"hydration-after-click\", mounted.router.state.location.pathname);\n"
+        }
+      ]
+    }
+  ],
+  "expectedPhases": [
+    "project-before-click",
+    "project-worktree-draft",
+    "draft-before-click",
+    "draft-worktree-draft",
+    "hydration-before-click",
+    "hydration-after-click"
+  ]
+}

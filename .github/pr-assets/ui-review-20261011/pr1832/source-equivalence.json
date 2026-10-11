@@ -1,0 +1,60 @@
+{
+  "capturedAfter": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+  "currentFeature": {
+    "sha": "8aabe73b6732adabaad7cf3480ca376700196656",
+    "node_id": "C_kwDORyuZ6doAKDhhYWJlNzNiNjczMmFkYWJhYWQ3Y2YzNDgwY2EzNzY3MDAxOTY2NTY",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/8aabe73b6732adabaad7cf3480ca376700196656",
+    "html_url": "https://github.com/Emanuele-web04/synara/commit/8aabe73b6732adabaad7cf3480ca376700196656",
+    "author": {
+      "name": "Commander Chara",
+      "email": "249489759+cmdr-chara@users.noreply.github.com",
+      "date": "2026-10-11T18:17:55Z"
+    },
+    "committer": {
+      "name": "Commander Chara",
+      "email": "249489759+cmdr-chara@users.noreply.github.com",
+      "date": "2026-10-11T18:17:55Z"
+    },
+    "tree": {
+      "sha": "a8a35b4705242d55cca4cb4556db2cd077b532be",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/a8a35b4705242d55cca4cb4556db2cd077b532be"
+    },
+    "message": "chore: sync Sidebar prerequisite with current main\n\nPreserve the reviewed Sidebar hydration guard and original regression fixture unchanged. Include current main so the dependent custom-model continuation retains a focused stacked diff; both feature blobs remain identical to 4e1d1e.",
+    "parents": [
+      {
+        "sha": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+        "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+        "html_url": "https://github.com/Emanuele-web04/synara/commit/4e1d1e040df853ddcaa8f30dabf8f913f67669ec"
+      },
+      {
+        "sha": "8ac0dfcd62f0e1adda9aff39f0fc7ded8d1276b7",
+        "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/8ac0dfcd62f0e1adda9aff39f0fc7ded8d1276b7",
+        "html_url": "https://github.com/Emanuele-web04/synara/commit/8ac0dfcd62f0e1adda9aff39f0fc7ded8d1276b7"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "currentMainRelativeFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "sha": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+      "status": "modified",
+      "additions": 88,
+      "deletions": 0
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.tsx",
+      "sha": "06594db921139944052c222b10b6d28f80d320c3",
+      "status": "modified",
+      "additions": 13,
+      "deletions": 8
+    }
+  ],
+  "qualification": "Both feature blobs are unchanged; the complete application tree is not claimed identical after current-main integration."
+}

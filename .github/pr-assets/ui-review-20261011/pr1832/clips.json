@@ -1,0 +1,182 @@
+[
+  {
+    "label": "before",
+    "source": "f73074c7a4e4145a8944292e2103964cdf83ecb8",
+    "driver": "77bcc5a433881b6d24cb61f1be5cb20555149099",
+    "rawVideo": "before/video/page@bbdfff4810455c71716f65b07bf22271.webm",
+    "rawVideoSha256": "5e1ab51b8d4c0a136a2c8bdcc21c1208eb5486f95326e550bf1e0f4f8b9be14b",
+    "rawProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "78.960000"
+      }
+    },
+    "clip": "before/interaction.mp4",
+    "clipSha256": "0eda2fa8476359e672266b5289841194da0b24de453c38e9221221dc90261536",
+    "clipProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "4.440000"
+      }
+    },
+    "sourceStartSeconds": 73.3,
+    "sourceDurationSeconds": 4.48,
+    "fullFrame": true,
+    "retimed": false,
+    "overlaysAdded": false,
+    "encoderArguments": [
+      "error",
+      "-y",
+      "-ss",
+      "73.3",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1832-evidence/pr1832/before/video/page@bbdfff4810455c71716f65b07bf22271.webm",
+      "-t",
+      "4.48",
+      "-map",
+      "0:v:0",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart"
+    ],
+    "inspectionFrames": [
+      {
+        "path": "before/clip-frame-1.png",
+        "clipSeconds": 0.2,
+        "sourceSeconds": 73.5,
+        "sha256": "51a56b8842ebca8823da1ab3de61e4999a8a83ab1d38c46fab86092a4393797d"
+      },
+      {
+        "path": "before/clip-frame-2.png",
+        "clipSeconds": 1.5,
+        "sourceSeconds": 74.8,
+        "sha256": "8ffa971b1a076c6d8a2eca5e71614e4d07cc58dd6a2978f7cb214a40e6021f18"
+      },
+      {
+        "path": "before/clip-frame-3.png",
+        "clipSeconds": 3.1,
+        "sourceSeconds": 76.4,
+        "sha256": "ae963f3ff317ca6a63178257fd40e989e47a7c0a3289a634c48d9e7a4a83c50a"
+      },
+      {
+        "path": "before/clip-frame-4.png",
+        "clipSeconds": 4.3,
+        "sourceSeconds": 77.6,
+        "sha256": "73aebcc69c3d3461eb9f419409ce52e7b460512b5d532aa3736ae1689670b795"
+      }
+    ],
+    "qualification": "Consecutive real interactions from all three cases, including the original between-case unmount/loading. Source times record the requested extraction window and nominal frame offset; actual encoded duration is in clipProbe and follows the original 25fps boundaries. Hydration deliberately clears projects in the controlled fixture; its empty main pane is not a claimed rendering defect."
+  },
+  {
+    "label": "after",
+    "source": "4e1d1e040df853ddcaa8f30dabf8f913f67669ec",
+    "driver": "77bcc5a433881b6d24cb61f1be5cb20555149099",
+    "rawVideo": "after/video/page@040c70fa454dea1d384233e62ba9bfe5.webm",
+    "rawVideoSha256": "bef5a36868691f6872aa4a7adfb7a7e14cd9b6bec8250fe5e604b99d01bcd0f3",
+    "rawProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "114.880000"
+      }
+    },
+    "clip": "after/interaction.mp4",
+    "clipSha256": "305d8e96ad653d3383b57874e018f9fb8feab921d8264cb24485217d3211d441",
+    "clipProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "5.120000"
+      }
+    },
+    "sourceStartSeconds": 108.5,
+    "sourceDurationSeconds": 5.16,
+    "fullFrame": true,
+    "retimed": false,
+    "overlaysAdded": false,
+    "encoderArguments": [
+      "error",
+      "-y",
+      "-ss",
+      "108.5",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1832-evidence/pr1832/after/video/page@040c70fa454dea1d384233e62ba9bfe5.webm",
+      "-t",
+      "5.16",
+      "-map",
+      "0:v:0",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart"
+    ],
+    "inspectionFrames": [
+      {
+        "path": "after/clip-frame-1.png",
+        "clipSeconds": 0.2,
+        "sourceSeconds": 108.7,
+        "sha256": "38206b7b13fe2f2fb2c137912a1badd89522530651040b26d8f311576d115eaf"
+      },
+      {
+        "path": "after/clip-frame-2.png",
+        "clipSeconds": 1.24,
+        "sourceSeconds": 109.74,
+        "sha256": "2954778f4cf61f363deec7154ea718d58f50f1d18431298a8bfd5eeec4bc3f72"
+      },
+      {
+        "path": "after/clip-frame-3.png",
+        "clipSeconds": 3.42,
+        "sourceSeconds": 111.92,
+        "sha256": "b6d596b58405e54f3c053f49e953900c01601e905e28cbd2fa0f1f7eb05e3417"
+      },
+      {
+        "path": "after/clip-frame-4.png",
+        "clipSeconds": 5.02,
+        "sourceSeconds": 113.52,
+        "sha256": "4257924fe93a176471ae797415f9309b91130bcfa6b141a69f7b7fe9588bf81e"
+      }
+    ],
+    "qualification": "Consecutive real interactions from all three cases, including the original between-case unmount/loading. Source times record the requested extraction window and nominal frame offset; actual encoded duration is in clipProbe and follows the original 25fps boundaries. Hydration deliberately clears projects in the controlled fixture; its empty main pane is not a claimed rendering defect."
+  }
+]
