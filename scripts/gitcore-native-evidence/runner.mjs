@@ -44,7 +44,32 @@ function guardSource() {
   const tree = command("git", ["rev-parse", "HEAD^{tree}"]).stdout.trim();
   if (head !== SOURCE || tree !== TREE) throw new Error(`Unexpected source ${head}/${tree}`);
   command("git", ["diff", "--exit-code", "HEAD", "--"]);
-  if (command("git", ["status", "--porcelain", "--untracked-files=no"]).stdout.trim()) {
+  const trackedStatus = command("git", ["status", "--porcelain", "--untracked-files=no"]);
+  if (trackedStatus.stdout.trim()) {
+    const bounded = (record) => ({
+      ...record,
+      stdout: record.stdout.slice(0, 40_000),
+      stderr: record.stderr.slice(0, 40_000),
+      stdoutTruncated: record.stdout.length > 40_000,
+      stderrTruncated: record.stderr.length > 40_000,
+    });
+    // Read-only startup diagnostics. The original failure remains a failure;
+    // neither Git configuration nor the index/working tree is repaired here.
+    writeJson("tracked-status-failure.json", {
+      observedAt: new Date().toISOString(),
+      head,
+      tree,
+      trackedStatus: bounded(trackedStatus),
+      rawDiff: bounded(command("git", ["diff", "--raw", "HEAD", "--"], root, true)),
+      applicationLineEndings: bounded(command("git", ["ls-files", "--eol", "--", ...EXPECTED.keys()], root, true)),
+      gitConfig: ["core.autocrlf", "core.eol", "core.filemode"].map((key) =>
+        bounded(command("git", ["config", "--get", key], root, true))),
+      applicationBytes: [...EXPECTED].map(([relative, expectedBlob]) => {
+        const data = readFileSync(path.join(root, relative));
+        return { path: relative, expectedBlob, actualBlob: blob(data), sha256: hash(data), bytes: data.length };
+      }),
+      qualification: "Bounded read-only observations after the original clean-source guard rejected startup; no Windows test case has run.",
+    });
     throw new Error("Tracked source is not clean");
   }
   const files = [];
