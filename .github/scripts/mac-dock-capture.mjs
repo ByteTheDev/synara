@@ -1,19 +1,22 @@
 // Exact-source package and real Dock evidence. Never change application source.
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   appendFileSync,
   copyFileSync,
+  closeSync,
   createReadStream,
   existsSync,
   mkdirSync,
   mkdtempSync,
+  openSync,
   readFileSync,
   readdirSync,
   statSync,
   writeFileSync,
 } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { release } from "node:os";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -90,6 +93,178 @@ function native(mode, setup) {
     timeout: 180_000,
     log: `native-${mode}.log`,
   });
+}
+async function bounded(promise, milliseconds, description) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`${description} deadline`)), milliseconds);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function captureWithActualQuitConfirmation(setup) {
+  const configuration = JSON.parse(readFileSync(setup.configurationPath, "utf8"));
+  const profile = join(configuration.environment.HOME, "Library", "Application Support", "synara");
+  assert.ok(profile.startsWith(setup.ownedRoot + "/"));
+  const portFile = join(profile, "DevToolsActivePort");
+  assert.ok(!existsSync(portFile), "Debugger endpoint must come from this new owned launch");
+  const requireWeb = createRequire(join(source, "apps/web/package.json"));
+  assert.equal(requireWeb("playwright/package.json").version, "1.62.1");
+  const playwright = requireWeb("playwright");
+  const descriptor = openSync(join(evidence, "native-capture.log"), "w");
+  let child;
+  try {
+    child = spawn(setup.helper, ["capture", setup.configurationPath], {
+      cwd: source,
+      shell: false,
+      stdio: ["ignore", descriptor, descriptor],
+    });
+  } finally {
+    closeSync(descriptor);
+  }
+  const observation = {
+    actualExit: null,
+    spawnError: null,
+    processErrors: [],
+    ownedHandleStop: null,
+    stopDeadline: false,
+    directFileLog: true,
+  };
+  let spawned = false;
+  const settled = new Promise((resolveExit) => {
+    child.once("spawn", () => {
+      spawned = true;
+    });
+    child.once("exit", (code, signal) => {
+      observation.actualExit = { code, signal };
+      resolveExit(observation.actualExit);
+    });
+    child.on("error", (error) => {
+      observation.processErrors.push(String(error));
+      if (!spawned) {
+        observation.spawnError = String(error);
+        resolveExit({ code: null, signal: null, error: String(error) });
+      }
+    });
+  });
+  async function until(predicate, milliseconds, description) {
+    const end = Date.now() + milliseconds;
+    while (Date.now() < end) {
+      const value = predicate();
+      if (value) return value;
+      assert.equal(observation.spawnError, null, observation.spawnError);
+      assert.equal(observation.actualExit, null, `Native observer exited before ${description}`);
+      await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+    }
+    throw new Error(`${description} deadline`);
+  }
+  let browser;
+  try {
+    const lines = await until(
+      () => {
+        if (!existsSync(portFile)) return false;
+        const lines = readFileSync(portFile, "utf8").trim().split(/\r?\n/);
+        return lines.length === 2 ? lines : false;
+      },
+      120_000,
+      "Owned Chromium endpoint",
+    );
+    assert.equal(lines.length, 2);
+    assert.match(lines[0], /^\d{1,5}$/);
+    const port = Number(lines[0]);
+    assert.ok(port > 0 && port <= 65535);
+    assert.match(lines[1], /^\/devtools\/browser\/[a-zA-Z0-9-]+$/);
+    browser = await playwright.chromium.connectOverCDP(`ws://127.0.0.1:${port}${lines[1]}`, {
+      timeout: 30_000,
+      noDefaults: true,
+    });
+    const pages = () =>
+      browser
+        .contexts()
+        .flatMap((context) => context.pages())
+        .filter((page) => {
+          try {
+            const url = new URL(page.url());
+            return url.protocol === "synara:" && url.hostname === "app";
+          } catch {
+            return false;
+          }
+        });
+    await until(() => pages().length === 1, 30_000, "Actual owned renderer");
+    const page = pages()[0];
+    await until(
+      () => existsSync(join(evidence, "normal-quit-request.json")),
+      120_000,
+      "Normal native quit request",
+    );
+    const request = JSON.parse(readFileSync(join(evidence, "normal-quit-request.json"), "utf8"));
+    const startup = JSON.parse(readFileSync(join(evidence, "application-startup.json"), "utf8"));
+    assert.equal(request.pid, startup.pid);
+    assert.equal(request.appPath, setup.appPath);
+    await page
+      .getByText("Are you sure you want to quit?", { exact: true })
+      .waitFor({ state: "visible", timeout: 10_000 });
+    const quit = page.getByRole("button", { name: "Quit", exact: true });
+    await quit.waitFor({ state: "visible", timeout: 10_000 });
+    const renderer = {
+      profile,
+      endpoint: "Owned ephemeral loopback Chromium endpoint",
+      protocol: "synara:",
+      host: "app",
+      nativePid: request.pid,
+      visiblePrompt: true,
+      visibleButton: true,
+      clicked: false,
+    };
+    save("renderer-confirmation.json", renderer);
+    run(
+      "/usr/sbin/screencapture",
+      ["-x", "-t", "png", "-T", "1", join(evidence, "quit-confirmation.png")],
+      { timeout: 15_000, log: "quit-confirmation-screen.log" },
+    );
+    await quit.click({ timeout: 10_000 });
+    renderer.clicked = true;
+    save("renderer-confirmation.json", renderer);
+    const result = await bounded(
+      settled,
+      60_000,
+      "Actual native normal quit and closed screenshot",
+    );
+    assert.equal(result.code, 0, JSON.stringify(result));
+    assert.deepEqual(observation.processErrors, []);
+  } catch (error) {
+    save("renderer-confirmation-failure.json", { message: String(error), stack: error.stack });
+    throw error;
+  } finally {
+    if (!observation.actualExit && !observation.spawnError) {
+      // Stop only the owned helper handle; app termination remains the separate
+      // exact-bundle native cleanup below, with any forced stop recorded.
+      try {
+        observation.ownedHandleStop = child.kill("SIGTERM");
+      } catch (error) {
+        observation.processErrors.push(String(error));
+      }
+      try {
+        await bounded(settled, 5_000, "Owned observer stop");
+      } catch {
+        observation.stopDeadline = true;
+      }
+    }
+    save("native-capture.log.json", observation);
+    if (browser) {
+      try {
+        await bounded(browser.close(), 10_000, "Owned Chromium observer disconnect");
+      } catch (error) {
+        save("renderer-disconnect-failure.json", { message: String(error) });
+        throw error;
+      }
+    }
+  }
 }
 const corePaths = [
   "Contents/MacOS/Synara",
@@ -179,7 +354,7 @@ async function main() {
       workflowSha256: await digest(join(driver, ".github/workflows/mac-dock-capture.yml")),
       compiledIcon: await verifyIconCatalog(),
       qualification:
-        "Exact current-main production-flavor unsigned macOS package and ordinary existing screen access. Actual running/closed screenshots use a saved/restored disposable Dock layout. Original author/current asset exports are separately labelled; original author application was not built/rendered. No permission request, TCC or accessibility changes, authenticated provider session, signing, release, or upgrade/cache-transition claim.",
+        "Exact current-main production-flavor unsigned macOS package and ordinary existing screen access. Actual running/closed screenshots use a saved/restored disposable Dock layout. The owned app exposes an ephemeral loopback Chromium endpoint only so Playwright can click its actual visible renderer Quit confirmation after the native termination request; no IPC or source shortcut. Original author/current asset exports are separately labelled; original author application was not built/rendered. No permission request, TCC or accessibility changes, authenticated provider session, signing, release, or upgrade/cache-transition claim.",
     });
     run(
       "/usr/bin/swiftc",
@@ -314,7 +489,7 @@ async function main() {
     const cleanupFailures = [];
     try {
       native("configure", setup);
-      native("capture", setup);
+      await captureWithActualQuitConfirmation(setup);
     } catch (error) {
       captureError = error;
       save("original-capture-failure.json", { message: String(error), stack: error.stack });
@@ -346,6 +521,10 @@ async function main() {
   assert.equal(process.env.DOCK_STARTUP_OUTCOME, "success");
   assert.equal(process.env.DOCK_CAPTURE_OUTCOME, "success");
   assert.equal(process.env.DOCK_CLEANUP_OUTCOME, "success");
+  const confirmation = JSON.parse(
+    readFileSync(join(evidence, "renderer-confirmation.json"), "utf8"),
+  );
+  assert.ok(confirmation.visiblePrompt && confirmation.visibleButton && confirmation.clicked);
   const images = [];
   for (const file of [
     "current-main-closed-before-launch.png",
@@ -378,5 +557,7 @@ async function main() {
 await main().catch((error) => {
   save(`${phase}-failure.json`, { message: String(error), stack: error.stack });
   console.error(error);
-  process.exitCode = 1;
+  // Bound failed observer connections; the always-running workflow cleanup
+  // still restores the Dock and terminates only the exact owned application.
+  process.exit(1);
 });

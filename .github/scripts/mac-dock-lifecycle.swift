@@ -137,7 +137,9 @@ do {
         try capture("current-main-closed-before-launch")
         let openConfiguration = NSWorkspace.OpenConfiguration()
         openConfiguration.environment = configuration["environment"] as! [String: String]
-        openConfiguration.arguments = []
+        // Ephemeral loopback Chromium endpoint in this fresh owned profile lets
+        // the controller click the actual renderer's normal Quit confirmation.
+        openConfiguration.arguments = ["--remote-debugging-port=0"]
         openConfiguration.createsNewApplicationInstance = true
         openConfiguration.allowsRunningApplicationSubstitution = false
         openConfiguration.promptsUserIfNeeded = false
@@ -174,8 +176,9 @@ do {
         try save("visible-owned-windows.json", ["windows": windows, "largeApplicationWindow": visible, "frontmost": frontmost])
         try capture("current-main-running")
         try require(visible && frontmost, "Actual main window is not visible and foreground")
+        try save("normal-quit-request.json", ["pid": application.processIdentifier, "appPath": appURL.path, "requestedAt": Date().timeIntervalSince1970])
         let requested = application.terminate()
-        let exited = awaitCondition(15, { application.isTerminated })
+        let exited = awaitCondition(45, { application.isTerminated })
         try save("normal-quit.json", ["pid": application.processIdentifier, "normalRequest": requested, "terminated": exited, "forceUsed": false])
         if !exited { try capture("quit-did-not-complete") }
         try require(requested && exited, "Normal application quit did not complete")
