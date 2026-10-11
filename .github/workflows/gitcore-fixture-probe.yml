@@ -1,0 +1,59 @@
+name: Diagnose native GitCore fixture prerequisites
+
+on:
+  push:
+    branches:
+      - cleanup/20261011/gitcore-windows-fixture-probe
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gitcore-fixture-probe-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fixture:
+    name: Fixture ${{ matrix.phase }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        phase: [original, candidate]
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    env:
+      GIT_FIXTURE_PHASE: ${{ matrix.phase }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: a1b087d984a39cf9df936d5da9465db9e7679600
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - name: Materialize exact source and driver bytes
+        run: |
+          for checkout in . ../driver; do
+            git -C "$checkout" read-tree HEAD
+            git -C "$checkout" -c core.autocrlf=false checkout-index --force --all --index
+          done
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Observe actual finite native Git prerequisites
+        run: node ../driver/scripts/gitcore-fixture-probe.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: gitcore-fixture-${{ matrix.os }}-${{ matrix.phase }}
+          path: ${{ runner.temp }}/gitcore-fixture-${{ matrix.phase }}/
+          if-no-files-found: error
+          retention-days: 14
