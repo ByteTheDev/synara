@@ -68,7 +68,7 @@ function guardSource() {
         const data = readFileSync(path.join(root, relative));
         return { path: relative, expectedBlob, actualBlob: blob(data), sha256: hash(data), bytes: data.length };
       }),
-      qualification: "Bounded read-only observations after the original clean-source guard rejected startup; no Windows test case has run.",
+      qualification: "Bounded read-only observations from a rejected tracked-source guard. Consult the command and test receipts to determine whether test execution started.",
     });
     throw new Error("Tracked source is not clean");
   }
