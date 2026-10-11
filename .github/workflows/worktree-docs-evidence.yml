@@ -80,4 +80,5 @@ jobs:
           name: worktree-docs-1847-${{ matrix.side }}
           path: worktree-docs-evidence/
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
