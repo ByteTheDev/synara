@@ -2802,7 +2802,7 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
           Stream.takeUntil(
             adapter.streamEvents,
             (event) =>
-              event.type === "session.started" && event.threadId === asThreadId("teardown-fence"),
+              event.type === "session.exited" && event.threadId === asThreadId("teardown-fence"),
           ),
         ).pipe(Effect.forkChild);
 
@@ -2839,6 +2839,9 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
           lifecycleGeneration: "generation-opencode-a",
           runtimeMode: "full-access",
         });
+        // Await the replacement context finalizers before ending observation.
+        yield* adapter.stopSession(asThreadId("teardown-fence"));
+        yield* adapter.stopAll();
         const events = Array.from(yield* Fiber.join(eventsFiber));
 
         return { events, readySession, runningSession };
@@ -2870,8 +2873,8 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
     expect(runtime.abortCalls.length).toBeGreaterThanOrEqual(1);
     expect(runtime.abortCalls[0]).toEqual({ sessionID: "opencode-session-1" });
     assertTerminalOutcomeConformance(result.events);
-    // Keep the deterministic teardown fence in ordinary CI. The live test
-    // separately observes native output through replacement completion.
+    // Ordinary CI observes through the replacement teardown barrier. The live
+    // test separately observes native output through replacement completion.
     assertSessionTeardownConformance(result.events, asThreadId("thread-1"));
     expect(result.runningSession?.status).toBe("running");
     expect(result.runningSession?.activeTurnId).toBeDefined();
@@ -2888,6 +2891,8 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
       "turn.aborted",
       "session.exited",
       "session.started",
+      "thread.started",
+      "session.exited",
     ]);
     expect(
       result.events.every((event) => event.lifecycleGeneration === "generation-opencode-a"),
