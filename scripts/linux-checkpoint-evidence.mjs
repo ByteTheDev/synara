@@ -15,18 +15,18 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const SOURCES = {
   1652: {
-    commit: "5512c114e3d97c7db79127ca9d9a7946b1bc7359",
-    tree: "811232074a0784aa8edc8b603c723ff4a6c5ad1c",
+    commit: "82f099ec3ed6dc698e76dac17c93ef4354141f5e",
+    tree: "cfa8ab2cf78d42755de601d50c94aae29212d21c",
     target: "AppImage,deb",
   },
   1720: {
-    commit: "5107bcccc6eff36672d878958fc75ce4fe61bc05",
-    tree: "a2c3f012f66d491ef634e982e03f212cf083c5a5",
+    commit: "4dced2d4a099b4186a2275c261886dfb55f9f325",
+    tree: "f286414e359c34ee52bfd826f7e8efdd80388bc2",
     target: "AppImage,deb",
   },
   1823: {
-    commit: "5b6b0c427863018f65f4b1113f4e1ad4076e1dab",
-    tree: "3d6480b7f82e2a16bcf45c92f1cc597255d49cb3",
+    commit: "d514181370aa7d673afe267948c42b85ba3f3e28",
+    tree: "708d1cea06b405a6911a0fae5b50d59fdb7223a9",
     target: "AppImage,deb,rpm",
   },
 };

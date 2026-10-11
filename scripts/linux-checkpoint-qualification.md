@@ -4,11 +4,11 @@ This evidence-only workflow invokes the unchanged reusable packaging workflow at
 
 | Separate strategy | Exact source                               | Declared native formats                                                |
 | ----------------- | ------------------------------------------ | ---------------------------------------------------------------------- |
-| PR 1652           | `5512c114e3d97c7db79127ca9d9a7946b1bc7359` | AppImage and Debian, retaining this alternative's Debian mirror policy |
-| PR 1720           | `5107bcccc6eff36672d878958fc75ce4fe61bc05` | AppImage and Debian, AppImage-only updater authority                   |
-| PR 1823           | `5b6b0c427863018f65f4b1113f4e1ad4076e1dab` | AppImage, Debian and RPM, AppImage-only updater authority              |
+| PR 1652           | `82f099ec3ed6dc698e76dac17c93ef4354141f5e` | AppImage and Debian, retaining this alternative's Debian mirror policy |
+| PR 1720           | `4dced2d4a099b4186a2275c261886dfb55f9f325` | AppImage and Debian, AppImage-only updater authority                   |
+| PR 1823           | `d514181370aa7d673afe267948c42b85ba3f3e28` | AppImage, Debian and RPM, AppImage-only updater authority              |
 
-Each source runs separately for `production` and `beta`, selected only by one of six explicit `cleanup/20261011/pr-N-linux-checkpoint-FLAVOR` branches. Each run therefore has a single Linux package artifact and checkpoint name. Production uses the source's actual server version; Beta uses the next patch with `-beta.1`. These are unsigned build identities, not release tags. All three sources currently contain version 1.0.2 and have current-main-compatible feature bytes; later main 9e01962's version 1.0.3 does not change the source pins or qualify these builds as that release.
+Each source runs separately for `production` and `beta`, selected only by one of six explicit `cleanup/20261011/pr-N-linux-checkpoint-FLAVOR` branches. Each run therefore has a single Linux package artifact and checkpoint name. Production uses the source's actual server version; Beta uses the next patch with `-beta.1`. These are unsigned build identities, not release tags. All three exact sources incorporate current main 1.0.3 metadata and the separately reviewed PR 1852 formatting prerequisite, preserving every previously reviewed feature blob. Production builds use 1.0.3 and Beta builds use 1.0.4-beta.1. Earlier 1.0.2 source checks remain separately labelled.
 
 ## Actual first attempt
 
