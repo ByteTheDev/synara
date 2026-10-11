@@ -1,0 +1,74 @@
+name: Browser cookie import Before and After
+on:
+  push:
+    branches: [cleanup/20261011/browser-cookie-1856-evidence]
+permissions:
+  contents: read
+concurrency:
+  group: cookie-evidence-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - id: targets
+        run: node scripts/browser-cookie-evidence/runner.mjs matrix
+  capture:
+    needs: matrix
+    name: ${{ matrix.id }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.matrix.outputs.targets) }}
+    env:
+      COOKIE_TARGET: ${{ matrix.id }}
+      COOKIE_SOURCE: ${{ matrix.source }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+      - name: Verify exact source and install additive canonical fixture observations
+        run: node .pr-driver/scripts/browser-cookie-evidence/runner.mjs prepare
+      - name: Install actual Chromium
+        working-directory: apps/web
+        run: bunx --no-install playwright install --with-deps chromium
+      - name: Run both complete original browser files
+        working-directory: apps/web
+        shell: bash
+        run: |
+          set +e
+          bun run test:browser --config=vitest.cookie-evidence.config.ts --reporter=default --reporter=json --outputFile.json="$COOKIE_LIVE_REPORT" 2>&1 | tee "$VITE_COOKIE_OUTPUT/vitest.log"
+          statuses=("${PIPESTATUS[@]}")
+          printf '{"vitest":%s,"tee":%s}\n' "${statuses[0]}" "${statuses[1]}" > "$VITE_COOKIE_OUTPUT/exits.json"
+          test "${statuses[0]}" -eq 0 && test "${statuses[1]}" -eq 0
+      - name: Freeze actual reports and verify source, assertions and media
+        if: always()
+        run: node .pr-driver/scripts/browser-cookie-evidence/runner.mjs verify
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cookie-import-${{ matrix.id }}
+          path: pr-cookie-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
