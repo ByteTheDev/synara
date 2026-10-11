@@ -34,7 +34,11 @@ for (const [layout, width, height] of [
         await expect(upgrade).toBeVisible();
         if (name === "installation") {
           await expect(
-            page.getByRole("heading", { name: "Homebrew on macOS", exact: true }),
+            page.getByRole("heading", {
+              level: 3,
+              name: "Homebrew on macOS Copy Anchor Link",
+              exact: true,
+            }),
           ).toBeVisible();
           await expect(
             page.getByText(/Homebrew support is pending acceptance of the official cask/),
@@ -49,7 +53,11 @@ for (const [layout, width, height] of [
       } else {
         await expect(upgrade).toHaveCount(0);
         await expect(
-          page.getByRole("heading", { name: "Homebrew on macOS", exact: true }),
+          page.getByRole("heading", {
+            level: 3,
+            name: "Homebrew on macOS Copy Anchor Link",
+            exact: true,
+          }),
         ).toHaveCount(0);
       }
       const state = await page.evaluate(() => ({
@@ -76,7 +84,9 @@ for (const [layout, width, height] of [
       observations.push({ name, route, state });
     }
     await prepareRoute(page, "/install", "light");
-    await expect(page.getByRole("heading", { name: /Install Synara/ })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Download Synara", exact: true }),
+    ).toBeVisible();
     await expect(page.getByText(/brew install --cask synara/)).toHaveCount(0);
     await expect(page.getByText(/Homebrew/)).toHaveCount(0);
     await assertNoOverflow(page);
