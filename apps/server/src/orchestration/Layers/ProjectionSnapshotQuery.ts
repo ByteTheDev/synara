@@ -1166,7 +1166,7 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
           ) OR EXISTS (
             SELECT 1 FROM orchestration_event_deliveries AS deliveries
             WHERE deliveries.thread_id = projection_threads.thread_id
-              AND deliveries.state IN ('claimed', 'uncertain', 'dead')
+              AND deliveries.state IN ('inflight', 'retry', 'uncertain', 'dead')
           ) AS busy
         FROM projection_threads
         WHERE worktree_path IS NOT NULL

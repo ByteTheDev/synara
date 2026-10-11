@@ -308,13 +308,17 @@ function snapshotOutputPath(input: {
   readonly snapshotsDir: string;
   readonly threadId: string;
   readonly worktreePath: string;
+  readonly head?: string;
 }): string {
   const digest = snapshotDigestForWorktreePath(input.worktreePath);
   const threadPathSegment = input.threadId
     .replace(/[^a-z0-9._-]+/giu, "-")
     .replace(/^-+|-+$/gu, "")
     .slice(0, 80);
-  return path.join(input.snapshotsDir, `${threadPathSegment || "thread"}-${digest}`);
+  return path.join(
+    input.snapshotsDir,
+    `${threadPathSegment || "thread"}${input.head ? `-${createHash("sha256").update(input.head).digest("hex").slice(0, 16)}` : ""}-${digest}`,
+  );
 }
 
 /**
@@ -426,9 +430,8 @@ function removeManagedWorktreeSafely(input: {
   const { entry, thread, reason } = input.candidate;
   const snapshotPath = snapshotOutputPath({
     snapshotsDir: input.snapshotsDir,
-    threadId: input.candidate.expectedHead
-      ? `${thread.id}-${input.candidate.expectedHead}`
-      : thread.id,
+    threadId: thread.id,
+    ...(input.candidate.expectedHead ? { head: input.candidate.expectedHead } : {}),
     worktreePath: entry.path,
   });
 
@@ -452,7 +455,8 @@ function removeManagedWorktreeSafely(input: {
             }).pipe(Effect.as(null)),
           ),
         );
-        if (status?.hasWorkingTreeChanges) {
+        if (status === null) return false;
+        if (status.hasWorkingTreeChanges) {
           yield* Effect.logWarning(
             "managed worktree cleanup skipped dirty worktree; refusing silent data loss",
             {
@@ -470,7 +474,7 @@ function removeManagedWorktreeSafely(input: {
           cwd: entry.workspaceRoot,
           path: entry.path,
           force: false,
-          reclaimTemporaryBranch: true,
+          reclaimTemporaryBranch: reason !== "merged",
         });
         // The snapshot stays as the recovery net for this automatic removal, but
         // the per-worktree parent folder has nothing left to hold.
