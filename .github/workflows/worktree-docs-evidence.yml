@@ -27,11 +27,14 @@ jobs:
       DOCS_SOURCE_SHA: ${{ matrix.source }}
       DOCS_SOURCE_TREE: ${{ matrix.tree }}
       DOCS_EVIDENCE_OUTPUT: ${{ github.workspace }}/worktree-docs-evidence
-      DOCS_LIVE_REPORT: ${{ runner.temp }}/worktree-docs-live/report.json
-      DOCS_PLAYWRIGHT_OUTPUT: ${{ runner.temp }}/worktree-docs-live/playwright
       VISUAL_TEST: "1"
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
+      - name: Set private diagnostic report paths
+        shell: bash
+        run: |
+          printf 'DOCS_LIVE_REPORT=%s\n' "$RUNNER_TEMP/worktree-docs-live/report.json" >> "$GITHUB_ENV"
+          printf 'DOCS_PLAYWRIGHT_OUTPUT=%s\n' "$RUNNER_TEMP/worktree-docs-live/playwright" >> "$GITHUB_ENV"
       - uses: actions/checkout@v6
         with:
           ref: ${{ matrix.source }}
