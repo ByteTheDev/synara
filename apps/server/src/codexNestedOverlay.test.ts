@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 async function fixture(withAuth = true) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "synara-nested-codex-"));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "synara-nested-codex-")));
   roots.push(root);
   const sourceHome = path.join(root, "home");
   const parentRuntime = path.join(root, "parent");
