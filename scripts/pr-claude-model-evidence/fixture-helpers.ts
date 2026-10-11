@@ -121,9 +121,102 @@ async function mountModelEvidence(scenario: ModelEvidenceScenario, seedSelection
   }
 }
 
+let modelEvidenceOpenAttempt = 0;
+
 async function openModelEvidenceMenu() {
-  await page.getByRole("button", { name: "Change model and reasoning" }).click();
-  await expect.element(page.getByRole("searchbox", { name: "Search models" })).toBeVisible();
+  const attempt = ++modelEvidenceOpenAttempt;
+  const started = performance.now();
+  const records: Record<string, unknown>[] = [];
+  const describeElement = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return target === window ? "window" : null;
+    const bounds = target.getBoundingClientRect();
+    return {
+      tag: target.tagName,
+      role: target.getAttribute("role"),
+      label: target.getAttribute("aria-label"),
+      editable: target.getAttribute("contenteditable"),
+      text: target.textContent?.slice(0, 180),
+      connected: target.isConnected,
+      rect: { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height },
+    };
+  };
+  const snapshot = () => {
+    const trigger = document.querySelector<HTMLButtonElement>(
+      'button[aria-label="Change model and reasoning"]',
+    );
+    const search = document.querySelector<HTMLInputElement>('[aria-label="Search models"]');
+    return {
+      documentFocused: document.hasFocus(),
+      active: describeElement(document.activeElement),
+      trigger: describeElement(trigger),
+      disabled: trigger?.disabled,
+      expanded: trigger?.getAttribute("aria-expanded"),
+      open: trigger?.getAttribute("data-popup-open"),
+      search: describeElement(search),
+      searchVisible: search?.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }),
+    };
+  };
+  const record = (stage: string, extra: Record<string, unknown> = {}) => {
+    if (records.length < 160)
+      records.push({ stage, elapsedMs: performance.now() - started, ...snapshot(), ...extra });
+  };
+  const onEvent = (event: Event) => {
+    record(event.type, {
+      target: describeElement(event.target),
+      defaultPrevented: event.defaultPrevented,
+      ...(event instanceof MouseEvent ? { x: event.clientX, y: event.clientY } : {}),
+      ...(event instanceof FocusEvent ? { related: describeElement(event.relatedTarget) } : {}),
+    });
+  };
+  const events = [
+    "pointerdown",
+    "mousedown",
+    "pointerup",
+    "mouseup",
+    "click",
+    "focusin",
+    "focusout",
+  ];
+  for (const event of events) document.addEventListener(event, onEvent, true);
+  window.addEventListener("focus", onEvent);
+  window.addEventListener("blur", onEvent);
+  let lastState = JSON.stringify(snapshot());
+  const observer = new MutationObserver(() => {
+    const current = JSON.stringify(snapshot());
+    if (current !== lastState) {
+      lastState = current;
+      record("surface-change");
+    }
+  });
+  observer.observe(document.body, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ["aria-expanded", "data-popup-open", "data-state", "style", "class"],
+  });
+  record("before-click");
+  try {
+    await page.getByRole("button", { name: "Change model and reasoning" }).click();
+    record("click-returned");
+    await expect.element(page.getByRole("searchbox", { name: "Search models" })).toBeVisible();
+    record("search-visible");
+  } catch (cause) {
+    record("original-assertion-failed", { cause: String(cause) });
+    try {
+      await page.screenshot({
+        path: `${import.meta.env.VITE_PR_MODEL_OUTPUT}/model-menu-open-failure-${attempt}.png`,
+      });
+    } catch (screenshotError) {
+      record("failure-screenshot-error", { cause: String(screenshotError) });
+    }
+    throw cause;
+  } finally {
+    observer.disconnect();
+    for (const event of events) document.removeEventListener(event, onEvent, true);
+    window.removeEventListener("focus", onEvent);
+    window.removeEventListener("blur", onEvent);
+    console.log("PR_MODEL_MENU_OBSERVER " + JSON.stringify({ attempt, records }));
+  }
 }
 
 async function captureModelEvidence(

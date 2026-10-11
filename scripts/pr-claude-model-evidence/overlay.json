@@ -21,10 +21,10 @@
       "name": "qualifies configured Claude options in the full ChatView"
     },
     {
-      "name": "keeps sibling Claude model controls unconfigured in the full ChatView"
+      "name": "keeps 'sibling' Claude model controls unconfigured in the full ChatView"
     },
     {
-      "name": "keeps unknown Claude model controls unconfigured in the full ChatView"
+      "name": "keeps 'unknown' Claude model controls unconfigured in the full ChatView"
     }
   ],
   "expectedPhases": [

@@ -12,7 +12,7 @@ export default defineConfig({
     ...browserConfig.test,
     include: ["src/components/PrUiEvidence369ModelChatView.browser.tsx"],
     testNamePattern:
-      "qualifies configured Claude options in the full ChatView|keeps (sibling|unknown) Claude model controls unconfigured in the full ChatView",
+      "qualifies configured Claude options in the full ChatView|keeps '(sibling|unknown)' Claude model controls unconfigured in the full ChatView",
     browser: {
       ...browserConfig.test?.browser,
       viewport: { width: 960, height: 1100 },
