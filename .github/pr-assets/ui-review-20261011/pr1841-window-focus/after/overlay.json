@@ -1,0 +1,30 @@
+{
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "d86dd91606f75ca0a4ab5850cee5bda866b7ebeb",
+    "sha256": "8bc297ba2c0c2cfb6797837352febdb433579c3ff49d6e3e14adb7707fb79605"
+  },
+  "replacements": [
+    {
+      "before": "      await waitForLayout();\n      expect(document.hasFocus()).toBe(false);\n      expect(document.activeElement).not.toBe(editor);\n\n      await trigger.click();\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"true\");",
+      "after": "      await waitForLayout();\n      await captureWindowActivation(label, \"before-click\");\n      expect(document.hasFocus()).toBe(false);\n      expect(document.activeElement).not.toBe(editor);\n\n      await trigger.click();\n      await captureWindowActivation(label, \"after-click\");\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"true\");"
+    },
+    {
+      "before": "      await expect.element(page.getByRole(\"menu\")).toBeVisible();\n      await userEvent.keyboard(\"{Escape}\");\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"false\");\n    } finally {\n      await mounted?.cleanup();",
+      "after": "      await captureWindowActivation(label, \"settled\");\n      await expect.element(page.getByRole(\"menu\")).toBeVisible();\n      await userEvent.keyboard(\"{Escape}\");\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"false\");\n      await captureWindowActivation(label, \"closed\");\n    } finally {\n      await mounted?.cleanup();"
+    }
+  ],
+  "helperAnchor": "describe(\"ChatView transcript geometry (full app)\", () => {",
+  "testNamePattern": "preserves the (?:'model'|'permissions'|model|permissions) picker on first window activation$",
+  "expectedCaseCount": 2,
+  "expectedPhases": [
+    "model-before-click",
+    "model-after-click",
+    "model-settled",
+    "model-closed",
+    "permissions-before-click",
+    "permissions-after-click",
+    "permissions-settled",
+    "permissions-closed"
+  ]
+}

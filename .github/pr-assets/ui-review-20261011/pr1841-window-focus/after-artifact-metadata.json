@@ -1,0 +1,20 @@
+{
+  "id": 11715365045,
+  "node_id": "MDg6QXJ0aWZhY3QxMTcxNTM2NTA0NQ==",
+  "name": "window-focus-evidence-pr1841-after-a2f1f846c15d98b734ac39d2b889ffade38496f9",
+  "size_in_bytes": 1004011,
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11715365045",
+  "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11715365045/zip",
+  "expired": false,
+  "digest": "sha256:f6df687570367671c8a33bfaf85bd421e22baa8dbfabd032238a87232fd7e461",
+  "created_at": "2026-10-11T20:38:13Z",
+  "updated_at": "2026-10-11T20:38:13Z",
+  "expires_at": "2026-11-10T20:38:12Z",
+  "workflow_run": {
+    "id": 38172838752,
+    "repository_id": 1194039785,
+    "head_repository_id": 1194039785,
+    "head_branch": "cleanup/20261011/window-focus-evidence",
+    "head_sha": "0cc8b3ca9f085fd235c26aeb77be840cce8f4ea6"
+  }
+}

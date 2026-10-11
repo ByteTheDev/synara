@@ -1,0 +1,30 @@
+{
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "5f913d0c0332a4adfec826ef66e5b9cd10935c07",
+    "sha256": "0f066877e19fa10f5209d76d27867263df7a4914dbf5dc8fc5c0b0365bd4d0e0"
+  },
+  "replacements": [
+    {
+      "before": "      await waitForLayout();\n      expect(document.hasFocus()).toBe(false);\n      expect(document.activeElement).not.toBe(editor);\n\n      await trigger.click();\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"true\");",
+      "after": "      await waitForLayout();\n      await captureWindowActivation(label, \"before-click\");\n      expect(document.hasFocus()).toBe(false);\n      expect(document.activeElement).not.toBe(editor);\n\n      await trigger.click();\n      await captureWindowActivation(label, \"after-click\");\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"true\");"
+    },
+    {
+      "before": "      await expect.element(page.getByRole(\"menu\")).toBeVisible();\n      await userEvent.keyboard(\"{Escape}\");\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"false\");\n    } finally {\n      await mounted?.cleanup();",
+      "after": "      await captureWindowActivation(label, \"settled\");\n      await expect.element(page.getByRole(\"menu\")).toBeVisible();\n      await userEvent.keyboard(\"{Escape}\");\n      await expect.element(trigger).toHaveAttribute(\"aria-expanded\", \"false\");\n      await captureWindowActivation(label, \"closed\");\n    } finally {\n      await mounted?.cleanup();"
+    }
+  ],
+  "helperAnchor": "describe(\"ChatView transcript geometry (full app)\", () => {",
+  "testNamePattern": "preserves the (?:'model'|'traits'|model|traits) picker on first window activation$",
+  "expectedCaseCount": 2,
+  "expectedPhases": [
+    "model-before-click",
+    "model-after-click",
+    "model-settled",
+    "model-closed",
+    "traits-before-click",
+    "traits-after-click",
+    "traits-settled",
+    "traits-closed"
+  ]
+}

@@ -1,0 +1,35 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m8:36:05 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+[2m8:36:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[BABEL] Note: The code generator has deoptimised the styling of /home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx as it exceeds the max of 500KB.
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'model' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"model-before-click","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Change model and reasoning","viewport":{"width":960,"height":1100},"documentFocused":false,"editorFocused":false,"activeElement":{"tag":"BODY","role":null,"label":null,"editable":null},"expanded":"false","visibleMenus":[]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'model' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"model-after-click","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Change model and reasoning","viewport":{"width":960,"height":1100},"documentFocused":true,"editorFocused":false,"activeElement":{"tag":"INPUT","role":null,"label":"Search models","editable":null},"expanded":"true","visibleMenus":["GPT-6 AstraCtrl 1GPT-6 SolCtrl 2GPT-6 LunaCtrl 3GPT-5.5Ctrl 4GPT-5.4Ctrl 5GPT-5.4 MiniCtrl 6GPT-5.3 CodexCtrl 7GPT-5.3 Codex SparkCtrl 8GPT-5.2 CodexCtrl 9GPT-5.2GPT-5"]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'model' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"model-settled","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Change model and reasoning","viewport":{"width":960,"height":1100},"documentFocused":true,"editorFocused":false,"activeElement":{"tag":"INPUT","role":null,"label":"Search models","editable":null},"expanded":"true","visibleMenus":["GPT-6 AstraCtrl 1GPT-6 SolCtrl 2GPT-6 LunaCtrl 3GPT-5.5Ctrl 4GPT-5.4Ctrl 5GPT-5.4 MiniCtrl 6GPT-5.3 CodexCtrl 7GPT-5.3 Codex SparkCtrl 8GPT-5.2 CodexCtrl 9GPT-5.2GPT-5"]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'model' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"model-closed","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Change model and reasoning","viewport":{"width":960,"height":1100},"documentFocused":true,"editorFocused":false,"activeElement":{"tag":"BUTTON","role":null,"label":"Change model and reasoning","editable":null},"expanded":"false","visibleMenus":[]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'permissions' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"permissions-before-click","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Full access","viewport":{"width":960,"height":1100},"documentFocused":false,"editorFocused":false,"activeElement":{"tag":"BODY","role":null,"label":null,"editable":null},"expanded":"false","visibleMenus":[]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'permissions' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"permissions-after-click","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Full access","viewport":{"width":960,"height":1100},"documentFocused":true,"editorFocused":false,"activeElement":{"tag":"DIV","role":"menu","label":null,"editable":null},"expanded":"true","visibleMenus":["Ask for approvalAlways ask to edit external files and use the internetApprove for meOnly ask for actions detected as potentially unsafeFull accessUnrestricted access to the internet and any file on your computer"]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'permissions' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"permissions-settled","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Full access","viewport":{"width":960,"height":1100},"documentFocused":true,"editorFocused":false,"activeElement":{"tag":"DIV","role":"menu","label":null,"editable":null},"expanded":"true","visibleMenus":["Ask for approvalAlways ask to edit external files and use the internetApprove for meOnly ask for actions detected as potentially unsafeFull accessUnrestricted access to the internet and any file on your computer"]}
+[90mstdout[2m | src/components/PrUiEvidence1841WindowFocus.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mpreserves the 'permissions' picker on first window activation
+[22m[39mPR_FOCUS_OBSERVATION {"phase":"permissions-closed","source":"a2f1f846c15d98b734ac39d2b889ffade38496f9","variant":"after","label":"Full access","viewport":{"width":960,"height":1100},"documentFocused":true,"editorFocused":false,"activeElement":{"tag":"BUTTON","role":null,"label":null,"editable":null},"expanded":"false","visibleMenus":[]}
+ [32m✓[39m [30m[43m chromium [49m[39m src/components/PrUiEvidence1841WindowFocus.browser.tsx [2m([22m[2m225 tests[22m[2m | [22m[33m223 skipped[39m[2m)[22m[33m 23952[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves the 'model' picker on first window activation [33m 21344[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves the 'permissions' picker on first window activation [33m 2549[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[2m | [22m[33m223 skipped[39m[90m (225)[39m
+[2m   Start at [22m 20:36:04
+[2m   Duration [22m 114.41s[2m (transform 0ms, setup 0ms, import 86.08s, tests 23.95s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/synara/synara/.pr-window-focus-evidence/pr1841-after/vitest.json

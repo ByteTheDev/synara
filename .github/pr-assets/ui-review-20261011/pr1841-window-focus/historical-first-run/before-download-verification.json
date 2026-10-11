@@ -1,0 +1,9 @@
+{
+  "output": "campaign/browser/pending-window-focus/first-artifacts/before",
+  "artifact_id": 11714385124,
+  "size_in_bytes": 2683931,
+  "digest": "sha256:cecbfedfa1be40e992351aefd2e2bb5ad04d9eccffa37b0a5febcf1b503080ca",
+  "sha256": "cecbfedfa1be40e992351aefd2e2bb5ad04d9eccffa37b0a5febcf1b503080ca",
+  "members": 10,
+  "verified": true
+}

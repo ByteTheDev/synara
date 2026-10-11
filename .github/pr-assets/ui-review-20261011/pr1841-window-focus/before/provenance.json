@@ -1,0 +1,208 @@
+{
+  "target": {
+    "id": "pr1841-before",
+    "variant": "before",
+    "source": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+    "tree": "3c1d0c3aa2559fb37da21dc88025d3adf6ae7a90"
+  },
+  "source": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+  "sourceTree": "3c1d0c3aa2559fb37da21dc88025d3adf6ae7a90",
+  "driver": "0cc8b3ca9f085fd235c26aeb77be840cce8f4ea6",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "d86dd91606f75ca0a4ab5850cee5bda866b7ebeb",
+    "sha256": "8bc297ba2c0c2cfb6797837352febdb433579c3ff49d6e3e14adb7707fb79605"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a",
+      "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "blob": "5b11da7aa38c9de98aca8c9b6eaca45dab7f63dd",
+      "sha256": "371bf0add5cee0d5a56d5aa5dd60e4b745ca8f7b241ae71ac3c5b84d8f18357d"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelPicker.tsx",
+      "blob": "b529714af8961e8cb4f8645d1fa0cdf5ebf4c18d",
+      "sha256": "069a75c23ef65a03a520fd23da76784597349a87a0d30f1fc4d628ba196b0640"
+    },
+    {
+      "path": "apps/web/src/components/chat/TraitsPicker.tsx",
+      "blob": "6a1972a668fb30cc49e8faccada3834d50003ecc",
+      "sha256": "2faecc24b88e46f3e8fa272a8f4e100afa463e09b67f4cbd3ef7509c964c7f69"
+    },
+    {
+      "path": "apps/web/src/components/BranchToolbar.tsx",
+      "blob": "2b0cda1fc795a47b5e1724194b5cf6a38ac16d08",
+      "sha256": "021e08b4e37b529799f9a067999f38d2fc2630edd61e795b1078f4a1924c9cb7"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelMenuTrigger.tsx",
+      "blob": "aa6cf32ce1f8200b2279bd7b7e66397e94e809d4",
+      "sha256": "8b070ebefb4730f7510fc1e4beeddea1c11e3a47d99a8ec48525e49950820fa5"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx",
+      "sha256": "411dd66357777b8ffcc5a91d60bd311fc7c4c642a639200e34d40da26ab1cc85"
+    },
+    {
+      "path": "apps/web/vitest.pr-window-focus-evidence.config.ts",
+      "sha256": "d645e9870266752d5c8fce1355d70c0c0aff2cbb5d5007605efede7f628d36bb"
+    }
+  ],
+  "observerSha256": "c318466eea699d899d3bd429df2d4c99b6c94d824d456665343a749433b4e870",
+  "helperSha256": "2e8826843c0a3e50b0411492738280a1be4b63b5bc13066009b205649e65e130",
+  "applicationCodeModified": false,
+  "originalCommonFixturePreserved": true,
+  "qualification": "Actual full ChatView and native Chromium focus between a same-origin Vitest parent and application frame, under the original controlled orchestration fixture. The same two complete canonical first-activation controls run on both production sources. Only read-only state observations/screenshots are added. No focus result, event, animation frame, component, hook or DOM geometry is mocked. This is browser-frame activation, not OS-level application switching.",
+  "status": "failed",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "1fa37bfc29fc693e01808b816c8abd67fc0a72c7cf35f56aa2a47e4ea5f7b173",
+  "reportSha256": "25b83fe2c786b587e3300f2b75b7291eb5878f58eb98108f876a8a132d6ef97e",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the 'model' picker on first window activation",
+      "status": "failed",
+      "failureMessages": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31melement\u001b[39m\u001b[2m).toHaveAttribute(\u001b[22m\u001b[32m\u001b[32m\"aria-expanded\"\u001b[32m\u001b[39m\u001b[2m, \u001b[22m\u001b[32m\u001b[32m\"true\"\u001b[32m\u001b[39m\u001b[2m) // element.getAttribute(\"aria-expanded\") === \"true\"\u001b[22m\n\nExpected the element to have attribute:\n\u001b[32m  aria-expanded=\"true\"\u001b[39m\nReceived:\n\u001b[31m  aria-expanded=\"false\"\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=8664faad:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx?import&browserv=1791750981769:7193:34\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=8664faad:1903:20"
+      ]
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the 'permissions' picker on first window activation",
+      "status": "failed",
+      "failureMessages": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31melement\u001b[39m\u001b[2m).toHaveAttribute(\u001b[22m\u001b[32m\u001b[32m\"aria-expanded\"\u001b[32m\u001b[39m\u001b[2m, \u001b[22m\u001b[32m\u001b[32m\"true\"\u001b[32m\u001b[39m\u001b[2m) // element.getAttribute(\"aria-expanded\") === \"true\"\u001b[22m\n\nExpected the element to have attribute:\n\u001b[32m  aria-expanded=\"true\"\u001b[39m\nReceived:\n\u001b[31m  aria-expanded=\"false\"\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=8664faad:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx?import&browserv=1791750981769:7193:34\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=8664faad:1903:20"
+      ]
+    }
+  ],
+  "unselectedTests": 223,
+  "observations": [
+    {
+      "phase": "model-before-click",
+      "source": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+      "variant": "before",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": false,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BODY",
+        "role": null,
+        "label": null,
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "model-after-click",
+      "source": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+      "variant": "before",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": true,
+      "activeElement": {
+        "tag": "DIV",
+        "role": "textbox",
+        "label": null,
+        "editable": "true"
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "permissions-before-click",
+      "source": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+      "variant": "before",
+      "label": "Full access",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": false,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BODY",
+        "role": null,
+        "label": null,
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "permissions-after-click",
+      "source": "110cc88e3ca24f54748d49fd7f20d4c434ee12a0",
+      "variant": "before",
+      "label": "Full access",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": true,
+      "activeElement": {
+        "tag": "DIV",
+        "role": "textbox",
+        "label": null,
+        "editable": "true"
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    }
+  ],
+  "files": [
+    {
+      "path": "model-after-click.png",
+      "bytes": 62994,
+      "sha256": "5cb2a4d22290430ceeda154de7af18784a005f388ade26d233610244bc6866a7"
+    },
+    {
+      "path": "model-before-click.png",
+      "bytes": 62760,
+      "sha256": "815c26637c9e60340ca7f5692388e5e4bcb80923d8ee231140aab91af3bea622"
+    },
+    {
+      "path": "permissions-after-click.png",
+      "bytes": 62647,
+      "sha256": "3baa9d19fd4ae8b6d22da172260fe1d7986a891d5b64f843237dc0f94eb5a24a"
+    },
+    {
+      "path": "permissions-before-click.png",
+      "bytes": 62994,
+      "sha256": "5cb2a4d22290430ceeda154de7af18784a005f388ade26d233610244bc6866a7"
+    },
+    {
+      "path": "video/page@afb1e6a6d9add034d7e5fa30c5de45e9.webm",
+      "bytes": 3397430,
+      "sha256": "9c9261b2b0e06c1ef2002ffb6c9f1c7b9071a43e9932173d8c73e7ff1cc59b8d"
+    }
+  ]
+}

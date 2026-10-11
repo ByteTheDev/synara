@@ -1,0 +1,153 @@
+{
+  "target": {
+    "id": "pr1841-before",
+    "variant": "before",
+    "source": "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+    "tree": "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822"
+  },
+  "source": "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+  "sourceTree": "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822",
+  "driver": "cac858b5e4a519302981abc4b73b3251d8f0c2fd",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "5f913d0c0332a4adfec826ef66e5b9cd10935c07",
+    "sha256": "0f066877e19fa10f5209d76d27867263df7a4914dbf5dc8fc5c0b0365bd4d0e0"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a",
+      "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "blob": "5b11da7aa38c9de98aca8c9b6eaca45dab7f63dd",
+      "sha256": "371bf0add5cee0d5a56d5aa5dd60e4b745ca8f7b241ae71ac3c5b84d8f18357d"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelPicker.tsx",
+      "blob": "b529714af8961e8cb4f8645d1fa0cdf5ebf4c18d",
+      "sha256": "069a75c23ef65a03a520fd23da76784597349a87a0d30f1fc4d628ba196b0640"
+    },
+    {
+      "path": "apps/web/src/components/chat/TraitsPicker.tsx",
+      "blob": "6a1972a668fb30cc49e8faccada3834d50003ecc",
+      "sha256": "2faecc24b88e46f3e8fa272a8f4e100afa463e09b67f4cbd3ef7509c964c7f69"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelMenuTrigger.tsx",
+      "blob": "aa6cf32ce1f8200b2279bd7b7e66397e94e809d4",
+      "sha256": "8b070ebefb4730f7510fc1e4beeddea1c11e3a47d99a8ec48525e49950820fa5"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx",
+      "sha256": "9856a27da7e95a553f53a6400f8835cc07364390afff12b26fedd3f215ff99c8"
+    },
+    {
+      "path": "apps/web/vitest.pr-window-focus-evidence.config.ts",
+      "sha256": "e2f9d75af1f048bd18167d889e735e2e010d6b9be95d88e7333def0f98ed3dd1"
+    }
+  ],
+  "observerSha256": "90f1d9ff14f7ddadb29eff32e66115af1d02d8ed729e52a99e6a21825d26aa73",
+  "helperSha256": "a57ce386e4f2e971877aa8138f3427c4339f159545909f64e81135ca2ec59b91",
+  "applicationCodeModified": false,
+  "originalCommonFixturePreserved": true,
+  "qualification": "Actual full ChatView and native Chromium focus between a same-origin Vitest parent and application frame, under the original controlled orchestration fixture. The same two complete canonical first-activation controls run on both production sources. Only read-only state observations/screenshots are added. No focus result, event, animation frame, component, hook or DOM geometry is mocked. This is browser-frame activation, not OS-level application switching.",
+  "status": "failed",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "c4eb20ef61a5f48189566af529a9eee1789513c52090c4ed4bc4c22713f61a7c",
+  "reportSha256": "cf94550c89127b1d39dff769cfe8731b85c3d42420c123df8a5d6f607a65c340",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the 'model' picker on first window activation",
+      "status": "failed",
+      "failureMessages": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31melement\u001b[39m\u001b[2m).toHaveAttribute(\u001b[22m\u001b[32m\u001b[32m\"aria-expanded\"\u001b[32m\u001b[39m\u001b[2m, \u001b[22m\u001b[32m\u001b[32m\"true\"\u001b[32m\u001b[39m\u001b[2m) // element.getAttribute(\"aria-expanded\") === \"true\"\u001b[22m\n\nExpected the element to have attribute:\n\u001b[32m  aria-expanded=\"true\"\u001b[39m\nReceived:\n\u001b[31m  aria-expanded=\"false\"\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=9992214f:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx?import&browserv=1791749459520:7193:34\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=9992214f:1903:20"
+      ]
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the 'traits' picker on first window activation",
+      "status": "failed",
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByRole('button', { name: 'Change effort, context, and speed', exact: true })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mstyle\u001b[39m=\u001b[32m\"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]\"\u001b[39m\n      \u001b[33mdata-sidebar-layout\u001b[39m=\u001b[32m\"rail\"\u001b[39m\n      \u001b[33mdata-sidebar-side\u001b[39m=\u001b[32m\"left\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"sidebar-wrapper\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal-anchored\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_96_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"outline-none\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport-anchored\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_97_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2\"\u001b[39m\n      \u001b[33mdata-position\u001b[39m=\u001b[32m\"top-center\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--toast-frontmost-height: 0px;\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m...\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=9992214f:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx?import&browserv=1791749459520:7186:34\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=9992214f:1903:20"
+      ]
+    }
+  ],
+  "unselectedTests": 223,
+  "observations": [
+    {
+      "phase": "model-before-click",
+      "source": "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+      "variant": "before",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": false,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BODY",
+        "role": null,
+        "label": null,
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "model-after-click",
+      "source": "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+      "variant": "before",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": true,
+      "activeElement": {
+        "tag": "DIV",
+        "role": "textbox",
+        "label": null,
+        "editable": "true"
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    }
+  ],
+  "files": [
+    {
+      "path": "model-after-click.png",
+      "bytes": 62994,
+      "sha256": "5cb2a4d22290430ceeda154de7af18784a005f388ade26d233610244bc6866a7"
+    },
+    {
+      "path": "model-before-click.png",
+      "bytes": 62751,
+      "sha256": "8cc97abb80be95d516b35696e524043c28dc3959dcc15bcc02fa37aee2da1ccb"
+    },
+    {
+      "path": "video/page@2a04523fdc1d21c742f9f8975ae08fa8.webm",
+      "bytes": 3361329,
+      "sha256": "d5342ccb04ca67216bed33ad63c28327e37a11f147316e461d56cd6bac72d77c"
+    }
+  ]
+}

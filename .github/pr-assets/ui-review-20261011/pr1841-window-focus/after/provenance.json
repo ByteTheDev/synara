@@ -1,0 +1,312 @@
+{
+  "target": {
+    "id": "pr1841-after",
+    "variant": "after",
+    "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+    "tree": "4c72b2b17e63bfb786c5f9e280a0579bbb776af7"
+  },
+  "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+  "sourceTree": "4c72b2b17e63bfb786c5f9e280a0579bbb776af7",
+  "driver": "0cc8b3ca9f085fd235c26aeb77be840cce8f4ea6",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "d86dd91606f75ca0a4ab5850cee5bda866b7ebeb",
+    "sha256": "8bc297ba2c0c2cfb6797837352febdb433579c3ff49d6e3e14adb7707fb79605"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "d86dd91606f75ca0a4ab5850cee5bda866b7ebeb",
+      "sha256": "8bc297ba2c0c2cfb6797837352febdb433579c3ff49d6e3e14adb7707fb79605"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "blob": "2af91c566c8713f8f7ca0ad740193e1c1c4013d9",
+      "sha256": "87f09b65745828251073c780f3a6057a80f97b2b87051cc80277b38cf0ddc96a"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelPicker.tsx",
+      "blob": "b529714af8961e8cb4f8645d1fa0cdf5ebf4c18d",
+      "sha256": "069a75c23ef65a03a520fd23da76784597349a87a0d30f1fc4d628ba196b0640"
+    },
+    {
+      "path": "apps/web/src/components/chat/TraitsPicker.tsx",
+      "blob": "6a1972a668fb30cc49e8faccada3834d50003ecc",
+      "sha256": "2faecc24b88e46f3e8fa272a8f4e100afa463e09b67f4cbd3ef7509c964c7f69"
+    },
+    {
+      "path": "apps/web/src/components/BranchToolbar.tsx",
+      "blob": "2b0cda1fc795a47b5e1724194b5cf6a38ac16d08",
+      "sha256": "021e08b4e37b529799f9a067999f38d2fc2630edd61e795b1078f4a1924c9cb7"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelMenuTrigger.tsx",
+      "blob": "aa6cf32ce1f8200b2279bd7b7e66397e94e809d4",
+      "sha256": "8b070ebefb4730f7510fc1e4beeddea1c11e3a47d99a8ec48525e49950820fa5"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1841WindowFocus.browser.tsx",
+      "sha256": "411dd66357777b8ffcc5a91d60bd311fc7c4c642a639200e34d40da26ab1cc85"
+    },
+    {
+      "path": "apps/web/vitest.pr-window-focus-evidence.config.ts",
+      "sha256": "d645e9870266752d5c8fce1355d70c0c0aff2cbb5d5007605efede7f628d36bb"
+    }
+  ],
+  "observerSha256": "c318466eea699d899d3bd429df2d4c99b6c94d824d456665343a749433b4e870",
+  "helperSha256": "2e8826843c0a3e50b0411492738280a1be4b63b5bc13066009b205649e65e130",
+  "applicationCodeModified": false,
+  "originalCommonFixturePreserved": true,
+  "qualification": "Actual full ChatView and native Chromium focus between a same-origin Vitest parent and application frame, under the original controlled orchestration fixture. The same two complete canonical first-activation controls run on both production sources. Only read-only state observations/screenshots are added. No focus result, event, animation frame, component, hook or DOM geometry is mocked. This is browser-frame activation, not OS-level application switching.",
+  "status": "completed",
+  "actualExitCode": 0,
+  "exits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "103d8ca3f9b7df84bde5f1653cc1a88ee7cf456fb40c255d5620e32b60af2feb",
+  "reportSha256": "3cb3cb4704e1beab05f79d9c3b14faba6d237a50dcec94ebf67074e0f91b0afc",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the 'model' picker on first window activation",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the 'permissions' picker on first window activation",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "unselectedTests": 223,
+  "observations": [
+    {
+      "phase": "model-before-click",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": false,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BODY",
+        "role": null,
+        "label": null,
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "model-after-click",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "INPUT",
+        "role": null,
+        "label": "Search models",
+        "editable": null
+      },
+      "expanded": "true",
+      "visibleMenus": [
+        "GPT-6 AstraCtrl 1GPT-6 SolCtrl 2GPT-6 LunaCtrl 3GPT-5.5Ctrl 4GPT-5.4Ctrl 5GPT-5.4 MiniCtrl 6GPT-5.3 CodexCtrl 7GPT-5.3 Codex SparkCtrl 8GPT-5.2 CodexCtrl 9GPT-5.2GPT-5"
+      ]
+    },
+    {
+      "phase": "model-settled",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "INPUT",
+        "role": null,
+        "label": "Search models",
+        "editable": null
+      },
+      "expanded": "true",
+      "visibleMenus": [
+        "GPT-6 AstraCtrl 1GPT-6 SolCtrl 2GPT-6 LunaCtrl 3GPT-5.5Ctrl 4GPT-5.4Ctrl 5GPT-5.4 MiniCtrl 6GPT-5.3 CodexCtrl 7GPT-5.3 Codex SparkCtrl 8GPT-5.2 CodexCtrl 9GPT-5.2GPT-5"
+      ]
+    },
+    {
+      "phase": "model-closed",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Change model and reasoning",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BUTTON",
+        "role": null,
+        "label": "Change model and reasoning",
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "permissions-before-click",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Full access",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": false,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BODY",
+        "role": null,
+        "label": null,
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    },
+    {
+      "phase": "permissions-after-click",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Full access",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "editable": null
+      },
+      "expanded": "true",
+      "visibleMenus": [
+        "Ask for approvalAlways ask to edit external files and use the internetApprove for meOnly ask for actions detected as potentially unsafeFull accessUnrestricted access to the internet and any file on your computer"
+      ]
+    },
+    {
+      "phase": "permissions-settled",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Full access",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "editable": null
+      },
+      "expanded": "true",
+      "visibleMenus": [
+        "Ask for approvalAlways ask to edit external files and use the internetApprove for meOnly ask for actions detected as potentially unsafeFull accessUnrestricted access to the internet and any file on your computer"
+      ]
+    },
+    {
+      "phase": "permissions-closed",
+      "source": "a2f1f846c15d98b734ac39d2b889ffade38496f9",
+      "variant": "after",
+      "label": "Full access",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentFocused": true,
+      "editorFocused": false,
+      "activeElement": {
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "editable": null
+      },
+      "expanded": "false",
+      "visibleMenus": []
+    }
+  ],
+  "files": [
+    {
+      "path": "model-after-click.png",
+      "bytes": 76399,
+      "sha256": "edd02cc5e8446ed8f91a38daa70d2c7be0d33f5a1560c60cf757004716920582"
+    },
+    {
+      "path": "model-before-click.png",
+      "bytes": 62760,
+      "sha256": "815c26637c9e60340ca7f5692388e5e4bcb80923d8ee231140aab91af3bea622"
+    },
+    {
+      "path": "model-closed.png",
+      "bytes": 66409,
+      "sha256": "34a2deee3db98b7908b0947cb12b26f4b432fa3ac4d49c94a219de2ff81655ef"
+    },
+    {
+      "path": "model-settled.png",
+      "bytes": 76399,
+      "sha256": "edd02cc5e8446ed8f91a38daa70d2c7be0d33f5a1560c60cf757004716920582"
+    },
+    {
+      "path": "permissions-after-click.png",
+      "bytes": 77057,
+      "sha256": "bb9acb4d4f293754e35ca234a9c0ad60c58d1602390f7d37301e3296ffa6eff2"
+    },
+    {
+      "path": "permissions-before-click.png",
+      "bytes": 62994,
+      "sha256": "5cb2a4d22290430ceeda154de7af18784a005f388ade26d233610244bc6866a7"
+    },
+    {
+      "path": "permissions-closed.png",
+      "bytes": 63007,
+      "sha256": "43099ce58b4737160b7ec2a0af4553e62b93a16262e4088d39357d5c0bdf1f7f"
+    },
+    {
+      "path": "permissions-settled.png",
+      "bytes": 77057,
+      "sha256": "bb9acb4d4f293754e35ca234a9c0ad60c58d1602390f7d37301e3296ffa6eff2"
+    },
+    {
+      "path": "video/page@c71fc7768918e5ddb524f5d798e069c6.webm",
+      "bytes": 516557,
+      "sha256": "32fee70a3dc659d40800668df5869eab41b3baa6c792b3d6e731b9dfd2b21182"
+    }
+  ]
+}

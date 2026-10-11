@@ -1,0 +1,42 @@
+{
+  "archives": [
+    {
+      "type": "corrected-artifacts",
+      "side": "before",
+      "artifactId": 11714472949,
+      "zipBytes": 2848114,
+      "zipSha256": "f4d04214c66100dcc32e3a9cc072d9de3453cd83495094235c56721fd5a12ed8",
+      "retainedRawMembersByteIdentical": 12
+    },
+    {
+      "type": "corrected-artifacts",
+      "side": "after",
+      "artifactId": 11715365045,
+      "zipBytes": 1004011,
+      "zipSha256": "f6df687570367671c8a33bfaf85bd421e22baa8dbfabd032238a87232fd7e461",
+      "retainedRawMembersByteIdentical": 16
+    },
+    {
+      "type": "first-artifacts",
+      "side": "before",
+      "artifactId": 11714385124,
+      "zipBytes": 2683931,
+      "zipSha256": "cecbfedfa1be40e992351aefd2e2bb5ad04d9eccffa37b0a5febcf1b503080ca",
+      "retainedRawMembersByteIdentical": 5
+    },
+    {
+      "type": "first-artifacts",
+      "side": "after",
+      "artifactId": 11713318197,
+      "zipBytes": 1877391,
+      "zipSha256": "8be6fad80f5ce1108ed56b43eedc4f45cef72677468655695c34c769162f09b0",
+      "retainedRawMembersByteIdentical": 5
+    }
+  ],
+  "originalPngs": 12,
+  "fullWebms": 2,
+  "shortClips": 4,
+  "representativeClipFrames": 8,
+  "rawProvenanceHashesVerified": true,
+  "capturedSourceLabelsPreserved": true
+}
