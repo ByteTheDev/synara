@@ -222,6 +222,9 @@ export function ParallelRunsControl(props: {
         size="sm"
         onClick={() => {
           setError(null);
+          if (!runId && !request && !prompt) {
+            setSelections([props.selection, props.selection]);
+          }
           setOpen(true);
         }}
       >

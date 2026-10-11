@@ -20,15 +20,14 @@ const harness = vi.hoisted(() => ({
   dispatchCommand: vi.fn(async () => ({ sequence: 1 })),
   readWorkingTreeDiff: vi.fn(async () => ({ patch: "+independent change", truncated: false })),
 }));
-vi.mock("~/store", () => ({
-  useStore: (selector: (state: unknown) => unknown) =>
-    selector({ sidebarThreadSummaryById: harness.summaries }),
-}));
 vi.mock("~/nativeApi", () => ({
   ensureNativeApi: () => ({ orchestration: harness, git: harness }),
   readNativeApi: () => ({ orchestration: harness, git: harness }),
 }));
 import { ParallelRunsControl } from "./ParallelRunsControl";
+import { useStore } from "../../store";
+
+const initialStoreState = useStore.getState();
 
 const selection: ModelSelection = { provider: "codex", instanceId: "codex", model: "gpt-5-codex" };
 const providers: ServerProviderStatus[] = [
@@ -59,6 +58,11 @@ const picker = {
 };
 
 async function mount(thread = makeThread()) {
+  useStore.setState({
+    sidebarThreadSummaryById: harness.summaries as ReturnType<
+      typeof useStore.getState
+    >["sidebarThreadSummaryById"],
+  });
   await page.viewport(1280, 900);
   return render(
     <QueryClientProvider
@@ -76,6 +80,7 @@ async function mount(thread = makeThread()) {
 }
 afterEach(async () => {
   await cleanup();
+  useStore.setState(initialStoreState, true);
   harness.summaries = {};
   vi.clearAllMocks();
 });

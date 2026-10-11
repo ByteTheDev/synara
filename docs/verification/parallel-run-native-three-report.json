@@ -1,0 +1,114 @@
+{
+  "home": "/tmp/native-parallel-acceptance-ZAt9Hy",
+  "base": "19708ecfa3f2476267221782dcce3cc3fc789a9f",
+  "threads": [
+    {
+      "thread_id": "8e2accec-4769-46cb-8c19-564039f588e8",
+      "title": "New thread",
+      "worktree_path": null,
+      "parallel_run_json": null,
+      "archived_at": null,
+      "deleted_at": null
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-0",
+      "title": "Reply with exactly NATIVE_PARALLEL_OK. Do not use tools. This is an empt \u00b7 Attempt 1",
+      "worktree_path": "/tmp/native-parallel-acceptance-ZAt9Hy/worktrees/fixture-repo/synara-parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-1",
+      "parallel_run_json": "{\"request\":{\"createdAt\":\"2026-10-11T20:42:15.020Z\",\"runtimeMode\":\"full-access\",\"interactionMode\":\"default\",\"runId\":\"8dd7dd09-ce55-4761-a6d5-7b9027ee9067\",\"sourceThreadId\":\"8e2accec-4769-46cb-8c19-564039f588e8\",\"prompt\":\"Reply with exactly NATIVE_PARALLEL_OK. Do not use tools. This is an empty synthetic acceptance repository.\",\"attempts\":[{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"},{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"},{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"}]},\"runId\":\"8dd7dd09-ce55-4761-a6d5-7b9027ee9067\",\"index\":0,\"count\":3,\"baseCommit\":\"19708ecfa3f2476267221782dcce3cc3fc789a9f\",\"requestHash\":\"d5ce67f0a86d19a986461d3555ec302f890958f07534f2a368502731995831b9\"}",
+      "archived_at": null,
+      "deleted_at": null
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-1",
+      "title": "Reply with exactly NATIVE_PARALLEL_OK. Do not use tools. This is an empt \u00b7 Attempt 2",
+      "worktree_path": "/tmp/native-parallel-acceptance-ZAt9Hy/worktrees/fixture-repo/synara-parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-2",
+      "parallel_run_json": "{\"request\":{\"createdAt\":\"2026-10-11T20:42:15.020Z\",\"runtimeMode\":\"full-access\",\"interactionMode\":\"default\",\"runId\":\"8dd7dd09-ce55-4761-a6d5-7b9027ee9067\",\"sourceThreadId\":\"8e2accec-4769-46cb-8c19-564039f588e8\",\"prompt\":\"Reply with exactly NATIVE_PARALLEL_OK. Do not use tools. This is an empty synthetic acceptance repository.\",\"attempts\":[{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"},{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"},{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"}]},\"runId\":\"8dd7dd09-ce55-4761-a6d5-7b9027ee9067\",\"index\":1,\"count\":3,\"baseCommit\":\"19708ecfa3f2476267221782dcce3cc3fc789a9f\",\"requestHash\":\"d5ce67f0a86d19a986461d3555ec302f890958f07534f2a368502731995831b9\"}",
+      "archived_at": "2026-10-11T20:42:55.891Z",
+      "deleted_at": null
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-2",
+      "title": "Reply with exactly NATIVE_PARALLEL_OK. Do not use tools. This is an empt \u00b7 Attempt 3",
+      "worktree_path": "/tmp/native-parallel-acceptance-ZAt9Hy/worktrees/fixture-repo/synara-parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-3",
+      "parallel_run_json": "{\"request\":{\"createdAt\":\"2026-10-11T20:42:15.020Z\",\"runtimeMode\":\"full-access\",\"interactionMode\":\"default\",\"runId\":\"8dd7dd09-ce55-4761-a6d5-7b9027ee9067\",\"sourceThreadId\":\"8e2accec-4769-46cb-8c19-564039f588e8\",\"prompt\":\"Reply with exactly NATIVE_PARALLEL_OK. Do not use tools. This is an empty synthetic acceptance repository.\",\"attempts\":[{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"},{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"},{\"provider\":\"opencode\",\"instanceId\":\"opencode\",\"model\":\"opencode/mimo-v2.6-flash-free\"}]},\"runId\":\"8dd7dd09-ce55-4761-a6d5-7b9027ee9067\",\"index\":2,\"count\":3,\"baseCommit\":\"19708ecfa3f2476267221782dcce3cc3fc789a9f\",\"requestHash\":\"d5ce67f0a86d19a986461d3555ec302f890958f07534f2a368502731995831b9\"}",
+      "archived_at": "2026-10-11T20:42:55.962Z",
+      "deleted_at": null
+    },
+    {
+      "thread_id": "eb5a37c3-a009-47b2-8690-c87166534046",
+      "title": "Compare parallel attempts",
+      "worktree_path": null,
+      "parallel_run_json": null,
+      "archived_at": null,
+      "deleted_at": null
+    }
+  ],
+  "sourceComponent": "636606478a0dd774b60e46d9a4531f4ee8d18769",
+  "sessions": [
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-0",
+      "resume_cursor_json": "{\"openCodeSessionId\":\"ses_ed34c4f53ffes05dxMCNGSm8qZ\",\"cwd\":\"/tmp/native-parallel-acceptance-ZAt9Hy/worktrees/fixture-repo/synara-parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-1\",\"harnessPolicyDelivery\":{\"sessionId\":\"ses_ed34c4f53ffes05dxMCNGSm8qZ\",\"policyVersion\":\"2026-10-02.1\",\"gatewayControlAvailable\":false,\"enableComputerControl\":false}}"
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-1",
+      "resume_cursor_json": "{\"openCodeSessionId\":\"ses_ed34c4dc4ffe81eRHba1J4zcN8\",\"cwd\":\"/tmp/native-parallel-acceptance-ZAt9Hy/worktrees/fixture-repo/synara-parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-2\",\"harnessPolicyDelivery\":{\"sessionId\":\"ses_ed34c4dc4ffe81eRHba1J4zcN8\",\"policyVersion\":\"2026-10-02.1\",\"gatewayControlAvailable\":false,\"enableComputerControl\":false}}"
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-2",
+      "resume_cursor_json": "{\"openCodeSessionId\":\"ses_ed34c4c45ffegAIBlwGlmeOLat\",\"cwd\":\"/tmp/native-parallel-acceptance-ZAt9Hy/worktrees/fixture-repo/synara-parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-3\",\"harnessPolicyDelivery\":{\"sessionId\":\"ses_ed34c4c45ffegAIBlwGlmeOLat\",\"policyVersion\":\"2026-10-02.1\",\"gatewayControlAvailable\":false,\"enableComputerControl\":false}}"
+    }
+  ],
+  "turns": [
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-0",
+      "state": "completed"
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-1",
+      "state": "completed"
+    },
+    {
+      "thread_id": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-2",
+      "state": "completed"
+    },
+    {
+      "thread_id": "eb5a37c3-a009-47b2-8690-c87166534046",
+      "state": "completed"
+    }
+  ],
+  "answers": [
+    {
+      "threadId": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-0",
+      "nativeSessionId": "ses_ed34c4f53ffes05dxMCNGSm8qZ",
+      "nativeText": "NATIVE_PARALLEL_OK",
+      "synaraText": "NATIVE_PARALLEL_OK"
+    },
+    {
+      "threadId": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-1",
+      "nativeSessionId": "ses_ed34c4dc4ffe81eRHba1J4zcN8",
+      "nativeText": "NATIVE_PARALLEL_OK",
+      "synaraText": "NATIVE_PARALLEL_OK"
+    },
+    {
+      "threadId": "parallel-8dd7dd09-ce55-4761-a6d5-7b9027ee9067-2",
+      "nativeSessionId": "ses_ed34c4c45ffegAIBlwGlmeOLat",
+      "nativeText": "NATIVE_PARALLEL_OK",
+      "synaraText": "NATIVE_PARALLEL_OK"
+    }
+  ],
+  "actualModel": "opencode/mimo-v2.6-flash-free",
+  "approvedReadOnlyCommands": [],
+  "realAnswers": true,
+  "sourcePreserved": true,
+  "siblingArchived": true,
+  "gracefulServerExit": true,
+  "comparisonNativeIntegrity": {
+    "threadId": "eb5a37c3-a009-47b2-8690-c87166534046",
+    "nativeSessionId": "ses_ed34c07e6ffeoiAQB7jVw3a28u",
+    "fourDistinctNativeSessions": true,
+    "actualNativeComparisonPromptVerified": true,
+    "actualNativeUserTextSha256": "73ab05f81b573889e767e5bb0c145634ab91e3ba5f92bc62ee155ec1076ffe5f",
+    "nativeAnswer": "NATIVE_PARALLEL_OK",
+    "synaraAnswer": "NATIVE_PARALLEL_OK"
+  }
+}
