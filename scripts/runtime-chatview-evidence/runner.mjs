@@ -29,7 +29,7 @@ assert.ok(pins, "Only the reviewed Before/After comparison is supported");
 assert.equal(process.env.RUNTIME_CHATVIEW_SOURCE, pins.source);
 assert.equal(process.platform, "linux");
 assert.ok(process.env.RUNNER_TEMP?.startsWith("/"));
-const output = join(root, ".runtime-chatview-evidence");
+const output = join(root, "runtime-chatview-evidence");
 mkdirSync(output, { recursive: true });
 const destination = "apps/web/src/components/ChatView.browser.tsx";
 const originalBlob = "73c366c47798f7b505ed3a1c293ae3b893953b5c";
