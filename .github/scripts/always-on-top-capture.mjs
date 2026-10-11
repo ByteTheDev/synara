@@ -348,8 +348,13 @@ async function main() {
   const requireWeb = createRequire(join(source, "apps/web/package.json"));
   const playwright = requireWeb("playwright");
   assert.equal(requireWeb("playwright/package.json").version, "1.62.1");
+  const profile = join(config.environment.HOME, "Library", "Application Support", "synara");
+  assert.ok(profile.startsWith(state.root + "/"));
+  const portFile = join(profile, "DevToolsActivePort");
+  assert.ok(!existsSync(portFile), "Debugger endpoint must belong to this fresh owned launch");
   let app;
   let child;
+  let rendererBrowser;
   let exit = null;
   let normalQuit = false;
   let captureError;
@@ -360,6 +365,82 @@ async function main() {
     return observation;
   };
   const evaluate = (fn, arg) => deadline(app.evaluate(fn, arg), 15_000, "Main-process observation");
+  async function until(predicate, milliseconds, description) {
+    const end = Date.now() + milliseconds;
+    while (Date.now() < end) {
+      assert.equal(exit, null, `Owned application exited before ${description}`);
+      const value = await predicate();
+      if (value) return value;
+      await new Promise((resolveWait) => setTimeout(resolveWait, 100));
+    }
+    throw new Error(`${description} deadline`);
+  }
+  async function attachActualRenderer() {
+    const owned = await evaluate(({ app }) => ({
+      pid: process.pid,
+      profile: app.getPath("userData"),
+      appPath: app.getAppPath(),
+    }));
+    assert.equal(owned.pid, child.pid);
+    assert.equal(owned.profile, profile);
+    assert.equal(owned.appPath, join(state.appPath, "Contents/Resources/app.asar"));
+    const lines = await until(
+      () => {
+        if (!existsSync(portFile)) return false;
+        const lines = readFileSync(portFile, "utf8").trim().split(/\r?\n/);
+        return lines.length === 2 ? lines : false;
+      },
+      30_000,
+      "Owned Chromium endpoint",
+    );
+    assert.match(lines[0], /^\d{1,5}$/);
+    const port = Number(lines[0]);
+    assert.ok(port > 0 && port <= 65535);
+    assert.match(lines[1], /^\/devtools\/browser\/[a-zA-Z0-9-]+$/);
+    rendererBrowser = await playwright.chromium.connectOverCDP(
+      `ws://127.0.0.1:${port}${lines[1]}`,
+      { timeout: 30_000, noDefaults: true },
+    );
+    record("renderer-attachment", {
+      ...owned,
+      endpoint: "Fresh owned profile's ephemeral loopback Chromium endpoint",
+      selection: "Exact live BrowserWindow URL; no first-window assumption",
+    });
+  }
+  async function actualRendererPage() {
+    return until(
+      async () => {
+        const windows = await evaluate(({ BrowserWindow }) =>
+          BrowserWindow.getAllWindows()
+            .filter((window) => !window.isDestroyed())
+            .map((window) => ({ id: window.id, url: window.webContents.getURL() })),
+        );
+        assert.ok(windows.length <= 1, "Ambiguous actual application windows");
+        if (windows.length === 0 || !windows[0].url.startsWith("synara://app/")) return false;
+        const pages = rendererBrowser
+          .contexts()
+          .flatMap((context) => context.pages())
+          .filter((page) => !page.isClosed() && page.url() === windows[0].url);
+        assert.ok(pages.length <= 1, "Ambiguous actual renderer targets");
+        if (pages.length === 0) return false;
+        const mapped = await deadline(app.browserWindow(pages[0]), 15_000, "Renderer ownership");
+        try {
+          const id = await deadline(
+            mapped.evaluate((window) => window?.id ?? null),
+            15_000,
+            "Actual BrowserWindow identity",
+          );
+          assert.equal(id, windows[0].id, "Renderer target belongs to a different native window");
+        } finally {
+          await deadline(mapped.dispose(), 5_000, "Renderer ownership handle disposal");
+        }
+        record("renderer-selection", { windowId: windows[0].id, url: pages[0].url() });
+        return pages[0];
+      },
+      30_000,
+      "Actual owned renderer",
+    );
+  }
   async function snapshot(name) {
     return record(
       name,
@@ -397,8 +478,8 @@ async function main() {
     assert.equal(current.menu?.type, "checkbox");
     return current;
   }
-  async function showWindow(existingPage) {
-    const page = existingPage ?? (await app.firstWindow({ timeout: 90_000 }));
+  async function showWindow() {
+    const page = await actualRendererPage();
     await page.waitForLoadState("domcontentloaded");
     await page
       .getByRole("button", { name: "Get started", exact: true })
@@ -473,6 +554,7 @@ async function main() {
     for (const stream of [child.stdout, child.stderr])
       stream?.on("data", (chunk) => appendFileSync(join(evidence, "actual-app-output.log"), chunk));
     writeFileSync(state.configPath, JSON.stringify({ ...config, pid: child.pid }, null, 2) + "\n");
+    await attachActualRenderer();
     await showWindow();
     const initial = await snapshot("initial");
     assert.equal(initial.electron, "43.4.1");
@@ -527,7 +609,7 @@ async function main() {
       });
       const created = await newWindow;
       assert.equal(created.error, undefined, created.error?.message);
-      await showWindow(created.page);
+      await showWindow();
       const recreated = await expectState("recreated-window-off", false);
       assert.notEqual(recreated.windows[0].id, initial.windows[0].id);
       await menuCapture("after-menu-recreated");
@@ -611,7 +693,7 @@ async function main() {
   } finally {
     if (app) {
       try {
-        const page = app.windows().find((window) => !window.isClosed());
+        const page = await actualRendererPage();
         assert.ok(page, "The actual renderer is required to confirm normal quit");
         const closed = app.waitForEvent("close", { timeout: 30_000 }).then(
           () => ({ closed: true }),
@@ -641,6 +723,14 @@ async function main() {
           exitCode: child?.exitCode,
           signalCode: child?.signalCode,
         });
+        captureError ??= error;
+      }
+    }
+    if (rendererBrowser) {
+      try {
+        await deadline(rendererBrowser.close(), 10_000, "Owned renderer observer disconnect");
+      } catch (error) {
+        save("renderer-disconnect-failure.json", { message: String(error) });
         captureError ??= error;
       }
     }
