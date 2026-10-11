@@ -1,0 +1,22 @@
+{
+  "artifact_id": 11712974736,
+  "size": 2209349,
+  "sha256": "e483827bcdb9938cc8e221a3beef34072530529292b44a012ccd69647534f638",
+  "members": [
+    "pr369-core-before/configured-menu.png",
+    "pr369-core-before/configured-thread.png",
+    "pr369-core-before/exits.json",
+    "pr369-core-before/observed-ChatView.browser.tsx",
+    "pr369-core-before/original-ChatView.browser.tsx",
+    "pr369-core-before/overlay.json",
+    "pr369-core-before/provenance.json",
+    "pr369-core-before/sibling-menu.png",
+    "pr369-core-before/sibling-thread.png",
+    "pr369-core-before/unknown-menu.png",
+    "pr369-core-before/unknown-thread.png",
+    "pr369-core-before/video/page@b5f08dd295bad9c1fab86c7a8db6e941.webm",
+    "pr369-core-before/vitest.json",
+    "pr369-core-before/vitest.log"
+  ],
+  "expanded_bytes": 4059392
+}

@@ -1,0 +1,140 @@
+[
+  {
+    "side": "before",
+    "source_file": "before/video/page@b5f08dd295bad9c1fab86c7a8db6e941.webm",
+    "source_sha256": "b8fba7c353ea123e9607bcdce843541f821684826ca8e3bda5172e5fd852e39e",
+    "source_start_seconds": 108.0,
+    "requested_duration_seconds": 4.0,
+    "clip_file": "before/interaction.mp4",
+    "clip_sha256": "770d1e4b3d17c8c6f1fb0a9246f2ebb198d4cd2a0d7a18173a147f706354b1a1",
+    "transform": "Contiguous full-frame real-time excerpt; H.264 transcode only. No crop, overlay, retiming, or frame substitution.",
+    "encoder_args": [
+      "-v",
+      "error",
+      "-ss",
+      "108.0",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1835-evidence/pr1835/before/video/page@b5f08dd295bad9c1fab86c7a8db6e941.webm",
+      "-t",
+      "4.0",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      "-y"
+    ],
+    "inspection_frames": [
+      {
+        "path": "before/clip-frame-1.png",
+        "clip_seconds": 0.25,
+        "source_seconds": 108.25,
+        "sha256": "a6b57dbe64e32ae81fe077acf73ac931abe410655232afc10e10153a94c92392"
+      },
+      {
+        "path": "before/clip-frame-2.png",
+        "clip_seconds": 1.0,
+        "source_seconds": 109.0,
+        "sha256": "aa37413153ec2cd87bf6c9a12664d07f2ead05520d7b79b739ed67b541f40399"
+      }
+    ],
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "4.000000"
+      }
+    }
+  },
+  {
+    "side": "after",
+    "source_file": "after/video/page@827da135b88aaf7599c8added04d6f1e.webm",
+    "source_sha256": "5bf20c7d90d19547ea49c7d3ef6527b8bb5995504d4303d6799d2041475a1852",
+    "source_start_seconds": 106.25,
+    "requested_duration_seconds": 6.75,
+    "clip_file": "after/interaction.mp4",
+    "clip_sha256": "c2a95db586bed274b0e9612f2dcf8773d0a89390962593d4381745295fa43a41",
+    "transform": "Contiguous full-frame real-time excerpt; H.264 transcode only. No crop, overlay, retiming, or frame substitution.",
+    "encoder_args": [
+      "-v",
+      "error",
+      "-ss",
+      "106.25",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1835-evidence/pr1835/after/video/page@827da135b88aaf7599c8added04d6f1e.webm",
+      "-t",
+      "6.75",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      "-y"
+    ],
+    "inspection_frames": [
+      {
+        "path": "after/clip-frame-1.png",
+        "clip_seconds": 1.25,
+        "source_seconds": 107.5,
+        "sha256": "ab6e628926000bf435b2755055233efe8d9b1e3edf3ff501049effad063434e6"
+      },
+      {
+        "path": "after/clip-frame-2.png",
+        "clip_seconds": 2.0,
+        "source_seconds": 108.25,
+        "sha256": "e50570fd8915a5c118919be3af3ce92c05516f5835c049d7765a20bcbd6f6da8"
+      },
+      {
+        "path": "after/clip-frame-3.png",
+        "clip_seconds": 3.35,
+        "source_seconds": 109.6,
+        "sha256": "e7db24f9f48638693c6a196b5d3aa59c35df51be74ca589995ddd4bb5024df91"
+      },
+      {
+        "path": "after/clip-frame-4.png",
+        "clip_seconds": 3.75,
+        "source_seconds": 110.0,
+        "sha256": "41cbe3f683ce811c90551b14039b5d696573f6af2620febd32f6b8fc31e7a056"
+      },
+      {
+        "path": "after/clip-frame-5.png",
+        "clip_seconds": 5.85,
+        "source_seconds": 112.1,
+        "sha256": "0c0592616d1f7e5d73ccb65563ea02750f7a7b22becf28f3e469fee07a70ee2f"
+      },
+      {
+        "path": "after/clip-frame-6.png",
+        "clip_seconds": 6.6,
+        "source_seconds": 112.85,
+        "sha256": "1b1da5bfcb638ae43bc21c81302fe4c5d9f2f3c591b271c7c50ef5fbac4dcac1"
+      }
+    ],
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "6.720000"
+      }
+    }
+  }
+]

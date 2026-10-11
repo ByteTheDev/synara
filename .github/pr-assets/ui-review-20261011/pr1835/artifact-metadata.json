@@ -1,0 +1,104 @@
+[
+  {
+    "run": 38168618786,
+    "stage": "focused",
+    "side": "before",
+    "id": 11712974736,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMjk3NDczNg==",
+    "name": "claude-model-evidence-pr369-core-before-101a3c9653f2feeab0c7bf3dbcbe163bf01d6869",
+    "size_in_bytes": 2209349,
+    "expired": false,
+    "digest": "sha256:e483827bcdb9938cc8e221a3beef34072530529292b44a012ccd69647534f638",
+    "created_at": "2026-10-11T19:43:49Z",
+    "updated_at": "2026-10-11T19:43:49Z",
+    "expires_at": "2026-11-10T19:43:47Z",
+    "workflow_run": {
+      "id": 38168618786,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/claude-model-evidence",
+      "head_sha": "2694d577152639d1a190901caa203113ad0fd270"
+    }
+  },
+  {
+    "run": 38168618786,
+    "stage": "focused",
+    "side": "after",
+    "id": 11713370805,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMzM3MDgwNQ==",
+    "name": "claude-model-evidence-pr369-core-after-9fb04ac2735b42efbdfd615efec723673395bab0",
+    "size_in_bytes": 1843552,
+    "expired": false,
+    "digest": "sha256:83463079eb6d1f829de4f2dd831d459053a65cf5917efb7105e71fa7a2517811",
+    "created_at": "2026-10-11T19:38:47Z",
+    "updated_at": "2026-10-11T19:38:47Z",
+    "expires_at": "2026-11-10T19:38:47Z",
+    "workflow_run": {
+      "id": 38168618786,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/claude-model-evidence",
+      "head_sha": "2694d577152639d1a190901caa203113ad0fd270"
+    }
+  },
+  {
+    "run": 38165453277,
+    "stage": "first",
+    "side": "before",
+    "label": "before",
+    "id": 11712356409,
+    "size": 1389226,
+    "digest": "4b753c079ce0d18acd0008233ac3457b9f852dd2fdc7e3a1a0f36aaa94993c8e"
+  },
+  {
+    "run": 38165453277,
+    "stage": "first",
+    "side": "after",
+    "label": "after",
+    "id": 11712271305,
+    "size": 1401319,
+    "digest": "d302427c1b913480219cb389ad6c605926b13759b5b3312f172152f05bbc7e00"
+  },
+  {
+    "run": 38167573917,
+    "stage": "observer",
+    "side": "before",
+    "id": 11712109117,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMjEwOTExNw==",
+    "name": "claude-model-evidence-pr369-core-before-101a3c9653f2feeab0c7bf3dbcbe163bf01d6869",
+    "size_in_bytes": 1943350,
+    "expired": false,
+    "digest": "sha256:8b25c354ac694cbc4d9cf9c2379d362bb996c1af5c099a79f299098917ab39b0",
+    "created_at": "2026-10-11T19:25:31Z",
+    "updated_at": "2026-10-11T19:25:31Z",
+    "expires_at": "2026-11-10T19:25:30Z",
+    "workflow_run": {
+      "id": 38167573917,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/claude-model-evidence",
+      "head_sha": "205a220c22ef68332cea0493cd99b7afa662f2aa"
+    }
+  },
+  {
+    "run": 38167573917,
+    "stage": "observer",
+    "side": "after",
+    "id": 11712179171,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMjE3OTE3MQ==",
+    "name": "claude-model-evidence-pr369-core-after-9fb04ac2735b42efbdfd615efec723673395bab0",
+    "size_in_bytes": 1919407,
+    "expired": false,
+    "digest": "sha256:c5f33d7cdd40213f0d114c75c3e95e19893d7175a316529362a546ca72b5bdb4",
+    "created_at": "2026-10-11T19:28:35Z",
+    "updated_at": "2026-10-11T19:28:35Z",
+    "expires_at": "2026-11-10T19:28:34Z",
+    "workflow_run": {
+      "id": 38167573917,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/claude-model-evidence",
+      "head_sha": "205a220c22ef68332cea0493cd99b7afa662f2aa"
+    }
+  }
+]

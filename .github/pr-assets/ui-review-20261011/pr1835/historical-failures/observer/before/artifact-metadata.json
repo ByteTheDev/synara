@@ -1,0 +1,18 @@
+{
+  "id": 11712109117,
+  "node_id": "MDg6QXJ0aWZhY3QxMTcxMjEwOTExNw==",
+  "name": "claude-model-evidence-pr369-core-before-101a3c9653f2feeab0c7bf3dbcbe163bf01d6869",
+  "size_in_bytes": 1943350,
+  "expired": false,
+  "digest": "sha256:8b25c354ac694cbc4d9cf9c2379d362bb996c1af5c099a79f299098917ab39b0",
+  "created_at": "2026-10-11T19:25:31Z",
+  "updated_at": "2026-10-11T19:25:31Z",
+  "expires_at": "2026-11-10T19:25:30Z",
+  "workflow_run": {
+    "id": 38167573917,
+    "repository_id": 1194039785,
+    "head_repository_id": 1194039785,
+    "head_branch": "cleanup/20261011/claude-model-evidence",
+    "head_sha": "205a220c22ef68332cea0493cd99b7afa662f2aa"
+  }
+}

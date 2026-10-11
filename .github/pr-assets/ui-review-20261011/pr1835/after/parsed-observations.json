@@ -1,0 +1,1769 @@
+{
+  "side": "after",
+  "result": {
+    "numPassedTests": 3,
+    "numFailedTests": 0,
+    "numPendingTests": 225,
+    "success": true
+  },
+  "tests": [
+    {
+      "name": "ChatView transcript geometry (full app) qualifies configured Claude options in the full ChatView",
+      "status": "passed",
+      "failure": null
+    },
+    {
+      "name": "ChatView transcript geometry (full app) keeps 'sibling' Claude model controls unconfigured in the full ChatView",
+      "status": "passed",
+      "failure": null
+    },
+    {
+      "name": "ChatView transcript geometry (full app) keeps 'unknown' Claude model controls unconfigured in the full ChatView",
+      "status": "passed",
+      "failure": null
+    }
+  ],
+  "exits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "focus": [
+    {
+      "scenario": "configured",
+      "documentFocused": true,
+      "editorFocused": true
+    },
+    {
+      "scenario": "configured",
+      "documentFocused": true,
+      "editorFocused": true
+    },
+    {
+      "scenario": "sibling",
+      "documentFocused": true,
+      "editorFocused": true
+    },
+    {
+      "scenario": "unknown",
+      "documentFocused": true,
+      "editorFocused": true
+    }
+  ],
+  "observations": [
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-thread",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelAuto (Claude Code)",
+      "visibleMenuRows": [],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-menu",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelAuto (Claude Code)",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compactAuto (Claude Code)",
+          "checked": null
+        },
+        {
+          "text": "EffortAuto (Claude Code)",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-effort",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelAuto (Claude Code)",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compactAuto (Claude Code)",
+          "checked": null
+        },
+        {
+          "text": "EffortAuto (Claude Code)",
+          "checked": null
+        },
+        {
+          "text": "Auto (Claude Code) (default)",
+          "checked": "true"
+        },
+        {
+          "text": "Low",
+          "checked": "false"
+        },
+        {
+          "text": "Medium",
+          "checked": "false"
+        },
+        {
+          "text": "High",
+          "checked": "false"
+        },
+        {
+          "text": "Extra High",
+          "checked": "false"
+        },
+        {
+          "text": "Max",
+          "checked": "false"
+        },
+        {
+          "text": "Ultrathink",
+          "checked": "false"
+        },
+        {
+          "text": "Ultracode",
+          "checked": "false"
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-high",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "effort": "high"
+        }
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelHigh",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compactAuto (Claude Code)",
+          "checked": null
+        },
+        {
+          "text": "EffortHigh",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-budget",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "effort": "high"
+        }
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "effort": "high"
+        }
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelHigh",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compactAuto (Claude Code)",
+          "checked": null
+        },
+        {
+          "text": "EffortHigh",
+          "checked": null
+        },
+        {
+          "text": "Auto (Claude Code) (default)",
+          "checked": "true"
+        },
+        {
+          "text": "200k",
+          "checked": "false"
+        },
+        {
+          "text": "1M",
+          "checked": "false"
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-high-200k",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "effort": "high",
+          "autoCompactWindow": "200k"
+        }
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "effort": "high"
+        }
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelHigh(200k next)",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compact200k",
+          "checked": null
+        },
+        {
+          "text": "EffortHigh",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-auto-200k",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "autoCompactWindow": "200k"
+        }
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "autoCompactWindow": "200k"
+        }
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelAuto (Claude Code)(200k next)",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compact200k",
+          "checked": null
+        },
+        {
+          "text": "EffortAuto (Claude Code)",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-rehydrated",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "autoCompactWindow": "200k"
+        }
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "autoCompactWindow": "200k"
+        }
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelAuto (Claude Code)(200k next)",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Auto-compact200k",
+          "checked": null
+        },
+        {
+          "text": "EffortAuto (Claude Code)",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 2,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        },
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ],
+      "actualSavedStorageBytes": "{\"state\":{\"draftsByThreadId\":{\"thread-browser-test\":{\"prompt\":\"\",\"attachments\":[],\"modelSelectionByProvider\":{\"claude_work\":{\"provider\":\"claudeAgent\",\"model\":\"enterprise-model\",\"instanceId\":\"claude_work\",\"options\":{\"autoCompactWindow\":\"200k\"}}},\"activeProvider\":\"claude_work\"}},\"draftThreadsByThreadId\":{},\"projectDraftThreadIdByProjectId\":{},\"stickyModelSelectionByProvider\":{\"claude_work\":{\"provider\":\"claudeAgent\",\"model\":\"enterprise-model\",\"instanceId\":\"claude_work\"}},\"stickyActiveProvider\":\"claude_work\"},\"version\":6}",
+      "reloadBoundary": "Fresh full ChatView component mount plus actual Zustand rehydration from the unmodified previously persisted bytes; not a browser-process reload."
+    },
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-ultrathink",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "autoCompactWindow": "200k"
+        }
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work",
+        "options": {
+          "autoCompactWindow": "200k"
+        }
+      },
+      "prompt": "Ultrathink:\n",
+      "triggerText": "WorkEnterprise ModelUltrathink(200k next)",
+      "visibleMenuRows": [],
+      "settingsRequests": 2,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        },
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "sibling",
+        "instanceId": "claude_empty",
+        "model": "enterprise-model",
+        "accountName": "Empty"
+      },
+      "phase": "sibling-thread",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "prompt": "",
+      "triggerText": "EmptyEnterprise Model",
+      "visibleMenuRows": [],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_empty"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "sibling",
+        "instanceId": "claude_empty",
+        "model": "enterprise-model",
+        "accountName": "Empty"
+      },
+      "phase": "sibling-menu",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "prompt": "",
+      "triggerText": "EmptyEnterprise Model",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_empty"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_empty",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "unknown",
+        "instanceId": "claude_work",
+        "model": "unknown-hint",
+        "accountName": "Work"
+      },
+      "phase": "unknown-thread",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkUnknown Hint",
+      "visibleMenuRows": [],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "unknown",
+        "instanceId": "claude_work",
+        "model": "unknown-hint",
+        "accountName": "Work"
+      },
+      "phase": "unknown-menu",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkUnknown Hint",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Unknown Hint",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    }
+  ]
+}

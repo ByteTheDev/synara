@@ -1,0 +1,724 @@
+{
+  "target": {
+    "id": "pr369-core-after",
+    "variant": "after",
+    "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+    "tree": "5347993312c4a6d7ec61edbd3827582fa102a812"
+  },
+  "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+  "sourceTree": "5347993312c4a6d7ec61edbd3827582fa102a812",
+  "driver": "205a220c22ef68332cea0493cd99b7afa662f2aa",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+    "sha256": "ec34302f40f6e14470a3971d45b4c71d274ab2d2447e6720b39a6315b5ad9da5"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "2ecb7492036aae7f5cdb50e0a6f2a479e50f0a1c",
+      "sha256": "ec34302f40f6e14470a3971d45b4c71d274ab2d2447e6720b39a6315b5ad9da5"
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.tsx",
+      "blob": "06594db921139944052c222b10b6d28f80d320c3",
+      "sha256": "ba0b6e88f03a9ceb4a6997feaa54ec477e880d0f1828a21c839040bca1b553a6"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "blob": "5b11da7aa38c9de98aca8c9b6eaca45dab7f63dd",
+      "sha256": "371bf0add5cee0d5a56d5aa5dd60e4b745ca8f7b241ae71ac3c5b84d8f18357d"
+    },
+    {
+      "path": "apps/web/src/components/chat/useChatProviderModels.ts",
+      "blob": "4a5ac3aeda8831c10e8dc3398d0652c901de42a1",
+      "sha256": "12b3dfffe7e60701dc1e3bf99ebbe8b7ac870c78d294f047706590ea0c56f0bd"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelPicker.tsx",
+      "blob": "b529714af8961e8cb4f8645d1fa0cdf5ebf4c18d",
+      "sha256": "069a75c23ef65a03a520fd23da76784597349a87a0d30f1fc4d628ba196b0640"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelPickerTraitRows.tsx",
+      "blob": "17cb5fe7d75456cd3f5bee2765d0924c0948fb85",
+      "sha256": "abf556d0fad4a5e0c5beb7e9f2a1fc6f3d3e4c33aeae4f2aa958582a4e1e2e11"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerModelMenuTrigger.tsx",
+      "blob": "aa6cf32ce1f8200b2279bd7b7e66397e94e809d4",
+      "sha256": "8b070ebefb4730f7510fc1e4beeddea1c11e3a47d99a8ec48525e49950820fa5"
+    },
+    {
+      "path": "apps/web/src/components/chat/useComposerTraitCommit.ts",
+      "blob": "22cefa7c1052cb4e7c704c891c233cdb2d0f1ad2",
+      "sha256": "2d9a455f6aeac0aa449f520267d4afcede7cc99a59ca7e0e30f09af3680ce793"
+    },
+    {
+      "path": "apps/web/src/components/chat/TraitsPicker.tsx",
+      "blob": "6a1972a668fb30cc49e8faccada3834d50003ecc",
+      "sha256": "2faecc24b88e46f3e8fa272a8f4e100afa463e09b67f4cbd3ef7509c964c7f69"
+    },
+    {
+      "path": "apps/web/src/components/chat/composerTraits.ts",
+      "blob": "f0b248ed9c33e0302920c3648f98a386433747c2",
+      "sha256": "72a2d4e593a3bb1668b73ab768759b0a4dfc61d5de3e1080fc1487f2e56a40c5"
+    },
+    {
+      "path": "apps/web/src/components/chat/runtimeModelCapabilities.ts",
+      "blob": "a32cb3d7cff20503dd9acc1a08448c7c636afd0a",
+      "sha256": "6e0416b42e4aaed3765461076aba727a25d6661c4fbd19fcd983fb2efac700b7"
+    },
+    {
+      "path": "apps/web/src/components/chat/composerProviderRegistry.tsx",
+      "blob": "b3c6dcf8cf88588142154dc637c3f80f4b7dbf45",
+      "sha256": "ae1682397139b1dc459dd2a8f75f0dd78231c4812e2fe8eba185449e3aa1d2e6"
+    },
+    {
+      "path": "apps/web/src/hooks/useProviderModelCatalog.ts",
+      "blob": "125836ebf689d6ea571c3c6dc89355e0570e0dc5",
+      "sha256": "d5cc85ce0265a5f4903513942f823342a2e1bd69827cf84682420c3abac7fb10"
+    },
+    {
+      "path": "apps/web/src/providerModelOptions.ts",
+      "blob": "dd3b017a971db2fdfed4088acc86a5f5926ea61b",
+      "sha256": "ef9f35202aeb0a5a061f3d8952a98bd9fb917a4d8197dedcfb74bbd43590a257"
+    },
+    {
+      "path": "apps/web/src/composerDraftStore.ts",
+      "blob": "d31ae14a110857f07b48953377c2c4a8698133df",
+      "sha256": "9b96de76f8c067259a3cc19b8940471cc73710e08cbb644ba620921531ba9c50"
+    },
+    {
+      "path": "apps/web/src/composerDraftModels.ts",
+      "blob": "de87275db19c9b94bc0332463e6bce4c204e73a4",
+      "sha256": "0e1cb10a42d15610f270b0ba38b4c7db6c222bea907aa49e452ce3377df2a62a"
+    },
+    {
+      "path": "apps/web/src/composerDraftActions.ts",
+      "blob": "b2b80094bb0e8264bd22f81735fbe055b6e3a106",
+      "sha256": "64c3b0d75a06b40880c0df7630fecbfdde3159e30cbd56ef8a94ead0af04f5ee"
+    },
+    {
+      "path": "apps/web/src/composerDraftPersistence.ts",
+      "blob": "61f686d340dceb4646fdfeb854fb00fc43aa6616",
+      "sha256": "e04919e732534fbf828bbcfa25313b7f363dddbfa583f4482423c78758033922"
+    },
+    {
+      "path": "apps/web/src/lib/storage.ts",
+      "blob": "04f8cf56cff5156d7d60d01b4231cd9729dc753d",
+      "sha256": "81905a47d9e90a0bec846a9f430c0f68df7b03cf820a97a22928630940dbfd91"
+    },
+    {
+      "path": "packages/shared/src/model.ts",
+      "blob": "d6e5c9e996bebb9e5a769f59a30cc0abd649541b",
+      "sha256": "7bc5cdd20caee68150799f2115d10f3a3e4fd2c99ec8ba83d253d28b78604959"
+    },
+    {
+      "path": "packages/contracts/src/model.ts",
+      "blob": "c85b7415f526171f4281f36a0c5ca16cd64aba5c",
+      "sha256": "1de977db7ef6ad801f32f9af3913dd0760ed70f021ad23b24a90d23e11afe6aa"
+    },
+    {
+      "path": "packages/contracts/src/providerDiscovery.ts",
+      "blob": "115c137dee56b65f4aa0db5abf75c16601e58ae1",
+      "sha256": "adbd04c5bcd83888a4d5d159daa8588fd8cfc13584a974cc5883cd3a22b45af9"
+    },
+    {
+      "path": "apps/web/src/appSettings.ts",
+      "blob": "c79f58fe100f04d489a08fc44fc4462405d3023c",
+      "sha256": "880d1beb02d04efbeafb4faa93196d49d481c6cb54f5f955c61ca5effb86e9ec"
+    },
+    {
+      "path": "packages/contracts/src/settings.ts",
+      "blob": "334d685d30bb3bb0fb69ab04f2b8782ebd32974e",
+      "sha256": "2ae2d43ad24d034b2962d81a7cfbae81c7723d72a3614f64f65158a971d74ed8"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence369ModelChatView.browser.tsx",
+      "sha256": "dcb01261d7aec7e94599967c430d4acc719ebf4686ef0a590c98554c9302651c"
+    },
+    {
+      "path": "apps/web/vitest.pr-claude-model-evidence.config.ts",
+      "sha256": "5c7fa0d1545e3a364dc849f9d15e81571a174370ea8fe0bc7ccef7291c17e5af"
+    }
+  ],
+  "observerSha256": "a7c63494cbc39ea94a8648c364401afbec7c83b655f826906fa528bceaf21b1a",
+  "helperSha256": "0d2d5dff9bbcceb47fa2c2b8ab323df1b3237c17ab99905b5936bac56033edaa",
+  "casesSha256": "c500db3598c92d8d3009d11d38bd85f6c7b3e036f693440a4eea6eccb2139759",
+  "applicationCodeModified": false,
+  "originalCommonFixturePreserved": true,
+  "qualification": "Actual full ChatView and integrated model picker under the original canonical MSW/orchestration fixture. Three identical additional scenario tests run on both sources. Controlled saved provider-instance settings feed the actual catalog; no runtime descriptor, component, hook or DOM geometry is mocked. Persistence qualification uses a new full component mount and actual Zustand rehydration from the original saved bytes, not a browser-process reload. No live proxy/provider dispatch claim.",
+  "status": "failed",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "d7ef1e450423693f75efc9f64a3a2ac443c8314b841929a5b580d4a08904fcbe",
+  "reportSha256": "2e4e2d31fd2b3df2ded1f40121c5cf4543acb67ead9ee5d5a506ad300ad8e6c1",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) qualifies configured Claude options in the full ChatView",
+      "status": "failed",
+      "failureMessages": [
+        "Error: STACK_TRACE_ERROR\n    at task (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:1784:27)\n    at Object.<anonymous> (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:1817:16)\n    at Object.<anonymous> (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:1563:28)\n    at chain (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:599:14)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence369ModelChatView.browser.tsx?import&browserv=1791746731772:2000:2\n    at http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:1889:40\n    at runWithSuite (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:2258:8)\n    at Object.collect (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:1889:10)\n    at Object.collect (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:1893:54)\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=dd5a77fd:2462:26"
+      ]
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) keeps 'sibling' Claude model controls unconfigured in the full ChatView",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) keeps 'unknown' Claude model controls unconfigured in the full ChatView",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "unselectedTests": 225,
+  "observations": [
+    {
+      "scenario": {
+        "id": "configured",
+        "instanceId": "claude_work",
+        "model": "enterprise-model",
+        "accountName": "Work"
+      },
+      "phase": "configured-thread",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkEnterprise ModelAuto (Claude Code)",
+      "visibleMenuRows": [],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "sibling",
+        "instanceId": "claude_empty",
+        "model": "enterprise-model",
+        "accountName": "Empty"
+      },
+      "phase": "sibling-thread",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "prompt": "",
+      "triggerText": "EmptyEnterprise Model",
+      "visibleMenuRows": [],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_empty"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "sibling",
+        "instanceId": "claude_empty",
+        "model": "enterprise-model",
+        "accountName": "Empty"
+      },
+      "phase": "sibling-menu",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "enterprise-model",
+        "instanceId": "claude_empty"
+      },
+      "prompt": "",
+      "triggerText": "EmptyEnterprise Model",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_empty"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_empty",
+          "refresh": "if-stale"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "unknown",
+        "instanceId": "claude_work",
+        "model": "unknown-hint",
+        "accountName": "Work"
+      },
+      "phase": "unknown-thread",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkUnknown Hint",
+      "visibleMenuRows": [],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "unknown",
+        "instanceId": "claude_work",
+        "model": "unknown-hint",
+        "accountName": "Work"
+      },
+      "phase": "unknown-menu",
+      "source": "9fb04ac2735b42efbdfd615efec723673395bab0",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "selection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "persistedSelection": {
+        "provider": "claudeAgent",
+        "model": "unknown-hint",
+        "instanceId": "claude_work"
+      },
+      "prompt": "",
+      "triggerText": "WorkUnknown Hint",
+      "visibleMenuRows": [
+        {
+          "text": "Claude Fable 5.1Ctrl 1",
+          "checked": null
+        },
+        {
+          "text": "Claude Fable 5Ctrl 2",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5.5Ctrl 3",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 5Ctrl 4",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.8Ctrl 5",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.7Ctrl 6",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.6Ctrl 7",
+          "checked": null
+        },
+        {
+          "text": "Claude Opus 4.5Ctrl 8",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 5Ctrl 9",
+          "checked": null
+        },
+        {
+          "text": "Claude Sonnet 4.6",
+          "checked": null
+        },
+        {
+          "text": "Claude Haiku 4.5",
+          "checked": null
+        },
+        {
+          "text": "Enterprise Model",
+          "checked": null
+        },
+        {
+          "text": "Unknown Hint",
+          "checked": null
+        }
+      ],
+      "settingsRequests": 1,
+      "providerModelRequests": [
+        {
+          "provider": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claudeAgent"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work"
+        },
+        {
+          "provider": "codex",
+          "instanceId": "codex"
+        },
+        {
+          "provider": "cursor",
+          "instanceId": "cursor"
+        },
+        {
+          "provider": "antigravity",
+          "instanceId": "antigravity"
+        },
+        {
+          "provider": "grok",
+          "instanceId": "grok"
+        },
+        {
+          "provider": "opencode",
+          "instanceId": "opencode"
+        },
+        {
+          "provider": "pi",
+          "instanceId": "pi"
+        },
+        {
+          "provider": "devin",
+          "instanceId": "devin"
+        },
+        {
+          "provider": "omp",
+          "instanceId": "omp"
+        },
+        {
+          "provider": "claudeAgent",
+          "instanceId": "claude_work",
+          "refresh": "if-stale"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "configured-thread.png",
+      "bytes": 65323,
+      "sha256": "7f1d05cabcc02c54cd215db6c03934cf0fb88f697d9270ee3bed51f061d909db"
+    },
+    {
+      "path": "model-menu-open-failure-1.png",
+      "bytes": 65587,
+      "sha256": "7d752d67445fa1831a1da46bd908ca06fd520479f31045c51659e1d71437590c"
+    },
+    {
+      "path": "sibling-menu.png",
+      "bytes": 83392,
+      "sha256": "a92c7cce13ca1886da13b04bae7604bb5011bf85270b85db2a3e35fb3816fb0f"
+    },
+    {
+      "path": "sibling-thread.png",
+      "bytes": 64257,
+      "sha256": "c0e15f60f9eec47fd524e9a5bb6a67d416def2574e643c45afd281835c01600f"
+    },
+    {
+      "path": "unknown-menu.png",
+      "bytes": 83138,
+      "sha256": "f82f03c87832bfc4830e03fdc6d73adb521a7a2052e387f4494767f6b4880bb3"
+    },
+    {
+      "path": "unknown-thread.png",
+      "bytes": 63872,
+      "sha256": "25f2d72f2de652edc653afd2b6f2fdf8c90cfebaa4e74d213fe2712b5059cfdd"
+    },
+    {
+      "path": "video/page@62832bfee8b82c953c6fa101d4257d47.webm",
+      "bytes": 1923537,
+      "sha256": "3fea9ce8a92dc42e3e4ea8bde801695fe5691e463892b4a512c5315f0cd46309"
+    }
+  ]
+}
