@@ -1,0 +1,18 @@
+{
+  "id": 11713014074,
+  "node_id": "MDg6QXJ0aWZhY3QxMTcxMzAxNDA3NA==",
+  "name": "retention-cache-evidence-pr1713-current-after-90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+  "size_in_bytes": 1527072,
+  "expired": false,
+  "digest": "sha256:87d46af88da01abd66877a1a65c84d20b088925009ee8f037e282dae16a56250",
+  "created_at": "2026-10-11T19:38:43Z",
+  "updated_at": "2026-10-11T19:38:43Z",
+  "expires_at": "2026-11-10T19:38:42Z",
+  "workflow_run": {
+    "id": 38168437578,
+    "repository_id": 1194039785,
+    "head_repository_id": 1194039785,
+    "head_branch": "cleanup/20261011/retention-cache-current-evidence",
+    "head_sha": "32bca0aec717aba9e0ef12ffc23d45d7af987fcd"
+  }
+}

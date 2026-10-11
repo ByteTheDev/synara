@@ -1,0 +1,3824 @@
+{
+  "target": {
+    "id": "pr1713-current-after",
+    "variant": "after",
+    "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+    "tree": "14ad2aac8785978b2b59bd5dcfc0663f11b9e038"
+  },
+  "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+  "sourceTree": "14ad2aac8785978b2b59bd5dcfc0663f11b9e038",
+  "driver": "b527de9ebe18d977baba503df3e4f2918726c37c",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a",
+    "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a",
+      "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "blob": "a419e739b46e2a5cad03ff6bdf157cdb61ca42ca",
+      "sha256": "26b15a75df38e763452a5c6775a9f2fd3a82bcfbee792e75e4fab117edd495d5"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerClaudeCacheReviewPanel.tsx",
+      "blob": "dc3bc3b00fa32d9bc5dff9f0406cb42aa59daca4",
+      "sha256": "4b7324fa2c42c294b62c341078979fc304051ebb9a19cd4a1d6fb9298ac17762"
+    },
+    {
+      "path": "apps/web/src/components/chat/ComposerChoiceRow.tsx",
+      "blob": "19f887d9f35a4f66f2230fe6d2888c255df36ad8",
+      "sha256": "86198ca93aef9ae5a67cab87551b90c5f71d9e359c689e38cebfef4e9c9b670c"
+    },
+    {
+      "path": "apps/web/src/components/chat/composerPickerStyles.ts",
+      "blob": "4f063c4e8757b07e73ee8d66a7bd19731ca2b0c6",
+      "sha256": "c9767b7527ff42a33071b573cf1b7b39f21a328dcc1bb5b6fc41f2f93df8d265"
+    },
+    {
+      "path": "apps/web/src/components/ui/toast.tsx",
+      "blob": "4c3df6599142435cc3317c64e6f96d2e7279bed3",
+      "sha256": "3d7394cf37e7c0b6f6f3ad067d3aea5a3d68163dc2a1baf981f798c535025107"
+    },
+    {
+      "path": "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "blob": "70ab947a551410eab42354ccc6b52d3e33ef116c",
+      "sha256": "c6ee8cba7b366bbbc078d97fdb2d5fef1883ba73d3cc6d0dc7542665e4539db4"
+    },
+    {
+      "path": "apps/web/src/routes/_chat.settings.tsx",
+      "blob": "ada33c538fb2e3e019ede48ea592a092f4be9cea",
+      "sha256": "4ba1d41abe428da4c7a8121e8945eadeb1443bf74af2053ba635f3eb8b8bab0f"
+    },
+    {
+      "path": "apps/web/src/appSettings.ts",
+      "blob": "055e5d5b2bdd5156f88d139dd7f1a73ea1066b84",
+      "sha256": "c7ff5c0d681eb9e40110c23a58f53a23ea6b388b525cb214e704b3f4ecd4ce5b"
+    },
+    {
+      "path": "apps/web/src/settingsSearchIndex.ts",
+      "blob": "b78572abb861b5b778d5d6a1902404354bbcc0ca",
+      "sha256": "f99cb63c141f039787c11727594b657b928ec2b0dba3267aaa28e5c7c221bfbb"
+    },
+    {
+      "path": "apps/web/src/wsNativeApi.ts",
+      "blob": "c529719ee12c4850c9b928470cacc8045535fedd",
+      "sha256": "b4ca9c4bcabff845f37f52bf1525d625ec83a93a6946bc2b05a4d5b040539f33"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    },
+    {
+      "path": "apps/server/src/threadRetention.ts",
+      "blob": "9679b7f0810de4d490087331a0e3aa7be7d4513a",
+      "sha256": "12f5d4acd68dc352f2bb2a56f3b56060e70e6b7470f142301124a1084dffdc39"
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.ts",
+      "blob": "2054af5e0c45ad8eed89037675125f20884052d9",
+      "sha256": "6338f4c5278f6637556ac046eee46315689aed62c8d948c0d06d5c9561da0f0c"
+    },
+    {
+      "path": "packages/contracts/src/settings.ts",
+      "blob": "6a89e042aa81a15df33e69cb54edd6f76a75697b",
+      "sha256": "55a5f4b15782301a7d66da162fc8996c53851818e6cb508040ba98d564b51bf4"
+    },
+    {
+      "path": "packages/shared/src/claudeCache.ts",
+      "blob": "4b75afbde9a0cd67f24721342fb8d9aadc029976",
+      "sha256": "59b28cfdba1bd171584ae5389183ed15a0bc0188a4b93e9759199182c5a3a5d3"
+    },
+    {
+      "path": "package.json",
+      "blob": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea",
+      "sha256": "ed94729f24c2261037bf04ad6c04a607d80648118b2a9d533da3d3b2231e8b4f"
+    },
+    {
+      "path": "apps/web/package.json",
+      "blob": "ecdaca9d5c4ed3215ca8185bf94a16dbc904d540",
+      "sha256": "a4f34108092d5185eaccad074f3e61128ae31387981508bff01b378155b14edf"
+    },
+    {
+      "path": "apps/server/package.json",
+      "blob": "6edc7e404d52656dc40f55ac3b60bd58de10d77a",
+      "sha256": "801f398320c878c7353287bd73752ff64ed35476470973944909ea876ff97183"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "blob": "4455abba1ba58a93e610c608a8dd7aff787b5478",
+      "sha256": "bec3f2b6b2115e93a76782c1731be5ce5f991504f4cd88d468690edcdac5bb76"
+    },
+    {
+      "path": "packages/shared/package.json",
+      "blob": "ac5881289427b87a805e4206f8b528600042f0c0",
+      "sha256": "9325961d2ce4d1fdce2c6d326e2b5c32c3e93cf237b6069ca6b3e91f91757250"
+    },
+    {
+      "path": "bun.lock",
+      "blob": "dd28f2f30281e31d25ceff4f57aac259124ba09d",
+      "sha256": "05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e"
+    },
+    {
+      "path": ".github/actions/setup-workspace/action.yml",
+      "blob": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+      "sha256": "fd5f1b4a080fb92330cee09b604a4938e6a571be1c548d0f149df150cad0335d"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1713CurrentChatView.browser.tsx",
+      "sha256": "a6e23a5018375ee6f23a8e2547422f5f7e4b2ad8b522c3407e34ec58b5795310"
+    },
+    {
+      "path": "apps/web/vitest.pr-retention-cache-evidence.config.ts",
+      "sha256": "bdb5024e1ebfc6fe8e80d3cd3aec6b58ba7b4b38141f27f6034209c52566cee9"
+    }
+  ],
+  "observerSha256": "9b6e41288eeaba14cda545ae622fee7beae3d5129bb24fa5ac4de4a249062272",
+  "helperSha256": "542f901d2f7b571bd1b399445a7cdaae4b1986b1bf3002ff5b8800eb3c62e48f",
+  "casesSha256": "2985baf29644834bfe362aa933287b1020e63f4a68473621841cb507a953eeaa",
+  "applicationCodeModified": false,
+  "originalCommonFixturePreserved": true,
+  "qualification": "Actual full ChatView, Settings route, provider control, cache panel and toast under the canonical MSW/orchestration fixture. Three identical added tests run on both sources. Saved settings, a pending cache assessment, response acknowledgement and failed settings RPC are controlled boundaries. The real ChatView response callback, app-settings write queue and toast render without component/hook/geometry mocks. No live Claude request, actual settings-file persistence, native provider cleanup or retention sweep is claimed.",
+  "status": "completed",
+  "actualExitCode": 0,
+  "exits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "287f105830ffb7bbfdc88e26159012c0e5de8883e48c8bde397c0ae052c438df",
+  "reportSha256": "54c34013b1b995852f5a75eecd3b921ec2fd813f91f3dc3f4fad31ac266cf2a6",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) qualifies the current retention Never choice through the real Settings route",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) preserves the canonical provider-scoped cache setting and its off default",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) reports the real cache preference write failure after an accepted full-ChatView choice",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "unselectedTests": 223,
+  "observations": [
+    {
+      "phase": "conversation-default",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/settings",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": false
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "General",
+          "disabled": false
+        },
+        {
+          "text": "Profile",
+          "disabled": false
+        },
+        {
+          "text": "Appearance",
+          "disabled": false
+        },
+        {
+          "text": "Notifications",
+          "disabled": false
+        },
+        {
+          "text": "Chat behavior",
+          "disabled": false
+        },
+        {
+          "text": "Keybindings",
+          "disabled": false
+        },
+        {
+          "text": "Usage & limits",
+          "disabled": false
+        },
+        {
+          "text": "AppSnap",
+          "disabled": false
+        },
+        {
+          "text": "Computer useBeta",
+          "disabled": false
+        },
+        {
+          "text": "MCP connections",
+          "disabled": false
+        },
+        {
+          "text": "Agent providers",
+          "disabled": false
+        },
+        {
+          "text": "Models & writing",
+          "disabled": false
+        },
+        {
+          "text": "Agent skills",
+          "disabled": false
+        },
+        {
+          "text": "Managed worktrees",
+          "disabled": false
+        },
+        {
+          "text": "System tools",
+          "disabled": false
+        },
+        {
+          "text": "Archived threads",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Restore defaults",
+          "disabled": true
+        },
+        {
+          "text": "Queue",
+          "disabled": false
+        },
+        {
+          "text": "Steer",
+          "disabled": false
+        },
+        {
+          "text": "1 hour",
+          "disabled": false
+        },
+        {
+          "text": "24 hours",
+          "disabled": false
+        },
+        {
+          "text": "Never",
+          "disabled": false
+        },
+        {
+          "text": "7 days",
+          "disabled": false
+        },
+        {
+          "text": "14 days",
+          "disabled": false
+        },
+        {
+          "text": "30 days",
+          "disabled": false
+        },
+        {
+          "text": "Never",
+          "disabled": false
+        },
+        {
+          "text": "Stop",
+          "disabled": false
+        },
+        {
+          "text": "Stop and send",
+          "disabled": false
+        },
+        {
+          "text": "Stacked",
+          "disabled": false
+        },
+        {
+          "text": "Split",
+          "disabled": false
+        },
+        {
+          "text": "In Synara",
+          "disabled": false
+        }
+      ],
+      "switches": [
+        {
+          "id": "base-ui-_r_76_",
+          "label": "Stream assistant messages",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_79_",
+          "label": "Fold finished turns",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7c_",
+          "label": "Show effort slider in the composer",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7f_",
+          "label": "Automatically open simulator",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7l_",
+          "label": "Show pull request diff colors",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7o_",
+          "label": "Include fork upstreams in code review",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_7r_",
+          "label": "Wrap diff lines by default",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_7u_",
+          "label": "Confirm thread deletion",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_81_",
+          "label": "Confirm thread archive",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_84_",
+          "label": "Confirm terminal tab close",
+          "checked": "true"
+        }
+      ]
+    },
+    {
+      "phase": "conversation-never",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/settings",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "never",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": false
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "General",
+          "disabled": false
+        },
+        {
+          "text": "Profile",
+          "disabled": false
+        },
+        {
+          "text": "Appearance",
+          "disabled": false
+        },
+        {
+          "text": "Notifications",
+          "disabled": false
+        },
+        {
+          "text": "Chat behavior",
+          "disabled": false
+        },
+        {
+          "text": "Keybindings",
+          "disabled": false
+        },
+        {
+          "text": "Usage & limits",
+          "disabled": false
+        },
+        {
+          "text": "AppSnap",
+          "disabled": false
+        },
+        {
+          "text": "Computer useBeta",
+          "disabled": false
+        },
+        {
+          "text": "MCP connections",
+          "disabled": false
+        },
+        {
+          "text": "Agent providers",
+          "disabled": false
+        },
+        {
+          "text": "Models & writing",
+          "disabled": false
+        },
+        {
+          "text": "Agent skills",
+          "disabled": false
+        },
+        {
+          "text": "Managed worktrees",
+          "disabled": false
+        },
+        {
+          "text": "System tools",
+          "disabled": false
+        },
+        {
+          "text": "Archived threads",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Restore defaults",
+          "disabled": false
+        },
+        {
+          "text": "Queue",
+          "disabled": false
+        },
+        {
+          "text": "Steer",
+          "disabled": false
+        },
+        {
+          "text": "1 hour",
+          "disabled": false
+        },
+        {
+          "text": "24 hours",
+          "disabled": false
+        },
+        {
+          "text": "Never",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "7 days",
+          "disabled": false
+        },
+        {
+          "text": "14 days",
+          "disabled": false
+        },
+        {
+          "text": "30 days",
+          "disabled": false
+        },
+        {
+          "text": "Never",
+          "disabled": false
+        },
+        {
+          "text": "Stop",
+          "disabled": false
+        },
+        {
+          "text": "Stop and send",
+          "disabled": false
+        },
+        {
+          "text": "Stacked",
+          "disabled": false
+        },
+        {
+          "text": "Split",
+          "disabled": false
+        },
+        {
+          "text": "In Synara",
+          "disabled": false
+        }
+      ],
+      "switches": [
+        {
+          "id": "base-ui-_r_76_",
+          "label": "Stream assistant messages",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_79_",
+          "label": "Fold finished turns",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7c_",
+          "label": "Show effort slider in the composer",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7f_",
+          "label": "Automatically open simulator",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7l_",
+          "label": "Show pull request diff colors",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_7o_",
+          "label": "Include fork upstreams in code review",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_7r_",
+          "label": "Wrap diff lines by default",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_7u_",
+          "label": "Confirm thread deletion",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_81_",
+          "label": "Confirm thread archive",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_84_",
+          "label": "Confirm terminal tab close",
+          "checked": "true"
+        }
+      ],
+      "settingsUpdates": [
+        [
+          {
+            "threadAutoArchive": "never"
+          }
+        ]
+      ]
+    },
+    {
+      "phase": "provider-default-off",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/settings",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": false
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "General",
+          "disabled": false
+        },
+        {
+          "text": "Profile",
+          "disabled": false
+        },
+        {
+          "text": "Appearance",
+          "disabled": false
+        },
+        {
+          "text": "Notifications",
+          "disabled": false
+        },
+        {
+          "text": "Chat behavior",
+          "disabled": false
+        },
+        {
+          "text": "Keybindings",
+          "disabled": false
+        },
+        {
+          "text": "Usage & limits",
+          "disabled": false
+        },
+        {
+          "text": "AppSnap",
+          "disabled": false
+        },
+        {
+          "text": "Computer useBeta",
+          "disabled": false
+        },
+        {
+          "text": "MCP connections",
+          "disabled": false
+        },
+        {
+          "text": "Agent providers",
+          "disabled": false
+        },
+        {
+          "text": "Models & writing",
+          "disabled": false
+        },
+        {
+          "text": "Agent skills",
+          "disabled": false
+        },
+        {
+          "text": "Managed worktrees",
+          "disabled": false
+        },
+        {
+          "text": "System tools",
+          "disabled": false
+        },
+        {
+          "text": "Archived threads",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Restore defaults",
+          "disabled": true
+        },
+        {
+          "text": "Refresh status",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Codex",
+          "disabled": false
+        },
+        {
+          "text": "Claude",
+          "disabled": false
+        },
+        {
+          "text": "Import directory",
+          "disabled": true
+        },
+        {
+          "text": "Add account",
+          "disabled": false
+        },
+        {
+          "text": "ClaudeSigned in locally",
+          "disabled": false
+        },
+        {
+          "text": "Sign in",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Add",
+          "disabled": true
+        },
+        {
+          "text": "Cursor",
+          "disabled": false
+        },
+        {
+          "text": "Antigravity",
+          "disabled": false
+        },
+        {
+          "text": "Grok",
+          "disabled": false
+        },
+        {
+          "text": "Droid",
+          "disabled": false
+        },
+        {
+          "text": "Devin",
+          "disabled": false
+        },
+        {
+          "text": "OpenCode",
+          "disabled": false
+        },
+        {
+          "text": "Pi",
+          "disabled": false
+        },
+        {
+          "text": "Oh My Pi",
+          "disabled": false
+        }
+      ],
+      "switches": [
+        {
+          "id": "base-ui-_r_fg_",
+          "label": "Disable Codex",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fj_",
+          "label": "Disable Claude",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fm_",
+          "label": "Disable Cursor",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fq_",
+          "label": "Disable Antigravity",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_ft_",
+          "label": "Disable Grok",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g0_",
+          "label": "Disable Droid",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g3_",
+          "label": "Disable OpenCode",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g6_",
+          "label": "Disable Pi",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g9_",
+          "label": "Disable Devin",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gd_",
+          "label": "Disable Oh My Pi",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gg_",
+          "label": "Show Codex in the provider picker",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gj_",
+          "label": "Show Claude in the provider picker",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gm_",
+          "label": "Checking Cursor CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_gq_",
+          "label": "Checking Antigravity CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_gt_",
+          "label": "Checking Grok CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h0_",
+          "label": "Checking Droid CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h3_",
+          "label": "Checking OpenCode CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h6_",
+          "label": "Checking Pi CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h9_",
+          "label": "Checking Devin CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_hd_",
+          "label": "Checking Oh My Pi CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_hg_",
+          "label": "Keep Synara responsive",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_hj_",
+          "label": "Automatic CLI update checks",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_ho_",
+          "label": "Enable Claude",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_hu_",
+          "label": null,
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_i1_",
+          "label": null,
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_i6_",
+          "label": "Store new variable as a secret",
+          "checked": "false"
+        }
+      ]
+    },
+    {
+      "phase": "provider-opted-in",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/settings",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": true
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "General",
+          "disabled": false
+        },
+        {
+          "text": "Profile",
+          "disabled": false
+        },
+        {
+          "text": "Appearance",
+          "disabled": false
+        },
+        {
+          "text": "Notifications",
+          "disabled": false
+        },
+        {
+          "text": "Chat behavior",
+          "disabled": false
+        },
+        {
+          "text": "Keybindings",
+          "disabled": false
+        },
+        {
+          "text": "Usage & limits",
+          "disabled": false
+        },
+        {
+          "text": "AppSnap",
+          "disabled": false
+        },
+        {
+          "text": "Computer useBeta",
+          "disabled": false
+        },
+        {
+          "text": "MCP connections",
+          "disabled": false
+        },
+        {
+          "text": "Agent providers",
+          "disabled": false
+        },
+        {
+          "text": "Models & writing",
+          "disabled": false
+        },
+        {
+          "text": "Agent skills",
+          "disabled": false
+        },
+        {
+          "text": "Managed worktrees",
+          "disabled": false
+        },
+        {
+          "text": "System tools",
+          "disabled": false
+        },
+        {
+          "text": "Archived threads",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Restore defaults",
+          "disabled": false
+        },
+        {
+          "text": "Refresh status",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Codex",
+          "disabled": false
+        },
+        {
+          "text": "ClaudeCustom",
+          "disabled": false
+        },
+        {
+          "text": "Import directory",
+          "disabled": true
+        },
+        {
+          "text": "Add account",
+          "disabled": false
+        },
+        {
+          "text": "ClaudeSigned in locally",
+          "disabled": false
+        },
+        {
+          "text": "Sign in",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Add",
+          "disabled": true
+        },
+        {
+          "text": "Cursor",
+          "disabled": false
+        },
+        {
+          "text": "Antigravity",
+          "disabled": false
+        },
+        {
+          "text": "Grok",
+          "disabled": false
+        },
+        {
+          "text": "Droid",
+          "disabled": false
+        },
+        {
+          "text": "Devin",
+          "disabled": false
+        },
+        {
+          "text": "OpenCode",
+          "disabled": false
+        },
+        {
+          "text": "Pi",
+          "disabled": false
+        },
+        {
+          "text": "Oh My Pi",
+          "disabled": false
+        }
+      ],
+      "switches": [
+        {
+          "id": "base-ui-_r_fg_",
+          "label": "Disable Codex",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fj_",
+          "label": "Disable Claude",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fm_",
+          "label": "Disable Cursor",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fq_",
+          "label": "Disable Antigravity",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_ft_",
+          "label": "Disable Grok",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g0_",
+          "label": "Disable Droid",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g3_",
+          "label": "Disable OpenCode",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g6_",
+          "label": "Disable Pi",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g9_",
+          "label": "Disable Devin",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gd_",
+          "label": "Disable Oh My Pi",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gg_",
+          "label": "Show Codex in the provider picker",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gj_",
+          "label": "Show Claude in the provider picker",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gm_",
+          "label": "Checking Cursor CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_gq_",
+          "label": "Checking Antigravity CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_gt_",
+          "label": "Checking Grok CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h0_",
+          "label": "Checking Droid CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h3_",
+          "label": "Checking OpenCode CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h6_",
+          "label": "Checking Pi CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h9_",
+          "label": "Checking Devin CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_hd_",
+          "label": "Checking Oh My Pi CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_hg_",
+          "label": "Keep Synara responsive",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_hj_",
+          "label": "Automatic CLI update checks",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_ho_",
+          "label": "Enable Claude",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_hu_",
+          "label": null,
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_i1_",
+          "label": null,
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_i6_",
+          "label": "Store new variable as a secret",
+          "checked": "false"
+        }
+      ],
+      "settingsUpdates": [
+        [
+          {
+            "providers": {
+              "claudeAgent": {
+                "confirmColdCacheResume": true
+              }
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "phase": "provider-opted-out",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/settings",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": false
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "General",
+          "disabled": false
+        },
+        {
+          "text": "Profile",
+          "disabled": false
+        },
+        {
+          "text": "Appearance",
+          "disabled": false
+        },
+        {
+          "text": "Notifications",
+          "disabled": false
+        },
+        {
+          "text": "Chat behavior",
+          "disabled": false
+        },
+        {
+          "text": "Keybindings",
+          "disabled": false
+        },
+        {
+          "text": "Usage & limits",
+          "disabled": false
+        },
+        {
+          "text": "AppSnap",
+          "disabled": false
+        },
+        {
+          "text": "Computer useBeta",
+          "disabled": false
+        },
+        {
+          "text": "MCP connections",
+          "disabled": false
+        },
+        {
+          "text": "Agent providers",
+          "disabled": false
+        },
+        {
+          "text": "Models & writing",
+          "disabled": false
+        },
+        {
+          "text": "Agent skills",
+          "disabled": false
+        },
+        {
+          "text": "Managed worktrees",
+          "disabled": false
+        },
+        {
+          "text": "System tools",
+          "disabled": false
+        },
+        {
+          "text": "Archived threads",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Restore defaults",
+          "disabled": true
+        },
+        {
+          "text": "Refresh status",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Codex",
+          "disabled": false
+        },
+        {
+          "text": "Claude",
+          "disabled": false
+        },
+        {
+          "text": "Import directory",
+          "disabled": true
+        },
+        {
+          "text": "Add account",
+          "disabled": false
+        },
+        {
+          "text": "ClaudeSigned in locally",
+          "disabled": false
+        },
+        {
+          "text": "Sign in",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Add",
+          "disabled": true
+        },
+        {
+          "text": "Cursor",
+          "disabled": false
+        },
+        {
+          "text": "Antigravity",
+          "disabled": false
+        },
+        {
+          "text": "Grok",
+          "disabled": false
+        },
+        {
+          "text": "Droid",
+          "disabled": false
+        },
+        {
+          "text": "Devin",
+          "disabled": false
+        },
+        {
+          "text": "OpenCode",
+          "disabled": false
+        },
+        {
+          "text": "Pi",
+          "disabled": false
+        },
+        {
+          "text": "Oh My Pi",
+          "disabled": false
+        }
+      ],
+      "switches": [
+        {
+          "id": "base-ui-_r_fg_",
+          "label": "Disable Codex",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fj_",
+          "label": "Disable Claude",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fm_",
+          "label": "Disable Cursor",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_fq_",
+          "label": "Disable Antigravity",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_ft_",
+          "label": "Disable Grok",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g0_",
+          "label": "Disable Droid",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g3_",
+          "label": "Disable OpenCode",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g6_",
+          "label": "Disable Pi",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_g9_",
+          "label": "Disable Devin",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gd_",
+          "label": "Disable Oh My Pi",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gg_",
+          "label": "Show Codex in the provider picker",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gj_",
+          "label": "Show Claude in the provider picker",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_gm_",
+          "label": "Checking Cursor CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_gq_",
+          "label": "Checking Antigravity CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_gt_",
+          "label": "Checking Grok CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h0_",
+          "label": "Checking Droid CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h3_",
+          "label": "Checking OpenCode CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h6_",
+          "label": "Checking Pi CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_h9_",
+          "label": "Checking Devin CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_hd_",
+          "label": "Checking Oh My Pi CLI availability",
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_hg_",
+          "label": "Keep Synara responsive",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_hj_",
+          "label": "Automatic CLI update checks",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_ho_",
+          "label": "Enable Claude",
+          "checked": "true"
+        },
+        {
+          "id": "base-ui-_r_hu_",
+          "label": null,
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_i1_",
+          "label": null,
+          "checked": "false"
+        },
+        {
+          "id": "base-ui-_r_i6_",
+          "label": "Store new variable as a secret",
+          "checked": "false"
+        }
+      ],
+      "settingsUpdates": [
+        [
+          {
+            "providers": {
+              "claudeAgent": {
+                "confirmColdCacheResume": true
+              }
+            }
+          }
+        ],
+        [
+          {
+            "providers": {
+              "claudeAgent": {
+                "confirmColdCacheResume": false
+              }
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "phase": "cache-review-options",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": true
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Synara",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "New thread",
+          "disabled": false
+        },
+        {
+          "text": "Project",
+          "disabled": false
+        },
+        {
+          "text": "Chats",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Browser test thread",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Resume from summary (recommended)Compaction is unavailable for this Claude session.",
+          "disabled": true
+        },
+        {
+          "text": "Resume full session as-isSend your message with the full history",
+          "disabled": false
+        },
+        {
+          "text": "Don't ask me againResume as-is now and stop asking. Turn it back on in Settings → Providers",
+          "disabled": false
+        },
+        {
+          "text": "Cancel this sendKeep your message without sending it",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Full access",
+          "disabled": false
+        },
+        {
+          "text": "Claude Opus 4.6High",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Terminal",
+          "disabled": false
+        },
+        {
+          "text": "Browser",
+          "disabled": false
+        },
+        {
+          "text": "Files",
+          "disabled": false
+        },
+        {
+          "text": "Side chats",
+          "disabled": false
+        },
+        {
+          "text": "Source control",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        }
+      ],
+      "switches": []
+    },
+    {
+      "phase": "cache-choice-pending",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": true
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Synara",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "New thread",
+          "disabled": false
+        },
+        {
+          "text": "Project",
+          "disabled": false
+        },
+        {
+          "text": "Chats",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Browser test thread",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Resume from summary (recommended)Compaction is unavailable for this Claude session.",
+          "disabled": true
+        },
+        {
+          "text": "Resume full session as-isSend your message with the full history",
+          "disabled": true
+        },
+        {
+          "text": "Don't ask me againResume as-is now and stop asking. Turn it back on in Settings → Providers",
+          "disabled": true
+        },
+        {
+          "text": "Cancel this sendKeep your message without sending it",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Full access",
+          "disabled": false
+        },
+        {
+          "text": "Claude Opus 4.6High",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Terminal",
+          "disabled": false
+        },
+        {
+          "text": "Browser",
+          "disabled": false
+        },
+        {
+          "text": "Files",
+          "disabled": false
+        },
+        {
+          "text": "Side chats",
+          "disabled": false
+        },
+        {
+          "text": "Source control",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        }
+      ],
+      "switches": [],
+      "cacheResponses": [
+        [
+          {
+            "type": "thread.claude-cache.respond",
+            "commandId": "d909d602-8b09-4744-b57d-0b502fb5b475",
+            "threadId": "thread-browser-test",
+            "messageId": "retention-current-cache-message",
+            "reviewId": "retention-current-cache-review",
+            "decision": "continue",
+            "createdAt": "2026-10-11T19:55:32.704Z"
+          }
+        ]
+      ],
+      "settingsUpdates": []
+    },
+    {
+      "phase": "cache-preference-saving",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": true
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Synara",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "New thread",
+          "disabled": false
+        },
+        {
+          "text": "Project",
+          "disabled": false
+        },
+        {
+          "text": "Chats",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Browser test thread",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Resume from summary (recommended)Compaction is unavailable for this Claude session.",
+          "disabled": true
+        },
+        {
+          "text": "Resume full session as-isSend your message with the full history",
+          "disabled": true
+        },
+        {
+          "text": "Don't ask me againResume as-is now and stop asking. Turn it back on in Settings → Providers",
+          "disabled": true
+        },
+        {
+          "text": "Cancel this sendKeep your message without sending it",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Full access",
+          "disabled": false
+        },
+        {
+          "text": "Claude Opus 4.6High",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Terminal",
+          "disabled": false
+        },
+        {
+          "text": "Browser",
+          "disabled": false
+        },
+        {
+          "text": "Files",
+          "disabled": false
+        },
+        {
+          "text": "Side chats",
+          "disabled": false
+        },
+        {
+          "text": "Source control",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        }
+      ],
+      "switches": [],
+      "cacheResponses": [
+        [
+          {
+            "type": "thread.claude-cache.respond",
+            "commandId": "d909d602-8b09-4744-b57d-0b502fb5b475",
+            "threadId": "thread-browser-test",
+            "messageId": "retention-current-cache-message",
+            "reviewId": "retention-current-cache-review",
+            "decision": "continue",
+            "createdAt": "2026-10-11T19:55:32.704Z"
+          }
+        ]
+      ],
+      "settingsUpdates": [
+        [
+          {
+            "providers": {
+              "claudeAgent": {
+                "confirmColdCacheResume": false
+              }
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "phase": "cache-preference-failed",
+      "source": "90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+      "variant": "after",
+      "route": "/thread-browser-test",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "controlledSettings": {
+        "enableAssistantStreaming": true,
+        "enableProviderUpdateChecks": true,
+        "keepAwakeMode": "off",
+        "lowerProviderProcessPriority": true,
+        "defaultThreadEnvMode": "local",
+        "addProjectBaseDirectory": "",
+        "githubInboxIncludeUpstreams": false,
+        "sidechatExpiry": "1h",
+        "threadAutoArchive": "7d",
+        "sourceControlWritingStyle": "repository",
+        "sourceControlCustomInstructions": "",
+        "textGenerationModelSelection": {
+          "provider": "codex",
+          "instanceId": "codex",
+          "model": "gpt-6-luna"
+        },
+        "providers": {
+          "codex": {
+            "enabled": true,
+            "binaryPath": "codex",
+            "customModels": [],
+            "homePath": "",
+            "accounts": [],
+            "selectedAccountId": "default"
+          },
+          "claudeAgent": {
+            "enabled": true,
+            "binaryPath": "claude",
+            "customModels": [],
+            "homePath": "",
+            "launchArgs": "",
+            "enableArtifacts": false,
+            "confirmColdCacheResume": true
+          },
+          "cursor": {
+            "enabled": true,
+            "binaryPath": "cursor-agent",
+            "customModels": [],
+            "apiEndpoint": ""
+          },
+          "devin": {
+            "enabled": true,
+            "binaryPath": "devin",
+            "customModels": []
+          },
+          "antigravity": {
+            "enabled": true,
+            "binaryPath": "agy",
+            "customModels": []
+          },
+          "grok": {
+            "enabled": true,
+            "binaryPath": "grok",
+            "customModels": []
+          },
+          "droid": {
+            "enabled": true,
+            "binaryPath": "droid",
+            "customModels": []
+          },
+          "opencode": {
+            "enabled": true,
+            "binaryPath": "opencode",
+            "customModels": [],
+            "serverUrl": "",
+            "serverPasswordConfigured": false,
+            "experimentalWebSockets": false
+          },
+          "pi": {
+            "enabled": true,
+            "binaryPath": "pi",
+            "customModels": [],
+            "agentDir": ""
+          },
+          "omp": {
+            "enabled": true,
+            "binaryPath": "omp",
+            "customModels": [],
+            "agentDir": ""
+          }
+        },
+        "providerInstances": {},
+        "skills": {
+          "disabled": []
+        },
+        "onboardingCompletedAt": "2026-03-04T12:00:00.000Z"
+      },
+      "buttons": [
+        {
+          "text": "Toggle Sidebar",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Synara",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "New thread",
+          "disabled": false
+        },
+        {
+          "text": "Project",
+          "disabled": false
+        },
+        {
+          "text": "Chats",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Browser test thread",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Resume from summary (recommended)Compaction is unavailable for this Claude session.",
+          "disabled": true
+        },
+        {
+          "text": "Resume full session as-isSend your message with the full history",
+          "disabled": true
+        },
+        {
+          "text": "Don't ask me againResume as-is now and stop asking. Turn it back on in Settings → Providers",
+          "disabled": true
+        },
+        {
+          "text": "Cancel this sendKeep your message without sending it",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Full access",
+          "disabled": false
+        },
+        {
+          "text": "Claude Opus 4.6High",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": true
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "Terminal",
+          "disabled": false
+        },
+        {
+          "text": "Browser",
+          "disabled": false
+        },
+        {
+          "text": "Files",
+          "disabled": false
+        },
+        {
+          "text": "Side chats",
+          "disabled": false
+        },
+        {
+          "text": "Source control",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        },
+        {
+          "text": "",
+          "disabled": false
+        }
+      ],
+      "switches": [],
+      "cacheResponses": [
+        [
+          {
+            "type": "thread.claude-cache.respond",
+            "commandId": "d909d602-8b09-4744-b57d-0b502fb5b475",
+            "threadId": "thread-browser-test",
+            "messageId": "retention-current-cache-message",
+            "reviewId": "retention-current-cache-review",
+            "decision": "continue",
+            "createdAt": "2026-10-11T19:55:32.704Z"
+          }
+        ]
+      ],
+      "settingsUpdates": [
+        [
+          {
+            "providers": {
+              "claudeAgent": {
+                "confirmColdCacheResume": false
+              }
+            }
+          }
+        ]
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "cache-choice-pending.png",
+      "bytes": 82939,
+      "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344"
+    },
+    {
+      "path": "cache-preference-failed.png",
+      "bytes": 97989,
+      "sha256": "107e239cc4f6abd62fcbdfd4c527762b8a1d7594cf2148dba6c58274f7cf7e07"
+    },
+    {
+      "path": "cache-preference-saving.png",
+      "bytes": 82939,
+      "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344"
+    },
+    {
+      "path": "cache-review-options.png",
+      "bytes": 84125,
+      "sha256": "1444962d9107d85a3d44b6efa6468fa4c3c8ec847f50b5f7a398e4172addced1"
+    },
+    {
+      "path": "conversation-default.png",
+      "bytes": 153801,
+      "sha256": "c25a021408a49bd55d9eb737a64019e897dcd86004e0e944a2af5a0d17c3cf8c"
+    },
+    {
+      "path": "conversation-never.png",
+      "bytes": 154064,
+      "sha256": "7a78e48d19e7f9e339822f844e4370bc141abd3e18602186d80621aa3e7a0377"
+    },
+    {
+      "path": "provider-default-off.png",
+      "bytes": 117074,
+      "sha256": "db3d227289dceaecd772014f815eb25aa4e68af2169af112d20421dcaf4e3847"
+    },
+    {
+      "path": "provider-opted-in.png",
+      "bytes": 117209,
+      "sha256": "a63ab57c1e669999b96ee592111af78be995795dd19d949425ad881f3a069048"
+    },
+    {
+      "path": "provider-opted-out.png",
+      "bytes": 116959,
+      "sha256": "6216e29f97259dece9fc8f67a13d37efe381c32bce0ee72a4b7933d41c0ab063"
+    },
+    {
+      "path": "video/page@bd84366d920aaf2482b2e6bf4d49730a.webm",
+      "bytes": 944451,
+      "sha256": "e75defb56e36232f1d8d34b73b67590760e76ca5f6e03f1c64795b042066da17"
+    }
+  ]
+}

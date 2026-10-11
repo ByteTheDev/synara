@@ -1,0 +1,86 @@
+[
+  {
+    "run": 38169683774,
+    "stage": "selector",
+    "side": "before",
+    "id": 11713732426,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMzczMjQyNg==",
+    "name": "retention-cache-evidence-pr1713-current-before-3270dcf89bb60745ac568803a940cd7e7ac676a7",
+    "size_in_bytes": 6832867,
+    "expired": false,
+    "digest": "sha256:de1dfa6e7d23dd9434b1e024726b5af728a9b91aa53c900625a68ca7d6e4220f",
+    "created_at": "2026-10-11T19:56:40Z",
+    "updated_at": "2026-10-11T19:56:40Z",
+    "expires_at": "2026-11-10T19:56:39Z",
+    "workflow_run": {
+      "id": 38169683774,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/retention-cache-current-evidence",
+      "head_sha": "b527de9ebe18d977baba503df3e4f2918726c37c"
+    }
+  },
+  {
+    "run": 38169683774,
+    "stage": "selector",
+    "side": "after",
+    "id": 11713581627,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMzU4MTYyNw==",
+    "name": "retention-cache-evidence-pr1713-current-after-90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+    "size_in_bytes": 1825309,
+    "expired": false,
+    "digest": "sha256:f02211c16cb373fc7e21d05e46a049a8cfdbed31db03eab36bdaf07c9fcb0dbf",
+    "created_at": "2026-10-11T19:55:51Z",
+    "updated_at": "2026-10-11T19:55:51Z",
+    "expires_at": "2026-11-10T19:55:50Z",
+    "workflow_run": {
+      "id": 38169683774,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/retention-cache-current-evidence",
+      "head_sha": "b527de9ebe18d977baba503df3e4f2918726c37c"
+    }
+  },
+  {
+    "run": 38168437578,
+    "stage": "first",
+    "side": "before",
+    "id": 11713116986,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMzExNjk4Ng==",
+    "name": "retention-cache-evidence-pr1713-current-before-3270dcf89bb60745ac568803a940cd7e7ac676a7",
+    "size_in_bytes": 4389829,
+    "expired": false,
+    "digest": "sha256:dba3d316ce99a25ea8ea76e9d52973120197115d80a45f0e5f5a6f3d1cbd8265",
+    "created_at": "2026-10-11T19:42:06Z",
+    "updated_at": "2026-10-11T19:42:06Z",
+    "expires_at": "2026-11-10T19:42:05Z",
+    "workflow_run": {
+      "id": 38168437578,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/retention-cache-current-evidence",
+      "head_sha": "32bca0aec717aba9e0ef12ffc23d45d7af987fcd"
+    }
+  },
+  {
+    "run": 38168437578,
+    "stage": "first",
+    "side": "after",
+    "id": 11713014074,
+    "node_id": "MDg6QXJ0aWZhY3QxMTcxMzAxNDA3NA==",
+    "name": "retention-cache-evidence-pr1713-current-after-90028f855f9e4c7ee04933322529e0a1e4d42ff1",
+    "size_in_bytes": 1527072,
+    "expired": false,
+    "digest": "sha256:87d46af88da01abd66877a1a65c84d20b088925009ee8f037e282dae16a56250",
+    "created_at": "2026-10-11T19:38:43Z",
+    "updated_at": "2026-10-11T19:38:43Z",
+    "expires_at": "2026-11-10T19:38:42Z",
+    "workflow_run": {
+      "id": 38168437578,
+      "repository_id": 1194039785,
+      "head_repository_id": 1194039785,
+      "head_branch": "cleanup/20261011/retention-cache-current-evidence",
+      "head_sha": "32bca0aec717aba9e0ef12ffc23d45d7af987fcd"
+    }
+  }
+]

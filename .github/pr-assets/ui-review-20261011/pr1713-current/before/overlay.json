@@ -1,0 +1,37 @@
+{
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a",
+    "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273"
+  },
+  "replacements": [
+    {
+      "before": "  if (tag === WS_METHODS.serverGetSettings) {\n    return createBrowserTestServerSettings(NOW_ISO);\n  }",
+      "after": "  if (tag === WS_METHODS.serverGetSettings) {\n    return retentionEvidenceServerSettings ?? createBrowserTestServerSettings(NOW_ISO);\n  }"
+    }
+  ],
+  "helperAnchor": "describe(\"ChatView transcript geometry (full app)\", () => {",
+  "caseAnchor": "  it(\"keeps the active chat explicitly unread until the next visit\", async () => {",
+  "cases": [
+    {
+      "name": "qualifies the current retention Never choice through the real Settings route"
+    },
+    {
+      "name": "preserves the canonical provider-scoped cache setting and its off default"
+    },
+    {
+      "name": "reports the real cache preference write failure after an accepted full-ChatView choice"
+    }
+  ],
+  "expectedPhases": [
+    "conversation-default",
+    "conversation-never",
+    "provider-default-off",
+    "provider-opted-in",
+    "provider-opted-out",
+    "cache-review-options",
+    "cache-choice-pending",
+    "cache-preference-saving",
+    "cache-preference-failed"
+  ]
+}

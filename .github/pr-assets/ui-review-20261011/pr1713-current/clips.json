@@ -1,0 +1,134 @@
+[
+  {
+    "side": "before",
+    "source_file": "before/video/page@93fab95fad43a3780cb5b987485a40dc.webm",
+    "source_sha256": "577bc982316d01e8f8e39833a577de1624ad08a28b9a3bb67d4ab4ad6e98bdb4",
+    "source_start_seconds": 170.76,
+    "requested_duration_seconds": 3.2,
+    "clip_file": "before/interaction.mp4",
+    "clip_sha256": "61f14f1bc4c11bcbe50346b44d5180fbfac3d569451d90e1d910dd24b44d5600",
+    "transform": "Contiguous full-frame real-time excerpt; H.264 transcode only. No crop, overlay, retiming, or frame substitution.",
+    "encoder_args": [
+      "-v",
+      "error",
+      "-ss",
+      "170.76",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/video/page@93fab95fad43a3780cb5b987485a40dc.webm",
+      "-t",
+      "3.2",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      "-y"
+    ],
+    "inspection_frames": [
+      {
+        "path": "before/clip-frame-1.png",
+        "clip_seconds": 0.24,
+        "source_seconds": 171.0,
+        "sha256": "df741d1a694407b4e6960b4b9f97044174ef765815e69e77f1cd0e1749f06153"
+      },
+      {
+        "path": "before/clip-frame-2.png",
+        "clip_seconds": 0.48,
+        "source_seconds": 171.23999999999998,
+        "sha256": "5162a112c71b3e7e6b58c79dbb2d314444ba2c5e405ca4016d1712a13b4948c7"
+      },
+      {
+        "path": "before/clip-frame-3.png",
+        "clip_seconds": 2.8,
+        "source_seconds": 173.56,
+        "sha256": "4575804f202543928f8e2c33db32680ecd304eed7a512b3984b554345e67da92"
+      }
+    ],
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "3.200000"
+      }
+    }
+  },
+  {
+    "side": "after",
+    "source_file": "after/video/page@bd84366d920aaf2482b2e6bf4d49730a.webm",
+    "source_sha256": "e75defb56e36232f1d8d34b73b67590760e76ca5f6e03f1c64795b042066da17",
+    "source_start_seconds": 124.84,
+    "requested_duration_seconds": 2.6,
+    "clip_file": "after/interaction.mp4",
+    "clip_sha256": "cb4b5a699ba8a1987e383422dfcf91b565e08e34901462a903583713287a3f9e",
+    "transform": "Contiguous full-frame real-time excerpt; H.264 transcode only. No crop, overlay, retiming, or frame substitution.",
+    "encoder_args": [
+      "-v",
+      "error",
+      "-ss",
+      "124.84",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/video/page@bd84366d920aaf2482b2e6bf4d49730a.webm",
+      "-t",
+      "2.6",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      "-y"
+    ],
+    "inspection_frames": [
+      {
+        "path": "after/clip-frame-1.png",
+        "clip_seconds": 0.16,
+        "source_seconds": 125.0,
+        "sha256": "c2d529eaf8fd1e491e1b6d501457a04f87bc1d9948d1afab51ea114d256a12fb"
+      },
+      {
+        "path": "after/clip-frame-2.png",
+        "clip_seconds": 0.68,
+        "source_seconds": 125.52000000000001,
+        "sha256": "2a1ccda59541ad2f7f23d2dd9426de4d36d669a9f06ecb4dbf6b150c85d8e076"
+      },
+      {
+        "path": "after/clip-frame-3.png",
+        "clip_seconds": 1.8,
+        "source_seconds": 126.64,
+        "sha256": "62c4f9d79f7b59df8aa48f0da3a9491387a4f599ca4ce365f2a07e9c8c4131c5"
+      },
+      {
+        "path": "after/clip-frame-4.png",
+        "clip_seconds": 2.28,
+        "source_seconds": 127.12,
+        "sha256": "93699a7b867de8a08094b8487ffa295fd961ae36336adde9c80aa76aa9ac152c"
+      }
+    ],
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "2.600000"
+      }
+    }
+  }
+]

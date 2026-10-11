@@ -1,0 +1,33 @@
+# Current retention and cache review — full ChatView evidence
+
+This isolated driver compares current main `3270dcf89bb60745ac568803a940cd7e7ac676a7` (tree `3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822`) with independently reviewed #1713 head `90028f855f9e4c7ee04933322529e0a1e4d42ff1` (tree `14ad2aac8785978b2b59bd5dcfc0663f11b9e038`). The application difference is exactly the 15-file accepted retention and cache-preference repair. It preserves the original author history and the current provider-scoped policy.
+
+The earlier #1713 captures at `4112a2f6...` remain historical evidence of that source. They show the old duplicate global cache preference, which current main superseded. This new comparison does not relabel those screenshots or revive that competing preference.
+
+## Actual source and fixture boundaries
+
+Both sources share the complete canonical ChatView browser fixture at blob `1fd638007a36a7a4f74adab4ee0ea96c9deef34a`, SHA-256 `5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273`. The driver copies it to an untracked file, adds three identical scenarios and helpers, and extends only its settings response while those scenarios run. Reversing the extension and removing the additions must reproduce every original byte. All original cases and assertions remain intact and are explicitly unselected by this focused driver.
+
+The real Router, ChatView, Settings route, provider settings panel, cache-review panel, app-settings mutation queue, toast, production CSS and theme render in Chromium. The canonical MSW/orchestration fixture supplies the app context. There are no component, hook, descriptor, DOM geometry or pixel mocks. Controlled settings replies represent the server response. The cache case additionally supplies a synthetic pending assessment and controls the native API acknowledgement and settings-write failure. The actual ChatView callbacks map the choice into the dispatch command and invoke the actual preference-writing queue.
+
+## Three identical cases
+
+1. **Archive idle threads.** Capture the actual Conversation settings, assert the 7-day default, click Never, and require one exact `threadAutoArchive: "never"` RPC patch plus the real checked UI. Main lacks this new row, so its missing-control failure is retained after the default screenshot. No conditional Before assertion bypass exists.
+2. **Canonical provider preference.** Open Settings → Providers → Claude, observe **Ask before resuming a long idle session** off by default, click on and then off, and require the exact nested `providers.claudeAgent.confirmColdCacheResume` writes. This is preservation of current-main behavior. The original global preference is absent from the fixture and source.
+3. **Accepted choice, failed save.** Render a real full ChatView with a controlled held message and two-hour-old, 161k-token assessment. The existing preference is explicitly opted in for this synthetic held-review scenario. Click **Don't ask me again** and hold the response acknowledgement. Require one real `thread.claude-cache.respond` command with `decision: "continue"`, no early settings write, and a disabled choice. Release the acknowledgement, require one exact provider preference write, and capture while that write is pending. Reject that controlled RPC, capture the resulting UI, then require the actual **Cache preference not saved** toast and its partial-failure explanation. The accepted choices must stay disabled; the server fixture preference stays true and neither command nor write is duplicated. Main's missing-toast failure remains a real failure. Both boundaries are released or rejected during cleanup so no mutation task is left waiting.
+
+The assessment is test input, not a measurement of real provider usage. The fixture intentionally holds its pending read model after the acknowledgement so the accepted, locked panel remains visible. Real durable server events may unmount that panel; the separate production regression suite covers reporting the failed save after unmount. No live Claude dispatch, native provider teardown, actual settings-file persistence or retention sweep is established by these pixels.
+
+## Execution and truthful results
+
+The workflow runs only on `cleanup/20261011/retention-cache-current-evidence`, has read-only repository permissions, checks out immutable source and driver commits, and uses the source's unchanged frozen workspace setup. Chromium and FFmpeg provide real screenshots and a complete context recording. Both the browser context and test viewport are 960×1100.
+
+The runner verifies the whole source head and tree before and after execution, rejects any tracked source changes, and records relevant source/overlay/snippet hashes. Original and observed fixture bytes, the complete Vitest log and JSON report, actual Vitest/tee exits, PNGs, full WebM and provenance are uploaded even after failures. Output stays under the source workspace. A success requires all three selected cases, all nine unique observed phases, matching source and viewport, valid media headers, and one complete context video. A failed assertion retains the failed job and original exit; expected Before failures are never inverted into success. Skipped original cases are not passes.
+
+Independent source review precedes branch publication. Actual screenshots of the rendered UI, raw video, any time-only clip trims, and the observed failure boundaries require independent visual review before being attached as final Before Vs After evidence. Nothing in this driver changes canonical CI or production files.
+
+## Retained first execution
+
+Run `38168437578` at driver `32bca0aec717aba9e0ef12ffc23d45d7af987fcd` completed with actual Before 2 failures / 1 pass and After 1 failure / 2 passes, with 223 original cases unselected on each source. The new retention control genuinely failed on Before and passed on After; the canonical provider toggle passed on both. Both held-review cases stopped before dispatch because Playwright rejected the serialized role selector containing the literal apostrophe in the regular expression. No acknowledgement, preference write or toast outcome is inferred from that failed click. All original logs, partial media and GitHub-digest-verified archives are retained.
+
+The sole selector follow-up spells the same ASCII apostrophe as `\x27` in the anchored name regular expression. Its matching semantics are unchanged; the role, one real pointer click, all subsequent queue/acceptance/disabled-state/toast assertions and the three-case/nine-phase gate stay intact. This is a fixture serialization repair, not a product change.

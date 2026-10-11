@@ -1,0 +1,24 @@
+{
+  "artifact_id": 11713732426,
+  "size": 6832867,
+  "sha256": "de1dfa6e7d23dd9434b1e024726b5af728a9b91aa53c900625a68ca7d6e4220f",
+  "members": [
+    "pr1713-current-before/cache-choice-pending.png",
+    "pr1713-current-before/cache-preference-failed.png",
+    "pr1713-current-before/cache-preference-saving.png",
+    "pr1713-current-before/cache-review-options.png",
+    "pr1713-current-before/conversation-default.png",
+    "pr1713-current-before/exits.json",
+    "pr1713-current-before/observed-ChatView.browser.tsx",
+    "pr1713-current-before/original-ChatView.browser.tsx",
+    "pr1713-current-before/overlay.json",
+    "pr1713-current-before/provenance.json",
+    "pr1713-current-before/provider-default-off.png",
+    "pr1713-current-before/provider-opted-in.png",
+    "pr1713-current-before/provider-opted-out.png",
+    "pr1713-current-before/video/page@93fab95fad43a3780cb5b987485a40dc.webm",
+    "pr1713-current-before/vitest.json",
+    "pr1713-current-before/vitest.log"
+  ],
+  "expanded_bytes": 9471042
+}

@@ -1,0 +1,443 @@
+[
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/README.md",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/README.md",
+    "bytes": 7503,
+    "sha256": "52415a21c86b90847bcd6e5a3ee9b3e00d6dfdbfe32b6a967f5229fa85a330f3",
+    "blob": "a1a6f55d08b0a9b00979d30c238ede3b987daffd"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/artifact-metadata.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/artifact-metadata.json",
+    "bytes": 678,
+    "sha256": "4efb78676693cdb4405a75352f3bb58fa19e169baf698151ccbf5883c4624c36",
+    "blob": "8ece3893b1b0cb8f57ae0134b06beb555a8e6828"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/cache-choice-pending.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/cache-choice-pending.png",
+    "bytes": 82939,
+    "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344",
+    "blob": "6c64c6431f579ae5e9b40a637c6ecd304cd5b329"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/cache-preference-failed.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/cache-preference-failed.png",
+    "bytes": 97989,
+    "sha256": "107e239cc4f6abd62fcbdfd4c527762b8a1d7594cf2148dba6c58274f7cf7e07",
+    "blob": "39ff6598febd790942cbd44f2f9ef244aa3262fe"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/cache-preference-saving.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/cache-preference-saving.png",
+    "bytes": 82939,
+    "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344",
+    "blob": "6c64c6431f579ae5e9b40a637c6ecd304cd5b329"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/cache-review-options.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/cache-review-options.png",
+    "bytes": 84125,
+    "sha256": "1444962d9107d85a3d44b6efa6468fa4c3c8ec847f50b5f7a398e4172addced1",
+    "blob": "8daebf3141eea362446a0bfefb6399ce23813afa"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/clip-frame-1.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/clip-frame-1.png",
+    "bytes": 144887,
+    "sha256": "c2d529eaf8fd1e491e1b6d501457a04f87bc1d9948d1afab51ea114d256a12fb",
+    "blob": "bfd29511bd4d1d60ce18a31aeac52ad9912e0ed9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/clip-frame-2.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/clip-frame-2.png",
+    "bytes": 142840,
+    "sha256": "2a1ccda59541ad2f7f23d2dd9426de4d36d669a9f06ecb4dbf6b150c85d8e076",
+    "blob": "73f9b9fdab91469c448ede151c41ffff5e0c9ebc"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/clip-frame-3.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/clip-frame-3.png",
+    "bytes": 169662,
+    "sha256": "62c4f9d79f7b59df8aa48f0da3a9491387a4f599ca4ce365f2a07e9c8c4131c5",
+    "blob": "3622abed4b618d775f6a55fede4820cc81cf89cb"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/clip-frame-4.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/clip-frame-4.png",
+    "bytes": 169652,
+    "sha256": "93699a7b867de8a08094b8487ffa295fd961ae36336adde9c80aa76aa9ac152c",
+    "blob": "f232ad0a6fdc51ac643bbb66347b3186034e98c6"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/conversation-default.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/conversation-default.png",
+    "bytes": 153801,
+    "sha256": "c25a021408a49bd55d9eb737a64019e897dcd86004e0e944a2af5a0d17c3cf8c",
+    "blob": "485c9431deaf40cdb26571effd21506e8147c2e5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/conversation-never.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/conversation-never.png",
+    "bytes": 154064,
+    "sha256": "7a78e48d19e7f9e339822f844e4370bc141abd3e18602186d80621aa3e7a0377",
+    "blob": "bf9ef6986f226edb8085146d7832538b18aacfc2"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/download-verification.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/download-verification.json",
+    "bytes": 1052,
+    "sha256": "935475acd29053a82d73fd0b1b945aa4f830d4f34bdc4f7e2a48a9f72c5b0608",
+    "blob": "bb0b324816d8e65d6141a2e3adebea75bd2a7a1c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/exits.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/exits.json",
+    "bytes": 21,
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/interaction.mp4",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/interaction.mp4",
+    "bytes": 87971,
+    "sha256": "cb4b5a699ba8a1987e383422dfcf91b565e08e34901462a903583713287a3f9e",
+    "blob": "c1fc67fde154f78ae9dab5843335566273748a26"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/observed-ChatView.browser.tsx",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/observed-ChatView.browser.tsx",
+    "bytes": 598139,
+    "sha256": "a6e23a5018375ee6f23a8e2547422f5f7e4b2ad8b522c3407e34ec58b5795310",
+    "blob": "785cac9e9b73b15d327b132458e4cc372f1e7160"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/original-ChatView.browser.tsx",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/original-ChatView.browser.tsx",
+    "bytes": 582762,
+    "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273",
+    "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/overlay.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/overlay.json",
+    "bytes": 1344,
+    "sha256": "9b6e41288eeaba14cda545ae622fee7beae3d5129bb24fa5ac4de4a249062272",
+    "blob": "2f03f4af354fd1cd7c2019466ebfe4df1a4fbc7c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/parsed-observations.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/parsed-observations.json",
+    "bytes": 74395,
+    "sha256": "52ceb8318703fa82e11c677e6afcf0ea4aaf640de0ab35e730be964898e0a27d",
+    "blob": "03ae848f6ab11b1ebeb3d272335209242255ac69"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/provenance.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/provenance.json",
+    "bytes": 91034,
+    "sha256": "a0fcd62c4e9d122f2ef7fe962240fde2975ed45d83334ec19c1bfe48fcd2d5a2",
+    "blob": "d11e0bf9c59408c3bd1b34bad274e48f9012367e"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/provider-default-off.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/provider-default-off.png",
+    "bytes": 117074,
+    "sha256": "db3d227289dceaecd772014f815eb25aa4e68af2169af112d20421dcaf4e3847",
+    "blob": "8252c8090e36129eb0b446a3d28e9ca72cb958e4"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/provider-opted-in.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/provider-opted-in.png",
+    "bytes": 117209,
+    "sha256": "a63ab57c1e669999b96ee592111af78be995795dd19d949425ad881f3a069048",
+    "blob": "10b68603c19b613e1b7aa69a0b02248d82498856"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/provider-opted-out.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/provider-opted-out.png",
+    "bytes": 116959,
+    "sha256": "6216e29f97259dece9fc8f67a13d37efe381c32bce0ee72a4b7933d41c0ab063",
+    "blob": "2e79680c8b49515ce50dcbc1889a1ad634b2c047"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/video/page@bd84366d920aaf2482b2e6bf4d49730a.webm",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/video/page@bd84366d920aaf2482b2e6bf4d49730a.webm",
+    "bytes": 944451,
+    "sha256": "e75defb56e36232f1d8d34b73b67590760e76ca5f6e03f1c64795b042066da17",
+    "blob": "3f6e1931c0697c8ffba0710756f86bb3730f7a43"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/vitest.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/vitest.json",
+    "bytes": 77179,
+    "sha256": "54c34013b1b995852f5a75eecd3b921ec2fd813f91f3dc3f4fad31ac266cf2a6",
+    "blob": "ad0ea2d1c26a8fdea25b84a21c87ea6a42145ffc"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/after/vitest.log",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/after/vitest.log",
+    "bytes": 46657,
+    "sha256": "287f105830ffb7bbfdc88e26159012c0e5de8883e48c8bde397c0ae052c438df",
+    "blob": "da7a25a56b76ff32f242e8f4b8d25247316c5dae"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/archive-verification.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/archive-verification.json",
+    "bytes": 1353,
+    "sha256": "6a82f8dfa35d0b3633275edae4193a4ed45df97fcf5ea2c1a47d0a1cb0d5005f",
+    "blob": "55c480ba4e463c2db855959732f18ae8ad3d1976"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/artifact-metadata.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/artifact-metadata.json",
+    "bytes": 3141,
+    "sha256": "205e33fd9c8423a20aa1d30aca51e22fea653c6213928695678fabfa77eac0fd",
+    "blob": "9b0a3edcb1dd86612550c2ef645248ab1e1c16ff"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/artifact-metadata.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/artifact-metadata.json",
+    "bytes": 679,
+    "sha256": "29a15894b571a7f56c6b510faece9f9e1db3937b94c1cd15d0caaa564a15d799",
+    "blob": "7003a3b13dc15a928a157cd75dfbc8cbd8501bc1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/cache-choice-pending.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/cache-choice-pending.png",
+    "bytes": 82939,
+    "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344",
+    "blob": "6c64c6431f579ae5e9b40a637c6ecd304cd5b329"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/cache-preference-failed.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/cache-preference-failed.png",
+    "bytes": 82939,
+    "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344",
+    "blob": "6c64c6431f579ae5e9b40a637c6ecd304cd5b329"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/cache-preference-saving.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/cache-preference-saving.png",
+    "bytes": 82939,
+    "sha256": "539c0e9cc595a41290158b23715fc3d6c9e138ef07d617510975af79853b9344",
+    "blob": "6c64c6431f579ae5e9b40a637c6ecd304cd5b329"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/cache-review-options.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/cache-review-options.png",
+    "bytes": 84125,
+    "sha256": "1444962d9107d85a3d44b6efa6468fa4c3c8ec847f50b5f7a398e4172addced1",
+    "blob": "8daebf3141eea362446a0bfefb6399ce23813afa"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/clip-frame-1.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/clip-frame-1.png",
+    "bytes": 146266,
+    "sha256": "df741d1a694407b4e6960b4b9f97044174ef765815e69e77f1cd0e1749f06153",
+    "blob": "28fa21ab685eff4ce9d578eef528b99b9afe25f4"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/clip-frame-2.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/clip-frame-2.png",
+    "bytes": 147275,
+    "sha256": "5162a112c71b3e7e6b58c79dbb2d314444ba2c5e405ca4016d1712a13b4948c7",
+    "blob": "46720080fc889ffd7b948230b88de25742548724"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/clip-frame-3.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/clip-frame-3.png",
+    "bytes": 157437,
+    "sha256": "4575804f202543928f8e2c33db32680ecd304eed7a512b3984b554345e67da92",
+    "blob": "0bba32f66dbc2f9a80fbe95139b12f4c49d54eb8"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/conversation-default.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/conversation-default.png",
+    "bytes": 157307,
+    "sha256": "026a647da3f4ccc178e1e6c25286541ba0735f83b8d9edaaf394b7bd41174922",
+    "blob": "fb0bd02a55b5166e3b5d8b6f6d6fdf4ee186baf6"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/download-verification.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/download-verification.json",
+    "bytes": 1017,
+    "sha256": "dd9ac8fd32febce2103ce902af0976d3e9d4cd27aac2ac55efad8eebedbda3f8",
+    "blob": "8d03530e93a7db9ff03d91b9a598b59fd9c3d7b6"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/exits.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/interaction.mp4",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/interaction.mp4",
+    "bytes": 95082,
+    "sha256": "61f14f1bc4c11bcbe50346b44d5180fbfac3d569451d90e1d910dd24b44d5600",
+    "blob": "ae153b2d37b7baf2c113bdd05c1fd1a8c8aa7694"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/observed-ChatView.browser.tsx",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/observed-ChatView.browser.tsx",
+    "bytes": 598139,
+    "sha256": "a6e23a5018375ee6f23a8e2547422f5f7e4b2ad8b522c3407e34ec58b5795310",
+    "blob": "785cac9e9b73b15d327b132458e4cc372f1e7160"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/original-ChatView.browser.tsx",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/original-ChatView.browser.tsx",
+    "bytes": 582762,
+    "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273",
+    "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/overlay.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/overlay.json",
+    "bytes": 1344,
+    "sha256": "9b6e41288eeaba14cda545ae622fee7beae3d5129bb24fa5ac4de4a249062272",
+    "blob": "2f03f4af354fd1cd7c2019466ebfe4df1a4fbc7c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/parsed-observations.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/parsed-observations.json",
+    "bytes": 66735,
+    "sha256": "75398d07fea3d42e69ea22283157c4ac79e3f8f5414fa05a36c7dc408f93d637",
+    "blob": "b0d8302f92639d810d33e0d2d41a69e3aca3e885"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/provenance.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/provenance.json",
+    "bytes": 91118,
+    "sha256": "e6757064f178b53f5fbe3e028fb63a7bd97330997e773878dcba0a2528f07051",
+    "blob": "731dd1e0660733a71edd4cae90abe1ba3c747d8b"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/provider-default-off.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/provider-default-off.png",
+    "bytes": 117145,
+    "sha256": "212024b1478d5a3fe043d2ed55e4b98aca1d5436cc1bf9ba01cf612f5760c33d",
+    "blob": "37690b80dd4ce99b23dfa85e3107a9e5d50f34e9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/provider-opted-in.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/provider-opted-in.png",
+    "bytes": 117242,
+    "sha256": "827489975de9b2174cb1518668ad6f0272f4eb01b9ec74aad6606abe8b333f10",
+    "blob": "d2dc018a77667ec547afb32699eca0ecca07b611"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/provider-opted-out.png",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/provider-opted-out.png",
+    "bytes": 117154,
+    "sha256": "5f889cedba20a69e6c231ad92624a148e104232925cb7e7ae480303e7598c1d7",
+    "blob": "562fa9e9c4cdaefa6755d03c900a3422bab3ab93"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/video/page@93fab95fad43a3780cb5b987485a40dc.webm",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/video/page@93fab95fad43a3780cb5b987485a40dc.webm",
+    "bytes": 7197136,
+    "sha256": "577bc982316d01e8f8e39833a577de1624ad08a28b9a3bb67d4ab4ad6e98bdb4",
+    "blob": "60c2aa638e1898f08bd8043b24771f327ac5429c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/vitest.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/vitest.json",
+    "bytes": 85780,
+    "sha256": "8038f892a81e3cb5d54393b7fe562b4feab437088172a0692f294f015d5e2141",
+    "blob": "ca5aeec1f1e15f3ecc152fb1a4006a4489a7ab06"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/before/vitest.log",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/before/vitest.log",
+    "bytes": 72952,
+    "sha256": "a8c42e92a6cd4f980d2ccb4252dca22d5d05d4f402a135b396ebb293f4fb7b4c",
+    "blob": "d76f625ed754c738019b6c3530ec48e4b2c80f6e"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/clips.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/clips.json",
+    "bytes": 3940,
+    "sha256": "feafd2df6977ca8cdd2f90da15eaf87916718bb12d2eae8127d54d59370a7b24",
+    "blob": "bb64a659e295e26bc120fb42d35e7ed2b9565597"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/driver-boundaries.md",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/driver-boundaries.md",
+    "bytes": 6625,
+    "sha256": "5d834986defe06ce85eb00dcde005db7459748010f31ba0fd7063511758e5d5f",
+    "blob": "f1a2aa7a28907155991e63add41de08288710d38"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/after/artifact-metadata.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/after/artifact-metadata.json",
+    "bytes": 678,
+    "sha256": "7c7decaeabbc49e66888a99339274e3fa621b68ad0b553b32a500d8dc2c626d6",
+    "blob": "db146d3110ef4d9483b398ddff5c9e1f864b38a8"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/after/exits.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/after/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/after/provenance.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/after/provenance.json",
+    "bytes": 66538,
+    "sha256": "37ae688166d1df5280fbb4b1be563bfc8c01627ce1d75a82a97cd6079285e1b7",
+    "blob": "2a4b33ca541a7f90aea5a096be7c2587846a172c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/after/vitest.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/after/vitest.json",
+    "bytes": 78441,
+    "sha256": "4518bcd449c91fb8b0baf29fb7d12425a103d73f40300ac2503052d559eb0e41",
+    "blob": "6fd28408fa818a65c67b1b3686a0db227aed37a6"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/after/vitest.log",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/after/vitest.log",
+    "bytes": 57768,
+    "sha256": "6f3527601971bf80b2cdcac1fe7cfdeace1cdce5ba6cfb3932ed4ea30c0b0e73",
+    "blob": "49f22da11bfc840ecd49c80e7466f4ee7203ade9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/before/artifact-metadata.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/before/artifact-metadata.json",
+    "bytes": 679,
+    "sha256": "79b7cc411cba3dc18059ec62b22373f69e46d5a808abeae4bb25af7025264489",
+    "blob": "803b8532ca277a40a0eb5d0e8784aea817268c4b"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/before/exits.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/before/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/before/provenance.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/before/provenance.json",
+    "bytes": 62519,
+    "sha256": "da5de54df1f0b4bd1e18105c7d625c2357d1a87c3feb672bfe9810cbe2a00f1e",
+    "blob": "3411f3b4a41442ef65a3efaa62338d67dc873772"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/before/vitest.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/before/vitest.json",
+    "bytes": 82759,
+    "sha256": "e61b0a97188a6f505ea7ce3b13cc952163b4e32c0406f7417a7d8b4a6dc53e81",
+    "blob": "88bd74aa1d70524a78395a72bcc9e092d22acd44"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261011/pr1713-current/historical-failures/first/before/vitest.log",
+    "local": "/workspace/scratch/f228243a1314/campaign/browser/pr1713-current-evidence/pr1713-current/historical-failures/first/before/vitest.log",
+    "bytes": 57273,
+    "sha256": "e0b82aa403fc1dbc488ee7715cf3cc827fd6fbeb49d9e6b2479ac9f70b9df1f1",
+    "blob": "4f1e1ef223b3af4bdb2be6bfd3676b108543d5bc"
+  }
+]
