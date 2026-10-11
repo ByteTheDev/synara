@@ -35,7 +35,9 @@ A changed or dirty orphan worktree, deleted attempt, archived source/attempt, or
 changed request is preserved and reported instead of being overwritten. Starting
 a new run after an error preserves any attempts that were already created.
 
-The first version is bounded to three attempts. Automatic judging and automatic
-branch merging remain outside this feature.
+The first version supports two or three total attempts. The per-model counts of
+one through five and separate per-entry effort/options requested in #1560 remain
+follow-up work; this dialog copies existing composer options for matching providers.
+Automatic judging and automatic branch merging remain outside this feature.
 
 Launching from a new draft saves that source conversation before staging attempts and keeps it available for launch recovery. It does not start a provider turn on the source.
