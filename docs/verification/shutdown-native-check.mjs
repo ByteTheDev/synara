@@ -213,6 +213,13 @@ try {
   });
   const reloaded = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await reloaded.goto(threadUrl);
+  await reloaded.getByRole("button", { name: "Not now", exact: true }).waitFor({ timeout: 30000 });
+  await reloaded.getByRole("button", { name: "Not now", exact: true }).click();
+  await reloaded
+    .getByRole("button", { name: "Skip tour", exact: true })
+    .waitFor({ timeout: 10000 });
+  await reloaded.getByRole("button", { name: "Skip tour", exact: true }).click();
+  await reloaded.getByRole("dialog").waitFor({ state: "hidden" });
   await reloaded
     .getByText("NATIVE_SHUTDOWN_READY", { exact: true })
     .first()
