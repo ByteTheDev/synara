@@ -17,12 +17,12 @@ import { fileURLToPath } from "node:url";
 
 const pins = {
   before: {
-    source: "3270dcf89bb60745ac568803a940cd7e7ac676a7",
-    tree: "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822",
+    source: "600a2da636e4c191bebaeade3f5751f0665b39ed",
+    tree: "0f8b71c4df620b0cc5561d2e1214e2d2a83d964d",
   },
   after: {
-    source: "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
-    tree: "ba99b66e786402f80124c4cf7368512908dee17f",
+    source: "ee009281c505a1a258b23b05b97b735fbf869ca6",
+    tree: "3255badffc1374eda143483f8359fbde431e7e74",
   },
 };
 const variant = process.env.HOMEBREW_DOCS_VARIANT;
@@ -110,7 +110,7 @@ if (phase === "prepare") {
       sha256: digest(readFileSync(join(root, golden))),
     },
     qualification:
-      "Actual production Next documentation and /install, actual Chromium, exact checked-in VISUAL_TEST v0.8.1 release fixture. Original docs root snapshot/assertions run unchanged and their real failure remains a failing workflow step. Candidate shared docs-root golden is generated only from exact current-main Before source for independent review, not reported as an original baseline pass. No native application, Homebrew install, upstream acceptance or arbitrary API mock claim.",
+      "Actual production Next documentation and /install, actual Chromium, exact checked-in VISUAL_TEST v0.8.1 release fixture. Before is exact main3270 plus the independently reviewed Darwin baseline prerequisite; After preserves the same nine Homebrew feature blobs plus that prerequisite. Original docs root snapshot/assertions run unchanged and any real failure remains a failing workflow step. Separate golden generation only from Before is never substituted for the original assertion. The historical unmodified3270/0d5f Darwin failures and ten omitted bookkeeping files remain in run38167801738. No native application, Homebrew install, upstream acceptance or arbitrary API mock claim.",
   });
   appendFileSync(
     process.env.GITHUB_ENV,

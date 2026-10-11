@@ -26,7 +26,7 @@ jobs:
       - name: Checkout exact application source
         uses: actions/checkout@v6
         with:
-          ref: ${{ matrix.variant == 'before' && '3270dcf89bb60745ac568803a940cd7e7ac676a7' || '0d5f04b91d4bf7af72f6d9c017705183c3c89bef' }}
+          ref: ${{ matrix.variant == 'before' && '600a2da636e4c191bebaeade3f5751f0665b39ed' || 'ee009281c505a1a258b23b05b97b735fbf869ca6' }}
           path: source
           persist-credentials: false
       - name: Checkout exact capture driver
@@ -63,7 +63,7 @@ jobs:
         id: capture
         working-directory: source/apps/marketing
         run: node "$GITHUB_WORKSPACE/driver/.github/scripts/homebrew-docs/runner.mjs" run capture -- bunx playwright test --config playwright.homebrew-proof.config.ts
-      - name: Generate separate current-main docs baseline candidate
+      - name: Generate separate reviewed-Before baseline comparison
         if: ${{ always() && matrix.variant == 'before' && steps.capture.outcome == 'success' }}
         working-directory: source/apps/marketing
         run: node "$GITHUB_WORKSPACE/driver/.github/scripts/homebrew-docs/runner.mjs" run generate-golden -- bunx playwright test tests/visual/visual.spec.ts --grep docs-desktop-light --retries=0 --update-snapshots --output "$HOMEBREW_DOCS_OUTPUT/golden-generation"
@@ -77,4 +77,5 @@ jobs:
         with:
           name: homebrew-docs-${{ matrix.os }}-${{ matrix.variant }}-${{ github.sha }}
           path: ${{ runner.temp }}/homebrew-docs-evidence
+          include-hidden-files: true
           if-no-files-found: error
