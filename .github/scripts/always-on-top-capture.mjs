@@ -536,6 +536,37 @@ async function main() {
     captureError = error;
     save("original-capture-failure.json", { message: String(error), stack: error.stack });
     if (app) {
+      // A failed Playwright target must not prevent the actual display capture.
+      try {
+        native(state, "capture", `${label}-failed-renderer-display`);
+      } catch (observationError) {
+        save("failed-display-observation-error.json", { message: String(observationError) });
+      }
+      try {
+        const captures = await evaluate(async ({ BrowserWindow }) =>
+          Promise.all(
+            BrowserWindow.getAllWindows().map(async (window) => ({
+              id: window.id,
+              url: window.webContents.getURL(),
+              png: (await window.webContents.capturePage()).toPNG().toString("base64"),
+            })),
+          ),
+        );
+        for (const capture of captures) {
+          assert.ok(Number.isSafeInteger(capture.id) && capture.id > 0);
+          const bytes = Buffer.from(capture.png, "base64");
+          assert.ok(bytes.subarray(0, 8).equals(Buffer.from("89504e470d0a1a0a", "hex")));
+          assert.ok(bytes.readUInt32BE(16) > 0 && bytes.readUInt32BE(20) > 0);
+          writeFileSync(join(evidence, `failed-actual-window-${capture.id}.png`), bytes);
+          save(`failed-actual-window-${capture.id}.json`, {
+            id: capture.id,
+            url: capture.url,
+            observation: "Unmodified actual BrowserWindow webContents.capturePage()",
+          });
+        }
+      } catch (observationError) {
+        save("failed-window-capture-error.json", { message: String(observationError) });
+      }
       try {
         save(
           "failed-renderer-windows.json",
@@ -573,7 +604,6 @@ async function main() {
             timeout: 10_000,
           });
         }
-        native(state, "capture", `${label}-failed-renderer-display`);
       } catch (observationError) {
         save("failed-renderer-observation-error.json", { message: String(observationError) });
       }
