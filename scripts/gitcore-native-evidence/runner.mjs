@@ -86,26 +86,97 @@ async function runTests() {
   writeFileSync(path.join(output, "vitest.log"), "");
   return await new Promise((resolve) => {
     let finished = false;
+    let deadlineTimer;
+    let drainTimer;
+    let drainDue = Infinity;
+    const observed = {
+      rootExit: null,
+      close: null,
+      processErrors: [],
+      deadlineReachedAt: null,
+      outputCutoff: null,
+      signalAttempts: [],
+    };
     const child = spawn("bun", args, {
       cwd: path.join(root, "apps/server"),
       env: process.env,
       stdio: ["ignore", "pipe", "pipe"],
-      timeout: 1_200_000,
     });
     const record = (data, stream) => {
+      if (finished) return;
       appendFileSync(path.join(output, "vitest.log"), data);
       stream.write(data);
     };
-    child.stdout.on("data", (data) => record(data, process.stdout));
-    child.stderr.on("data", (data) => record(data, process.stderr));
-    const finish = (result) => {
+    const onStdout = (data) => record(data, process.stdout);
+    const onStderr = (data) => record(data, process.stderr);
+    child.stdout.on("data", onStdout);
+    child.stderr.on("data", onStderr);
+    const signalOwnedChild = (signal) => {
+      // This is the ChildProcess created above, never a later numerical PID.
+      if (observed.rootExit !== null) return;
+      try {
+        observed.signalAttempts.push({ signal, sent: child.kill(signal), error: null });
+      } catch (error) {
+        observed.signalAttempts.push({ signal, sent: false, error: String(error) });
+      }
+    };
+    const finish = () => {
       if (finished) return;
       finished = true;
+      clearTimeout(deadlineTimer);
+      clearTimeout(drainTimer);
+      // Stop all file writes before hashing/finalizing the log. A late close or
+      // error cannot change the immutable observation returned to the caller.
+      child.stdout.off("data", onStdout);
+      child.stderr.off("data", onStderr);
+      if (observed.close === null) {
+        child.stdout.destroy();
+        child.stderr.destroy();
+        child.unref();
+      }
+      const result = JSON.parse(JSON.stringify(observed));
       writeJson("exit.json", result);
       resolve(result);
     };
-    child.on("error", (error) => finish({ code: 127, signal: null, error: String(error) }));
-    child.on("close", (code, signal) => finish({ code, signal, error: null }));
+    const boundDrain = (reason, durationMs) => {
+      const due = performance.now() + durationMs;
+      if (due >= drainDue) return;
+      drainDue = due;
+      clearTimeout(drainTimer);
+      drainTimer = setTimeout(() => {
+        if (finished) return;
+        observed.outputCutoff = {
+          reason,
+          at: new Date().toISOString(),
+          stdoutEnded: child.stdout.readableEnded,
+          stderrEnded: child.stderr.readableEnded,
+        };
+        signalOwnedChild("SIGKILL");
+        finish();
+      }, durationMs);
+    };
+    child.on("exit", (code, signal) => {
+      if (finished) return;
+      observed.rootExit = { code, signal, at: new Date().toISOString() };
+      boundDrain("root exited but inherited output pipes did not close", 5_000);
+    });
+    child.on("error", (error) => {
+      if (finished) return;
+      observed.processErrors.push(String(error));
+      // Preserve the real exit if one arrives; do not invent an exit code.
+      boundDrain("process error without completed output drain", 5_000);
+    });
+    child.on("close", (code, signal) => {
+      if (finished) return;
+      observed.close = { code, signal, at: new Date().toISOString() };
+      finish();
+    });
+    deadlineTimer = setTimeout(() => {
+      if (finished) return;
+      observed.deadlineReachedAt = new Date().toISOString();
+      signalOwnedChild("SIGTERM");
+      boundDrain("test deadline reached without completed output drain", 10_000);
+    }, 1_200_000);
   });
 }
 
@@ -143,7 +214,10 @@ try {
   exit = await runTests();
   receipt.after = guardSource();
   guardDriver();
-  if (exit.code !== 0 || exit.signal) errors.push(`Actual test exit ${JSON.stringify(exit)}`);
+  if (exit.rootExit?.code !== 0 || exit.rootExit?.signal || exit.close === null ||
+      exit.processErrors.length || exit.deadlineReachedAt || exit.outputCutoff) {
+    errors.push(`Actual test process observation ${JSON.stringify(exit)}`);
+  }
   if (!existsSync(path.join(output, "results.json"))) throw new Error("Missing actual Vitest JSON report");
   const report = JSON.parse(readFileSync(path.join(output, "results.json"), "utf8"));
   receipt.results = {
@@ -177,5 +251,6 @@ try {
   });
   writeJson("verified.json", { source: SOURCE, tree: TREE, driver: process.env.DRIVER_SHA ?? null, errors, artifacts });
   if (errors.length) console.error(errors.join("\n"));
-  process.exitCode = exit?.code && exit.code > 0 ? exit.code : errors.length ? 1 : 0;
+  const actualCode = exit?.rootExit?.code;
+  process.exitCode = actualCode && actualCode > 0 ? actualCode : errors.length ? 1 : 0;
 }
