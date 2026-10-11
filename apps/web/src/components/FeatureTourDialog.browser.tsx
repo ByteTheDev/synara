@@ -92,7 +92,9 @@ it("navigates Stable highlights, remembers dismissal per installation, and repla
     .element(page.getByRole("dialog", { name: "A new home for your work" }))
     .toBeVisible();
   await page.getByRole("button", { name: "Show From review to the next change" }).click();
-  await expect.element(page.getByRole("button", { name: "Next", exact: true })).toBeVisible();
+  await expect
+    .element(page.getByRole("dialog", { name: "From review to the next change" }))
+    .toBeVisible();
   await page.getByRole("button", { name: "Show Give bigger work a team" }).click();
   await expect.element(page.getByRole("dialog", { name: "Give bigger work a team" })).toBeVisible();
   await expect.element(page.getByRole("button", { name: "Start exploring" })).toBeVisible();
