@@ -1,0 +1,76 @@
+name: ChatView scroll Before and After evidence
+
+on:
+  push:
+    branches:
+      - codex/runtime-chatview-1821-20261011
+    paths:
+      - .github/workflows/runtime-chatview-evidence.yml
+      - scripts/runtime-chatview-evidence/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-chatview-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  capture:
+    name: ChatView ${{ matrix.case }} keyboard and wheel
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - case: before
+            source: 75ec05e69c819a57573a24be1a424f3e8420ebe8
+          - case: after
+            source: ab8a77a873e2443ffc9a9570cbd2919219fd41c9
+    env:
+      RUNTIME_CHATVIEW_CASE: ${{ matrix.case }}
+      RUNTIME_CHATVIEW_SOURCE: ${{ matrix.source }}
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout independently reviewed capture driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .runtime-chatview-driver
+          persist-credentials: false
+      - name: Setup unchanged workspace
+        uses: ./.github/actions/setup-workspace
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+      - name: Install Chromium and video support
+        timeout-minutes: 10
+        run: ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+      - name: Verify exact source and append identical capture fixture
+        id: prepare
+        run: node .runtime-chatview-driver/scripts/runtime-chatview-evidence/runner.mjs prepare
+      - name: Record real ChatView input and preserve actual test exit
+        id: capture
+        run: node .runtime-chatview-driver/scripts/runtime-chatview-evidence/runner.mjs execute
+      - name: Verify all cases, screenshot bytes, full video and unchanged source
+        if: always() && steps.prepare.outcome == 'success'
+        run: node .runtime-chatview-driver/scripts/runtime-chatview-evidence/runner.mjs verify
+      - name: Upload original evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: chatview-scroll-${{ matrix.case }}-${{ matrix.source }}
+          path: ${{ runner.temp }}/chatview-scroll-evidence/
+          if-no-files-found: error
+          retention-days: 30
+
