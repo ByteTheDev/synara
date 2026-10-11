@@ -535,6 +535,49 @@ async function main() {
   } catch (error) {
     captureError = error;
     save("original-capture-failure.json", { message: String(error), stack: error.stack });
+    if (app) {
+      try {
+        save(
+          "failed-renderer-windows.json",
+          await evaluate(({ BrowserWindow }) =>
+            BrowserWindow.getAllWindows().map((window) => ({
+              id: window.id,
+              title: window.getTitle(),
+              visible: window.isVisible(),
+              url: window.webContents.getURL(),
+              loading: window.webContents.isLoading(),
+              crashed: window.webContents.isCrashed(),
+            })),
+          ),
+        );
+        for (const [index, page] of app.windows().entries()) {
+          if (page.isClosed()) continue;
+          save(
+            `failed-renderer-${index}.json`,
+            await deadline(
+              page.evaluate(() => ({
+                url: location.href,
+                title: document.title,
+                readyState: document.readyState,
+                body: document.body?.innerText ?? null,
+                buttons: Array.from(document.querySelectorAll("button")).map(
+                  (button) => button.innerText,
+                ),
+              })),
+              10_000,
+              "Failed renderer observation",
+            ),
+          );
+          await page.screenshot({
+            path: join(evidence, `failed-renderer-${index}.png`),
+            timeout: 10_000,
+          });
+        }
+        native(state, "capture", `${label}-failed-renderer-display`);
+      } catch (observationError) {
+        save("failed-renderer-observation-error.json", { message: String(observationError) });
+      }
+    }
   } finally {
     if (app) {
       try {
