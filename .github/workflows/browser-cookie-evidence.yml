@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          bun run test:browser --config=vitest.cookie-evidence.config.ts --reporter=default --reporter=json --outputFile.json="$COOKIE_LIVE_REPORT" 2>&1 | tee "$VITE_COOKIE_OUTPUT/vitest.log"
+          bunx --no-install vitest run --config=vitest.cookie-evidence.config.ts --reporter=default --reporter=json --outputFile.json="$COOKIE_LIVE_REPORT" 2>&1 | tee "$VITE_COOKIE_OUTPUT/vitest.log"
           statuses=("${PIPESTATUS[@]}")
           printf '{"vitest":%s,"tee":%s}\n' "${statuses[0]}" "${statuses[1]}" > "$VITE_COOKIE_OUTPUT/exits.json"
           test "${statuses[0]}" -eq 0 && test "${statuses[1]}" -eq 0
