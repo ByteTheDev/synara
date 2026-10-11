@@ -1,0 +1,167 @@
+name: Verify actual Always on Top before and after PR 1831
+on:
+  push:
+    branches: [cleanup/20261011/always-on-top-1831-evidence]
+    paths:
+      - .github/workflows/always-on-top-capture.yml
+      - .github/scripts/always-on-top-capture.mjs
+      - .github/scripts/always-on-top-screen.swift
+permissions:
+  contents: read
+concurrency:
+  group: always-on-top-capture-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build_mac_icon:
+    name: Compile exact-${{ matrix.label }} production icon
+    runs-on: macos-26
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: before
+            source: ec8c940e07582454a475250ade40147e3c89d59f
+          - label: after
+            source: ac0e7f65b6860dbc4e7c308acbc01a886238f559
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Compile and fingerprint exact-source production icon
+        env:
+          AOT_SOURCE_SHA: ${{ matrix.source }}
+          DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$AOT_SOURCE_SHA"
+          git diff --exit-code HEAD --
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          xcodebuild -version
+          mkdir -p "$RUNNER_TEMP/always-on-top-icon"
+          xcrun actool assets/prod/Synara.icon --compile "$RUNNER_TEMP/always-on-top-icon" --platform macosx --minimum-deployment-target 26.0 --app-icon Synara --include-all-app-icons --output-partial-info-plist "$RUNNER_TEMP/icon-partial.plist" --output-format human-readable-text
+          test -s "$RUNNER_TEMP/always-on-top-icon/Assets.car"
+          printf '%s\n' "$AOT_SOURCE_SHA" > "$RUNNER_TEMP/always-on-top-icon/source-commit.txt"
+          (
+            cd "$RUNNER_TEMP/always-on-top-icon"
+            shasum -a 256 Assets.car > Assets.car.sha256
+          )
+          git diff --exit-code HEAD --
+      - uses: actions/upload-artifact@v7
+        with:
+          name: always-on-top-icon-${{ matrix.label }}-${{ github.sha }}
+          path: ${{ runner.temp }}/always-on-top-icon
+          retention-days: 14
+          if-no-files-found: error
+  capture:
+    needs: build_mac_icon
+    name: Actual native ${{ matrix.label }} menu and stacking
+    runs-on: macos-15
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: before
+            source: ec8c940e07582454a475250ade40147e3c89d59f
+          - label: after
+            source: ac0e7f65b6860dbc4e7c308acbc01a886238f559
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    env:
+      AOT_LABEL: ${{ matrix.label }}
+      AOT_SOURCE_SHA: ${{ matrix.source }}
+      NODE_OPTIONS: --max-old-space-size=4096
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      SYNARA_DESKTOP_SIGNED: "false"
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      SYNARA_DISABLE_AUTO_UPDATE: "1"
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          path: source
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Download current-run exact-source icon catalog
+        uses: actions/download-artifact@v8
+        with:
+          name: always-on-top-icon-${{ matrix.label }}-${{ github.sha }}
+          path: ${{ runner.temp }}/always-on-top-icon
+      - name: Verify icon source and integrity before building
+        run: |
+          set -euo pipefail
+          test "$(cat "$RUNNER_TEMP/always-on-top-icon/source-commit.txt")" = "$AOT_SOURCE_SHA"
+          (
+            cd "$RUNNER_TEMP/always-on-top-icon"
+            shasum -a 256 -c Assets.car.sha256
+          )
+          printf 'SYNARA_MAC_ICON_CATALOG=%s\n' "$RUNNER_TEMP/always-on-top-icon/Assets.car" >> "$GITHUB_ENV"
+      - name: Compile native observer and verify existing display access
+        id: prepare
+        run: node ../driver/.github/scripts/always-on-top-capture.mjs prepare
+      - name: Install frozen native packaging toolchain
+        run: |
+          set -euo pipefail
+          aot_rust_version=$(node -p 'require("./packages/shared/src/cuaDriverRelease.json").rustVersion')
+          rustup toolchain install "$aot_rust_version" --profile minimal
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$aot_rust_version" >> "$GITHUB_ENV"
+          bun install --frozen-lockfile --ignore-scripts --filter '!@synara/marketing' 2>&1 | tee "$AOT_EVIDENCE/install.log"
+      - name: Build unchanged exact-source unsigned macOS application
+        id: build
+        timeout-minutes: 35
+        run: |
+          set -euo pipefail
+          aot_version=$(node -p 'require("./apps/server/package.json").version')
+          aot_lock=$(shasum -a 256 bun.lock | cut -d ' ' -f 1)
+          bun run dist:desktop:artifact -- --platform mac --target dmg --arch arm64 --flavor production \
+            --build-version "$aot_version" --source-commit "$AOT_SOURCE_SHA" \
+            --lockfile-sha256 "$aot_lock" --verbose --output-dir "$RUNNER_TEMP/always-on-top-packages" \
+            2>&1 | tee "$AOT_EVIDENCE/build.log"
+      - name: Keep canonical packaged imports and isolated startup assertions
+        id: startup
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          aot_version=$(node -p 'require("./apps/server/package.json").version')
+          node scripts/verify-packaged-desktop-startup.ts --assets-dir "$RUNNER_TEMP/always-on-top-packages" \
+            --platform mac --arch arm64 --version "$aot_version" 2>&1 | tee "$AOT_EVIDENCE/canonical-startup.log"
+      - name: Capture actual native menu, state and stacking behavior
+        id: capture
+        timeout-minutes: 10
+        if: ${{ !cancelled() && steps.startup.outcome == 'success' }}
+        run: node ../driver/.github/scripts/always-on-top-capture.mjs capture
+      - name: Stop and unregister only the owned application
+        id: cleanup
+        if: always()
+        run: node ../driver/.github/scripts/always-on-top-capture.mjs cleanup
+      - name: Require actual native behavior, source integrity and screenshots
+        if: always()
+        env:
+          AOT_BUILD_OUTCOME: ${{ steps.build.outcome }}
+          AOT_STARTUP_OUTCOME: ${{ steps.startup.outcome }}
+          AOT_CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
+          AOT_CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+        run: node ../driver/.github/scripts/always-on-top-capture.mjs verify
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: always-on-top-1831-${{ matrix.label }}-${{ github.sha }}
+          path: ${{ runner.temp }}/always-on-top-evidence
+          retention-days: 14
+          if-no-files-found: error
