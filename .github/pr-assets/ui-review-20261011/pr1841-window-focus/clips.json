@@ -4,8 +4,6 @@
     "control": "model",
     "source": "before/video/page@afb1e6a6d9add034d7e5fa30c5de45e9.webm",
     "sourceSha256": "9c9261b2b0e06c1ef2002ffb6c9f1c7b9071a43e9932173d8c73e7ff1cc59b8d",
-    "sourceStartSeconds": 104.0,
-    "durationSeconds": 4.0,
     "path": "before/model-interaction.mp4",
     "sha256": "5dce946fffb6537c04cf946da8c05116815475c79f6e22df9fd66fe24486431d",
     "bytes": 50599,
@@ -40,25 +38,33 @@
       {
         "path": "before/model-clip-1.00s.png",
         "clipTimeSeconds": 1.0,
-        "sourceTimeSeconds": 105.0,
-        "sha256": "694d7d9ff81dbddf53ef629d0e9bb3dfdef3df0fff34fdeb8e652967403fe086"
+        "sha256": "694d7d9ff81dbddf53ef629d0e9bb3dfdef3df0fff34fdeb8e652967403fe086",
+        "nominalSourceSeekTimeSeconds": 105.0
       },
       {
         "path": "before/model-clip-3.00s.png",
         "clipTimeSeconds": 3.0,
-        "sourceTimeSeconds": 107.0,
-        "sha256": "11b5930b3a3494c860a2eff7ec27abc537fc1d290ed2fbf3a05acf86b5134388"
+        "sha256": "11b5930b3a3494c860a2eff7ec27abc537fc1d290ed2fbf3a05acf86b5134388",
+        "nominalSourceSeekTimeSeconds": 107.0
       }
     ],
-    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture."
+    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture. Requested seeks and -t values are encoder inputs; measured stream timing is recorded separately. Nominal source frame times are requested source seek plus clip seek, not a claim of exact source presentation timestamp.",
+    "requestedSourceStartSeconds": 104.0,
+    "requestedDurationSeconds": 4.0,
+    "measuredVideo": {
+      "durationSeconds": 4.0,
+      "startTimeSeconds": 0.0,
+      "frameCount": 100,
+      "frameRate": "25/1",
+      "width": 960,
+      "height": 1100
+    }
   },
   {
     "side": "before",
     "control": "permissions",
     "source": "before/video/page@afb1e6a6d9add034d7e5fa30c5de45e9.webm",
     "sourceSha256": "9c9261b2b0e06c1ef2002ffb6c9f1c7b9071a43e9932173d8c73e7ff1cc59b8d",
-    "sourceStartSeconds": 178.5,
-    "durationSeconds": 4.0,
     "path": "before/permissions-interaction.mp4",
     "sha256": "d0d7da2e8ad17ad5ed23bc6ce28a177b2b3885d13911f5d660753b458d3bf7d3",
     "bytes": 63280,
@@ -93,25 +99,33 @@
       {
         "path": "before/permissions-clip-1.00s.png",
         "clipTimeSeconds": 1.0,
-        "sourceTimeSeconds": 179.5,
-        "sha256": "9108c6b850108eb822d9b88ce51af70ae84ef933dd843b2ec5c5225d10ece84d"
+        "sha256": "9108c6b850108eb822d9b88ce51af70ae84ef933dd843b2ec5c5225d10ece84d",
+        "nominalSourceSeekTimeSeconds": 179.5
       },
       {
         "path": "before/permissions-clip-3.00s.png",
         "clipTimeSeconds": 3.0,
-        "sourceTimeSeconds": 181.5,
-        "sha256": "0ddb489f6ae929e646a37997dfb53d17d43ff08acaee245bcafd5b07ac9ee67f"
+        "sha256": "0ddb489f6ae929e646a37997dfb53d17d43ff08acaee245bcafd5b07ac9ee67f",
+        "nominalSourceSeekTimeSeconds": 181.5
       }
     ],
-    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture."
+    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture. Requested seeks and -t values are encoder inputs; measured stream timing is recorded separately. Nominal source frame times are requested source seek plus clip seek, not a claim of exact source presentation timestamp.",
+    "requestedSourceStartSeconds": 178.5,
+    "requestedDurationSeconds": 4.0,
+    "measuredVideo": {
+      "durationSeconds": 3.96,
+      "startTimeSeconds": 0.04,
+      "frameCount": 99,
+      "frameRate": "25/1",
+      "width": 960,
+      "height": 1100
+    }
   },
   {
     "side": "after",
     "control": "model",
     "source": "after/video/page@c71fc7768918e5ddb524f5d798e069c6.webm",
     "sourceSha256": "32fee70a3dc659d40800668df5869eab41b3baa6c792b3d6e731b9dfd2b21182",
-    "sourceStartSeconds": 108.5,
-    "durationSeconds": 2.4,
     "path": "after/model-interaction.mp4",
     "sha256": "1e2ebc933923ef38eae840138673da7a39f19e738ad178aedfeff21bb4ae8986",
     "bytes": 59031,
@@ -146,25 +160,33 @@
       {
         "path": "after/model-clip-1.20s.png",
         "clipTimeSeconds": 1.2,
-        "sourceTimeSeconds": 109.7,
-        "sha256": "a5694c781d3c3caeb6248515eb582e1d87e34f0845f0035853392b5a0fe91162"
+        "sha256": "a5694c781d3c3caeb6248515eb582e1d87e34f0845f0035853392b5a0fe91162",
+        "nominalSourceSeekTimeSeconds": 109.7
       },
       {
         "path": "after/model-clip-2.00s.png",
         "clipTimeSeconds": 2.0,
-        "sourceTimeSeconds": 110.5,
-        "sha256": "802d98f019335ef06013e235e45395c168d905af1fd6a2b136783fa2a5e09507"
+        "sha256": "802d98f019335ef06013e235e45395c168d905af1fd6a2b136783fa2a5e09507",
+        "nominalSourceSeekTimeSeconds": 110.5
       }
     ],
-    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture."
+    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture. Requested seeks and -t values are encoder inputs; measured stream timing is recorded separately. Nominal source frame times are requested source seek plus clip seek, not a claim of exact source presentation timestamp.",
+    "requestedSourceStartSeconds": 108.5,
+    "requestedDurationSeconds": 2.4,
+    "measuredVideo": {
+      "durationSeconds": 2.36,
+      "startTimeSeconds": 0.04,
+      "frameCount": 59,
+      "frameRate": "25/1",
+      "width": 960,
+      "height": 1100
+    }
   },
   {
     "side": "after",
     "control": "permissions",
     "source": "after/video/page@c71fc7768918e5ddb524f5d798e069c6.webm",
     "sourceSha256": "32fee70a3dc659d40800668df5869eab41b3baa6c792b3d6e731b9dfd2b21182",
-    "sourceStartSeconds": 111.5,
-    "durationSeconds": 2.4,
     "path": "after/permissions-interaction.mp4",
     "sha256": "3c3993354704b7945b647063e40a908ca2e6275c2eb1d92ed65ea5ce4910597e",
     "bytes": 76493,
@@ -199,16 +221,26 @@
       {
         "path": "after/permissions-clip-0.80s.png",
         "clipTimeSeconds": 0.8,
-        "sourceTimeSeconds": 112.3,
-        "sha256": "b2d45775029212f3f8ffb1b7ea3271c76fa2b79fbcfe03e1dc8b6bea7c278765"
+        "sha256": "b2d45775029212f3f8ffb1b7ea3271c76fa2b79fbcfe03e1dc8b6bea7c278765",
+        "nominalSourceSeekTimeSeconds": 112.3
       },
       {
         "path": "after/permissions-clip-1.70s.png",
         "clipTimeSeconds": 1.7,
-        "sourceTimeSeconds": 113.2,
-        "sha256": "7a549377a0c4dd48b5950fcc82aefac500988cd3681fd80ec0008006dd986476"
+        "sha256": "7a549377a0c4dd48b5950fcc82aefac500988cd3681fd80ec0008006dd986476",
+        "nominalSourceSeekTimeSeconds": 113.2
       }
     ],
-    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture."
+    "qualification": "Full original frame and real-time playback, H.264 encode only; no crop, scale, overlay, retiming or compositing. Browser-frame activation under the controlled full ChatView fixture. Requested seeks and -t values are encoder inputs; measured stream timing is recorded separately. Nominal source frame times are requested source seek plus clip seek, not a claim of exact source presentation timestamp.",
+    "requestedSourceStartSeconds": 111.5,
+    "requestedDurationSeconds": 2.4,
+    "measuredVideo": {
+      "durationSeconds": 2.36,
+      "startTimeSeconds": 0.04,
+      "frameCount": 59,
+      "frameRate": "25/1",
+      "width": 960,
+      "height": 1100
+    }
   }
 ]

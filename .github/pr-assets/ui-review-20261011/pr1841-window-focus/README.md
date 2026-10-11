@@ -33,12 +33,12 @@ The After `*-settled.png` frames preserve both menus after all four original lay
 
 | Control | Before | After |
 | --- | --- | --- |
-| Model | [4.0-second clip](before/model-interaction.mp4) | [2.4-second clip](after/model-interaction.mp4) |
-| Permissions | [4.0-second clip](before/permissions-interaction.mp4) | [2.4-second clip](after/permissions-interaction.mp4) |
+| Model | [4.00-second clip](before/model-interaction.mp4) | [2.36-second clip](after/model-interaction.mp4) |
+| Permissions | [3.96-second clip](before/permissions-interaction.mp4) | [2.36-second clip](after/permissions-interaction.mp4) |
 
 The clips retain the complete 960 × 1100 frame at the original 25 fps. They trim time and encode H.264 only: no crop, scale, overlay, compositing or retiming. The original full WebMs remain in each side's `video/` directory. The full recordings include startup and the canonical setup between the two cases. Short clips show bounded interaction segments and do not replace the full failure duration or test receipts.
 
-[clips.json](clips.json) records each full-video hash, exact source start and duration, encoder arguments, final clip hash and representative frame timestamps. The source intervals are Before model 104.0–108.0 seconds, Before permissions 178.5–182.5 seconds, After model 108.5–110.9 seconds, and After permissions 111.5–113.9 seconds. The eight representative clip frames are separate from the 12 untouched original PNGs.
+[clips.json](clips.json) records each full-video hash, requested source seek and duration, encoder arguments, measured video-stream duration/start/frame count, final clip hash and representative frame seeks. The requested source intervals are Before model 104.0–108.0 seconds, Before permissions 178.5–182.5 seconds, After model 108.5–110.9 seconds, and After permissions 111.5–113.9 seconds. At the original 25 fps, the encoded model Before clip contains 100 frames over 4.00 seconds starting at 0.00; the permissions Before clip contains 99 frames over 3.96 seconds starting at 0.04; both After clips contain 59 frames over 2.36 seconds starting at 0.04. These measurements preserve the original encoded bytes and distinguish one-frame timestamp quantization from the requested trim duration. Nominal source frame times are the requested source seek plus the representative clip seek. The eight representative clip frames are separate from the 12 untouched original PNGs.
 
 ## Scope and current-head qualification
 

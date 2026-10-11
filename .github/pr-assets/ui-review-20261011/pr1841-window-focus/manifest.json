@@ -1,9 +1,9 @@
 [
   {
     "path": "README.md",
-    "bytes": 7572,
-    "sha256": "f54a51b49d8ed2521fc87185258e79d77f89f547dda0ea9962587db5c0a55e39",
-    "gitBlob": "9c33a4b300ddd4b704edafd33234af0ee2e09cea"
+    "bytes": 8128,
+    "sha256": "63eda80dd1b40b43ccc14490433055104cccc22564f108786dbd4fd5429fd644",
+    "gitBlob": "3e5cbcaf78b4046c592ea32b9fd559c0770361d5"
   },
   {
     "path": "after/exits.json",
@@ -277,9 +277,9 @@
   },
   {
     "path": "clips.json",
-    "bytes": 6985,
-    "sha256": "11a68287c368dda3e60f3a448d33e28673a9ce31b212e938df31a221248a6382",
-    "gitBlob": "069f258352846cd71e352250bb361780db1377a9"
+    "bytes": 8756,
+    "sha256": "1836a3217123c99a8485a4353f0ac76f554ef6db5a85a0d003b428a0b9ade55b",
+    "gitBlob": "994ca648f252ced3c74a372e79e87f2eefaa271a"
   },
   {
     "path": "historical-first-run/after/exits.json",
