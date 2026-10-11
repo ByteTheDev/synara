@@ -1,0 +1,94 @@
+name: Retention and cache source-pinned ChatView evidence
+
+on:
+  push:
+    branches:
+      - cleanup/20261011/retention-cache-current-evidence
+    paths:
+      - .github/workflows/pr-retention-cache-evidence.yml
+      - scripts/pr-retention-cache-evidence/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-retention-cache-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  targets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: targets
+        run: node scripts/pr-retention-cache-evidence/runner.mjs matrix
+
+  capture:
+    name: Retention/cache evidence ${{ matrix.id }}
+    needs: targets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-retention-cache-driver
+          persist-credentials: false
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+        with:
+          electron: "false"
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+      - name: Install actual browser and video runtime
+        timeout-minutes: 10
+        run: ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+      - name: Prepare identical full ChatView scenarios
+        env:
+          PR_RETENTION_TARGET: ${{ matrix.id }}
+          PR_RETENTION_SOURCE: ${{ matrix.source }}
+        run: node .pr-retention-cache-driver/scripts/pr-retention-cache-evidence/runner.mjs prepare
+      - name: Run full ChatView retention/cache assertions and capture actual UI
+        timeout-minutes: 12
+        working-directory: apps/web
+        run: |
+          set +e
+          bunx vitest run --config vitest.pr-retention-cache-evidence.config.ts --reporter=default --reporter=json --outputFile="$VITE_PR_RETENTION_OUTPUT/vitest.json" 2>&1 | tee "$VITE_PR_RETENTION_OUTPUT/vitest.log"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$VITE_PR_RETENTION_OUTPUT/exits.json"
+          if [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi
+          exit "${result[1]}"
+      - name: Verify source and retain the actual result
+        if: always()
+        run: node .pr-retention-cache-driver/scripts/pr-retention-cache-evidence/runner.mjs verify
+      - name: Upload original results and source-pinned images and video
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: retention-cache-evidence-${{ matrix.id }}-${{ matrix.source }}
+          path: .pr-retention-cache-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
