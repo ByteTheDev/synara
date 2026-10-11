@@ -1,0 +1,256 @@
+{
+  "featureHead": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+  "capturedFeatureHead": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+  "identicalCompleteTree": "82f64c2afaa63b28ca168881d9b1eec9f654f2ec",
+  "main": "f7173d190c07a3bbfdbd614d17680749d21012c7",
+  "base": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "featurePaths": [
+    "apps/web/src/components/ChatView.browser.tsx",
+    "apps/web/src/components/Sidebar.tsx",
+    "apps/web/src/components/Sidebar.uiState.test.ts",
+    "apps/web/src/components/Sidebar.uiState.ts",
+    "apps/web/src/components/SidebarActivityView.browser.tsx",
+    "apps/web/src/components/SidebarActivityView.tsx"
+  ],
+  "mainThroughF730": [
+    "CLAUDE.md",
+    "apps/marketing/content/docs/providers/claude-code.mdx",
+    "apps/marketing/scripts/release-feature-docs.test.mjs",
+    "apps/server/package.json",
+    "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts",
+    "apps/server/src/orchestration/Layers/ProviderCommandReactor.ts",
+    "apps/server/src/provider/Layers/ClaudeAdapter.test.ts",
+    "apps/server/src/provider/Layers/ClaudeAdapter.ts",
+    "apps/web/src/appSettings.ts",
+    "apps/web/src/components/ChatView.tsx",
+    "apps/web/src/components/chat/ComposerClaudeCacheReviewPanel.browser.tsx",
+    "apps/web/src/components/chat/ComposerClaudeCacheReviewPanel.tsx",
+    "apps/web/src/components/settings/ProvidersSettingsPanel.test.ts",
+    "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+    "apps/web/src/providerUpdates.test.ts",
+    "apps/web/src/wsNativeApi.test.ts",
+    "bun.lock",
+    "docs/claude-cache-recovery.md",
+    "docs/providers.md",
+    "packages/contracts/src/orchestration.claudeCacheReview.test.ts",
+    "packages/contracts/src/settings.ts",
+    "packages/shared/src/claudeCache.test.ts",
+    "packages/shared/src/claudeCache.ts"
+  ],
+  "mainF730ToF717": [
+    ".github/actions/setup-workspace/action.yml",
+    "apps/server/package.json",
+    "apps/server/src/orchestration/Layers/ProjectionSnapshotQuery.test.ts",
+    "apps/server/src/orchestration/Layers/ProjectionSnapshotQuery.ts",
+    "apps/server/src/orchestration/Services/ProjectionSnapshotQuery.ts",
+    "apps/server/src/provider/Layers/ProviderRuntimeReconciler.test.ts",
+    "apps/server/src/provider/Layers/ProviderRuntimeReconciler.ts",
+    "apps/server/src/provider/Layers/ProviderService.test.ts",
+    "apps/server/src/provider/Layers/ProviderService.ts",
+    "apps/server/src/provider/providerRuntimeReconciliation.test.ts",
+    "apps/server/src/provider/providerRuntimeReconciliation.ts",
+    "apps/web/package.json",
+    "apps/web/src/components/EventRouter.browser.tsx",
+    "apps/web/src/components/SidebarActivityView.tsx",
+    "apps/web/src/lib/rpcTransportFailure.test.ts",
+    "apps/web/src/lib/rpcTransportFailure.ts",
+    "apps/web/src/wsTransport.test.ts",
+    "apps/web/src/wsTransport.ts",
+    "package.json",
+    "packages/contracts/package.json",
+    "packages/shared/package.json",
+    "scripts/package.json",
+    "scripts/patch-workspace-typescript.test.ts",
+    "scripts/patch-workspace-typescript.ts"
+  ],
+  "overlap": [
+    "apps/web/src/components/SidebarActivityView.tsx"
+  ],
+  "merge": {
+    "command": "git merge-file -p FEATURE BASE MAIN",
+    "exit": 0,
+    "baseBlob": "4990e1d234965436d0b4ae2a24aef637e416f117",
+    "featureBlob": "9bc44b93d8e8154defc2fe1651a2fbf8ec116b41",
+    "mainBlob": "1d9540c60f25b02a12027301799282a11a5ab18b",
+    "resultBlob": "c839bde9a2ddbd0929e9e440e0360d64e868eafb",
+    "qualification": "Read-only content integration. Main's folder/branch layout and feature's controlled grouping props both retained. No branch update or claim of a new main-inclusive runtime test."
+  },
+  "checks": [
+    {
+      "name": "Format, Lint, Typecheck, Test, Browser Test, Build",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114534913034"
+    },
+    {
+      "name": "Label PR size",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160804550/job/114533497886"
+    },
+    {
+      "name": "Label PR 1827",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160804595/job/114533376908"
+    },
+    {
+      "name": "Sync PR size label definitions",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160804550/job/114533205682"
+    },
+    {
+      "name": "Browser Tests (components 3/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189627"
+    },
+    {
+      "name": "Unit Tests (core)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189594"
+    },
+    {
+      "name": "Browser Tests (components 1/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189558"
+    },
+    {
+      "name": "Unit Tests (web)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189557"
+    },
+    {
+      "name": "Browser Tests (chat-projects 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189554"
+    },
+    {
+      "name": "Browser Tests (chat-follow 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189535"
+    },
+    {
+      "name": "Unit Tests (server 2/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189514"
+    },
+    {
+      "name": "Browser Tests (chat-workflows 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189509"
+    },
+    {
+      "name": "Browser Tests (components 2/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189507"
+    },
+    {
+      "name": "Windows Process Regression",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189490"
+    },
+    {
+      "name": "Unit Tests (server 3/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189479"
+    },
+    {
+      "name": "Unit Tests (server 1/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189478"
+    },
+    {
+      "name": "Static Checks (typecheck)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189467"
+    },
+    {
+      "name": "Migration Lineage",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189455"
+    },
+    {
+      "name": "Desktop Build",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189418"
+    },
+    {
+      "name": "Static Checks (fast)",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533129095"
+    },
+    {
+      "name": "Detect code changes",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533128948"
+    },
+    {
+      "name": "Collect PR targets",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160804595/job/114533124920"
+    },
+    {
+      "name": "Prepare PR size config",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38160804550/job/114533124787"
+    }
+  ],
+  "latestMain": "8ac0dfcd62f0e1adda9aff39f0fc7ded8d1276b7",
+  "mainF717To8ac": [
+    "apps/server/src/agentGateway/mcpInjection.test.ts",
+    "apps/server/src/codexAppServerManager.test.ts",
+    "apps/server/src/codexAppServerManager.ts",
+    "apps/server/src/codexNestedOverlay.test.ts",
+    "apps/server/src/codexPathIdentity.ts",
+    "apps/server/src/codexProcessEnv.test.ts",
+    "apps/server/src/codexProcessEnv.ts",
+    "apps/server/src/git/Layers/CodexTextGeneration.ts",
+    "apps/server/src/provider/Layers/ProviderHealth.test.ts",
+    "apps/server/src/provider/Layers/ProviderHealth.ts",
+    "apps/server/src/provider/continuationIdentity.ts"
+  ],
+  "latestDeltaFeatureOverlap": []
+}

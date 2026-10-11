@@ -1,0 +1,166 @@
+[
+  {
+    "label": "before",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "driver": "9131385930f1554f9739e4190a3d398270eab2da",
+    "rawVideo": "before/video/page@e98dca98a99d4c00ebd693fc13af8602.webm",
+    "rawVideoSha256": "8b4da9b32ad494d42d909446f8ab4603309745f585e9b66b987fa25318d67d5d",
+    "rawProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "254.880000"
+      }
+    },
+    "clip": "before/interaction.mp4",
+    "clipSha256": "358b12049aabc411703ad36efe1651007b98adc3d86f30f7fc027bc277ce0a37",
+    "sourceStartSeconds": 88.0,
+    "sourceDurationSeconds": 5.0,
+    "fullFrame": true,
+    "retimed": false,
+    "overlaysAdded": false,
+    "encoderArguments": [
+      "error",
+      "-y",
+      "-ss",
+      "88.0",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1827-evidence/pr1827/before/video/page@e98dca98a99d4c00ebd693fc13af8602.webm",
+      "-t",
+      "5.0",
+      "-map",
+      "0:v:0",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart"
+    ],
+    "inspectionFrames": [
+      {
+        "path": "before/clip-frame-1.png",
+        "clipSeconds": 1.0,
+        "sourceSeconds": 89.0,
+        "sha256": "71f63c6193a32bcdb02d8bc8e78b5ff47f6a32e8016f872f3dc8af2bb94c1633"
+      },
+      {
+        "path": "before/clip-frame-2.png",
+        "clipSeconds": 1.24,
+        "sourceSeconds": 89.24,
+        "sha256": "a92e111e8ac20acff896f3073cfcc4d88a5fe25cab21325d8ae06df74bc85615"
+      },
+      {
+        "path": "before/clip-frame-3.png",
+        "clipSeconds": 2.0,
+        "sourceSeconds": 90.0,
+        "sha256": "9c1f03447df2f0100df879c40f6ffeaeedab960d33ee0618c995ef50c718d594"
+      },
+      {
+        "path": "before/clip-frame-4.png",
+        "clipSeconds": 2.8,
+        "sourceSeconds": 90.8,
+        "sha256": "4a5a4ccca5c18ce24fe79719374153828c24a5e7381d6172768de1043b18c0ea"
+      }
+    ]
+  },
+  {
+    "label": "after",
+    "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+    "driver": "9131385930f1554f9739e4190a3d398270eab2da",
+    "rawVideo": "after/video/page@bc82acd08ff910d41ac342a0a17777ea.webm",
+    "rawVideoSha256": "144a204eff3324dd388690d47dae32f4f0f16cf2d0da8b74f552d72291a777a2",
+    "rawProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 1100,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "112.840000"
+      }
+    },
+    "clip": "after/interaction.mp4",
+    "clipSha256": "1efc37d13c9b6abbff727f94b2707f60d9cb82941571dc4d2744856b7503de4f",
+    "sourceStartSeconds": 106.4,
+    "sourceDurationSeconds": 5.6,
+    "fullFrame": true,
+    "retimed": false,
+    "overlaysAdded": false,
+    "encoderArguments": [
+      "error",
+      "-y",
+      "-ss",
+      "106.4",
+      "-i",
+      "/workspace/scratch/f228243a1314/campaign/browser/pr1827-evidence/pr1827/after/video/page@bc82acd08ff910d41ac342a0a17777ea.webm",
+      "-t",
+      "5.6",
+      "-map",
+      "0:v:0",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart"
+    ],
+    "inspectionFrames": [
+      {
+        "path": "after/clip-frame-1.png",
+        "clipSeconds": 1.2,
+        "sourceSeconds": 107.6,
+        "sha256": "649b06416d4c753fa842cbb201bd1ce3d61f38eebeb7e670a7656d575203a6f4"
+      },
+      {
+        "path": "after/clip-frame-2.png",
+        "clipSeconds": 1.6,
+        "sourceSeconds": 108.0,
+        "sha256": "c8fdfe33194a3586fbcd0fb8d0cc0ecae956e18227a9ef2221fa5a767bbd14dc"
+      },
+      {
+        "path": "after/clip-frame-3.png",
+        "clipSeconds": 2.4,
+        "sourceSeconds": 108.8,
+        "sha256": "c2c18a7dce286077f3661b4eebe02ef501dfee8e4d6adaf63940fd7b152521c4"
+      },
+      {
+        "path": "after/clip-frame-4.png",
+        "clipSeconds": 2.8,
+        "sourceSeconds": 109.2,
+        "sha256": "b3f51c9eaa8798ecddae27103a38ae0538695e21d3d3099d53cdca2a402c4187"
+      },
+      {
+        "path": "after/clip-frame-5.png",
+        "clipSeconds": 4.4,
+        "sourceSeconds": 110.8,
+        "sha256": "d1b47644a799bcaa87bcfed981c67e44ac713608eca28906907ece6bbefe1fc4"
+      },
+      {
+        "path": "after/clip-frame-6.png",
+        "clipSeconds": 5.2,
+        "sourceSeconds": 111.6,
+        "sha256": "b6c784f79398b9ad3a2166e1c44939be8842ab23c8ef55f0f1017427efc753c7"
+      }
+    ]
+  }
+]

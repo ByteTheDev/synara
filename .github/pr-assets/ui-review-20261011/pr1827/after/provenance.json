@@ -1,0 +1,344 @@
+{
+  "target": {
+    "id": "pr1827-after",
+    "variant": "after",
+    "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+    "tree": "82f64c2afaa63b28ca168881d9b1eec9f654f2ec"
+  },
+  "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+  "sourceTree": "82f64c2afaa63b28ca168881d9b1eec9f654f2ec",
+  "driver": "9131385930f1554f9739e4190a3d398270eab2da",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "6e470f593c119400528ccd50cc7089b3cb601568",
+    "sha256": "713701ac86338bbfd965e91a4b2a99b62a59eb5fea4fce31dccf6804e7668960"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "6e470f593c119400528ccd50cc7089b3cb601568",
+      "sha256": "713701ac86338bbfd965e91a4b2a99b62a59eb5fea4fce31dccf6804e7668960"
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.tsx",
+      "blob": "e7922fa6c0cef5ac07f76f239514e0e08484c0bf",
+      "sha256": "be2270121b98ab099a06373ed3841cd7c0f0205490fef9fadebac58efcf93811"
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.uiState.ts",
+      "blob": "00520fabd61d97f9a0062169cc9529b068a192f0",
+      "sha256": "4b7f27d24d4f6b597f3ec323937dc1f1a85eb977ab0e41ec5ace83182b430b12"
+    },
+    {
+      "path": "apps/web/src/components/SidebarActivityView.tsx",
+      "blob": "9bc44b93d8e8154defc2fe1651a2fbf8ec116b41",
+      "sha256": "fb34ac69a59da3f5c27fa241a584c076a9408df3fb4518ce518a78e4a1650b3b"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1827ChatView.browser.tsx",
+      "sha256": "d70f12a49022a2d830732c7c0731b73f00a435b9a223ef79a263f47e6464bdc0"
+    },
+    {
+      "path": "apps/web/vitest.pr-grouping-evidence.config.ts",
+      "sha256": "77071fba813142f2578375ccc55703b6f3565f9c47504a3c7411d2c9d506360b"
+    }
+  ],
+  "observerSha256": "133cd86bfea52349c6954eef3fe5266e740cef9ff9301f4201e07af93d6eca61",
+  "helperSha256": "3cb0bd5e5126d793fc79d61e0b1b6b7f8346f8aad2e382e5e482b7ab5100dada",
+  "applicationCodeModified": false,
+  "originalAssertionsAndInteractionsPreserved": true,
+  "qualification": "Actual full ChatView, Sidebar, activity list, CSS and theme under the canonical MSW/orchestration fixtures. Same original two test cases on both sources, with additive observations before their assertions. Explicit test-dispatched external storage event; no native desktop or live account claim.",
+  "status": "completed",
+  "actualExitCode": 0,
+  "exits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "verificationErrors": [],
+  "logSha256": "8ad88a4057b1376a0a2af8c25ac2e72cada18968d9481ea6959138e2d3093b57",
+  "reportSha256": "ff1c6f405d40e89a6e7fc8d8c7421c2e3b21fb4424e3ae42c24cd881c908b088",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) keeps the selected Activity grouping after switching back from classic view",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) restores Activity grouping on mount and adopts an external grouping change",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "filteredTests": 0,
+  "observations": [
+    {
+      "phase": "initial-time-menu",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "true"
+        },
+        {
+          "text": "Project",
+          "checked": "false"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null,
+        "activityGroupMode": "time"
+      }
+    },
+    {
+      "phase": "selected-project",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "false"
+        },
+        {
+          "text": "Project",
+          "checked": "true"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null,
+        "activityGroupMode": "project"
+      }
+    },
+    {
+      "phase": "classic-view",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": false,
+        "activityScope": null,
+        "activityGroupMode": "project"
+      }
+    },
+    {
+      "phase": "returned-activity-menu",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "false"
+        },
+        {
+          "text": "Project",
+          "checked": "true"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null,
+        "activityGroupMode": "project"
+      }
+    },
+    {
+      "phase": "stored-project-on-mount",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "false"
+        },
+        {
+          "text": "Project",
+          "checked": "true"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null,
+        "activityGroupMode": "project"
+      }
+    },
+    {
+      "phase": "external-time",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "true"
+        },
+        {
+          "text": "Project",
+          "checked": "false"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null,
+        "activityGroupMode": "time"
+      }
+    },
+    {
+      "phase": "project-after-external-change",
+      "variant": "after",
+      "source": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "false"
+        },
+        {
+          "text": "Project",
+          "checked": "true"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null,
+        "activityGroupMode": "project"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "classic-view.png",
+      "bytes": 61408,
+      "sha256": "4acedec1b42f483a52b988954c7bf4b47610e488627b1d1d98cc2b6f5428ad92"
+    },
+    {
+      "path": "external-time.png",
+      "bytes": 64453,
+      "sha256": "2106a843976fdc231ab05e8a56cdba6b5e68ba8c5d6eea957b382958c9acfb23"
+    },
+    {
+      "path": "initial-time-menu.png",
+      "bytes": 64405,
+      "sha256": "2a43e17e0e7771e642da6bfa5234fa77dd5755ce7350b9446626d8370bdc782a"
+    },
+    {
+      "path": "project-after-external-change.png",
+      "bytes": 64185,
+      "sha256": "843a558a7cc73d748760dd44b27bc443b875c24ebfc4ee65f37ff4e53f60c918"
+    },
+    {
+      "path": "returned-activity-menu.png",
+      "bytes": 64374,
+      "sha256": "2ee8d9847c93df0a3a5d57f2eb38de6b6eb25156184c1c9937608573ed0fc494"
+    },
+    {
+      "path": "selected-project.png",
+      "bytes": 64142,
+      "sha256": "5d33ab673dc822049b17939a9910f4169980b4499a2ed53e3b773c3dd1e2a919"
+    },
+    {
+      "path": "stored-project-on-mount.png",
+      "bytes": 64423,
+      "sha256": "9d702630721d82866385388629983b71eaf8f773f7454efcbbd381f53edad123"
+    },
+    {
+      "path": "video/page@bc82acd08ff910d41ac342a0a17777ea.webm",
+      "bytes": 453726,
+      "sha256": "144a204eff3324dd388690d47dae32f4f0f16cf2d0da8b74f552d72291a777a2"
+    }
+  ]
+}

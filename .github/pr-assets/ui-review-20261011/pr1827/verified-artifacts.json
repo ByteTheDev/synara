@@ -1,0 +1,29 @@
+{
+  "final": {
+    "run": 38161540569,
+    "driver": "9131385930f1554f9739e4190a3d398270eab2da",
+    "before": {
+      "id": 11710597956,
+      "sha256": "0623c221446a2febd79bac697a2d909eeae9ca3f98f3eab968a01221c5828bf8",
+      "job": 114535351900
+    },
+    "after": {
+      "id": 11709884419,
+      "sha256": "7fb21b84bbe28c46f31c422446360e0d8397a0490f957606fc7e632920a17d04",
+      "job": 114535351853
+    }
+  },
+  "historical": {
+    "run": 38160292177,
+    "driver": "2cc79795594cdedc820cf1fd3bd1ed51a1ef9c01",
+    "before": {
+      "id": 11710975653,
+      "sha256": "de41da3172d3a915f37c00ea2ebbaeb4bac26516c1955ab13a76bed37a9dfd24"
+    },
+    "after": {
+      "id": 11710361391,
+      "sha256": "ef96e77969a15fc75a4bc661ca3128b3ddade65af75aa3d7d9a970968c52fe52"
+    }
+  },
+  "verification": "All four raw ZIP SHA256 digests matched the GitHub artifact metadata before safe extraction; every final provenance entry and actual log/report hash was checked. Original final PNG/WebM files are unmodified."
+}

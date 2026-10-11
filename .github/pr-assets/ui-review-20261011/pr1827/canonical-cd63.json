@@ -1,0 +1,135 @@
+{
+  "head": "cd63cea4dec2b51cc79be8c5480956696cf82b23",
+  "sourceEquivalentCaptureHead": "d9a84cc8a58abf49181ee28c3d800b7d0d2c6923",
+  "tree": "82f64c2afaa63b28ca168881d9b1eec9f654f2ec",
+  "run": 38160806178,
+  "all18Pass": true,
+  "jobs": [
+    {
+      "id": 114533128948,
+      "name": "Detect code changes",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533128948"
+    },
+    {
+      "id": 114533129095,
+      "name": "Static Checks (fast)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533129095"
+    },
+    {
+      "id": 114533189418,
+      "name": "Desktop Build",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189418"
+    },
+    {
+      "id": 114533189455,
+      "name": "Migration Lineage",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189455"
+    },
+    {
+      "id": 114533189467,
+      "name": "Static Checks (typecheck)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189467"
+    },
+    {
+      "id": 114533189478,
+      "name": "Unit Tests (server 1/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189478"
+    },
+    {
+      "id": 114533189479,
+      "name": "Unit Tests (server 3/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189479"
+    },
+    {
+      "id": 114533189490,
+      "name": "Windows Process Regression",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189490"
+    },
+    {
+      "id": 114533189507,
+      "name": "Browser Tests (components 2/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189507"
+    },
+    {
+      "id": 114533189509,
+      "name": "Browser Tests (chat-workflows 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189509"
+    },
+    {
+      "id": 114533189514,
+      "name": "Unit Tests (server 2/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189514"
+    },
+    {
+      "id": 114533189535,
+      "name": "Browser Tests (chat-follow 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189535"
+    },
+    {
+      "id": 114533189554,
+      "name": "Browser Tests (chat-projects 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189554"
+    },
+    {
+      "id": 114533189557,
+      "name": "Unit Tests (web)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189557"
+    },
+    {
+      "id": 114533189558,
+      "name": "Browser Tests (components 1/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189558"
+    },
+    {
+      "id": 114533189594,
+      "name": "Unit Tests (core)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189594"
+    },
+    {
+      "id": 114533189627,
+      "name": "Browser Tests (components 3/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114533189627"
+    },
+    {
+      "id": 114534913034,
+      "name": "Format, Lint, Typecheck, Test, Browser Test, Build",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Emanuele-web04/synara/actions/runs/38160806178/job/114534913034"
+    }
+  ]
+}

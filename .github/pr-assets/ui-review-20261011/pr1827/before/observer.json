@@ -1,0 +1,60 @@
+{
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "6e470f593c119400528ccd50cc7089b3cb601568",
+    "sha256": "713701ac86338bbfd965e91a4b2a99b62a59eb5fea4fce31dccf6804e7668960"
+  },
+  "cases": [
+    {
+      "name": "keeps the selected Activity grouping after switching back from classic view",
+      "start": "  it(\"keeps the selected Activity grouping after switching back from classic view\", async () => {",
+      "end": "  it(\"restores Activity grouping on mount and adopts an external grouping change\", async () => {",
+      "replacements": [
+        {
+          "before": "    try {\n      await page.getByRole(\"button\", { name: \"Switch to activity view\" }).click();\n      await page.getByRole(\"button\", { name: \"Activity options\", exact: true }).click();\n",
+          "after": "    try {\n      await page.getByRole(\"button\", { name: \"Switch to activity view\" }).click();\n      await page.getByRole(\"button\", { name: \"Activity options\", exact: true }).click();\n      await captureActivityGroupingEvidence(\"initial-time-menu\");\n"
+        },
+        {
+          "before": "      await page.getByRole(\"menuitemradio\", { name: \"Project\" }).click();\n",
+          "after": "      await page.getByRole(\"menuitemradio\", { name: \"Project\" }).click();\n      await captureActivityGroupingEvidence(\"selected-project\");\n"
+        },
+        {
+          "before": "      await page.getByRole(\"button\", { name: \"Switch to classic view\" }).click();\n",
+          "after": "      await page.getByRole(\"button\", { name: \"Switch to classic view\" }).click();\n      await captureActivityGroupingEvidence(\"classic-view\");\n"
+        },
+        {
+          "before": "      await expect\n        .element(page.getByRole(\"menuitemradio\", { name: \"Project\" }))\n        .toHaveAttribute(\"aria-checked\", \"true\");\n",
+          "after": "      await captureActivityGroupingEvidence(\"returned-activity-menu\");\n      await expect\n        .element(page.getByRole(\"menuitemradio\", { name: \"Project\" }))\n        .toHaveAttribute(\"aria-checked\", \"true\");\n"
+        }
+      ]
+    },
+    {
+      "name": "restores Activity grouping on mount and adopts an external grouping change",
+      "start": "  it(\"restores Activity grouping on mount and adopts an external grouping change\", async () => {",
+      "end": "  it.each([\n    { destination: \"Home\", keepsActivity: true },",
+      "replacements": [
+        {
+          "before": "      await expect\n        .element(page.getByRole(\"menuitemradio\", { name: \"Project\", exact: true }))\n        .toHaveAttribute(\"aria-checked\", \"true\");\n",
+          "after": "      await captureActivityGroupingEvidence(\"stored-project-on-mount\");\n      await expect\n        .element(page.getByRole(\"menuitemradio\", { name: \"Project\", exact: true }))\n        .toHaveAttribute(\"aria-checked\", \"true\");\n"
+        },
+        {
+          "before": "      await expect\n        .element(page.getByRole(\"menuitemradio\", { name: \"Time\", exact: true }))\n        .toHaveAttribute(\"aria-checked\", \"true\");\n",
+          "after": "      await captureActivityGroupingEvidence(\"external-time\");\n      await expect\n        .element(page.getByRole(\"menuitemradio\", { name: \"Time\", exact: true }))\n        .toHaveAttribute(\"aria-checked\", \"true\");\n"
+        },
+        {
+          "before": "        .toMatchObject({ activityGroupMode: \"project\", activityScope: null });\n",
+          "after": "        .toMatchObject({ activityGroupMode: \"project\", activityScope: null });\n      await captureActivityGroupingEvidence(\"project-after-external-change\");\n"
+        }
+      ]
+    }
+  ],
+  "expectedPhases": [
+    "initial-time-menu",
+    "selected-project",
+    "classic-view",
+    "returned-activity-menu",
+    "stored-project-on-mount",
+    "external-time",
+    "project-after-external-change"
+  ]
+}

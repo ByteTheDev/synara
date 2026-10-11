@@ -1,0 +1,15 @@
+{
+  "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "driver": "9131385930f1554f9739e4190a3d398270eab2da",
+  "run": 38161540569,
+  "job": 114535351900,
+  "vitestExit": 1,
+  "teeExit": 0,
+  "passed": 0,
+  "failed": 2,
+  "unselected": 223,
+  "verificationErrors": [],
+  "observations": 5,
+  "qualification": "Actual original two selected cases, unchanged assertions with additive captures; other 223 cases excluded by the explicit test-name selection, not counted as passes."
+}

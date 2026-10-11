@@ -1,0 +1,275 @@
+{
+  "target": {
+    "id": "pr1827-before",
+    "variant": "before",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "tree": "26c3b060469f224dce8135d8046697eb43fe0794"
+  },
+  "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "driver": "2cc79795594cdedc820cf1fd3bd1ed51a1ef9c01",
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "6e470f593c119400528ccd50cc7089b3cb601568",
+    "sha256": "713701ac86338bbfd965e91a4b2a99b62a59eb5fea4fce31dccf6804e7668960"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "1fd638007a36a7a4f74adab4ee0ea96c9deef34a",
+      "sha256": "5574d81fea2e0982e2c9032765f2c1e53ff819b7386219e2dcc3306dea524273"
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.tsx",
+      "blob": "685c63c154eff892f723d672ca4931571b5672f2",
+      "sha256": "90ea8955483fddf09cde5816156f6bc074b7c8086db34898d9b6c44fd7fae7fb"
+    },
+    {
+      "path": "apps/web/src/components/Sidebar.uiState.ts",
+      "blob": "bd0f9a15fe74bc6c95c05c0e41f2b0a40968af2e",
+      "sha256": "cd051ecc2656e2e0d6a0860b1b921fb6f1d1d7b90100e90adca8e7d747f10cc4"
+    },
+    {
+      "path": "apps/web/src/components/SidebarActivityView.tsx",
+      "blob": "4990e1d234965436d0b4ae2a24aef637e416f117",
+      "sha256": "13788c1a0e4e3e9eb7198d83b731c9b20b7dbb693aaf861068425826bbeb462e"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence1827ChatView.browser.tsx",
+      "sha256": "d70f12a49022a2d830732c7c0731b73f00a435b9a223ef79a263f47e6464bdc0"
+    },
+    {
+      "path": "apps/web/vitest.pr-grouping-evidence.config.ts",
+      "sha256": "50e9780d188f6fa334be8cedf510c3d9816b4bb78e79c86e359f468862e19aa2"
+    }
+  ],
+  "observerSha256": "133cd86bfea52349c6954eef3fe5266e740cef9ff9301f4201e07af93d6eca61",
+  "helperSha256": "3cb0bd5e5126d793fc79d61e0b1b6b7f8346f8aad2e382e5e482b7ab5100dada",
+  "applicationCodeModified": false,
+  "originalAssertionsAndInteractionsPreserved": true,
+  "qualification": "Actual full ChatView, Sidebar, activity list, CSS and theme under the canonical MSW/orchestration fixtures. Same original two test cases on both sources, with additive observations before their assertions. Explicit test-dispatched external storage event; no native desktop or live account claim.",
+  "status": "failed",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "verificationErrors": [
+    "Invalid full-viewport PNG: classic-view.png",
+    "Invalid full-viewport PNG: initial-time-menu.png",
+    "Invalid full-viewport PNG: returned-activity-menu.png",
+    "Invalid full-viewport PNG: selected-project.png",
+    "Invalid full-viewport PNG: stored-project-on-mount.png"
+  ],
+  "logSha256": "a8e7d66e72c75c27ba4dbaff3c1cc3147b254586dec022b3175a710f46e0575c",
+  "reportSha256": "8092479d009d44543e61287052511ce650e46af2aa3068c71c17755e11baf191",
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) keeps the selected Activity grouping after switching back from classic view",
+      "status": "failed",
+      "failureMessages": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31melement\u001b[39m\u001b[2m).toHaveAttribute(\u001b[22m\u001b[32m\u001b[32m\"aria-checked\"\u001b[32m\u001b[39m\u001b[2m, \u001b[22m\u001b[32m\u001b[32m\"true\"\u001b[32m\u001b[39m\u001b[2m) // element.getAttribute(\"aria-checked\") === \"true\"\u001b[22m\n\nExpected the element to have attribute:\n\u001b[32m  aria-checked=\"true\"\u001b[39m\nReceived:\n\u001b[31m  aria-checked=\"false\"\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=e8a959aa:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1827ChatView.browser.tsx?import&browserv=1791740388934:3216:79\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=e8a959aa:1903:20"
+      ]
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) restores Activity grouping on mount and adopts an external grouping change",
+      "status": "failed",
+      "failureMessages": [
+        "Error: \u001b[2mexpect(\u001b[22m\u001b[31melement\u001b[39m\u001b[2m).toHaveAttribute(\u001b[22m\u001b[32m\u001b[32m\"aria-checked\"\u001b[32m\u001b[39m\u001b[2m, \u001b[22m\u001b[32m\u001b[32m\"true\"\u001b[32m\u001b[39m\u001b[2m) // element.getAttribute(\"aria-checked\") === \"true\"\u001b[22m\n\nExpected the element to have attribute:\n\u001b[32m  aria-checked=\"true\"\u001b[39m\nReceived:\n\u001b[31m  aria-checked=\"false\"\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=e8a959aa:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1827ChatView.browser.tsx?import&browserv=1791740388934:3244:8\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=e8a959aa:1903:20"
+      ]
+    }
+  ],
+  "filteredTests": 0,
+  "observations": [
+    {
+      "phase": "initial-time-menu",
+      "variant": "before",
+      "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "true"
+        },
+        {
+          "text": "Project",
+          "checked": "false"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null
+      }
+    },
+    {
+      "phase": "selected-project",
+      "variant": "before",
+      "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "false"
+        },
+        {
+          "text": "Project",
+          "checked": "true"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null
+      }
+    },
+    {
+      "phase": "classic-view",
+      "variant": "before",
+      "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": false,
+        "activityScope": null
+      }
+    },
+    {
+      "phase": "returned-activity-menu",
+      "variant": "before",
+      "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "true"
+        },
+        {
+          "text": "Project",
+          "checked": "false"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null
+      }
+    },
+    {
+      "phase": "stored-project-on-mount",
+      "variant": "before",
+      "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "documentClass": "",
+      "menuChoices": [
+        {
+          "text": "Time",
+          "checked": "true"
+        },
+        {
+          "text": "Project",
+          "checked": "false"
+        }
+      ],
+      "storedSidebarState": {
+        "chatSectionExpanded": false,
+        "chatThreadListExtraPages": 0,
+        "projectThreadListExtraPagesByCwd": {},
+        "dismissedThreadStatusKeyByThreadId": {},
+        "lastThreadRoute": {
+          "threadId": "thread-browser-test"
+        },
+        "activityViewEnabled": true,
+        "activityScope": null
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "classic-view.png",
+      "bytes": 36043,
+      "sha256": "9fc3184fae41ad86e5c7690281a758595c32c53eb5d45441fd735dbf8c0acd55"
+    },
+    {
+      "path": "initial-time-menu.png",
+      "bytes": 37754,
+      "sha256": "8a4b23f7f440852af63b7103cae5f8406e74cb55e3142fbc6ce59a0c4b277ca8"
+    },
+    {
+      "path": "returned-activity-menu.png",
+      "bytes": 37754,
+      "sha256": "8a4b23f7f440852af63b7103cae5f8406e74cb55e3142fbc6ce59a0c4b277ca8"
+    },
+    {
+      "path": "selected-project.png",
+      "bytes": 37614,
+      "sha256": "5c46a5a8e775acf191910a734f182081058156db1bd2801df728844465ac3301"
+    },
+    {
+      "path": "stored-project-on-mount.png",
+      "bytes": 37798,
+      "sha256": "37f64f967c02b0b918be5aa1077d7cc42c21ae89f26f1f30d5240868ebe65fc8"
+    },
+    {
+      "path": "video/page@1131fd07ab3b7229a0ee5c51c717e38b.webm",
+      "bytes": 1927309,
+      "sha256": "0727e09c93adf4eedcad119d68c2b27ff4b1f9cbf35ff9efe831a1acac16639f"
+    }
+  ]
+}
