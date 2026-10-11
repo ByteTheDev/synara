@@ -15,8 +15,8 @@ import {
 } from "node:fs";
 import { join, resolve } from "node:path";
 
-const source = "3270dcf89bb60745ac568803a940cd7e7ac676a7";
-const sourceTree = "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822";
+const source = "99a1c00c46db38e557a29cb6c958692b0558d297";
+const sourceTree = "41cb78248a829dd47a07ceacadcd0be9f044dde8";
 const root = resolve(process.env.GITHUB_WORKSPACE, "source");
 const driver = resolve(process.env.GITHUB_WORKSPACE, "driver");
 const out = join(process.env.RUNNER_TEMP, "library-maintenance-evidence");
