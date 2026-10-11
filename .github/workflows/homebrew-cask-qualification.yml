@@ -1,0 +1,53 @@
+name: Homebrew cask native qualification (PR1836)
+
+on:
+  push:
+    branches: [cleanup/20261011/pr1836-homebrew-qualification]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homebrew-cask-qualification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native:
+    name: Actual Homebrew ${{ matrix.arch }} install and removal
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+          - os: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 6d3682aa9123d02b560131ae363e0b627e634447
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Actual local-tap style, audit, install, signing and removal
+        working-directory: source
+        env:
+          HOMEBREW_EXPECTED_ARCH: ${{ matrix.arch }}
+        run: node ../driver/.github/scripts/homebrew-cask-qualification.mjs
+      - name: Retain all actual outcomes and integrity receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homebrew-pr1836-${{ matrix.arch }}-${{ github.sha }}
+          path: ${{ runner.temp }}/homebrew-cask-evidence
+          if-no-files-found: error
