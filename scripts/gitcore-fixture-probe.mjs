@@ -90,10 +90,11 @@ function sourceGuard() {
     );
 }
 
-function repository(name) {
+function repository(name, longPaths = false) {
   const cwd = join(owned, name);
-  mkdirSync(cwd);
-  successful(cwd, ["init"]);
+  mkdirSync(cwd, { recursive: true });
+  successful(cwd, longPaths ? ["-c", "core.longpaths=true", "init"] : ["init"]);
+  if (longPaths) successful(cwd, ["-c", "core.longpaths=true", "config", "core.longpaths", "true"]);
   successful(cwd, ["config", "user.email", "fixture@example.test"]);
   successful(cwd, ["config", "user.name", "Synthetic Git fixture"]);
   if (phase === "candidate") successful(cwd, ["config", "core.autocrlf", "false"]);
@@ -174,25 +175,64 @@ try {
       writeFileSync(join(cwd, "fixture-content.txt"), "literal filename\n");
       const object = successful(cwd, ["hash-object", "-w", "fixture-content.txt"]).trim();
       assert.match(object, /^[a-f0-9]{40}$/);
-      successful(cwd, [
-        "-c",
-        "core.protectNTFS=false",
-        "update-index",
-        "--add",
-        "--cacheinfo",
-        `100644,${object},1:foo.txt`,
-      ]);
+      // Import a valid version-2 Git index directly. Git for Windows rejects
+      // DOS-drive-shaped paths in update-index even with protectNTFS=false,
+      // while this case exercises reading an existing literal stage-zero entry.
+      const name = Buffer.from("1:foo.txt", "utf8");
+      const header = Buffer.alloc(12);
+      header.write("DIRC", 0, "ascii");
+      header.writeUInt32BE(2, 4);
+      header.writeUInt32BE(1, 8);
+      const padding = 8 - ((62 + name.length) % 8);
+      const entry = Buffer.alloc(62 + name.length + padding);
+      entry.writeUInt32BE(0o100644, 24);
+      entry.writeUInt32BE(Buffer.byteLength("literal filename\n"), 36);
+      Buffer.from(object, "hex").copy(entry, 40);
+      entry.writeUInt16BE(name.length, 60);
+      name.copy(entry, 62);
+      const body = Buffer.concat([header, entry]);
+      const index = Buffer.concat([body, createHash("sha1").update(body).digest()]);
+      writeFileSync(join(cwd, ".git", "index"), index);
+      writeJSON("numeric-colon-index.json", {
+        formatVersion: 2,
+        entries: 1,
+        bytes: index.length,
+        sha256: digest(index),
+        path: name.toString("utf8"),
+        object,
+        mode: "100644",
+        stage: 0,
+        qualification:
+          "Owned synthetic imported index; no Windows working-tree filename support is claimed.",
+      });
     }
     const content = successful(cwd, ["show", ":0:1:foo.txt"]);
     assert.equal(content, "literal filename\n");
     return { content, index: successful(cwd, ["ls-files", "--stage"]) };
   });
   observe("exact trailing-space untracked filename", () => {
-    const cwd = repository("trailing-space");
-    if (phase === "candidate") successful(cwd, ["config", "core.protectNTFS", "false"]);
+    // A long owned working directory selects Git for Windows' extended-path
+    // implementation. Keep the exact relative filename and patch assertions.
+    const directory =
+      phase === "candidate"
+        ? join(
+            "trailing-space",
+            ...Array.from({ length: 6 }, (_, i) => `segment-${i}-` + "x".repeat(40)),
+          )
+        : "trailing-space";
+    const cwd = repository(directory, phase === "candidate");
+    if (phase === "candidate") {
+      successful(cwd, ["config", "core.protectNTFS", "false"]);
+      successful(cwd, ["config", "core.longpaths", "true"]);
+    }
     writeFileSync(join(cwd, " spaced file.txt "), "hello\n");
     const paths = readdirSync(cwd).filter((name) => name !== ".git");
-    writeJSON("trailing-space-paths.json", { paths });
+    writeJSON("trailing-space-paths.json", {
+      paths,
+      cwdCharacters: cwd.length,
+      qualification:
+        "The candidate is an explicit extended-path experiment; short-directory failure remains retained and is not repaired by this probe.",
+    });
     const result = git(cwd, [
       "diff",
       "--no-index",

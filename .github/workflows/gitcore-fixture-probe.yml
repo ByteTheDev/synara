@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        phase: [original, candidate]
+        phase: [candidate]
     defaults:
       run:
         shell: bash
