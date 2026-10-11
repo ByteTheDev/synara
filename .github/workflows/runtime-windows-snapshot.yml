@@ -1,0 +1,41 @@
+name: Native Windows snapshot diagnosis
+
+on:
+  push:
+    branches:
+      - codex/runtime-windows-snapshot-20261011
+    paths:
+      - .github/workflows/runtime-windows-snapshot.yml
+      - .github/scripts/runtime-windows-snapshot.ts
+
+permissions:
+  contents: read
+
+jobs:
+  observe:
+    runs-on: windows-2022
+    timeout-minutes: 10
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+      - name: Observe production snapshot workers without native provider traffic
+        run: bun .github/scripts/runtime-windows-snapshot.ts
+      - name: Retain complete observations including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-snapshot-${{ github.sha }}
+          path: ${{ runner.temp }}/runtime-windows-snapshot-evidence/
+          if-no-files-found: error
+          retention-days: 30
