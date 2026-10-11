@@ -222,7 +222,7 @@ it("reports the real cache preference write failure after an accepted full-ChatV
     },
   });
   try {
-    const choice = page.getByRole("button", { name: /^Don't ask me again/u });
+    const choice = page.getByRole("button", { name: /^Don\x27t ask me again/u });
     await expect.element(choice).toBeVisible();
     await expect
       .element(page.getByText("This session is 2 hours old and 161k tokens.", { exact: true }))
