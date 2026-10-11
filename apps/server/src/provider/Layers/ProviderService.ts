@@ -960,27 +960,33 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
       operation: string,
       work: Effect.Effect<A, E, R>,
     ): Effect.Effect<A, E | ProviderValidationError, R> =>
-      Effect.suspend<A, E | ProviderValidationError, R>(() => {
-        if (!acceptingProviderWork)
-          return Effect.fail(toValidationError(operation, "Provider runtime is closing"));
-        activeProviderWork += 1;
-        return Effect.gen(function* () {
-          const fiber = yield* work.pipe(Effect.interruptible, Effect.forkChild);
-          activeProviderFibers.add(fiber);
-          return yield* Fiber.join(fiber).pipe(
-            Effect.ensuring(Fiber.interrupt(fiber)),
-            Effect.ensuring(Effect.sync(() => activeProviderFibers.delete(fiber))),
+      // Caller interruption must not split admission from its counter cleanup.
+      Effect.uninterruptibleMask((restore) =>
+        Effect.suspend<A, E | ProviderValidationError, R>(() => {
+          if (!acceptingProviderWork)
+            return Effect.fail(toValidationError(operation, "Provider runtime is closing"));
+          activeProviderWork += 1;
+          return Effect.gen(function* () {
+            const fiber = yield* work.pipe(Effect.interruptible, Effect.forkChild);
+            activeProviderFibers.add(fiber);
+            // Shutdown may have taken its cancellation snapshot while this
+            // admitted child was being registered. Retire that late child too.
+            if (!acceptingProviderWork) yield* Fiber.interrupt(fiber);
+            return yield* restore(Fiber.join(fiber)).pipe(
+              Effect.ensuring(Fiber.interrupt(fiber)),
+              Effect.ensuring(Effect.sync(() => activeProviderFibers.delete(fiber))),
+            );
+          }).pipe(
+            Effect.ensuring(
+              Effect.gen(function* () {
+                activeProviderWork -= 1;
+                if (!acceptingProviderWork && activeProviderWork === 0)
+                  yield* Deferred.succeed(providerWorkDrained, undefined);
+              }),
+            ),
           );
-        }).pipe(
-          Effect.ensuring(
-            Effect.gen(function* () {
-              activeProviderWork -= 1;
-              if (!acceptingProviderWork && activeProviderWork === 0)
-                yield* Deferred.succeed(providerWorkDrained, undefined);
-            }),
-          ),
-        );
-      });
+        }),
+      );
     type ResolvedProviderSessionStartInput = ProviderSessionStartInput & {
       readonly provider: ProviderKind;
     };
@@ -4948,89 +4954,97 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
       registry.getByProvider(provider).pipe(Effect.map((adapter) => adapter.capabilities));
 
     const rollbackConversation: ProviderServiceShape["rollbackConversation"] = (rawInput) =>
-      Effect.gen(function* () {
-        const input = yield* decodeInputOrValidationError({
-          operation: "ProviderService.rollbackConversation",
-          schema: ProviderRollbackConversationInput,
-          payload: rawInput,
-        });
-        if (input.numTurns === 0) {
-          return;
-        }
-        yield* runIdleSensitiveProviderWork(
-          input.threadId,
-          Effect.gen(function* () {
-            const routed = yield* resolveRoutableSession({
-              threadId: input.threadId,
-              operation: "ProviderService.rollbackConversation",
-              // Restart-based rollback only needs the persisted binding and must
-              // not replay the stale native cursor merely to close it again.
-              allowRecovery: false,
-            });
-            if (routed.adapter.capabilities.conversationRollback === "restart-session") {
-              // Some provider protocols can resume but cannot rewind. Clear their
-              // native cursor so edit-and-resend cannot continue from stale history;
-              // ProviderCommandReactor bootstraps the retained transcript next turn.
-              yield* clearSessionResumeCursor({ threadId: input.threadId });
-            } else {
-              const active = routed.isActive
-                ? routed
-                : yield* resolveRoutableSession({
-                    threadId: input.threadId,
-                    operation: "ProviderService.rollbackConversation",
-                    allowRecovery: true,
-                  });
-              yield* active.adapter.rollbackThread(input.threadId, input.numTurns);
-            }
-          }),
-          { scheduleIdleStopOnSuccess: true },
-        );
-      });
+      withProviderWork(
+        "ProviderService.rollbackConversation",
+        Effect.gen(function* () {
+          const input = yield* decodeInputOrValidationError({
+            operation: "ProviderService.rollbackConversation",
+            schema: ProviderRollbackConversationInput,
+            payload: rawInput,
+          });
+          if (input.numTurns === 0) {
+            return;
+          }
+          yield* runIdleSensitiveProviderWork(
+            input.threadId,
+            Effect.gen(function* () {
+              const routed = yield* resolveRoutableSession({
+                threadId: input.threadId,
+                operation: "ProviderService.rollbackConversation",
+                // Restart-based rollback only needs the persisted binding and must
+                // not replay the stale native cursor merely to close it again.
+                allowRecovery: false,
+              });
+              if (routed.adapter.capabilities.conversationRollback === "restart-session") {
+                // Some provider protocols can resume but cannot rewind. Clear their
+                // native cursor so edit-and-resend cannot continue from stale history;
+                // ProviderCommandReactor bootstraps the retained transcript next turn.
+                yield* clearSessionResumeCursor({ threadId: input.threadId });
+              } else {
+                const active = routed.isActive
+                  ? routed
+                  : yield* resolveRoutableSession({
+                      threadId: input.threadId,
+                      operation: "ProviderService.rollbackConversation",
+                      allowRecovery: true,
+                    });
+                yield* active.adapter.rollbackThread(input.threadId, input.numTurns);
+              }
+            }),
+            { scheduleIdleStopOnSuccess: true },
+          );
+        }),
+      );
 
     const compactThread: ProviderServiceShape["compactThread"] = (rawInput) =>
-      Effect.gen(function* () {
-        const input = yield* decodeInputOrValidationError({
-          operation: "ProviderService.compactThread",
-          schema: ProviderCompactThreadInput,
-          payload: rawInput,
-        });
-        yield* runIdleSensitiveProviderWork(
-          input.threadId,
-          Effect.gen(function* () {
-            const routed = yield* resolveRoutableSession({
-              threadId: input.threadId,
-              operation: "ProviderService.compactThread",
-              allowRecovery: true,
-            });
-            if (!routed.adapter.compactThread) {
-              return yield* toValidationError(
-                "ProviderService.compactThread",
-                `Context compaction is unavailable for provider '${routed.adapter.provider}'.`,
-              );
-            }
-            yield* routed.adapter.compactThread(input.threadId);
-            const binding = Option.getOrUndefined(yield* directory.getBinding(input.threadId));
-            if (binding) {
-              yield* directory.upsert({
+      withProviderWork(
+        "ProviderService.compactThread",
+        Effect.gen(function* () {
+          const input = yield* decodeInputOrValidationError({
+            operation: "ProviderService.compactThread",
+            schema: ProviderCompactThreadInput,
+            payload: rawInput,
+          });
+          yield* runIdleSensitiveProviderWork(
+            input.threadId,
+            Effect.gen(function* () {
+              const routed = yield* resolveRoutableSession({
                 threadId: input.threadId,
-                provider: binding.provider,
-                providerInstanceId: binding.providerInstanceId,
-                ...(binding.adapterKey !== undefined ? { adapterKey: binding.adapterKey } : {}),
-                ...(binding.runtimeMode !== undefined ? { runtimeMode: binding.runtimeMode } : {}),
-                status: "stopped",
-                resumeCursor: binding.resumeCursor,
-                runtimePayload: {
-                  ...runtimePayloadRecord(binding.runtimePayload),
-                  activeTurnId: null,
-                  lastRuntimeEvent: "provider.compactThread",
-                  lastRuntimeEventAt: new Date().toISOString(),
-                },
+                operation: "ProviderService.compactThread",
+                allowRecovery: true,
               });
-            }
-          }),
-          { scheduleIdleStopOnSuccess: true },
-        );
-      });
+              if (!routed.adapter.compactThread) {
+                return yield* toValidationError(
+                  "ProviderService.compactThread",
+                  `Context compaction is unavailable for provider '${routed.adapter.provider}'.`,
+                );
+              }
+              yield* routed.adapter.compactThread(input.threadId);
+              const binding = Option.getOrUndefined(yield* directory.getBinding(input.threadId));
+              if (binding) {
+                yield* directory.upsert({
+                  threadId: input.threadId,
+                  provider: binding.provider,
+                  providerInstanceId: binding.providerInstanceId,
+                  ...(binding.adapterKey !== undefined ? { adapterKey: binding.adapterKey } : {}),
+                  ...(binding.runtimeMode !== undefined
+                    ? { runtimeMode: binding.runtimeMode }
+                    : {}),
+                  status: "stopped",
+                  resumeCursor: binding.resumeCursor,
+                  runtimePayload: {
+                    ...runtimePayloadRecord(binding.runtimePayload),
+                    activeTurnId: null,
+                    lastRuntimeEvent: "provider.compactThread",
+                    lastRuntimeEventAt: new Date().toISOString(),
+                  },
+                });
+              }
+            }),
+            { scheduleIdleStopOnSuccess: true },
+          );
+        }),
+      );
 
     const runStopAll = (issueReceipts = true) =>
       Effect.gen(function* () {

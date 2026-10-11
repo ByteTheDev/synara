@@ -49,6 +49,7 @@ import {
   Stream,
 } from "effect";
 import { TestClock } from "effect/testing";
+import * as Scheduler from "effect/Scheduler";
 import * as SqlClient from "effect/unstable/sql/SqlClient";
 import {
   buildCodexProcessEnv,
@@ -8950,6 +8951,190 @@ providerDisabledAfterInitialCheck.layer("ProviderServiceLive enablement race", (
     }),
   );
 });
+
+it.live("ProviderServiceLive cancels a startup registered after the shutdown snapshot", () =>
+  Effect.gen(function* () {
+    const shutdown = makeProviderServiceLayer();
+    const scope = yield* Scope.make("sequential");
+    const services = yield* Layer.buildWithScope(shutdown.rawLayer, scope);
+    const provider = yield* Effect.service(ProviderService).pipe(Effect.provide(services));
+    const directory = yield* Effect.service(ProviderSessionDirectory).pipe(
+      Effect.provide(services),
+    );
+    // There are no admitted sessions yet. Keep this empty directory lookup
+    // synchronous so the two schedulers own every shutdown handoff in the test.
+    const directoryLookup = vi
+      .spyOn(directory, "listThreadIds")
+      .mockReturnValue(Effect.succeed([]));
+    shutdown.codex.startSession.mockImplementation(() => Effect.never);
+    const startTasks: Array<() => void> = [];
+    const closeTasks: Array<() => void> = [];
+    let pausedBeforeRegistration = false;
+    const startupScheduler: Scheduler.Scheduler = {
+      executionMode: "async",
+      scheduleTask: (task) => startTasks.push(task),
+      shouldYield: () => {
+        if (pausedBeforeRegistration || startTasks.length === 0) return false;
+        pausedBeforeRegistration = true;
+        return true;
+      },
+    };
+    const closingScheduler: Scheduler.Scheduler = {
+      executionMode: "async",
+      scheduleTask: (task) => closeTasks.push(task),
+      shouldYield: () => false,
+    };
+    const flush = () =>
+      Effect.sync(() => {
+        for (
+          let remaining = 1_000;
+          remaining > 0 && (startTasks.length || closeTasks.length);
+          remaining--
+        ) {
+          closeTasks.shift()?.();
+          startTasks.shift()?.();
+        }
+        assert.equal(
+          startTasks.length + closeTasks.length,
+          0,
+          "The controlled schedulers must drain",
+        );
+      });
+    const threadId = asThreadId("shutdown-before-child-registration");
+    const startup = yield* provider
+      .startSession(threadId, {
+        provider: "codex",
+        threadId,
+        runtimeMode: "full-access",
+      })
+      .pipe(
+        Effect.provideService(Scheduler.Scheduler, startupScheduler),
+        Effect.forkChild({ startImmediately: true }),
+      );
+    yield* Effect.gen(function* () {
+      assert.equal(pausedBeforeRegistration, true);
+      const closing = yield* provider.closeRuntimeEvents.pipe(
+        Effect.provideService(Scheduler.Scheduler, closingScheduler),
+        Effect.forkChild({ startImmediately: true }),
+      );
+      // Finish the first stop pass while the startup child is still absent
+      // from the cancellation snapshot. The directory and adapters are empty.
+      for (let remaining = 1_000; remaining > 0 && closeTasks.length; remaining--)
+        closeTasks.shift()!();
+      assert.equal(closeTasks.length, 0);
+      assert.equal(closing.pollUnsafe(), undefined);
+      for (let round = 0; round < 20; round++) {
+        yield* flush();
+        yield* Effect.yieldNow;
+      }
+      assert.notEqual(
+        closing.pollUnsafe(),
+        undefined,
+        "Shutdown must cancel late-registered startup work",
+      );
+      assert.notEqual(startup.pollUnsafe(), undefined);
+      assert.equal(Exit.isFailure(startup.pollUnsafe()!), true);
+      assert.equal(yield* shutdown.codex.adapter.hasSession(threadId), false);
+    }).pipe(
+      Effect.ensuring(
+        Effect.gen(function* () {
+          const interruption = yield* Fiber.interrupt(startup).pipe(
+            Effect.forkChild({ startImmediately: true }),
+          );
+          yield* flush();
+          yield* Fiber.join(interruption);
+          yield* Scope.close(scope, Exit.void);
+          directoryLookup.mockRestore();
+        }),
+      ),
+    );
+  }),
+);
+
+for (const operation of ["compact", "rollback"] as const) {
+  it.effect(`ProviderServiceLive rejects recovery-capable ${operation} after shutdown`, () =>
+    Effect.gen(function* () {
+      const shutdown = makeProviderServiceLayer();
+      const scope = yield* Scope.make("sequential");
+      yield* Effect.gen(function* () {
+        const services = yield* Layer.buildWithScope(shutdown.rawLayer, scope);
+        const provider = yield* Effect.service(ProviderService).pipe(Effect.provide(services));
+        const threadId = asThreadId(`shutdown-admission-${operation}`);
+        yield* provider.startSession(threadId, {
+          provider: "codex",
+          threadId,
+          runtimeMode: "full-access",
+        });
+        yield* provider.closeRuntimeEvents;
+        shutdown.codex.startSession.mockClear();
+        shutdown.codex.compactThread.mockClear();
+        shutdown.codex.rollbackThread.mockClear();
+
+        const result = yield* Effect.result(
+          operation === "compact"
+            ? provider.compactThread({ threadId })
+            : provider.rollbackConversation({ threadId, numTurns: 1 }),
+        );
+
+        assert.deepEqual(
+          {
+            starts: shutdown.codex.startSession.mock.calls.length,
+            compactions: shutdown.codex.compactThread.mock.calls.length,
+            rollbacks: shutdown.codex.rollbackThread.mock.calls.length,
+            hasSession: yield* shutdown.codex.adapter.hasSession(threadId),
+          },
+          { starts: 0, compactions: 0, rollbacks: 0, hasSession: false },
+          "No recovery-capable operation may reopen or reuse a runtime after shutdown",
+        );
+        assert.equal(result._tag, "Failure");
+        if (result._tag !== "Failure") return;
+        assert.equal(result.failure._tag, "ProviderValidationError");
+        assert.equal(result.failure.message.includes("closing"), true);
+      }).pipe(Effect.ensuring(Scope.close(scope, Exit.void)));
+    }),
+  );
+}
+
+for (const operation of ["compact", "rollback"] as const) {
+  it.effect(`ProviderServiceLive cancels admitted ${operation} before closing runtime events`, () =>
+    Effect.gen(function* () {
+      const shutdown = makeProviderServiceLayer();
+      const scope = yield* Scope.make("sequential");
+      yield* Effect.gen(function* () {
+        const services = yield* Layer.buildWithScope(shutdown.rawLayer, scope);
+        const provider = yield* Effect.service(ProviderService).pipe(Effect.provide(services));
+        const threadId = asThreadId(`shutdown-inflight-${operation}`);
+        const entered = yield* Deferred.make<void>();
+        const cancelled = yield* Deferred.make<void>();
+        yield* provider.startSession(threadId, {
+          provider: "codex",
+          threadId,
+          runtimeMode: "full-access",
+        });
+        const pending = Deferred.succeed(entered, undefined).pipe(
+          Effect.andThen(Effect.never),
+          Effect.onInterrupt(() => Deferred.succeed(cancelled, undefined)),
+        );
+        if (operation === "compact") {
+          shutdown.codex.compactThread.mockImplementation(() => pending);
+        } else {
+          shutdown.codex.rollbackThread.mockImplementation(() => pending);
+        }
+        const operationFiber = yield* (
+          operation === "compact"
+            ? provider.compactThread({ threadId })
+            : provider.rollbackConversation({ threadId, numTurns: 1 })
+        ).pipe(Effect.forkChild);
+        yield* Effect.gen(function* () {
+          yield* Deferred.await(entered);
+          yield* provider.closeRuntimeEvents;
+          assert.equal(yield* Deferred.isDone(cancelled), true);
+          assert.equal(yield* shutdown.codex.adapter.hasSession(threadId), false);
+        }).pipe(Effect.ensuring(Fiber.interrupt(operationFiber)));
+      }).pipe(Effect.ensuring(Scope.close(scope, Exit.void)));
+    }),
+  );
+}
 
 for (const outcome of [
   "confirmed",
