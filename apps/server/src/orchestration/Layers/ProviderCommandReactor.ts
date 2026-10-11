@@ -7129,10 +7129,6 @@ const make = Effect.gen(function* () {
           threadSessionModelSelections.set(event.payload.threadId, event.payload.modelSelection);
           return;
         case "thread.deleted":
-          if (Option.isSome(computerService))
-            yield* Effect.promise(() =>
-              computerService.value.manager.handleThreadRemoved(event.payload.threadId),
-            );
           // Cancel any queued/promoting turns for the deleted thread BEFORE
           // clearing runtime caches so a concurrent drain cannot resurrect them
           // (see cancelThread). Best-effort: the event stays unclaimed either way.
@@ -7141,6 +7137,12 @@ const make = Effect.gen(function* () {
             updatedAt: event.payload.deletedAt,
           });
           yield* clearThreadRuntimeCaches(event.payload.threadId);
+          // Finish local cleanup before computer teardown, which can reject or
+          // time out independently of the durable queue and runtime caches.
+          if (Option.isSome(computerService))
+            yield* Effect.promise(() =>
+              computerService.value.manager.handleThreadRemoved(event.payload.threadId),
+            );
           return;
         case "thread.archived":
           if (Option.isSome(computerService))
