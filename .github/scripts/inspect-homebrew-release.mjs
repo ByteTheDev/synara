@@ -225,7 +225,8 @@ try {
   for (const path of regularFiles(app).filter(isMachO)) {
     const name = relative(app, path);
     const number = binaryMetadata.length;
-    const output = command(`macho-${number}`, "/usr/bin/otool", ["-l", path]).stdout;
+    // Apple's -m disables archive(member) parsing for names such as Synara Helper (GPU).
+    const output = command(`macho-${number}`, "/usr/bin/otool", ["-m", "-l", path]).stdout;
     const requirements = output
       .split(/Load command \d+/)
       .filter((block) => /cmd LC_(BUILD_VERSION|VERSION_MIN_MACOSX)/.test(block))
