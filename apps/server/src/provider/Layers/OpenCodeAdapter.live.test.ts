@@ -78,6 +78,13 @@ describe.runIf(live)("native OpenCode lifecycle", () => {
               event.type === "content.delta",
           );
           yield* adapter.interruptTurn(first, interrupted.turnId);
+          const cancelled = yield* wait(
+            (event) =>
+              event.threadId === first &&
+              event.turnId === interrupted.turnId &&
+              (event.type === "turn.aborted" || event.type === "turn.completed"),
+          );
+          expect(cancelled.type).toBe("turn.aborted");
           yield* adapter.stopSession(first);
           yield* adapter.stopSession(first);
           expect(yield* adapter.hasSession(first)).toBe(false);

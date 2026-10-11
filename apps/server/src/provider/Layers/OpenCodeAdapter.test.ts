@@ -2801,7 +2801,8 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
         const eventsFiber = yield* Stream.runCollect(
           Stream.takeUntil(
             adapter.streamEvents,
-            (event) => event.type === "session.exited" && event.threadId === asThreadId("thread-1"),
+            (event) =>
+              event.type === "session.started" && event.threadId === asThreadId("teardown-fence"),
           ),
         ).pipe(Effect.forkChild);
 
@@ -2832,6 +2833,12 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
         const [readySession] = yield* adapter.listSessions();
         yield* adapter.interruptTurn(asThreadId("thread-1"));
         yield* adapter.stopSession(asThreadId("thread-1"));
+        yield* adapter.startSession({
+          provider: "opencode",
+          threadId: asThreadId("teardown-fence"),
+          lifecycleGeneration: "generation-opencode-a",
+          runtimeMode: "full-access",
+        });
         const events = Array.from(yield* Fiber.join(eventsFiber));
 
         return { events, readySession, runningSession };
@@ -2863,8 +2870,9 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
     expect(runtime.abortCalls.length).toBeGreaterThanOrEqual(1);
     expect(runtime.abortCalls[0]).toEqual({ sessionID: "opencode-session-1" });
     assertTerminalOutcomeConformance(result.events);
-    // This bounded unit collector verifies interrupt state only. Late native
-    // output after exit is observed through replacement completion in the live test.
+    // Keep the deterministic teardown fence in ordinary CI. The live test
+    // separately observes native output through replacement completion.
+    assertSessionTeardownConformance(result.events, asThreadId("thread-1"));
     expect(result.runningSession?.status).toBe("running");
     expect(result.runningSession?.activeTurnId).toBeDefined();
     expect(result.readySession).toMatchObject({
@@ -2879,6 +2887,7 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
       "turn.started",
       "turn.aborted",
       "session.exited",
+      "session.started",
     ]);
     expect(
       result.events.every((event) => event.lifecycleGeneration === "generation-opencode-a"),
