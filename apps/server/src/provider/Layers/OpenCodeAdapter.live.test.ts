@@ -50,6 +50,9 @@ describe.runIf(live)("native OpenCode lifecycle", () => {
                     ...(process.env.OPENCODE_LIVE_SERVER_URL
                       ? { serverUrl: process.env.OPENCODE_LIVE_SERVER_URL }
                       : {}),
+                    ...(process.env.OPENCODE_LIVE_SERVER_PASSWORD
+                      ? { serverPassword: process.env.OPENCODE_LIVE_SERVER_PASSWORD }
+                      : {}),
                   },
                 },
               });
