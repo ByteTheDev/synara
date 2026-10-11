@@ -1,0 +1,443 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 9774,
+      "sha256": "4a99f5405b748f4790ca50b3303827aeee3cf402c68caeeb395badd99a1a4057",
+      "gitBlob": "faeec8502fd00cfba29f2fb220c8e88742d536c7"
+    },
+    {
+      "path": "artwork/current-main-legacy-bundle-artwork.png",
+      "bytes": 61823,
+      "sha256": "a835c56773f4be193434f071c4369b3b4fc60a323705c89efe4e6c491eed8911",
+      "gitBlob": "f6314baa357fb7b2f07879d394c9be97cf450a64"
+    },
+    {
+      "path": "artwork/current-main-legacy-runtime-artwork.png",
+      "bytes": 28683,
+      "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e",
+      "gitBlob": "598f4dafbb0245f59af844e4541bc640e1494670"
+    },
+    {
+      "path": "artwork/original-author-bundle-artwork.png",
+      "bytes": 51503,
+      "sha256": "e032ded8d7cf6fb282ebdee02cc1e87cdc4b36124c1146a66fc5edee21c322a7",
+      "gitBlob": "b7eeebc9e45f5dfea135984e8bbc084ed078a0fd"
+    },
+    {
+      "path": "macos15/application-startup.json",
+      "bytes": 224,
+      "sha256": "45ff08fde0dc71bef2a07ec449111e5473d586dbf5a1369b83a4362e7637df42",
+      "gitBlob": "57fd7015bb2734aa5e46794e2a0fd79ed762fb24"
+    },
+    {
+      "path": "macos15/cleanup-applications.json",
+      "bytes": 116,
+      "sha256": "6bcc21a9c643dd281fc43583d299fab633eb208c47594d1862deef5e8db4ac29",
+      "gitBlob": "117209efc77db691b5b8f93e714739376f9e66e1"
+    },
+    {
+      "path": "macos15/cleanup-result.json",
+      "bytes": 40,
+      "sha256": "bb6ab0d4f831d5cb2043f851fae98ed51dab554a79b8fd7edc84faf910035288",
+      "gitBlob": "aa75e7f8dbcaa42a71fb0470f88bebf5ec466e2d"
+    },
+    {
+      "path": "macos15/compiled-icon-receipt.json",
+      "bytes": 161,
+      "sha256": "7b3018d726031f54368e41cbfd2c98e922fa7963d1fd8fd19d086d6383ee9c23",
+      "gitBlob": "0068a6135c68117aae19b2f7933d53671955ad94"
+    },
+    {
+      "path": "macos15/core-payload-after.json",
+      "bytes": 404,
+      "sha256": "ad0142f1a09265b2a16426107757ebf463b9d1fd3c9dbad6bf32eeb6c2552699",
+      "gitBlob": "2aed823145b0977fb97f5f2c55958e1260e0991c"
+    },
+    {
+      "path": "macos15/current-main-closed-after-quit.png",
+      "bytes": 62304,
+      "sha256": "3cbec12171c86c2e8b1ea43b552b8e4ee50e44b386c0f85d69cee47970fdd5c2",
+      "gitBlob": "ac75dfd7987022882cd538ebd3a64bc42a683f24"
+    },
+    {
+      "path": "macos15/current-main-closed-before-launch.png",
+      "bytes": 61881,
+      "sha256": "a631485fc60904d01d22ab7af3d92c9c4dff29adc29576b7239a31e18834ed88",
+      "gitBlob": "2114bb947e9502cc6a123ab85053294ad09b891f"
+    },
+    {
+      "path": "macos15/current-main-running.png",
+      "bytes": 118120,
+      "sha256": "0aa1229ba7982af8d939b3df28b2d593a58e2926c49f80bcf3b6536d10627ca8",
+      "gitBlob": "fe2f4371dee2d4fe36ab964191781f05ab48bbdc"
+    },
+    {
+      "path": "macos15/display-preflight.json",
+      "bytes": 77,
+      "sha256": "ddaff6f155505dfbcb936e67a4a71e14d55caee7b47e2c23b7920734cfe8af14",
+      "gitBlob": "46f9a6f41705ff191838ebb4aaa0d03a27147675"
+    },
+    {
+      "path": "macos15/dock-configuration.json",
+      "bytes": 392,
+      "sha256": "ae46aa869f8ea94d99662bead72c1249c95653fe5a09fef525fd3c1f7abe4ba6",
+      "gitBlob": "1a28210863e0352c5d9eb0c22da1143a647e5656"
+    },
+    {
+      "path": "macos15/dock-restore.json",
+      "bytes": 174,
+      "sha256": "45b5e4c24b65acf41c510a91be805c041c3e9979a7616fa92a2a96e122175219",
+      "gitBlob": "660e27046d0da5c2f51366d2b7c35af4ab647b2e"
+    },
+    {
+      "path": "macos15/lifecycle-result.json",
+      "bytes": 364,
+      "sha256": "35996ffec30a36f392f6fdc7538f94a26be54ef0f305d8bbfc9d71f35890c72c",
+      "gitBlob": "345a635775c4078259e026df50e868cc4d042bb3"
+    },
+    {
+      "path": "macos15/native-capture.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "macos15/native-capture.log.json",
+      "bytes": 182,
+      "sha256": "b0bc1a6544274b30ad59e0e7e2649986d59fb2b86c6ce824de0d65f115a5aedc",
+      "gitBlob": "b94712603838787d9a3d2aa4c11af57ad2b1223d"
+    },
+    {
+      "path": "macos15/normal-quit-request.json",
+      "bytes": 148,
+      "sha256": "0212e6d05c05bbbd1d01bbe7fe47fb18d10fbb80eb7235ed3d3e7f14d821f54e",
+      "gitBlob": "317e89b37cd2eaf5b2290667aa9e455f27f69c66"
+    },
+    {
+      "path": "macos15/normal-quit.json",
+      "bytes": 91,
+      "sha256": "d86c410b0e7c3f3cdc60c966e6c99d6c12ff58ec4280f928d85de5ddf00bf0a6",
+      "gitBlob": "7c0c5f683666026e7ba08a3961699263031f0ebe"
+    },
+    {
+      "path": "macos15/package-identity.json",
+      "bytes": 1015,
+      "sha256": "936835df65e61b40c8e74ce1f30952b85470f8818b16f2fa357f21cc55d2b502",
+      "gitBlob": "dd2c2e1e5995b1137aa43ae47998e699ba9af168"
+    },
+    {
+      "path": "macos15/provenance.json",
+      "bytes": 1820,
+      "sha256": "03f3b80fab1aec1c306626aee351c0b4527ad6ff79d3cafbf7d3379185f99f2a",
+      "gitBlob": "ff972c5e8bf648146410a48845c563c11148af24"
+    },
+    {
+      "path": "macos15/qualification.json",
+      "bytes": 1847,
+      "sha256": "dd936c22de32c97fae0e1505024d79766fb7f19349e3e590d0c5bce4d7037531",
+      "gitBlob": "9d742572ffe29a5e0b40ff736126622988019504"
+    },
+    {
+      "path": "macos15/quit-confirmation.png",
+      "bytes": 111337,
+      "sha256": "49523e866e469bbb69b780fed7c917bb7f3c321d79373f6abb1b814e465f49de",
+      "gitBlob": "d6db93cfa3a35675661ffeed79e6e5ae6d618d26"
+    },
+    {
+      "path": "macos15/renderer-confirmation.json",
+      "bytes": 305,
+      "sha256": "fc8d3fdd252e4da79dfb616f2aac3da308908df15164b36b66d510037b15f9a2",
+      "gitBlob": "faf6d22f1945ae5659a0d10e069f27ff87511897"
+    },
+    {
+      "path": "macos15/visible-owned-windows.json",
+      "bytes": 544,
+      "sha256": "81a44f1f9540ce26f252a6e8d1850c51a428641a21e5d694ee58a3c6a4e974c3",
+      "gitBlob": "70b75bd985f36387e4f04a72e7ecb4f4b55651e5"
+    },
+    {
+      "path": "macos26/application-startup.json",
+      "bytes": 224,
+      "sha256": "0ee764b23708d2328ee7a9e8c789873e4f5e7c24a80eb9fd8758953f510c4789",
+      "gitBlob": "9c22478235d4de53f54448151f84df794931587e"
+    },
+    {
+      "path": "macos26/cleanup-applications.json",
+      "bytes": 116,
+      "sha256": "e547c64a7be2b91b9b6fb090d69a09b9beaf9c51a5cade869dab15572f99dc59",
+      "gitBlob": "057a67a364101ac8bbf5f03679cca8cbaa6eba89"
+    },
+    {
+      "path": "macos26/cleanup-result.json",
+      "bytes": 40,
+      "sha256": "bb6ab0d4f831d5cb2043f851fae98ed51dab554a79b8fd7edc84faf910035288",
+      "gitBlob": "aa75e7f8dbcaa42a71fb0470f88bebf5ec466e2d"
+    },
+    {
+      "path": "macos26/compiled-icon-receipt.json",
+      "bytes": 161,
+      "sha256": "7b3018d726031f54368e41cbfd2c98e922fa7963d1fd8fd19d086d6383ee9c23",
+      "gitBlob": "0068a6135c68117aae19b2f7933d53671955ad94"
+    },
+    {
+      "path": "macos26/core-payload-after.json",
+      "bytes": 404,
+      "sha256": "806a6f5473c548cbc57d051f0469dd2502b82325d04f3f7e65c4293a361834c8",
+      "gitBlob": "394141885a0647c5c6c00e12657109ef3bcaefb6"
+    },
+    {
+      "path": "macos26/current-main-closed-after-quit.png",
+      "bytes": 67958,
+      "sha256": "bdd446b7f2f020ae52b0a219eeb604e64433082693f2f9c7cfeda180fe4b3535",
+      "gitBlob": "547b661e215365339f72259fb5093930d984e406"
+    },
+    {
+      "path": "macos26/current-main-closed-before-launch.png",
+      "bytes": 68094,
+      "sha256": "fd6efa51748d22d500aa35a70b453356e558fa76732c6ccd97fc6eba530ea8b9",
+      "gitBlob": "56a02c145e814d7998fb1dd029edb99b9e6e2816"
+    },
+    {
+      "path": "macos26/current-main-running.png",
+      "bytes": 117529,
+      "sha256": "714891087e91683b50a424feeb7609752f529eaedb97738c64c69b9d47ba5412",
+      "gitBlob": "2961215922228961fbb5b8fafe1010558f37701d"
+    },
+    {
+      "path": "macos26/display-preflight.json",
+      "bytes": 77,
+      "sha256": "ddaff6f155505dfbcb936e67a4a71e14d55caee7b47e2c23b7920734cfe8af14",
+      "gitBlob": "46f9a6f41705ff191838ebb4aaa0d03a27147675"
+    },
+    {
+      "path": "macos26/dock-configuration.json",
+      "bytes": 392,
+      "sha256": "47be1681a0d88a798d9573fe6157067d7d1660967fd18b6b3e6928660be5f5dc",
+      "gitBlob": "0568a506b691c831989a4faf5eb88701af54b40c"
+    },
+    {
+      "path": "macos26/dock-restore.json",
+      "bytes": 174,
+      "sha256": "45b5e4c24b65acf41c510a91be805c041c3e9979a7616fa92a2a96e122175219",
+      "gitBlob": "660e27046d0da5c2f51366d2b7c35af4ab647b2e"
+    },
+    {
+      "path": "macos26/lifecycle-result.json",
+      "bytes": 364,
+      "sha256": "235cfc7d4aa6804a5b90aa7e8f360b1e0c9fda2997ca3c6b8348a082af4b70ac",
+      "gitBlob": "796c32fdb418edaa4b9af3d25b06e0c92ca161f2"
+    },
+    {
+      "path": "macos26/native-capture.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "macos26/native-capture.log.json",
+      "bytes": 182,
+      "sha256": "b0bc1a6544274b30ad59e0e7e2649986d59fb2b86c6ce824de0d65f115a5aedc",
+      "gitBlob": "b94712603838787d9a3d2aa4c11af57ad2b1223d"
+    },
+    {
+      "path": "macos26/normal-quit-request.json",
+      "bytes": 148,
+      "sha256": "581246b31830b55ce141b8d9ebbc5af6ff07dc65a152247541c507c56028d2b2",
+      "gitBlob": "6efa1c0b1752e17383ae950f08bb1369cdc352bc"
+    },
+    {
+      "path": "macos26/normal-quit.json",
+      "bytes": 91,
+      "sha256": "886963d02dd1ff2e1aa650dea996afdb8c29887f82b49033be472f26a9ea27d3",
+      "gitBlob": "1f3f85c3e2b830216ef5bb5d31715680d6872e1d"
+    },
+    {
+      "path": "macos26/package-identity.json",
+      "bytes": 1015,
+      "sha256": "d07b906a970e9989433abea00cd9160826c428bd7b0fcc29d6d8c8d2db2e3fe3",
+      "gitBlob": "29fadea03843b50b5568b1e4e58ae2869ba9d653"
+    },
+    {
+      "path": "macos26/provenance.json",
+      "bytes": 1820,
+      "sha256": "b86b149b731c0297206f0df70551ba6aaff20f938fa810ba80bebe121adffd86",
+      "gitBlob": "3b002b95256a3d31db05eb1d133c3d6534b6c20b"
+    },
+    {
+      "path": "macos26/qualification.json",
+      "bytes": 1847,
+      "sha256": "af31d8caf8a1d71336a778e7de83749008cccbac554523d3861635c08c3e8e50",
+      "gitBlob": "acfe9e687f9d40cff4a68af80eb7f0539e9c13e7"
+    },
+    {
+      "path": "macos26/quit-confirmation.png",
+      "bytes": 115258,
+      "sha256": "ce5007396bd688e87936c0581d61ad77616267e20b62a13e4d0c2b1aaf54aaf6",
+      "gitBlob": "d343275b3b3c0c88ff7fab903b3bac84c89c6cbc"
+    },
+    {
+      "path": "macos26/renderer-confirmation.json",
+      "bytes": 305,
+      "sha256": "0bebaae04ac31695ccabbe57c8f4bb933cd059cd67745db2b5f77676247b5f07",
+      "gitBlob": "fc4edf2461a55deed07ba96aa27d53106a905a86"
+    },
+    {
+      "path": "macos26/visible-owned-windows.json",
+      "bytes": 544,
+      "sha256": "df2611222e79979bf995a33d34552ae2e1676eb6b88ea37ab5705a6bf59462f8",
+      "gitBlob": "0021c76107b4ca24d57865831fcf52450140ff9e"
+    },
+    {
+      "path": "prior-failures/first-macos15/cleanup-result.json",
+      "bytes": 40,
+      "sha256": "bb6ab0d4f831d5cb2043f851fae98ed51dab554a79b8fd7edc84faf910035288",
+      "gitBlob": "aa75e7f8dbcaa42a71fb0470f88bebf5ec466e2d"
+    },
+    {
+      "path": "prior-failures/first-macos15/dock-restore.json",
+      "bytes": 100,
+      "sha256": "24d14e2f159f7d2a375ea16d61fcc71f9dcf27e38b219881888b62734b17b218",
+      "gitBlob": "9927704ec11ecd6d217c880871d94aaf6174110a"
+    },
+    {
+      "path": "prior-failures/first-macos15/provenance.json",
+      "bytes": 1430,
+      "sha256": "2f1d562f1bc6213e19c42f65bcc20b078e5cb67e30223a970696ed609a3db3f4",
+      "gitBlob": "0b7b294d34ccb340ff5e2dd04019fab23474b268"
+    },
+    {
+      "path": "prior-failures/first-macos15/verify-failure.json",
+      "bytes": 710,
+      "sha256": "89aa2ed391b5123a12f418e0e1ee0bccb2e77f6cad526afe309f56a355211f86",
+      "gitBlob": "c2f7a3d44e6250ecf606c696c26179b9494b4f16"
+    },
+    {
+      "path": "prior-failures/first-macos26/capture-failure.json",
+      "bytes": 737,
+      "sha256": "4d91531e8d8accdd667ca2dfcdbcaf510760b18e024c43753053a39f56e4518a",
+      "gitBlob": "18201cb92e434f6561050f4212addec323e1e614"
+    },
+    {
+      "path": "prior-failures/first-macos26/cleanup-result.json",
+      "bytes": 40,
+      "sha256": "bb6ab0d4f831d5cb2043f851fae98ed51dab554a79b8fd7edc84faf910035288",
+      "gitBlob": "aa75e7f8dbcaa42a71fb0470f88bebf5ec466e2d"
+    },
+    {
+      "path": "prior-failures/first-macos26/dock-restore.json",
+      "bytes": 174,
+      "sha256": "45b5e4c24b65acf41c510a91be805c041c3e9979a7616fa92a2a96e122175219",
+      "gitBlob": "660e27046d0da5c2f51366d2b7c35af4ab647b2e"
+    },
+    {
+      "path": "prior-failures/first-macos26/normal-quit.json",
+      "bytes": 92,
+      "sha256": "1476ce30adc8b8af3b6f5210f0c377feb37653fe1526426a9513ca137ac8f55c",
+      "gitBlob": "3f3fb05dfe4bb5503d9f1fca6553a639132be8b8"
+    },
+    {
+      "path": "prior-failures/first-macos26/original-capture-failure.json",
+      "bytes": 737,
+      "sha256": "4d91531e8d8accdd667ca2dfcdbcaf510760b18e024c43753053a39f56e4518a",
+      "gitBlob": "18201cb92e434f6561050f4212addec323e1e614"
+    },
+    {
+      "path": "prior-failures/first-macos26/provenance.json",
+      "bytes": 1430,
+      "sha256": "0234cbd6e0b159fe349535b3b767821e16883cb66cf68f13acdd4a7f18d2a823",
+      "gitBlob": "d089c2401df39d3729a6ceb86ffd17c592498012"
+    },
+    {
+      "path": "prior-failures/first-macos26/quit-did-not-complete.png",
+      "bytes": 115238,
+      "sha256": "3e3084419d3516d0b444a71d9fac8c02a879aad1a2efc885d774e061734a73bc",
+      "gitBlob": "ab4ebc47ec238ccfbd2d140372739adb817489db"
+    },
+    {
+      "path": "prior-failures/first-macos26/verify-failure.json",
+      "bytes": 710,
+      "sha256": "89aa2ed391b5123a12f418e0e1ee0bccb2e77f6cad526afe309f56a355211f86",
+      "gitBlob": "c2f7a3d44e6250ecf606c696c26179b9494b4f16"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/capture-failure.json",
+      "bytes": 737,
+      "sha256": "12eb58906a31818bddd7635cbf76748858a22b87a808a3d269cce445388ce222",
+      "gitBlob": "b3287be194a6c3e805f4647d55e1549b6f5a48a4"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/cleanup-result.json",
+      "bytes": 40,
+      "sha256": "bb6ab0d4f831d5cb2043f851fae98ed51dab554a79b8fd7edc84faf910035288",
+      "gitBlob": "aa75e7f8dbcaa42a71fb0470f88bebf5ec466e2d"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/dock-restore.json",
+      "bytes": 174,
+      "sha256": "45b5e4c24b65acf41c510a91be805c041c3e9979a7616fa92a2a96e122175219",
+      "gitBlob": "660e27046d0da5c2f51366d2b7c35af4ab647b2e"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/normal-quit.json",
+      "bytes": 92,
+      "sha256": "eb2eef1c93445a57a849f85fc4d04ff24151d8ef107f9fd1f309ad7f10eab499",
+      "gitBlob": "220c3e2ca611d02414b391be9756fdf961ad877a"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/original-capture-failure.json",
+      "bytes": 737,
+      "sha256": "12eb58906a31818bddd7635cbf76748858a22b87a808a3d269cce445388ce222",
+      "gitBlob": "b3287be194a6c3e805f4647d55e1549b6f5a48a4"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/provenance.json",
+      "bytes": 1618,
+      "sha256": "f08d8b0c52ba7cee5023c30d15a32d97194870f5c709e4a9356598b90e3d9517",
+      "gitBlob": "486b3a302dab7efe80209535c0521bb381feee78"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/quit-did-not-complete.png",
+      "bytes": 111420,
+      "sha256": "67a5f16cc30ddc4a612560057b121dd3a0824b045816586d31b4fdb9844d12f8",
+      "gitBlob": "f8710363265ec5dce1f51c6e2f3c72bc0d88ac9b"
+    },
+    {
+      "path": "prior-failures/icon-prerequisite-macos15/verify-failure.json",
+      "bytes": 593,
+      "sha256": "25c87f6d50f7284cfe64f850f65e471057b5bc7f99f2cb7a6cf716c3e46b1a64",
+      "gitBlob": "0ceb4ea4650db1a53ded56a21478636160200914"
+    },
+    {
+      "path": "review/copied-file-origins.json",
+      "bytes": 15594,
+      "sha256": "d8226c6a35581219ab097d3dad51ddb023720e557b7921cd381590d0d46c4ce7",
+      "gitBlob": "a845014c1603f0f50da7fd073a1645134961e8dc"
+    },
+    {
+      "path": "review/dock-final-receipts.json",
+      "bytes": 5681,
+      "sha256": "e5c1454a4f5217ed5b651345400fa4db9d4752c4b093490ce33e10f8a0e99be3",
+      "gitBlob": "cddbb89e59c21f74052780ce7883df20d2928f73"
+    },
+    {
+      "path": "review/icon-pixel-evidence.json",
+      "bytes": 2358,
+      "sha256": "13ef249ca39baecea2f56778ae4f405d23c4a096d9385bada0d9ac607ed4f705",
+      "gitBlob": "4ceaad88498e2e843972aa84ae537930466b47c1"
+    },
+    {
+      "path": "review/main25b-icon-equivalence.json",
+      "bytes": 6193,
+      "sha256": "d9c463360163c651d1d072b4ae0cd1991f932ab8d986678203f10503e74c0a06",
+      "gitBlob": "175ac28bd3b692ba72fc4d4226de26e628b9b716"
+    },
+    {
+      "path": "review/native-persistence-receipts.json",
+      "bytes": 3105,
+      "sha256": "3f87b8c3e6852d5ab012523ce5e09a6418bffd5018839e3a59dc23da20ab9a0d",
+      "gitBlob": "483b94eaeea2eb8ff2a867acb5a64cc9f6b28fd9"
+    }
+  ],
+  "manifestExcludesSelf": true
+}

@@ -1,0 +1,26 @@
+{
+  "sourceSha": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "authorSha": "01ca9a62f8bb222dda23d8c68181acdbf5ddd1fb",
+  "driverSha": "b7cfab55d5896d57704cbf3fc4d1cf9c65a1929b",
+  "driverTree": "803e609fe2e44dd40e07d0c288b41bacf0025a05",
+  "version": "1.0.2-beta.1",
+  "run": "38162333002",
+  "os": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "24.6.0"
+  },
+  "lockfileSha256": "e04d95a03e02e86d0c78fed226bdb9faa3519e0eb8a73868c7434f08df567879",
+  "mainSha256": "c412b4cf5d704dadda53e54e71006a2ea8f989438e5035c194b95ee782ec5c3a",
+  "canonicalStartupSha256": "4d88cdccfb35794c7f025b40a74fd0d9d1c5a5fe272a0fbaab4e806d3c423991",
+  "driverScriptSha256": "83b63cdf725f2590196b5babda1c24b423076d1087c1eb79686d7090db93e935",
+  "nativeScriptSha256": "63f3655df7404aee8e5c72ba895200cee0c1ba8b8812b86a427cfc9f6f0e79b4",
+  "workflowSha256": "a9aaf6669e524ab263fb454a2d745a77d56ae2825ed018b30b949ddbb56bf458",
+  "compiledIcon": {
+    "sourceSha": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "sha256": "e66ffb6f405edd858cf95b64420954a87cbda0391d92b7844a8868b0a900802a",
+    "bytes": 546152
+  },
+  "qualification": "Exact current-main production-flavor unsigned macOS package and ordinary existing screen access. Actual running/closed screenshots use a saved/restored disposable Dock layout. The owned app exposes an ephemeral loopback Chromium endpoint only so Playwright can click its actual visible renderer Quit confirmation after the native termination request; no IPC or source shortcut. Original author/current asset exports are separately labelled; original author application was not built/rendered. No permission request, TCC or accessibility changes, authenticated provider session, signing, release, or upgrade/cache-transition claim."
+}

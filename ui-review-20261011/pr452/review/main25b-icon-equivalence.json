@@ -1,0 +1,164 @@
+{
+  "capturedSource": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "capturedTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "comparedMain": "25b55b0bec0914d81e4db54b27f953721b067b29",
+  "comparedTree": "00d8c27b49524a93e219c03c8639638e6415354c",
+  "allEqual": true,
+  "files": [
+    {
+      "path": "apps/desktop/src/main.ts",
+      "bytes": 230576,
+      "gitBlob": "2b5b7a547b0b30c4f886a098dcc9554eabca1682",
+      "sha256": "c412b4cf5d704dadda53e54e71006a2ea8f989438e5035c194b95ee782ec5c3a",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/src/desktopAppIcon.ts",
+      "bytes": 3896,
+      "gitBlob": "85a507136b6f246947c7363b21ef4b6a3ebb52aa",
+      "sha256": "c4bfd14dc3457fce723b8375a93ce86bcc07270107fe87e715134ec0421505f3",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/src/macAppIcon.ts",
+      "bytes": 3259,
+      "gitBlob": "be15ffcfc93f226a3eb296be2092acdaac2781f5",
+      "sha256": "c9949a92936ef4baa1b1aa43c90d619b0c0b19a6224afda747cce7e03e7b0377",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/src/bundleSwapDetection.ts",
+      "bytes": 2441,
+      "gitBlob": "d2eda2987f1d3248aca1e811278c28148506bcb3",
+      "sha256": "6d65271915d0f7ac971b9e77d71551f8762cbffa61bb46298722aa968f45fece",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/src/desktopAppIcon.test.ts",
+      "bytes": 9387,
+      "gitBlob": "6f45262047a072b9c224bbe0f53a9b4f626f5a5a",
+      "sha256": "254173caf1af4e3c4f80ee2500e1f38e16f0d1a6ad7a06b488915724edcabdb6",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/src/macAppIcon.test.ts",
+      "bytes": 5905,
+      "gitBlob": "b4567dae79c899ef08afb77f30900f6cb7870554",
+      "sha256": "5f745cd49386fff93bc681bcf92f45d02e0301448e7035fa5350792a648a99ef",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/src/macAppIcon.native.test.ts",
+      "bytes": 2072,
+      "gitBlob": "758b634357f3d9d1539dcafcbef3494124bbf185",
+      "sha256": "367e6dee639936a5df45f920d9933859b0f67f288939cc5ba7634aa0a1525cbb",
+      "sameBytes": true
+    },
+    {
+      "path": "packages/shared/src/processRuntime.ts",
+      "bytes": 7171,
+      "gitBlob": "fa4eb044a4a2059de4f9e4ff179482955df9cd90",
+      "sha256": "f326e5a9a0e7206bc79bee8b41467fec6ed470330a0b7baea4ba3137db9e1afa",
+      "sameBytes": true
+    },
+    {
+      "path": "packages/shared/src/desktopIdentity.ts",
+      "bytes": 6949,
+      "gitBlob": "1e37de0cf1e2e122527c17a9d696a1b0f7215bce",
+      "sha256": "68b5db6825c87d42540367f679bf7eeadd8d18a0050d9971d45012a6d8bc451d",
+      "sameBytes": true
+    },
+    {
+      "path": "scripts/build-desktop-artifact.ts",
+      "bytes": 58059,
+      "gitBlob": "075bd6e26f043062d646b36124b8eedf08d38a7b",
+      "sha256": "a829d3695be7738c1e17c7bec6fcda1278265de6cf09f727a5134103012de418",
+      "sameBytes": true
+    },
+    {
+      "path": "scripts/lib/desktop-platform-build-config.ts",
+      "bytes": 10876,
+      "gitBlob": "40ee2de6048893a35c58c0ee7d3e9c3f08a344ab",
+      "sha256": "95df0e0a3e332d1dd8e7a530f85294d276e2c9f24c8101eee1320c6270124e00",
+      "sameBytes": true
+    },
+    {
+      "path": "scripts/lib/desktop-artifact-identity.ts",
+      "bytes": 1378,
+      "gitBlob": "1fdcec46af22583a3c37dd1da5ea41da8ad9a836",
+      "sha256": "00749c1dc3d81e9e81987fcfe518121ac9353d3daf42631c2358916552df8636",
+      "sameBytes": true
+    },
+    {
+      "path": "scripts/lib/brand-assets.ts",
+      "bytes": 5720,
+      "gitBlob": "45fe38b69568805f4616a81c38cde423ceffdeb2",
+      "sha256": "38c893e34900419ac81e9601c5a4dbea73113782bd42529a76e8954902168b03",
+      "sameBytes": true
+    },
+    {
+      "path": "scripts/build-desktop-artifact-mac-config.test.ts",
+      "bytes": 9602,
+      "gitBlob": "4ad98d8310ee477d835bd58ae60d3f6ea870ed7f",
+      "sha256": "643b576a8da0fa6920a76edce773f3521f0097af47033c57037ffc565cbb25e5",
+      "sameBytes": true
+    },
+    {
+      "path": "scripts/verify-packaged-desktop-startup.ts",
+      "bytes": 16965,
+      "gitBlob": "ac39a558ad759fb3526247538ad906036761833d",
+      "sha256": "4d88cdccfb35794c7f025b40a74fd0d9d1c5a5fe272a0fbaab4e806d3c423991",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/resources/icon.icns",
+      "bytes": 145470,
+      "gitBlob": "b20868f8c778501d5c6df78ab85018a97d1ae625",
+      "sha256": "b2bd5acd4db9c1fc0d055dc3c11ff4b9c5925171be58c652a525900b3064a93a",
+      "sameBytes": true
+    },
+    {
+      "path": "apps/desktop/resources/dock-icon.png",
+      "bytes": 28683,
+      "gitBlob": "598f4dafbb0245f59af844e4541bc640e1494670",
+      "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e",
+      "sameBytes": true
+    },
+    {
+      "path": "assets/prod/black-macos-1024.png",
+      "bytes": 13880,
+      "gitBlob": "cbfaf24a0d066e3b5c0046c4619e5df898000f70",
+      "sha256": "3914e01ffa931a12adef6531e90adbdeb1a267cf3721dbfe8291fe81a77b05b3",
+      "sameBytes": true
+    },
+    {
+      "path": "assets/prod/black-macos-legacy-1024.png",
+      "bytes": 28683,
+      "gitBlob": "598f4dafbb0245f59af844e4541bc640e1494670",
+      "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e",
+      "sameBytes": true
+    },
+    {
+      "path": "assets/prod/Synara.icon/Assets/background.png",
+      "bytes": 15859,
+      "gitBlob": "6cbb48c47f681199e6652d49fd1af86a84d16712",
+      "sha256": "ee66aba9714ac6f2cb8365927c59028aa5ff3577df8fa74ecc2e01f74a062592",
+      "sameBytes": true
+    },
+    {
+      "path": "assets/prod/Synara.icon/Assets/glyph.png",
+      "bytes": 63232,
+      "gitBlob": "dcf0cf27114a9a6a492f02b3a15eadee71983b12",
+      "sha256": "2495bfcbd43e8ab8ac96d5b56c47dcedc494ece52aee15d5348e39c20b77ef26",
+      "sameBytes": true
+    },
+    {
+      "path": "assets/prod/Synara.icon/icon.json",
+      "bytes": 804,
+      "gitBlob": "82ea8bb34213a470833aadbad22af5b06e1f67d3",
+      "sha256": "a86924d93a16f1f550b3234d0e7b6e6e2336cca84626a45c254cbe87c6987c46",
+      "sameBytes": true
+    }
+  ],
+  "qualification": "Only these exact icon/lifecycle/build source paths and tests are proven byte-identical. Native packages/screenshots were built from ec8, not25b; dependencies/server changes afterec8 were not rerun."
+}

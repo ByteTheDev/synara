@@ -1,0 +1,82 @@
+[
+  {
+    "label": "author-bundle",
+    "path": "campaign/packaging/pr452/author-icon.icns",
+    "gitBlob": "146a2ddb60be66675f831ec285f34ccdc482a635",
+    "sha256": "c2b2834d6c42d670cc4a11a195b7c094f3204c16d18f070fa0ba6797cc0f3bfa",
+    "decodedRgbaSha256": "9a3b079fc4c6bb518d1012a268f4ddaf1f98c3f96c5ca3ec79cf92d59bc4c7ef",
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "alphaRange": [
+      255,
+      255
+    ],
+    "transparentPixels": 0
+  },
+  {
+    "label": "author-modern",
+    "path": "campaign/packaging/pr452/author-modern.png",
+    "gitBlob": "68f4812bc615220e9c1a54914538bf62b4b2dc32",
+    "sha256": "900ca524d12ddafbad0758fb9f2662c9399b68e8af21367397027a516db47710",
+    "decodedRgbaSha256": "fca116a968a9339d1aa86906ad665eaad6a2727cc9fe6a07f0a17dfae2957e37",
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "alphaRange": [
+      255,
+      255
+    ],
+    "transparentPixels": 0
+  },
+  {
+    "label": "main-bundle",
+    "path": "campaign/cache/main-ec8c940/apps/desktop/resources/icon.icns",
+    "gitBlob": "b20868f8c778501d5c6df78ab85018a97d1ae625",
+    "sha256": "b2bd5acd4db9c1fc0d055dc3c11ff4b9c5925171be58c652a525900b3064a93a",
+    "decodedRgbaSha256": "7449bcc6af214de3030abd572a293922da0359217b68750821619d5b021f9bb4",
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "transparentPixels": 224671
+  },
+  {
+    "label": "main-runtime",
+    "path": "campaign/cache/main-ec8c940/apps/desktop/resources/dock-icon.png",
+    "gitBlob": "598f4dafbb0245f59af844e4541bc640e1494670",
+    "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e",
+    "decodedRgbaSha256": "7449bcc6af214de3030abd572a293922da0359217b68750821619d5b021f9bb4",
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "transparentPixels": 224671
+  },
+  {
+    "label": "main-legacy-source",
+    "path": "campaign/cache/main-ec8c940/assets/prod/black-macos-legacy-1024.png",
+    "gitBlob": "598f4dafbb0245f59af844e4541bc640e1494670",
+    "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e",
+    "decodedRgbaSha256": "7449bcc6af214de3030abd572a293922da0359217b68750821619d5b021f9bb4",
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "alphaRange": [
+      0,
+      255
+    ],
+    "transparentPixels": 224671
+  }
+]

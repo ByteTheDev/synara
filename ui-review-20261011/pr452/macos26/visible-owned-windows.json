@@ -1,0 +1,24 @@
+{
+  "frontmost" : true,
+  "largeApplicationWindow" : true,
+  "windows" : [
+    {
+      "kCGWindowAlpha" : 1,
+      "kCGWindowBounds" : {
+        "Height" : 615,
+        "Width" : 1024,
+        "X" : 0,
+        "Y" : 31
+      },
+      "kCGWindowIsOnscreen" : true,
+      "kCGWindowLayer" : 0,
+      "kCGWindowMemoryUsage" : 2368,
+      "kCGWindowName" : "Synara",
+      "kCGWindowNumber" : 47,
+      "kCGWindowOwnerName" : "Synara",
+      "kCGWindowOwnerPID" : 39108,
+      "kCGWindowSharingState" : 1,
+      "kCGWindowStoreType" : 1
+    }
+  ]
+}

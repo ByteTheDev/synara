@@ -1,0 +1,13 @@
+{
+  "changedKeys" : [
+    "persistent-apps",
+    "show-recents",
+    "autohide",
+    "tilesize",
+    "magnification",
+    "orientation"
+  ],
+  "ownedAppURL" : "file:\/\/\/Users\/runner\/work\/_temp\/mac-dock-owned-GqnMhD\/expanded\/Synara.app\/",
+  "qualification" : "Controlled disposable-runner Dock layout for legibility; actual application artwork remains unchanged.",
+  "tileSize" : 96
+}

@@ -1,0 +1,4 @@
+{
+  "message": "AssertionError [ERR_ASSERTION]: failed(\"Normal application quit did not complete\")\n\n\n1 !== 0\n",
+  "stack": "AssertionError [ERR_ASSERTION]: failed(\"Normal application quit did not complete\")\n\n\n1 !== 0\n\n    at run (file:///Users/runner/work/synara/synara/driver/.github/scripts/mac-dock-capture.mjs:62:10)\n    at native (file:///Users/runner/work/synara/synara/driver/.github/scripts/mac-dock-capture.mjs:89:10)\n    at main (file:///Users/runner/work/synara/synara/driver/.github/scripts/mac-dock-capture.mjs:317:7)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/runner/work/synara/synara/driver/.github/scripts/mac-dock-capture.mjs:378:1"
+}

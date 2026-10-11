@@ -1,0 +1,11 @@
+{
+  "actualExit": {
+    "code": 0,
+    "signal": null
+  },
+  "spawnError": null,
+  "processErrors": [],
+  "ownedHandleStop": null,
+  "stopDeadline": false,
+  "directFileLog": true
+}

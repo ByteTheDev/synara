@@ -1,0 +1,90 @@
+[
+  {
+    "id": 11709220140,
+    "zipSha256": "2cbbc13dca7185f368b93ff5338ec36153be8443bc6c2cd158eda9532970d1c6",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "driver": "8f23a4d4523e967486e9213747a67726f895aa73",
+    "os": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "24.6.0"
+    },
+    "sourceHashesVerified": 12,
+    "passedTests": 25,
+    "nativePersistence": {
+      "ancestorTitles": [
+        "native macOS custom icon persistence"
+      ],
+      "fullName": "native macOS custom icon persistence keeps a custom icon after the writer exits and removes it for Default",
+      "status": "passed",
+      "title": "keeps a custom icon after the writer exits and removes it for Default",
+      "duration": 1862.832041,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    "images": {
+      "before-author-bundle.png": "e032ded8d7cf6fb282ebdee02cc1e87cdc4b36124c1146a66fc5edee21c322a7",
+      "after-current-main-bundle.png": "a835c56773f4be193434f071c4369b3b4fc60a323705c89efe4e6c491eed8911",
+      "current-main-runtime.png": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e"
+    },
+    "files": [
+      "current.iconset",
+      "provenance.json",
+      "before-author-bundle.png",
+      "before.iconset",
+      "native-image-dimensions.txt",
+      "install.log",
+      "current-main-runtime.png",
+      "native-tests.json",
+      "native-tests.log",
+      "native-result.json",
+      "before-author-modern-source.png",
+      "after-current-main-bundle.png"
+    ]
+  },
+  {
+    "id": 11709190383,
+    "zipSha256": "c6374c9cdde3946ee04760389d0816a4b564fd0df84a480d03790ebaeb492db5",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "driver": "8f23a4d4523e967486e9213747a67726f895aa73",
+    "os": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "25.6.0"
+    },
+    "sourceHashesVerified": 12,
+    "passedTests": 25,
+    "nativePersistence": {
+      "ancestorTitles": [
+        "native macOS custom icon persistence"
+      ],
+      "fullName": "native macOS custom icon persistence keeps a custom icon after the writer exits and removes it for Default",
+      "status": "passed",
+      "title": "keeps a custom icon after the writer exits and removes it for Default",
+      "duration": 1256.922875,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    "images": {
+      "before-author-bundle.png": "e032ded8d7cf6fb282ebdee02cc1e87cdc4b36124c1146a66fc5edee21c322a7",
+      "after-current-main-bundle.png": "a835c56773f4be193434f071c4369b3b4fc60a323705c89efe4e6c491eed8911",
+      "current-main-runtime.png": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e"
+    },
+    "files": [
+      "current.iconset",
+      "provenance.json",
+      "before-author-bundle.png",
+      "before.iconset",
+      "native-image-dimensions.txt",
+      "install.log",
+      "current-main-runtime.png",
+      "native-tests.json",
+      "native-tests.log",
+      "native-result.json",
+      "before-author-modern-source.png",
+      "after-current-main-bundle.png"
+    ]
+  }
+]

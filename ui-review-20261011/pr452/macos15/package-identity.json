@@ -1,0 +1,22 @@
+{
+  "sourceSha": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "appPath": "/Users/runner/work/_temp/mac-dock-owned-GqnMhD/expanded/Synara.app",
+  "zip": {
+    "file": "Synara-1.0.2-beta.1-arm64.zip",
+    "bytes": 297447539,
+    "sha256": "7238deebe09a7b013d9b644ea1c412a7de49066b1da9ffe0eb6202a57c7cdcfe"
+  },
+  "embedded": {
+    "commit": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "lock": "e04d95a03e02e86d0c78fed226bdb9faa3519e0eb8a73868c7434f08df567879",
+    "flavor": "production",
+    "version": "1.0.2-beta.1"
+  },
+  "hashes": {
+    "Contents/MacOS/Synara": "221d5695ab9eb2263b9107e4a5bb3f5780adc35963530e322673d5535e8eeae5",
+    "Contents/Resources/app.asar": "4e1ee1ef901486d0a6012252d9fc3b4ba6a6797dbfbdbe7eb53da62de5d07acc",
+    "Contents/Resources/icon.icns": "b2bd5acd4db9c1fc0d055dc3c11ff4b9c5925171be58c652a525900b3064a93a",
+    "Contents/Resources/Assets.car": "e66ffb6f405edd858cf95b64420954a87cbda0391d92b7844a8868b0a900802a"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "sourceSha": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "driverSha": "b7cfab55d5896d57704cbf3fc4d1cf9c65a1929b",
+  "lifecycle": {
+    "appPath": "/Users/runner/work/_temp/mac-dock-owned-MFO9wl/expanded/Synara.app",
+    "closedCapture": true,
+    "normalQuit": true,
+    "qualification": "Actual current-main packaged application and controlled Dock layout; no claim that the original author app was built or rendered, no signed-install or cache-upgrade claim.",
+    "runningCapture": true
+  },
+  "images": [
+    {
+      "file": "current-main-closed-before-launch.png",
+      "bytes": 68094,
+      "width": 1024,
+      "height": 768,
+      "sha256": "fd6efa51748d22d500aa35a70b453356e558fa76732c6ccd97fc6eba530ea8b9"
+    },
+    {
+      "file": "current-main-running.png",
+      "bytes": 117529,
+      "width": 1024,
+      "height": 768,
+      "sha256": "714891087e91683b50a424feeb7609752f529eaedb97738c64c69b9d47ba5412"
+    },
+    {
+      "file": "current-main-closed-after-quit.png",
+      "bytes": 67958,
+      "width": 1024,
+      "height": 768,
+      "sha256": "bdd446b7f2f020ae52b0a219eeb604e64433082693f2f9c7cfeda180fe4b3535"
+    },
+    {
+      "file": "original-author-bundle-artwork.png",
+      "bytes": 51503,
+      "width": 1024,
+      "height": 1024,
+      "sha256": "e032ded8d7cf6fb282ebdee02cc1e87cdc4b36124c1146a66fc5edee21c322a7"
+    },
+    {
+      "file": "current-main-legacy-bundle-artwork.png",
+      "bytes": 61823,
+      "width": 1024,
+      "height": 1024,
+      "sha256": "a835c56773f4be193434f071c4369b3b4fc60a323705c89efe4e6c491eed8911"
+    },
+    {
+      "file": "current-main-legacy-runtime-artwork.png",
+      "bytes": 28683,
+      "width": 1024,
+      "height": 1024,
+      "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e"
+    }
+  ],
+  "passed": true,
+  "visualReviewPending": true
+}

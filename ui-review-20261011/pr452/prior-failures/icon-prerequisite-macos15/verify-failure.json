@@ -1,0 +1,4 @@
+{
+  "message": "Error: ENOENT: no such file or directory, open '/Users/runner/work/_temp/mac-dock-evidence/lifecycle-result.json'",
+  "stack": "Error: ENOENT: no such file or directory, open '/Users/runner/work/_temp/mac-dock-evidence/lifecycle-result.json'\n    at readFileSync (node:fs:484:20)\n    at main (file:///Users/runner/work/synara/synara/driver/.github/scripts/mac-dock-capture.mjs:343:30)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///Users/runner/work/synara/synara/driver/.github/scripts/mac-dock-capture.mjs:378:1"
+}

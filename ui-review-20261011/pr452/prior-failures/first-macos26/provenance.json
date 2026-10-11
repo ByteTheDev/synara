@@ -1,0 +1,21 @@
+{
+  "sourceSha": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "authorSha": "01ca9a62f8bb222dda23d8c68181acdbf5ddd1fb",
+  "driverSha": "272f7a7f3d47d6d940b24936a7a03faa0e94fb09",
+  "driverTree": "35886b6c65d7353f9043838953ea9a6d7450118f",
+  "version": "1.0.2-beta.1",
+  "run": "38159736131",
+  "os": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "release": "25.6.0"
+  },
+  "lockfileSha256": "e04d95a03e02e86d0c78fed226bdb9faa3519e0eb8a73868c7434f08df567879",
+  "mainSha256": "c412b4cf5d704dadda53e54e71006a2ea8f989438e5035c194b95ee782ec5c3a",
+  "canonicalStartupSha256": "4d88cdccfb35794c7f025b40a74fd0d9d1c5a5fe272a0fbaab4e806d3c423991",
+  "driverScriptSha256": "4d3c7dcb336bd3c4059cebc08c85e464111c7ba307eeb8c083632221b47cfb48",
+  "nativeScriptSha256": "160a9379587d3c7df60503b4ce991c5f472f35f89ed9b5dd781c4a1c91bb0f3f",
+  "workflowSha256": "bed2866e2698a1821276372bf54b39d8a465301309596e67d945d5d4364b5f3e",
+  "qualification": "Exact current-main production-flavor unsigned macOS package and ordinary existing screen access. Actual running/closed screenshots use a saved/restored disposable Dock layout. Original author/current asset exports are separately labelled; original author application was not built/rendered. No permission request, TCC or accessibility changes, authenticated provider session, signing, release, or upgrade/cache-transition claim."
+}

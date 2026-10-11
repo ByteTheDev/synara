@@ -1,0 +1,11 @@
+{
+  "matchedBeforeReload" : true,
+  "restoredKeys" : [
+    "persistent-apps",
+    "show-recents",
+    "autohide",
+    "tilesize",
+    "magnification",
+    "orientation"
+  ]
+}

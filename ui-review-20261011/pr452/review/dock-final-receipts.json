@@ -1,0 +1,174 @@
+[
+  {
+    "os": "15",
+    "zipSha256": "61638d7b430e617fa40a90c5f1bdc1d16b0948103a578497257c11f0654cae65",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+    "driver": "b7cfab55d5896d57704cbf3fc4d1cf9c65a1929b",
+    "driverTree": "803e609fe2e44dd40e07d0c288b41bacf0025a05",
+    "run": "38162333002",
+    "normalQuit": {
+      "forceUsed": false,
+      "normalRequest": true,
+      "pid": 29033,
+      "terminated": true
+    },
+    "restoredKeys": [
+      "persistent-apps",
+      "show-recents",
+      "autohide",
+      "tilesize",
+      "magnification",
+      "orientation"
+    ],
+    "coreUnchanged": true,
+    "images": [
+      {
+        "file": "current-main-closed-before-launch.png",
+        "bytes": 61881,
+        "width": 1024,
+        "height": 768,
+        "sha256": "a631485fc60904d01d22ab7af3d92c9c4dff29adc29576b7239a31e18834ed88"
+      },
+      {
+        "file": "current-main-running.png",
+        "bytes": 118120,
+        "width": 1024,
+        "height": 768,
+        "sha256": "0aa1229ba7982af8d939b3df28b2d593a58e2926c49f80bcf3b6536d10627ca8"
+      },
+      {
+        "file": "current-main-closed-after-quit.png",
+        "bytes": 62304,
+        "width": 1024,
+        "height": 768,
+        "sha256": "3cbec12171c86c2e8b1ea43b552b8e4ee50e44b386c0f85d69cee47970fdd5c2"
+      },
+      {
+        "file": "original-author-bundle-artwork.png",
+        "bytes": 51503,
+        "width": 1024,
+        "height": 1024,
+        "sha256": "e032ded8d7cf6fb282ebdee02cc1e87cdc4b36124c1146a66fc5edee21c322a7"
+      },
+      {
+        "file": "current-main-legacy-bundle-artwork.png",
+        "bytes": 61823,
+        "width": 1024,
+        "height": 1024,
+        "sha256": "a835c56773f4be193434f071c4369b3b4fc60a323705c89efe4e6c491eed8911"
+      },
+      {
+        "file": "current-main-legacy-runtime-artwork.png",
+        "bytes": 28683,
+        "width": 1024,
+        "height": 1024,
+        "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e"
+      }
+    ],
+    "visualReview": "Actual closed-before/running/closed-after and mac15 Quit PNGs viewed. Same tile/scale; mac15 running internal logo shading appears flatter. No pixel-identical lifecycle claim.",
+    "driverFileHashes": [
+      {
+        "os": "15",
+        "path": ".github/scripts/mac-dock-capture.mjs",
+        "sha256": "83b63cdf725f2590196b5babda1c24b423076d1087c1eb79686d7090db93e935"
+      },
+      {
+        "os": "15",
+        "path": ".github/scripts/mac-dock-lifecycle.swift",
+        "sha256": "63f3655df7404aee8e5c72ba895200cee0c1ba8b8812b86a427cfc9f6f0e79b4"
+      },
+      {
+        "os": "15",
+        "path": ".github/workflows/mac-dock-capture.yml",
+        "sha256": "a9aaf6669e524ab263fb454a2d745a77d56ae2825ed018b30b949ddbb56bf458"
+      }
+    ]
+  },
+  {
+    "os": "26",
+    "zipSha256": "ed564130b7f41d09ebec56df189ddb5ddb70fb1d52e5477cf9ad2221c557bd01",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+    "driver": "b7cfab55d5896d57704cbf3fc4d1cf9c65a1929b",
+    "driverTree": "803e609fe2e44dd40e07d0c288b41bacf0025a05",
+    "run": "38162333002",
+    "normalQuit": {
+      "forceUsed": false,
+      "normalRequest": true,
+      "pid": 39108,
+      "terminated": true
+    },
+    "restoredKeys": [
+      "persistent-apps",
+      "show-recents",
+      "autohide",
+      "tilesize",
+      "magnification",
+      "orientation"
+    ],
+    "coreUnchanged": true,
+    "images": [
+      {
+        "file": "current-main-closed-before-launch.png",
+        "bytes": 68094,
+        "width": 1024,
+        "height": 768,
+        "sha256": "fd6efa51748d22d500aa35a70b453356e558fa76732c6ccd97fc6eba530ea8b9"
+      },
+      {
+        "file": "current-main-running.png",
+        "bytes": 117529,
+        "width": 1024,
+        "height": 768,
+        "sha256": "714891087e91683b50a424feeb7609752f529eaedb97738c64c69b9d47ba5412"
+      },
+      {
+        "file": "current-main-closed-after-quit.png",
+        "bytes": 67958,
+        "width": 1024,
+        "height": 768,
+        "sha256": "bdd446b7f2f020ae52b0a219eeb604e64433082693f2f9c7cfeda180fe4b3535"
+      },
+      {
+        "file": "original-author-bundle-artwork.png",
+        "bytes": 51503,
+        "width": 1024,
+        "height": 1024,
+        "sha256": "e032ded8d7cf6fb282ebdee02cc1e87cdc4b36124c1146a66fc5edee21c322a7"
+      },
+      {
+        "file": "current-main-legacy-bundle-artwork.png",
+        "bytes": 61823,
+        "width": 1024,
+        "height": 1024,
+        "sha256": "a835c56773f4be193434f071c4369b3b4fc60a323705c89efe4e6c491eed8911"
+      },
+      {
+        "file": "current-main-legacy-runtime-artwork.png",
+        "bytes": 28683,
+        "width": 1024,
+        "height": 1024,
+        "sha256": "ac23822916319901b1639be7f13fd51a9587b1064fd4d1f048e7b0b967c2e16e"
+      }
+    ],
+    "visualReview": "Actual closed-before/running/closed-after and mac15 Quit PNGs viewed. Same tile/scale; mac15 running internal logo shading appears flatter. No pixel-identical lifecycle claim.",
+    "driverFileHashes": [
+      {
+        "os": "26",
+        "path": ".github/scripts/mac-dock-capture.mjs",
+        "sha256": "83b63cdf725f2590196b5babda1c24b423076d1087c1eb79686d7090db93e935"
+      },
+      {
+        "os": "26",
+        "path": ".github/scripts/mac-dock-lifecycle.swift",
+        "sha256": "63f3655df7404aee8e5c72ba895200cee0c1ba8b8812b86a427cfc9f6f0e79b4"
+      },
+      {
+        "os": "26",
+        "path": ".github/workflows/mac-dock-capture.yml",
+        "sha256": "a9aaf6669e524ab263fb454a2d745a77d56ae2825ed018b30b949ddbb56bf458"
+      }
+    ]
+  }
+]
