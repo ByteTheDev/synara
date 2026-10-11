@@ -2,6 +2,7 @@ import type { ProviderModelCatalog } from "~/hooks/useProviderModelCatalog";
 import { resolveRuntimeModelDescriptor } from "./runtimeModelCapabilities";
 import {
   ModelSelection,
+  CommandId,
   type OrchestrationStartParallelRunInput,
   type ProviderKind,
   type ModelSlug,
@@ -14,9 +15,13 @@ import { Schema } from "effect";
 import { useMemo, useState } from "react";
 import { ensureNativeApi } from "~/nativeApi";
 import { useStore } from "~/store";
+import { useComposerDraftStore } from "~/composerDraftStore";
+import { useTemporaryThreadStore } from "~/temporaryThreadStore";
 
 import type { Thread, Project } from "~/types";
 import { newCommandId, newMessageId, newThreadId } from "~/lib/utils";
+import { promoteThreadCreate } from "~/lib/threadCreatePromotion";
+import { buildDraftThreadRenameCreateInput } from "~/lib/threadRename";
 import {
   parallelAttemptSettled,
   parallelComparisonPrompt,
@@ -60,6 +65,10 @@ export function ParallelRunsControl(props: {
     props.selection,
   ]);
   const [request, setRequest] = useState<OrchestrationStartParallelRunInput | null>(null);
+  const [sourcePromotion, setSourcePromotion] = useState<Extract<
+    ClientOrchestrationCommand,
+    { type: "thread.create" }
+  > | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const summaries = useStore((state) => state.sidebarThreadSummaryById);
@@ -125,9 +134,23 @@ export function ParallelRunsControl(props: {
         attempts: selections,
       };
       setRequest(input);
+      const source = sourcePromotion ?? {
+        ...buildDraftThreadRenameCreateInput(props.thread),
+        type: "thread.create" as const,
+        commandId: CommandId.makeUnsafe(`parallel:${input.runId}:source`),
+        threadId: props.thread.id,
+        title: props.thread.title,
+      };
+      setSourcePromotion(source);
+      const drafts = useComposerDraftStore.getState();
+      if (drafts.draftThreadsByThreadId[props.thread.id])
+        drafts.setDraftThreadContext(props.thread.id, { isTemporary: false });
+      useTemporaryThreadStore.getState().clearTemporaryThread(props.thread.id);
+      await promoteThreadCreate(source, ensureNativeApi());
       const result = await ensureNativeApi().orchestration.startParallelRun(input);
       setOpen(false);
       setRequest(null);
+      setSourcePromotion(null);
       props.onNavigate(result.threadIds[0]!);
     });
   const compare = () =>
@@ -208,7 +231,7 @@ export function ParallelRunsControl(props: {
           <DialogDescription>
             {runId
               ? "Inspect each answer and its changes from the common base. Keeping an attempt archives the other conversations and preserves their branches and worktrees."
-              : "Choose two or three attempts. Each gets an independent thread and worktree from the same commit. Uncommitted source changes are excluded. The source thread’s access mode applies to every attempt. Providers without Auto support use approval mode."}
+              : "Choose two or three attempts. Each gets an independent thread and worktree from the same commit. Uncommitted source changes are excluded. The source conversation is kept for launch recovery. Its access mode applies to every attempt. Providers without Auto support use approval mode."}
           </DialogDescription>
           {runId ? (
             <div className="grid gap-3 overflow-auto p-4 text-ui sm:grid-cols-3">
@@ -219,7 +242,10 @@ export function ParallelRunsControl(props: {
                   </h3>
                   <p className="break-all text-ui-xs text-muted-foreground">{attempt.branch}</p>
                   <p>
-                    {attempt.archivedAt ? "Archived" : (attempt.latestTurn?.state ?? "Starting")}
+                    {attempt.archivedAt
+                      ? "Archived"
+                      : (attempt.latestTurn?.state ??
+                        (attempt.session?.status === "error" ? "Failed to start" : "Starting"))}
                   </p>
                   <pre className="max-h-64 overflow-auto whitespace-pre-wrap font-sans">
                     {details.data?.[index]?.thread?.messages.findLast(

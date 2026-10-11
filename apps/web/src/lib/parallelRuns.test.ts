@@ -100,3 +100,14 @@ it("keeps provider answers and repository paths inside the untrusted reference e
   const json = prompt.split("<parallel_attempts>\n")[1]!.split("\n</parallel_attempts>")[0]!;
   expect(JSON.parse(json).attempts[0]).toMatchObject({ branch: injected, answer: injected });
 });
+
+it("settles a failed provider start without treating an unknown or active attempt as settled", () => {
+  expect(parallelAttemptSettled({ latestTurn: null, session: { status: "error" } })).toBe(true);
+  expect(parallelAttemptSettled({ latestTurn: null, session: null })).toBe(false);
+  expect(
+    parallelAttemptSettled({
+      latestTurn: null,
+      session: { status: "error", activeTurnId: "turn" },
+    }),
+  ).toBe(false);
+});

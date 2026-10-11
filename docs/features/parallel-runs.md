@@ -37,3 +37,5 @@ a new run after an error preserves any attempts that were already created.
 
 The first version is bounded to three attempts. Automatic judging and automatic
 branch merging remain outside this feature.
+
+Launching from a new draft saves that source conversation before staging attempts and keeps it available for launch recovery. It does not start a provider turn on the source.

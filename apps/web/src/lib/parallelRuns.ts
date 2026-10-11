@@ -7,8 +7,8 @@ export function parallelAttemptSettled(thread: {
   session: { activeTurnId?: unknown; status: string } | null;
 }): boolean {
   return (
-    thread.latestTurn !== null &&
-    thread.latestTurn.state !== "running" &&
+    ((thread.latestTurn !== null && thread.latestTurn.state !== "running") ||
+      (thread.latestTurn === null && thread.session?.status === "error")) &&
     !thread.session?.activeTurnId &&
     thread.session?.status !== "starting" &&
     thread.session?.status !== "connecting" &&
