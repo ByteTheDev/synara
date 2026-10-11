@@ -1,0 +1,14 @@
+{
+  "source": {
+    "head": "e0dc656efd9f6b4e45999f7925d9122eadba1c06",
+    "tree": "758d4b075cf1ba9313518f540a1c1fe0922970fa"
+  },
+  "testPath": "apps/server/src/provider/Layers/WorkerEnvironment.native.test.ts",
+  "fixtureBlob": "fd89e1ed9993b6e7b1a811d37d0f3811b3529f28",
+  "fixtureSha256": "8f5fdece0fa514c9dbbc3c0b4904b69a22b944c2acc3fbc7a4dc7f8ef6756264",
+  "productionBlobs": {
+    "apps/server/src/platform/windowsProcessSnapshot.ts": "a9008e37f709a97cc06e790101a455a6180a9dee",
+    "apps/server/src/platform/supervisedProcessTeardown.ts": "eac9e1e5a9276d6b033d71b27ec44ee6618a8aea",
+    "apps/server/src/provider/opencodeRuntime.ts": "ae0ac7cf49aefe2fc081ef930d5b6b23943d064b"
+  }
+}

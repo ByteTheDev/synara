@@ -1,0 +1,63 @@
+name: Windows process observer environment diagnostic
+on:
+  push:
+    branches: [codex/runtime-windows-worker-env-20261011]
+    paths:
+      - .github/workflows/windows-worker-env.yml
+      - .github/scripts/windows-worker-env/**
+permissions:
+  contents: read
+concurrency:
+  group: windows-worker-env-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  observe:
+    name: Actual worker with ${{ matrix.environment }} environment
+    runs-on: windows-2022
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [minimal, platform]
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
+      WORKER_ENV_MODE: ${{ matrix.environment }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: e0dc656efd9f6b4e45999f7925d9122eadba1c06
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          path: driver
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Install exact source dependencies using canonical serialized lifecycles
+        working-directory: source
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+          BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/bun-install-cache
+        run: bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1
+      - name: Observe original worker policies and bounded raw query
+        run: node driver/.github/scripts/windows-worker-env/runner.mjs
+      - name: Retain exact outcomes including unavailable snapshots and observer failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-worker-env-${{ matrix.environment }}-${{ github.sha }}
+          path: ${{ runner.temp }}/windows-worker-env-evidence/
+          if-no-files-found: error
+          retention-days: 30
