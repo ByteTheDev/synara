@@ -1,0 +1,19 @@
+{
+  "source": {
+    "head": "e0dc656efd9f6b4e45999f7925d9122eadba1c06",
+    "tree": "758d4b075cf1ba9313518f540a1c1fe0922970fa"
+  },
+  "probePath": "apps/server/src/platform/WorkerRuntime.probe.ts",
+  "productionBlobs": {
+    "apps/server/src/platform/windowsProcessSnapshot.ts": "a9008e37f709a97cc06e790101a455a6180a9dee",
+    "packages/shared/src/processRuntime.ts": "fa4eb044a4a2059de4f9e4ff179482955df9cd90",
+    "packages/shared/src/platformEnvironment.ts": "4a6fa2cbab9369c55b4267b0ce51c55a764388ec",
+    "packages/shared/src/platformProcess.ts": "ba2655a9495622d56077f86721ea1c215560fa47",
+    "packages/shared/src/processSpawnOutcome.ts": "08c5ba8267f859e998a89760ec9bad88c9aec5de",
+    "packages/shared/src/executable.ts": "46b027390492f8e398723ca56dd7a1d3f5f5347d",
+    "packages/shared/src/windowsProcess.ts": "affb2b34a50bbd034603ab609022001627ee528e"
+  },
+  "probeBlob": "339d3de264ac99cf7a246280a2c26cec138428b6",
+  "probeSha256": "fae3c386b2905e05f6e0760b7b865f67f1f5dfe8ca701d8242e778281560f2e6",
+  "bundleSha256": "1f2706a50555136c7477b9ececaea323cf826b1b2711c33cb4b418a755775f34"
+}

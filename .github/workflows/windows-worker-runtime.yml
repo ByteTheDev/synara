@@ -1,0 +1,57 @@
+name: Windows production worker runtime diagnostic
+on:
+  push:
+    branches: [codex/runtime-windows-worker-runtime-20261011]
+    paths:
+      - .github/workflows/windows-worker-runtime.yml
+      - .github/scripts/windows-worker-runtime/**
+permissions:
+  contents: read
+concurrency:
+  group: windows-worker-runtime-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  observe:
+    name: Exact production worker under ${{ matrix.runtime }}
+    runs-on: windows-2022
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [node, bun]
+    env:
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: core.eol
+      GIT_CONFIG_VALUE_1: lf
+      WORKER_RUNTIME: ${{ matrix.runtime }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: e0dc656efd9f6b4e45999f7925d9122eadba1c06
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          path: driver
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Bundle exact source and retain every actual worker outcome
+        run: node driver/.github/scripts/windows-worker-runtime/runner.mjs
+      - name: Retain genuine worker failures, cache observation and source guards
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-worker-runtime-${{ matrix.runtime }}-${{ github.sha }}
+          path: ${{ runner.temp }}/windows-worker-runtime-evidence/
+          if-no-files-found: error
+          retention-days: 30
