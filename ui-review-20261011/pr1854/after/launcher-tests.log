@@ -1,0 +1,2 @@
+$ vitest run --passWithNoTests scripts/electron-launcher.test.mjs "--reporter=json" "--outputFile=/Users/runner/work/_temp/source-icon-after-live-tests.json"
+JSON report written to /Users/runner/work/_temp/source-icon-after-live-tests.json

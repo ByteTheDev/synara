@@ -1,0 +1,17 @@
+{
+  "label": "driver-blob",
+  "executable": "git",
+  "args": [
+    "rev-parse",
+    "HEAD:scripts/source-icon-evidence.mjs"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/driver",
+  "startedAt": "2026-10-11T22:48:15.926Z",
+  "finishedAt": "2026-10-11T22:48:15.935Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "98dd3a6410157696b84a0386446eaac75d240803\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

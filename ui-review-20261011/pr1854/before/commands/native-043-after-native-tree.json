@@ -1,0 +1,17 @@
+{
+  "label": "after-native-tree",
+  "executable": "git",
+  "args": [
+    "rev-parse",
+    "HEAD^{tree}"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:49:28.915Z",
+  "finishedAt": "2026-10-11T22:49:28.940Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "81b2ce105b3362e1266bb15916e0b16633f3843d\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

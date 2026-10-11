@@ -1,0 +1,18 @@
+{
+  "label": "after-install-status",
+  "executable": "git",
+  "args": [
+    "status",
+    "--porcelain=v1",
+    "--untracked-files=all"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:19.625Z",
+  "finishedAt": "2026-10-11T22:48:20.048Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

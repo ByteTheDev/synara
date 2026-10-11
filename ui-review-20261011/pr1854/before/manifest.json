@@ -1,0 +1,565 @@
+{
+  "phase": "before",
+  "source": {
+    "commit": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "launcher": "c59a7f91980637387c744344673f1a178eab3b7f",
+    "test": "12725b08fcdd54a5397385203952529363693770",
+    "catalog": "assets/prod/Synara.icon"
+  },
+  "complete": true,
+  "files": [
+    {
+      "path": "driver-source-icon-render.swift",
+      "bytes": 3638,
+      "sha256": "c5db4f2926af264c36a7394c068dec1512d77c7045acff72deda3f2dd9b17df3",
+      "gitBlob": "1a0d885efc1b2ff27be75a3a5b733c26f999c93d"
+    },
+    {
+      "path": "bundle-plist.json",
+      "bytes": 1838,
+      "sha256": "1c62b1f132c7370367b0c2bacccc48ca55b9e58df55665e75e12adefd4c4142c",
+      "gitBlob": "8783eebaae40aed4b8a03f86ae04ef5d2fcaa4fd"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 2952,
+      "sha256": "e0f61d7845a3be3bbf9fc1c014c28ac07467f7a842fa42943d29ef89c207a805",
+      "gitBlob": "3c5c39df6db0c9c29181768c10f8ea3d8fd9abd4"
+    },
+    {
+      "path": "source-after-native.json",
+      "bytes": 148,
+      "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+      "gitBlob": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+    },
+    {
+      "path": "native-preflight.json",
+      "bytes": 78,
+      "sha256": "d46f06e7fcae5f7b8216d6f0962eb6c9571a19b045418929bb79f85edc9d2384",
+      "gitBlob": "ab54fbac6624ec776f361b924fafa7cd671bcda0"
+    },
+    {
+      "path": "source-bundle-icon.png",
+      "bytes": 144303,
+      "sha256": "e765977c20f5848d4453b564421bc82f1bea4022c9bdf8c078768db2560eccb8",
+      "gitBlob": "b02f18c4b3dbef3d968adef1f73d2261bc6edfb1"
+    },
+    {
+      "path": "appkit-render.json",
+      "bytes": 399,
+      "sha256": "96d9fda57dc9f365c3667a839ff08eae6a61dc314d05554319037910ca8a5a8f",
+      "gitBlob": "c34b23c48b12ee85fe2768c3cd601203966f6684"
+    },
+    {
+      "path": "source-before-native.json",
+      "bytes": 148,
+      "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+      "gitBlob": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+    },
+    {
+      "path": "source-prepare.json",
+      "bytes": 148,
+      "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+      "gitBlob": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 159,
+      "sha256": "33d4f7e7747012180991202de6052f0a9ed672a3ff4f35a88b6e3f5c64e0c653",
+      "gitBlob": "0017c2481f4b1920ce898aefc098497e4b560d5c"
+    },
+    {
+      "path": "driver-source-icon-evidence.mjs",
+      "bytes": 16685,
+      "sha256": "83a6638aedfad504113248439c93cf419798f46f3a49953c3cb6df0bf16d9597",
+      "gitBlob": "98dd3a6410157696b84a0386446eaac75d240803"
+    },
+    {
+      "path": "launcher-metadata.json",
+      "bytes": 399,
+      "sha256": "84538be808b843651eb9e445c99517035cb4605a8de2f1a4da1edae786d0ac36",
+      "gitBlob": "9f9592ea85bedc3f68e808d1cb8e675778295e9b"
+    },
+    {
+      "path": "native.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "native-result.json",
+      "bytes": 12950,
+      "sha256": "9a227996c405287d34b50f231af89cf3c8af0665467815c07ef4bfc996a3e0b4",
+      "gitBlob": "ac881b0e4d7c03be5591624031b5ee82464fa96b"
+    },
+    {
+      "path": "source-after-install.json",
+      "bytes": 148,
+      "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+      "gitBlob": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+    },
+    {
+      "path": "driver-source-icon-evidence.md",
+      "bytes": 3134,
+      "sha256": "1b3eb37a9ef4245e9ef7bb17304519172a4eb93e2fe3b167c9aa1d8e82221b34",
+      "gitBlob": "cd29110ea21905489b37075aba85cdca063fa930"
+    },
+    {
+      "path": "commands/native-004-before-native-diff.json",
+      "bytes": 443,
+      "sha256": "c6a7f8a078f5754756125dd930777f774e27e984c0ee4a3e9726cf79985427ca",
+      "gitBlob": "6120f866d255d7ddc5cd6281aaccc4ad7570f373"
+    },
+    {
+      "path": "commands/native-006-driver-blob.json",
+      "bytes": 487,
+      "sha256": "b9cb6230f37a66b2ca51abbb7c6b1a657201666d79c55468c3ab94370860f95e",
+      "gitBlob": "214f9eeced19daeffbd9846cf24f85e79f3ddf62"
+    },
+    {
+      "path": "commands/native-002-before-native-tree.json",
+      "bytes": 468,
+      "sha256": "7f8baf16b01c0470a82b2a85696a3f82b038cb3d050bec8a7b92ed08f1fe22ff",
+      "gitBlob": "4e71d34112b5d78032bb3a898060b39141f6cc18"
+    },
+    {
+      "path": "commands/native-038-verify-generated-signature.json",
+      "bytes": 552,
+      "sha256": "380550665c23ebd449e70f09ea5ffd8b25fc6850720821ed347516766312b00e",
+      "gitBlob": "fbf586284019024c28a409943e0b7cb38a563200"
+    },
+    {
+      "path": "commands/native-044-after-native-status.json",
+      "bytes": 456,
+      "sha256": "1ca148f71f9000514e27bd5c4f0fd2569a9e10334ebe8cd499be67fbaf3c37a0",
+      "gitBlob": "cafdda0cc219885a72cfeb0a017dba3e2f2cd2d3"
+    },
+    {
+      "path": "commands/native-017-launcher-native.json",
+      "bytes": 755,
+      "sha256": "ca5e68a061424629506e6c766ea7be2e4d83f06b72461a77c319f963c08a33ba",
+      "gitBlob": "aa286f9a10914c3c6add397cbb90a47273691787"
+    },
+    {
+      "path": "commands/native-037-bundle-plist.json",
+      "bytes": 2338,
+      "sha256": "6e53faf69a1bc5ab381409f629b2d18a27165c16619510e90f75aed6feff6828",
+      "gitBlob": "2f42ab289d9be675efa7ebba82c2db7efdfb8b7e"
+    },
+    {
+      "path": "commands/native-012-launcher-native.json",
+      "bytes": 604,
+      "sha256": "d0be5ac998c6cf42431793fb677f747c259b2daac36b79dd6bdb158fee999d44",
+      "gitBlob": "d833b69d4ee9c0cd4c5ae80bdbd854c22c3039f2"
+    },
+    {
+      "path": "commands/finalize-003-final-status.json",
+      "bytes": 449,
+      "sha256": "c1ec2e458eb1ffa334fdd34c2e7f5678fcd1a9b77b680b8ff733783fea5f33de",
+      "gitBlob": "36208ec75cb777cac625f49e2cc91d0a74af0629"
+    },
+    {
+      "path": "commands/prepare-005-driver-head.json",
+      "bytes": 454,
+      "sha256": "0ab9325a12760cd643e8aa7711428371807b6b16931b230a6aabf69e77abf13b",
+      "gitBlob": "717ae6b3252b386f870dbd1c0a8851dcd62d0553"
+    },
+    {
+      "path": "commands/native-025-launcher-native.json",
+      "bytes": 639,
+      "sha256": "522149e4a25baeee62751c0cfaaa98b16509841f9acc39875340de62f325eefb",
+      "gitBlob": "6084381a3d7727e01c665562c5c46d36cf544510"
+    },
+    {
+      "path": "commands/native-018-launcher-native.json",
+      "bytes": 693,
+      "sha256": "e25da4eedc16f832bbaf6ad6d87b69d446f95b7b548eda7be45d2ca33df58d11",
+      "gitBlob": "8e4e78b4f9dc5ac8d8faf842440c3342b8f87a36"
+    },
+    {
+      "path": "commands/native-020-launcher-native.json",
+      "bytes": 573,
+      "sha256": "7a3df56a8da8004e347765b8153d1d4e7b16fd698bb9be65b160f0b949df7fd7",
+      "gitBlob": "71f5cc22413a686d15997658411889b88a6ff128"
+    },
+    {
+      "path": "commands/prepare-003-prepare-status.json",
+      "bytes": 451,
+      "sha256": "28c2898c5981f115084dea438e526f5ca5c7b864fd0994b523a5df6ff4715f43",
+      "gitBlob": "d4df24c31d6158f5aff5a5a1472f14cb79f854d5"
+    },
+    {
+      "path": "commands/prepare-004-prepare-diff.json",
+      "bytes": 437,
+      "sha256": "814d2961a14c178604bb62e592a693f555e71f8a9e10ead0dfe9604ad912a1fa",
+      "gitBlob": "cfed6cd532744adc8d5d236a2797a56ae4c51f17"
+    },
+    {
+      "path": "commands/finalize-005-driver-head.json",
+      "bytes": 454,
+      "sha256": "c2e7a4bb108e15ef2c053f9047fc6ffaed5ab177d2b72ad49b6ae32f026cda7a",
+      "gitBlob": "6029a0a4b2837f678fbc7238d5e129b14ff0cbbf"
+    },
+    {
+      "path": "commands/native-032-launcher-native.json",
+      "bytes": 648,
+      "sha256": "8aed06ec6eb49a65df8f4ddde207a510842fe5bb4e131f39fcc84684f6fb3018",
+      "gitBlob": "b3d176a28a3b7bc7e46625faf70dbfd027f8c548"
+    },
+    {
+      "path": "commands/finalize-001-final-head.json",
+      "bytes": 453,
+      "sha256": "395788bd387027c0a221bbf3e33d2326f50d73e63dafdae0a985e8e3829bfd6c",
+      "gitBlob": "3949cf918d436414fd977464e1e91db01f3df0c8"
+    },
+    {
+      "path": "commands/native-042-after-native-head.json",
+      "bytes": 460,
+      "sha256": "3e529930ec7671afb79a7363c0c0b3ee5ce2e87b372f2a7e93a5c1eb51d0aa10",
+      "gitBlob": "707a47468b0cc706162573cfabe6d9cb4f971914"
+    },
+    {
+      "path": "commands/native-009-driver-blob.json",
+      "bytes": 497,
+      "sha256": "6a9a3e519980c1d44dc28200147e44f970f708e3823535fb0f07db809ba77b3f",
+      "gitBlob": "3ddebeffe9f6a9cd496fa8adf91805860f7cba28"
+    },
+    {
+      "path": "commands/guard-003-after-install-status.json",
+      "bytes": 457,
+      "sha256": "e5f5a2fc3e1c0289fe0dd97aa67ad10678efc175aee824e8540dfd52570fff9d",
+      "gitBlob": "8a5f3fc1f5637a306bcc5736ede59ea5f5b787e5"
+    },
+    {
+      "path": "commands/finalize-002-final-tree.json",
+      "bytes": 460,
+      "sha256": "666abe2f6d4d299cf6ff1d650281b78502525aac95d39fcb2c96b1ada15fac52",
+      "gitBlob": "68019c63a99d53b6175f8cfab4de3e47888f48b7"
+    },
+    {
+      "path": "commands/guard-002-after-install-tree.json",
+      "bytes": 468,
+      "sha256": "9bc5033e989fef1ba9d9e8c1411d70962e998a6569289e88f8b19531c60c2d1d",
+      "gitBlob": "1fa0b402f5baecddeab615924ff06a511ad14b9a"
+    },
+    {
+      "path": "commands/guard-004-after-install-diff.json",
+      "bytes": 443,
+      "sha256": "0fed4e31a0edf62b3ecb562d4b2d62ce45955f7451d9a8e718a93621ee8c092b",
+      "gitBlob": "2bcb6db38cfc45d3c96f9e87259c71a4d5ebd933"
+    },
+    {
+      "path": "commands/prepare-011-node-version.json",
+      "bytes": 412,
+      "sha256": "def73d9000a360185671f5d300fd9e339b74192c46e9ee705325aedbf6d310f6",
+      "gitBlob": "8bd7cf26da87908daac232712c73617e5c413e41"
+    },
+    {
+      "path": "commands/native-024-launcher-native.json",
+      "bytes": 646,
+      "sha256": "280802c74693bb245258450b1a83628b14b1bc0e0e8ec3827f45892b03c668e6",
+      "gitBlob": "263ad114e9964deaf47df8df512bf36e10040676"
+    },
+    {
+      "path": "commands/native-021-launcher-native.json",
+      "bytes": 650,
+      "sha256": "cd389d094a28d7b79aded119cba10a5b96ea7a9fd0c958f72889c9210a1ded53",
+      "gitBlob": "9b0f5a1cd3e7ce02f86121d05e574fbbc68bf387"
+    },
+    {
+      "path": "commands/native-039-describe-generated-signature.json",
+      "bytes": 1494,
+      "sha256": "c7e9ee4a91466808a7fde6a49e80e68f1e5128b4de2115e107755d8545e1b927",
+      "gitBlob": "4e72d1b8e4beae0948ab4a4e0f537067741219e4"
+    },
+    {
+      "path": "commands/native-007-driver-blob.json",
+      "bytes": 487,
+      "sha256": "a838311812fc92d4e434bafc1f5677b7f09e89a4cc53c4a889124e2e9e3ac400",
+      "gitBlob": "831902f2d4b3ec1feea8de3cf6c0120844226076"
+    },
+    {
+      "path": "commands/native-019-launcher-native.json",
+      "bytes": 1302,
+      "sha256": "baa2e2e3e0f9a7fc7e63ca77843fe6dee3a28a8e69ae2a22ba3ead362aee58e1",
+      "gitBlob": "5b5edf3832bd50b930fb490fbd7ef128548d52b3"
+    },
+    {
+      "path": "commands/native-016-launcher-native.json",
+      "bytes": 576,
+      "sha256": "c36d7fca27f68e8b4d997cbdc085083c66f2f2f87b5a6ccc2f4f8d8929fef2c4",
+      "gitBlob": "19f3115066f9142b08d697e611774ad2356e3a98"
+    },
+    {
+      "path": "commands/native-013-launcher-native.json",
+      "bytes": 581,
+      "sha256": "bf2f3246ac0cddcc5190529ce066ef2e09e73b3a84def812019e82662528df0e",
+      "gitBlob": "00691fa394c0a67c4d01325313156e83313f34d2"
+    },
+    {
+      "path": "commands/native-003-before-native-status.json",
+      "bytes": 457,
+      "sha256": "e360613c7e3869a0d93e43b7ea472afdb48011b764f5cf408a5c974efb12bb6b",
+      "gitBlob": "9fea3246f3ad14eaf9be3343645bc66e9a233d8b"
+    },
+    {
+      "path": "commands/native-045-after-native-diff.json",
+      "bytes": 442,
+      "sha256": "8fdaa4339fd6031b1201f3a8d262cf264d48292030e5964d21180918b2be3b34",
+      "gitBlob": "e91ef9a52e8bf682c6091909be1c820564f49070"
+    },
+    {
+      "path": "commands/native-008-driver-blob.json",
+      "bytes": 486,
+      "sha256": "55554460f6354da1ce408e223884a3a3d11f2994ce33dced95b4044736531223",
+      "gitBlob": "4ef2e32d5148456e6552d5e6be58b5aef27ac9b0"
+    },
+    {
+      "path": "commands/prepare-001-prepare-head.json",
+      "bytes": 455,
+      "sha256": "ad561c67e3dba58438cfc7e2b07697b40538249181360cad8e5562b54c99971e",
+      "gitBlob": "afb1706891f03cd85cab8007b00166e3911b3b98"
+    },
+    {
+      "path": "commands/native-040-render-actual-bundle-icon.json",
+      "bytes": 708,
+      "sha256": "eff477dd1af8caeca022ee3ad5ae0666683d83e03107f111d9eab2a2ade3fd89",
+      "gitBlob": "06019fa3f870dd16985ac29a720e770a5d986188"
+    },
+    {
+      "path": "commands/prepare-013-xcode-version.json",
+      "bytes": 442,
+      "sha256": "1c9cd0f726957450cfa2f9c5a9ed2fef290de1f5df840d2551f47a84d1b3e266",
+      "gitBlob": "f7f42551738eb4ab152308151102c45930b200ac"
+    },
+    {
+      "path": "commands/native-033-launcher-native.json",
+      "bytes": 689,
+      "sha256": "fc15a6e1e218f2a0fb980ca6a6392af88a4f213629a3bba25e32f2f78d2f8e23",
+      "gitBlob": "a743fd746b1a2b7785638e5376ee6dca1338d433"
+    },
+    {
+      "path": "commands/native-011-native-preflight.json",
+      "bytes": 537,
+      "sha256": "3fabb2ad36ed65c30bdcd6e17dadc82197461da059ae30f6527529249c39ce2f",
+      "gitBlob": "7fc856f9b6449943e2cae45bb411987d2ca1aa87"
+    },
+    {
+      "path": "commands/native-036-launcher-native.json",
+      "bytes": 624,
+      "sha256": "26e4b293b4c32b87d0f0225456a43fb7b7cdf803ecf65b5abe72a3185d43c941",
+      "gitBlob": "181edecb07e66845941d798f5070e2cbf84fd961"
+    },
+    {
+      "path": "commands/native-035-launcher-native.json",
+      "bytes": 740,
+      "sha256": "e82b41c5d87b66e2cfa7403cbd3bb2930975ab27a240b4a64a8d9fc9d2767539",
+      "gitBlob": "75cbfaa798ac7f30e8c0a85717a26df796b5f49e"
+    },
+    {
+      "path": "commands/finalize-004-final-diff.json",
+      "bytes": 435,
+      "sha256": "a53f87d422306247ac70e83e37e1875ce0007e214ab53f952a7e3a7744f4f7c3",
+      "gitBlob": "3be71bc9d12b80a740fce9817087a41901234afc"
+    },
+    {
+      "path": "commands/native-030-launcher-native.json",
+      "bytes": 628,
+      "sha256": "3e863ea98f1c5129b9a0162d62685dfb9ae68ff56afb3368fbd859cf452f109f",
+      "gitBlob": "bd47946608f6953b798bfabf669781eaa3652511"
+    },
+    {
+      "path": "commands/prepare-007-driver-blob.json",
+      "bytes": 487,
+      "sha256": "6ce8f71138527cc41cb24421746e160d3ec57be25c8a34d023458f05bd44126c",
+      "gitBlob": "eb6938e6e2ff8e4abf0b1d9b024005915095bb62"
+    },
+    {
+      "path": "commands/finalize-008-driver-blob.json",
+      "bytes": 486,
+      "sha256": "27344992c000644f7ef3649eff80f9385890ef1055ddeab656549c308722d630",
+      "gitBlob": "662c35686f26ac039f180479f18c4fe3cf5f72a5"
+    },
+    {
+      "path": "commands/prepare-010-catalog-inventory.json",
+      "bytes": 765,
+      "sha256": "24b66d45172910a542012c1cd08ae58a2a29fc220474eebbe02e17ecd4838aab",
+      "gitBlob": "ff66ba6cd7e6312bad8a0cb3ad12f8bf260fe054"
+    },
+    {
+      "path": "commands/prepare-008-driver-blob.json",
+      "bytes": 486,
+      "sha256": "56ba409780375ed151e29498e948887c7ffaa6dbef07968dd692371dcc1948fb",
+      "gitBlob": "9973dc224a3a6647fdf50fd45ae2c1958a9660bd"
+    },
+    {
+      "path": "commands/native-028-launcher-native.json",
+      "bytes": 633,
+      "sha256": "9bec434398d6582d541c80df5055c658f79b4ac8893e684fc1de8bd5d00abea8",
+      "gitBlob": "8e952e7d29ee3326b2c45b6da2138532185605f8"
+    },
+    {
+      "path": "commands/native-015-launcher-native.json",
+      "bytes": 601,
+      "sha256": "8b96ecbedba651a7351151c6b3ea75a02a744f8e3f77301168cd6c6c4a3e04a5",
+      "gitBlob": "56d2164060a7f27a41f8c339acfcc8547aca2c4c"
+    },
+    {
+      "path": "commands/prepare-012-system-version.json",
+      "bytes": 471,
+      "sha256": "e5d03392714cd650e60a6e6f20ed3fcd08c5eba7970e1bacb94c0b08299bdf8a",
+      "gitBlob": "942b0f877dad8a641ac94df5e349337d90204aae"
+    },
+    {
+      "path": "commands/native-022-launcher-native.json",
+      "bytes": 643,
+      "sha256": "bd5ccd09995481e163be2f89bf144e79710485d30669b436b6bf9085288cc631",
+      "gitBlob": "61bdfac791dd60d1c49cd407bca5190997f63742"
+    },
+    {
+      "path": "commands/native-041-unregister-owned-bundle.json",
+      "bytes": 622,
+      "sha256": "6c515761aa3e28bf59311795cac4e88dbb17340382599e849cd6de750033343a",
+      "gitBlob": "8dbd8e3da2ab5c4cdce906df7fc3e5820637c0e4"
+    },
+    {
+      "path": "commands/prepare-002-prepare-tree.json",
+      "bytes": 462,
+      "sha256": "1be2a0980afbeef572b8d721434998925c60f9844fce6b75dcc1812d3b4052a6",
+      "gitBlob": "84923734e8433f853070505a984190c5c03cfd3e"
+    },
+    {
+      "path": "commands/native-027-launcher-native.json",
+      "bytes": 640,
+      "sha256": "5c8bbeee8e052754c32caeb8894077b73ac8bd709adecfb71b121948db83da96",
+      "gitBlob": "f047e778a810526c887b733d48472114dbede8eb"
+    },
+    {
+      "path": "commands/finalize-007-driver-blob.json",
+      "bytes": 487,
+      "sha256": "8cc06b1a6e8f810bea792f636bd3f6787ce8231dd77ab94a053645cdd713134c",
+      "gitBlob": "c462495f5528af00617e3d59f8f9480432dc52d5"
+    },
+    {
+      "path": "commands/prepare-006-driver-blob.json",
+      "bytes": 487,
+      "sha256": "b143dce41603ea0d5f66c7badccac6eac10349d5637764118ec419ce30983c7d",
+      "gitBlob": "1114d9cd2a644aedb421383654275ccb13d1cfe7"
+    },
+    {
+      "path": "commands/native-001-before-native-head.json",
+      "bytes": 461,
+      "sha256": "281fd54bcf92ff5b0e065beef406f5a9d8615e2575947a0dfc3035bf7c9063d7",
+      "gitBlob": "f20b5ada4aa1a7c87562910209fcd8e53b034fe2"
+    },
+    {
+      "path": "commands/native-005-driver-head.json",
+      "bytes": 454,
+      "sha256": "976a31d798a673cb0155958d2c80b43b0eb04f2cbbf2e63ce806f234faed6b01",
+      "gitBlob": "acdc404501971925b160272902cabd55b7966acf"
+    },
+    {
+      "path": "commands/native-034-launcher-native.json",
+      "bytes": 541,
+      "sha256": "9aa6a0a9650af46ad84a122d9adfe01eca6d4e145be27ee335212dd06b1615da",
+      "gitBlob": "0e3d5f80c8a154b7aaf9073aa433fa522a66e1ad"
+    },
+    {
+      "path": "commands/finalize-009-driver-blob.json",
+      "bytes": 497,
+      "sha256": "c860d7687d2e470dc2038c144218aef43f2367380243669728b09514e747c945",
+      "gitBlob": "f74e22f5f28affbf14ed33ad6c0a4dc450c6bdba"
+    },
+    {
+      "path": "commands/native-031-launcher-native.json",
+      "bytes": 621,
+      "sha256": "e2ba4031b5ed193676065126da506dc9cfc4431dc8b044e82d373156eb1ad64d",
+      "gitBlob": "1ba2460e6ce018adec1c963ed279d0518675ad2e"
+    },
+    {
+      "path": "commands/native-010-compile-observer.json",
+      "bytes": 564,
+      "sha256": "4093ddba2e1d582e831b34b1de431020ff76507e820ef7a6e8cc45ce06e7a2cb",
+      "gitBlob": "d277b1579b4f9460b2a18d70cb749ab87ba2cdca"
+    },
+    {
+      "path": "commands/native-023-launcher-native.json",
+      "bytes": 668,
+      "sha256": "32a8fdd858f99009f68667418e09892eae0e7cc5b7281f0268c71100d669bd37",
+      "gitBlob": "39454684690740447df36494c7b1e75bda4eb361"
+    },
+    {
+      "path": "commands/native-043-after-native-tree.json",
+      "bytes": 467,
+      "sha256": "1bf32ae96843b23929a049e851cb2fe1be26d8cab09656d3b584dd8faad49f30",
+      "gitBlob": "30295a41ea6e105b8a66e85f4af201098f81f49d"
+    },
+    {
+      "path": "commands/prepare-009-driver-blob.json",
+      "bytes": 497,
+      "sha256": "570d31b2bd347a18f63abf8102f48d1d60c782687c8e040ebf024ef46e187dec",
+      "gitBlob": "578122bc195f5d9f068e279b1ec7fbc2f88055ef"
+    },
+    {
+      "path": "commands/native-026-launcher-native.json",
+      "bytes": 664,
+      "sha256": "4820d140f802f6eb2157faebe4299ee26daceeee7a5e21eddbeeda182138076b",
+      "gitBlob": "cee54e6ba0229229e4ec18c7be5d100cf9c37fae"
+    },
+    {
+      "path": "commands/native-029-launcher-native.json",
+      "bytes": 658,
+      "sha256": "7e4cee5789a049591d37e2ea1cc6f0b072bffa5a4347e3e5f99032e5c313b7d4",
+      "gitBlob": "8a60ecd821b078bf14e579589f87bcb7db82c851"
+    },
+    {
+      "path": "commands/finalize-006-driver-blob.json",
+      "bytes": 487,
+      "sha256": "d4cbc554de1ab626f9f1fbb42bc04fb50f8f2c80b4157587043f4b829f3d5d86",
+      "gitBlob": "b15ff77917ef34f6e59d13161f1dd82cace9ba38"
+    },
+    {
+      "path": "commands/guard-001-after-install-head.json",
+      "bytes": 461,
+      "sha256": "c9fdcf0fc299f44e97d24aa22f9a92759948f38ba129dd0c9f28e1618a22d9ef",
+      "gitBlob": "f40c09ee77e00404b7c9b81d5066d78351b91fbd"
+    },
+    {
+      "path": "commands/native-014-launcher-native.json",
+      "bytes": 574,
+      "sha256": "501df074f3997cde420b8f442ccbbb6c05a503dff89e5e065c752efda686c422",
+      "gitBlob": "df29ee7db9b42cab462b7e74903d575bb29343bd"
+    },
+    {
+      "path": "render-source-icon",
+      "bytes": 101856,
+      "sha256": "96f26b32e62410c54875a009cf35d706f79742bf53ad1dd60e5e7fe8a5ef81e2",
+      "gitBlob": "0e71961f6622570a148d643c440b3e5361096aa3"
+    },
+    {
+      "path": "driver-source-icon-evidence.yml",
+      "bytes": 3587,
+      "sha256": "3538fb9f35258a7763ebae5c9d4183b078fb885ba70e65ed163708d649c89af9",
+      "gitBlob": "5f177066acef621af38cc71d1122fa86feac1765"
+    },
+    {
+      "path": "electron-install.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitBlob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "install.log",
+      "bytes": 1319,
+      "sha256": "2a0014c5387a0503a94372c4a0e13c0ed4df4752630a8ebb4ad7e15070558cde",
+      "gitBlob": "cb5d0c6e98f14c78716e4c9c3a79222facddde01"
+    },
+    {
+      "path": "source-final.json",
+      "bytes": 148,
+      "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+      "gitBlob": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+    }
+  ]
+}

@@ -1,0 +1,1346 @@
+[
+  {
+    "path": "ui-review-20261011/pr1854/README.md",
+    "mode": "100644",
+    "bytes": 5790,
+    "sha256": "123fbc821d6bcceed3366ad551eb90044d6c0b679154355dabf2b2bacb7bd141",
+    "sha": "63fc5fced7b3b5b85d9cf75b8d8d9ce1e6ecc1bd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/appkit-render.json",
+    "mode": "100644",
+    "bytes": 399,
+    "sha256": "95814a2228eb193a5929005a923bcc5be634149cf80c2011f4d13433e827b96d",
+    "sha": "2e9f9aa160dbf2eac81daefe8384632c92f74689"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/bundle-plist.json",
+    "mode": "100644",
+    "bytes": 1838,
+    "sha256": "1c62b1f132c7370367b0c2bacccc48ca55b9e58df55665e75e12adefd4c4142c",
+    "sha": "8783eebaae40aed4b8a03f86ae04ef5d2fcaa4fd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/cleanup.json",
+    "mode": "100644",
+    "bytes": 159,
+    "sha256": "33d4f7e7747012180991202de6052f0a9ed672a3ff4f35a88b6e3f5c64e0c653",
+    "sha": "0017c2481f4b1920ce898aefc098497e4b560d5c"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-001-final-head.json",
+    "mode": "100644",
+    "bytes": 453,
+    "sha256": "28ced869093c75656721e2bbd81d41ba035f0464255bd2dafd51687c60da0654",
+    "sha": "a47ad098bc742a9bf498ecc8fc7f66cf75535f21"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-002-final-tree.json",
+    "mode": "100644",
+    "bytes": 460,
+    "sha256": "2a27468a9148c7afdabcdce968d8c9e4335675de0cbe6a3525c3954db2d80d49",
+    "sha": "ed1fda176d0b7f6d6fc1bb94f67dfdbdc6a6bc51"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-003-final-status.json",
+    "mode": "100644",
+    "bytes": 449,
+    "sha256": "66fd7db04b442b263e425b958e66aa8b50dd87dc0ed14fbdbe6db23894869d91",
+    "sha": "348a39977628be0608ec05ed47330ab7009bc7d3"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-004-final-diff.json",
+    "mode": "100644",
+    "bytes": 435,
+    "sha256": "d2dddc24ea0ac73d35d98ec0228da52e491118232ebf4288b157be8a905e735d",
+    "sha": "cea3fca8c152244ac791f24555940a8f9d12bd02"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-005-driver-head.json",
+    "mode": "100644",
+    "bytes": 454,
+    "sha256": "9acd9d77cae84ee7d818e8c8d9af5fc94d15fa56aeccc4643171ba6437eb3606",
+    "sha": "7b056b4457c64a37a1c8309a94a1abc330a40879"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-006-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "67559add633490aac35cc21e31372f6b6127d154b0a746ee57cf6fd9e919b08e",
+    "sha": "3493a5e704c78b2f4fd283ff4a4d9d2360d79891"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-007-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "02ade6d587eb3c4d8456c7e7b99ec2e6bed80b7a18757a1d50b2fe0b44650bfc",
+    "sha": "edc5026bcc406bf2479b47fe4b0b6ab8d4fb44bc"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-008-driver-blob.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "1dc93df682b9a48b45243c0ff21eba43098b63e48b9bf1505dd6c27e16fa2f8e",
+    "sha": "f5241cf8bbecebbf5959dac5eb18dafcf0554583"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/finalize-009-driver-blob.json",
+    "mode": "100644",
+    "bytes": 497,
+    "sha256": "61a9f34c5b9bdc17cd9c167fb094a4eb3977041757e8b1ec1ff489c4dbf26ceb",
+    "sha": "bd31cbbdb8677abfaf80ae1ba5e3253b428da84f"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/guard-001-after-install-head.json",
+    "mode": "100644",
+    "bytes": 461,
+    "sha256": "6f4ad7b6f5172729aff0a7aa0850258a4729ef6af0b574761dc7308f78f13e55",
+    "sha": "0855be8f87321a37472b537689dbd09553b2b4ae"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/guard-002-after-install-tree.json",
+    "mode": "100644",
+    "bytes": 468,
+    "sha256": "f732dd6f8f68e3b8a845598ff5012ff370eb62e4da6aeb2929b534b27296d4b2",
+    "sha": "88a96c9a2e5fc82537faaa4f88f9887ed0b3a8d5"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/guard-003-after-install-status.json",
+    "mode": "100644",
+    "bytes": 457,
+    "sha256": "1d0e51981e9e3d2c51cd5f508604e8fcc4273baa97162be12247999916c3645e",
+    "sha": "fe079702dc24f28a78a2879207bcd70e22ea9da4"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/guard-004-after-install-diff.json",
+    "mode": "100644",
+    "bytes": 443,
+    "sha256": "973efd24331f304fe36061920a46ca0954129a3dae230ce0da85c08d9080fc00",
+    "sha": "657c7b5be352198c7d2de06ea5c493e1782acdfd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-001-before-native-head.json",
+    "mode": "100644",
+    "bytes": 461,
+    "sha256": "cdc7cc4f8f322994cc948839a51a791aaa70f15b483b5704f68ba35b3a2718e6",
+    "sha": "34fb4d53f25dde3eb6556eb19b942818ddaad998"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-002-before-native-tree.json",
+    "mode": "100644",
+    "bytes": 468,
+    "sha256": "31725c872c025207330a8d75fc815a868d950b63050db4119ae56da3adb34f4e",
+    "sha": "2a93223733d2032f1ab0a305fa3a0c862e6535b9"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-003-before-native-status.json",
+    "mode": "100644",
+    "bytes": 457,
+    "sha256": "1cf004ec4a7320a938b3e06cc02912837c5fbebe7e6e0fa7316668f7744ec9ae",
+    "sha": "e256e05a724420d3c21d0d98fe1c2f413977b0e5"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-004-before-native-diff.json",
+    "mode": "100644",
+    "bytes": 443,
+    "sha256": "804264a602464fdd76bb712ff26766324f32a593095a0e9a3b3c8a69bbfcf3ba",
+    "sha": "9ded1f37eea32f42ebbaf378edf63c1facb786e0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-005-driver-head.json",
+    "mode": "100644",
+    "bytes": 454,
+    "sha256": "4fb469c773fe2d160ba800e00368a43506be99538b48e1d3211007c802daba05",
+    "sha": "a0c26c412dcaf1b0cabe75981baeafb8d10dea56"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-006-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "2d0c9bc8aaf39fe6729d178d0871a72f2214ca4e039dc7390ab7e331e3b07d07",
+    "sha": "1351242a60e305045025fe672c2c06dd305ead31"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-007-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "b8688b9ec3e7045f97708a176672abf624e486849badcd65c2e55da4de033ddc",
+    "sha": "7be627d57a31e510382175e46b306d948ff98e45"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-008-driver-blob.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "fbc0889df0c0620cbe6d05b7759d8a02eaf2b0935b648637fc8566534e3ec215",
+    "sha": "bc86a1064182f41d6eb7de3db8217bb2ad5e9ce1"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-009-driver-blob.json",
+    "mode": "100644",
+    "bytes": 497,
+    "sha256": "4ec65e64ebd33d8895fafd1e5f27ad39bc01a55bec6aff1ac477dceb21173470",
+    "sha": "235ec484f1b36316737d89fa1ede134949bce0f2"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-010-compile-observer.json",
+    "mode": "100644",
+    "bytes": 563,
+    "sha256": "9319de6ddb8b7809737f8ee4a078e84e9893042ebc8e29b5fdb82ba9b0041ffc",
+    "sha": "33f5ff85711bd65f63e6d7a41f7c1d732213e5be"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-011-native-preflight.json",
+    "mode": "100644",
+    "bytes": 535,
+    "sha256": "2b54a595f0bd237f655306f87a0dc47e2bc4023f6783fc05c5a29a7e7129fbab",
+    "sha": "aa9305a98552c5d3fe77bafc3ea1755053b56737"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-012-launcher-native.json",
+    "mode": "100644",
+    "bytes": 604,
+    "sha256": "7eacac6c302da7623343d6ad284037cb2318dce8e836528dcba77c27e246c053",
+    "sha": "7abad57d9a7fe0435df595163828b7e3a3ef4b47"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-013-launcher-native.json",
+    "mode": "100644",
+    "bytes": 581,
+    "sha256": "e56fb5a5070fe989d49b3c4b5d4af2d568a53c93b49cfd22d50706cc9e473fd1",
+    "sha": "f27fead33dbc47ba52ae04d108d4e3ba49c50080"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-014-launcher-native.json",
+    "mode": "100644",
+    "bytes": 574,
+    "sha256": "9927e4508902024edc0d240b26784fb7cf92e8138fe9afa6f1839b15f73c0ec2",
+    "sha": "6f08c67030352e3ff3e2db9bc47634e645441a9e"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-015-launcher-native.json",
+    "mode": "100644",
+    "bytes": 601,
+    "sha256": "42ca0da55b44bdba45fec047db8e96932b55df093e31c13abd21c549a7cadeb4",
+    "sha": "1e687cdce7ea67c73ba8ae1a1313d4777e8156a3"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-016-launcher-native.json",
+    "mode": "100644",
+    "bytes": 576,
+    "sha256": "fc7df2eb03c97a73eca6ad61ee5c145c8e1dadba631a29a9e94472c390d609ae",
+    "sha": "45114db9e4f58f4634ae3bcf7be254f3d4f4e70d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-017-launcher-native.json",
+    "mode": "100644",
+    "bytes": 755,
+    "sha256": "5aaf9645d8aa9f8f0c294ddb1b51960e6912254ff63d1ae02922c1e4a980c9eb",
+    "sha": "322be77ed8c0c512083ebbca7104437a95808809"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-018-launcher-native.json",
+    "mode": "100644",
+    "bytes": 693,
+    "sha256": "61c5b7f1f44109545b743d5a36ac5a59ce9cdb4d9f4db517fcf35ca84545bdb1",
+    "sha": "a0bb7b9918ffedbfbd8338b10ffeb72118b70a9c"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-019-launcher-native.json",
+    "mode": "100644",
+    "bytes": 1302,
+    "sha256": "df4f012e32ccc1970aab324ed5e740965603b2478af45d2640a355f958946ac8",
+    "sha": "3bb331c0e3f73201b62eef11958a7043eef0d6ac"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-020-launcher-native.json",
+    "mode": "100644",
+    "bytes": 573,
+    "sha256": "a7d66be43ee0fe6fa9f99e2849457c7b17c2b17777898f9d5a7e59d4515068ec",
+    "sha": "69358da154c4dd8592d371e566f36eecc3b62c47"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-021-launcher-native.json",
+    "mode": "100644",
+    "bytes": 650,
+    "sha256": "99aedf5247133009112fc2cac58bf3a6435c3af50ddc96509c238e82694af57c",
+    "sha": "a3f81ad75e492ae59917b86a562231a63539093b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-022-launcher-native.json",
+    "mode": "100644",
+    "bytes": 643,
+    "sha256": "f5dd787079239d19a17898814aeef23a93b2406bb92a194e21050dd6bcdb0f2d",
+    "sha": "e61d32b7b027f012b0efc56703dea6d32e905934"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-023-launcher-native.json",
+    "mode": "100644",
+    "bytes": 668,
+    "sha256": "18bac09ae9352c5d5dabe68b137f5b1ea8c1ec0c27d91f1a9004d7f7275c8e4f",
+    "sha": "b9fc48701226f5f70475d30af2cacca636081701"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-024-launcher-native.json",
+    "mode": "100644",
+    "bytes": 646,
+    "sha256": "1b1bd91561aa91819f53926edb6ef2fc56e7dca81a770cbc6c69923cb2dd2c15",
+    "sha": "93c531a6abf86376fd83df52803849459398f7e3"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-025-launcher-native.json",
+    "mode": "100644",
+    "bytes": 639,
+    "sha256": "1c1315da3e100d01bdab10f3ac306bd1ae3f0d61b6e594eb0943154997246f70",
+    "sha": "66c15ddf88e2e6a5438e110957e7f11b008dd5e9"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-026-launcher-native.json",
+    "mode": "100644",
+    "bytes": 664,
+    "sha256": "1ec294a9c4fe93868581cb0824f980f07f2714b285997b8a893857a4ba061a16",
+    "sha": "d93f7aa7e6422b93054cf98558123be741310d0d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-027-launcher-native.json",
+    "mode": "100644",
+    "bytes": 640,
+    "sha256": "0b38856cceac612a7d84118e3ff6bd8901dac45d783777c9da273b2c05020b05",
+    "sha": "f75fe3543e4678c4d23cd84c51724d5e8abdf982"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-028-launcher-native.json",
+    "mode": "100644",
+    "bytes": 633,
+    "sha256": "c33347a180ca42c352d64bb1f4f5b6a8b52830d4b8c1719916622a91fd3c5b57",
+    "sha": "28ccb8edafb6af372c27b0fa6d418fb4305b1aca"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-029-launcher-native.json",
+    "mode": "100644",
+    "bytes": 658,
+    "sha256": "92f60df16736019ef0228bae40bbed65661a23cddcb42cad8c13f7ed6fdf54db",
+    "sha": "937afbea80e4fbecc9ff76b658f09423e5b40f30"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-030-launcher-native.json",
+    "mode": "100644",
+    "bytes": 628,
+    "sha256": "e9b761ac5f7cd9ad8f0785b5a47d63e022252e72f39c12974f4570e7f71bf085",
+    "sha": "9fa980aaad2564e00084a235fc7f33f43bd8cb33"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-031-launcher-native.json",
+    "mode": "100644",
+    "bytes": 621,
+    "sha256": "ddad4c0018113dbcf95e476b6ec0aae462e3156661fdb20b6dd317b996e8a966",
+    "sha": "527210f688d8c25ad9a7caebffb4c85753436ba8"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-032-launcher-native.json",
+    "mode": "100644",
+    "bytes": 648,
+    "sha256": "f90d9b3f2a8bceb93cdfd0f24ce159af125a385303b92e595168185c4a4507a5",
+    "sha": "d93b555f495e14ce56d50476416d6783dc67ed1c"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-033-launcher-native.json",
+    "mode": "100644",
+    "bytes": 689,
+    "sha256": "75243f1e3160a2ab1a1136d712e0a4c58bcaf9b24157279004ad5727f2de670b",
+    "sha": "b55b0f71bd9f00cd4d53f1903beacb690877ed4d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-034-launcher-native.json",
+    "mode": "100644",
+    "bytes": 541,
+    "sha256": "627fa754f8a07e2e0d69aab4a0da423e6a3591682a4cb3811aa5bbe324889b74",
+    "sha": "d1452cad4c4bb2f2855c5a6dec9550d97f3c4c18"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-035-launcher-native.json",
+    "mode": "100644",
+    "bytes": 740,
+    "sha256": "54d263a4d5a77ce6b006eb6f58dcf66541bc54e819763327aea5fdce2e02cb25",
+    "sha": "0137717734c390322b6e9614233be82865c24ab9"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-036-launcher-native.json",
+    "mode": "100644",
+    "bytes": 624,
+    "sha256": "5b77e6e3940d9fb5a59beb6b29c507dd0e6f1df8d18600364a92db066f795b4d",
+    "sha": "f8601a2014d7bda8dea9e254f0f07dd28a7c0677"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-037-bundle-plist.json",
+    "mode": "100644",
+    "bytes": 2338,
+    "sha256": "c2a8d751f27bc7c9fe82eee6045f5b622a7d4896b702273f210f6d017547a63b",
+    "sha": "ecbe7cc047f9f6661a5f78001754d09602f50d88"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-038-verify-generated-signature.json",
+    "mode": "100644",
+    "bytes": 552,
+    "sha256": "6a016ea7db331a7c4a27e0e54821ca7ea3b5ebdd168549b0fe0e62fcc9686a91",
+    "sha": "9432364a17edf2f0da0443475dfcfb26a122aeb2"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-039-describe-generated-signature.json",
+    "mode": "100644",
+    "bytes": 1494,
+    "sha256": "0828927e3adc8ae6ac77bcee5076f773e8022544ff77908339c0c0f589e99405",
+    "sha": "325eaedfc73487dee40901a0997455ebc6635d1f"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-040-render-actual-bundle-icon.json",
+    "mode": "100644",
+    "bytes": 705,
+    "sha256": "b2b10487c75e978e2e83b7f93f0af2e68cd100c8bda69ba0569c64caa20ecd23",
+    "sha": "7004d11017957d5e799fcbb35875317bdad567be"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-041-unregister-owned-bundle.json",
+    "mode": "100644",
+    "bytes": 622,
+    "sha256": "d9a2b63b6ea1c11ba01c79d01a9a982706fdf260c7f5211ce59e5d9df85a19e9",
+    "sha": "b4d62168fd799412eb08d9ddcf0d177cb3ddb3a8"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-042-after-native-head.json",
+    "mode": "100644",
+    "bytes": 460,
+    "sha256": "6e33803160d3a4b10e13c4ab0f4f7489bed2e91d93038305d52b1eeb21cf76c9",
+    "sha": "b3da78bde6da63b9067a9adf8e915678f4174c74"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-043-after-native-tree.json",
+    "mode": "100644",
+    "bytes": 467,
+    "sha256": "a9badf0f10dbc923befd57651da278e912d6ab3b790a0913fbb96e4e36e0120d",
+    "sha": "ffa97ce52ad474b94705f5cc57129464c4e7953d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-044-after-native-status.json",
+    "mode": "100644",
+    "bytes": 456,
+    "sha256": "ab3a8b7669cd4a4eef8b9f99d0df04077cf67897e02b74aa2894f46064a91b41",
+    "sha": "4d493a062cdb285e0f98b973b34a955f3f3c8748"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/native-045-after-native-diff.json",
+    "mode": "100644",
+    "bytes": 442,
+    "sha256": "75456bc9c08f25afb0a6f1baebcf55f3a27ca8723dc152918ec30213542fe4d2",
+    "sha": "84ad8bec18bbaf144116370975cc892ae9fd818d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-001-prepare-head.json",
+    "mode": "100644",
+    "bytes": 455,
+    "sha256": "b32ff541f3a111d7e3207ac7e4d3657a29fe153c57308721f165317829fa074d",
+    "sha": "966efde58d9e67f6927bb633ac9b39cda0a432d8"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-002-prepare-tree.json",
+    "mode": "100644",
+    "bytes": 462,
+    "sha256": "6681981bdf8e4e62eaaa86834cfa4db7efd4de7fb6cbaf5ace20e4f297e76782",
+    "sha": "b0784f110814c8c455aa7b03f2b146e177c09dc7"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-003-prepare-status.json",
+    "mode": "100644",
+    "bytes": 451,
+    "sha256": "77ab77dfc153bd2fc39b4f59a5ee2b9a422220456fa8b8304c18cfc2adcec1f3",
+    "sha": "d0d18ccd547d40a5358ca4bbb220b8bdc08ea8ab"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-004-prepare-diff.json",
+    "mode": "100644",
+    "bytes": 437,
+    "sha256": "c87863cb8ce20c0b628e65e9af6b917cf90ff049d1d8b1f9e2fce1a2ba713698",
+    "sha": "a3230f9b62b3cf78778e1ae5800f2b5b496f2227"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-005-driver-head.json",
+    "mode": "100644",
+    "bytes": 454,
+    "sha256": "48c56eb142ca4e01b9b5ab0874a8ade148d776a8dd36c8f4548446d3f96345a1",
+    "sha": "82081c6c167de8484dc6dc89eb8e388187a6753e"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-006-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "316aa2f34c2c36a056da929ed47698ca1d2c4b8ba32f7f3e5436a0fa8122caef",
+    "sha": "72faac90322269347bb4ba44138b8f39c12e0f76"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-007-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "ba3bb033a0523031f1429c3ba50c19e3d6c99af5ada7f18628086aa1abef7492",
+    "sha": "07d93175d3f47d2c00d8916fc513ea2550e9ef57"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-008-driver-blob.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "6bcf9398927ae7e026ee8c990101a4df5bb6ef6de4ac6ab437d5eaee5d3fdd1e",
+    "sha": "8cfab0c8f6ebff0a07b6e19b3e1b77d41da41ef4"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-009-driver-blob.json",
+    "mode": "100644",
+    "bytes": 497,
+    "sha256": "e5cf5b6d52e7c8ce8e50e8f110010a95a5bccc7c6daec0d56861a3af115b989c",
+    "sha": "b1f4e296c54c9014a09e6885e19d9314668da751"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-010-catalog-inventory.json",
+    "mode": "100644",
+    "bytes": 765,
+    "sha256": "b16fdda58e2e377b6f226413bcc2486696ced184106535031acfec26b4f5a82b",
+    "sha": "cf24320d5433c71caafa791adfee6b4e02f1790c"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-011-node-version.json",
+    "mode": "100644",
+    "bytes": 412,
+    "sha256": "6659c825718cea10b80dffacb723300f581b00b67546725a24f8b74e549d8d97",
+    "sha": "61c1f4014398a654a109c1cfc1dc7179986cc728"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-012-system-version.json",
+    "mode": "100644",
+    "bytes": 471,
+    "sha256": "33295d6a96bab75eead1994f1ab512c6f293a13c570f3e1da2215f77a671c59b",
+    "sha": "ee4f1a0ec72665e2f93fa73982cd8a41f5d58920"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/commands/prepare-013-xcode-version.json",
+    "mode": "100644",
+    "bytes": 442,
+    "sha256": "c82f1b7e766645ec5a736face4d97969f51783d2a7b45a7c1155c63fc9c6523e",
+    "sha": "9d7220a510a3e64c4374445d8671904331b757ed"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/driver-source-icon-evidence.md",
+    "mode": "100644",
+    "bytes": 3134,
+    "sha256": "1b3eb37a9ef4245e9ef7bb17304519172a4eb93e2fe3b167c9aa1d8e82221b34",
+    "sha": "cd29110ea21905489b37075aba85cdca063fa930"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/driver-source-icon-evidence.mjs",
+    "mode": "100644",
+    "bytes": 16685,
+    "sha256": "83a6638aedfad504113248439c93cf419798f46f3a49953c3cb6df0bf16d9597",
+    "sha": "98dd3a6410157696b84a0386446eaac75d240803"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/driver-source-icon-evidence.yml",
+    "mode": "100644",
+    "bytes": 3587,
+    "sha256": "3538fb9f35258a7763ebae5c9d4183b078fb885ba70e65ed163708d649c89af9",
+    "sha": "5f177066acef621af38cc71d1122fa86feac1765"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/driver-source-icon-render.swift",
+    "mode": "100644",
+    "bytes": 3638,
+    "sha256": "c5db4f2926af264c36a7394c068dec1512d77c7045acff72deda3f2dd9b17df3",
+    "sha": "1a0d885efc1b2ff27be75a3a5b733c26f999c93d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/electron-install.log",
+    "mode": "100644",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/install.log",
+    "mode": "100644",
+    "bytes": 1319,
+    "sha256": "bd44455a9e96d1cf5ad9755f9a32c7f859bbc79c1f4072272c4323ccc3b1b56a",
+    "sha": "e09fa7f02a30d40d403bb126cdf168aa062f0545"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/launcher-metadata.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "260f5347e8dba072fc7a19be6d71a7b613527d3f80daa99807cb3c2d06c177f8",
+    "sha": "c6dc5e7adce95c9575a4ea8f4dbeba0f9cce83fd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/launcher-tests.json",
+    "mode": "100644",
+    "bytes": 8081,
+    "sha256": "d815aa0171860f19319b23ce6f2dbcbb88e8aaa51a65f57e6c994caeee4f7543",
+    "sha": "eaed963ec5e5e8f07a516c845200ada42c0f7a73"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/launcher-tests.log",
+    "mode": "100644",
+    "bytes": 240,
+    "sha256": "0ffe714c476ef2e6b596c2fc18512497e5a7db7e09dcc3a43ed45b90b0ea908d",
+    "sha": "b370703534a03a2118fba5c65ba7796fccd4e595"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/manifest.json",
+    "mode": "100644",
+    "bytes": 22243,
+    "sha256": "949acf483f02d47ece2ecfeb113d02fc4275dffc3602287b80b7ed8709073e27",
+    "sha": "6daa23e140aecef95e7d7f4e0bec1fc4d319cc27"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/native-preflight.json",
+    "mode": "100644",
+    "bytes": 78,
+    "sha256": "d46f06e7fcae5f7b8216d6f0962eb6c9571a19b045418929bb79f85edc9d2384",
+    "sha": "ab54fbac6624ec776f361b924fafa7cd671bcda0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/native-result.json",
+    "mode": "100644",
+    "bytes": 12950,
+    "sha256": "1d2ea5097ae768cd5ac6a81fa9d09b4b803ec24aee4961d5ac830c12a44d766e",
+    "sha": "e51cd1688466f5651dbde02dfc0a440927e29269"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/native.log",
+    "mode": "100644",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/provenance.json",
+    "mode": "100644",
+    "bytes": 2951,
+    "sha256": "4f2f9a4dd20a698acd165902fc197d1c314d3ce6f5eb631c54f7ae8bcb03ad9e",
+    "sha": "d5b79fc2c29390b11365997de5b9eaf2c2162920"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/source-after-install.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "8e52614e5c6945fb85c48fb36c56f05530792dd939f9ff66a077c08293bad2ad",
+    "sha": "6ff98076e42028f7aa6ff71365c1db60a732a1c0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/source-after-native.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "8e52614e5c6945fb85c48fb36c56f05530792dd939f9ff66a077c08293bad2ad",
+    "sha": "6ff98076e42028f7aa6ff71365c1db60a732a1c0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/source-before-native.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "8e52614e5c6945fb85c48fb36c56f05530792dd939f9ff66a077c08293bad2ad",
+    "sha": "6ff98076e42028f7aa6ff71365c1db60a732a1c0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/source-bundle-icon.png",
+    "mode": "100644",
+    "bytes": 436728,
+    "sha256": "eef7372a66745fa13f15ea1303602a6c7a9cf1d2426bc96cf44629845f884806",
+    "sha": "e2f7772b922eb7bcbdf47ecf4beca0cfde49dd85"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/source-final.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "8e52614e5c6945fb85c48fb36c56f05530792dd939f9ff66a077c08293bad2ad",
+    "sha": "6ff98076e42028f7aa6ff71365c1db60a732a1c0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/source-prepare.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "8e52614e5c6945fb85c48fb36c56f05530792dd939f9ff66a077c08293bad2ad",
+    "sha": "6ff98076e42028f7aa6ff71365c1db60a732a1c0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/after/test-report-snapshot.json",
+    "mode": "100644",
+    "bytes": 264,
+    "sha256": "57df4dfcabbb855cf2412bd2df62128481f2ab21f1e6b5d0ffd478d373817d53",
+    "sha": "d4ebc4d7c5c8e3777f0585cda9e1f57a4e5d2a60"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/artifact-metadata.json",
+    "mode": "100644",
+    "bytes": 1841,
+    "sha256": "036053b33fa277b3d2ff29e650c76c4a2dff82eb2499390264a0bc46fff4d6a5",
+    "sha": "466e54b986a6318dfb2f4b114c8a921d9220f1ba"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/appkit-render.json",
+    "mode": "100644",
+    "bytes": 399,
+    "sha256": "96d9fda57dc9f365c3667a839ff08eae6a61dc314d05554319037910ca8a5a8f",
+    "sha": "c34b23c48b12ee85fe2768c3cd601203966f6684"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/bundle-plist.json",
+    "mode": "100644",
+    "bytes": 1838,
+    "sha256": "1c62b1f132c7370367b0c2bacccc48ca55b9e58df55665e75e12adefd4c4142c",
+    "sha": "8783eebaae40aed4b8a03f86ae04ef5d2fcaa4fd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/cleanup.json",
+    "mode": "100644",
+    "bytes": 159,
+    "sha256": "33d4f7e7747012180991202de6052f0a9ed672a3ff4f35a88b6e3f5c64e0c653",
+    "sha": "0017c2481f4b1920ce898aefc098497e4b560d5c"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-001-final-head.json",
+    "mode": "100644",
+    "bytes": 453,
+    "sha256": "395788bd387027c0a221bbf3e33d2326f50d73e63dafdae0a985e8e3829bfd6c",
+    "sha": "3949cf918d436414fd977464e1e91db01f3df0c8"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-002-final-tree.json",
+    "mode": "100644",
+    "bytes": 460,
+    "sha256": "666abe2f6d4d299cf6ff1d650281b78502525aac95d39fcb2c96b1ada15fac52",
+    "sha": "68019c63a99d53b6175f8cfab4de3e47888f48b7"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-003-final-status.json",
+    "mode": "100644",
+    "bytes": 449,
+    "sha256": "c1ec2e458eb1ffa334fdd34c2e7f5678fcd1a9b77b680b8ff733783fea5f33de",
+    "sha": "36208ec75cb777cac625f49e2cc91d0a74af0629"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-004-final-diff.json",
+    "mode": "100644",
+    "bytes": 435,
+    "sha256": "a53f87d422306247ac70e83e37e1875ce0007e214ab53f952a7e3a7744f4f7c3",
+    "sha": "3be71bc9d12b80a740fce9817087a41901234afc"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-005-driver-head.json",
+    "mode": "100644",
+    "bytes": 454,
+    "sha256": "c2e7a4bb108e15ef2c053f9047fc6ffaed5ab177d2b72ad49b6ae32f026cda7a",
+    "sha": "6029a0a4b2837f678fbc7238d5e129b14ff0cbbf"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-006-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "d4cbc554de1ab626f9f1fbb42bc04fb50f8f2c80b4157587043f4b829f3d5d86",
+    "sha": "b15ff77917ef34f6e59d13161f1dd82cace9ba38"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-007-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "8cc06b1a6e8f810bea792f636bd3f6787ce8231dd77ab94a053645cdd713134c",
+    "sha": "c462495f5528af00617e3d59f8f9480432dc52d5"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-008-driver-blob.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "27344992c000644f7ef3649eff80f9385890ef1055ddeab656549c308722d630",
+    "sha": "662c35686f26ac039f180479f18c4fe3cf5f72a5"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/finalize-009-driver-blob.json",
+    "mode": "100644",
+    "bytes": 497,
+    "sha256": "c860d7687d2e470dc2038c144218aef43f2367380243669728b09514e747c945",
+    "sha": "f74e22f5f28affbf14ed33ad6c0a4dc450c6bdba"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/guard-001-after-install-head.json",
+    "mode": "100644",
+    "bytes": 461,
+    "sha256": "c9fdcf0fc299f44e97d24aa22f9a92759948f38ba129dd0c9f28e1618a22d9ef",
+    "sha": "f40c09ee77e00404b7c9b81d5066d78351b91fbd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/guard-002-after-install-tree.json",
+    "mode": "100644",
+    "bytes": 468,
+    "sha256": "9bc5033e989fef1ba9d9e8c1411d70962e998a6569289e88f8b19531c60c2d1d",
+    "sha": "1fa0b402f5baecddeab615924ff06a511ad14b9a"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/guard-003-after-install-status.json",
+    "mode": "100644",
+    "bytes": 457,
+    "sha256": "e5f5a2fc3e1c0289fe0dd97aa67ad10678efc175aee824e8540dfd52570fff9d",
+    "sha": "8a5f3fc1f5637a306bcc5736ede59ea5f5b787e5"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/guard-004-after-install-diff.json",
+    "mode": "100644",
+    "bytes": 443,
+    "sha256": "0fed4e31a0edf62b3ecb562d4b2d62ce45955f7451d9a8e718a93621ee8c092b",
+    "sha": "2bcb6db38cfc45d3c96f9e87259c71a4d5ebd933"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-001-before-native-head.json",
+    "mode": "100644",
+    "bytes": 461,
+    "sha256": "281fd54bcf92ff5b0e065beef406f5a9d8615e2575947a0dfc3035bf7c9063d7",
+    "sha": "f20b5ada4aa1a7c87562910209fcd8e53b034fe2"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-002-before-native-tree.json",
+    "mode": "100644",
+    "bytes": 468,
+    "sha256": "7f8baf16b01c0470a82b2a85696a3f82b038cb3d050bec8a7b92ed08f1fe22ff",
+    "sha": "4e71d34112b5d78032bb3a898060b39141f6cc18"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-003-before-native-status.json",
+    "mode": "100644",
+    "bytes": 457,
+    "sha256": "e360613c7e3869a0d93e43b7ea472afdb48011b764f5cf408a5c974efb12bb6b",
+    "sha": "9fea3246f3ad14eaf9be3343645bc66e9a233d8b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-004-before-native-diff.json",
+    "mode": "100644",
+    "bytes": 443,
+    "sha256": "c6a7f8a078f5754756125dd930777f774e27e984c0ee4a3e9726cf79985427ca",
+    "sha": "6120f866d255d7ddc5cd6281aaccc4ad7570f373"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-005-driver-head.json",
+    "mode": "100644",
+    "bytes": 454,
+    "sha256": "976a31d798a673cb0155958d2c80b43b0eb04f2cbbf2e63ce806f234faed6b01",
+    "sha": "acdc404501971925b160272902cabd55b7966acf"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-006-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "b9cb6230f37a66b2ca51abbb7c6b1a657201666d79c55468c3ab94370860f95e",
+    "sha": "214f9eeced19daeffbd9846cf24f85e79f3ddf62"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-007-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "a838311812fc92d4e434bafc1f5677b7f09e89a4cc53c4a889124e2e9e3ac400",
+    "sha": "831902f2d4b3ec1feea8de3cf6c0120844226076"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-008-driver-blob.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "55554460f6354da1ce408e223884a3a3d11f2994ce33dced95b4044736531223",
+    "sha": "4ef2e32d5148456e6552d5e6be58b5aef27ac9b0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-009-driver-blob.json",
+    "mode": "100644",
+    "bytes": 497,
+    "sha256": "6a9a3e519980c1d44dc28200147e44f970f708e3823535fb0f07db809ba77b3f",
+    "sha": "3ddebeffe9f6a9cd496fa8adf91805860f7cba28"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-010-compile-observer.json",
+    "mode": "100644",
+    "bytes": 564,
+    "sha256": "4093ddba2e1d582e831b34b1de431020ff76507e820ef7a6e8cc45ce06e7a2cb",
+    "sha": "d277b1579b4f9460b2a18d70cb749ab87ba2cdca"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-011-native-preflight.json",
+    "mode": "100644",
+    "bytes": 537,
+    "sha256": "3fabb2ad36ed65c30bdcd6e17dadc82197461da059ae30f6527529249c39ce2f",
+    "sha": "7fc856f9b6449943e2cae45bb411987d2ca1aa87"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-012-launcher-native.json",
+    "mode": "100644",
+    "bytes": 604,
+    "sha256": "d0be5ac998c6cf42431793fb677f747c259b2daac36b79dd6bdb158fee999d44",
+    "sha": "d833b69d4ee9c0cd4c5ae80bdbd854c22c3039f2"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-013-launcher-native.json",
+    "mode": "100644",
+    "bytes": 581,
+    "sha256": "bf2f3246ac0cddcc5190529ce066ef2e09e73b3a84def812019e82662528df0e",
+    "sha": "00691fa394c0a67c4d01325313156e83313f34d2"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-014-launcher-native.json",
+    "mode": "100644",
+    "bytes": 574,
+    "sha256": "501df074f3997cde420b8f442ccbbb6c05a503dff89e5e065c752efda686c422",
+    "sha": "df29ee7db9b42cab462b7e74903d575bb29343bd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-015-launcher-native.json",
+    "mode": "100644",
+    "bytes": 601,
+    "sha256": "8b96ecbedba651a7351151c6b3ea75a02a744f8e3f77301168cd6c6c4a3e04a5",
+    "sha": "56d2164060a7f27a41f8c339acfcc8547aca2c4c"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-016-launcher-native.json",
+    "mode": "100644",
+    "bytes": 576,
+    "sha256": "c36d7fca27f68e8b4d997cbdc085083c66f2f2f87b5a6ccc2f4f8d8929fef2c4",
+    "sha": "19f3115066f9142b08d697e611774ad2356e3a98"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-017-launcher-native.json",
+    "mode": "100644",
+    "bytes": 755,
+    "sha256": "ca5e68a061424629506e6c766ea7be2e4d83f06b72461a77c319f963c08a33ba",
+    "sha": "aa286f9a10914c3c6add397cbb90a47273691787"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-018-launcher-native.json",
+    "mode": "100644",
+    "bytes": 693,
+    "sha256": "e25da4eedc16f832bbaf6ad6d87b69d446f95b7b548eda7be45d2ca33df58d11",
+    "sha": "8e4e78b4f9dc5ac8d8faf842440c3342b8f87a36"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-019-launcher-native.json",
+    "mode": "100644",
+    "bytes": 1302,
+    "sha256": "baa2e2e3e0f9a7fc7e63ca77843fe6dee3a28a8e69ae2a22ba3ead362aee58e1",
+    "sha": "5b5edf3832bd50b930fb490fbd7ef128548d52b3"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-020-launcher-native.json",
+    "mode": "100644",
+    "bytes": 573,
+    "sha256": "7a3df56a8da8004e347765b8153d1d4e7b16fd698bb9be65b160f0b949df7fd7",
+    "sha": "71f5cc22413a686d15997658411889b88a6ff128"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-021-launcher-native.json",
+    "mode": "100644",
+    "bytes": 650,
+    "sha256": "cd389d094a28d7b79aded119cba10a5b96ea7a9fd0c958f72889c9210a1ded53",
+    "sha": "9b0f5a1cd3e7ce02f86121d05e574fbbc68bf387"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-022-launcher-native.json",
+    "mode": "100644",
+    "bytes": 643,
+    "sha256": "bd5ccd09995481e163be2f89bf144e79710485d30669b436b6bf9085288cc631",
+    "sha": "61bdfac791dd60d1c49cd407bca5190997f63742"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-023-launcher-native.json",
+    "mode": "100644",
+    "bytes": 668,
+    "sha256": "32a8fdd858f99009f68667418e09892eae0e7cc5b7281f0268c71100d669bd37",
+    "sha": "39454684690740447df36494c7b1e75bda4eb361"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-024-launcher-native.json",
+    "mode": "100644",
+    "bytes": 646,
+    "sha256": "280802c74693bb245258450b1a83628b14b1bc0e0e8ec3827f45892b03c668e6",
+    "sha": "263ad114e9964deaf47df8df512bf36e10040676"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-025-launcher-native.json",
+    "mode": "100644",
+    "bytes": 639,
+    "sha256": "522149e4a25baeee62751c0cfaaa98b16509841f9acc39875340de62f325eefb",
+    "sha": "6084381a3d7727e01c665562c5c46d36cf544510"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-026-launcher-native.json",
+    "mode": "100644",
+    "bytes": 664,
+    "sha256": "4820d140f802f6eb2157faebe4299ee26daceeee7a5e21eddbeeda182138076b",
+    "sha": "cee54e6ba0229229e4ec18c7be5d100cf9c37fae"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-027-launcher-native.json",
+    "mode": "100644",
+    "bytes": 640,
+    "sha256": "5c8bbeee8e052754c32caeb8894077b73ac8bd709adecfb71b121948db83da96",
+    "sha": "f047e778a810526c887b733d48472114dbede8eb"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-028-launcher-native.json",
+    "mode": "100644",
+    "bytes": 633,
+    "sha256": "9bec434398d6582d541c80df5055c658f79b4ac8893e684fc1de8bd5d00abea8",
+    "sha": "8e952e7d29ee3326b2c45b6da2138532185605f8"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-029-launcher-native.json",
+    "mode": "100644",
+    "bytes": 658,
+    "sha256": "7e4cee5789a049591d37e2ea1cc6f0b072bffa5a4347e3e5f99032e5c313b7d4",
+    "sha": "8a60ecd821b078bf14e579589f87bcb7db82c851"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-030-launcher-native.json",
+    "mode": "100644",
+    "bytes": 628,
+    "sha256": "3e863ea98f1c5129b9a0162d62685dfb9ae68ff56afb3368fbd859cf452f109f",
+    "sha": "bd47946608f6953b798bfabf669781eaa3652511"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-031-launcher-native.json",
+    "mode": "100644",
+    "bytes": 621,
+    "sha256": "e2ba4031b5ed193676065126da506dc9cfc4431dc8b044e82d373156eb1ad64d",
+    "sha": "1ba2460e6ce018adec1c963ed279d0518675ad2e"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-032-launcher-native.json",
+    "mode": "100644",
+    "bytes": 648,
+    "sha256": "8aed06ec6eb49a65df8f4ddde207a510842fe5bb4e131f39fcc84684f6fb3018",
+    "sha": "b3d176a28a3b7bc7e46625faf70dbfd027f8c548"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-033-launcher-native.json",
+    "mode": "100644",
+    "bytes": 689,
+    "sha256": "fc15a6e1e218f2a0fb980ca6a6392af88a4f213629a3bba25e32f2f78d2f8e23",
+    "sha": "a743fd746b1a2b7785638e5376ee6dca1338d433"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-034-launcher-native.json",
+    "mode": "100644",
+    "bytes": 541,
+    "sha256": "9aa6a0a9650af46ad84a122d9adfe01eca6d4e145be27ee335212dd06b1615da",
+    "sha": "0e3d5f80c8a154b7aaf9073aa433fa522a66e1ad"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-035-launcher-native.json",
+    "mode": "100644",
+    "bytes": 740,
+    "sha256": "e82b41c5d87b66e2cfa7403cbd3bb2930975ab27a240b4a64a8d9fc9d2767539",
+    "sha": "75cbfaa798ac7f30e8c0a85717a26df796b5f49e"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-036-launcher-native.json",
+    "mode": "100644",
+    "bytes": 624,
+    "sha256": "26e4b293b4c32b87d0f0225456a43fb7b7cdf803ecf65b5abe72a3185d43c941",
+    "sha": "181edecb07e66845941d798f5070e2cbf84fd961"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-037-bundle-plist.json",
+    "mode": "100644",
+    "bytes": 2338,
+    "sha256": "6e53faf69a1bc5ab381409f629b2d18a27165c16619510e90f75aed6feff6828",
+    "sha": "2f42ab289d9be675efa7ebba82c2db7efdfb8b7e"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-038-verify-generated-signature.json",
+    "mode": "100644",
+    "bytes": 552,
+    "sha256": "380550665c23ebd449e70f09ea5ffd8b25fc6850720821ed347516766312b00e",
+    "sha": "fbf586284019024c28a409943e0b7cb38a563200"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-039-describe-generated-signature.json",
+    "mode": "100644",
+    "bytes": 1494,
+    "sha256": "c7e9ee4a91466808a7fde6a49e80e68f1e5128b4de2115e107755d8545e1b927",
+    "sha": "4e72d1b8e4beae0948ab4a4e0f537067741219e4"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-040-render-actual-bundle-icon.json",
+    "mode": "100644",
+    "bytes": 708,
+    "sha256": "eff477dd1af8caeca022ee3ad5ae0666683d83e03107f111d9eab2a2ade3fd89",
+    "sha": "06019fa3f870dd16985ac29a720e770a5d986188"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-041-unregister-owned-bundle.json",
+    "mode": "100644",
+    "bytes": 622,
+    "sha256": "6c515761aa3e28bf59311795cac4e88dbb17340382599e849cd6de750033343a",
+    "sha": "8dbd8e3da2ab5c4cdce906df7fc3e5820637c0e4"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-042-after-native-head.json",
+    "mode": "100644",
+    "bytes": 460,
+    "sha256": "3e529930ec7671afb79a7363c0c0b3ee5ce2e87b372f2a7e93a5c1eb51d0aa10",
+    "sha": "707a47468b0cc706162573cfabe6d9cb4f971914"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-043-after-native-tree.json",
+    "mode": "100644",
+    "bytes": 467,
+    "sha256": "1bf32ae96843b23929a049e851cb2fe1be26d8cab09656d3b584dd8faad49f30",
+    "sha": "30295a41ea6e105b8a66e85f4af201098f81f49d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-044-after-native-status.json",
+    "mode": "100644",
+    "bytes": 456,
+    "sha256": "1ca148f71f9000514e27bd5c4f0fd2569a9e10334ebe8cd499be67fbaf3c37a0",
+    "sha": "cafdda0cc219885a72cfeb0a017dba3e2f2cd2d3"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/native-045-after-native-diff.json",
+    "mode": "100644",
+    "bytes": 442,
+    "sha256": "8fdaa4339fd6031b1201f3a8d262cf264d48292030e5964d21180918b2be3b34",
+    "sha": "e91ef9a52e8bf682c6091909be1c820564f49070"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-001-prepare-head.json",
+    "mode": "100644",
+    "bytes": 455,
+    "sha256": "ad561c67e3dba58438cfc7e2b07697b40538249181360cad8e5562b54c99971e",
+    "sha": "afb1706891f03cd85cab8007b00166e3911b3b98"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-002-prepare-tree.json",
+    "mode": "100644",
+    "bytes": 462,
+    "sha256": "1be2a0980afbeef572b8d721434998925c60f9844fce6b75dcc1812d3b4052a6",
+    "sha": "84923734e8433f853070505a984190c5c03cfd3e"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-003-prepare-status.json",
+    "mode": "100644",
+    "bytes": 451,
+    "sha256": "28c2898c5981f115084dea438e526f5ca5c7b864fd0994b523a5df6ff4715f43",
+    "sha": "d4df24c31d6158f5aff5a5a1472f14cb79f854d5"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-004-prepare-diff.json",
+    "mode": "100644",
+    "bytes": 437,
+    "sha256": "814d2961a14c178604bb62e592a693f555e71f8a9e10ead0dfe9604ad912a1fa",
+    "sha": "cfed6cd532744adc8d5d236a2797a56ae4c51f17"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-005-driver-head.json",
+    "mode": "100644",
+    "bytes": 454,
+    "sha256": "0ab9325a12760cd643e8aa7711428371807b6b16931b230a6aabf69e77abf13b",
+    "sha": "717ae6b3252b386f870dbd1c0a8851dcd62d0553"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-006-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "b143dce41603ea0d5f66c7badccac6eac10349d5637764118ec419ce30983c7d",
+    "sha": "1114d9cd2a644aedb421383654275ccb13d1cfe7"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-007-driver-blob.json",
+    "mode": "100644",
+    "bytes": 487,
+    "sha256": "6ce8f71138527cc41cb24421746e160d3ec57be25c8a34d023458f05bd44126c",
+    "sha": "eb6938e6e2ff8e4abf0b1d9b024005915095bb62"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-008-driver-blob.json",
+    "mode": "100644",
+    "bytes": 486,
+    "sha256": "56ba409780375ed151e29498e948887c7ffaa6dbef07968dd692371dcc1948fb",
+    "sha": "9973dc224a3a6647fdf50fd45ae2c1958a9660bd"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-009-driver-blob.json",
+    "mode": "100644",
+    "bytes": 497,
+    "sha256": "570d31b2bd347a18f63abf8102f48d1d60c782687c8e040ebf024ef46e187dec",
+    "sha": "578122bc195f5d9f068e279b1ec7fbc2f88055ef"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-010-catalog-inventory.json",
+    "mode": "100644",
+    "bytes": 765,
+    "sha256": "24b66d45172910a542012c1cd08ae58a2a29fc220474eebbe02e17ecd4838aab",
+    "sha": "ff66ba6cd7e6312bad8a0cb3ad12f8bf260fe054"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-011-node-version.json",
+    "mode": "100644",
+    "bytes": 412,
+    "sha256": "def73d9000a360185671f5d300fd9e339b74192c46e9ee705325aedbf6d310f6",
+    "sha": "8bd7cf26da87908daac232712c73617e5c413e41"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-012-system-version.json",
+    "mode": "100644",
+    "bytes": 471,
+    "sha256": "e5d03392714cd650e60a6e6f20ed3fcd08c5eba7970e1bacb94c0b08299bdf8a",
+    "sha": "942b0f877dad8a641ac94df5e349337d90204aae"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/commands/prepare-013-xcode-version.json",
+    "mode": "100644",
+    "bytes": 442,
+    "sha256": "1c9cd0f726957450cfa2f9c5a9ed2fef290de1f5df840d2551f47a84d1b3e266",
+    "sha": "f7f42551738eb4ab152308151102c45930b200ac"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/driver-source-icon-evidence.md",
+    "mode": "100644",
+    "bytes": 3134,
+    "sha256": "1b3eb37a9ef4245e9ef7bb17304519172a4eb93e2fe3b167c9aa1d8e82221b34",
+    "sha": "cd29110ea21905489b37075aba85cdca063fa930"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/driver-source-icon-evidence.mjs",
+    "mode": "100644",
+    "bytes": 16685,
+    "sha256": "83a6638aedfad504113248439c93cf419798f46f3a49953c3cb6df0bf16d9597",
+    "sha": "98dd3a6410157696b84a0386446eaac75d240803"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/driver-source-icon-evidence.yml",
+    "mode": "100644",
+    "bytes": 3587,
+    "sha256": "3538fb9f35258a7763ebae5c9d4183b078fb885ba70e65ed163708d649c89af9",
+    "sha": "5f177066acef621af38cc71d1122fa86feac1765"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/driver-source-icon-render.swift",
+    "mode": "100644",
+    "bytes": 3638,
+    "sha256": "c5db4f2926af264c36a7394c068dec1512d77c7045acff72deda3f2dd9b17df3",
+    "sha": "1a0d885efc1b2ff27be75a3a5b733c26f999c93d"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/electron-install.log",
+    "mode": "100644",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/install.log",
+    "mode": "100644",
+    "bytes": 1319,
+    "sha256": "2a0014c5387a0503a94372c4a0e13c0ed4df4752630a8ebb4ad7e15070558cde",
+    "sha": "cb5d0c6e98f14c78716e4c9c3a79222facddde01"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/launcher-metadata.json",
+    "mode": "100644",
+    "bytes": 399,
+    "sha256": "84538be808b843651eb9e445c99517035cb4605a8de2f1a4da1edae786d0ac36",
+    "sha": "9f9592ea85bedc3f68e808d1cb8e675778295e9b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/manifest.json",
+    "mode": "100644",
+    "bytes": 21596,
+    "sha256": "da7f8e01b928fde5e6c64130c434e3b4c8d1e06ab15f782cbd44e5d02c4becb2",
+    "sha": "fb63c20357e91e38c396a62f0ef6e9d5d082c4d6"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/native-preflight.json",
+    "mode": "100644",
+    "bytes": 78,
+    "sha256": "d46f06e7fcae5f7b8216d6f0962eb6c9571a19b045418929bb79f85edc9d2384",
+    "sha": "ab54fbac6624ec776f361b924fafa7cd671bcda0"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/native-result.json",
+    "mode": "100644",
+    "bytes": 12950,
+    "sha256": "9a227996c405287d34b50f231af89cf3c8af0665467815c07ef4bfc996a3e0b4",
+    "sha": "ac881b0e4d7c03be5591624031b5ee82464fa96b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/native.log",
+    "mode": "100644",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/provenance.json",
+    "mode": "100644",
+    "bytes": 2952,
+    "sha256": "e0f61d7845a3be3bbf9fc1c014c28ac07467f7a842fa42943d29ef89c207a805",
+    "sha": "3c5c39df6db0c9c29181768c10f8ea3d8fd9abd4"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/source-after-install.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+    "sha": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/source-after-native.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+    "sha": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/source-before-native.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+    "sha": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/source-bundle-icon.png",
+    "mode": "100644",
+    "bytes": 144303,
+    "sha256": "e765977c20f5848d4453b564421bc82f1bea4022c9bdf8c078768db2560eccb8",
+    "sha": "b02f18c4b3dbef3d968adef1f73d2261bc6edfb1"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/source-final.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+    "sha": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/before/source-prepare.json",
+    "mode": "100644",
+    "bytes": 148,
+    "sha256": "82d079d8bc8d94a0dd80c1324e4640ef8162570bd6d6a4e9f8b2fb396ba047a8",
+    "sha": "9ff9d539e8a4d2e533ca78a32e858eacb9c2594b"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/origins.json",
+    "mode": "100644",
+    "bytes": 67443,
+    "sha256": "bafb250ddc098b2c526e19397a106fc5c52a32ec8b21f5417706516915cd9a67",
+    "sha": "146a478d4fb9a39ec03293c8759bf0506cc7d220"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/qualification.json",
+    "mode": "100644",
+    "bytes": 6148,
+    "sha256": "93c13a272fcb4e398e0d522b43b4913ffe3bcb7bc01d16b8925451e69cc416db",
+    "sha": "89ae67ed642dad9616d07e6c30b1e43643e4f488"
+  },
+  {
+    "path": "ui-review-20261011/pr1854/run-and-jobs.json",
+    "mode": "100644",
+    "bytes": 27203,
+    "sha256": "5b9156499a53d4c5ab7893222a3e20007c50d977f882b98bf563e6e5dcce775b",
+    "sha": "64f7afcae66f9fcdf3d4fb663bbcedd6f3f9e7ac"
+  }
+]

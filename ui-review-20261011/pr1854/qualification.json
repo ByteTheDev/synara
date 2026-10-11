@@ -1,0 +1,152 @@
+{
+  "run": 38181306809,
+  "driver": "5c713a700b398e63519a5938e82f0641d2ff17ed",
+  "phases": [
+    {
+      "phase": "before",
+      "artifact_id": 11718511095,
+      "source": {
+        "commit": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+        "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d"
+      },
+      "zip": {
+        "bytes": 218820,
+        "sha256": "2f2c720d1d80d5f8bf3d123940e0b0d39a0fea43c79c093a40d40f9743fde0e1",
+        "gitBlob": "6b94844e901162c33ee55459b0db2dcebffd0416"
+      },
+      "declared_files_verified": 92,
+      "retained_files_verified": 93,
+      "commands": 71,
+      "retained_nonzero_commands": [
+        {
+          "label": "launcher-native",
+          "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister",
+          "args": [
+            "-u",
+            "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app"
+          ],
+          "cwd": "/Users/runner/work/synara/synara/source",
+          "startedAt": "2026-10-11T22:49:25.171Z",
+          "finishedAt": "2026-10-11T22:49:25.226Z",
+          "status": 1,
+          "signal": null,
+          "error": null,
+          "stdout": "",
+          "stderr": "failed to scan /Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app: -10814\n from spotlight",
+          "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+        }
+      ],
+      "selected_catalog": "assets/prod/Synara.icon",
+      "icon": {
+        "bytes": 144303,
+        "sha256": "e765977c20f5848d4453b564421bc82f1bea4022c9bdf8c078768db2560eccb8",
+        "gitBlob": "b02f18c4b3dbef3d968adef1f73d2261bc6edfb1"
+      },
+      "render": {
+        "api": "NSWorkspace.icon(forFile:)",
+        "appearance": "aqua",
+        "applicationLaunched": false,
+        "bundle": "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app",
+        "height": 1024,
+        "pngBytes": 144303,
+        "qualification": "Actual AppKit bundle-icon render, not a running or closed Dock screenshot.",
+        "visiblePixels": 736097,
+        "width": 1024
+      },
+      "cache_reuse": {
+        "nativeCommands": 0,
+        "signedMaterialUnchanged": true,
+        "metadataUnchanged": true
+      },
+      "cleanup": {
+        "owned": true,
+        "bundleExisted": true,
+        "unregister": {
+          "status": 0,
+          "signal": null,
+          "error": null
+        },
+        "removed": true,
+        "error": null
+      },
+      "source_guard_stages": 5,
+      "canonical_tests": null,
+      "launcher_app_version": "1.0.3",
+      "copied_electron_bundle_version": "43.4.1"
+    },
+    {
+      "phase": "after",
+      "artifact_id": 11718102474,
+      "source": {
+        "commit": "4f7c61fe6f028d69ef187c9437286e7830628da4",
+        "tree": "be7e97e6094034179881fc1b0cbe36b0e3d20c36"
+      },
+      "zip": {
+        "bytes": 519731,
+        "sha256": "c21fb06c0a7ade319d944991d93ce6816a40f1db590d7835eb52cbd757162875",
+        "gitBlob": "9837c711622fdf48864c8a61487c77b1a372b324"
+      },
+      "declared_files_verified": 95,
+      "retained_files_verified": 96,
+      "commands": 71,
+      "retained_nonzero_commands": [
+        {
+          "label": "launcher-native",
+          "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister",
+          "args": [
+            "-u",
+            "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app"
+          ],
+          "cwd": "/Users/runner/work/synara/synara/source",
+          "startedAt": "2026-10-11T22:48:52.180Z",
+          "finishedAt": "2026-10-11T22:48:52.196Z",
+          "status": 1,
+          "signal": null,
+          "error": null,
+          "stdout": "",
+          "stderr": "failed to scan /Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app: -10814\n from spotlight",
+          "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+        }
+      ],
+      "selected_catalog": "assets/beta/Synara.icon",
+      "icon": {
+        "bytes": 436728,
+        "sha256": "eef7372a66745fa13f15ea1303602a6c7a9cf1d2426bc96cf44629845f884806",
+        "gitBlob": "e2f7772b922eb7bcbdf47ecf4beca0cfde49dd85"
+      },
+      "render": {
+        "api": "NSWorkspace.icon(forFile:)",
+        "appearance": "aqua",
+        "applicationLaunched": false,
+        "bundle": "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app",
+        "height": 1024,
+        "pngBytes": 436728,
+        "qualification": "Actual AppKit bundle-icon render, not a running or closed Dock screenshot.",
+        "visiblePixels": 736097,
+        "width": 1024
+      },
+      "cache_reuse": {
+        "nativeCommands": 0,
+        "signedMaterialUnchanged": true,
+        "metadataUnchanged": true
+      },
+      "cleanup": {
+        "owned": true,
+        "bundleExisted": true,
+        "unregister": {
+          "status": 0,
+          "signal": null,
+          "error": null
+        },
+        "removed": true,
+        "error": null
+      },
+      "source_guard_stages": 5,
+      "canonical_tests": 22,
+      "launcher_app_version": "1.0.3",
+      "copied_electron_bundle_version": "43.4.1"
+    }
+  ],
+  "qualification": "Actual macOS 26.6.2 / Xcode 26.6 ARM64 source-launcher compilation, ad-hoc signature, cache reuse and AppKit bundle-icon rendering. No app launch, live Dock/app-picker interaction, TCC reset, packaged release, flat-fallback native execution or old-cache native migration. The launcher records appVersion1.0.3 while the copied Electron bundle's unchanged CFBundleVersion remains43.4.1.",
+  "retained_command_failure": "Both canonical launcher calls first attempt to unregister a newly created bundle and return1/-10814; the existing source treats that call as best effort. Successful registration, later owned unregister and cleanup are separately required and observed. No failure was removed."
+}

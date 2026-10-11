@@ -1,0 +1,17 @@
+{
+  "label": "driver-head",
+  "executable": "git",
+  "args": [
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/driver",
+  "startedAt": "2026-10-11T22:49:29.779Z",
+  "finishedAt": "2026-10-11T22:49:29.796Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "5c713a700b398e63519a5938e82f0641d2ff17ed\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

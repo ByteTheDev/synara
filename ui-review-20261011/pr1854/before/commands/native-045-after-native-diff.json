@@ -1,0 +1,19 @@
+{
+  "label": "after-native-diff",
+  "executable": "git",
+  "args": [
+    "diff",
+    "--exit-code",
+    "HEAD",
+    "--"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:49:29.106Z",
+  "finishedAt": "2026-10-11T22:49:29.139Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

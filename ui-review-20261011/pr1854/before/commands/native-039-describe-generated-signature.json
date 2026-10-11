@@ -1,0 +1,18 @@
+{
+  "label": "describe-generated-signature",
+  "executable": "/usr/bin/codesign",
+  "args": [
+    "--display",
+    "--verbose=4",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:49:26.493Z",
+  "finishedAt": "2026-10-11T22:49:26.514Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "Executable=/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app/Contents/MacOS/Electron\nIdentifier=com.emanueledipietro.synara.beta\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20400 size=313 flags=0x2(adhoc) hashes=3+3 location=embedded\nVersionPlatform=1\nVersionMin=786432\nVersionSDK=1705216\nHash type=sha256 size=32\nCandidateCDHash sha256=6a930216d54d6464a4519938f0c3bb890f74abcb\nCandidateCDHashFull sha256=6a930216d54d6464a4519938f0c3bb890f74abcb0761532fc0f0113f3f90ce11\nHash choices=sha256\nCMSDigest=6a930216d54d6464a4519938f0c3bb890f74abcb0761532fc0f0113f3f90ce11\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=6a930216d54d6464a4519938f0c3bb890f74abcb\nSignature=adhoc\nInfo.plist entries=32\nTeamIdentifier=not set\nSealed Resources version=2 rules=13 files=15\nInternal requirements count=0 size=12\n",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

@@ -1,0 +1,82 @@
+{
+  "phase": "before",
+  "source": {
+    "commit": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d"
+  },
+  "selectedCatalog": "assets/prod/Synara.icon",
+  "driverCommit": "5c713a700b398e63519a5938e82f0641d2ff17ed",
+  "run": "38181306809",
+  "attempt": "1",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "nodeCompatibility": "v26.3.0",
+  "node": "v24.20.0",
+  "bun": "1.4.2",
+  "driverFiles": [
+    {
+      "path": "scripts/source-icon-evidence.mjs",
+      "bytes": 16685,
+      "sha256": "83a6638aedfad504113248439c93cf419798f46f3a49953c3cb6df0bf16d9597",
+      "gitBlob": "98dd3a6410157696b84a0386446eaac75d240803"
+    },
+    {
+      "path": "scripts/source-icon-render.swift",
+      "bytes": 3638,
+      "sha256": "c5db4f2926af264c36a7394c068dec1512d77c7045acff72deda3f2dd9b17df3",
+      "gitBlob": "1a0d885efc1b2ff27be75a3a5b733c26f999c93d"
+    },
+    {
+      "path": "scripts/source-icon-evidence.md",
+      "bytes": 3134,
+      "sha256": "1b3eb37a9ef4245e9ef7bb17304519172a4eb93e2fe3b167c9aa1d8e82221b34",
+      "gitBlob": "cd29110ea21905489b37075aba85cdca063fa930"
+    },
+    {
+      "path": ".github/workflows/source-icon-evidence.yml",
+      "bytes": 3587,
+      "sha256": "3538fb9f35258a7763ebae5c9d4183b078fb885ba70e65ed163708d649c89af9",
+      "gitBlob": "5f177066acef621af38cc71d1122fa86feac1765"
+    }
+  ],
+  "catalogs": [
+    {
+      "path": "assets/beta/Synara.icon/Assets/background.png",
+      "bytes": 276822,
+      "sha256": "83be15bb21fc59cbb0a08d183d85276a380eef1fbc717ee88b9d06cf0f766f16",
+      "gitBlob": "d4aec3d51e1c61b108946b5b0c18702eeb84977b"
+    },
+    {
+      "path": "assets/beta/Synara.icon/Assets/glyph.png",
+      "bytes": 40430,
+      "sha256": "eb74aac20255786fe49c9095b2a64f0ab19f11e2db633821f6640ab9a4884cc8",
+      "gitBlob": "dd618b1b25a9175b8c157e3192e6c019f8906b29"
+    },
+    {
+      "path": "assets/beta/Synara.icon/icon.json",
+      "bytes": 804,
+      "sha256": "a86924d93a16f1f550b3234d0e7b6e6e2336cca84626a45c254cbe87c6987c46",
+      "gitBlob": "82ea8bb34213a470833aadbad22af5b06e1f67d3"
+    },
+    {
+      "path": "assets/prod/Synara.icon/Assets/background.png",
+      "bytes": 15859,
+      "sha256": "ee66aba9714ac6f2cb8365927c59028aa5ff3577df8fa74ecc2e01f74a062592",
+      "gitBlob": "6cbb48c47f681199e6652d49fd1af86a84d16712"
+    },
+    {
+      "path": "assets/prod/Synara.icon/Assets/glyph.png",
+      "bytes": 63232,
+      "sha256": "2495bfcbd43e8ab8ac96d5b56c47dcedc494ece52aee15d5348e39c20b77ef26",
+      "gitBlob": "dcf0cf27114a9a6a492f02b3a15eadee71983b12"
+    },
+    {
+      "path": "assets/prod/Synara.icon/icon.json",
+      "bytes": 804,
+      "sha256": "a86924d93a16f1f550b3234d0e7b6e6e2336cca84626a45c254cbe87c6987c46",
+      "gitBlob": "82ea8bb34213a470833aadbad22af5b06e1f67d3"
+    }
+  ],
+  "system": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\n",
+  "xcode": "Xcode 26.6\nBuild version 17F113\n"
+}

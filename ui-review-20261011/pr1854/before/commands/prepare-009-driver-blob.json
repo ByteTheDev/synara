@@ -1,0 +1,17 @@
+{
+  "label": "driver-blob",
+  "executable": "git",
+  "args": [
+    "rev-parse",
+    "HEAD:.github/workflows/source-icon-evidence.yml"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/driver",
+  "startedAt": "2026-10-11T22:48:15.954Z",
+  "finishedAt": "2026-10-11T22:48:15.964Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "5f177066acef621af38cc71d1122fa86feac1765\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

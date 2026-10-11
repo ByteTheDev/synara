@@ -1,0 +1,16 @@
+{
+  "label": "node-version",
+  "executable": "node",
+  "args": [
+    "--version"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:47:49.651Z",
+  "finishedAt": "2026-10-11T22:47:49.671Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "v24.20.0\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

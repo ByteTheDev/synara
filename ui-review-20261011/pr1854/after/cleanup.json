@@ -1,0 +1,11 @@
+{
+  "owned": true,
+  "bundleExisted": true,
+  "unregister": {
+    "status": 0,
+    "signal": null,
+    "error": null
+  },
+  "removed": true,
+  "error": null
+}

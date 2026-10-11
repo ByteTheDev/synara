@@ -1,0 +1,22 @@
+{
+  "label": "catalog-inventory",
+  "executable": "git",
+  "args": [
+    "ls-tree",
+    "-r",
+    "--name-only",
+    "HEAD",
+    "--",
+    "assets/prod/Synara.icon",
+    "assets/beta/Synara.icon"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:15.964Z",
+  "finishedAt": "2026-10-11T22:48:15.978Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "assets/beta/Synara.icon/Assets/background.png\nassets/beta/Synara.icon/Assets/glyph.png\nassets/beta/Synara.icon/icon.json\nassets/prod/Synara.icon/Assets/background.png\nassets/prod/Synara.icon/Assets/glyph.png\nassets/prod/Synara.icon/icon.json\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

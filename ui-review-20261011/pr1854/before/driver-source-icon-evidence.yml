@@ -1,0 +1,97 @@
+name: Qualify Beta macOS source launcher artwork
+
+on:
+  push:
+    branches:
+      - cleanup/20261011/pr1849-source-icon-proof
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-icon-proof-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-icon:
+    name: Native source icon ${{ matrix.phase }}
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - phase: before
+            source: 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94
+          - phase: after
+            source: 4f7c61fe6f028d69ef187c9437286e7830628da4
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    env:
+      ICON_PHASE: ${{ matrix.phase }}
+      SYNARA_DESKTOP_FLAVOR: beta
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            scripts/source-icon-evidence.mjs
+            scripts/source-icon-render.swift
+            scripts/source-icon-evidence.md
+            .github/workflows/source-icon-evidence.yml
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Bind private evidence directory
+        run: |
+          printf 'ICON_EVIDENCE_OUTPUT=%s\n' "$RUNNER_TEMP/source-icon-$ICON_PHASE" >> "$GITHUB_ENV"
+      - name: Pin unchanged source and native toolchain
+        run: bun ../driver/scripts/source-icon-evidence.mjs prepare
+      - name: Install frozen runtime dependencies
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+        run: |
+          set -euo pipefail
+          bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1 2>&1 | tee "$ICON_EVIDENCE_OUTPUT/install.log"
+      - name: Install exact Electron test runtime
+        run: |
+          set -euo pipefail
+          node apps/desktop/node_modules/electron/install.js 2>&1 | tee "$ICON_EVIDENCE_OUTPUT/electron-install.log"
+          bun ../driver/scripts/source-icon-evidence.mjs guard
+      - name: Build, sign, reuse and render the actual source launcher
+        run: |
+          set -euo pipefail
+          bun ../driver/scripts/source-icon-evidence.mjs native 2>&1 | tee "$ICON_EVIDENCE_OUTPUT/native.log"
+      - name: Run all canonical launcher assertions on Darwin
+        if: matrix.phase == 'after'
+        env:
+          SYNARA_DESKTOP_FLAVOR: ""
+        run: |
+          set -euo pipefail
+          test ! -e "$RUNNER_TEMP/source-icon-after-live-tests.json"
+          bun run --cwd apps/desktop test scripts/electron-launcher.test.mjs --reporter=json --outputFile="$RUNNER_TEMP/source-icon-after-live-tests.json" 2>&1 | tee "$ICON_EVIDENCE_OUTPUT/launcher-tests.log"
+      - name: Preserve strict source, result and artifact receipts
+        if: always()
+        run: bun ../driver/scripts/source-icon-evidence.mjs finalize
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: source-icon-${{ matrix.phase }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/source-icon-${{ matrix.phase }}/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

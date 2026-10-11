@@ -1,0 +1,20 @@
+{
+  "label": "launcher-native",
+  "executable": "plutil",
+  "args": [
+    "-replace",
+    "CFBundleIdentifier",
+    "-string",
+    "com.emanueledipietro.synara.beta",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app/Contents/Info.plist"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:49:05.191Z",
+  "finishedAt": "2026-10-11T22:49:05.197Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

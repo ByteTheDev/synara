@@ -1,0 +1,17 @@
+{
+  "label": "unregister-owned-bundle",
+  "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister",
+  "args": [
+    "-u",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:54.539Z",
+  "finishedAt": "2026-10-11T22:48:54.570Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

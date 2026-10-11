@@ -1,0 +1,20 @@
+{
+  "label": "launcher-native",
+  "executable": "plutil",
+  "args": [
+    "-replace",
+    "CFBundleDisplayName",
+    "-string",
+    "Synara Beta Helper (GPU)",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app/Contents/Frameworks/Electron Helper (GPU).app/Contents/Info.plist"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:50.012Z",
+  "finishedAt": "2026-10-11T22:48:50.019Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

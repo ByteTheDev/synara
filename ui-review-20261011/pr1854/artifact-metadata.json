@@ -1,0 +1,45 @@
+{
+  "total_count": 2,
+  "artifacts": [
+    {
+      "id": 11718511095,
+      "node_id": "MDg6QXJ0aWZhY3QxMTcxODUxMTA5NQ==",
+      "name": "source-icon-before-attempt-1",
+      "size_in_bytes": 218820,
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11718511095",
+      "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11718511095/zip",
+      "expired": false,
+      "digest": "sha256:2f2c720d1d80d5f8bf3d123940e0b0d39a0fea43c79c093a40d40f9743fde0e1",
+      "created_at": "2026-10-11T22:49:33Z",
+      "updated_at": "2026-10-11T22:49:33Z",
+      "expires_at": "2026-10-25T22:49:31Z",
+      "workflow_run": {
+        "id": 38181306809,
+        "repository_id": 1194039785,
+        "head_repository_id": 1194039785,
+        "head_branch": "cleanup/20261011/pr1849-source-icon-proof",
+        "head_sha": "5c713a700b398e63519a5938e82f0641d2ff17ed"
+      }
+    },
+    {
+      "id": 11718102474,
+      "node_id": "MDg6QXJ0aWZhY3QxMTcxODEwMjQ3NA==",
+      "name": "source-icon-after-attempt-1",
+      "size_in_bytes": 519731,
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11718102474",
+      "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11718102474/zip",
+      "expired": false,
+      "digest": "sha256:c21fb06c0a7ade319d944991d93ce6816a40f1db590d7835eb52cbd757162875",
+      "created_at": "2026-10-11T22:48:59Z",
+      "updated_at": "2026-10-11T22:48:59Z",
+      "expires_at": "2026-10-25T22:48:57Z",
+      "workflow_run": {
+        "id": 38181306809,
+        "repository_id": 1194039785,
+        "head_repository_id": 1194039785,
+        "head_branch": "cleanup/20261011/pr1849-source-icon-proof",
+        "head_sha": "5c713a700b398e63519a5938e82f0641d2ff17ed"
+      }
+    }
+  ]
+}

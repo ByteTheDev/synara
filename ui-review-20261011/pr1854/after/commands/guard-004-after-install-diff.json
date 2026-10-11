@@ -1,0 +1,19 @@
+{
+  "label": "after-install-diff",
+  "executable": "git",
+  "args": [
+    "diff",
+    "--exit-code",
+    "HEAD",
+    "--"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:20.048Z",
+  "finishedAt": "2026-10-11T22:48:20.073Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

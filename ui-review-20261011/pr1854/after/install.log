@@ -1,0 +1,24 @@
+bun install v1.4.2 (744846f84)
+Resolving dependencies
+Resolved, downloaded and extracted [64]
+
+$ node scripts/patch-workspace-typescript.ts && effect-tsgo patch --typescript --typescript-package @typescript/native
+[22:48:11.483] INFO (#22): /Users/runner/work/synara/synara/source/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/typescript.js patched successfully.
+[22:48:16.371] INFO (#22): /Users/runner/work/synara/synara/source/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/_tsc.js patched successfully.
+[22:48:16.373] INFO (#22): If your project uses incremental builds, delete the .tsbuildinfo files and perform a full build.
+[22:48:16.376] INFO (#22): No prepare script found in package.json; to make the patch persistent across package installations and updates, add the following to your package.json scripts:
+  "scripts": {
+          "prepare": "effect-language-service patch"
+  }
+Patched typescript at /Users/runner/work/synara/synara/source/node_modules/.bun/@typescript+typescript-darwin-arm64@7.0.2/node_modules/@typescript/typescript-darwin-arm64/lib/tsc
+
++ @effect/tsgo@0.41.0
++ @types/node@24.12.0 (v26.6.5 available)
++ @typescript/native@7.0.2
++ @vitest/coverage-v8@4.1.10
++ oxfmt@0.40.0
++ oxlint@1.56.0
++ turbo@2.10.5
++ vitest@4.1.10
+
+1154 packages installed [26.91s]

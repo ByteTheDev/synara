@@ -1,0 +1,17 @@
+{
+  "label": "prepare-head",
+  "executable": "git",
+  "args": [
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:14.958Z",
+  "finishedAt": "2026-10-11T22:48:14.977Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

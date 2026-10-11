@@ -1,0 +1,11 @@
+{
+  "api" : "NSWorkspace.icon(forFile:)",
+  "appearance" : "aqua",
+  "applicationLaunched" : false,
+  "bundle" : "\/Users\/runner\/work\/synara\/synara\/source\/apps\/desktop\/.electron-runtime\/Synara Beta.app",
+  "height" : 1024,
+  "pngBytes" : 436728,
+  "qualification" : "Actual AppKit bundle-icon render, not a running or closed Dock screenshot.",
+  "visiblePixels" : 736097,
+  "width" : 1024
+}

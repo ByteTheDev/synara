@@ -1,0 +1,14 @@
+{
+  "label": "system-version",
+  "executable": "/usr/bin/sw_vers",
+  "args": [],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:16.005Z",
+  "finishedAt": "2026-10-11T22:48:16.017Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

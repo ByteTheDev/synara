@@ -1,0 +1,30 @@
+{
+  "label": "launcher-native",
+  "executable": "xcrun",
+  "args": [
+    "actool",
+    "/Users/runner/work/synara/synara/source/assets/beta/Synara.icon",
+    "--compile",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app/Contents/Resources",
+    "--platform",
+    "macosx",
+    "--minimum-deployment-target",
+    "26.0",
+    "--app-icon",
+    "Synara",
+    "--include-all-app-icons",
+    "--output-partial-info-plist",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/icon-partial.plist",
+    "--output-format",
+    "human-readable-text"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:48:36.050Z",
+  "finishedAt": "2026-10-11T22:48:49.948Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "/* com.apple.actool.compilation-results */\n/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app/Contents/Resources/Assets.car\n/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app/Contents/Resources/Synara.icns\n/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/icon-partial.plist\n\n",
+  "stderr": "",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

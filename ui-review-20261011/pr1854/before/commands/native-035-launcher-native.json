@@ -1,0 +1,17 @@
+{
+  "label": "launcher-native",
+  "executable": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister",
+  "args": [
+    "-u",
+    "/Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app"
+  ],
+  "cwd": "/Users/runner/work/synara/synara/source",
+  "startedAt": "2026-10-11T22:49:25.171Z",
+  "finishedAt": "2026-10-11T22:49:25.226Z",
+  "status": 1,
+  "signal": null,
+  "error": null,
+  "stdout": "",
+  "stderr": "failed to scan /Users/runner/work/synara/synara/source/apps/desktop/.electron-runtime/Synara Beta.app: -10814\n from spotlight",
+  "qualification": "Actual bounded synchronous native utility; no descendant-cleanup claim."
+}

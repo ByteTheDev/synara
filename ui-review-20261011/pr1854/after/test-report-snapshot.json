@@ -1,0 +1,6 @@
+{
+  "capturedAt": "2026-10-11T22:48:57.206Z",
+  "bytes": 8081,
+  "sha256": "d815aa0171860f19319b23ce6f2dbcbb88e8aaa51a65f57e6c994caeee4f7543",
+  "qualification": "One copied observation after the workflow test step; missing/partial/failed reports are rejected."
+}
