@@ -25,7 +25,7 @@ jobs:
       - name: Check out exact reviewed application
         uses: actions/checkout@v6
         with:
-          ref: a1b087d984a39cf9df936d5da9465db9e7679600
+          ref: 2a6008e65a7b88cbfe89795ac067f55d8693c6ac
           persist-credentials: false
       - name: Check out isolated evidence driver
         uses: actions/checkout@v6
