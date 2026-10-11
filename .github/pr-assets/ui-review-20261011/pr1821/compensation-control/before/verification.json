@@ -1,0 +1,18 @@
+{
+  "case": "before",
+  "source": "75ec05e69c819a57573a24be1a424f3e8420ebe8",
+  "hookBlob": "1d4378e9fced76ff2a13431f437fe0bf951bdca3",
+  "suiteBlob": "1f390a8599188f8f418c3ae6fc87adbc8ad5c1d2",
+  "driver": "9cfabdafaaa4f30ecbc2ae2300630dc3da4e2a12",
+  "runId": "38153628677",
+  "hookSha256": "6ed3399436a690c2209df630205d17a46331fccb1c30a16e4c22fb02485c6447",
+  "suiteSha256": "0bbe24f062d132bb3fbbe4c5da0c47e4a24a97f9acfb79e2375a57e091aea634",
+  "boundary": "Real Chromium and production React hook; controlled overflowing-node geometry and handler events. This does not prove native keyboard or wheel distances, packaged desktop behavior, or a live provider session.",
+  "verdict": "expected keyboard regression reproduced",
+  "passed": 9,
+  "failed": 1,
+  "failedNames": [
+    "transcript detach on reader gestures retains observed 'keyboard' ownership across row compensation (moved up: true)"
+  ],
+  "reportSha256": "615b4bdc902ddfa2ec18be06a468a673274ae405e4260258dff1293374ca287a"
+}

@@ -1,0 +1,154 @@
+[
+  {
+    "variant": "before",
+    "sourcePath": "before/video/page@9bdbcd70aa4a2db19e7695fcdef821ed.webm",
+    "sourceSha256": "2dbe724ae9b202ae81c1f838153113fe1f02ee15c93b98241cbebcdd33c5c9a4",
+    "sourceDurationSeconds": 83.92,
+    "sourceStartSeconds": 65.0,
+    "requestedDurationSeconds": 18.92,
+    "clipPath": "before/interaction.mp4",
+    "clipSha256": "6c25476ad09376ef9e60c5a0df8001fc50d5bb24d2d77b1d750f9a8f8ed8ed27",
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 900,
+          "avg_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "18.920000",
+        "size": "3308983"
+      }
+    },
+    "derivation": "One continuous full-frame real-time interval, re-encoded H.264 CRF18; no cropping, text overlays, added frames, speed changes or source application changes. Original complete WebM remains included.",
+    "args": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-i",
+      "campaign/runtime/1821-evidence/pr1821/before/video/page@9bdbcd70aa4a2db19e7695fcdef821ed.webm",
+      "-ss",
+      "65.0",
+      "-t",
+      "18.92",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-an",
+      "-movflags",
+      "+faststart",
+      "campaign/runtime/1821-evidence/pr1821/before/interaction.mp4"
+    ],
+    "frames": [
+      {
+        "path": "before/clip-frame-1.png",
+        "clipTimeSeconds": 0,
+        "sourceTimeSeconds": 65.0,
+        "sha256": "f6a4d208c4d0c30631e44747812834cbfdeeb6e787596a4bcf1632a6b7491cea"
+      },
+      {
+        "path": "before/clip-frame-2.png",
+        "clipTimeSeconds": 4,
+        "sourceTimeSeconds": 69.0,
+        "sha256": "99662cef836820338061e62cdf87737be8d14337a00d653dfab853eacbc7b643"
+      },
+      {
+        "path": "before/clip-frame-3.png",
+        "clipTimeSeconds": 7,
+        "sourceTimeSeconds": 72.0,
+        "sha256": "52a91fbe154b37d729ac02d64fcf9e626556a4763ebdc4f7e3218c2e17fe8cd2"
+      },
+      {
+        "path": "before/clip-frame-4.png",
+        "clipTimeSeconds": 17.92,
+        "sourceTimeSeconds": 82.92,
+        "sha256": "1fafb50143a87855cdfce78f5e249dfc34d3105639e9d5ce97273d8f352e2c33"
+      }
+    ]
+  },
+  {
+    "variant": "after",
+    "sourcePath": "after/video/page@9eabae66dae1b61265527169fd95ca87.webm",
+    "sourceSha256": "3b4d5b89d0964f8b2f9ad0bf3be1a3398a7e4c0ae607d5dfc50f1bcc0a0fdcc3",
+    "sourceDurationSeconds": 107.56,
+    "sourceStartSeconds": 86.0,
+    "requestedDurationSeconds": 21.56,
+    "clipPath": "after/interaction.mp4",
+    "clipSha256": "a2c96f698cffad5f41ea9207534e64a3a2b3c2eec190d58a3c4251a98c3069ca",
+    "probe": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 900,
+          "avg_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "21.560000",
+        "size": "3492092"
+      }
+    },
+    "derivation": "One continuous full-frame real-time interval, re-encoded H.264 CRF18; no cropping, text overlays, added frames, speed changes or source application changes. Original complete WebM remains included.",
+    "args": [
+      "ffmpeg",
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-i",
+      "campaign/runtime/1821-evidence/pr1821/after/video/page@9eabae66dae1b61265527169fd95ca87.webm",
+      "-ss",
+      "86.0",
+      "-t",
+      "21.56",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "medium",
+      "-crf",
+      "18",
+      "-pix_fmt",
+      "yuv420p",
+      "-an",
+      "-movflags",
+      "+faststart",
+      "campaign/runtime/1821-evidence/pr1821/after/interaction.mp4"
+    ],
+    "frames": [
+      {
+        "path": "after/clip-frame-1.png",
+        "clipTimeSeconds": 0,
+        "sourceTimeSeconds": 86.0,
+        "sha256": "0325a7496bc61eff34232eb84492530c767c0bc14ea3e239843e399513f1e443"
+      },
+      {
+        "path": "after/clip-frame-2.png",
+        "clipTimeSeconds": 4,
+        "sourceTimeSeconds": 90.0,
+        "sha256": "4f258617f10ab8b43ed672d813ccc921a82fc6c5fd2acfaf0ef2d2813c9fda81"
+      },
+      {
+        "path": "after/clip-frame-3.png",
+        "clipTimeSeconds": 7,
+        "sourceTimeSeconds": 93.0,
+        "sha256": "d2a2aba1da57895f65a5fe56bf3ec87f4040a683cb07cdb19897e7bdc70cd8c8"
+      },
+      {
+        "path": "after/clip-frame-4.png",
+        "clipTimeSeconds": 20.560000000000002,
+        "sourceTimeSeconds": 106.56,
+        "sha256": "a0937e6133c514dd13b0463f2169e449e1caefe1b65a4c9ebe050a2a2ba9f236"
+      }
+    ]
+  }
+]

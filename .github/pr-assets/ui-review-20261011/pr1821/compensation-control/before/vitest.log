@@ -1,0 +1,51 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m4:01:21 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+[2m4:01:23 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ [31m❯[39m [30m[43m chromium [49m[39m src/components/chat/useChatTranscriptScroll.browser.tsx [2m([22m[2m10 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2232[2mms[22m[39m
+     [32m✓[39m follows an idle destination after leaving a detached transcript[32m 282[2mms[22m[39m
+     [32m✓[39m keeps live follow during the scroll guard (switch while pending: false)[32m 268[2mms[22m[39m
+     [32m✓[39m keeps live follow during the scroll guard (switch while pending: true)[32m 299[2mms[22m[39m
+     [32m✓[39m preserves send-anchor ownership when an idle destination starts streaming[32m 99[2mms[22m[39m
+     [32m✓[39m retains observed 'wheel' ownership across row compensation (moved up: true)[32m 250[2mms[22m[39m
+[31m     [31m×[31m retains observed 'keyboard' ownership across row compensation (moved up: true)[39m[33m 421[2mms[22m[39m
+     [32m✓[39m retains observed 'wheel' ownership across row compensation (moved up: false)[32m 245[2mms[22m[39m
+     [32m✓[39m retains observed 'keyboard' ownership across row compensation (moved up: false)[32m 250[2mms[22m[39m
+     [32m✓[39m commits the detached follow state before an already queued frame runs[32m 50[2mms[22m[39m
+     [32m✓[39m detaches without a flushSync warning when a gesture lands inside a commit[32m 66[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/chat/useChatTranscriptScroll.browser.tsx[2m > [22mtranscript detach on reader gestures[2m > [22mretains observed 'keyboard' ownership across row compensation (moved up: true)
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+Failure screenshot:
+  - [2msrc/components/chat/__screenshots__/useChatTranscriptScroll.browser.tsx/transcript-detach-on-reader-gestures-retains-observed--keyboard--ownership-across-row-compensation--moved-up--true--1.png[22m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m src/components/chat/useChatTranscriptScroll.browser.tsx:[2m276:47[22m[39m
+    [90m274|[39m         [35mawait[39m [35mnew[39m [33mPromise[39m((resolve) [33m=>[39m [34msetTimeout[39m(resolve[33m,[39m [34m200[39m))[33m;[39m
+    [90m275|[39m         [35mawait[39m [34mwaitForFrames[39m()[33m;[39m
+    [90m276|[39m         [34mexpect[39m(controls[33m![39m[33m.[39misUserScrollDetached)[33m.[39m[34mtoBe[39m(movedUp)[33m;[39m
+    [90m   |[39m                                               [31m^[39m
+    [90m277|[39m         expect(listRef.current.scrollToEnd).toHaveBeenCalledTimes(move…
+    [90m278|[39m       } [35mfinally[39m {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 16:01:20
+[2m   Duration [22m 10.06s[2m (transform 0ms, setup 0ms, import 3.13s, tests 2.23s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/synara/synara/.runtime-scroll-output/vitest.json

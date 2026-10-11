@@ -1,0 +1,16 @@
+{
+  "case": "after",
+  "source": "ab8a77a873e2443ffc9a9570cbd2919219fd41c9",
+  "hookBlob": "1e67805a6037c8cd7728919da35cc7530b69ad73",
+  "suiteBlob": "1f390a8599188f8f418c3ae6fc87adbc8ad5c1d2",
+  "driver": "9cfabdafaaa4f30ecbc2ae2300630dc3da4e2a12",
+  "runId": "38153628677",
+  "hookSha256": "7b56b4d6eb0f60889f5250c64b8e791256b6082433dbc981611233da27a3e5ef",
+  "suiteSha256": "0bbe24f062d132bb3fbbe4c5da0c47e4a24a97f9acfb79e2375a57e091aea634",
+  "boundary": "Real Chromium and production React hook; controlled overflowing-node geometry and handler events. This does not prove native keyboard or wheel distances, packaged desktop behavior, or a live provider session.",
+  "verdict": "all ten browser cases passed",
+  "passed": 10,
+  "failed": 0,
+  "failedNames": [],
+  "reportSha256": "e435c568741aa14c6b7940b767f0909e6b4865367a6222f69e64787d9db92085"
+}

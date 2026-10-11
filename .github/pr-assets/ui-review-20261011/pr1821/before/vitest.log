@@ -1,0 +1,22 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m5:36:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[BABEL] Note: The code generator has deoptimised the styling of /home/runner/work/synara/synara/apps/web/src/components/ChatView.browser.tsx as it exceeds the max of 500KB.
+[90mstdout[2m | src/components/ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mPR UI evidence: preserve a ChatView reading position through streaming after keyboard input
+[22m[39mPR_CHATVIEW_SCROLL_RESULT {"variant":"before","gesture":"keyboard","input":"Chromium PageUp","states":[{"name":"following","scrollTop":4217,"scrollHeight":5054,"clientHeight":837,"distanceFromBottom":0,"paragraphs":13},{"name":"reading","scrollTop":3485,"scrollHeight":5054,"clientHeight":837,"distanceFromBottom":732,"paragraphs":13,"anchorTop":23,"anchorText":"filler user message 19","inputStartTop":4217},{"name":"streaming-while-reading","scrollTop":3485,"scrollHeight":5276,"clientHeight":837,"distanceFromBottom":954,"paragraphs":16,"anchorTop":23,"anchorText":"filler user message 19","anchorDrift":0},{"name":"following-resumed","scrollTop":4586,"scrollHeight":5423,"clientHeight":837,"distanceFromBottom":0,"paragraphs":18}],"boundary":"Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."}
+[90mstdout[2m | src/components/ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mPR UI evidence: preserve a ChatView reading position through streaming after wheel input
+[22m[39mPR_CHATVIEW_SCROLL_RESULT {"variant":"before","gesture":"wheel","input":"Chromium wheel deltaY=-350","states":[{"name":"following","scrollTop":4217,"scrollHeight":5054,"clientHeight":837,"distanceFromBottom":0,"paragraphs":13},{"name":"reading","scrollTop":3867,"scrollHeight":5054,"clientHeight":837,"distanceFromBottom":350,"paragraphs":13,"anchorTop":43.1875,"anchorText":"Mar 4 12:02 PM","inputStartTop":4217},{"name":"streaming-while-reading","scrollTop":3867,"scrollHeight":5276,"clientHeight":837,"distanceFromBottom":572,"paragraphs":16,"anchorTop":43.1875,"anchorText":"Mar 4 12:02 PM","anchorDrift":0},{"name":"following-resumed","scrollTop":4586,"scrollHeight":5423,"clientHeight":837,"distanceFromBottom":0,"paragraphs":18}],"boundary":"Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."}
+ [32m✓[39m [30m[43m chromium [49m[39m src/components/ChatView.browser.tsx [2m([22m[2m225 tests[22m[2m | [22m[33m223 skipped[39m[2m)[22m[33m 28142[2mms[22m[39m
+     [33m[2m✓[22m[39m PR UI evidence: preserve a ChatView reading position through streaming after keyboard input [33m 19684[2mms[22m[39m
+     [33m[2m✓[22m[39m PR UI evidence: preserve a ChatView reading position through streaming after wheel input [33m 8422[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[2m | [22m[33m223 skipped[39m[90m (225)[39m
+[2m   Start at [22m 17:36:39
+[2m   Duration [22m 84.82s[2m (transform 0ms, setup 0ms, import 53.90s, tests 28.14s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/synara/synara/runtime-chatview-evidence/vitest.json

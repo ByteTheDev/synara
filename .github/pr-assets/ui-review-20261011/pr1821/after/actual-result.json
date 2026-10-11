@@ -1,0 +1,19 @@
+{
+  "source": "ab8a77a873e2443ffc9a9570cbd2919219fd41c9",
+  "driver": "dd5b1f1cca2719185cca99c876e80a93da95030a",
+  "command": "bun",
+  "args": [
+    "x",
+    "vitest",
+    "run",
+    "--config",
+    "vitest.runtime-chatview-evidence.config.ts",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/home/runner/work/synara/synara/runtime-chatview-evidence/vitest.json"
+  ],
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "logSha256": "145ff0e88ecf15da8592d0f3937e5644b1f2c9bec220ae2e6848877bac0bec89"
+}

@@ -1,0 +1,206 @@
+{
+  "source": "ab8a77a873e2443ffc9a9570cbd2919219fd41c9",
+  "sourceTree": "cd1b99fed142f3d28cfa1aa93467f5f6b4d35c4f",
+  "driver": "dd5b1f1cca2719185cca99c876e80a93da95030a",
+  "driverTree": "c3d923eee524f2f748fe64d60061adf47241e154",
+  "variant": "after",
+  "hookBlob": "1e67805a6037c8cd7728919da35cc7530b69ad73",
+  "originalChatViewTestBlob": "73c366c47798f7b505ed3a1c293ae3b893953b5c",
+  "fixtureSha256": "8f68e9acc05153cfa5ea6bf4b16ec1f133425cf78668f5cf4de58670b1015bb0",
+  "originalChatViewTestSha256": "d400aa5a6870539353b73b653fd33bc547802904516f156bce32c78a4340cb40",
+  "driverScriptSha256": "48e0a31ecb3946f9d781745335e880be76c81ba3bafb6a3ca8d4b6c223027a75",
+  "driverWorkflowSha256": "9b6e64719c1617c7336e35a60c53e4256109e7b70577a58d7a74c3fa45c02039",
+  "lockfileSha256": "e04d95a03e02e86d0c78fed226bdb9faa3519e0eb8a73868c7434f08df567879",
+  "overlays": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "sha256": "04151bc7bdaeab600d09e28ea048042ff3dd4276474d297e0a670fa31a1c51a0"
+    },
+    {
+      "path": "apps/web/vitest.runtime-chatview-evidence.config.ts",
+      "sha256": "7c97557afdbb6dea9cd3fd055be64a63e98711b5138564e0548f05f190aa5a0e"
+    }
+  ],
+  "applicationCodeModified": false,
+  "qualification": "Actual ChatView, production CSS/router/virtual list in hosted Chromium with native browser PageUp and wheel input; orchestration and native API remain canonical fixtures. Both ordinary full-component cases must pass on both heads. No forced scroll dimensions, replaced hooks, native Electron/macOS input, authenticated provider or compensation-race reproduction claim. The separate unchanged ten-test control at run38153628677 retains its Before1-fail/9-pass and After10-pass causal evidence.",
+  "status": "completed",
+  "actual": {
+    "source": "ab8a77a873e2443ffc9a9570cbd2919219fd41c9",
+    "driver": "dd5b1f1cca2719185cca99c876e80a93da95030a",
+    "command": "bun",
+    "args": [
+      "x",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.runtime-chatview-evidence.config.ts",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/home/runner/work/synara/synara/runtime-chatview-evidence/vitest.json"
+    ],
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "logSha256": "145ff0e88ecf15da8592d0f3937e5644b1f2c9bec220ae2e6848877bac0bec89"
+  },
+  "images": [
+    {
+      "name": "keyboard-following-resumed.png",
+      "bytes": 153793,
+      "sha256": "84c1ec3b8fa6705e53b77df8a44fc99b8eba17fdeda4a220ed255a3f9cc3a44c",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "keyboard-following.png",
+      "bytes": 153717,
+      "sha256": "9f477a586b74bb1f306d8b52058dc7e848415fa415585a236a5aa5cec1f649da",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "keyboard-reading.png",
+      "bytes": 91819,
+      "sha256": "80f049d4a4894ebc3972232659342aa11103ab85e597516d093078b6ff726e5a",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "keyboard-streaming-while-reading.png",
+      "bytes": 91850,
+      "sha256": "65d900ab204fd118e855bde3ec8a50e1ff0a5797343f54fbe35b5810b9b81ccb",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "wheel-following-resumed.png",
+      "bytes": 153804,
+      "sha256": "f1444dc7492a044d72873bf4fdf629a8203e664b788e7e2b7014d604ad5452ea",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "wheel-following.png",
+      "bytes": 153728,
+      "sha256": "da230ed4585dd80b9d2709cf2458c075c7566356b8287b1ba73f34323e78c01b",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "wheel-reading.png",
+      "bytes": 148636,
+      "sha256": "0f818ef2890a26eb28b181abc52c743b2ea8baa64cfb0fc7aeffdf2708ea2b0f",
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "name": "wheel-streaming-while-reading.png",
+      "bytes": 148504,
+      "sha256": "586863a9f423b9f4818dbe73636ffd4848793a945d35b5006e4714af30adc9ec",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "videos": [
+    {
+      "name": "video/page@9eabae66dae1b61265527169fd95ca87.webm",
+      "bytes": 2815228,
+      "sha256": "3b4d5b89d0964f8b2f9ad0bf3be1a3398a7e4c0ae607d5dfc50f1bcc0a0fdcc3"
+    }
+  ],
+  "observations": [
+    {
+      "variant": "after",
+      "gesture": "keyboard",
+      "input": "Chromium PageUp",
+      "states": [
+        {
+          "name": "following",
+          "scrollTop": 4217,
+          "scrollHeight": 5054,
+          "clientHeight": 837,
+          "distanceFromBottom": 0,
+          "paragraphs": 13
+        },
+        {
+          "name": "reading",
+          "scrollTop": 3485,
+          "scrollHeight": 5054,
+          "clientHeight": 837,
+          "distanceFromBottom": 732,
+          "paragraphs": 13,
+          "anchorTop": 23,
+          "anchorText": "filler user message 19",
+          "inputStartTop": 4217
+        },
+        {
+          "name": "streaming-while-reading",
+          "scrollTop": 3485,
+          "scrollHeight": 5276,
+          "clientHeight": 837,
+          "distanceFromBottom": 954,
+          "paragraphs": 16,
+          "anchorTop": 23,
+          "anchorText": "filler user message 19",
+          "anchorDrift": 0
+        },
+        {
+          "name": "following-resumed",
+          "scrollTop": 4586,
+          "scrollHeight": 5423,
+          "clientHeight": 837,
+          "distanceFromBottom": 0,
+          "paragraphs": 18
+        }
+      ],
+      "boundary": "Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."
+    },
+    {
+      "variant": "after",
+      "gesture": "wheel",
+      "input": "Chromium wheel deltaY=-350",
+      "states": [
+        {
+          "name": "following",
+          "scrollTop": 4217,
+          "scrollHeight": 5054,
+          "clientHeight": 837,
+          "distanceFromBottom": 0,
+          "paragraphs": 13
+        },
+        {
+          "name": "reading",
+          "scrollTop": 3867,
+          "scrollHeight": 5054,
+          "clientHeight": 837,
+          "distanceFromBottom": 350,
+          "paragraphs": 13,
+          "anchorTop": 43.1875,
+          "anchorText": "Mar 4 12:02 PM",
+          "inputStartTop": 4217
+        },
+        {
+          "name": "streaming-while-reading",
+          "scrollTop": 3867,
+          "scrollHeight": 5276,
+          "clientHeight": 837,
+          "distanceFromBottom": 572,
+          "paragraphs": 16,
+          "anchorTop": 43.1875,
+          "anchorText": "Mar 4 12:02 PM",
+          "anchorDrift": 0
+        },
+        {
+          "name": "following-resumed",
+          "scrollTop": 4586,
+          "scrollHeight": 5423,
+          "clientHeight": 837,
+          "distanceFromBottom": 0,
+          "paragraphs": 18
+        }
+      ],
+      "boundary": "Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."
+    }
+  ],
+  "reportSha256": "945e16655629816a105b61697b6c4dffd9f66c7176fb034c82e75381ee9595e2"
+}

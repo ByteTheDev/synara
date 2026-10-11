@@ -1,0 +1,260 @@
+[
+  {
+    "variant": "before",
+    "id": 11710146165,
+    "zipSha256": "3b2547c50693ff4a03abf84da95d16f0100a24963aadc83a82d92ce6ee04a27a",
+    "source": "75ec05e69c819a57573a24be1a424f3e8420ebe8",
+    "sourceTree": "833d32dfdc79af7a3e9d11f63924611e1d14dad7",
+    "fixtureSha256": "8f68e9acc05153cfa5ea6bf4b16ec1f133425cf78668f5cf4de58670b1015bb0",
+    "images": 8,
+    "videos": [
+      {
+        "name": "video/page@9bdbcd70aa4a2db19e7695fcdef821ed.webm",
+        "bytes": 2534193,
+        "sha256": "2dbe724ae9b202ae81c1f838153113fe1f02ee15c93b98241cbebcdd33c5c9a4"
+      }
+    ],
+    "observations": [
+      {
+        "variant": "before",
+        "gesture": "keyboard",
+        "input": "Chromium PageUp",
+        "states": [
+          {
+            "name": "following",
+            "scrollTop": 4217,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 13
+          },
+          {
+            "name": "reading",
+            "scrollTop": 3485,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 732,
+            "paragraphs": 13,
+            "anchorTop": 23,
+            "anchorText": "filler user message 19",
+            "inputStartTop": 4217
+          },
+          {
+            "name": "streaming-while-reading",
+            "scrollTop": 3485,
+            "scrollHeight": 5276,
+            "clientHeight": 837,
+            "distanceFromBottom": 954,
+            "paragraphs": 16,
+            "anchorTop": 23,
+            "anchorText": "filler user message 19",
+            "anchorDrift": 0
+          },
+          {
+            "name": "following-resumed",
+            "scrollTop": 4586,
+            "scrollHeight": 5423,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 18
+          }
+        ],
+        "boundary": "Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."
+      },
+      {
+        "variant": "before",
+        "gesture": "wheel",
+        "input": "Chromium wheel deltaY=-350",
+        "states": [
+          {
+            "name": "following",
+            "scrollTop": 4217,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 13
+          },
+          {
+            "name": "reading",
+            "scrollTop": 3867,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 350,
+            "paragraphs": 13,
+            "anchorTop": 43.1875,
+            "anchorText": "Mar 4 12:02 PM",
+            "inputStartTop": 4217
+          },
+          {
+            "name": "streaming-while-reading",
+            "scrollTop": 3867,
+            "scrollHeight": 5276,
+            "clientHeight": 837,
+            "distanceFromBottom": 572,
+            "paragraphs": 16,
+            "anchorTop": 43.1875,
+            "anchorText": "Mar 4 12:02 PM",
+            "anchorDrift": 0
+          },
+          {
+            "name": "following-resumed",
+            "scrollTop": 4586,
+            "scrollHeight": 5423,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 18
+          }
+        ],
+        "boundary": "Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."
+      }
+    ],
+    "actual": {
+      "source": "75ec05e69c819a57573a24be1a424f3e8420ebe8",
+      "driver": "dd5b1f1cca2719185cca99c876e80a93da95030a",
+      "command": "bun",
+      "args": [
+        "x",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.runtime-chatview-evidence.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/home/runner/work/synara/synara/runtime-chatview-evidence/vitest.json"
+      ],
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "logSha256": "a1945c1a0948d450bf52b0a2f8b0dfdf70929662d3d853ca42eaa4c5d9851471"
+    }
+  },
+  {
+    "variant": "after",
+    "id": 11708879967,
+    "zipSha256": "e8171f95a70e55d2b4b01537e2959548c5d0a4d1ea2dab010380615ba213563d",
+    "source": "ab8a77a873e2443ffc9a9570cbd2919219fd41c9",
+    "sourceTree": "cd1b99fed142f3d28cfa1aa93467f5f6b4d35c4f",
+    "fixtureSha256": "8f68e9acc05153cfa5ea6bf4b16ec1f133425cf78668f5cf4de58670b1015bb0",
+    "images": 8,
+    "videos": [
+      {
+        "name": "video/page@9eabae66dae1b61265527169fd95ca87.webm",
+        "bytes": 2815228,
+        "sha256": "3b4d5b89d0964f8b2f9ad0bf3be1a3398a7e4c0ae607d5dfc50f1bcc0a0fdcc3"
+      }
+    ],
+    "observations": [
+      {
+        "variant": "after",
+        "gesture": "keyboard",
+        "input": "Chromium PageUp",
+        "states": [
+          {
+            "name": "following",
+            "scrollTop": 4217,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 13
+          },
+          {
+            "name": "reading",
+            "scrollTop": 3485,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 732,
+            "paragraphs": 13,
+            "anchorTop": 23,
+            "anchorText": "filler user message 19",
+            "inputStartTop": 4217
+          },
+          {
+            "name": "streaming-while-reading",
+            "scrollTop": 3485,
+            "scrollHeight": 5276,
+            "clientHeight": 837,
+            "distanceFromBottom": 954,
+            "paragraphs": 16,
+            "anchorTop": 23,
+            "anchorText": "filler user message 19",
+            "anchorDrift": 0
+          },
+          {
+            "name": "following-resumed",
+            "scrollTop": 4586,
+            "scrollHeight": 5423,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 18
+          }
+        ],
+        "boundary": "Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."
+      },
+      {
+        "variant": "after",
+        "gesture": "wheel",
+        "input": "Chromium wheel deltaY=-350",
+        "states": [
+          {
+            "name": "following",
+            "scrollTop": 4217,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 13
+          },
+          {
+            "name": "reading",
+            "scrollTop": 3867,
+            "scrollHeight": 5054,
+            "clientHeight": 837,
+            "distanceFromBottom": 350,
+            "paragraphs": 13,
+            "anchorTop": 43.1875,
+            "anchorText": "Mar 4 12:02 PM",
+            "inputStartTop": 4217
+          },
+          {
+            "name": "streaming-while-reading",
+            "scrollTop": 3867,
+            "scrollHeight": 5276,
+            "clientHeight": 837,
+            "distanceFromBottom": 572,
+            "paragraphs": 16,
+            "anchorTop": 43.1875,
+            "anchorText": "Mar 4 12:02 PM",
+            "anchorDrift": 0
+          },
+          {
+            "name": "following-resumed",
+            "scrollTop": 4586,
+            "scrollHeight": 5423,
+            "clientHeight": 837,
+            "distanceFromBottom": 0,
+            "paragraphs": 18
+          }
+        ],
+        "boundary": "Actual ChatView, production CSS, router and virtual list with fixture orchestration. No forced geometry or compensation race; the separate unchanged ten-test control demonstrates that race."
+      }
+    ],
+    "actual": {
+      "source": "ab8a77a873e2443ffc9a9570cbd2919219fd41c9",
+      "driver": "dd5b1f1cca2719185cca99c876e80a93da95030a",
+      "command": "bun",
+      "args": [
+        "x",
+        "vitest",
+        "run",
+        "--config",
+        "vitest.runtime-chatview-evidence.config.ts",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/home/runner/work/synara/synara/runtime-chatview-evidence/vitest.json"
+      ],
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "logSha256": "145ff0e88ecf15da8592d0f3937e5644b1f2c9bec220ae2e6848877bac0bec89"
+    }
+  }
+]
