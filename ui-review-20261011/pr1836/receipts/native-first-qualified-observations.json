@@ -1,0 +1,65 @@
+[
+  {
+    "arch": "arm64",
+    "source": "6d3682aa9123d02b560131ae363e0b627e634447",
+    "driver": "7faff73c0df8417a221871af5e6bf0f1885e6ec8",
+    "run": "38166229495",
+    "filesVerified": 108,
+    "passed": false,
+    "style": 0,
+    "audit": 1,
+    "lifecyclePassed": true,
+    "cleanup": {
+      "attempted": true,
+      "failures": [],
+      "appAbsent": true,
+      "caskAbsent": true,
+      "tapAbsent": true
+    },
+    "version": "1.0.1",
+    "bundleMinimum": "12.0",
+    "download": {
+      "bytes": 299369491,
+      "sha256": "d2e63ec2ff7da36de3531ca95ef8ac2b4161631fee9f94e3da15b31ff393d3ea",
+      "releaseAssetId": 623170563
+    },
+    "installedExecutableSha256": "df6068f7f5f47c26bb1740e63a1c07bfee2d75e3a6a776bdea0d2385eee7a285",
+    "installedAsarSha256": "43c40b9d7ff498a2112f0705f602ceddde4eae744739197bc215ba549b050d57",
+    "appLaunchPerformed": false,
+    "auditFindings": [
+      "Homebrew requires the app plist minimum Monterey12 but candidate intentionally preserves complete-bundle native tool minimum Ventura13",
+      "Unauthenticated GitHub API rate limit during online audit"
+    ]
+  },
+  {
+    "arch": "x64",
+    "source": "6d3682aa9123d02b560131ae363e0b627e634447",
+    "driver": "7faff73c0df8417a221871af5e6bf0f1885e6ec8",
+    "run": "38166229495",
+    "filesVerified": 108,
+    "passed": false,
+    "style": 0,
+    "audit": 1,
+    "lifecyclePassed": true,
+    "cleanup": {
+      "attempted": true,
+      "failures": [],
+      "appAbsent": true,
+      "caskAbsent": true,
+      "tapAbsent": true
+    },
+    "version": "1.0.1",
+    "bundleMinimum": "12.0",
+    "download": {
+      "bytes": 308822463,
+      "sha256": "c6ce67a500e92c3f26fb885fbf1be2c901aa401f71ff13a8b0bb9a1104df3ddb",
+      "releaseAssetId": 623170557
+    },
+    "installedExecutableSha256": "c03bdd82ba9977f98b6ae2ef7f9c5080fcd7f69529d6e0d476aed604885f51cf",
+    "installedAsarSha256": "ba7ad3d9538ce2ba10efa997f5b02bb4c8514a106604b6b5bb399cff3de58a25",
+    "appLaunchPerformed": false,
+    "auditFindings": [
+      "Homebrew requires the app plist minimum Monterey12 but candidate intentionally preserves complete-bundle native tool minimum Ventura13"
+    ]
+  }
+]

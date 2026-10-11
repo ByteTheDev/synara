@@ -1,0 +1,26 @@
+[
+  {
+    "label": "linux-before",
+    "sha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838",
+    "zipBytes": 4548909,
+    "files": 25
+  },
+  {
+    "label": "mac-after",
+    "sha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6",
+    "zipBytes": 10307739,
+    "files": 29
+  },
+  {
+    "label": "mac-before",
+    "sha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0",
+    "zipBytes": 11069804,
+    "files": 33
+  },
+  {
+    "label": "linux-after",
+    "sha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949",
+    "zipBytes": 4283366,
+    "files": 22
+  }
+]

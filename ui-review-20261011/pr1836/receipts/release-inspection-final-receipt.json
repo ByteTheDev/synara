@@ -1,0 +1,246 @@
+[
+  {
+    "arch": "arm64",
+    "zipSha256": "85b58cff722e08298db5d43bb2f039b4c8110fa4d227acfa6861640304531c7e",
+    "fileReceipts": 105,
+    "applicationMinOS": "12.0",
+    "mainArchitectures": [
+      "arm64"
+    ],
+    "electronVersion": "43.4.1",
+    "binaryCount": 33,
+    "minimums": {
+      "12.0": [
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Electron Framework",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Helpers/chrome_crashpad_handler",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libEGL.dylib",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libGLESv2.dylib",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libffmpeg.dylib",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libvk_swiftshader.dylib",
+        "Contents/Frameworks/Mantle.framework/Versions/A/Mantle",
+        "Contents/Frameworks/ReactiveObjC.framework/Versions/A/ReactiveObjC",
+        "Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt",
+        "Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel",
+        "Contents/Frameworks/Synara Helper (GPU).app/Contents/MacOS/Synara Helper (GPU)",
+        "Contents/Frameworks/Synara Helper (Plugin).app/Contents/MacOS/Synara Helper (Plugin)",
+        "Contents/Frameworks/Synara Helper (Renderer).app/Contents/MacOS/Synara Helper (Renderer)",
+        "Contents/Frameworks/Synara Helper.app/Contents/MacOS/Synara Helper",
+        "Contents/MacOS/Synara",
+        "Contents/Resources/app.asar.unpacked/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+        "Contents/Resources/app.asar.unpacked/node_modules/effect/node_modules/msgpackr-extract/build/Release/extract.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/msgpackr-extract/build/Release/extract.node"
+      ],
+      "12.3": [
+        "Contents/Frameworks/synara-window-material.node",
+        "Contents/Helpers/synara-appsnap-helper"
+      ],
+      "13.0": [
+        "Contents/Resources/app.asar.unpacked/node_modules/@anthropic-ai/claude-agent-sdk-darwin-arm64/claude",
+        "Contents/Resources/cua-driver/cua-driver"
+      ],
+      "11.0": [
+        "Contents/Resources/app.asar.unpacked/node_modules/@earendil-works/pi-tui/native/darwin/prebuilds/darwin-arm64/darwin-platform.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/@msgpackr-extract/msgpackr-extract-darwin-arm64/node.napi.glibc.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/effect/node_modules/@msgpackr-extract/msgpackr-extract-darwin-arm64/node.napi.glibc.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/spawn-helper",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-arm64/pty.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-arm64/spawn-helper",
+        "Contents/Resources/app.asar.unpacked/node_modules/rookie-cookies-darwin-arm64/rookie_cookies.darwin-arm64.node"
+      ],
+      "10.15": [
+        "Contents/Resources/app.asar.unpacked/node_modules/@earendil-works/pi-tui/native/darwin/prebuilds/darwin-x64/darwin-platform.node"
+      ],
+      "10.7": [
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-x64/pty.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-x64/spawn-helper"
+      ]
+    },
+    "signing": {
+      "signature": {
+        "status": 0,
+        "signal": null,
+        "stdout": "",
+        "stderr": "Executable=/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/MacOS/Synara\nIdentifier=com.emanueledipietro.synara\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20500 size=647 flags=0x10000(runtime) hashes=9+7 location=embedded\nVersionPlatform=1\nVersionMin=786432\nVersionSDK=1705216\nHash type=sha256 size=32\nCandidateCDHash sha256=e092747594d3e97d13a227cd75a68887692e9faf\nCandidateCDHashFull sha256=e092747594d3e97d13a227cd75a68887692e9faf2e9939cd2c6ec849520b4916\nHash choices=sha256\nCMSDigest=e092747594d3e97d13a227cd75a68887692e9faf2e9939cd2c6ec849520b4916\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=e092747594d3e97d13a227cd75a68887692e9faf\nSignature size=9056\nAuthority=Developer ID Application: Emanuele Di Pietro (HR24WHR326)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=Oct 8, 2026 at 10:13:19\u202fPM\nNotarization Ticket=stapled\nInfo.plist entries=36\nTeamIdentifier=HR24WHR326\nRuntime Version=26.5.0\nSealed Resources version=2 rules=13 files=256\nInternal requirements count=1 size=188\n"
+      },
+      "verify": {
+        "status": 0,
+        "signal": null,
+        "stdout": "",
+        "stderr": "--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Mantle.framework/Versions/Current/.\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Mantle.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper (GPU).app\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper (GPU).app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper (Plugin).app\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper (Plugin).app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper (Renderer).app\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper (Renderer).app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper.app\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/Synara Helper.app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/synara-window-material.node\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Frameworks/synara-window-material.node\n--prepared:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Helpers/synara-appsnap-helper\n--validated:/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app/Contents/Helpers/synara-appsnap-helper\n/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app: valid on disk\n/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app: satisfies its Designated Requirement\n"
+      },
+      "gatekeeper": {
+        "status": 0,
+        "signal": null,
+        "stdout": "",
+        "stderr": "/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/mount/Synara.app: accepted\nsource=Notarized Developer ID\n"
+      },
+      "staple": {
+        "status": 0,
+        "signal": null,
+        "stdout": "Processing: /Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/Synara-1.0.1-arm64.dmg\nThe validate action worked!\n",
+        "stderr": ""
+      }
+    },
+    "cleanup": {
+      "attachAttempted": true,
+      "attachCommandSucceeded": true,
+      "observed": [
+        {
+          "image": "/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11/Synara-1.0.1-arm64.dmg",
+          "target": "/dev/disk5",
+          "ownedImage": true,
+          "ownedMount": true
+        }
+      ],
+      "detaches": [
+        {
+          "target": "/dev/disk5",
+          "status": 0,
+          "signal": null,
+          "error": null
+        }
+      ],
+      "remaining": [],
+      "error": null,
+      "ownedRoot": "/Users/runner/work/_temp/homebrew-dmg-arm64-XPxB11"
+    },
+    "dmg": {
+      "expected": {
+        "id": 623170563,
+        "bytes": 299369491,
+        "sha256": "d2e63ec2ff7da36de3531ca95ef8ac2b4161631fee9f94e3da15b31ff393d3ea"
+      },
+      "actual": {
+        "bytes": 299369491,
+        "sha256": "d2e63ec2ff7da36de3531ca95ef8ac2b4161631fee9f94e3da15b31ff393d3ea"
+      }
+    },
+    "driver": "d41b609324e434eae35a0ba3510c8570d01c3476",
+    "run": "38163962883",
+    "qualification": "Actual vendor DMG read-only metadata/signing; no application execution, minimum-OS runtime compatibility or Homebrew acceptance claim."
+  },
+  {
+    "arch": "x64",
+    "zipSha256": "604fb5abca6a203903e886c5b1c09b5031b48f1b0e70f5973a7fa64b60b5861f",
+    "fileReceipts": 105,
+    "applicationMinOS": "12.0",
+    "mainArchitectures": [
+      "x86_64"
+    ],
+    "electronVersion": "43.4.1",
+    "binaryCount": 33,
+    "minimums": {
+      "12.0": [
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Electron Framework",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Helpers/chrome_crashpad_handler",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libEGL.dylib",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libGLESv2.dylib",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libffmpeg.dylib",
+        "Contents/Frameworks/Electron Framework.framework/Versions/A/Libraries/libvk_swiftshader.dylib",
+        "Contents/Frameworks/Mantle.framework/Versions/A/Mantle",
+        "Contents/Frameworks/ReactiveObjC.framework/Versions/A/ReactiveObjC",
+        "Contents/Frameworks/Squirrel.framework/Versions/A/Resources/ShipIt",
+        "Contents/Frameworks/Squirrel.framework/Versions/A/Squirrel",
+        "Contents/Frameworks/Synara Helper (GPU).app/Contents/MacOS/Synara Helper (GPU)",
+        "Contents/Frameworks/Synara Helper (Plugin).app/Contents/MacOS/Synara Helper (Plugin)",
+        "Contents/Frameworks/Synara Helper (Renderer).app/Contents/MacOS/Synara Helper (Renderer)",
+        "Contents/Frameworks/Synara Helper.app/Contents/MacOS/Synara Helper",
+        "Contents/MacOS/Synara",
+        "Contents/Resources/app.asar.unpacked/node_modules/@esbuild/darwin-x64/bin/esbuild",
+        "Contents/Resources/app.asar.unpacked/node_modules/effect/node_modules/msgpackr-extract/build/Release/extract.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/msgpackr-extract/build/Release/extract.node"
+      ],
+      "12.3": [
+        "Contents/Frameworks/synara-window-material.node",
+        "Contents/Helpers/synara-appsnap-helper"
+      ],
+      "13.0": [
+        "Contents/Resources/app.asar.unpacked/node_modules/@anthropic-ai/claude-agent-sdk-darwin-x64/claude",
+        "Contents/Resources/cua-driver/cua-driver"
+      ],
+      "11.0": [
+        "Contents/Resources/app.asar.unpacked/node_modules/@earendil-works/pi-tui/native/darwin/prebuilds/darwin-arm64/darwin-platform.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-arm64/pty.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-arm64/spawn-helper"
+      ],
+      "10.15": [
+        "Contents/Resources/app.asar.unpacked/node_modules/@earendil-works/pi-tui/native/darwin/prebuilds/darwin-x64/darwin-platform.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/@msgpackr-extract/msgpackr-extract-darwin-x64/node.napi.glibc.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/effect/node_modules/@msgpackr-extract/msgpackr-extract-darwin-x64/node.napi.glibc.node"
+      ],
+      "10.7": [
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/spawn-helper",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-x64/pty.node",
+        "Contents/Resources/app.asar.unpacked/node_modules/node-pty/prebuilds/darwin-x64/spawn-helper"
+      ],
+      "10.13": [
+        "Contents/Resources/app.asar.unpacked/node_modules/rookie-cookies-darwin-x64/rookie_cookies.darwin-x64.node"
+      ]
+    },
+    "signing": {
+      "signature": {
+        "status": 0,
+        "signal": null,
+        "stdout": "",
+        "stderr": "Executable=/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/MacOS/Synara\nIdentifier=com.emanueledipietro.synara\nFormat=app bundle with Mach-O thin (x86_64)\nCodeDirectory v=20500 size=487 flags=0x10000(runtime) hashes=4+7 location=embedded\nVersionPlatform=1\nVersionMin=786432\nVersionSDK=1705216\nHash type=sha256 size=32\nCandidateCDHash sha256=49275cca1c8c6019b5a358aa2d251ccf3c984180\nCandidateCDHashFull sha256=49275cca1c8c6019b5a358aa2d251ccf3c9841807769f1bc8392ce20ee919fd5\nHash choices=sha256\nCMSDigest=49275cca1c8c6019b5a358aa2d251ccf3c9841807769f1bc8392ce20ee919fd5\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=8192\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=49275cca1c8c6019b5a358aa2d251ccf3c984180\nSignature size=9057\nAuthority=Developer ID Application: Emanuele Di Pietro (HR24WHR326)\nAuthority=Developer ID Certification Authority\nAuthority=Apple Root CA\nTimestamp=Oct 8, 2026 at 10:15:54\u202fPM\nNotarization Ticket=stapled\nInfo.plist entries=36\nTeamIdentifier=HR24WHR326\nRuntime Version=26.5.0\nSealed Resources version=2 rules=13 files=256\nInternal requirements count=1 size=188\n"
+      },
+      "verify": {
+        "status": 0,
+        "signal": null,
+        "stdout": "",
+        "stderr": "--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Mantle.framework/Versions/Current/.\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Mantle.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper (GPU).app\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper (GPU).app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper (Plugin).app\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper (Plugin).app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper (Renderer).app\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper (Renderer).app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper.app\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/Synara Helper.app\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/synara-window-material.node\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Frameworks/synara-window-material.node\n--prepared:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Helpers/synara-appsnap-helper\n--validated:/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app/Contents/Helpers/synara-appsnap-helper\n/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app: valid on disk\n/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app: satisfies its Designated Requirement\n"
+      },
+      "gatekeeper": {
+        "status": 0,
+        "signal": null,
+        "stdout": "",
+        "stderr": "/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/mount/Synara.app: accepted\nsource=Notarized Developer ID\n"
+      },
+      "staple": {
+        "status": 0,
+        "signal": null,
+        "stdout": "Processing: /Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/Synara-1.0.1-x64.dmg\nThe validate action worked!\n",
+        "stderr": ""
+      }
+    },
+    "cleanup": {
+      "attachAttempted": true,
+      "attachCommandSucceeded": true,
+      "observed": [
+        {
+          "image": "/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc/Synara-1.0.1-x64.dmg",
+          "target": "/dev/disk5",
+          "ownedImage": true,
+          "ownedMount": true
+        }
+      ],
+      "detaches": [
+        {
+          "target": "/dev/disk5",
+          "status": 0,
+          "signal": null,
+          "error": null
+        }
+      ],
+      "remaining": [],
+      "error": null,
+      "ownedRoot": "/Users/runner/work/_temp/homebrew-dmg-x64-P5TGGc"
+    },
+    "dmg": {
+      "expected": {
+        "id": 623170557,
+        "bytes": 308822463,
+        "sha256": "c6ce67a500e92c3f26fb885fbf1be2c901aa401f71ff13a8b0bb9a1104df3ddb"
+      },
+      "actual": {
+        "bytes": 308822463,
+        "sha256": "c6ce67a500e92c3f26fb885fbf1be2c901aa401f71ff13a8b0bb9a1104df3ddb"
+      }
+    },
+    "driver": "d41b609324e434eae35a0ba3510c8570d01c3476",
+    "run": "38163962883",
+    "qualification": "Actual vendor DMG read-only metadata/signing; no application execution, minimum-OS runtime compatibility or Homebrew acceptance claim."
+  }
+]

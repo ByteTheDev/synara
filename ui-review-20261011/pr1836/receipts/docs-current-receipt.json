@@ -1,0 +1,424 @@
+[
+  {
+    "label": "linux-before",
+    "source": "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+    "tree": "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822",
+    "driver": "aeba5cfaf1619ba8067e19a7d0d78d6c7b5d3dc3",
+    "run": "38167801738",
+    "capturePassed": true,
+    "originalSnapshotPassed": true,
+    "results": {
+      "build": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bun",
+          "run",
+          "build"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "original-snapshot": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "tests/visual/visual.spec.ts",
+          "--grep",
+          "docs-desktop-light",
+          "--retries=0",
+          "--output",
+          "/home/runner/work/_temp/homebrew-docs-evidence/original-snapshot"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "capture": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "--config",
+          "playwright.homebrew-proof.config.ts"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "generate-golden": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "tests/visual/visual.spec.ts",
+          "--grep",
+          "docs-desktop-light",
+          "--retries=0",
+          "--update-snapshots",
+          "--output",
+          "/home/runner/work/_temp/homebrew-docs-evidence/golden-generation"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      }
+    },
+    "declared": 27,
+    "verified": 24,
+    "missing": [
+      {
+        "path": "capture-test-results/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "golden-generation/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "original-snapshot/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      }
+    ]
+  },
+  {
+    "label": "linux-after",
+    "source": "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
+    "tree": "ba99b66e786402f80124c4cf7368512908dee17f",
+    "driver": "aeba5cfaf1619ba8067e19a7d0d78d6c7b5d3dc3",
+    "run": "38167801738",
+    "capturePassed": true,
+    "originalSnapshotPassed": true,
+    "results": {
+      "build": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bun",
+          "run",
+          "build"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "original-snapshot": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "tests/visual/visual.spec.ts",
+          "--grep",
+          "docs-desktop-light",
+          "--retries=0",
+          "--output",
+          "/home/runner/work/_temp/homebrew-docs-evidence/original-snapshot"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "capture": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "--config",
+          "playwright.homebrew-proof.config.ts"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      }
+    },
+    "declared": 23,
+    "verified": 21,
+    "missing": [
+      {
+        "path": "capture-test-results/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "original-snapshot/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      }
+    ]
+  },
+  {
+    "label": "mac-before",
+    "source": "3270dcf89bb60745ac568803a940cd7e7ac676a7",
+    "tree": "3041a3cf0328b6e7e4d9b6c5027a2a1a09e33822",
+    "driver": "aeba5cfaf1619ba8067e19a7d0d78d6c7b5d3dc3",
+    "run": "38167801738",
+    "capturePassed": true,
+    "originalSnapshotPassed": false,
+    "results": {
+      "build": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bun",
+          "run",
+          "build"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "original-snapshot": {
+        "rootExit": {
+          "code": 1,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 1,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 1,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "tests/visual/visual.spec.ts",
+          "--grep",
+          "docs-desktop-light",
+          "--retries=0",
+          "--output",
+          "/Users/runner/work/_temp/homebrew-docs-evidence/original-snapshot"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "capture": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "--config",
+          "playwright.homebrew-proof.config.ts"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "generate-golden": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "tests/visual/visual.spec.ts",
+          "--grep",
+          "docs-desktop-light",
+          "--retries=0",
+          "--update-snapshots",
+          "--output",
+          "/Users/runner/work/_temp/homebrew-docs-evidence/golden-generation"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      }
+    },
+    "declared": 35,
+    "verified": 32,
+    "missing": [
+      {
+        "path": "capture-test-results/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "golden-generation/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "original-snapshot/.last-run.json",
+        "bytes": 96,
+        "sha256": "7d130b187aee9cbe9bf10f17bd70ee2f0be8a0011762f62e3e88c44b8e8af410"
+      }
+    ]
+  },
+  {
+    "label": "mac-after",
+    "source": "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
+    "tree": "ba99b66e786402f80124c4cf7368512908dee17f",
+    "driver": "aeba5cfaf1619ba8067e19a7d0d78d6c7b5d3dc3",
+    "run": "38167801738",
+    "capturePassed": true,
+    "originalSnapshotPassed": false,
+    "results": {
+      "build": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bun",
+          "run",
+          "build"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "original-snapshot": {
+        "rootExit": {
+          "code": 1,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 1,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 1,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "tests/visual/visual.spec.ts",
+          "--grep",
+          "docs-desktop-light",
+          "--retries=0",
+          "--output",
+          "/Users/runner/work/_temp/homebrew-docs-evidence/original-snapshot"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      },
+      "capture": {
+        "rootExit": {
+          "code": 0,
+          "signal": null
+        },
+        "processError": null,
+        "closeCode": 0,
+        "closeSignal": null,
+        "observerDeadline": false,
+        "outputCut": false,
+        "exitCode": 0,
+        "command": [
+          "bunx",
+          "playwright",
+          "test",
+          "--config",
+          "playwright.homebrew-proof.config.ts"
+        ],
+        "cwd": "apps/marketing",
+        "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+      }
+    },
+    "declared": 30,
+    "verified": 28,
+    "missing": [
+      {
+        "path": "capture-test-results/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "original-snapshot/.last-run.json",
+        "bytes": 96,
+        "sha256": "7d130b187aee9cbe9bf10f17bd70ee2f0be8a0011762f62e3e88c44b8e8af410"
+      }
+    ]
+  }
+]

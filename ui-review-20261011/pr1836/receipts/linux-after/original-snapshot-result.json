@@ -1,0 +1,25 @@
+{
+  "rootExit": {
+    "code": 0,
+    "signal": null
+  },
+  "processError": null,
+  "closeCode": 0,
+  "closeSignal": null,
+  "observerDeadline": false,
+  "outputCut": false,
+  "exitCode": 0,
+  "command": [
+    "bunx",
+    "playwright",
+    "test",
+    "tests/visual/visual.spec.ts",
+    "--grep",
+    "docs-desktop-light",
+    "--retries=0",
+    "--output",
+    "/home/runner/work/_temp/homebrew-docs-evidence/original-snapshot"
+  ],
+  "cwd": "apps/marketing",
+  "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+}

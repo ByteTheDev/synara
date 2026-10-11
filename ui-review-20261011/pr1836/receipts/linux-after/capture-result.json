@@ -1,0 +1,21 @@
+{
+  "rootExit": {
+    "code": 0,
+    "signal": null
+  },
+  "processError": null,
+  "closeCode": 0,
+  "closeSignal": null,
+  "observerDeadline": false,
+  "outputCut": false,
+  "exitCode": 0,
+  "command": [
+    "bunx",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.homebrew-proof.config.ts"
+  ],
+  "cwd": "apps/marketing",
+  "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+}

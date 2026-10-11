@@ -1,0 +1,398 @@
+{
+  "source": "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
+  "sourceTree": "ba99b66e786402f80124c4cf7368512908dee17f",
+  "variant": "after",
+  "platform": "linux",
+  "arch": "x64",
+  "driver": "aeba5cfaf1619ba8067e19a7d0d78d6c7b5d3dc3",
+  "driverTree": "ecfa3917b5cecd21a5435c51301c9ca3ddacd8d6",
+  "run": "38167801738",
+  "fixture": {
+    "version": "v0.8.1",
+    "releasesUrl": "https://github.com/Emanuele-web04/synara/releases/tag/v0.8.1",
+    "mac": {
+      "arm64": "https://github.com/Emanuele-web04/synara/releases/download/v0.8.1/Synara-0.8.1-arm64.dmg",
+      "x64": "https://github.com/Emanuele-web04/synara/releases/download/v0.8.1/Synara-0.8.1-x64.dmg"
+    },
+    "windows": "https://github.com/Emanuele-web04/synara/releases/download/v0.8.1/Synara-0.8.1-x64.exe",
+    "linux": "https://github.com/Emanuele-web04/synara/releases/download/v0.8.1/Synara-0.8.1-x86_64.AppImage",
+    "updatedAt": "2026-09-02T08:00:22.509Z",
+    "source": "https://api.github.com/repos/Emanuele-web04/synara/releases/latest"
+  },
+  "lockfileSha256": "05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e",
+  "sourceFiles": [
+    {
+      "path": "content/docs/index.mdx",
+      "gitBlob": "43ec69b8ab1cfca5c24dd878b356c819b9b58856",
+      "sha256": "dbcb2688c8c29ea34fb8c85d3672a6b0a28e3569f0e766b0ee3656d3171a10a2"
+    },
+    {
+      "path": "content/docs/getting-started/installation.mdx",
+      "gitBlob": "21ea33668eb291ac2a2409720f20e6149369c6ea",
+      "sha256": "2ae75e99cf3cfb0675d6f9e8bc199019dc97a19917290a0a137ac09432793303"
+    },
+    {
+      "path": "content/docs/troubleshooting/desktop-and-updates.mdx",
+      "gitBlob": "fa30f995f73d1373789bd4c3fc1695cf8175a234",
+      "sha256": "af050cd088fab0bec3a2ff0675d06e85ef34564828d26caba48cc3e0745b5f43"
+    },
+    {
+      "path": "src/components/InstallOptions.tsx",
+      "gitBlob": "9d27be67888435bc947bc9aa1aa6faf36c2937cc",
+      "sha256": "c1db07c3eb896f724c14a0613fa37714ced03929e05540280eaad04c541bcafc"
+    },
+    {
+      "path": "src/lib/docs.ts",
+      "gitBlob": "06a41a4519f795bb9f959d6f2bbe0a7d334f27b9",
+      "sha256": "226c436da574f78efd68deb748f1da763917bd3bbcbf3e4ede80f7894e5668b1"
+    },
+    {
+      "path": "src/app/docs/[[...slug]]/page.tsx",
+      "gitBlob": "7c5b8329638aa2e7fad313f0255b527e6a81dec5",
+      "sha256": "4e087c6da6f43aaede7ebd7f7c5a0e6aa8e6169b7bfb445605a3e582df669955"
+    },
+    {
+      "path": "src/data/latest-release-downloads.json",
+      "gitBlob": "84cb72006476981f861403da7670c669cb325744",
+      "sha256": "2ce9b874a3030143beffa1b5bf3459d809ad757dda92e2ad6e503d204fe735b3"
+    },
+    {
+      "path": "tests/test-helpers.ts",
+      "gitBlob": "89f07fd51f4fc7feb7acd296e11ea71329cd7c98",
+      "sha256": "c27e6dbe3c49ad9cfd5496c8d9b813e62931c94ff1cdc45bd45c542e36807bf5"
+    },
+    {
+      "path": "tests/visual/visual.spec.ts",
+      "gitBlob": "33beb181fd2d2a96d78718075dc8635d6eb7ddc2",
+      "sha256": "bcdad81742978c47a7ae1d1a5f6f53dda666cc72f64c4b89955724ed1526414a"
+    },
+    {
+      "path": "playwright.config.ts",
+      "gitBlob": "56fa473780bbb6bc6762ba98c23debe61a5dfa3d",
+      "sha256": "f9258be39ccbe185236f762972366a2762674b8eb4b2f296f8bacb3360100092"
+    }
+  ],
+  "captureFiles": [
+    {
+      "path": "tests/e2e/homebrew-docs.spec.ts",
+      "sha256": "65f7d12e37d7f2fd5dbe91a29f2c3aefc2662172dd2bcd48c0170cf8cf7b551b"
+    },
+    {
+      "path": "playwright.homebrew-proof.config.ts",
+      "sha256": "4ee65f7ab986a6193e063ca8340de5f32306a1a054e9fca956c3d2b00f09e9d2"
+    }
+  ],
+  "driverFiles": [
+    {
+      "path": "runner.mjs",
+      "sha256": "2123909a5c15b884ca3dc62fcdffca1ab70e4004e319ea43b6a075daf1dc1248"
+    },
+    {
+      "path": "capture.spec.ts",
+      "sha256": "65f7d12e37d7f2fd5dbe91a29f2c3aefc2662172dd2bcd48c0170cf8cf7b551b"
+    },
+    {
+      "path": "capture.config.ts",
+      "sha256": "4ee65f7ab986a6193e063ca8340de5f32306a1a054e9fca956c3d2b00f09e9d2"
+    }
+  ],
+  "workflowSha256": "0d301f5e51065fbb1f69d117de1c5ceb9bc0594abc0a3d40ba3941cdbcee5b39",
+  "originalGolden": {
+    "path": "apps/marketing/tests/visual/visual.spec.ts-snapshots/docs-desktop-light-linux.png",
+    "gitBlob": "fa0790fa18beb82a303da5b48663c88ea233dff6",
+    "sha256": "e406abe76780ed66de0eef389caffb8c0c044f6b9c64f140d00138d1314829e3"
+  },
+  "qualification": "Actual production Next documentation and /install, actual Chromium, exact checked-in VISUAL_TEST v0.8.1 release fixture. Original docs root snapshot/assertions run unchanged and their real failure remains a failing workflow step. Candidate shared docs-root golden is generated only from exact current-main Before source for independent review, not reported as an original baseline pass. No native application, Homebrew install, upstream acceptance or arbitrary API mock claim.",
+  "playwrightVersion": "1.62.1",
+  "capturePassed": true,
+  "originalSnapshotPassed": true,
+  "results": {
+    "build": {
+      "rootExit": {
+        "code": 0,
+        "signal": null
+      },
+      "processError": null,
+      "closeCode": 0,
+      "closeSignal": null,
+      "observerDeadline": false,
+      "outputCut": false,
+      "exitCode": 0,
+      "command": [
+        "bun",
+        "run",
+        "build"
+      ],
+      "cwd": "apps/marketing",
+      "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+    },
+    "original-snapshot": {
+      "rootExit": {
+        "code": 0,
+        "signal": null
+      },
+      "processError": null,
+      "closeCode": 0,
+      "closeSignal": null,
+      "observerDeadline": false,
+      "outputCut": false,
+      "exitCode": 0,
+      "command": [
+        "bunx",
+        "playwright",
+        "test",
+        "tests/visual/visual.spec.ts",
+        "--grep",
+        "docs-desktop-light",
+        "--retries=0",
+        "--output",
+        "/home/runner/work/_temp/homebrew-docs-evidence/original-snapshot"
+      ],
+      "cwd": "apps/marketing",
+      "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+    },
+    "capture": {
+      "rootExit": {
+        "code": 0,
+        "signal": null
+      },
+      "processError": null,
+      "closeCode": 0,
+      "closeSignal": null,
+      "observerDeadline": false,
+      "outputCut": false,
+      "exitCode": 0,
+      "command": [
+        "bunx",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.homebrew-proof.config.ts"
+      ],
+      "cwd": "apps/marketing",
+      "scope": "On observer deadline only the owned ChildProcess handle is signalled. Descendant teardown is runner-owned; forced output cutoff is explicit."
+    }
+  },
+  "observations": [
+    {
+      "source": "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
+      "variant": "after",
+      "platform": "linux",
+      "layout": "desktop",
+      "observations": [
+        {
+          "name": "installation",
+          "route": "/docs/getting-started/installation",
+          "state": {
+            "url": "http://127.0.0.1:3211/docs/getting-started/installation",
+            "title": "Installation — Synara Docs",
+            "theme": "light",
+            "reducedMotion": true,
+            "fonts": "loaded",
+            "text": "Synara\nDocs\nSearch\nCtrl\nK\nInstall\nChangelog\nDownload\nSynara documentation\n\nGetting started\n\nQuickstart\nCore concepts\nInstallation\nProviders\nYour first task\n\nProviders\n\nProvider guides\nClaude Code\nCodex\nOpenCode\nCursor\nAntigravity\nGrok Build\nDevin CLI\nPi\nFactory Droid\nOh My Pi\n\nWorkflows\n\nWorkflow guides\nBest practices\nParallel agents\nWorktrees\nThread forks\nProvider handoffs\nDebug mode\nBrowser verification\nHeadless server\nPull requests\nAutomations\nStudio\nAgent Gateway\nExternal MCP\n\nFeatures\n\nAll features\nSynara Beta\nHubs and Library\nTasks, Kanban, and Inbox\nProvider accounts\nComputer Use beta\nImport Codex and Claude projects\nMulti-folder projects\nComposer & attachments\nProvider-native subagents\nConversation history and reload\nThread goals\nOrganize & navigate\nWorkspace editor & diffs\nTerminal panels\nBrowser logins & sessions\niOS Simulator\nAutomations & Studio\nCustomization\n\nReference\n\nSlash commands\nKeyboard shortcuts\nFeatures on main\nTroubleshooting\nDesktop and updates\nProvider troubleshooting\nTasks and runtime\nGit and worktrees\nBrowser troubleshooting\nAutomations and integrations\nDiagnostics\nFrequently asked questions\nReport a problem\nGetting started\nInstallation\nInstallation\n\nInstall Synara on macOS, Windows, or Linux and connect your first coding-agent runtime.\n\nSynara is a desktop workspace for coding agents. Installing Synara gives you the workspace; provider runtimes and model access still come from the coding-agent tools and accounts you already use.\n\nChoose the right installer\n\nDownload the latest stable build from the Synara download page. If the automatic download is unavailable, open GitHub Releases and select the asset for your system.\n\nPlatform\tDownload\nmacOS on Apple Silicon\tArm64 .dmg\nmacOS on Intel\tx64 .dmg\nWindows\tx64 .exe installer\nLinux\tx86_64 .AppImage\nHomebrew on macOS\n\nHomebrew support is pending acceptance of the official cask. Until then, install the .dmg from the download page or GitHub Releases.\n\nAfter acceptance, when brew info --cask synara resolves the official cask, install the same signed Stable DMG with:\n\nbrew install --cask synara\nSynara does not include a model subscription\n\nSynara uses provider runtimes installed on your machine. Install and authenticate at least one provider—such as Claude Code, Codex, OpenCode, Cursor, or another supported runtime—before starting your first task.\n\nInstall Synara\nDownload the application\n\nUse the download page or an official GitHub release. Avoid third-party download mirrors.\n\nComplete the platform installation\n\nOpen the downloaded installer and complete the normal installation flow for your operating system.\n\nAfter the official cask becomes available, Homebrew installs Synara.app in /Applications by default. Synara's packaged updater remains enabled.\n\nOn Linux, your desktop environment may require making the AppImage executable before opening it:\n\nchmod +x Synara*.AppImage\nInstall and authenticate a provider\n\nFollow the provider's official installation and sign-in process. Synara does not copy an account from another machine or replace the provider's own authentication.\n\nOpen a fresh terminal and confirm that the provider can start successfully outside Synara. This separates provider installation problems from Synara configuration problems.\n\nLaunch Synara and check the provider\n\nOpen Synara, go to provider settings, and confirm that the runtime is detected and available. Synara discovers the models and options exposed by the installed runtime, so the choices can vary by provider version, account, and subscription.\n\nAdd a project\n\nChoose a local project folder. A Git repository is strongly recommended because it enables branches, worktrees, diffs, commits, pushes, and pull-request workflows.\n\nWhen a provider is not detected\n\nWork through these checks in order:\n\nOpen a new terminal window.\nConfirm that the provider executable runs there.\nConfirm that the provider is authenticated.\nCheck whether Synara offers a custom binary-path setting for that provider.\nRestart Synara after changing your PATH or installing a new runtime.\nContinue with Troubleshooting if it remains unavailable.\n\nSynara normalizes the environment available to the desktop process, but provider installations and shell configurations differ across operating systems.\n\nUpdating Synara\n\nPackaged builds use Synara's desktop updater. When an update cannot be applied automatically, download the newest installer and install it over the existing application.\n\nFor an installation managed by the accepted official Homebrew cask, you can also run brew update followed by brew upgrade --cask --greedy-auto-updates synara. The extra flag includes this cask even though the application has its own updater.\n\nThe application bundle and local workspace data are stored separately. Even so, keep important work committed to Git before updating an early release.\n\nRun without the desktop shell\n\nEach GitHub release also includes synara-server-<version>.tar.gz for a headless web installation. It requires a supported Node.js runtime and a production dependency install; it is not a standalone executable or a replacement for provider authentication.\n\nFollow the Headless server guide for extraction, startup, readiness checks, data-directory ownership, and remote-access policy. Start loopback-only and do not expose the raw server port without deliberate authentication and trusted transport.\n\nSynara is under active development\n\nSynara changes quickly. Keep valuable work committed and review release notes before relying on a new workflow for important repositories.\n\nNext\n\nContinue with the Quickstart, or review the provider overview first.\n\nLast updated on 10/11/2026\n\nCore concepts\nProviders\nOn this page\nChoose the right installer\nHomebrew on macOS\nInstall Synara\nDownload the application\nComplete the platform installation\nInstall and authenticate a provider\nLaunch Synara and check the provider\nAdd a project\nWhen a provider is not detected\nUpdating Synara\nRun without the desktop shell\nNext",
+            "viewport": {
+              "width": 1440,
+              "height": 1100
+            },
+            "document": {
+              "width": 1440,
+              "height": 2872
+            }
+          }
+        },
+        {
+          "name": "updates",
+          "route": "/docs/troubleshooting/desktop-and-updates",
+          "state": {
+            "url": "http://127.0.0.1:3211/docs/troubleshooting/desktop-and-updates",
+            "title": "Desktop and updates — Synara Docs",
+            "theme": "light",
+            "reducedMotion": true,
+            "fonts": "loaded",
+            "text": "Synara\nDocs\nSearch\nCtrl\nK\nInstall\nChangelog\nDownload\nSynara documentation\n\nGetting started\n\nQuickstart\nCore concepts\nInstallation\nProviders\nYour first task\n\nProviders\n\nProvider guides\nClaude Code\nCodex\nOpenCode\nCursor\nAntigravity\nGrok Build\nDevin CLI\nPi\nFactory Droid\nOh My Pi\n\nWorkflows\n\nWorkflow guides\nBest practices\nParallel agents\nWorktrees\nThread forks\nProvider handoffs\nDebug mode\nBrowser verification\nHeadless server\nPull requests\nAutomations\nStudio\nAgent Gateway\nExternal MCP\n\nFeatures\n\nAll features\nSynara Beta\nHubs and Library\nTasks, Kanban, and Inbox\nProvider accounts\nComputer Use beta\nImport Codex and Claude projects\nMulti-folder projects\nComposer & attachments\nProvider-native subagents\nConversation history and reload\nThread goals\nOrganize & navigate\nWorkspace editor & diffs\nTerminal panels\nBrowser logins & sessions\niOS Simulator\nAutomations & Studio\nCustomization\n\nReference\n\nSlash commands\nKeyboard shortcuts\nFeatures on main\nTroubleshooting\nDesktop and updates\nProvider troubleshooting\nTasks and runtime\nGit and worktrees\nBrowser troubleshooting\nAutomations and integrations\nDiagnostics\nFrequently asked questions\nReport a problem\nTroubleshooting\nDesktop and updates\nDesktop and updates\n\nResolve Synara launch, window, architecture, packaged update, and reinstall problems without deleting useful state.\n\nTreat the desktop application, its local server, and the installed provider runtimes as separate layers. A window problem does not automatically mean your repositories, provider credentials, or Synara workspace data are damaged.\n\nSynara will not launch\n\nWork through these checks in order:\n\nConfirm the installer matches your operating system and CPU architecture.\nFully quit any existing Synara process.\nStart Synara again from the normal application launcher.\nRestart the operating system if a previous process cannot be terminated cleanly.\nRe-download the current installer from the official download page. After Homebrew accepts the official cask, installations managed by that cask may use brew reinstall --cask synara.\nReinstall over the current application without deleting workspace data.\n\nOn macOS, use the Arm64 build for Apple Silicon and the x64 build for Intel. On Linux, ensure the AppImage is executable:\n\nchmod +x Synara*.AppImage\nDo not delete data as a first step\n\nReplacing the application bundle and deleting Synara’s local data are different operations. As a rule, reinstall the application first. Preserve repositories, uncommitted changes, task evidence, and any data directory before considering destructive cleanup.\n\nClosing while chats are still running\n\nWhen a desktop quit would interrupt running or connecting chats, Synara lists those chats before closing.\n\nChoose Cancel to keep the app and current work open.\nChoose Quit to stop the listed work and close.\nLeave Resume chats automatically enabled when eligible chats should receive a continuation turn on the next launch.\n\nAutomatic resume is guarded rather than unconditional. Synara skips a remembered chat when it completed, was archived or deleted, already started newer work, or no longer belongs to a live project. If the local server cannot record the resume intent within the bounded quit wait, Synara falls back to interruption and still allows the desktop app to close; do not assume that fallback work will resume automatically.\n\nThe checkbox choice persists for later quits. Review it when a task must not continue without fresh supervision.\n\nThe window is blank or unresponsive\n\nA blank window can come from the renderer, the local server, graphics state, or a process left over from an earlier launch.\n\nWait briefly for initial startup and provider-health probes.\nFully quit Synara rather than only closing the window.\nStart it again with no other Synara instance running.\nDisconnect unusual display, proxy, or security software only when you can do so safely and reversibly.\nRecord whether the window is blank immediately or only after opening a specific project or surface.\nCapture the operating system, Synara version, and exact time before restarting again.\n\nWhen only one project or task triggers the problem, report that boundary. It is more useful than “the app is blank.”\n\nWindows or Linux title bar looks wrong\n\nOpen Settings → Appearance → Use custom title bar to switch between Synara’s frameless title bar and the operating system’s title bar. A restart is required because Electron chooses the window frame before the renderer starts; use the offered relaunch action after saving the preference.\n\nThe custom title bar is supported only on Windows and Linux. Some Linux window managers integrate better with the system title bar. On Windows, the custom frame keeps Synara’s own minimize, maximize, restore, and close controls.\n\nThe local server does not become ready\n\nSynara’s desktop UI depends on its local application server. Repeated connection or startup errors can result from:\n\nAnother Synara process using the local runtime state\nA partially terminated previous launch\nA blocked local process\nA damaged or incompatible application installation\nSecurity software preventing the packaged server from running\n\nFully quit every Synara process, then relaunch. Do not expose or forward Synara’s local server ports as a troubleshooting shortcut.\n\nThe packaged update failed\nPreserve important Git work.\nClose active provider turns and terminal processes when practical.\nFully quit Synara.\nStart it again and retry the update once.\nIf the updater still fails, download the newest installer from trysynara.com/install or GitHub Releases. Installations managed by the accepted official Homebrew cask can run brew update followed by brew upgrade --cask --greedy-auto-updates synara.\nInstall the new application over the existing application.\nLaunch Synara and verify the displayed version before resuming important work.\n\nAn update failure does not prove that local task data was deleted. Avoid combining an update recovery with manual data-directory cleanup.\n\nSynara opens but providers changed after an update\n\nThe application update and provider CLI updates are independent. After updating Synara:\n\nRestart the app so provider discovery runs against the current environment.\nCheck each enabled provider’s detected executable and authentication state.\nRemove stale custom binary paths.\nUpdate the provider runtime through its own supported method when Synara reports that it is outdated.\nStart a new provider session when protocol or capability negotiation changed.\n\nContinue with Provider troubleshooting.\n\nSource build and packaged build behave differently\n\nA development checkout and a packaged release may use different executable paths, environment variables, data locations, update behavior, and build-time configuration.\n\nWhen reporting a problem, state whether you are using:\n\nA packaged release\nA locally built desktop application\nA website development server only\nA specific branch or commit\n\nDo not use a successful website build as evidence that the packaged desktop runtime works.\n\nSafe reinstall checklist\n Important repository changes are committed, stashed, copied, or pushed\n The correct installer and architecture were selected\n Every Synara process was fully closed\n The application was replaced before any data was deleted\n The version was checked after launch\n Provider detection and authentication were rechecked\n A small test task was completed before resuming important work\nStill failing\n\nContinue with Diagnostics, then prepare a focused report using Report a problem.\n\nLast updated on 10/11/2026\n\nTroubleshooting\nProvider troubleshooting\nOn this page\nSynara will not launch\nClosing while chats are still running\nThe window is blank or unresponsive\nWindows or Linux title bar looks wrong\nThe local server does not become ready\nThe packaged update failed\nSynara opens but providers changed after an update\nSource build and packaged build behave differently\nSafe reinstall checklist\nStill failing",
+            "viewport": {
+              "width": 1440,
+              "height": 1100
+            },
+            "document": {
+              "width": 1440,
+              "height": 3352
+            }
+          }
+        }
+      ],
+      "installCalloutAbsent": true,
+      "pageErrors": [],
+      "qualification": "Actual production Next routes and Chromium. Exact unchanged preparation helper controls light preference, reduced motion, fonts and image readiness. No mocked component or API response, install command execution, upstream Homebrew acceptance, or app-source edit."
+    },
+    {
+      "source": "0d5f04b91d4bf7af72f6d9c017705183c3c89bef",
+      "variant": "after",
+      "platform": "linux",
+      "layout": "mobile",
+      "observations": [
+        {
+          "name": "installation",
+          "route": "/docs/getting-started/installation",
+          "state": {
+            "url": "http://127.0.0.1:3211/docs/getting-started/installation",
+            "title": "Installation — Synara Docs",
+            "theme": "light",
+            "reducedMotion": true,
+            "fonts": "loaded",
+            "text": "Synara\nDocs\nInstallation\nChoose the right installer\nGetting started\nInstallation\nInstallation\n\nInstall Synara on macOS, Windows, or Linux and connect your first coding-agent runtime.\n\nSynara is a desktop workspace for coding agents. Installing Synara gives you the workspace; provider runtimes and model access still come from the coding-agent tools and accounts you already use.\n\nChoose the right installer\n\nDownload the latest stable build from the Synara download page. If the automatic download is unavailable, open GitHub Releases and select the asset for your system.\n\nPlatform\tDownload\nmacOS on Apple Silicon\tArm64 .dmg\nmacOS on Intel\tx64 .dmg\nWindows\tx64 .exe installer\nLinux\tx86_64 .AppImage\nHomebrew on macOS\n\nHomebrew support is pending acceptance of the official cask. Until then, install the .dmg from the download page or GitHub Releases.\n\nAfter acceptance, when brew info --cask synara resolves the official cask, install the same signed Stable DMG with:\n\nbrew install --cask synara\nSynara does not include a model subscription\n\nSynara uses provider runtimes installed on your machine. Install and authenticate at least one provider—such as Claude Code, Codex, OpenCode, Cursor, or another supported runtime—before starting your first task.\n\nInstall Synara\nDownload the application\n\nUse the download page or an official GitHub release. Avoid third-party download mirrors.\n\nComplete the platform installation\n\nOpen the downloaded installer and complete the normal installation flow for your operating system.\n\nAfter the official cask becomes available, Homebrew installs Synara.app in /Applications by default. Synara's packaged updater remains enabled.\n\nOn Linux, your desktop environment may require making the AppImage executable before opening it:\n\nchmod +x Synara*.AppImage\nInstall and authenticate a provider\n\nFollow the provider's official installation and sign-in process. Synara does not copy an account from another machine or replace the provider's own authentication.\n\nOpen a fresh terminal and confirm that the provider can start successfully outside Synara. This separates provider installation problems from Synara configuration problems.\n\nLaunch Synara and check the provider\n\nOpen Synara, go to provider settings, and confirm that the runtime is detected and available. Synara discovers the models and options exposed by the installed runtime, so the choices can vary by provider version, account, and subscription.\n\nAdd a project\n\nChoose a local project folder. A Git repository is strongly recommended because it enables branches, worktrees, diffs, commits, pushes, and pull-request workflows.\n\nWhen a provider is not detected\n\nWork through these checks in order:\n\nOpen a new terminal window.\nConfirm that the provider executable runs there.\nConfirm that the provider is authenticated.\nCheck whether Synara offers a custom binary-path setting for that provider.\nRestart Synara after changing your PATH or installing a new runtime.\nContinue with Troubleshooting if it remains unavailable.\n\nSynara normalizes the environment available to the desktop process, but provider installations and shell configurations differ across operating systems.\n\nUpdating Synara\n\nPackaged builds use Synara's desktop updater. When an update cannot be applied automatically, download the newest installer and install it over the existing application.\n\nFor an installation managed by the accepted official Homebrew cask, you can also run brew update followed by brew upgrade --cask --greedy-auto-updates synara. The extra flag includes this cask even though the application has its own updater.\n\nThe application bundle and local workspace data are stored separately. Even so, keep important work committed to Git before updating an early release.\n\nRun without the desktop shell\n\nEach GitHub release also includes synara-server-<version>.tar.gz for a headless web installation. It requires a supported Node.js runtime and a production dependency install; it is not a standalone executable or a replacement for provider authentication.\n\nFollow the Headless server guide for extraction, startup, readiness checks, data-directory ownership, and remote-access policy. Start loopback-only and do not expose the raw server port without deliberate authentication and trusted transport.\n\nSynara is under active development\n\nSynara changes quickly. Keep valuable work committed and review release notes before relying on a new workflow for important repositories.\n\nNext\n\nContinue with the Quickstart, or review the provider overview first.\n\nLast updated on 10/11/2026\n\nCore concepts\nProviders",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "document": {
+              "width": 390,
+              "height": 3980
+            }
+          }
+        },
+        {
+          "name": "updates",
+          "route": "/docs/troubleshooting/desktop-and-updates",
+          "state": {
+            "url": "http://127.0.0.1:3211/docs/troubleshooting/desktop-and-updates",
+            "title": "Desktop and updates — Synara Docs",
+            "theme": "light",
+            "reducedMotion": true,
+            "fonts": "loaded",
+            "text": "Synara\nDocs\nDesktop and updates\nSynara will not launch\nTroubleshooting\nDesktop and updates\nDesktop and updates\n\nResolve Synara launch, window, architecture, packaged update, and reinstall problems without deleting useful state.\n\nTreat the desktop application, its local server, and the installed provider runtimes as separate layers. A window problem does not automatically mean your repositories, provider credentials, or Synara workspace data are damaged.\n\nSynara will not launch\n\nWork through these checks in order:\n\nConfirm the installer matches your operating system and CPU architecture.\nFully quit any existing Synara process.\nStart Synara again from the normal application launcher.\nRestart the operating system if a previous process cannot be terminated cleanly.\nRe-download the current installer from the official download page. After Homebrew accepts the official cask, installations managed by that cask may use brew reinstall --cask synara.\nReinstall over the current application without deleting workspace data.\n\nOn macOS, use the Arm64 build for Apple Silicon and the x64 build for Intel. On Linux, ensure the AppImage is executable:\n\nchmod +x Synara*.AppImage\nDo not delete data as a first step\n\nReplacing the application bundle and deleting Synara’s local data are different operations. As a rule, reinstall the application first. Preserve repositories, uncommitted changes, task evidence, and any data directory before considering destructive cleanup.\n\nClosing while chats are still running\n\nWhen a desktop quit would interrupt running or connecting chats, Synara lists those chats before closing.\n\nChoose Cancel to keep the app and current work open.\nChoose Quit to stop the listed work and close.\nLeave Resume chats automatically enabled when eligible chats should receive a continuation turn on the next launch.\n\nAutomatic resume is guarded rather than unconditional. Synara skips a remembered chat when it completed, was archived or deleted, already started newer work, or no longer belongs to a live project. If the local server cannot record the resume intent within the bounded quit wait, Synara falls back to interruption and still allows the desktop app to close; do not assume that fallback work will resume automatically.\n\nThe checkbox choice persists for later quits. Review it when a task must not continue without fresh supervision.\n\nThe window is blank or unresponsive\n\nA blank window can come from the renderer, the local server, graphics state, or a process left over from an earlier launch.\n\nWait briefly for initial startup and provider-health probes.\nFully quit Synara rather than only closing the window.\nStart it again with no other Synara instance running.\nDisconnect unusual display, proxy, or security software only when you can do so safely and reversibly.\nRecord whether the window is blank immediately or only after opening a specific project or surface.\nCapture the operating system, Synara version, and exact time before restarting again.\n\nWhen only one project or task triggers the problem, report that boundary. It is more useful than “the app is blank.”\n\nWindows or Linux title bar looks wrong\n\nOpen Settings → Appearance → Use custom title bar to switch between Synara’s frameless title bar and the operating system’s title bar. A restart is required because Electron chooses the window frame before the renderer starts; use the offered relaunch action after saving the preference.\n\nThe custom title bar is supported only on Windows and Linux. Some Linux window managers integrate better with the system title bar. On Windows, the custom frame keeps Synara’s own minimize, maximize, restore, and close controls.\n\nThe local server does not become ready\n\nSynara’s desktop UI depends on its local application server. Repeated connection or startup errors can result from:\n\nAnother Synara process using the local runtime state\nA partially terminated previous launch\nA blocked local process\nA damaged or incompatible application installation\nSecurity software preventing the packaged server from running\n\nFully quit every Synara process, then relaunch. Do not expose or forward Synara’s local server ports as a troubleshooting shortcut.\n\nThe packaged update failed\nPreserve important Git work.\nClose active provider turns and terminal processes when practical.\nFully quit Synara.\nStart it again and retry the update once.\nIf the updater still fails, download the newest installer from trysynara.com/install or GitHub Releases. Installations managed by the accepted official Homebrew cask can run brew update followed by brew upgrade --cask --greedy-auto-updates synara.\nInstall the new application over the existing application.\nLaunch Synara and verify the displayed version before resuming important work.\n\nAn update failure does not prove that local task data was deleted. Avoid combining an update recovery with manual data-directory cleanup.\n\nSynara opens but providers changed after an update\n\nThe application update and provider CLI updates are independent. After updating Synara:\n\nRestart the app so provider discovery runs against the current environment.\nCheck each enabled provider’s detected executable and authentication state.\nRemove stale custom binary paths.\nUpdate the provider runtime through its own supported method when Synara reports that it is outdated.\nStart a new provider session when protocol or capability negotiation changed.\n\nContinue with Provider troubleshooting.\n\nSource build and packaged build behave differently\n\nA development checkout and a packaged release may use different executable paths, environment variables, data locations, update behavior, and build-time configuration.\n\nWhen reporting a problem, state whether you are using:\n\nA packaged release\nA locally built desktop application\nA website development server only\nA specific branch or commit\n\nDo not use a successful website build as evidence that the packaged desktop runtime works.\n\nSafe reinstall checklist\n Important repository changes are committed, stashed, copied, or pushed\n The correct installer and architecture were selected\n Every Synara process was fully closed\n The application was replaced before any data was deleted\n The version was checked after launch\n Provider detection and authentication were rechecked\n A small test task was completed before resuming important work\nStill failing\n\nContinue with Diagnostics, then prepare a focused report using Report a problem.\n\nLast updated on 10/11/2026\n\nTroubleshooting\nProvider troubleshooting",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "document": {
+              "width": 390,
+              "height": 5283
+            }
+          }
+        }
+      ],
+      "installCalloutAbsent": true,
+      "pageErrors": [],
+      "qualification": "Actual production Next routes and Chromium. Exact unchanged preparation helper controls light preference, reduced motion, fonts and image readiness. No mocked component or API response, install command execution, upstream Homebrew acceptance, or app-source edit."
+    }
+  ],
+  "changedTrackedFiles": [],
+  "files": [
+    {
+      "path": "build-result.json",
+      "bytes": 427,
+      "sha256": "35f6d353ed1d9c020b857290df9cd4a811fea7f3eb4d5e3b3c3c1b28b41cbe1b"
+    },
+    {
+      "path": "build.log",
+      "bytes": 2488,
+      "sha256": "af988e7b2e06cba11835747634eca6226cf14c659ce0fb411bdb851899c4731d"
+    },
+    {
+      "path": "capture-report.json",
+      "bytes": 8399,
+      "sha256": "fa240ea9d5eeaec1e02ac91893b6962d683065815b388575c0256c824ef4a178"
+    },
+    {
+      "path": "capture-result.json",
+      "bytes": 493,
+      "sha256": "d2bc7fffa65cd35b020804b0d1e339ca8c8b51698236a79a4fd1358f55ab6f95"
+    },
+    {
+      "path": "capture-test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "capture-test-results/e2e-homebrew-docs-actual-Homebrew-documentation-desktop/test-finished-1.png",
+      "bytes": 68035,
+      "sha256": "9bb2087d011b99d843a8a352c46c5c374b50925805e297669242b1914e02afa2"
+    },
+    {
+      "path": "capture-test-results/e2e-homebrew-docs-actual-Homebrew-documentation-desktop/trace.zip",
+      "bytes": 1938793,
+      "sha256": "598132bb5c9d1f64c03b2d4d236c9c4781f42853f4f2d70c003733bc036c35ff"
+    },
+    {
+      "path": "capture-test-results/e2e-homebrew-docs-actual-Homebrew-documentation-desktop/video.webm",
+      "bytes": 198143,
+      "sha256": "7d9895947a562fa5d6eba186e31bea51670471e124edbeb320f02efc18c36531"
+    },
+    {
+      "path": "capture-test-results/e2e-homebrew-docs-actual-Homebrew-documentation-mobile/test-finished-1.png",
+      "bytes": 39550,
+      "sha256": "2c9e3a7e3617d217698ae56114aac8ed89f77bc0dd4f12275e6241c20df17353"
+    },
+    {
+      "path": "capture-test-results/e2e-homebrew-docs-actual-Homebrew-documentation-mobile/trace.zip",
+      "bytes": 870782,
+      "sha256": "e50a239b32debc6ba25a02055becae41df5fa3dc32967e4345a42fe82a3dcd84"
+    },
+    {
+      "path": "capture-test-results/e2e-homebrew-docs-actual-Homebrew-documentation-mobile/video.webm",
+      "bytes": 80200,
+      "sha256": "264eacff80f2f36caaeb20011decea33cc5d93dd429dbd94df80af981ca3c1b4"
+    },
+    {
+      "path": "capture.log",
+      "bytes": 241,
+      "sha256": "efb02f200d2d35ef6d8e3425ed20cf6fb8bce9e8f37e0f00d87ee8312206922b"
+    },
+    {
+      "path": "install-page-desktop.png",
+      "bytes": 68035,
+      "sha256": "9bb2087d011b99d843a8a352c46c5c374b50925805e297669242b1914e02afa2"
+    },
+    {
+      "path": "install-page-mobile.png",
+      "bytes": 58627,
+      "sha256": "226e719a5e1ed4c1e85fa38aa367979e74af0bd58722ceb802c083605c08956c"
+    },
+    {
+      "path": "installation-desktop.png",
+      "bytes": 322129,
+      "sha256": "847cf3bfa472c2c0aa10616da2e509486b18300aa8338348672d13bdbe06150c"
+    },
+    {
+      "path": "installation-mobile.png",
+      "bytes": 242893,
+      "sha256": "2230fc1fbce80a06695058c8df2f72868b576aeca721bfefc555cfc93de74de4"
+    },
+    {
+      "path": "observations-desktop.json",
+      "bytes": 15922,
+      "sha256": "8ed890cc4bb5f9fb8f7ba09d5a0d65aa61c69c24cca6e9923365bd284f190661"
+    },
+    {
+      "path": "observations-mobile.json",
+      "bytes": 12869,
+      "sha256": "366cafc635ede4abc6038f48cce0d86c5b23ab6f19288dd85ecaf35e5dbcd3b7"
+    },
+    {
+      "path": "original-snapshot/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "original-snapshot-result.json",
+      "bytes": 616,
+      "sha256": "b28c838523e9f2342b023aad613ae221232ccf28c7b319e38b63df1c4f4cbef4"
+    },
+    {
+      "path": "original-snapshot.log",
+      "bytes": 154,
+      "sha256": "6a22713d8f45b16f32e1272adaa5f74801e6404ae7819e3fc4f26d67ea78bb84"
+    },
+    {
+      "path": "updates-desktop.png",
+      "bytes": 417668,
+      "sha256": "164949f9c57fd3dc9fef3526a47f18acf800bab0f45dade62c5249108f1ded9a"
+    },
+    {
+      "path": "updates-mobile.png",
+      "bytes": 312740,
+      "sha256": "55f7265d13cce676d74bd28c9d76294305a58f89e0a10f3dd274b4d1c45cf3fb"
+    }
+  ]
+}

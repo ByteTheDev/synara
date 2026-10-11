@@ -1,0 +1,66 @@
+
+Running 1 test using 1 worker
+
+  ✘  1 tests/visual/visual.spec.ts:116:7 › visual regression @visual › docs-desktop-light (4.8s)
+
+
+  1) tests/visual/visual.spec.ts:116:7 › visual regression @visual › docs-desktop-light ────────────
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      Expected an image 1440px by 2200px, received 1440px by 2681px. 120533 pixels (ratio 0.04 of all image pixels) are different.
+
+      Snapshot: docs-desktop-light.png
+
+    Call log:
+      - Expect "toHaveScreenshot(docs-desktop-light.png)" with timeout 10000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - Expected an image 1440px by 2200px, received 1440px by 2681px. 120533 pixels (ratio 0.04 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - Expected an image 1440px by 2200px, received 1440px by 2681px. 120533 pixels (ratio 0.04 of all image pixels) are different.
+
+
+      118 |     await prepareRoute(page, "/docs", "light");
+      119 |     await page.addStyleTag({ content: STABLE_DOCS_TOC });
+    > 120 |     await expect(page).toHaveScreenshot("docs-desktop-light.png", {
+          |                        ^
+      121 |       fullPage: true,
+      122 |       animations: "disabled",
+      123 |       maxDiffPixels: 0,
+        at /Users/runner/work/synara/synara/source/apps/marketing/tests/visual/visual.spec.ts:120:24
+
+    attachment #1: docs-desktop-light (image/png) ──────────────────────────────────────────────────
+    Expected: tests/visual/visual.spec.ts-snapshots/docs-desktop-light-darwin.png
+    Received: ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/docs-desktop-light-actual.png
+    Diff:     ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/docs-desktop-light-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../_temp/homebrew-docs-evidence/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/visual/visual.spec.ts:116:7 › visual regression @visual › docs-desktop-light ─────────────

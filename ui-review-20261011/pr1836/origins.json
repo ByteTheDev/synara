@@ -1,0 +1,649 @@
+{
+  "run": 38167801738,
+  "driver": "aeba5cfaf1619ba8067e19a7d0d78d6c7b5d3dc3",
+  "artifacts": {
+    "linux-before": {
+      "id": 11712703782,
+      "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+    },
+    "linux-after": {
+      "id": 11712449568,
+      "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+    },
+    "mac-before": {
+      "id": 11712014437,
+      "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+    },
+    "mac-after": {
+      "id": 11712688618,
+      "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+    }
+  },
+  "files": [
+    {
+      "path": "screenshots/macos/before/installation-desktop.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/installation-desktop.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 427402,
+      "sha256": "999ce9d5e740cf960985ca970852326d545d4073dae2a0c8822f870826c9cc9a",
+      "gitBlob": "03e26647a3935f1fb55d4dd8bc3b006e1b52b559"
+    },
+    {
+      "path": "screenshots/macos/before/installation-mobile.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/installation-mobile.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 327323,
+      "sha256": "acc9947deca1e7d319b14f8884fdd830c6da010c47cc91e6d21d18a825e19816",
+      "gitBlob": "e411460f9f11ed100f25e50d1a68424b6876a9ad"
+    },
+    {
+      "path": "screenshots/macos/before/updates-desktop.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/updates-desktop.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 654080,
+      "sha256": "b62232889297ca0a63ebe4f8c5367f78253d362a5c88f04d0240824a2fbe4985",
+      "gitBlob": "ccb74a423bf7e78698f6960652a8ed63e6a2f0da"
+    },
+    {
+      "path": "screenshots/macos/before/updates-mobile.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/updates-mobile.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 512844,
+      "sha256": "0767beb9d303fa41873cbd8c9fcdf049f0ad3baee12e662864cf3a06cebe6a09",
+      "gitBlob": "b200ad65ac0513965e57a4b6c77daded7090dfae"
+    },
+    {
+      "path": "screenshots/macos/after/installation-desktop.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/installation-desktop.png",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 492606,
+      "sha256": "3fd305702f0b759cbf8bc638ac2828df929ba3fffb260da451b8f496c0150b4b",
+      "gitBlob": "446e59ae79c3078fba27e022f12eb7bc96985066"
+    },
+    {
+      "path": "screenshots/macos/after/installation-mobile.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/installation-mobile.png",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 386597,
+      "sha256": "032a5f56b55301345b4a89ffd945bbdf7746a1f66ad9ddef11dcb8a6b36c3965",
+      "gitBlob": "67db5aae8f8d32f5bbc0be8bd015693f841b7243"
+    },
+    {
+      "path": "screenshots/macos/after/updates-desktop.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/updates-desktop.png",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 676215,
+      "sha256": "f764cad9fd15f1aa7466aa26a2492c2396c213067067d4ca567c9b566ee62f96",
+      "gitBlob": "040c851c50faa2a5a5ee4d6ab1e44f942b5284c6"
+    },
+    {
+      "path": "screenshots/macos/after/updates-mobile.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/updates-mobile.png",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 533693,
+      "sha256": "d85499e3988443823371fab528426de59cea062e4fb6e89d510418cbdaefd8b7",
+      "gitBlob": "d4d5979163364bcb011a16292031596a55bbe6a7"
+    },
+    {
+      "path": "screenshots/macos/shared/install-page-desktop.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after; identical actual mac-before bytes",
+      "originPath": "homebrew-docs-mac-after-current/install-page-desktop.png",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 85221,
+      "sha256": "567c3ad5e00f2613cefd398130f31375b09402e0303f6e911f101692ca45c092",
+      "gitBlob": "b00dfef08ffa566f3a3873080c33589d94e47a11"
+    },
+    {
+      "path": "screenshots/macos/shared/install-page-mobile.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after; identical actual mac-before bytes",
+      "originPath": "homebrew-docs-mac-after-current/install-page-mobile.png",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 71901,
+      "sha256": "aea4fed272e19118e50b494e027d2e1d0c832c17037d74e4a562603848e40944",
+      "gitBlob": "f03fbb8f5f550a84119960fcba275c9230c5ae8e"
+    },
+    {
+      "path": "baseline/old-expected.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/docs-desktop-light-expected.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 456178,
+      "sha256": "cfb0ac39001091ad84c9d2106beb930d5460f0840e06876e2cca445dfd52755b",
+      "gitBlob": "02e8ea5289dcc65f2a0396beed6a7c223584a6c0"
+    },
+    {
+      "path": "baseline/original-diff.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/original-snapshot/visual-visual-visual-regression-visual-docs-desktop-light/docs-desktop-light-diff.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 509863,
+      "sha256": "ae1b183fd042f11f58a5dc043911472fbf56bd5f01484323f8cfc9b3d2c7b3e4",
+      "gitBlob": "9961e520b7dbc0db9272923d4d39d81d90264520"
+    },
+    {
+      "path": "baseline/current-main.png",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/candidate-golden/docs-desktop-light-darwin.png",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 535679,
+      "sha256": "fa5611325a74380655ebd8a31be52ee3691d66a10879e2a20957e8c6a64eefca",
+      "gitBlob": "d02da571fac4d0c4f8957c545a58106ce6056179"
+    },
+    {
+      "path": "receipts/linux-before/provenance.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/provenance.json",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 39516,
+      "sha256": "3e6dc8aed4d6f4271dee7861e631a094e2ff3c9b38dc331d0bb411feeb269014",
+      "gitBlob": "9fbd5b886edb47bde06d8a785003c60a04b6bc78"
+    },
+    {
+      "path": "receipts/linux-before/observations-desktop.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/observations-desktop.json",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 14950,
+      "sha256": "d35b25c6431ea5ae7b7f3204319f9dfc0957b594fb5c085bce0a28fc1b6d0c56",
+      "gitBlob": "0be1288b124f780626f308012f3ee175e606772a"
+    },
+    {
+      "path": "receipts/linux-before/observations-mobile.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/observations-mobile.json",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 11916,
+      "sha256": "08ff8d2f2ae45cff02ce5800affeed74f29fa529ab45440254e396d2d988805c",
+      "gitBlob": "ebbef971c454e44e58f3f740b5f377ffa2c75ec4"
+    },
+    {
+      "path": "receipts/linux-before/build-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/build-result.json",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 427,
+      "sha256": "35f6d353ed1d9c020b857290df9cd4a811fea7f3eb4d5e3b3c3c1b28b41cbe1b",
+      "gitBlob": "dfe16428e463ef507d4e7cb2797f62e3b1a49a70"
+    },
+    {
+      "path": "receipts/linux-before/capture-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/capture-result.json",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 493,
+      "sha256": "d2bc7fffa65cd35b020804b0d1e339ca8c8b51698236a79a4fd1358f55ab6f95",
+      "gitBlob": "20ffd60432c09ac7617cd35334fc731fa676f7ad"
+    },
+    {
+      "path": "receipts/linux-before/original-snapshot-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/original-snapshot-result.json",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 616,
+      "sha256": "b28c838523e9f2342b023aad613ae221232ccf28c7b319e38b63df1c4f4cbef4",
+      "gitBlob": "fecbab9cd0ee041b84a847bff0b7f3e93672f38d"
+    },
+    {
+      "path": "logs/linux-before/capture.log",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/capture.log",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 241,
+      "sha256": "864138178838c689f007abd3dba657aff3970389d5ca40f5a945fa0857ff2508",
+      "gitBlob": "09de5d33b99b6f51f1542f22acafcadff2196d58"
+    },
+    {
+      "path": "logs/linux-before/original-snapshot.log",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-before",
+      "originPath": "homebrew-docs-linux-before-current/original-snapshot.log",
+      "artifact": {
+        "id": 11712703782,
+        "zipSha256": "ce8886114bd9f2d6db5f26959dc01e222e3ad57f662cfe751ca717c30df80838"
+      },
+      "bytes": 154,
+      "sha256": "e1c6f4291f383f822640d6f35dca643e2fdf077e13a06ed4f17499216618511d",
+      "gitBlob": "fcd89be8a0d82bb8a3f9598262fb5b06ac2bd7e3"
+    },
+    {
+      "path": "receipts/linux-after/provenance.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/provenance.json",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 40012,
+      "sha256": "c2904698b0f3ef0e2ca7cf33e22ae065bd87cdbf719c5f8616fe2b5190f9d4b1",
+      "gitBlob": "86f41651410214d38596d09946464eeac90ec296"
+    },
+    {
+      "path": "receipts/linux-after/observations-desktop.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/observations-desktop.json",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 15922,
+      "sha256": "8ed890cc4bb5f9fb8f7ba09d5a0d65aa61c69c24cca6e9923365bd284f190661",
+      "gitBlob": "f739c8cb4e354726804e1a817e38297338eeb66e"
+    },
+    {
+      "path": "receipts/linux-after/observations-mobile.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/observations-mobile.json",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 12869,
+      "sha256": "366cafc635ede4abc6038f48cce0d86c5b23ab6f19288dd85ecaf35e5dbcd3b7",
+      "gitBlob": "f37b11c29d5fb934905ea3dc1c79f18ca7a309bf"
+    },
+    {
+      "path": "receipts/linux-after/build-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/build-result.json",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 427,
+      "sha256": "35f6d353ed1d9c020b857290df9cd4a811fea7f3eb4d5e3b3c3c1b28b41cbe1b",
+      "gitBlob": "dfe16428e463ef507d4e7cb2797f62e3b1a49a70"
+    },
+    {
+      "path": "receipts/linux-after/capture-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/capture-result.json",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 493,
+      "sha256": "d2bc7fffa65cd35b020804b0d1e339ca8c8b51698236a79a4fd1358f55ab6f95",
+      "gitBlob": "20ffd60432c09ac7617cd35334fc731fa676f7ad"
+    },
+    {
+      "path": "receipts/linux-after/original-snapshot-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/original-snapshot-result.json",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 616,
+      "sha256": "b28c838523e9f2342b023aad613ae221232ccf28c7b319e38b63df1c4f4cbef4",
+      "gitBlob": "fecbab9cd0ee041b84a847bff0b7f3e93672f38d"
+    },
+    {
+      "path": "logs/linux-after/capture.log",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/capture.log",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 241,
+      "sha256": "efb02f200d2d35ef6d8e3425ed20cf6fb8bce9e8f37e0f00d87ee8312206922b",
+      "gitBlob": "f679db1543856070d4695e7ee52a7bb42e4b36eb"
+    },
+    {
+      "path": "logs/linux-after/original-snapshot.log",
+      "kind": "unchanged artifact copy",
+      "origin": "linux-after",
+      "originPath": "homebrew-docs-linux-after-current/original-snapshot.log",
+      "artifact": {
+        "id": 11712449568,
+        "zipSha256": "7179f0fb40cc7ed95680ae966394a911d3b06881bb242145734591f2d5f0a949"
+      },
+      "bytes": 154,
+      "sha256": "6a22713d8f45b16f32e1272adaa5f74801e6404ae7819e3fc4f26d67ea78bb84",
+      "gitBlob": "49708d4b53c62f43820bbd5e075aa2a0bbdb014e"
+    },
+    {
+      "path": "receipts/mac-before/provenance.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/provenance.json",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 41491,
+      "sha256": "b50e79a3925a38add6fbc3e3a610b458446ae756ff7a9e7e5bb25fb3cdb12e97",
+      "gitBlob": "1c28da54a3d34f064b793731dd5d8594e2d8c36a"
+    },
+    {
+      "path": "receipts/mac-before/observations-desktop.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/observations-desktop.json",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 14951,
+      "sha256": "862b9b388cb464ce000285344c5ce961a4ab9215c1c262b9af90aa4f10518b3d",
+      "gitBlob": "ec64088166a4d997196c22bb1ff3f688eb40a965"
+    },
+    {
+      "path": "receipts/mac-before/observations-mobile.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/observations-mobile.json",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 11917,
+      "sha256": "5025c4d48122a04e6ef6f9795223da4a9afb014a9ec7bafd3d6bfb9f839e9803",
+      "gitBlob": "48dc31b1d31b5ea102cd301bc7fb5c889a67f141"
+    },
+    {
+      "path": "receipts/mac-before/build-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/build-result.json",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 427,
+      "sha256": "35f6d353ed1d9c020b857290df9cd4a811fea7f3eb4d5e3b3c3c1b28b41cbe1b",
+      "gitBlob": "dfe16428e463ef507d4e7cb2797f62e3b1a49a70"
+    },
+    {
+      "path": "receipts/mac-before/capture-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/capture-result.json",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 493,
+      "sha256": "d2bc7fffa65cd35b020804b0d1e339ca8c8b51698236a79a4fd1358f55ab6f95",
+      "gitBlob": "20ffd60432c09ac7617cd35334fc731fa676f7ad"
+    },
+    {
+      "path": "receipts/mac-before/original-snapshot-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/original-snapshot-result.json",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 617,
+      "sha256": "08b9274b747d4303c74135927bd25246a3c8ae9aa49f8e1f0a33ef6602f9cc7e",
+      "gitBlob": "886a8490e06911f2aaa2b9108c0153a28980f3b1"
+    },
+    {
+      "path": "logs/mac-before/capture.log",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/capture.log",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 241,
+      "sha256": "1beb7f92284a7081e3b89e73130369ba7eda720b63d3e36187c83ed8df0377cc",
+      "gitBlob": "be7de167f38d1227abd04f972a1f22c773dbf316"
+    },
+    {
+      "path": "logs/mac-before/original-snapshot.log",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-before",
+      "originPath": "homebrew-docs-mac-before-current/original-snapshot.log",
+      "artifact": {
+        "id": 11712014437,
+        "zipSha256": "fe02d1f39dbb8d44b6ea356a5e4a841b7b7074fe0b398d6d1a7c2c33b752c2c0"
+      },
+      "bytes": 5036,
+      "sha256": "6481cedc570e41fc52f588917ad2354485d5c1b105f34752b66b67064b5a36a2",
+      "gitBlob": "cb7360d9fdf8783769c2d6af9d90f98c4bcbbb78"
+    },
+    {
+      "path": "receipts/mac-after/provenance.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/provenance.json",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 41653,
+      "sha256": "d875214ab4ec098d518c97952ccaa8a9da8f9905c24e49dc55a8ea3c9c36fb9a",
+      "gitBlob": "88ff950935a4425ce9bdeaba48c8752e328fd7ff"
+    },
+    {
+      "path": "receipts/mac-after/observations-desktop.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/observations-desktop.json",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 15923,
+      "sha256": "dd2ced9c7337bc294d1a42a524fa0fd4d8301c974099e81f09d2fb04e5baa22f",
+      "gitBlob": "a39df8400ece129734ff2ffd26e007e62604aa46"
+    },
+    {
+      "path": "receipts/mac-after/observations-mobile.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/observations-mobile.json",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 12870,
+      "sha256": "c947545aae71e44ea51bdd7a7ac5a9f4012a2f7f05a08155d90a9d3a52a8296f",
+      "gitBlob": "ff4cffb0ec3ab30c58b3abbfc4a0ebf9c33f507d"
+    },
+    {
+      "path": "receipts/mac-after/build-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/build-result.json",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 427,
+      "sha256": "35f6d353ed1d9c020b857290df9cd4a811fea7f3eb4d5e3b3c3c1b28b41cbe1b",
+      "gitBlob": "dfe16428e463ef507d4e7cb2797f62e3b1a49a70"
+    },
+    {
+      "path": "receipts/mac-after/capture-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/capture-result.json",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 493,
+      "sha256": "d2bc7fffa65cd35b020804b0d1e339ca8c8b51698236a79a4fd1358f55ab6f95",
+      "gitBlob": "20ffd60432c09ac7617cd35334fc731fa676f7ad"
+    },
+    {
+      "path": "receipts/mac-after/original-snapshot-result.json",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/original-snapshot-result.json",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 617,
+      "sha256": "08b9274b747d4303c74135927bd25246a3c8ae9aa49f8e1f0a33ef6602f9cc7e",
+      "gitBlob": "886a8490e06911f2aaa2b9108c0153a28980f3b1"
+    },
+    {
+      "path": "logs/mac-after/capture.log",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/capture.log",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 241,
+      "sha256": "dab9d518f2fd1c67c4f87dd1908438facca7c80be9eac2e376c6761e06849530",
+      "gitBlob": "57e93483fab494dea520aa992401533010f82365"
+    },
+    {
+      "path": "logs/mac-after/original-snapshot.log",
+      "kind": "unchanged artifact copy",
+      "origin": "mac-after",
+      "originPath": "homebrew-docs-mac-after-current/original-snapshot.log",
+      "artifact": {
+        "id": 11712688618,
+        "zipSha256": "4fa3c65c5eb7f0fdb2697b185490b7b2e62dec84f416e26bbf5c7718e8294eb6"
+      },
+      "bytes": 5036,
+      "sha256": "4349de648d5cd3ca220c554bc12d2e06b7834ae4a3fd4da20e184879565a69e6",
+      "gitBlob": "8ae78e5f0750eea4b010a58807a7d43cccba82f1"
+    },
+    {
+      "path": "receipts/docs-current-receipt.json",
+      "kind": "local derived receipt copy",
+      "origin": "local independently verified summary",
+      "originPath": "pr1198/docs-current-receipt.json",
+      "artifact": null,
+      "bytes": 12816,
+      "sha256": "e11b450d7e5f5caa4604e781330f5ec40a9a668c37ef70460fb76ab46a0d288a",
+      "gitBlob": "6cdb03469d03c2a5b2eeca4085079c53a8e87092"
+    },
+    {
+      "path": "receipts/docs-current-download-receipt.json",
+      "kind": "local derived receipt copy",
+      "origin": "local independently verified summary",
+      "originPath": "pr1198/docs-current-download-receipt.json",
+      "artifact": null,
+      "bytes": 643,
+      "sha256": "023d6688090ca422c7d132e6d15407ad204f57715a5671ea585c023f39ad1f37",
+      "gitBlob": "9f9f6bb99b0e07a48edf14e67cc8e08c634651f5"
+    },
+    {
+      "path": "receipts/native-first-qualified-observations.json",
+      "kind": "local derived receipt copy",
+      "origin": "local independently verified summary",
+      "originPath": "pr1198/native-first-qualified-observations.json",
+      "artifact": null,
+      "bytes": 2166,
+      "sha256": "5c13ce0269deac39ab7fa5718815b6d373e845f09c6dc79a5557791f9c7f65b0",
+      "gitBlob": "b88fba3ed891312f5f36adaa65aca1227ded2658"
+    },
+    {
+      "path": "receipts/release-inspection-final-receipt.json",
+      "kind": "local derived receipt copy",
+      "origin": "local independently verified summary",
+      "originPath": "pr1198/release-inspection-final-receipt.json",
+      "artifact": null,
+      "bytes": 19639,
+      "sha256": "0e3f16be4844a6f1505c02238778772050dc6f7142d1e43c4366774d9c00880b",
+      "gitBlob": "9a3f608ef4052c45310c334b3ff3d586c2c49c54"
+    }
+  ]
+}
