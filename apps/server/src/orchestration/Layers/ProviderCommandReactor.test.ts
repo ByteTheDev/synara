@@ -6020,6 +6020,133 @@ describe("ProviderCommandReactor", () => {
     },
   );
 
+  it.each(["pending", "compacting", "uncertain", "failed"] as const)(
+    "isolates an unavailable owner with a persisted %s Claude review",
+    async (reviewStatus) => {
+      const harness = await createHarness({ startReactor: false });
+      const now = new Date().toISOString();
+      const childId = ThreadId.makeUnsafe("subagent:missing-parent:compacting");
+      const messageId = asMessageId("orphan-held-message");
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.create",
+          commandId: CommandId.makeUnsafe("orphan-compaction-create"),
+          threadId: childId,
+          parentThreadId: ThreadId.makeUnsafe("missing-parent"),
+          projectId: asProjectId("project-1"),
+          title: "Orphan compaction",
+          modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+          runtimeMode: "approval-required",
+          interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
+          branch: null,
+          worktreePath: null,
+          createdAt: now,
+        }),
+      );
+      const source = await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.turn.start",
+          commandId: CommandId.makeUnsafe("orphan-compaction-source"),
+          threadId: childId,
+          runtimeMode: "approval-required",
+          interactionMode: "default",
+          message: { messageId, role: "user", text: "Held prompt", attachments: [] },
+          createdAt: now,
+        }),
+      );
+      const review = {
+        reviewId: "orphan-compaction-review",
+        messageId,
+        sourceEventSequence: source.sequence,
+        assessment: {
+          observedAt: now,
+          state: "likely-expired" as const,
+          source: "request-usage" as const,
+        },
+        status: "pending" as const,
+        createdAt: now,
+      };
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.claude-cache.set",
+          commandId: CommandId.makeUnsafe("orphan-compaction-review-set"),
+          threadId: childId,
+          review,
+          createdAt: now,
+        }),
+      );
+      const response = await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.claude-cache.respond",
+          commandId: CommandId.makeUnsafe("orphan-compaction-review-respond"),
+          threadId: childId,
+          reviewId: review.reviewId,
+          messageId,
+          decision: "compact",
+          createdAt: now,
+        }),
+      );
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.claude-cache.set",
+          commandId: CommandId.makeUnsafe("orphan-compaction-compacting"),
+          threadId: childId,
+          review: {
+            ...review,
+            status: reviewStatus,
+            ...(reviewStatus !== "pending"
+              ? {
+                  compactionTurnId: asTurnId("orphan-compaction"),
+                  compactionResponseEventSequence: response.sequence,
+                }
+              : {}),
+          },
+          expectedReviewId: review.reviewId,
+          createdAt: now,
+        }),
+      );
+      await expect(harness.startReactor()).resolves.toBeUndefined();
+      await harness.drain();
+      const readChild = async () =>
+        Option.getOrThrow(
+          await Effect.runPromise(harness.projectionSnapshotQuery.getThreadDetailById(childId)),
+        );
+      const child = await readChild();
+      expect(child.session).toMatchObject({ status: "error", activeTurnId: null });
+      expect(child.claudeCacheReview?.status).toBe(reviewStatus);
+      expect(child.messages.some((message) => message.id === messageId)).toBe(true);
+      expect(harness.startSession).not.toHaveBeenCalled();
+      expect(harness.sendTurn).not.toHaveBeenCalled();
+
+      // Restarting must neither replay the held prompt nor repeat error events.
+      const beforeRestart = await Effect.runPromise(harness.engine.getEventHighWaterSequence);
+      const fresh = await harness.restartReactor();
+      await fresh.start();
+      await Effect.runPromise(fresh.reactor.drain);
+      expect(await Effect.runPromise(harness.engine.getEventHighWaterSequence)).toBe(beforeRestart);
+      expect((await readChild()).claudeCacheReview).toEqual(child.claudeCacheReview);
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.turn.start",
+          commandId: CommandId.makeUnsafe("healthy-after-orphan-compaction"),
+          threadId: ThreadId.makeUnsafe("thread-1"),
+          runtimeMode: "approval-required",
+          interactionMode: "default",
+          message: {
+            messageId: asMessageId("healthy-compaction-message"),
+            role: "user",
+            text: "Continue",
+            attachments: [],
+          },
+          createdAt: now,
+        }),
+      );
+      await Effect.runPromise(fresh.reactor.drain);
+      expect(harness.sendTurn).toHaveBeenCalledTimes(1);
+      expect(harness.sendTurn.mock.calls[0]?.[0].threadId).toBe("thread-1");
+    },
+  );
+
   it.each([
     ["missing-parent", "new"],
     ["deleted-parent", "new"],

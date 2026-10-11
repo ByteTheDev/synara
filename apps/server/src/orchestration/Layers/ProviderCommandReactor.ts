@@ -9132,6 +9132,13 @@ const make = Effect.gen(function* () {
           review.status !== "failed")
       )
         continue;
+      // Compaction recovery must respect the same unavailable-owner boundary
+      // as delivery replay. Keep the review/journal for reconciliation instead
+      // of resolving a live session or resending a held message.
+      if ((yield* resolveDeliverySessionThread(thread.id)) === null) {
+        yield* settleUnavailableProviderThread(thread.id);
+        continue;
+      }
       const terminal = yield* readClaudeCompactionTerminal(thread.id, review.compactionTurnId);
       if (terminal && review.status !== "failed") {
         yield* processClaudeCompactionTerminal(terminal).pipe(
