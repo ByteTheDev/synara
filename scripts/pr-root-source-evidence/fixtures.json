@@ -1,0 +1,17 @@
+{
+  "server": {
+    "path": "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts",
+    "blob": "d343176ded616eeebce6c6ec62647482c47b6500",
+    "sha256": "ca0c7620f66b1ce264e4df40520045203ca66dc03d1696244118bec1591611b7"
+  },
+  "chat": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb"
+  },
+  "settings": {
+    "path": "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+    "blob": "7d387ef20c2f5e30fdc2e4c7a446d66161efdd88",
+    "sha256": "5745bb1c31168949d99d0bb82a4961acc8826a4bdb57c68c63a4cc2723138cb1"
+  }
+}

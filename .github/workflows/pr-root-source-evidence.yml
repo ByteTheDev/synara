@@ -1,0 +1,111 @@
+name: Source-pinned image provenance and Codex settings evidence
+
+on:
+  push:
+    branches:
+      - cleanup/20261011/root-source-evidence
+    paths:
+      - .github/workflows/pr-root-source-evidence.yml
+      - scripts/pr-root-source-evidence/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-root-source-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  capture:
+    name: Source evidence ${{ matrix.id }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: pr1857-before
+            kind: images
+            source: 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94
+            tree: 81b2ce105b3362e1266bb15916e0b16633f3843d
+          - id: pr1857-after
+            kind: images
+            source: 00d069ea71154ae11b87944a542bb845878b7050
+            tree: eeeb0b2796614b2680ea36ed27c77f3bdd161303
+          - id: pr1860-before
+            kind: settings
+            source: 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94
+            tree: 81b2ce105b3362e1266bb15916e0b16633f3843d
+          - id: pr1860-after
+            kind: settings
+            source: 638e419bc952566932bbf7cddf0b129bafc4d434
+            tree: f3534dbf68d6550206470e7614e9d477ccb5e837
+    env:
+      PR_ROOT_ID: ${{ matrix.id }}
+      PR_ROOT_SOURCE: ${{ matrix.source }}
+      PR_ROOT_TREE: ${{ matrix.tree }}
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-root-driver
+          persist-credentials: false
+      - name: Setup workspace
+        uses: ./.github/actions/setup-workspace
+        with:
+          electron: "false"
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+      - name: Install actual browser and video runtime
+        timeout-minutes: 10
+        run: ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+      - name: Prepare common canonical fixtures and source guards
+        run: node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs prepare
+      - name: Run actual SQLite ingestion and retain diagnostic exit
+        if: matrix.kind == 'images'
+        timeout-minutes: 5
+        working-directory: apps/server
+        run: |
+          set +e
+          bunx vitest run src/orchestration/Layers/PrRootProjectionEvidence.test.ts -t 'source UI evidence exports' --maxWorkers=1 --no-file-parallelism --reporter=default --reporter=json --outputFile="$PR_ROOT_LIVE/server.json" 2>&1 | tee "$PR_ROOT_OUTPUT/server.log"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"process":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$PR_ROOT_OUTPUT/server-exit.json"
+          exit "${result[1]}"
+      - name: Import unchanged actual database projections into full ChatView fixture
+        if: matrix.kind == 'images'
+        run: node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs prepare-browser
+      - name: Capture real production UI and retain diagnostic exit
+        timeout-minutes: 12
+        working-directory: apps/web
+        run: |
+          set +e
+          bunx vitest run --config vitest.pr-root-source-evidence.config.ts --reporter=default --reporter=json --outputFile="$PR_ROOT_LIVE/browser.json" 2>&1 | tee "$PR_ROOT_OUTPUT/browser.log"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"process":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$PR_ROOT_OUTPUT/browser-exit.json"
+          exit "${result[1]}"
+      - name: Require exact expected assertions, media, and unchanged source
+        if: always()
+        run: node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs verify
+      - name: Upload original reports, projections, images, and video
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: root-source-evidence-${{ matrix.id }}-${{ matrix.source }}
+          path: root-source-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
