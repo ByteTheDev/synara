@@ -114,6 +114,19 @@ async function mountModelEvidence(scenario: ModelEvidenceScenario, seedSelection
       instanceId: scenario.instanceId,
       model: scenario.model,
     });
+    // Qualify normal already-focused use separately from the retained first-activation race.
+    const editor = await waitForComposerEditor();
+    await page.getByTestId("composer-editor").click();
+    await waitForLayout();
+    await expect.poll(() => document.hasFocus() && document.activeElement === editor).toBe(true);
+    console.log(
+      "PR_MODEL_FOCUS_PRECONDITION " +
+        JSON.stringify({
+          scenario: scenario.id,
+          documentFocused: document.hasFocus(),
+          editorFocused: document.activeElement === editor,
+        }),
+    );
     return mounted;
   } catch (cause) {
     await mounted.cleanup();
