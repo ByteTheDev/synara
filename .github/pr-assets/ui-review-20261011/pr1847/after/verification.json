@@ -1,0 +1,56 @@
+{
+  "side": "after",
+  "target": {
+    "head": "a1b087d984a39cf9df936d5da9465db9e7679600",
+    "tree": "6011b0c1b9d93e2dcbf9b78b79c981d587cf4a4b"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/marketing/content/docs/workflows/worktrees.mdx",
+      "gitBlob": "4ce7108bdb099272b9037b309b4d4acefbf54109",
+      "sha256": "783dc186fb523c98882a660f3bcdbc12edd57ad7989395967f64b80e1d229c85",
+      "bytes": 8115
+    },
+    {
+      "path": "apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx",
+      "gitBlob": "c4a6cdef035ade671c26a63c6d03e03b4457dd5d",
+      "sha256": "61fa109964a62c7807bbd03d40dec640d39978224b0400406a0072c46ea49d55",
+      "bytes": 9865
+    },
+    {
+      "path": "apps/marketing/src/app/docs/[[...slug]]/page.tsx",
+      "gitBlob": "7c5b8329638aa2e7fad313f0255b527e6a81dec5",
+      "sha256": "4e087c6da6f43aaede7ebd7f7c5a0e6aa8e6169b7bfb445605a3e582df669955",
+      "bytes": 3831
+    },
+    {
+      "path": "apps/marketing/next.config.ts",
+      "gitBlob": "ccf3cb270602b518f4dd9a8909999c925f246bd6",
+      "sha256": "189da45f1b290d0c9284c74b922200d3bcbbedbdd04be44246c399d61412e922",
+      "bytes": 2153
+    },
+    {
+      "path": "apps/marketing/package.json",
+      "gitBlob": "3a2832be28c7b7056dd75e47e09d9149e6081c89",
+      "sha256": "85355378be428567dbc20a8f958af4fecd6d8ff65898112e1b7e87393b5124dd",
+      "bytes": 2251
+    },
+    {
+      "path": "bun.lock",
+      "gitBlob": "dd28f2f30281e31d25ceff4f57aac259124ba09d",
+      "sha256": "05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e",
+      "bytes": 776487
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-11T23:01:48.454Z",
+    "duration": 4165.996999999999,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "passed": true,
+  "verifiedAt": "2026-10-11T23:01:52.950Z"
+}

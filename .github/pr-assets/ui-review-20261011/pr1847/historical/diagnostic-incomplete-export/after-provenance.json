@@ -1,0 +1,85 @@
+{
+  "side": "after",
+  "target": {
+    "head": "a1b087d984a39cf9df936d5da9465db9e7679600",
+    "tree": "6011b0c1b9d93e2dcbf9b78b79c981d587cf4a4b"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/marketing/content/docs/workflows/worktrees.mdx",
+      "gitBlob": "4ce7108bdb099272b9037b309b4d4acefbf54109",
+      "sha256": "783dc186fb523c98882a660f3bcdbc12edd57ad7989395967f64b80e1d229c85",
+      "bytes": 8115
+    },
+    {
+      "path": "apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx",
+      "gitBlob": "c4a6cdef035ade671c26a63c6d03e03b4457dd5d",
+      "sha256": "61fa109964a62c7807bbd03d40dec640d39978224b0400406a0072c46ea49d55",
+      "bytes": 9865
+    },
+    {
+      "path": "apps/marketing/src/app/docs/[[...slug]]/page.tsx",
+      "gitBlob": "7c5b8329638aa2e7fad313f0255b527e6a81dec5",
+      "sha256": "4e087c6da6f43aaede7ebd7f7c5a0e6aa8e6169b7bfb445605a3e582df669955",
+      "bytes": 3831
+    },
+    {
+      "path": "apps/marketing/next.config.ts",
+      "gitBlob": "ccf3cb270602b518f4dd9a8909999c925f246bd6",
+      "sha256": "189da45f1b290d0c9284c74b922200d3bcbbedbdd04be44246c399d61412e922",
+      "bytes": 2153
+    },
+    {
+      "path": "apps/marketing/package.json",
+      "gitBlob": "3a2832be28c7b7056dd75e47e09d9149e6081c89",
+      "sha256": "85355378be428567dbc20a8f958af4fecd6d8ff65898112e1b7e87393b5124dd",
+      "bytes": 2251
+    },
+    {
+      "path": "bun.lock",
+      "gitBlob": "dd28f2f30281e31d25ceff4f57aac259124ba09d",
+      "sha256": "05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e",
+      "bytes": 776487
+    }
+  ],
+  "driver": {
+    "head": "caa515b2aa055c3de981b589a129eab716249bb8",
+    "tree": "187368a4c7ca73c0f80a133261e7d2ab14021c4d",
+    "files": [
+      {
+        "path": ".github/workflows/worktree-docs-evidence.yml",
+        "gitBlob": "525af12107d9af584855a51dde89adbcd18e523e",
+        "sha256": "ab1ac8b56c6a0f4d68fb2c862e7ceac241949d49c03e964f1e713f50e0a7e240",
+        "bytes": 3386
+      },
+      {
+        "path": "scripts/worktree-docs-evidence/capture.spec.ts",
+        "gitBlob": "4df7a4cbef989c2552a98babb236e5e3d3154cd3",
+        "sha256": "a467deb4b4b6984d51a02351bd558fe93d9ee0f5e74e7771b663fb80ac166cb2",
+        "bytes": 5920
+      },
+      {
+        "path": "scripts/worktree-docs-evidence/playwright.config.ts",
+        "gitBlob": "c08f80bb8e22a1991f328877a9c8831467f19d1c",
+        "sha256": "9c1374faa225546509ff85ac01970dc3b046fa9e1d804451ae02515e4be72549",
+        "bytes": 830
+      },
+      {
+        "path": "scripts/worktree-docs-evidence/runner.mjs",
+        "gitBlob": "f2e557b37217e45ef63811edc48224de8f4717c0",
+        "sha256": "6fdf976d845073494857427481d3b5e922df987229b376c0e2c3a90dd4f0591f",
+        "bytes": 10126
+      },
+      {
+        "path": "scripts/worktree-docs-evidence/README.md",
+        "gitBlob": "60d7e1453a685a6c961d4e8e4d25ef1cfaa72046",
+        "sha256": "2440fb38a11b92a78295695778d3954a8125d69a515f279a49adc69be9ecae1e",
+        "bytes": 3654
+      }
+    ]
+  },
+  "run": "38181440682",
+  "preparedAt": "2026-10-11T22:47:54.883Z",
+  "node": "v24.21.0",
+  "qualification": "Production Next/Fumadocs source, actual light and reduced-motion preferences, deterministic VISUAL_TEST marketing data. Twelve total viewport images are documentation evidence; native GitCore behavior is a separate run."
+}

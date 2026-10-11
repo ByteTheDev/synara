@@ -1,0 +1,39 @@
+{
+  "run": "38181440682",
+  "side": "after",
+  "verifiedAvailablePaths": [
+    "build-exit.json",
+    "build.log",
+    "capture.spec.ts",
+    "desktop-troubleshooting.json",
+    "desktop-troubleshooting.png",
+    "desktop-worktrees-context.json",
+    "desktop-worktrees-context.png",
+    "desktop-worktrees-policy.json",
+    "desktop-worktrees-policy.png",
+    "initial-provenance.json",
+    "mobile-troubleshooting.json",
+    "mobile-troubleshooting.png",
+    "mobile-worktrees-context.json",
+    "mobile-worktrees-context.png",
+    "mobile-worktrees-policy.json",
+    "mobile-worktrees-policy.png",
+    "playwright.config.ts",
+    "playwright.json",
+    "playwright.log",
+    "provenance.json",
+    "report-snapshot.json",
+    "test-exit.json",
+    "verification.json"
+  ],
+  "missingManifestEntries": [
+    {
+      "path": "playwright-output/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "gitBlob": "cbcc1fbac11a74b608b2b3edc3a2ffd6ab639cb2"
+    }
+  ],
+  "allManifestEntriesPresent": false,
+  "qualification": "The original archive is preserved unchanged; missing entries remain a historical export failure, not a reconstructed success."
+}

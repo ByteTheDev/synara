@@ -1,0 +1,8 @@
+{
+  "startedAt": "2026-10-11T22:48:44.939Z",
+  "completedAt": "2026-10-11T22:48:44.939Z",
+  "bytes": 10719,
+  "sha256": "ecef1a2d1f21dd2b9eb053ad7cbc4ba72150b47fccfde86c28fc778c485ba837",
+  "changedWhileReading": false,
+  "qualification": "One retained byte snapshot; subsequent live report writes cannot change this artifact."
+}

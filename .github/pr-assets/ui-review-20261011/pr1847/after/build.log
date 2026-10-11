@@ -1,0 +1,61 @@
+$ next build
+▲ Next.js 16.3.0 (Turbopack)
+✓ Running next.config.ts took 47ms
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+
+  Creating an optimized production build ...
+[MDX] generated files in 29.115139999999997ms
+✓ Compiled successfully in 8.8s
+  Running TypeScript ...
+  Finished TypeScript in 3.7s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/222) ...
+  Generating static pages using 3 workers (55/222) 
+  Generating static pages using 3 workers (110/222) 
+  Generating static pages using 3 workers (166/222) 
+✓ Generating static pages using 3 workers (222/222) in 1600ms
+  Finalizing page optimization ...
+
+Route (app)                                     Revalidate  Expire
+┌ ƒ /
+├ ○ /_not-found
+├ ○ /ai.txt                                             1d      1y
+├ ƒ /api/feedback
+├ ƒ /api/inbound-email
+├ ○ /api/installer-count                                1d      1y
+├ ƒ /api/search
+├ ○ /apple-icon.png
+├ ○ /changelog
+├   /changelog/[version]
+│ ├ ● /changelog/v1.0.2-beta.1
+│ ├ ● /changelog/v0.9.1
+│ ├ ● /changelog/v0.9.0
+│ └ ● [+72 more paths]
+├ ○ /changelog/sitemap.xml
+├   /docs/[[...slug]]
+│ ├ ● /docs
+│ ├ ● /docs/features/automations
+│ ├ ● /docs/features/browser-sessions
+│ └ ● [+60 more paths]
+├ ○ /icon.png
+├ ○ /install                                           30m      1y
+├ ○ /llms-full.txt
+├   /llms.mdx/docs/[[...slug]]
+│ ├ ● /llms.mdx/docs
+│ ├ ● /llms.mdx/docs/features/automations
+│ ├ ● /llms.mdx/docs/features/browser-sessions
+│ └ ● [+60 more paths]
+├ ○ /llms.txt                                           1d      1y
+├ ○ /manifest.webmanifest
+├ ○ /privacy
+├ ○ /robots.txt
+├ ○ /sitemap-index.xml                                  1d      1y
+├ ○ /sitemap.xml
+├ ○ /sponsor
+└ ○ /sponsors
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

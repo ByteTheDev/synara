@@ -1,0 +1,31 @@
+{
+  "side": "before",
+  "phase": "worktrees-policy",
+  "pathname": "/docs/workflows/worktrees",
+  "viewport": {
+    "name": "mobile",
+    "width": 390,
+    "height": 844
+  },
+  "selectedAnchor": "Working inside the task (the following section before the new policy exists)",
+  "targetBox": {
+    "x": 16,
+    "y": 211.828125,
+    "width": 358,
+    "height": 26.65625
+  },
+  "geometry": {
+    "width": 390,
+    "height": 844,
+    "scrollX": 0,
+    "scrollY": 1969,
+    "documentWidth": 390,
+    "light": true,
+    "reducedMotion": true
+  },
+  "source": "52f06318fdb3c0b4b310a8d55d0083cba0bde1a0",
+  "tree": "a4159d11d36ade68727a11503a3912d973bad66f",
+  "containsLinkPolicy": false,
+  "pageErrors": [],
+  "qualification": "Actual built production documentation and CSS. Read-only page observations and ordinary scrolling; no rendered content or CSS replacement. The policy view is explicitly the neighboring old section Before and the newly inserted policy After. Filesystem/native behavior is verified separately."
+}

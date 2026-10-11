@@ -1,0 +1,31 @@
+{
+  "side": "before",
+  "phase": "troubleshooting",
+  "pathname": "/docs/troubleshooting/git-and-worktrees",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1100
+  },
+  "selectedAnchor": "Slow branch or worktree creation",
+  "targetBox": {
+    "x": 312,
+    "y": 211.640625,
+    "width": 836,
+    "height": 26.65625
+  },
+  "geometry": {
+    "width": 1440,
+    "height": 1100,
+    "scrollX": 0,
+    "scrollY": 453,
+    "documentWidth": 1440,
+    "light": true,
+    "reducedMotion": true
+  },
+  "source": "52f06318fdb3c0b4b310a8d55d0083cba0bde1a0",
+  "tree": "a4159d11d36ade68727a11503a3912d973bad66f",
+  "containsLinkPolicy": false,
+  "pageErrors": [],
+  "qualification": "Actual built production documentation and CSS. Read-only page observations and ordinary scrolling; no rendered content or CSS replacement. The policy view is explicitly the neighboring old section Before and the newly inserted policy After. Filesystem/native behavior is verified separately."
+}

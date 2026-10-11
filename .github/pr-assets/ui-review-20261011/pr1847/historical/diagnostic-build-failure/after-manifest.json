@@ -1,0 +1,44 @@
+[
+  {
+    "path": "build-exit.json",
+    "bytes": 48,
+    "sha256": "2347e61124ea9d6e7384ad2629f6f20b29c4db9e777ef73b22431d2bb0a07de6",
+    "gitBlob": "4cc8bd83edc72f3fbc4941f941894a52680d6c72"
+  },
+  {
+    "path": "build.log",
+    "bytes": 771,
+    "sha256": "a7f24c1ff07b59a892b438da537c18ca76a5f5e0e61c810249d8939eea294e11",
+    "gitBlob": "587ce0c69af1ac36f54be6fd9a65ba97b8e008af"
+  },
+  {
+    "path": "capture.spec.ts",
+    "bytes": 5920,
+    "sha256": "a467deb4b4b6984d51a02351bd558fe93d9ee0f5e74e7771b663fb80ac166cb2",
+    "gitBlob": "4df7a4cbef989c2552a98babb236e5e3d3154cd3"
+  },
+  {
+    "path": "initial-provenance.json",
+    "bytes": 219,
+    "sha256": "fe53fd1f3b9fe3c0a168e9c6d3f49d85ba38297831b76f37349e9ce9e0ec7f3f",
+    "gitBlob": "de72f6fe0ee3cc893e569504c8f4697a239e14f9"
+  },
+  {
+    "path": "playwright.config.ts",
+    "bytes": 810,
+    "sha256": "5f77ca51e665b3aa75b32a1982fb19aedce12f7e6c23a752326c1e6959fb5524",
+    "gitBlob": "6f16db2bd602cdfd2c43ba10a9a8d763c56ea673"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 3326,
+    "sha256": "e5b26a7a4adb324e81bc4a01749e2da3b2fd947df851725bdc1f60f53b603792",
+    "gitBlob": "d412b24efd04a464045d22d547a0d8b36930998d"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 2825,
+    "sha256": "2874535b5e50d0fc70477139bbe5aed90345e2ee81755095c94569665ab7d9b6",
+    "gitBlob": "02b466fda276980e9d4f4650d27132fb63698fa6"
+  }
+]

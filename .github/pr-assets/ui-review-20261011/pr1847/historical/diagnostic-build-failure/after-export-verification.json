@@ -1,0 +1,16 @@
+{
+  "run": "38180452895",
+  "side": "after",
+  "verifiedAvailablePaths": [
+    "build-exit.json",
+    "build.log",
+    "capture.spec.ts",
+    "initial-provenance.json",
+    "playwright.config.ts",
+    "provenance.json",
+    "verification.json"
+  ],
+  "missingManifestEntries": [],
+  "allManifestEntriesPresent": true,
+  "qualification": "The original archive is preserved unchanged; missing entries remain a historical export failure, not a reconstructed success."
+}

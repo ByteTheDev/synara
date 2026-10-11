@@ -1,0 +1,12 @@
+[WebServer] $ next start --hostname "127.0.0.1" --port "3211"
+
+
+Running 6 tests using 1 worker
+
+[1/6] tests/pr1847-docs-evidence/capture.spec.ts:16:9 › desktop worktrees-context
+[2/6] tests/pr1847-docs-evidence/capture.spec.ts:16:9 › desktop worktrees-policy
+[3/6] tests/pr1847-docs-evidence/capture.spec.ts:16:9 › desktop troubleshooting
+[4/6] tests/pr1847-docs-evidence/capture.spec.ts:16:9 › mobile worktrees-context
+[5/6] tests/pr1847-docs-evidence/capture.spec.ts:16:9 › mobile worktrees-policy
+[6/6] tests/pr1847-docs-evidence/capture.spec.ts:16:9 › mobile troubleshooting
+  6 passed (8.5s)

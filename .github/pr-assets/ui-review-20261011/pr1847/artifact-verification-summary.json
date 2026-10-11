@@ -1,0 +1,44 @@
+[
+  {
+    "source": "before",
+    "allManifestFilesVerified": 24,
+    "pngs": [
+      "desktop-troubleshooting.png",
+      "desktop-worktrees-context.png",
+      "desktop-worktrees-policy.png",
+      "mobile-troubleshooting.png",
+      "mobile-worktrees-context.png",
+      "mobile-worktrees-policy.png"
+    ],
+    "archive": {
+      "output": "/workspace/scratch/f228243a1314/campaign/browser/pr1847-docs-run38182580196/before",
+      "artifact_id": 11718586688,
+      "size_in_bytes": 709507,
+      "digest": "sha256:1f7f39c0447b3c5facacdf1ea6d1050c2ab6dc41d6fc53d90cdaa789d425ed87",
+      "sha256": "1f7f39c0447b3c5facacdf1ea6d1050c2ab6dc41d6fc53d90cdaa789d425ed87",
+      "members": 25,
+      "verified": true
+    }
+  },
+  {
+    "source": "after",
+    "allManifestFilesVerified": 24,
+    "pngs": [
+      "desktop-troubleshooting.png",
+      "desktop-worktrees-context.png",
+      "desktop-worktrees-policy.png",
+      "mobile-troubleshooting.png",
+      "mobile-worktrees-context.png",
+      "mobile-worktrees-policy.png"
+    ],
+    "archive": {
+      "output": "/workspace/scratch/f228243a1314/campaign/browser/pr1847-docs-run38182580196/after",
+      "artifact_id": 11717954233,
+      "size_in_bytes": 777338,
+      "digest": "sha256:aa814169f96431c5747e94202461a84e7313a6fbe1c00fd726ee4882a6e4864e",
+      "sha256": "aa814169f96431c5747e94202461a84e7313a6fbe1c00fd726ee4882a6e4864e",
+      "members": 25,
+      "verified": true
+    }
+  }
+]

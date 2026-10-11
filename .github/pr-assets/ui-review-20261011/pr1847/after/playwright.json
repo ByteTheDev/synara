@@ -1,0 +1,339 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+      "/home/runner/work/synara/synara/apps/marketing/node_modules/.bin/playwright",
+      "test",
+      "--config=pr1847-docs-evidence.config.ts"
+    ],
+    "configFile": "/home/runner/work/synara/synara/apps/marketing/pr1847-docs-evidence.config.ts",
+    "rootDir": "/home/runner/work/synara/synara/apps/marketing/tests/pr1847-docs-evidence",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/Emanuele-web04/synara/commit/cc681aa0b416ad12cc3bb4a4a34771bb0a06350e",
+        "commitHash": "cc681aa0b416ad12cc3bb4a4a34771bb0a06350e",
+        "buildHref": "https://github.com/Emanuele-web04/synara/actions/runs/38182580196"
+      },
+      "gitCommit": {
+        "shortHash": "a1b087d",
+        "hash": "a1b087d984a39cf9df936d5da9465db9e7679600",
+        "subject": "fix(worktrees): select directory link kinds through the filesystem boundary",
+        "body": "fix(worktrees): select directory link kinds through the filesystem boundary\n\nKeep Windows junction behavior and all existing GitCore regressions while removing platform branching from Git policy. Integrate current main normally, retaining its paging/history removals and original worktree author ancestry.",
+        "author": {
+          "name": "Commander Chara",
+          "email": "249489759+cmdr-chara@users.noreply.github.com",
+          "time": 1791751995000
+        },
+        "committer": {
+          "name": "Commander Chara",
+          "email": "249489759+cmdr-chara@users.noreply.github.com",
+          "time": 1791751995000
+        },
+        "branch": "HEAD"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/_temp/worktree-docs-live/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/Emanuele-web04/synara/commit/cc681aa0b416ad12cc3bb4a4a34771bb0a06350e",
+            "commitHash": "cc681aa0b416ad12cc3bb4a4a34771bb0a06350e",
+            "buildHref": "https://github.com/Emanuele-web04/synara/actions/runs/38182580196"
+          },
+          "gitCommit": {
+            "shortHash": "a1b087d",
+            "hash": "a1b087d984a39cf9df936d5da9465db9e7679600",
+            "subject": "fix(worktrees): select directory link kinds through the filesystem boundary",
+            "body": "fix(worktrees): select directory link kinds through the filesystem boundary\n\nKeep Windows junction behavior and all existing GitCore regressions while removing platform branching from Git policy. Integrate current main normally, retaining its paging/history removals and original worktree author ancestry.",
+            "author": {
+              "name": "Commander Chara",
+              "email": "249489759+cmdr-chara@users.noreply.github.com",
+              "time": 1791751995000
+            },
+            "committer": {
+              "name": "Commander Chara",
+              "email": "249489759+cmdr-chara@users.noreply.github.com",
+              "time": 1791751995000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/runner/work/synara/synara/apps/marketing/tests/pr1847-docs-evidence",
+        "testIgnore": [],
+        "testMatch": [
+          "capture.spec.ts"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/home/runner/work/_temp/worktree-docs-live/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": {
+      "command": "bun run start --hostname 127.0.0.1 --port 3211",
+      "url": "http://127.0.0.1:3211",
+      "timeout": 120000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "capture.spec.ts",
+      "file": "capture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop worktrees-context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 642,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T23:01:49.268Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a0260cabe6bbf638b217-4a961568c762be115fd0",
+          "file": "capture.spec.ts",
+          "line": 16,
+          "column": 9
+        },
+        {
+          "title": "desktop worktrees-policy",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 534,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T23:01:50.077Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a0260cabe6bbf638b217-fff07ffe7d41c49535e0",
+          "file": "capture.spec.ts",
+          "line": 16,
+          "column": 9
+        },
+        {
+          "title": "desktop troubleshooting",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 561,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T23:01:50.623Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a0260cabe6bbf638b217-863aa1b784673e4f6280",
+          "file": "capture.spec.ts",
+          "line": 16,
+          "column": 9
+        },
+        {
+          "title": "mobile worktrees-context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 449,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T23:01:51.191Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a0260cabe6bbf638b217-69220a7e340e5d994042",
+          "file": "capture.spec.ts",
+          "line": 16,
+          "column": 9
+        },
+        {
+          "title": "mobile worktrees-policy",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 478,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T23:01:51.646Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a0260cabe6bbf638b217-4a24efeb946e15c3bb6c",
+          "file": "capture.spec.ts",
+          "line": 16,
+          "column": 9
+        },
+        {
+          "title": "mobile troubleshooting",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 430,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-11T23:01:52.129Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a0260cabe6bbf638b217-4df4e2e82e3577a59853",
+          "file": "capture.spec.ts",
+          "line": 16,
+          "column": 9
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T23:01:48.454Z",
+    "duration": 4165.996999999999,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

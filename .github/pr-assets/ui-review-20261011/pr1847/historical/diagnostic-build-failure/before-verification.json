@@ -1,0 +1,58 @@
+{
+  "side": "before",
+  "target": {
+    "head": "52f06318fdb3c0b4b310a8d55d0083cba0bde1a0",
+    "tree": "a4159d11d36ade68727a11503a3912d973bad66f"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/marketing/content/docs/workflows/worktrees.mdx",
+      "gitBlob": "1b4f804b809889d88157068039668682963c7640",
+      "sha256": "6b4542ead201cb9a04582708758467fe5e6fc97cab20cb61fc8d4a90910583ca",
+      "bytes": 6580
+    },
+    {
+      "path": "apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx",
+      "gitBlob": "ffc8d2b7587d69d8deb389353acc59859c1d16a4",
+      "sha256": "84221e6c458c2055dcad820e7b90800d3cf9af14ab10d50b439cd3370469ab71",
+      "bytes": 9745
+    },
+    {
+      "path": "apps/marketing/src/app/docs/[[...slug]]/page.tsx",
+      "gitBlob": "7c5b8329638aa2e7fad313f0255b527e6a81dec5",
+      "sha256": "4e087c6da6f43aaede7ebd7f7c5a0e6aa8e6169b7bfb445605a3e582df669955",
+      "bytes": 3831
+    },
+    {
+      "path": "apps/marketing/next.config.ts",
+      "gitBlob": "ccf3cb270602b518f4dd9a8909999c925f246bd6",
+      "sha256": "189da45f1b290d0c9284c74b922200d3bcbbedbdd04be44246c399d61412e922",
+      "bytes": 2153
+    },
+    {
+      "path": "apps/marketing/package.json",
+      "gitBlob": "3a2832be28c7b7056dd75e47e09d9149e6081c89",
+      "sha256": "85355378be428567dbc20a8f958af4fecd6d8ff65898112e1b7e87393b5124dd",
+      "bytes": 2251
+    },
+    {
+      "path": "bun.lock",
+      "gitBlob": "dd28f2f30281e31d25ceff4f57aac259124ba09d",
+      "sha256": "05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e",
+      "bytes": 776487
+    }
+  ],
+  "errors": [
+    "AssertionError [ERR_ASSERTION]: build actual exit was not successful\n\n1 !== 0\n",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/test-exit.json'",
+    "Error: ENOENT: no such file or directory, stat '/home/runner/work/_temp/worktree-docs-live/report.json'",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/desktop-worktrees-context.png'",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/desktop-worktrees-policy.png'",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/desktop-troubleshooting.png'",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/mobile-worktrees-context.png'",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/mobile-worktrees-policy.png'",
+    "Error: ENOENT: no such file or directory, open '/home/runner/work/synara/synara/worktree-docs-evidence/mobile-troubleshooting.png'"
+  ],
+  "passed": false,
+  "verifiedAt": "2026-10-11T22:33:23.507Z"
+}

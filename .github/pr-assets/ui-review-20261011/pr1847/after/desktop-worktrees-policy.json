@@ -1,0 +1,31 @@
+{
+  "side": "after",
+  "phase": "worktrees-policy",
+  "pathname": "/docs/workflows/worktrees",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1100
+  },
+  "selectedAnchor": "New .worktreelink policy paragraph",
+  "targetBox": {
+    "x": 312,
+    "y": 100.390625,
+    "width": 836,
+    "height": 118.984375
+  },
+  "geometry": {
+    "width": 1440,
+    "height": 1100,
+    "scrollX": 0,
+    "scrollY": 1678,
+    "documentWidth": 1440,
+    "light": true,
+    "reducedMotion": true
+  },
+  "source": "a1b087d984a39cf9df936d5da9465db9e7679600",
+  "tree": "6011b0c1b9d93e2dcbf9b78b79c981d587cf4a4b",
+  "containsLinkPolicy": true,
+  "pageErrors": [],
+  "qualification": "Actual built production documentation and CSS. Read-only page observations and ordinary scrolling; no rendered content or CSS replacement. The policy view is explicitly the neighboring old section Before and the newly inserted policy After. Filesystem/native behavior is verified separately."
+}
