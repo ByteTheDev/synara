@@ -283,7 +283,10 @@ try {
     Object.entries(process.env).filter(([name]) => permitted.has(name.toUpperCase())),
   );
   await observe("version", binary, ["--version"], { env: nativeEnvironment, timeoutMs: 30_000 });
-  assert.equal(readFileSync(join(output, "version.log"), "utf8").trim(), pins.version);
+  assert.equal(
+    readFileSync(join(output, "version.log"), "utf8").trim(),
+    `opencode v${pins.version}`,
+  );
   sourceGuard("before-native");
   await observe(
     "native",
