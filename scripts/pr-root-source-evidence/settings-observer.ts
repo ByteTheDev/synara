@@ -6,7 +6,8 @@ async function captureRootProviderSettings(stage: string) {
   await document.fonts.ready;
   await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
   const fields = [...account.querySelectorAll<HTMLInputElement>("input")].map((input) => ({
-    label: input.getAttribute("aria-label"), value: input.value, placeholder: input.placeholder,
+    label: input.getAttribute("aria-label") ?? [...(input.labels ?? [])].map((label) => label.textContent?.trim() ?? "").join(" "),
+    value: input.value, placeholder: input.placeholder,
   }));
   await page.screenshot({ path: directory + "/settings-" + stage + ".png" });
   console.log("PR_ROOT_OBSERVATION " + JSON.stringify({
