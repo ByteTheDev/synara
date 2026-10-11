@@ -1,0 +1,170 @@
+name: Verify actual macOS minimum metadata (PR1839)
+
+on:
+  push:
+    branches: [cleanup/20261011/macos-minimum-evidence]
+    paths:
+      - .github/workflows/macos-minimum-qualification.yml
+      - .github/scripts/verify-macos-minimum.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-minimum-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  icon:
+    name: Compile exact-source production icon
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fc3cd0c5e744041108b5d9109730cba1ded9c4ee
+          persist-credentials: false
+      - name: Compile and fingerprint source icon
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = fc3cd0c5e744041108b5d9109730cba1ded9c4ee
+          test "$(git rev-parse 'HEAD^{tree}')" = e462bf97f33a79c2fedf40172ae35d87da615184
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          xcodebuild -version
+          mkdir -p "$RUNNER_TEMP/macos-minimum-icon"
+          xcrun actool assets/prod/Synara.icon --compile "$RUNNER_TEMP/macos-minimum-icon" --platform macosx --minimum-deployment-target 26.0 --app-icon Synara --include-all-app-icons --output-partial-info-plist "$RUNNER_TEMP/minimum-icon-partial.plist" --output-format human-readable-text
+          test -s "$RUNNER_TEMP/macos-minimum-icon/Assets.car"
+          printf '%s\n' fc3cd0c5e744041108b5d9109730cba1ded9c4ee > "$RUNNER_TEMP/macos-minimum-icon/source-commit.txt"
+          (
+            cd "$RUNNER_TEMP/macos-minimum-icon"
+            shasum -a 256 Assets.car > Assets.car.sha256
+          )
+          git diff --exit-code HEAD --
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos-minimum-icon-${{ github.sha }}
+          path: ${{ runner.temp }}/macos-minimum-icon
+          retention-days: 14
+          if-no-files-found: error
+
+  native:
+    name: Actual ${{ matrix.arch }} DMG and ZIP minimum
+    needs: icon
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+          - os: macos-15-intel
+            arch: x64
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    env:
+      MINIMUM_ARCH: ${{ matrix.arch }}
+      NODE_OPTIONS: --max-old-space-size=4096
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      SYNARA_DESKTOP_SIGNED: "false"
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      SYNARA_DISABLE_AUTO_UPDATE: "1"
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: fc3cd0c5e744041108b5d9109730cba1ded9c4ee
+          path: source
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - uses: actions/download-artifact@v8
+        with:
+          name: macos-minimum-icon-${{ github.sha }}
+          path: ${{ runner.temp }}/macos-minimum-icon
+      - name: Select the verified current-run source icon
+        run: |
+          set -euo pipefail
+          test "$(cat "$RUNNER_TEMP/macos-minimum-icon/source-commit.txt")" = fc3cd0c5e744041108b5d9109730cba1ded9c4ee
+          (
+            cd "$RUNNER_TEMP/macos-minimum-icon"
+            shasum -a 256 -c Assets.car.sha256
+          )
+          printf 'SYNARA_MAC_ICON_CATALOG=%s\n' "$RUNNER_TEMP/macos-minimum-icon/Assets.car" >> "$GITHUB_ENV"
+      - name: Verify exact source and save bounded provenance
+        id: prepare
+        run: node ../driver/.github/scripts/verify-macos-minimum.mjs prepare
+      - name: Install frozen native build dependencies
+        id: install
+        run: |
+          set -euo pipefail
+          minimum_rust_version=$(node -p 'require("./packages/shared/src/cuaDriverRelease.json").rustVersion')
+          rustup toolchain install "$minimum_rust_version" --profile minimal
+          printf 'RUSTUP_TOOLCHAIN=%s\n' "$minimum_rust_version" >> "$GITHUB_ENV"
+          bun install --frozen-lockfile --ignore-scripts --filter '!@synara/marketing' 2>&1 | tee "$MINIMUM_EVIDENCE/install.log"
+      - name: Build actual unsigned DMG and update ZIP
+        id: build
+        timeout-minutes: 35
+        run: |
+          set -euo pipefail
+          bun run dist:desktop:artifact -- --platform mac --target dmg --arch "$MINIMUM_ARCH" --flavor production \
+            --build-version 1.0.2 --source-commit fc3cd0c5e744041108b5d9109730cba1ded9c4ee \
+            --lockfile-sha256 05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e \
+            --verbose --output-dir "$RUNNER_TEMP/macos-minimum-packages" 2>&1 | tee "$MINIMUM_EVIDENCE/build.log"
+      - name: Inspect both containers and detach every owned image
+        id: metadata
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        timeout-minutes: 10
+        run: node ../driver/.github/scripts/verify-macos-minimum.mjs inspect
+      - name: Keep canonical non-publication artifact provenance
+        id: provenance
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          node scripts/write-release-artifact-provenance.ts --assets-dir "$RUNNER_TEMP/macos-minimum-packages" \
+            --platform mac --arch "$MINIMUM_ARCH" --target dmg --version 1.0.2 \
+            --source-commit fc3cd0c5e744041108b5d9109730cba1ded9c4ee \
+            --lockfile-sha256 05f39e33bc5c54ceb31eba6925c7e6c065648effedd26fbeb0f5deda4d3bac2e \
+            --publication false --signed false --allow-unsigned-windows-publication false \
+            2>&1 | tee "$MINIMUM_EVIDENCE/canonical-provenance.log"
+          cp "$RUNNER_TEMP/macos-minimum-packages/artifact-mac-$MINIMUM_ARCH.provenance.json" "$MINIMUM_EVIDENCE/"
+      - name: Keep canonical packaged imports and isolated startup assertions
+        id: startup
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          node scripts/verify-packaged-desktop-startup.ts --assets-dir "$RUNNER_TEMP/macos-minimum-packages" \
+            --platform mac --arch "$MINIMUM_ARCH" --version 1.0.2 \
+            2>&1 | tee "$MINIMUM_EVIDENCE/canonical-startup.log"
+      - name: Require all real outcomes and final integrity
+        if: always()
+        env:
+          MINIMUM_PREPARE_OUTCOME: ${{ steps.prepare.outcome }}
+          MINIMUM_INSTALL_OUTCOME: ${{ steps.install.outcome }}
+          MINIMUM_BUILD_OUTCOME: ${{ steps.build.outcome }}
+          MINIMUM_METADATA_OUTCOME: ${{ steps.metadata.outcome }}
+          MINIMUM_PROVENANCE_OUTCOME: ${{ steps.provenance.outcome }}
+          MINIMUM_STARTUP_OUTCOME: ${{ steps.startup.outcome }}
+        run: node ../driver/.github/scripts/verify-macos-minimum.mjs verify
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: macos-minimum-1839-${{ matrix.arch }}-${{ github.sha }}
+          path: ${{ runner.temp }}/macos-minimum-evidence
+          retention-days: 14
+          if-no-files-found: error
