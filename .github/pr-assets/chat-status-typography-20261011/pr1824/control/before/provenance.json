@@ -1,0 +1,36 @@
+{
+  "variant": "before",
+  "source": "ca7345b440a7a2fd3d9ffa4637d708cc1a1519e8",
+  "tree": "52cd21be0f9eb753962247437eb4f91ea2381d4e",
+  "driver": "3587efe17edba380210394899b7b0599798a83c0",
+  "fixture": "apps/web/src/components/chat/MessagesTimeline.workingStatus.browser.tsx",
+  "fixtureSha256": "2f4abb76e41f438939e105c9da4b6688eab86ea1a47fca2a62e630a20d0b0718",
+  "productionBlob": "cbf6450e18995fd075bcf4caee9e956d2aa67e11",
+  "status": "failed",
+  "applicationCodeModified": false,
+  "qualification": "The exact two unfiltered production browser regressions run against the pre-repair and repaired source. Controlled conversation and real pointer state changes; actual exit status is retained, including expected negative controls. No native or live-provider claim.",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "passed": 0,
+  "failed": 2,
+  "files": [
+    {
+      "path": "vitest.log",
+      "bytes": 4460,
+      "sha256": "35df639e231117da2c43b24d4643296c1f6126bca3f9fcb0771417a4ccc01d88"
+    },
+    {
+      "path": "vitest.json",
+      "bytes": 2549,
+      "sha256": "15574c4fc915c5e1b53c597e4520a11ea143a8b67b513a276fe73314e716e6c0"
+    },
+    {
+      "path": "exits.json",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+    }
+  ]
+}

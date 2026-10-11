@@ -1,0 +1,486 @@
+{
+  "target": {
+    "id": "pr1826-after",
+    "variant": "after",
+    "source": "ba8206efa8bd377e7c4e9c776600c7a4fd37d7e4",
+    "tree": "60d10801aad1b05081bc50b7619caf493c7dcc01"
+  },
+  "source": "ba8206efa8bd377e7c4e9c776600c7a4fd37d7e4",
+  "sourceTree": "60d10801aad1b05081bc50b7619caf493c7dcc01",
+  "driver": "a33beba91465eb4aa727e7cf055c177a347a6e3e",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatMarkdown.tsx",
+      "blob": "64e767925623857b51735f0b5af869f3880308b8",
+      "sha256": "3762894a1a28234ee13b3769c202a79d6fcd74fea4c2d0384e5fe5fafc190815"
+    },
+    {
+      "path": "apps/web/src/components/ChatMarkdown.test.tsx",
+      "blob": "01f9a6c42f7db3d354d9f9f294d19f35692a74b8",
+      "sha256": "d38c286884c04e4efac6606edc7a69e81b54443e89707498478f13a0b2722cf6"
+    },
+    {
+      "path": "apps/web/src/components/chat/AgentActivityDetailView.tsx",
+      "blob": "b776eb1176bd255100b1d8cf04830ef33f23b60e",
+      "sha256": "3e86dc5c2fe58fd746f86f75961dce516780429879498bce5a692cfdef8f8cbd"
+    },
+    {
+      "path": "apps/web/src/components/chat/TimelineWorkEntryRow.tsx",
+      "blob": "78d5ffb868c14a4f757792e40ae51b940e1b6797",
+      "sha256": "9998363d7be4abe1463619ecb23d3dab087206c75cc04857eec174f5d5766c6f"
+    },
+    {
+      "path": "apps/web/src/components/chat/MessagesTimeline.tsx",
+      "blob": "4a45ac60fc7e719db2665390a344d33c534dbdd7",
+      "sha256": "45eb8cafcd2cc7b28a5b4dcd4495e0642335b4fbb1613e3580bf517f50d85ca5"
+    },
+    {
+      "path": "apps/web/src/components/chat/chatTypography.ts",
+      "blob": "351f0e02cdbe3aad7fef669a6bfbdbdf72ac3bfe",
+      "sha256": "136b52837f648479456de708de3d2e4f13aed45c49277ee8da8b0d77999dac4e"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4af62e72918ab45d9fa22a47bcb1f82d677e0072",
+      "sha256": "2ae1622d5490490ad5df4ccdc78ed584cf4fa3f46f116d9fe6d586470bfdc834"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence175.browser.tsx",
+      "sha256": "c8878cdbd51d01617d74ffa8a859c40a538a5e8e8b501a56f3bc9a507ea7e79f"
+    },
+    {
+      "path": "apps/web/vitest.pr-typography-evidence.config.ts",
+      "sha256": "dbb878923f531187ee55db799e17f3c52eb9db7d1df9d300801c97ecbe412ccd"
+    }
+  ],
+  "status": "completed",
+  "applicationCodeModified": false,
+  "qualification": "Actual production ChatMarkdown, syntax highlighting, AgentActivityDetailView and useTheme with controlled sample content and explicit RTL container. Both themes at 980/390px; no native desktop or live provider claim.",
+  "actualExitCode": 0,
+  "files": [
+    {
+      "path": "video-no-preference/page@7212c91787693109581f3bd3a29a83cd.webm",
+      "bytes": 987259,
+      "sha256": "25265a7b1bbc5774e4ad8a3192db0ec910bcca5b6ffccf9900b53196730e3e9e"
+    },
+    {
+      "path": "dark-390px-activity.png",
+      "bytes": 27778,
+      "sha256": "89fd4b7dbc9d2b87fc298829bb19e5615b2695e64a7a28a521a147b8b682e5c8"
+    },
+    {
+      "path": "dark-390px-code-default.png",
+      "bytes": 28776,
+      "sha256": "e3f9df50a87afffa265c9201ac398992f600bfbb6c4b97a8b8bfcd7370510bb1"
+    },
+    {
+      "path": "dark-390px-code-toggled.png",
+      "bytes": 21919,
+      "sha256": "cb90781e15edd72d2e1044f48967b3da56d45c5717ed27462b4c6c50b1aa9003"
+    },
+    {
+      "path": "dark-390px-prose.png",
+      "bytes": 38876,
+      "sha256": "750453a4da19280d4496888f1ffc14149eab833305c8c58a82301cc7ef8c6a43"
+    },
+    {
+      "path": "dark-390px-rtl-table.png",
+      "bytes": 29640,
+      "sha256": "7521111dbc967833ae6dccdde4ae031e249549219fcc3d334f833e55249aec26"
+    },
+    {
+      "path": "dark-980px-activity.png",
+      "bytes": 30647,
+      "sha256": "8a6394acee3f2da64eabd53652cb78afdbfb2e5d04a8a954a9c830a4f5786be1"
+    },
+    {
+      "path": "dark-980px-code-default.png",
+      "bytes": 31809,
+      "sha256": "cdabcbf7c3926fa1520734c89832f73a832f30a37b7eb28f9ecae0602b9da3b7"
+    },
+    {
+      "path": "dark-980px-code-toggled.png",
+      "bytes": 26671,
+      "sha256": "3be4580e6dfaa935cd71c3734043d32ac309ceaade45ac512b97d22b7a50a033"
+    },
+    {
+      "path": "dark-980px-prose.png",
+      "bytes": 42913,
+      "sha256": "61a23a52c1a6bb17b19f3cecddd2f818fbfac9483a3854c91a6ab7abda9b78cc"
+    },
+    {
+      "path": "dark-980px-rtl-table.png",
+      "bytes": 32329,
+      "sha256": "a28c9416e3cc7c755dc7eee1708c1457a79266c1a16de5776a1d4f420cfeafca"
+    },
+    {
+      "path": "light-390px-activity.png",
+      "bytes": 27563,
+      "sha256": "9b65247c45e555bfafc57fb09d71e020a5884696a488712928e5367ac6da7c92"
+    },
+    {
+      "path": "light-390px-code-default.png",
+      "bytes": 29008,
+      "sha256": "fdcdfb3059d4f972925ac18c2ab397c616bf4a94bf9f68cbc57b3b78de1d2339"
+    },
+    {
+      "path": "light-390px-code-toggled.png",
+      "bytes": 22196,
+      "sha256": "4fe5b9952a6744646d315e6a910cf8567c200a4e238f7dd9414699bcfbc80d6f"
+    },
+    {
+      "path": "light-390px-prose.png",
+      "bytes": 37474,
+      "sha256": "3a08be760120e47b99dae09c9e6f24a96f38b527ff82e1db174ba05bcaa46272"
+    },
+    {
+      "path": "light-390px-rtl-table.png",
+      "bytes": 29175,
+      "sha256": "146cb251430ed10937b05173496689569aa6529b1568660976b719bf55dfc481"
+    },
+    {
+      "path": "light-980px-activity.png",
+      "bytes": 30548,
+      "sha256": "7e2041a7dbeb418ace1f4336918960123ac850606ebef9b484783b66bdf0c95d"
+    },
+    {
+      "path": "light-980px-code-default.png",
+      "bytes": 32176,
+      "sha256": "22fb0645706ea45e3e7bbec6f3a7f05dd387a872db5b5de68c7ba265482c62f3"
+    },
+    {
+      "path": "light-980px-code-toggled.png",
+      "bytes": 26812,
+      "sha256": "7b84e1923c220df892122517959f0e042ae673b59f425bea677bd4d2768ccb8d"
+    },
+    {
+      "path": "light-980px-prose.png",
+      "bytes": 41600,
+      "sha256": "5eb42687b3533babeec34710edf3f9dc68a7fb4906afdf57eb498662f541a84e"
+    },
+    {
+      "path": "light-980px-rtl-table.png",
+      "bytes": 32086,
+      "sha256": "4fe75fc2648e3c8c83887878147486712d7fda42bd0c13bc42b6a323322c97ae"
+    }
+  ],
+  "observations": [
+    {
+      "motion": "no-preference",
+      "exits": {
+        "vitest": 0,
+        "tee": 0
+      },
+      "logSha256": "3aeac6d8783070b24866810739c2a46df1e2972b6da3857aae54e09171b3b457",
+      "observations": [
+        {
+          "variant": "after",
+          "cases": [
+            {
+              "width": 980,
+              "theme": "dark",
+              "tones": [
+                {
+                  "tone": "default",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.94)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "subtle",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.74)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "process",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.52)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground"
+                }
+              ],
+              "heading": {
+                "fontSize": "18.46px",
+                "lineHeight": "22.152px"
+              },
+              "inlineCode": {
+                "borderRadius": "6.08px",
+                "padding": "0.48px 4.48px 0.96px"
+              },
+              "initialCode": {
+                "wrap": "true",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre-wrap",
+                "clientWidth": 734,
+                "scrollWidth": 734,
+                "height": 86.40625
+              },
+              "toggledCode": {
+                "wrap": "false",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre",
+                "clientWidth": 734,
+                "scrollWidth": 1391,
+                "height": 44.15625
+              },
+              "alert": {
+                "direction": "rtl",
+                "borderLeftWidth": "1px",
+                "borderRightWidth": "3px"
+              },
+              "activity": [
+                {
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "Considering the dependency changes before choosing the next verification step.",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.52)"
+                },
+                {
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "The build output is available for review. Supporting details remain visible beside the primary result.",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.74)"
+                }
+              ]
+            },
+            {
+              "width": 980,
+              "theme": "light",
+              "tones": [
+                {
+                  "tone": "default",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.94)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "subtle",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.74)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "process",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.52)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground"
+                }
+              ],
+              "heading": {
+                "fontSize": "18.46px",
+                "lineHeight": "22.152px"
+              },
+              "inlineCode": {
+                "borderRadius": "6.08px",
+                "padding": "0.48px 4.48px 0.96px"
+              },
+              "initialCode": {
+                "wrap": "true",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre-wrap",
+                "clientWidth": 734,
+                "scrollWidth": 734,
+                "height": 86.40625
+              },
+              "toggledCode": {
+                "wrap": "false",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre",
+                "clientWidth": 734,
+                "scrollWidth": 1391,
+                "height": 44.15625
+              },
+              "alert": {
+                "direction": "rtl",
+                "borderLeftWidth": "1px",
+                "borderRightWidth": "3px"
+              },
+              "activity": [
+                {
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "Considering the dependency changes before choosing the next verification step.",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.52)"
+                },
+                {
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "The build output is available for review. Supporting details remain visible beside the primary result.",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.74)"
+                }
+              ]
+            },
+            {
+              "width": 390,
+              "theme": "dark",
+              "tones": [
+                {
+                  "tone": "default",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.94)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "subtle",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.74)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "process",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.52)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground"
+                }
+              ],
+              "heading": {
+                "fontSize": "18.46px",
+                "lineHeight": "22.152px"
+              },
+              "inlineCode": {
+                "borderRadius": "6.08px",
+                "padding": "0.48px 4.48px 0.96px"
+              },
+              "initialCode": {
+                "wrap": "true",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre-wrap",
+                "clientWidth": 348,
+                "scrollWidth": 348,
+                "height": 149.78125
+              },
+              "toggledCode": {
+                "wrap": "false",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre",
+                "clientWidth": 348,
+                "scrollWidth": 1391,
+                "height": 44.15625
+              },
+              "alert": {
+                "direction": "rtl",
+                "borderLeftWidth": "1px",
+                "borderRightWidth": "3px"
+              },
+              "activity": [
+                {
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "Considering the dependency changes before choosing the next verification step.",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.52)"
+                },
+                {
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "The build output is available for review. Supporting details remain visible beside the primary result.",
+                  "color": "color(srgb 0.988235 0.988235 0.988235 / 0.74)"
+                }
+              ]
+            },
+            {
+              "width": 390,
+              "theme": "light",
+              "tones": [
+                {
+                  "tone": "default",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.94)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "subtle",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.74)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground"
+                },
+                {
+                  "tone": "process",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.52)",
+                  "fontSize": "13px",
+                  "lineHeight": "21.125px",
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground"
+                }
+              ],
+              "heading": {
+                "fontSize": "18.46px",
+                "lineHeight": "22.152px"
+              },
+              "inlineCode": {
+                "borderRadius": "6.08px",
+                "padding": "0.48px 4.48px 0.96px"
+              },
+              "initialCode": {
+                "wrap": "true",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre-wrap",
+                "clientWidth": 348,
+                "scrollWidth": 348,
+                "height": 149.78125
+              },
+              "toggledCode": {
+                "wrap": "false",
+                "text": "bun run test -- src/components/ChatMarkdown.test.tsx src/components/chat/MessagesTimeline.test.tsx src/components/chat/AgentActivityDetailView.test.tsx src/appSettings.test.ts",
+                "whiteSpace": "pre",
+                "clientWidth": 348,
+                "scrollWidth": 1391,
+                "height": 44.15625
+              },
+              "alert": {
+                "direction": "rtl",
+                "borderLeftWidth": "1px",
+                "borderRightWidth": "3px"
+              },
+              "activity": [
+                {
+                  "className": "chat-markdown chat-markdown--process w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "Considering the dependency changes before choosing the next verification step.",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.52)"
+                },
+                {
+                  "className": "chat-markdown chat-markdown--subtle w-full min-w-0 text-chat leading-relaxed text-foreground",
+                  "text": "The build output is available for review. Supporting details remain visible beside the primary result.",
+                  "color": "color(srgb 0.0509804 0.0509804 0.0509804 / 0.74)"
+                }
+              ]
+            }
+          ],
+          "screenshots": [
+            "dark-980px-prose",
+            "dark-980px-code-default",
+            "dark-980px-code-toggled",
+            "dark-980px-rtl-table",
+            "dark-980px-activity",
+            "light-980px-prose",
+            "light-980px-code-default",
+            "light-980px-code-toggled",
+            "light-980px-rtl-table",
+            "light-980px-activity",
+            "dark-390px-prose",
+            "dark-390px-code-default",
+            "dark-390px-code-toggled",
+            "dark-390px-rtl-table",
+            "dark-390px-activity",
+            "light-390px-prose",
+            "light-390px-code-default",
+            "light-390px-code-toggled",
+            "light-390px-rtl-table",
+            "light-390px-activity"
+          ],
+          "boundary": "Actual ChatMarkdown, syntax highlighter, activity detail and theme. Controlled content and explicit RTL container; no native desktop or live provider run."
+        }
+      ]
+    }
+  ]
+}

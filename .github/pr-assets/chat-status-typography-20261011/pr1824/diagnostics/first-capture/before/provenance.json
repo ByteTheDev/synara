@@ -1,0 +1,99 @@
+{
+  "target": {
+    "id": "pr1824-before",
+    "variant": "before",
+    "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+    "tree": "26c3b060469f224dce8135d8046697eb43fe0794"
+  },
+  "source": "ec8c940e07582454a475250ade40147e3c89d59f",
+  "sourceTree": "26c3b060469f224dce8135d8046697eb43fe0794",
+  "driver": "7fef7cc6156a41f7176acf915497ff04b5560377",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/chat/MessagesTimeline.tsx",
+      "blob": "327bdb4a494ffd9df743531d4e4eb7d25885453a",
+      "sha256": "e19124030cd63f8f47b659d512f63b3cfc7142898c1f3ea3fe6ea738d0ff4b9c"
+    },
+    {
+      "path": "apps/web/src/components/chat/MessagesTimeline.test.tsx",
+      "blob": "1ec1d5a312ee33bb6dfa79da12f997f7e99a6926",
+      "sha256": "858663fd275066d0485e9665ad6e64fb071794c0a3433675686e79ba7e2c5c88"
+    },
+    {
+      "path": "apps/web/src/components/SynaraLogo.tsx",
+      "blob": "5f4bd3a0f97fb2ec4a40b9a2607b6d760dceb3a3",
+      "sha256": "49ead716b4b690d87ae1a0bd30f101a5ffac663a4e19f4f13cb20739c0340961"
+    },
+    {
+      "path": "apps/web/src/assets/synaraLogoPath.ts",
+      "blob": "de29d57210f9fee1b2315fe285b08806eed07c99",
+      "sha256": "6e1c2a0665c271209c50a6c945d38b89da37d880371a42d0acd5789a977579d5"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrUiEvidence174.browser.tsx",
+      "sha256": "08674f82b0859c76962aee049be98b558ae6447d92fcce430637123c1c9ebc5f"
+    },
+    {
+      "path": "apps/web/vitest.pr-status-evidence.config.ts",
+      "sha256": "3dedfa60c6705d915924e3cce88f179a6cba24a2e4f5e12e0f897f54b9692597"
+    }
+  ],
+  "status": "failed",
+  "applicationCodeModified": false,
+  "qualification": "Actual production MessagesTimeline, LegendList, SVG and useTheme with controlled conversation and status props. Chromium reduced-motion context emulation. No native desktop or live provider claim.",
+  "actualExitCode": 1,
+  "files": [
+    {
+      "path": "video-no-preference/page@a109a384779c471b0dff75d2d0262071.webm",
+      "bytes": 236793,
+      "sha256": "4d602fef5325a6d4d4132e66a02079ee612e75a2063735ac9175f53dfae60418"
+    },
+    {
+      "path": "video-reduce/page@dd4a2c9720df0c70d01b755910d19225.webm",
+      "bytes": 262629,
+      "sha256": "4bf52ec46491f9a5880683454fd8ea1f2b951e9e7d9d3a0482b41aac0429d4cd"
+    },
+    {
+      "path": "no-preference-dark-thinking-13px.png",
+      "bytes": 23284,
+      "sha256": "8cc9eda44db453e2be56486ec926be295f3cca368e412cb4c4c6cfad6e02d00d"
+    },
+    {
+      "path": "reduce-dark-thinking-13px.png",
+      "bytes": 23271,
+      "sha256": "ad5aad845c6e0fe20d99ab85ef7cff0f4e07044a822b8621c479b0204f577d5d"
+    }
+  ],
+  "observations": [
+    {
+      "motion": "no-preference",
+      "exits": {
+        "vitest": 1,
+        "tee": 0
+      },
+      "logSha256": "5c004c9ef5b549d85719191e4ae24f304b405c474001603b8680a9a8f090d9ba",
+      "observations": []
+    },
+    {
+      "motion": "reduce",
+      "exits": {
+        "vitest": 1,
+        "tee": 0
+      },
+      "logSha256": "9024d49170b28cac579389937f1a0d2e80d9f36bb957e70186f40418f4a3b961",
+      "observations": []
+    }
+  ]
+}

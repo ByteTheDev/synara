@@ -1,0 +1,91 @@
+{
+  "verified": true,
+  "artifacts": [
+    {
+      "id": 11709820469,
+      "name": "typography-evidence-pr1826-after-ba8206efa8bd377e7c4e9c776600c7a4fd37d7e4",
+      "bytes": 1311224,
+      "digest": "sha256:e46d6a3f32e4478b505acc9caf571c2728de892e3d51104e05281f65cd8bd1e6",
+      "run": 38157656522,
+      "driver": "a33beba91465eb4aa727e7cf055c177a347a6e3e",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11709820469"
+    },
+    {
+      "id": 11709426436,
+      "name": "typography-evidence-pr1826-before-ec8c940e07582454a475250ade40147e3c89d59f",
+      "bytes": 1280338,
+      "digest": "sha256:6cec6aafa022d33418688ed09c2176161e396ea49b9ee20be9098ddb8ac7d65a",
+      "run": 38157656522,
+      "driver": "a33beba91465eb4aa727e7cf055c177a347a6e3e",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11709426436"
+    },
+    {
+      "id": 11709656531,
+      "name": "status-evidence-pr1824-before-ec8c940e07582454a475250ade40147e3c89d59f",
+      "bytes": 325222,
+      "digest": "sha256:4f21fe0c02564e7f1244312aabb39602754f60ccbe59abaa558cb8d668b4c749",
+      "run": 38157947260,
+      "driver": "3587efe17edba380210394899b7b0599798a83c0",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11709656531"
+    },
+    {
+      "id": 11709038169,
+      "name": "status-evidence-pr1824-after-63c33e00238b4ca13aa52ecee29bb6494ed4f642",
+      "bytes": 677784,
+      "digest": "sha256:891590ba4769de8d4b535748528f4673e604954d927df3c43b2486297711e7d8",
+      "run": 38157947260,
+      "driver": "3587efe17edba380210394899b7b0599798a83c0",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11709038169"
+    },
+    {
+      "id": 11708997024,
+      "name": "status-regression-after-63c33e00238b4ca13aa52ecee29bb6494ed4f642",
+      "bytes": 2293,
+      "digest": "sha256:f9f7d8117fefab0c37193d34d46ec73199370024b5cfb166788f6d2caa94fa43",
+      "run": 38157947260,
+      "driver": "3587efe17edba380210394899b7b0599798a83c0",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11708997024"
+    },
+    {
+      "id": 11708787525,
+      "name": "status-regression-before-ca7345b440a7a2fd3d9ffa4637d708cc1a1519e8",
+      "bytes": 3492,
+      "digest": "sha256:ff5534fd02292c2c623cdcf01d5b7d57805eff23186849710eed33c6d3b3f04d",
+      "run": 38157947260,
+      "driver": "3587efe17edba380210394899b7b0599798a83c0",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11708787525"
+    },
+    {
+      "id": 11708831258,
+      "name": "status-evidence-pr1824-before-ec8c940e07582454a475250ade40147e3c89d59f",
+      "bytes": 223885,
+      "digest": "sha256:ecff4453a11d5aa02a341bdb27e1ac9b456647117d060265a2021dfdaeb87ff9",
+      "run": 38156975491,
+      "driver": "b88af16bd50d2d828b07b927ec5f5489e0e057db",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11708831258"
+    },
+    {
+      "id": 11708756413,
+      "name": "status-evidence-pr1824-after-ca7345b440a7a2fd3d9ffa4637d708cc1a1519e8",
+      "bytes": 222582,
+      "digest": "sha256:de57f6e9bb2d1800d134c09508f37ad80b0b0aa63ef291fb1fc2d624ba25537d",
+      "run": 38156975491,
+      "driver": "b88af16bd50d2d828b07b927ec5f5489e0e057db",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11708756413"
+    },
+    {
+      "id": 11708564071,
+      "name": "initial-status-before",
+      "digest": "sha256:e4ba261ce245f675d06455d22aa7b89703e2cc3ab5100cd6dfab097be96dc30c",
+      "run": 38156624761,
+      "driver": "7fef7cc6156a41f7176acf915497ff04b5560377"
+    },
+    {
+      "id": 11708549111,
+      "name": "initial-status-after",
+      "digest": "sha256:e2c602f876606f9bd5b1fa2489d98e99ab9f4864a7f66e29d7ea71862e4905b3",
+      "run": 38156624761,
+      "driver": "7fef7cc6156a41f7176acf915497ff04b5560377"
+    }
+  ]
+}

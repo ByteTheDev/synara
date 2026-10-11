@@ -1,0 +1,38 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[90mstdout[2m | src/components/PrUiEvidence174.browser.tsx[2m > [22m[2mPR UI evidence: working mark, semantic icon, type scale and actual motion preference
+[22m[39mPR_STATUS_STATE_DIAGNOSTIC {"variant":"after","motion":"reduce","requested":"Requested status: Thinking; chat size: 18px","actualWorkingFont":"13px","actualWorkingText":"Thinking","actualUserFont":"13px"}
+ [31m❯[39m [30m[43m chromium [49m[39m src/components/PrUiEvidence174.browser.tsx [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 4294[2mms[22m[39m
+[31m   [31m×[31m PR UI evidence: working mark, semantic icon, type scale and actual motion preference[39m[33m 4293[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrUiEvidence174.browser.tsx[2m > [22mPR UI evidence: working mark, semantic icon, type scale and actual motion preference
+[31m[1mAssertionError[22m: expected '13px' to be '18px' // Object.is equality[39m
+
+Failure screenshot:
+  - [2msrc/components/__screenshots__/PrUiEvidence174.browser.tsx/PR-UI-evidence--working-mark--semantic-icon--type-scale-and-actual-motion-preference-2.png[22m
+
+Expected: [32m"1[7m8[27mpx"[39m
+Received: [31m"1[7m3[27mpx"[39m
+
+[36m [2m❯[22m src/components/PrUiEvidence174.browser.tsx:[2m208:68[22m[39m
+
+
+[31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+[36m [2m❯[22m src/components/PrUiEvidence174.browser.tsx:[2m208:4[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m   Start at [22m 16:50:38
+[2m   Duration [22m 14.76s[2m (transform 0ms, setup 0ms, import 9.14s, tests 4.29s, environment 0ms)[22m
+
+
+::error file=/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence174.browser.tsx,title=[chromium] src/components/PrUiEvidence174.browser.tsx > PR UI evidence%3A working mark%2C semantic icon%2C type scale and actual motion preference,line=208,column=68::AssertionError: expected '13px' to be '18px' // Object.is equality%0A%0AExpected: "18px"%0AReceived: "13px"%0A%0A ❯ src/components/PrUiEvidence174.browser.tsx:208:68%0A%0ACaused by: Caused by: Error: Matcher did not succeed in time.%0A ❯ src/components/PrUiEvidence174.browser.tsx:208:4%0A%0A

@@ -1,0 +1,134 @@
+[
+  {
+    "path": "pr1826/before/typography-interaction.mp4",
+    "source": "pr1826/before/video-no-preference/page@16491cae2aab63613d0242cdf3351974.webm",
+    "sourceSha256": "d6fc32fdf164838f8ea105279c246ab49e545c5dbc1d4f347e5f237737ccab3f",
+    "sourceStartSeconds": 12.25,
+    "requestedDurationSeconds": 15.0,
+    "output": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "14.960000"
+      }
+    },
+    "sha256": "7a06615e4db63ec7dc92a754f3f1a2af2f3ae5db817c1203a88678cc17e24b78",
+    "transform": "Time trim and H.264 encode only; full 1280x900 recorder frame retained, no crop, speed change, overlays or synthesized frames."
+  },
+  {
+    "path": "pr1826/after/typography-interaction.mp4",
+    "source": "pr1826/after/video-no-preference/page@7212c91787693109581f3bd3a29a83cd.webm",
+    "sourceSha256": "25265a7b1bbc5774e4ad8a3192db0ec910bcca5b6ffccf9900b53196730e3e9e",
+    "sourceStartSeconds": 6.6,
+    "requestedDurationSeconds": 14.7,
+    "output": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "14.720000"
+      }
+    },
+    "sha256": "a7f46ff3e8808cc5603430a6b167a36bd21c9919bd88454b198a86791802ba5a",
+    "transform": "Time trim and H.264 encode only; full 1280x900 recorder frame retained, no crop, speed change, overlays or synthesized frames."
+  },
+  {
+    "path": "pr1824/before/status-no-preference-interaction.mp4",
+    "source": "pr1824/before/video-no-preference/page@04c5950f0391ad02d55ba20f604e488e.webm",
+    "sourceSha256": "66d4b6c04b998365bfd342539cc86d6f9315216925b5a7fa11148133e127a17b",
+    "sourceStartSeconds": 12.8,
+    "requestedDurationSeconds": 3.5,
+    "output": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "3.520000"
+      }
+    },
+    "sha256": "39409b07a4e69df38c5f41bffcc0b1d01cbf7806165ae8104847a447530456fe",
+    "transform": "Time trim and H.264 encode only; full 1280x900 recorder frame retained, no crop, speed change, overlays or synthesized frames."
+  },
+  {
+    "path": "pr1824/before/status-reduce-interaction.mp4",
+    "source": "pr1824/before/video-reduce/page@8122f735746ae4c0fac0118c8930846c.webm",
+    "sourceSha256": "b9a0b2b812ddccd785128173aad5dc0e3e0121fffa71fe9981ca6331938a84b6",
+    "sourceStartSeconds": 11.3,
+    "requestedDurationSeconds": 3.2,
+    "output": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "3.160000"
+      }
+    },
+    "sha256": "60a0be62250c5099209a23340d07d41a2823db4eda5c6b82a272e12b56414d44",
+    "transform": "Time trim and H.264 encode only; full 1280x900 recorder frame retained, no crop, speed change, overlays or synthesized frames."
+  },
+  {
+    "path": "pr1824/after/status-no-preference-interaction.mp4",
+    "source": "pr1824/after/video-no-preference/page@136c813d05a5eebddaa5ab9b6f3f1210.webm",
+    "sourceSha256": "c709940fb68f3d6489144f15e5d28d738044eb173d7f634be8ac6f7709d4f698",
+    "sourceStartSeconds": 12.0,
+    "requestedDurationSeconds": 5.7,
+    "output": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "5.720000"
+      }
+    },
+    "sha256": "a3f3f514d7b80379789ede78f1dbbab462911c2264426a1724ad03d628b84205",
+    "transform": "Time trim and H.264 encode only; full 1280x900 recorder frame retained, no crop, speed change, overlays or synthesized frames."
+  },
+  {
+    "path": "pr1824/after/status-reduce-interaction.mp4",
+    "source": "pr1824/after/video-reduce/page@3556fb412d602655ed27abad0d6c3b01.webm",
+    "sourceSha256": "87e205c00f584e2611a8de68a659d58825625ec26621e0c8dd94dddc50d224af",
+    "sourceStartSeconds": 11.8,
+    "requestedDurationSeconds": 5.2,
+    "output": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 1280,
+          "height": 900,
+          "r_frame_rate": "25/1"
+        }
+      ],
+      "format": {
+        "duration": "5.200000"
+      }
+    },
+    "sha256": "c2e1d9a87ff6f772dec21cb59b4f8194aad9873414b33f4b2780ac1b6e04d144",
+    "transform": "Time trim and H.264 encode only; full 1280x900 recorder frame retained, no crop, speed change, overlays or synthesized frames."
+  }
+]
