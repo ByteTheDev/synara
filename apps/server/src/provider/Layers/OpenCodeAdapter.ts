@@ -1,3 +1,4 @@
+import { settleConcurrentTeardowns } from "../settleConcurrentTeardowns.ts";
 import { createHash, randomUUID } from "node:crypto";
 
 import {
@@ -1366,11 +1367,15 @@ const stopOpenCodeContext = Effect.fn("stopOpenCodeContext")(function* (
     return;
   }
 
-  yield* runOpenCodeSdk("session.abort", () =>
-    context.client.session.abort({ sessionID: context.openCodeSessionId }),
-  ).pipe(Effect.ignore({ log: true }));
+  yield* Effect.gen(function* () {
+    yield* runOpenCodeSdk("session.abort", () =>
+      context.client.session.abort({ sessionID: context.openCodeSessionId }),
+    ).pipe(Effect.ignore({ log: true }));
 
-  yield* releaseOpenCodeSessionResources(context, beforeRelease);
+    yield* releaseOpenCodeSessionResources(context, beforeRelease);
+  }).pipe(
+    Effect.onExit((exit) => (Exit.isFailure(exit) ? Ref.set(context.stopped, false) : Effect.void)),
+  );
 });
 
 export function makeOpenCodeAdapterLive(options?: OpenCodeAdapterLiveOptions) {
@@ -5116,21 +5121,19 @@ export function makeOpenCodeAdapterLive(options?: OpenCodeAdapterLiveOptions) {
         } satisfies ProviderComposerCapabilities);
 
       const stopAll: OpenCodeAdapterShape["stopAll"] = () =>
-        Effect.gen(function* () {
-          const contexts = [...sessions.values()];
-          sessions.clear();
-          yield* Effect.forEach(
-            contexts,
-            (context) =>
-              Effect.ignoreCause(
-                stopOpenCodeContext(
-                  context,
-                  settleAllOpenCodeBackgroundTasks(context, { status: "stopped" }),
-                ),
-              ),
-            { concurrency: "unbounded", discard: true },
-          );
-        });
+        settleConcurrentTeardowns([...sessions.entries()], ([threadId, context]) =>
+          stopOpenCodeContext(
+            context,
+            settleAllOpenCodeBackgroundTasks(context, { status: "stopped" }),
+          ).pipe(
+            Effect.tap(() =>
+              Effect.sync(() => {
+                if (sessions.get(threadId) === context) sessions.delete(threadId);
+              }),
+            ),
+            Effect.mapError((cause) => toAdapterProcessError(threadId, cause)),
+          ),
+        );
 
       const didResumeSession: NonNullable<OpenCodeAdapterShape["didResumeSession"]> = (
         input,

@@ -118,6 +118,7 @@ export function closeServerRuntimePipeline(input: {
     // close then fences terminal runtime events into subscriber workers; scope
     // close drains those workers before the engine accepts its final stop.
     Effect.andThen(input.orchestrationEngine.drain),
+    Effect.andThen(input.orchestrationReactor.drainProviderCommands),
     Effect.andThen(input.providerService.closeRuntimeEvents),
     Effect.andThen(input.orchestrationReactor.drainProviderCommands),
     Effect.andThen(Scope.close(input.subscriptionsScope, Exit.void)),
