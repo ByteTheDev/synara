@@ -23,7 +23,7 @@
         }
       ],
       "expectedCases": 15,
-      "observedSha256": "0aee0815cfaac8a5c7351e48f0ad9bccb967f3ca52eb7df9d960c2740bf769f5"
+      "observedSha256": "3b743a7d6c73234ccb64f1f1dd576ef01afceb88c18af6c754f77982aa93122d"
     },
     {
       "path": "apps/web/src/components/SafariAccessOnboarding.browser.tsx",
@@ -44,7 +44,7 @@
         }
       ],
       "expectedCases": 12,
-      "observedSha256": "a6807abba008fdea036bd2b2b10d4ce592470d1041d6a30ae187b7490a3d2213"
+      "observedSha256": "6bca7865f863f6ae15be61f2470d976accde56ca707b2f93adb67575f12e6649"
     }
   ],
   "expectedCases": 27,
