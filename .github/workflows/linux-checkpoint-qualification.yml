@@ -1,0 +1,295 @@
+name: Qualify repaired Linux packages and checkpoint replay
+
+on:
+  push:
+    branches:
+      - cleanup/20261011/pr-1652-linux-checkpoint-production
+      - cleanup/20261011/pr-1652-linux-checkpoint-beta
+      - cleanup/20261011/pr-1720-linux-checkpoint-production
+      - cleanup/20261011/pr-1720-linux-checkpoint-beta
+      - cleanup/20261011/pr-1823-linux-checkpoint-production
+      - cleanup/20261011/pr-1823-linux-checkpoint-beta
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: linux-checkpoint-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  AZURE_TRUSTED_SIGNING_SUBJECT_DN: ""
+
+jobs:
+  preflight:
+    name: Bind exact source and isolated flavor
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      pr: ${{ steps.meta.outputs.pr }}
+      source_commit: ${{ steps.meta.outputs.source_commit }}
+      source_tree: ${{ steps.meta.outputs.source_tree }}
+      desktop_flavor: ${{ steps.meta.outputs.desktop_flavor }}
+      target: ${{ steps.meta.outputs.target }}
+      version: ${{ steps.meta.outputs.version }}
+      lockfile_sha256: ${{ steps.meta.outputs.lockfile_sha256 }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ startsWith(github.ref_name, 'cleanup/20261011/pr-1652-') && '5512c114e3d97c7db79127ca9d9a7946b1bc7359' || startsWith(github.ref_name, 'cleanup/20261011/pr-1720-') && '5107bcccc6eff36672d878958fc75ce4fe61bc05' || '5b6b0c427863018f65f4b1113f4e1ad4076e1dab' }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            scripts/linux-checkpoint-evidence.mjs
+            .github/workflows/linux-checkpoint-qualification.yml
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - id: meta
+        name: Validate source tree, bytes and build-only scope
+        run: node .pr-driver/scripts/linux-checkpoint-evidence.mjs prepare
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: linux-source-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/linux-checkpoint-evidence/
+          retention-days: 14
+          if-no-files-found: error
+
+  portable:
+    name: Build exact portable JavaScript
+    needs: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.preflight.outputs.source_commit }}
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - name: Install frozen native-build workspace
+        run: bun install --frozen-lockfile --ignore-scripts --filter '!@synara/marketing'
+      - name: Build and retain actual portable output
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ needs.preflight.outputs.source_commit }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          mkdir -p "$RUNNER_TEMP/portable-build" "$RUNNER_TEMP/portable-logs"
+          bun run build:desktop 2>&1 | tee "$RUNNER_TEMP/portable-logs/build.log"
+          git diff --exit-code HEAD --
+          node scripts/portable-build.ts create "$RUNNER_TEMP/portable-build/manifest.json" "$SOURCE_COMMIT"
+          tar -cf "$RUNNER_TEMP/portable-build/outputs.tar" apps/desktop/dist-electron apps/server/dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: portable-build
+          path: ${{ runner.temp }}/portable-build/*
+          compression-level: 1
+          retention-days: 14
+          overwrite: true
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: portable-logs-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/portable-logs/
+          retention-days: 14
+          if-no-files-found: error
+
+  cua:
+    name: Provision exact Linux Cua
+    needs: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.preflight.outputs.source_commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - uses: ./.github/actions/provision-cua
+        with:
+          arch: x64
+      - name: Verify preparation left tracked source intact
+        run: git diff --exit-code HEAD --
+      - uses: actions/upload-artifact@v7
+        with:
+          name: prepared-cua-linux-x64
+          path: ${{ runner.temp }}/cua-artifact
+          retention-days: 14
+          overwrite: true
+          if-no-files-found: error
+
+  package1652:
+    name: Qualify PR 1652 Linux
+    if: needs.preflight.outputs.pr == '1652'
+    needs: [preflight, portable, cua]
+    uses: Emanuele-web04/synara/.github/workflows/release-platform.yml@5512c114e3d97c7db79127ca9d9a7946b1bc7359
+    with:
+      runner: ubuntu-24.04
+      platform: linux
+      arch: x64
+      target: AppImage,deb
+      version: ${{ needs.preflight.outputs.version }}
+      desktop_flavor: ${{ needs.preflight.outputs.desktop_flavor }}
+      publish_release: false
+      source_commit: ${{ needs.preflight.outputs.source_commit }}
+      source_tag: ""
+      lockfile_sha256: ${{ needs.preflight.outputs.lockfile_sha256 }}
+      allow_unsigned_windows_publication: false
+
+  package1720:
+    name: Qualify PR 1720 Linux
+    if: needs.preflight.outputs.pr == '1720'
+    needs: [preflight, portable, cua]
+    uses: Emanuele-web04/synara/.github/workflows/release-platform.yml@5107bcccc6eff36672d878958fc75ce4fe61bc05
+    with:
+      runner: ubuntu-24.04
+      platform: linux
+      arch: x64
+      target: AppImage,deb
+      version: ${{ needs.preflight.outputs.version }}
+      desktop_flavor: ${{ needs.preflight.outputs.desktop_flavor }}
+      publish_release: false
+      source_commit: ${{ needs.preflight.outputs.source_commit }}
+      source_tag: ""
+      lockfile_sha256: ${{ needs.preflight.outputs.lockfile_sha256 }}
+      allow_unsigned_windows_publication: false
+
+  package1823:
+    name: Qualify PR 1823 Linux
+    if: needs.preflight.outputs.pr == '1823'
+    needs: [preflight, portable, cua]
+    uses: Emanuele-web04/synara/.github/workflows/release-platform.yml@5b6b0c427863018f65f4b1113f4e1ad4076e1dab
+    with:
+      runner: ubuntu-24.04
+      platform: linux
+      arch: x64
+      target: AppImage,deb,rpm
+      version: ${{ needs.preflight.outputs.version }}
+      desktop_flavor: ${{ needs.preflight.outputs.desktop_flavor }}
+      publish_release: false
+      source_commit: ${{ needs.preflight.outputs.source_commit }}
+      source_tag: ""
+      lockfile_sha256: ${{ needs.preflight.outputs.lockfile_sha256 }}
+      allow_unsigned_windows_publication: false
+
+  verify:
+    name: Verify actual packages and native attempt
+    needs: [preflight, package1652, package1720, package1823]
+    if: ${{ !cancelled() && ((needs.preflight.outputs.pr == '1652' && needs.package1652.result == 'success') || (needs.preflight.outputs.pr == '1720' && needs.package1720.result == 'success') || (needs.preflight.outputs.pr == '1823' && needs.package1823.result == 'success')) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.preflight.outputs.source_commit }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            scripts/linux-checkpoint-evidence.mjs
+            .github/workflows/linux-checkpoint-qualification.yml
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+      - name: Install read-only package metadata tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev rpm
+      - uses: actions/download-artifact@v8
+        with:
+          name: desktop-linux-x64
+          path: ${{ runner.temp }}/qualified-packages
+      - name: Verify real artifacts without workspace installation
+        run: node .pr-driver/scripts/linux-checkpoint-evidence.mjs verify
+      - name: Verify the actual native workflow steps for this attempt
+        if: always()
+        uses: actions/github-script@v8
+        env:
+          SOURCE_PR: ${{ needs.preflight.outputs.pr }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const assert = require('node:assert/strict');
+            const attempt = Number(process.env.GITHUB_RUN_ATTEMPT);
+            const jobs = await github.paginate('GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs', {
+              ...context.repo, run_id: context.runId, attempt_number: attempt, per_page: 100,
+            });
+            const candidates = jobs.filter(job => job.steps?.some(step => step.name === 'Verify restored checkpoint identity and bytes'));
+            const output = path.join(process.env.RUNNER_TEMP, 'linux-checkpoint-evidence');
+            fs.mkdirSync(output, { recursive: true });
+            fs.writeFileSync(path.join(output, 'native-attempt.json'), JSON.stringify({
+              run: context.runId, attempt, sourcePr: process.env.SOURCE_PR,
+              candidates, qualification: 'Actual current-run/current-attempt job steps. Attempt two is a deliberate replay of verified attempt-one bytes, not a naturally failed release.',
+            }, null, 2) + '\n');
+            assert.equal(candidates.length, 1, 'Exactly the selected feature native job must qualify');
+            const job = candidates[0];
+            assert.equal(job.conclusion, 'success');
+            const steps = new Map(job.steps.map(step => [step.name, step.conclusion]));
+            for (const name of ['Smoke packaged desktop startup', 'Upload qualified artifacts']) {
+              assert.equal(steps.get(name), 'success', name);
+            }
+            for (const name of ['Find failed attempt checkpoint in this run', 'Restore failed attempt checkpoint from this run', 'Verify restored checkpoint identity and bytes']) {
+              assert.equal(steps.get(name), attempt === 1 ? 'skipped' : 'success', name);
+            }
+            for (const name of ['Setup Bun', 'Install dependencies', 'Install Linux package prerequisites', 'Report runner capacity', "Import this candidate's verified Cua", 'Restore portable outputs', 'Build desktop artifact', 'Collect release assets', 'Verify and record artifact provenance']) {
+              assert.equal(steps.get(name), attempt === 1 ? 'success' : 'skipped', name);
+            }
+            if (process.env.SOURCE_PR !== '1652') {
+              assert.equal(steps.get('Install Linux checkpoint inspection tools'), attempt === 1 ? 'skipped' : 'success');
+            }
+      - name: Retain verified actual bytes for a labelled same-run replay
+        if: github.run_attempt == 1
+        uses: actions/upload-artifact@v7
+        with:
+          name: candidate-desktop-linux-x64
+          path: ${{ runner.temp }}/qualified-packages/*
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
+      - name: Fingerprint every retained evidence file
+        if: always()
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+          import { join } from 'node:path';
+          const root = join(process.env.RUNNER_TEMP, 'linux-checkpoint-evidence');
+          const files = readdirSync(root).sort().filter(name => name !== 'complete-inventory.json').map(name => {
+            const data = readFileSync(join(root, name));
+            return { name, bytes: data.length, sha256: createHash('sha256').update(data).digest('hex') };
+          });
+          writeFileSync(join(root, 'complete-inventory.json'), JSON.stringify({ files, run: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT }, null, 2) + '\n');
+          NODE
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: linux-packages-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/linux-checkpoint-evidence/
+          retention-days: 14
+          if-no-files-found: error
