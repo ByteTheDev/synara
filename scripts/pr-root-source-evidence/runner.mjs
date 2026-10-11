@@ -8,11 +8,11 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
-  statSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { boundedStableRead, freezeDirectory, freezeFile } from "./snapshots.mjs";
 
 const root = process.cwd();
 const scripts = dirname(fileURLToPath(import.meta.url));
@@ -37,6 +37,14 @@ const live = join(
     process.env.GITHUB_RUN_ATTEMPT +
     "-" +
     target.id,
+);
+const liveData = join(live, "data");
+// Vite permits browser screenshots within the application workspace. This
+// writer directory is deliberately outside the uploaded artifact tree.
+const liveMedia = join(
+  root,
+  ".pr-root-live-media",
+  process.env.GITHUB_RUN_ID + "-" + process.env.GITHUB_RUN_ATTEMPT + "-" + target.id,
 );
 assert.notEqual(root, driverRoot);
 const digest = (data, algorithm = "sha256") => createHash(algorithm).update(data).digest("hex");
@@ -171,8 +179,10 @@ const command = process.argv[2];
 if (command === "prepare") {
   assert.equal(existsSync(output), false);
   assert.equal(existsSync(live), false);
+  assert.equal(existsSync(liveMedia), false);
   mkdirSync(output, { recursive: true });
-  mkdirSync(live, { recursive: true });
+  mkdirSync(liveData, { recursive: true });
+  mkdirSync(liveMedia, { recursive: true });
   const sourceFiles = sourceGuard();
   const driver = driverGuard();
   const manifest = {
@@ -180,6 +190,7 @@ if (command === "prepare") {
     sourceFiles,
     driver,
     overlays: [],
+    livePaths: { reports: live, data: liveData, media: liveMedia, artifact: output },
     run: process.env.GITHUB_RUN_ID,
     attempt: process.env.GITHUB_RUN_ATTEMPT,
     node: process.version,
@@ -207,13 +218,18 @@ if (command === "prepare") {
     manifest,
   );
   save("provenance.json", manifest);
+  save("output-snapshots.json", {
+    files: [],
+    qualification:
+      "Only bounded stable copies enter the artifact tree; live writer paths are separate.",
+  });
   save("prepare-commands.json", commands);
   appendEnvironment({
-    PR_ROOT_OUTPUT: output,
+    PR_ROOT_OUTPUT: liveData,
     PR_ROOT_LIVE: live,
     PR_ROOT_KIND: target.kind,
     PR_ROOT_APPLICATION_ROOT: root,
-    VITE_PR_ROOT_OUTPUT: output,
+    VITE_PR_ROOT_OUTPUT: liveMedia,
     VITE_PR_ROOT_SOURCE: target.source,
     VITE_PR_ROOT_TREE: target.tree,
   });
@@ -223,8 +239,25 @@ if (command === "prepare") {
   assert.deepEqual(sourceGuard(), manifest.sourceFiles);
   assert.deepEqual(driverGuard(), manifest.driver);
   verifyOverlays(manifest);
+  assert.equal(
+    process.env.PR_ROOT_SERVER_OUTCOME,
+    "success",
+    "Projection execution did not complete normally.",
+  );
+  const snapshots = read("output-snapshots.json");
+  try {
+    for (const kind of ["view", "generation"]) {
+      const name = "projection-" + kind + ".json";
+      freezeFile(join(liveData, name), output, name, snapshots.files, 20 * 1024 * 1024);
+    }
+  } finally {
+    save("output-snapshots.json", snapshots);
+  }
   const cases = ["view", "generation"].map((kind) => {
-    const bytes = readFileSync(join(output, "projection-" + kind + ".json"));
+    const bytes = boundedStableRead(
+      join(output, "projection-" + kind + ".json"),
+      20 * 1024 * 1024,
+    ).bytes;
     const entry = JSON.parse(bytes.toString("utf8"));
     assert.equal(entry.kind, kind);
     assert.equal(entry.source, target.source);
@@ -266,18 +299,47 @@ if (command === "prepare") {
   attempt(() => assert.deepEqual(sourceGuard(), manifest.sourceFiles));
   attempt(() => assert.deepEqual(driverGuard(), manifest.driver));
   attempt(() => verifyOverlays(manifest));
+  const outcomes = {
+    server: process.env.PR_ROOT_SERVER_OUTCOME,
+    browser: process.env.PR_ROOT_BROWSER_OUTCOME,
+  };
+  attempt(() =>
+    assert.equal(
+      outcomes.server,
+      target.kind === "images" ? "success" : "skipped",
+      "Projection step failed, timed out or was cancelled.",
+    ),
+  );
+  attempt(() =>
+    assert.equal(outcomes.browser, "success", "Browser step failed, timed out or was cancelled."),
+  );
+  const snapshots = read("output-snapshots.json");
+  attempt(() => freezeDirectory(liveData, output, snapshots.files, 40 * 1024 * 1024));
+  attempt(() => freezeDirectory(liveMedia, output, snapshots.files, 100 * 1024 * 1024));
+  for (const phase of target.kind === "images" ? ["server", "browser"] : ["browser"]) {
+    attempt(() =>
+      freezeFile(
+        join(live, phase + ".json"),
+        output,
+        phase + ".json",
+        snapshots.files,
+        20 * 1024 * 1024,
+      ),
+    );
+  }
+  save("output-snapshots.json", snapshots);
+  save("live-output-cutoff.json", {
+    outcomes,
+    cutoffUtc: new Date().toISOString(),
+    errors: [...errors],
+    qualification:
+      "Timeout, cancellation, missing output, unsafe files or writes during a cutoff make evidence incomplete. Later writes can affect only separate live paths, never these frozen copies.",
+  });
   const reportRecords = [];
   for (const phase of target.kind === "images" ? ["server", "browser"] : ["browser"])
     attempt(() => {
-      const path = join(live, phase + ".json");
-      const before = statSync(path);
-      const bytes = readFileSync(path);
-      const after = statSync(path);
-      assert.ok(before.isFile() && before.size > 0 && before.size <= 20 * 1024 * 1024);
-      assert.equal(before.size, bytes.length);
-      assert.equal(after.size, before.size);
-      assert.equal(after.mtimeMs, before.mtimeMs);
-      writeFileSync(join(output, phase + ".json"), bytes, { flag: "wx" });
+      const bytes = boundedStableRead(join(output, phase + ".json"), 20 * 1024 * 1024).bytes;
+      assert.ok(bytes.length > 0);
       const report = JSON.parse(bytes.toString("utf8"));
       const exits = read(phase + "-exit.json");
       assert.equal(exits.tee, 0);
@@ -320,7 +382,9 @@ if (command === "prepare") {
     });
   const observations =
     attempt(() => {
-      const log = readFileSync(join(output, "browser.log"), "utf8");
+      const log = boundedStableRead(join(output, "browser.log"), 20 * 1024 * 1024).bytes.toString(
+        "utf8",
+      );
       const prefix = "PR_ROOT_OBSERVATION ";
       return log
         .split("\n")
@@ -403,7 +467,7 @@ if (command === "prepare") {
       if (info.isDirectory()) walk(path, relative + "/");
       else {
         assert.ok(info.isFile());
-        const bytes = readFileSync(path);
+        const bytes = boundedStableRead(path, 100 * 1024 * 1024 - total).bytes;
         total += bytes.length;
         assert.ok(total <= 100 * 1024 * 1024);
         inventory.push({

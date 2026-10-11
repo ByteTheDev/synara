@@ -74,6 +74,7 @@ jobs:
       - name: Prepare common canonical fixtures and source guards
         run: node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs prepare
       - name: Run actual SQLite ingestion and retain diagnostic exit
+        id: projection
         if: matrix.kind == 'images'
         timeout-minutes: 5
         working-directory: apps/server
@@ -86,8 +87,11 @@ jobs:
           exit "${result[1]}"
       - name: Import unchanged actual database projections into full ChatView fixture
         if: matrix.kind == 'images'
+        env:
+          PR_ROOT_SERVER_OUTCOME: ${{ steps.projection.outcome }}
         run: node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs prepare-browser
       - name: Capture real production UI and retain diagnostic exit
+        id: browser
         timeout-minutes: 12
         working-directory: apps/web
         run: |
@@ -99,6 +103,9 @@ jobs:
           exit "${result[1]}"
       - name: Require exact expected assertions, media, and unchanged source
         if: always()
+        env:
+          PR_ROOT_SERVER_OUTCOME: ${{ steps.projection.outcome }}
+          PR_ROOT_BROWSER_OUTCOME: ${{ steps.browser.outcome }}
         run: node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs verify
       - name: Upload original reports, projections, images, and video
         if: always()
