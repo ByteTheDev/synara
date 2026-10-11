@@ -184,6 +184,8 @@ try {
     .find((branch) => branch.startsWith("synara/parallel/"))
     .replace(/\/[123]$/, "");
   const approvedCommands = new Set();
+  const pendingCommands = new Set();
+  const reviewedApprovalPath = path.join(home, "verified-read-only-approvals.json");
   let comparisonCompleted = false;
   for (let i = 0; i < 180; i++) {
     const approve = page.getByRole("button", { name: /Approve once/ }).first();
@@ -192,17 +194,46 @@ try {
         .locator("pre[title]")
         .evaluateAll((nodes) => nodes.map((node) => node.title));
       const command = previews.at(-1);
+      // Permit combinations of these bounded read-only commands in the empty
+      // fixture. No arbitrary arguments, shell operators, or other programs.
+      const fixtureRepoPattern = repo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const readOnlyGitCommand = String.raw`git(?: -C ${fixtureRepoPattern})? (?:log --oneline -(?:3|5)(?: --all)?(?: 2>/dev/null)?|status --(?:short|porcelain)|branch -a(?: --format='%\(refname:short\) %\(objectname:short\)')?)`;
+      const readOnlyGitBatch = new RegExp(`^${readOnlyGitCommand}(?: ${readOnlyGitCommand})*$`);
       const allowed = [
+        `git -C ${repo} status --porcelain git -C ${repo} worktree list echo "== $d" git -C "$d" status --porcelain git -C "$d" log --oneline -1`,
+        "git status --porcelain git log --oneline -5 git branch -a --format='%(refname:short) %(objectname:short)'",
+        `git log --oneline -3 git branch -a git branch --list 'synara/parallel/*' --format='%(refname:short)' echo "== $b" git diff --stat ${base} "$b"`,
+        `git -C ${repo} log --oneline -5 --all 2>/dev/null git -C ${repo} status --short ls ${home}/worktrees/fixture-repo 2>/dev/null`,
         `git log --oneline -3 git status --short git branch -a --contains ${base} head -20`,
         "git log --oneline -3 --all git branch -a git status --short",
         "git log --oneline -3 git status --short git branch -a",
         `git log --oneline -3 git status --short echo "--- branch $b ---" git diff --stat ${base} "${branchPrefix}/$b" 2>&1 git log --oneline ${base}.."${branchPrefix}/$b" 2>&1`,
         `echo \"== $b ==\" git diff --stat ${base} \"$br\" git rev-parse \"$br\"`,
       ];
-      assert.ok(
-        allowed.includes(command),
-        "Unexpected tool request; refusing approval: " + command,
-      );
+      let reviewed = [];
+      try {
+        reviewed = JSON.parse(await fs.readFile(reviewedApprovalPath, "utf8"));
+        assert.ok(Array.isArray(reviewed) && reviewed.every((value) => typeof value === "string"));
+      } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+      }
+      if (
+        !allowed.includes(command) &&
+        !readOnlyGitBatch.test(command ?? "") &&
+        !reviewed.includes(command)
+      ) {
+        if (!pendingCommands.has(command)) {
+          pendingCommands.add(command);
+          console.log(
+            "PENDING_NATIVE_TOOL_REVIEW",
+            JSON.stringify({ command, reviewedApprovalPath }),
+          );
+        }
+        // An operator may review an exact fixture-only read request. Nothing
+        // is approved by default; the finite completion deadline still fails.
+        await page.waitForTimeout(1000);
+        continue;
+      }
       if (!approvedCommands.has(command)) {
         await page.screenshot({
           path: root + "/docs/verification/parallel-run-native-three-approval.png",
@@ -212,11 +243,15 @@ try {
         await approve.click();
       }
     }
-    const body = await page.locator("body").innerText();
+    // Fork is offered only for a settled, persisted assistant answer. Work
+    // headers are optional, and production SQLite owns an exclusive live lock.
+    // All four durable completed rows are checked after graceful shutdown below.
     if (
       !(await approve.count()) &&
       !(await page.getByRole("button", { name: "Stop generation", exact: true }).count()) &&
-      /Worked \d+(?:\.\d+)?s/.test(body)
+      (await page
+        .getByRole("button", { name: "Fork thread from this turn", exact: true })
+        .count()) === 1
     ) {
       comparisonCompleted = true;
       break;
