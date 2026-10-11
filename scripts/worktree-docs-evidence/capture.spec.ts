@@ -41,7 +41,9 @@ for (const viewport of [
       let target;
       if (phase === "troubleshooting") {
         selectedAnchor = "Slow branch or worktree creation";
-        target = main.getByRole("heading", { name: selectedAnchor, exact: true });
+        target = main.getByRole("heading", {
+          name: /^Slow branch or worktree creation(?: Copy Anchor Link)?$/u,
+        });
         await expect(main).toContainText(".worktreeinclude");
         if (after)
           await expect(main).toContainText(
@@ -50,7 +52,9 @@ for (const viewport of [
         else await expect(main).not.toContainText(".worktreelink");
       } else {
         await expect(
-          main.getByRole("heading", { name: "Ignored files in a new worktree", exact: true }),
+          main.getByRole("heading", {
+            name: /^Ignored files in a new worktree(?: Copy Anchor Link)?$/u,
+          }),
         ).toHaveCount(after ? 1 : 0);
         if (after) {
           await expect(main).toContainText(
@@ -63,7 +67,9 @@ for (const viewport of [
         } else await expect(main).not.toContainText(".worktreelink");
         if (phase === "worktrees-context") {
           selectedAnchor = "Starting from a base ref";
-          target = main.getByRole("heading", { name: selectedAnchor, exact: true });
+          target = main.getByRole("heading", {
+            name: /^Starting from a base ref(?: Copy Anchor Link)?$/u,
+          });
         } else if (after) {
           selectedAnchor = "New .worktreelink policy paragraph";
           target = main
@@ -72,7 +78,9 @@ for (const viewport of [
         } else {
           selectedAnchor =
             "Working inside the task (the following section before the new policy exists)";
-          target = main.getByRole("heading", { name: "Working inside the task", exact: true });
+          target = main.getByRole("heading", {
+            name: /^Working inside the task(?: Copy Anchor Link)?$/u,
+          });
         }
       }
       await expect(target).toHaveCount(1);
