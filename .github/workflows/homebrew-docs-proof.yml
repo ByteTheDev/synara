@@ -1,0 +1,80 @@
+name: Homebrew documentation Before Vs After (PR1836)
+on:
+  push:
+    branches: [cleanup/20261011/pr1836-homebrew-docs-proof]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: homebrew-docs-proof-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  capture:
+    name: Actual docs ${{ matrix.os }} ${{ matrix.variant }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+        variant: [before, after]
+    env:
+      HOMEBREW_DOCS_VARIANT: ${{ matrix.variant }}
+      VISUAL_TEST: "1"
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - name: Checkout exact application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.variant == 'before' && '25b55b0bec0914d81e4db54b27f953721b067b29' || '6d3682aa9123d02b560131ae363e0b627e634447' }}
+          path: source
+          persist-credentials: false
+      - name: Checkout exact capture driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.19.0
+      - name: Prepare source identity and additive capture
+        working-directory: source
+        run: node ../driver/.github/scripts/homebrew-docs/runner.mjs prepare
+      - name: Install exact frozen workspace
+        working-directory: source
+        run: bun install --frozen-lockfile
+      - name: Install actual Chromium
+        working-directory: source/apps/marketing
+        run: bunx playwright install --with-deps chromium
+      - name: Build actual production site with the checked-in release fixture
+        id: build
+        working-directory: source/apps/marketing
+        run: node "$GITHUB_WORKSPACE/driver/.github/scripts/homebrew-docs/runner.mjs" run build -- bun run build
+      - name: Preserve original unchanged docs root assertion
+        id: original
+        working-directory: source/apps/marketing
+        run: node "$GITHUB_WORKSPACE/driver/.github/scripts/homebrew-docs/runner.mjs" run original-snapshot -- bunx playwright test tests/visual/visual.spec.ts --grep docs-desktop-light --retries=0 --output "$HOMEBREW_DOCS_OUTPUT/original-snapshot"
+      - name: Capture actual production docs and absent install callout
+        if: ${{ always() && steps.build.outcome == 'success' }}
+        id: capture
+        working-directory: source/apps/marketing
+        run: node "$GITHUB_WORKSPACE/driver/.github/scripts/homebrew-docs/runner.mjs" run capture -- bunx playwright test --config playwright.homebrew-proof.config.ts
+      - name: Generate separate current-main docs baseline candidate
+        if: ${{ always() && matrix.variant == 'before' && steps.capture.outcome == 'success' }}
+        working-directory: source/apps/marketing
+        run: node "$GITHUB_WORKSPACE/driver/.github/scripts/homebrew-docs/runner.mjs" run generate-golden -- bunx playwright test tests/visual/visual.spec.ts --grep docs-desktop-light --retries=0 --update-snapshots --output "$HOMEBREW_DOCS_OUTPUT/golden-generation"
+      - name: Verify exact source, assertions, captures, raw outcomes and digests
+        if: always()
+        working-directory: source
+        run: node ../driver/.github/scripts/homebrew-docs/runner.mjs verify
+      - name: Upload actual captures, failed original control and labelled candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homebrew-docs-${{ matrix.os }}-${{ matrix.variant }}-${{ github.sha }}
+          path: ${{ runner.temp }}/homebrew-docs-evidence
+          if-no-files-found: error
