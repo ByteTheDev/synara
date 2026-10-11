@@ -23,6 +23,7 @@ import {
   type ProviderRuntimeEvent,
   type ProviderSession,
   type ProviderUserInputAnswers,
+  RuntimeTaskId,
   RuntimeItemId,
   RuntimeRequestId,
   ThreadId,
@@ -85,6 +86,7 @@ import {
 } from "../Errors.ts";
 import { AcpRequestError } from "../acp/AcpErrors.ts";
 import {
+  ACP_SUBAGENT_TOOL_KIND,
   classifyAcpPromptTurnCompletion,
   mapAcpToAdapterError,
   readAcpFailedToolDetail,
@@ -193,6 +195,13 @@ const DEVIN_WEDGE_RECOVERY_WARNING =
 const DEVIN_WEDGE_RECOVERY_MAX_PER_THREAD = 3;
 const DEVIN_WEDGE_RECOVERY_WINDOW_MS = 30 * 60 * 1000;
 const DEVIN_WEDGE_SUPERVISOR_INTERVAL_MS = 5_000;
+const DEVIN_SUBAGENT_CONTEXT_META = "cognition.ai/subagent_context";
+const DEVIN_SUBAGENT_STARTED_META = "cognition.ai/subagent_started";
+const DEVIN_SUBAGENT_COMPLETED_META = "cognition.ai/subagent_completed";
+const DEVIN_BACKGROUND_META = "cognition.ai/background";
+const DEVIN_BACKGROUND_SHELL_ID_META = "cognition.ai/backgroundShellId";
+const DEVIN_BACKGROUND_COMMAND_META = "cognition.ai/backgroundCommand";
+const DEVIN_BACKGROUND_EXIT_CODE_META = "cognition.ai/exitCode";
 
 export interface DevinWedgeRecoveryOptions {
   /** Silence required after a child stall warning before recovering. */
@@ -381,8 +390,35 @@ interface PendingUserInput {
   readonly answers: Deferred.Deferred<ProviderUserInputAnswers>;
 }
 
+interface DevinSubagentState {
+  readonly agentId: string;
+  readonly toolCallId: string;
+  readonly turnId: TurnId | undefined;
+  readonly parentAgentId?: string;
+  readonly title?: string;
+  readonly profile?: string;
+  readonly task?: string;
+  summary?: string;
+  isBackground: boolean;
+  /** Stop RPC succeeded before the matching provider terminal update arrived. */
+  locallyStopped?: boolean;
+  status: "running" | "completed" | "failed" | "stopped";
+}
+
+interface DevinBackgroundShellState {
+  readonly shellId: string;
+  readonly toolCallId: string;
+  readonly parentAgentId?: string;
+  readonly command?: string;
+  readonly turnId: TurnId | undefined;
+  /** Kill RPC succeeded before the matching provider terminal update arrived. */
+  locallyStopped?: boolean;
+  status: "running" | "completed" | "failed" | "stopped";
+}
+
 interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
   readonly threadId: ThreadId;
+  readonly acpSessionId: string;
   readonly lifecycleGeneration: string | undefined;
   session: ProviderSession;
   readonly scope: Scope.Closeable;
@@ -428,6 +464,14 @@ interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
   // card. Bounded to the same window as turnToolCallIds.
   readonly devinToolCallStateById: Map<string, AcpToolCallState>;
   readonly devinToolCallLifecycleById: Map<string, "active" | "terminal">;
+  /** Native Devin child agents keyed by provider thread/agent id. */
+  readonly devinSubagents: Map<string, DevinSubagentState>;
+  /** Tool-call id to child agent id, for sparse subsequent tool updates. */
+  readonly devinSubagentIdByToolCallId: Map<string, string>;
+  /** Native background shell jobs keyed by Devin shell id. */
+  readonly devinBackgroundShells: Map<string, DevinBackgroundShellState>;
+  /** Locally stopped tasks awaiting a provider terminal update, including after resume. */
+  readonly pendingTaskReconciliations: Set<string>;
   // Session-scoped approval keys recorded by "Always allow this session".
   // Each key is (canonical request kind + the exact thing approved): the full
   // command string for execute, the provider's tool name for other tools — so
@@ -496,6 +540,135 @@ interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function metadataString(value: unknown, ...keys: string[]): string | undefined {
+  if (!isRecord(value)) return undefined;
+  for (const key of keys) {
+    const candidate = value[key];
+    if (typeof candidate === "string" && candidate.trim()) return candidate.trim();
+  }
+  return undefined;
+}
+
+function readDevinSubagentContext(
+  metadata: Record<string, unknown> | undefined,
+): { readonly parentAgentId: string } | undefined {
+  const parentAgentId = metadataString(metadata?.[DEVIN_SUBAGENT_CONTEXT_META], "parentAgentId");
+  return parentAgentId ? { parentAgentId } : undefined;
+}
+
+function readDevinSubagentStart(
+  toolCall: AcpToolCallState,
+  parentAgentId: string | undefined,
+  turnId: TurnId | undefined,
+): DevinSubagentState | undefined {
+  const start = toolCall.metadata?.[DEVIN_SUBAGENT_STARTED_META];
+  if (!isRecord(start)) return undefined;
+  const agentId = metadataString(start, "agentId", "agent_id", "id") ?? toolCall.toolCallId;
+  const title = metadataString(start, "title", "name", "nickname");
+  const profile = metadataString(start, "profile", "agentType", "agent_type", "role");
+  const task = metadataString(start, "task", "prompt", "description");
+  return {
+    agentId,
+    toolCallId: toolCall.toolCallId,
+    turnId,
+    ...(parentAgentId ? { parentAgentId } : {}),
+    ...(title ? { title } : {}),
+    ...(profile ? { profile } : {}),
+    ...(task ? { task } : {}),
+    isBackground: start.isBackground === true || start.background === true,
+    status: "running",
+  };
+}
+
+function readDevinSubagentCompletion(
+  toolCall: AcpToolCallState,
+): { readonly agentId: string; readonly success: boolean; readonly summary?: string } | undefined {
+  const completion = toolCall.metadata?.[DEVIN_SUBAGENT_COMPLETED_META];
+  if (!isRecord(completion)) return undefined;
+  const agentId = metadataString(completion, "agentId", "agent_id", "id") ?? toolCall.toolCallId;
+  const summary = metadataString(completion, "summary", "message");
+  return {
+    agentId,
+    success: completion.success !== false,
+    ...(summary ? { summary } : {}),
+  };
+}
+
+function readDevinBackgroundShellUpdate(toolCall: AcpToolCallState):
+  | {
+      readonly shellId: string;
+      readonly command?: string;
+      readonly exitCode?: number | null;
+    }
+  | undefined {
+  const metadata = toolCall.metadata;
+  if (metadata?.[DEVIN_BACKGROUND_META] !== true) return undefined;
+  const shellId = metadataString(metadata, DEVIN_BACKGROUND_SHELL_ID_META);
+  if (!shellId) return undefined;
+  const command = metadataString(metadata, DEVIN_BACKGROUND_COMMAND_META);
+  const rawExitCode = metadata[DEVIN_BACKGROUND_EXIT_CODE_META];
+  return {
+    shellId,
+    ...(command ? { command } : {}),
+    ...(typeof rawExitCode === "number" || rawExitCode === null ? { exitCode: rawExitCode } : {}),
+  };
+}
+
+function readDevinBackgroundShellExitCode(
+  metadata: Record<string, unknown> | undefined,
+): number | undefined {
+  const exitCode = metadata?.[DEVIN_BACKGROUND_EXIT_CODE_META];
+  return typeof exitCode === "number" ? exitCode : undefined;
+}
+
+function asDevinSubagentToolCallState(
+  toolCall: AcpToolCallState,
+  subagent: DevinSubagentState,
+): AcpToolCallState {
+  const currentAgentStates = isRecord(toolCall.data.agentsStates) ? toolCall.data.agentsStates : {};
+  const currentAgentState: Record<string, unknown> = isRecord(currentAgentStates[subagent.agentId])
+    ? (currentAgentStates[subagent.agentId] as Record<string, unknown>)
+    : {};
+  const receiverAgent = {
+    threadId: subagent.agentId,
+    agentId: subagent.agentId,
+    ...(subagent.title ? { agentNickname: subagent.title } : {}),
+    ...(subagent.profile ? { agentRole: subagent.profile } : {}),
+    background: subagent.isBackground,
+    ...(subagent.task ? { prompt: subagent.task } : {}),
+  };
+  return {
+    ...toolCall,
+    kind: ACP_SUBAGENT_TOOL_KIND,
+    title: subagent.title ?? subagent.task ?? toolCall.title ?? "Subagent",
+    ...(subagent.status === "completed"
+      ? { status: "completed" as const }
+      : subagent.status === "failed" || subagent.status === "stopped"
+        ? { status: "failed" as const }
+        : {}),
+    data: {
+      ...toolCall.data,
+      kind: ACP_SUBAGENT_TOOL_KIND,
+      tool: "task",
+      ...(subagent.agentId ? { agentId: subagent.agentId, threadId: subagent.agentId } : {}),
+      ...(subagent.title ? { agentNickname: subagent.title } : {}),
+      ...(subagent.profile ? { agentRole: subagent.profile } : {}),
+      ...(subagent.task ? { prompt: subagent.task, task: subagent.task } : {}),
+      background: subagent.isBackground,
+      receiverThreadIds: [subagent.agentId],
+      receiverAgents: [receiverAgent],
+      agentsStates: {
+        ...currentAgentStates,
+        [subagent.agentId]: {
+          ...currentAgentState,
+          status: subagent.status,
+          ...(subagent.summary ? { message: subagent.summary } : {}),
+        },
+      },
+    },
+  };
 }
 
 function readDevinProviderStartOptions(providerOptions: unknown):
@@ -1694,6 +1867,185 @@ export function makeDevinAdapter(
         );
       });
 
+    const devinProviderRefsForAgent = (ctx: DevinSessionContext, agentId: string | undefined) =>
+      agentId
+        ? {
+            providerThreadId: agentId,
+            providerParentThreadId: ctx.acpSessionId,
+          }
+        : undefined;
+
+    const emitDevinSubagentStarted = (
+      ctx: DevinSessionContext,
+      subagent: DevinSubagentState,
+      turnId: TurnId | undefined,
+    ) =>
+      Effect.gen(function* () {
+        const providerRefs = devinProviderRefsForAgent(ctx, subagent.parentAgentId);
+        const taskId = RuntimeTaskId.makeUnsafe(subagent.agentId);
+        const stamp = yield* makeEventStamp();
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.started",
+          ...stamp,
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId,
+          ...(providerRefs ? { providerRefs } : {}),
+          payload: {
+            taskId,
+            ...((subagent.task ?? subagent.title)
+              ? { description: subagent.task ?? subagent.title }
+              : {}),
+            taskType: "subagent",
+            ...(subagent.profile ? { subagentType: subagent.profile } : {}),
+            toolUseId: subagent.agentId,
+          },
+        });
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.updated",
+          ...(yield* makeEventStamp()),
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId,
+          ...(providerRefs ? { providerRefs } : {}),
+          payload: {
+            taskId,
+            status: "running",
+            isBackgrounded: subagent.isBackground,
+            toolUseId: subagent.agentId,
+          },
+        });
+      });
+
+    const emitDevinSubagentCompleted = (
+      ctx: DevinSessionContext,
+      subagent: DevinSubagentState,
+      status: "completed" | "failed" | "stopped",
+      turnId: TurnId | undefined,
+      summary?: string,
+      reconcilesStop = false,
+      awaitingProviderConfirmation = false,
+    ) =>
+      Effect.gen(function* () {
+        const providerRefs = devinProviderRefsForAgent(ctx, subagent.parentAgentId);
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.completed",
+          ...(yield* makeEventStamp()),
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId,
+          ...(providerRefs ? { providerRefs } : {}),
+          payload: {
+            taskId: RuntimeTaskId.makeUnsafe(subagent.agentId),
+            status,
+            toolUseId: subagent.agentId,
+            ...(summary ? { summary } : {}),
+            ...(reconcilesStop ? { reconcilesStop: true } : {}),
+            ...(awaitingProviderConfirmation ? { awaitingProviderConfirmation: true } : {}),
+          },
+        });
+      });
+
+    const emitDevinSubagentItemUpdate = (ctx: DevinSessionContext, subagent: DevinSubagentState) =>
+      Effect.gen(function* () {
+        const toolCall =
+          ctx.devinToolCallStateById.get(subagent.toolCallId) ??
+          ({
+            toolCallId: subagent.toolCallId,
+            kind: ACP_SUBAGENT_TOOL_KIND,
+            data: {},
+          } satisfies AcpToolCallState);
+        const turnId = subagent.turnId ?? ctx.activeTurnId;
+        yield* offerRuntimeEvent(
+          ctx.lifecycleGeneration,
+          makeAcpToolCallEvent({
+            stamp: yield* makeEventStamp(),
+            provider: PROVIDER,
+            threadId: ctx.threadId,
+            turnId,
+            toolCall: turnId
+              ? scopeDevinToolCallStateForTurn(
+                  turnId,
+                  asDevinSubagentToolCallState(toolCall, subagent),
+                )
+              : asDevinSubagentToolCallState(toolCall, subagent),
+            providerRefs: devinProviderRefsForAgent(ctx, subagent.parentAgentId),
+            rawPayload: {
+              source: "synara.devin.subagent-control",
+              toolCallId: subagent.toolCallId,
+              agentId: subagent.agentId,
+              status: subagent.status,
+              background: subagent.isBackground,
+            },
+          }),
+        );
+      });
+
+    const emitDevinBackgroundShellStarted = (
+      ctx: DevinSessionContext,
+      shell: DevinBackgroundShellState,
+    ) =>
+      Effect.gen(function* () {
+        const providerRefs = devinProviderRefsForAgent(ctx, shell.parentAgentId);
+        const taskId = RuntimeTaskId.makeUnsafe(shell.shellId);
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.started",
+          ...(yield* makeEventStamp()),
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId: shell.turnId,
+          ...(providerRefs ? { providerRefs } : {}),
+          payload: {
+            taskId,
+            ...(shell.command ? { description: shell.command } : {}),
+            taskType: "local_bash",
+            toolUseId: shell.toolCallId,
+          },
+        });
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.updated",
+          ...(yield* makeEventStamp()),
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId: shell.turnId,
+          ...(providerRefs ? { providerRefs } : {}),
+          payload: {
+            taskId,
+            status: "running",
+            isBackgrounded: true,
+            toolUseId: shell.toolCallId,
+          },
+        });
+      });
+
+    const emitDevinBackgroundShellCompleted = (
+      ctx: DevinSessionContext,
+      shell: DevinBackgroundShellState,
+      status: "completed" | "failed" | "stopped",
+      summary?: string,
+      reconcilesStop = false,
+      awaitingProviderConfirmation = false,
+    ) =>
+      Effect.gen(function* () {
+        const providerRefs = devinProviderRefsForAgent(ctx, shell.parentAgentId);
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.completed",
+          ...(yield* makeEventStamp()),
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId: shell.turnId,
+          ...(providerRefs ? { providerRefs } : {}),
+          payload: {
+            taskId: RuntimeTaskId.makeUnsafe(shell.shellId),
+            status,
+            toolUseId: shell.toolCallId,
+            ...(summary ? { summary } : {}),
+            ...(reconcilesStop ? { reconcilesStop: true } : {}),
+            ...(awaitingProviderConfirmation ? { awaitingProviderConfirmation: true } : {}),
+          },
+        });
+      });
+
     const requireSession = (threadId: ThreadId) => {
       const ctx = sessions.get(threadId);
       if (!ctx || ctx.stopped) {
@@ -1714,6 +2066,22 @@ export function makeDevinAdapter(
         clearDevinActiveToolCallIdleState(ctx);
         ctx.devinStallWatchDetectedAt = undefined;
         ctx.devinSpawnStalls.clear();
+        for (const subagent of ctx.devinSubagents.values()) {
+          if (subagent.status !== "running") continue;
+          subagent.status = "stopped";
+          yield* emitDevinSubagentCompleted(
+            ctx,
+            subagent,
+            "stopped",
+            subagent.turnId ?? ctx.activeTurnId,
+          );
+          yield* emitDevinSubagentItemUpdate(ctx, subagent);
+        }
+        for (const shell of ctx.devinBackgroundShells.values()) {
+          if (shell.status !== "running") continue;
+          shell.status = "stopped";
+          yield* emitDevinBackgroundShellCompleted(ctx, shell, "stopped", "Devin session stopped");
+        }
         yield* cancelAgentGatewayTurn(ctx.gatewaySessionLease, ctx.activeTurnId);
         ctx.gatewaySessionLease?.release();
         yield* settleAcpPendingApprovalsAsCancelled(ctx.pendingApprovals);
@@ -2106,7 +2474,13 @@ export function makeDevinAdapter(
             cwd,
             runtimeMode: input.runtimeMode,
             clientInfo: { name: "Synara", version: "0.0.0" },
-            clientCapabilities: { elicitation: { form: {} } },
+            clientCapabilities: {
+              elicitation: { form: {} },
+              _meta: {
+                "cognition.ai/subagentSupport": true,
+                "cognition.ai/subagentControl": true,
+              },
+            },
             ...(resumeSessionId ? { resumeSessionId } : {}),
             ...(devinSessionConfig ? { sessionConfig: devinSessionConfig } : {}),
             onChildStderrLine,
@@ -2381,6 +2755,7 @@ export function makeDevinAdapter(
           ctx = {
             enableComputerControl: input.enableComputerControl === true,
             threadId: input.threadId,
+            acpSessionId: started.sessionId,
             lifecycleGeneration: input.lifecycleGeneration,
             session,
             scope: sessionScope,
@@ -2402,6 +2777,10 @@ export function makeDevinAdapter(
             turnToolCallIds: new Map(),
             devinToolCallStateById: new Map(),
             devinToolCallLifecycleById: new Map(),
+            devinSubagents: new Map(),
+            devinSubagentIdByToolCallId: new Map(),
+            devinBackgroundShells: new Map(),
+            pendingTaskReconciliations: new Set(input.pendingTaskReconciliations ?? []),
             devinSessionApprovedRequestKeys: new Set(),
             devinStallWatchDetectedAt: undefined,
             devinSpawnStalls: new Map(),
@@ -2505,32 +2884,301 @@ export function makeDevinAdapter(
                       // Always merge first: a later request_permission for this
                       // tool call may carry a sparse toolCall and relies on the
                       // tracked state for its approval-card label.
-                      ctx.devinToolCallStateById.set(
-                        event.toolCall.toolCallId,
-                        mergeToolCallState(
-                          ctx.devinToolCallStateById.get(event.toolCall.toolCallId),
-                          event.toolCall,
-                        ),
+                      let toolCall = mergeToolCallState(
+                        ctx.devinToolCallStateById.get(event.toolCall.toolCallId),
+                        event.toolCall,
                       );
                       if (ctx.compactingThread) {
+                        ctx.devinToolCallStateById.set(event.toolCall.toolCallId, toolCall);
                         const failedToolDetail = readAcpFailedToolDetail(event.toolCall);
                         if (failedToolDetail !== undefined) {
                           ctx.compactionFailedToolDetail = failedToolDetail;
                         }
                         return;
                       }
+                      if (ctx.resumeReplayReady !== undefined) {
+                        ctx.devinToolCallStateById.set(event.toolCall.toolCallId, toolCall);
+                        // Rebuild native control state from session/load replay,
+                        // while suppressing all historical UI lifecycle events.
+                        const replaySubagentContext = readDevinSubagentContext(toolCall.metadata);
+                        const replayStart = readDevinSubagentStart(
+                          toolCall,
+                          replaySubagentContext?.parentAgentId,
+                          ctx.activeTurnId,
+                        );
+                        if (replayStart) {
+                          const previous = ctx.devinSubagents.get(replayStart.agentId);
+                          const subagent: DevinSubagentState = previous
+                            ? {
+                                ...previous,
+                                ...replayStart,
+                                turnId: previous.turnId ?? replayStart.turnId,
+                                ...((previous.parentAgentId ?? replayStart.parentAgentId)
+                                  ? {
+                                      parentAgentId:
+                                        previous.parentAgentId ?? replayStart.parentAgentId,
+                                    }
+                                  : {}),
+                                isBackground: previous.isBackground || replayStart.isBackground,
+                                status: previous.status,
+                              }
+                            : replayStart;
+                          ctx.devinSubagents.set(subagent.agentId, subagent);
+                          ctx.devinSubagentIdByToolCallId.set(
+                            subagent.toolCallId,
+                            subagent.agentId,
+                          );
+                        }
+                        const replayCompletion = readDevinSubagentCompletion(toolCall);
+                        if (replayCompletion) {
+                          const knownId = ctx.devinSubagentIdByToolCallId.get(
+                            event.toolCall.toolCallId,
+                          );
+                          const previous =
+                            ctx.devinSubagents.get(replayCompletion.agentId) ??
+                            (knownId ? ctx.devinSubagents.get(knownId) : undefined);
+                          const subagent: DevinSubagentState = previous ?? {
+                            agentId: replayCompletion.agentId,
+                            toolCallId: event.toolCall.toolCallId,
+                            turnId: ctx.activeTurnId,
+                            ...(replaySubagentContext?.parentAgentId
+                              ? { parentAgentId: replaySubagentContext.parentAgentId }
+                              : {}),
+                            isBackground: false,
+                            status: "running",
+                          };
+                          if (subagent.status === "running") {
+                            subagent.status = replayCompletion.success ? "completed" : "failed";
+                            if (replayCompletion.summary)
+                              subagent.summary = replayCompletion.summary;
+                            // Only replay a correction when Synara persisted
+                            // evidence that it stopped this task before the
+                            // process restarted. Ordinary replay is silent.
+                            if (ctx.pendingTaskReconciliations.delete(subagent.agentId)) {
+                              yield* emitDevinSubagentCompleted(
+                                ctx,
+                                subagent,
+                                subagent.status,
+                                subagent.turnId,
+                                replayCompletion.summary,
+                                true,
+                              );
+                              yield* emitDevinSubagentItemUpdate(ctx, subagent);
+                            }
+                          }
+                          ctx.devinSubagents.set(subagent.agentId, subagent);
+                          ctx.devinSubagentIdByToolCallId.set(
+                            subagent.toolCallId,
+                            subagent.agentId,
+                          );
+                        }
+                        const replayShell = readDevinBackgroundShellUpdate(toolCall);
+                        if (replayShell) {
+                          let shell = ctx.devinBackgroundShells.get(replayShell.shellId);
+                          if (!shell) {
+                            shell = {
+                              shellId: replayShell.shellId,
+                              toolCallId: event.toolCall.toolCallId,
+                              ...(replaySubagentContext?.parentAgentId
+                                ? { parentAgentId: replaySubagentContext.parentAgentId }
+                                : {}),
+                              ...(replayShell.command ? { command: replayShell.command } : {}),
+                              turnId: ctx.activeTurnId,
+                              status: "running",
+                            };
+                          } else if (replayShell.command && !shell.command) {
+                            shell = { ...shell, command: replayShell.command };
+                          }
+                          if (
+                            typeof replayShell.exitCode === "number" &&
+                            shell.status === "running"
+                          ) {
+                            shell.status = replayShell.exitCode === 0 ? "completed" : "failed";
+                            // Resume replay is normally silent. Emit one
+                            // corrective completion only for a locally
+                            // stopped task recorded by the reactor.
+                            if (ctx.pendingTaskReconciliations.delete(shell.shellId)) {
+                              yield* emitDevinBackgroundShellCompleted(
+                                ctx,
+                                shell,
+                                shell.status,
+                                replayShell.exitCode === 0
+                                  ? undefined
+                                  : `Exited with code ${replayShell.exitCode}`,
+                                true,
+                              );
+                            }
+                          }
+                          ctx.devinBackgroundShells.set(shell.shellId, shell);
+                        }
+                        yield* noteSuppressedDevinRuntimeEvent(ctx, event._tag, "resume-replay");
+                        return;
+                      }
+                      const toolCallTurnId = resolveDevinToolCallUpdatedTurnId({
+                        toolCallId: event.toolCall.toolCallId,
+                        activeTurnId: ctx.activeTurnId,
+                        resumeReplayReady: false,
+                        toolCallTurnIds: ctx.turnToolCallIds,
+                      });
+                      const subagentContext = readDevinSubagentContext(toolCall.metadata);
+                      const startedSubagent = readDevinSubagentStart(
+                        toolCall,
+                        subagentContext?.parentAgentId,
+                        toolCallTurnId,
+                      );
+                      if (startedSubagent) {
+                        const previous = ctx.devinSubagents.get(startedSubagent.agentId);
+                        const subagent = previous
+                          ? {
+                              ...previous,
+                              ...startedSubagent,
+                              turnId: previous.turnId ?? startedSubagent.turnId,
+                              ...((previous.parentAgentId ?? startedSubagent.parentAgentId)
+                                ? {
+                                    parentAgentId:
+                                      previous.parentAgentId ?? startedSubagent.parentAgentId,
+                                  }
+                                : {}),
+                              // Devin's background transition is one-way for a
+                              // running agent. Sparse/replayed start metadata
+                              // must not undo the user's background action.
+                              isBackground: previous.isBackground || startedSubagent.isBackground,
+                              ...(previous.locallyStopped || startedSubagent.locallyStopped
+                                ? { locallyStopped: true }
+                                : {}),
+                              status: previous.status,
+                            }
+                          : startedSubagent;
+                        ctx.devinSubagents.set(subagent.agentId, subagent);
+                        ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
+                        if (previous === undefined) {
+                          yield* emitDevinSubagentStarted(ctx, subagent, subagent.turnId);
+                        }
+                      }
+
+                      const completion = readDevinSubagentCompletion(toolCall);
+                      if (completion) {
+                        const knownId = ctx.devinSubagentIdByToolCallId.get(
+                          event.toolCall.toolCallId,
+                        );
+                        const existingSubagent =
+                          ctx.devinSubagents.get(completion.agentId) ??
+                          (knownId ? ctx.devinSubagents.get(knownId) : undefined);
+                        const subagent = existingSubagent ?? {
+                          agentId: completion.agentId,
+                          toolCallId: event.toolCall.toolCallId,
+                          turnId: toolCallTurnId,
+                          ...(subagentContext?.parentAgentId
+                            ? { parentAgentId: subagentContext.parentAgentId }
+                            : {}),
+                          isBackground: false,
+                          status: "running" as const,
+                        };
+                        if (existingSubagent === undefined) {
+                          ctx.devinSubagents.set(subagent.agentId, subagent);
+                          ctx.devinSubagentIdByToolCallId.set(
+                            subagent.toolCallId,
+                            subagent.agentId,
+                          );
+                          yield* emitDevinSubagentStarted(ctx, subagent, subagent.turnId);
+                        }
+                        if (
+                          subagent.status === "running" ||
+                          subagent.locallyStopped ||
+                          ctx.pendingTaskReconciliations.has(subagent.agentId)
+                        ) {
+                          const locallyStopped = subagent.locallyStopped === true;
+                          const awaitingConfirmation = ctx.pendingTaskReconciliations.delete(
+                            subagent.agentId,
+                          );
+                          const reconcilesStop = locallyStopped || awaitingConfirmation;
+                          subagent.status = completion.success ? "completed" : "failed";
+                          subagent.locallyStopped = false;
+                          if (completion.summary) subagent.summary = completion.summary;
+                          yield* emitDevinSubagentCompleted(
+                            ctx,
+                            subagent,
+                            subagent.status,
+                            subagent.turnId ?? ctx.activeTurnId,
+                            completion.summary,
+                            reconcilesStop,
+                          );
+                          if (reconcilesStop) yield* emitDevinSubagentItemUpdate(ctx, subagent);
+                        }
+                      }
+
+                      const shellUpdate = readDevinBackgroundShellUpdate(toolCall);
+                      // Devin may send the exit code as a sparse follow-up long
+                      // after the original tool-call snapshot has been pruned.
+                      // The tracked shell keeps the durable correlation key.
+                      let shell = shellUpdate
+                        ? ctx.devinBackgroundShells.get(shellUpdate.shellId)
+                        : undefined;
+                      shell ??= [...ctx.devinBackgroundShells.values()].find(
+                        (candidate) => candidate.toolCallId === event.toolCall.toolCallId,
+                      );
+                      if (shellUpdate && !shell) {
+                        shell = {
+                          shellId: shellUpdate.shellId,
+                          toolCallId: event.toolCall.toolCallId,
+                          ...(subagentContext?.parentAgentId
+                            ? { parentAgentId: subagentContext.parentAgentId }
+                            : {}),
+                          ...(shellUpdate.command ? { command: shellUpdate.command } : {}),
+                          turnId: toolCallTurnId,
+                          status: "running",
+                        };
+                        ctx.devinBackgroundShells.set(shell.shellId, shell);
+                        yield* emitDevinBackgroundShellStarted(ctx, shell);
+                      } else if (shell && shellUpdate?.command && !shell.command) {
+                        shell = { ...shell, command: shellUpdate.command };
+                        ctx.devinBackgroundShells.set(shell.shellId, shell);
+                      }
+                      const exitCode =
+                        shellUpdate?.exitCode ??
+                        readDevinBackgroundShellExitCode(toolCall.metadata);
+                      // A null exit code is an unknown/running state in Devin's
+                      // metadata. Only a numeric exit code settles the task.
+                      if (
+                        shell &&
+                        typeof exitCode === "number" &&
+                        (shell.status === "running" ||
+                          shell.locallyStopped ||
+                          ctx.pendingTaskReconciliations.has(shell.shellId))
+                      ) {
+                        const locallyStopped = shell.locallyStopped === true;
+                        const awaitingConfirmation = ctx.pendingTaskReconciliations.delete(
+                          shell.shellId,
+                        );
+                        const reconcilesStop = locallyStopped || awaitingConfirmation;
+                        shell.status = exitCode === 0 ? "completed" : "failed";
+                        shell.locallyStopped = false;
+                        yield* emitDevinBackgroundShellCompleted(
+                          ctx,
+                          shell,
+                          shell.status,
+                          exitCode === 0 ? undefined : `Exited with code ${exitCode}`,
+                          reconcilesStop,
+                        );
+                      }
+
+                      const subagentId =
+                        ctx.devinSubagentIdByToolCallId.get(event.toolCall.toolCallId) ??
+                        completion?.agentId;
+                      const trackedSubagent = subagentId
+                        ? ctx.devinSubagents.get(subagentId)
+                        : undefined;
+                      if (trackedSubagent) {
+                        toolCall = asDevinSubagentToolCallState(toolCall, trackedSubagent);
+                      }
+                      ctx.devinToolCallStateById.set(event.toolCall.toolCallId, toolCall);
                       // A tool call already mapped to an older turn keeps that
                       // provenance even while a newer turn is active: emit under
                       // the recorded turn so its row resolves in place, and never
                       // let a trailing update mutate the current turn's failure
                       // state. Resume replay stays suppressed like every other
                       // event.
-                      const recordedTurnId = resolveDevinToolCallUpdatedTurnId({
-                        toolCallId: event.toolCall.toolCallId,
-                        activeTurnId: ctx.activeTurnId,
-                        resumeReplayReady: ctx.resumeReplayReady !== undefined,
-                        toolCallTurnIds: ctx.turnToolCallIds,
-                      });
+                      const recordedTurnId = toolCallTurnId;
                       if (recordedTurnId !== undefined && recordedTurnId !== ctx.activeTurnId) {
                         yield* logNative(ctx.threadId, "session/update", event.rawPayload);
                         yield* offerRuntimeEvent(
@@ -2540,9 +3188,10 @@ export function makeDevinAdapter(
                             provider: PROVIDER,
                             threadId: ctx.threadId,
                             turnId: recordedTurnId,
-                            toolCall: scopeDevinToolCallStateForTurn(
-                              recordedTurnId,
-                              event.toolCall,
+                            toolCall: scopeDevinToolCallStateForTurn(recordedTurnId, toolCall),
+                            providerRefs: devinProviderRefsForAgent(
+                              ctx,
+                              subagentContext?.parentAgentId,
                             ),
                             rawPayload: event.rawPayload,
                           }),
@@ -2556,10 +3205,10 @@ export function makeDevinAdapter(
                       ctx.lastTurnActivityAt = Date.now();
                       ctx.devinStallWatchDetectedAt = undefined;
                       ctx.devinSpawnStalls.clear();
-                      updateDevinToolCallIdleState(ctx, event.toolCall);
-                      ctx.turnToolCallIds.set(event.toolCall.toolCallId, activeTurnId);
+                      updateDevinToolCallIdleState(ctx, toolCall);
+                      ctx.turnToolCallIds.set(toolCall.toolCallId, activeTurnId);
                       yield* logNative(ctx.threadId, "session/update", event.rawPayload);
-                      const failedToolDetail = readAcpFailedToolDetail(event.toolCall);
+                      const failedToolDetail = readAcpFailedToolDetail(toolCall);
                       if (failedToolDetail !== undefined) {
                         ctx.activeTurnFailedToolDetail = failedToolDetail;
                       }
@@ -2570,7 +3219,11 @@ export function makeDevinAdapter(
                           provider: PROVIDER,
                           threadId: ctx.threadId,
                           turnId: activeTurnId,
-                          toolCall: scopeDevinToolCallStateForTurn(activeTurnId, event.toolCall),
+                          toolCall: scopeDevinToolCallStateForTurn(activeTurnId, toolCall),
+                          providerRefs: devinProviderRefsForAgent(
+                            ctx,
+                            subagentContext?.parentAgentId,
+                          ),
                           rawPayload: event.rawPayload,
                         }),
                       );
@@ -2579,6 +3232,7 @@ export function makeDevinAdapter(
 
                   case "ContentDelta":
                     {
+                      const subagentContext = readDevinSubagentContext(event.metadata);
                       const activeTurnId = yield* activeTurnIdForDevinRuntimeEvent(ctx, event._tag);
                       if (activeTurnId === undefined) {
                         return;
@@ -2603,6 +3257,10 @@ export function makeDevinAdapter(
                           ...(scopedItemId ? { itemId: scopedItemId } : {}),
                           text: event.text,
                           ...(event.streamKind ? { streamKind: event.streamKind } : {}),
+                          providerRefs: devinProviderRefsForAgent(
+                            ctx,
+                            subagentContext?.parentAgentId,
+                          ),
                           rawPayload: event.rawPayload,
                         }),
                       );
@@ -2858,6 +3516,13 @@ export function makeDevinAdapter(
               ...(ctx.devinStartProviderOptions
                 ? { providerOptions: ctx.devinStartProviderOptions }
                 : {}),
+              ...(ctx.pendingTaskReconciliations.size > 0
+                ? {
+                    pendingTaskReconciliations: [...ctx.pendingTaskReconciliations].map((taskId) =>
+                      RuntimeTaskId.makeUnsafe(taskId),
+                    ),
+                  }
+                : {}),
               resumeCursor,
             },
             ctx,
@@ -3096,6 +3761,28 @@ export function makeDevinAdapter(
             ctx.devinToolCallStateById.delete(toolCallId);
           }
         }
+        // Keep background work alive across turns, plus terminal outcomes from
+        // the just-settled turn for late ACP updates. Older terminal task IDs
+        // have no remaining UI controls and can be discarded.
+        for (const [agentId, subagent] of ctx.devinSubagents) {
+          if (
+            subagent.status !== "running" &&
+            !subagent.locallyStopped &&
+            subagent.turnId !== keptTurnId
+          ) {
+            ctx.devinSubagents.delete(agentId);
+          }
+        }
+        for (const [toolCallId, agentId] of ctx.devinSubagentIdByToolCallId) {
+          if (!ctx.devinSubagents.has(agentId)) {
+            ctx.devinSubagentIdByToolCallId.delete(toolCallId);
+          }
+        }
+        for (const [shellId, shell] of ctx.devinBackgroundShells) {
+          if (shell.status !== "running" && !shell.locallyStopped && shell.turnId !== keptTurnId) {
+            ctx.devinBackgroundShells.delete(shellId);
+          }
+        }
         ctx.activeInteractionMode = interactionMode;
         ctx.lastPlanFingerprint = undefined;
         ctx.lastTurnActivityAt = Date.now();
@@ -3291,14 +3978,189 @@ export function makeDevinAdapter(
         };
       });
 
-    const interruptTurn: DevinAdapterShape["interruptTurn"] = (threadId, turnId) =>
+    const stopDevinSubagentInternal = (
+      ctx: DevinSessionContext,
+      agentId: string,
+      turnId: TurnId | undefined,
+    ) =>
+      Effect.gen(function* () {
+        const state = ctx.devinSubagents.get(agentId);
+        if (
+          state?.status === "completed" ||
+          state?.status === "failed" ||
+          state?.status === "stopped"
+        ) {
+          return;
+        }
+        yield* withAgentGatewayTurnCancellation(
+          ctx.gatewaySessionLease,
+          turnId,
+          ctx.acp
+            .request("_cognition.ai/subagent/cancel", {
+              sessionId: ctx.acpSessionId,
+              agentId,
+            })
+            .pipe(Effect.mapError(acpToAdapterError(ctx.threadId)), Effect.asVoid),
+        );
+        yield* waitForDevinQueuedTurnEventsDrained(ctx);
+        const current = ctx.devinSubagents.get(agentId);
+        if (current?.status === "running") {
+          current.status = "stopped";
+          current.locallyStopped = true;
+          ctx.pendingTaskReconciliations.add(current.agentId);
+          yield* emitDevinSubagentCompleted(
+            ctx,
+            current,
+            "stopped",
+            current.turnId ?? turnId,
+            undefined,
+            false,
+            true,
+          );
+          yield* emitDevinSubagentItemUpdate(ctx, current);
+        }
+      });
+
+    const interruptTurn: DevinAdapterShape["interruptTurn"] = (
+      threadId,
+      turnId,
+      providerThreadId,
+    ) =>
       Effect.gen(function* () {
         const cancelledRecovery = yield* cancelWedgeRecovery(threadId, turnId);
         const ctx = sessions.get(threadId);
         // The caller may still know only the original turn during restart.
         if (cancelledRecovery && (!ctx || (turnId !== undefined && ctx.activeTurnId !== turnId)))
           return;
+        if (providerThreadId !== undefined) {
+          const active = yield* requireSession(threadId);
+          yield* stopDevinSubagentInternal(active, providerThreadId, turnId);
+          return;
+        }
         yield* interruptDevinTurn(threadId, turnId);
+      });
+
+    const stopTask: DevinAdapterShape["stopTask"] = (threadId, taskId) =>
+      Effect.gen(function* () {
+        const ctx = yield* requireSession(threadId);
+        const shell = ctx.devinBackgroundShells.get(taskId);
+        if (shell !== undefined) {
+          if (shell.status !== "running") return;
+          yield* ctx.acp
+            .request("_cognition.ai/terminal/killBackgroundShell", {
+              sessionId: ctx.acpSessionId,
+              shellId: taskId,
+            })
+            .pipe(
+              Effect.mapError((error) =>
+                mapAcpToAdapterError(PROVIDER, threadId, "terminal/killBackgroundShell", error),
+              ),
+            );
+          yield* waitForDevinQueuedTurnEventsDrained(ctx);
+          const current = ctx.devinBackgroundShells.get(taskId);
+          if (current?.status !== "running") return;
+          current.status = "stopped";
+          current.locallyStopped = true;
+          ctx.pendingTaskReconciliations.add(current.shellId);
+          yield* emitDevinBackgroundShellCompleted(
+            ctx,
+            current,
+            "stopped",
+            "Background shell stopped",
+            false,
+            true,
+          );
+          return;
+        }
+        const subagent =
+          ctx.devinSubagents.get(taskId) ??
+          (() => {
+            const agentId = ctx.devinSubagentIdByToolCallId.get(taskId);
+            return agentId ? ctx.devinSubagents.get(agentId) : undefined;
+          })();
+        if (!subagent) {
+          return yield* new ProviderAdapterValidationError({
+            provider: PROVIDER,
+            operation: "stopTask",
+            issue: `Devin task '${taskId}' is not tracked in this session.`,
+          });
+        }
+        yield* stopDevinSubagentInternal(
+          ctx,
+          subagent.agentId,
+          subagent.turnId ?? ctx.activeTurnId,
+        );
+      });
+
+    const backgroundTask: DevinAdapterShape["backgroundTask"] = (threadId, toolUseId) =>
+      Effect.gen(function* () {
+        const ctx = yield* requireSession(threadId);
+        const existingState =
+          ctx.devinSubagents.get(toolUseId) ??
+          (() => {
+            const agentId = ctx.devinSubagentIdByToolCallId.get(toolUseId);
+            return agentId ? ctx.devinSubagents.get(agentId) : undefined;
+          })();
+        const state =
+          existingState ??
+          ({
+            agentId: toolUseId,
+            toolCallId: toolUseId,
+            turnId: ctx.activeTurnId,
+            isBackground: false,
+            status: "running",
+          } satisfies DevinSubagentState);
+        if (state && state.status !== "running") {
+          return yield* new ProviderAdapterValidationError({
+            provider: PROVIDER,
+            operation: "backgroundTask",
+            issue: `Devin subagent '${toolUseId}' has already finished.`,
+          });
+        }
+        yield* ctx.acp
+          .request("_cognition.ai/subagent/background", {
+            sessionId: ctx.acpSessionId,
+            agentId: state.agentId,
+          })
+          .pipe(
+            Effect.mapError((error) =>
+              mapAcpToAdapterError(PROVIDER, threadId, "subagent/background", error),
+            ),
+          );
+        yield* waitForDevinQueuedTurnEventsDrained(ctx);
+        const current =
+          ctx.devinSubagents.get(state.agentId) ??
+          [...ctx.devinSubagents.values()].find(
+            (candidate) => candidate.toolCallId === state.toolCallId,
+          ) ??
+          // A caller can request background mode before the corresponding ACP
+          // start update is available. Keep the known control target on success,
+          // unless an observed terminal event above supplied a newer state.
+          (!existingState ? state : undefined);
+        if (!current || current.status !== "running") return;
+        current.isBackground = true;
+        ctx.devinSubagents.set(current.agentId, current);
+        ctx.devinSubagentIdByToolCallId.set(current.toolCallId, current.agentId);
+        yield* emitDevinSubagentItemUpdate(ctx, current);
+        // The ACP update stream can deliver completion while the item update is
+        // being emitted. Do not follow it with a stale running transition.
+        if (ctx.devinSubagents.get(current.agentId)?.status !== "running") return;
+        yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+          type: "task.updated",
+          ...(yield* makeEventStamp()),
+          provider: PROVIDER,
+          threadId: ctx.threadId,
+          turnId: current.turnId ?? ctx.activeTurnId,
+          ...(devinProviderRefsForAgent(ctx, current.parentAgentId)
+            ? { providerRefs: devinProviderRefsForAgent(ctx, current.parentAgentId) }
+            : {}),
+          payload: {
+            taskId: RuntimeTaskId.makeUnsafe(current.agentId),
+            status: "running",
+            isBackgrounded: true,
+            toolUseId: current.agentId,
+          },
+        });
       });
 
     const interruptDevinTurn: DevinAdapterShape["interruptTurn"] = (threadId, turnId) =>
@@ -3769,6 +4631,8 @@ export function makeDevinAdapter(
       startSession,
       sendTurn,
       interruptTurn,
+      stopTask,
+      backgroundTask,
       readThread,
       rollbackThread,
       respondToRequest,

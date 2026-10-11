@@ -394,6 +394,54 @@ it("keeps the full task failure summary so the work-log reveal can show it", () 
   expect(cappedPayload.detail.endsWith("...")).toBe(true);
 });
 
+it("persists provider confirmation when a late completion reconciles a local stop", () => {
+  const [activity] = projectProviderRuntimeActivities(
+    runtimeEvent({
+      type: "task.completed",
+      eventId: "task-completed-after-stop",
+      provider: "devin",
+      turnId: TURN_ID,
+      payload: {
+        taskId: "task-after-stop",
+        status: "completed",
+        reconcilesStop: true,
+      },
+    }),
+  );
+
+  expect(activity).toMatchObject({
+    kind: "task.completed",
+    payload: { taskId: "task-after-stop", status: "completed", reconcilesStop: true },
+  });
+  expect(() => decodeActivityAppendCommand(activity!)).not.toThrow();
+});
+
+it("persists pending provider confirmation for a stopped Devin task", () => {
+  const [activity] = projectProviderRuntimeActivities(
+    runtimeEvent({
+      type: "task.completed",
+      eventId: "task-awaiting-provider-confirmation",
+      provider: "devin",
+      turnId: TURN_ID,
+      payload: {
+        taskId: "task-awaiting-confirmation",
+        status: "stopped",
+        awaitingProviderConfirmation: true,
+      },
+    }),
+  );
+
+  expect(activity).toMatchObject({
+    kind: "task.completed",
+    payload: {
+      taskId: "task-awaiting-confirmation",
+      status: "stopped",
+      awaitingProviderConfirmation: true,
+    },
+  });
+  expect(() => decodeActivityAppendCommand(activity!)).not.toThrow();
+});
+
 it("keeps the full task update error so the work-log reveal can show it", () => {
   // The task.updated error is the provider's own failure text; the row's CSS
   // `truncate` does the one-line clip, so the payload must carry the full

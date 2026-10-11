@@ -631,6 +631,12 @@ const TaskCompletedPayload = Schema.Struct({
   workflowAgents: Schema.optional(Schema.Array(WorkflowAgentSnapshot)),
   // Spawning tool call id when the task is a provider-native subagent.
   toolUseId: Schema.optional(TrimmedNonEmptyStringSchema),
+  // A provider terminal update can correct an adapter's earlier local stop
+  // result when the task's completion notification arrived later.
+  reconcilesStop: Schema.optional(Schema.Boolean),
+  // A local stop persisted without a provider terminal update. Resume replay
+  // may reconcile this task after a process restart.
+  awaitingProviderConfirmation: Schema.optional(Schema.Boolean),
 });
 export type TaskCompletedPayload = typeof TaskCompletedPayload.Type;
 

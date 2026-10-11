@@ -5,6 +5,7 @@ import {
   EventId,
   IsoDateTime,
   ProviderItemId,
+  RuntimeTaskId,
   ThreadId,
   TurnId,
 } from "./baseSchemas";
@@ -63,6 +64,8 @@ export const ProviderSessionStartInput = Schema.Struct({
   additionalDirectories: Schema.optional(Schema.Array(TrimmedNonEmptyString)),
   modelSelection: Schema.optional(ModelSelection),
   resumeCursor: Schema.optional(Schema.Unknown),
+  /** Devin tasks Synara previously stopped and must reconcile against resume replay. */
+  pendingTaskReconciliations: Schema.optional(Schema.Array(RuntimeTaskId)),
   forkSourceResumeCursor: Schema.optional(Schema.Unknown),
   approvalPolicy: Schema.optional(ProviderApprovalPolicy),
   sandboxMode: Schema.optional(ProviderSandboxMode),

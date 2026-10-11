@@ -5,7 +5,7 @@
 
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import type * as Acp from "@agentclientprotocol/sdk";
-import { ThreadId, TurnId } from "@synara/contracts";
+import { RuntimeTaskId, ThreadId, TurnId, type ProviderRuntimeEvent } from "@synara/contracts";
 import {
   Cause,
   Deferred,
@@ -172,10 +172,11 @@ function makeEventAcpRuntime(prompt: AcpSessionRuntimeShape["prompt"]) {
         toolCall: { toolCallId, status, data: {}, ...extra },
         rawPayload: { toolCallId, status },
       }),
-    emitProgress: (text = "progress") =>
+    emitProgress: (text = "progress", metadata?: Record<string, unknown>) =>
       emit({
         _tag: "ContentDelta",
         text,
+        ...(metadata ? { metadata } : {}),
         rawPayload: { text },
       }),
     completeProcessedEvent: () => {
@@ -820,6 +821,717 @@ describe("Devin wedge auto-recovery", () => {
 describe("Devin adapter lifecycle", () => {
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("projects Devin subagents and background shells into native task controls", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    const eventRuntime = makeEventAcpRuntime(() => Effect.never);
+    const acpRequests: Array<{ method: string; payload: unknown }> = [];
+    let acpInput: DevinAcpRuntimeInput | undefined;
+    const runtime = {
+      ...eventRuntime.runtime,
+      request: (method: string, payload: unknown) =>
+        Effect.sync(() => {
+          acpRequests.push({ method, payload });
+          return {};
+        }),
+    } as AcpSessionRuntimeShape;
+    const layer = makeDevinAdapterLive(
+      {},
+      {
+        makeAcpRuntime: (input) => {
+          acpInput = input;
+          return Effect.succeed(runtime);
+        },
+        onSessionUpdateProcessed: eventRuntime.completeProcessedEvent,
+        timeouts: { turnIdleMs: 3_600_000, toolIdleMs: 3_600_000 },
+      },
+    ).pipe(
+      Layer.provideMerge(ServerConfig.layerTest(process.cwd(), { prefix: "devin-agent-test-" })),
+      Layer.provideMerge(NodeServices.layer),
+    );
+
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe("thread-devin-agent-surfaces");
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        yield* adapter.startSession({
+          provider: "devin",
+          threadId,
+          runtimeMode: "full-access",
+          cwd: process.cwd(),
+        });
+        const turn = yield* adapter.sendTurn({
+          threadId,
+          input: "delegate and run a background command",
+          attachments: [],
+        });
+
+        yield* eventRuntime.emitToolCall("agent-1", "inProgress", {
+          metadata: {
+            "cognition.ai/subagent_started": {
+              agentId: "agent-1",
+              title: "API investigator",
+              profile: "explorer",
+              task: "Inspect the public API surface",
+            },
+          },
+        });
+        yield* adapter.backgroundTask(threadId, "agent-1");
+        yield* eventRuntime.emitToolCall("agent-1", "inProgress");
+        yield* eventRuntime.emitProgress("Child agent output", {
+          "cognition.ai/subagent_context": { parentAgentId: "agent-1" },
+        });
+        yield* adapter.interruptTurn(threadId, turn.turnId, "agent-1");
+
+        yield* eventRuntime.emitToolCall("shell-stop-call", "inProgress", {
+          metadata: {
+            "cognition.ai/background": true,
+            "cognition.ai/backgroundShellId": "shell-stop",
+            "cognition.ai/backgroundCommand": "sleep 60",
+          },
+        });
+        yield* adapter.stopTask(threadId, "shell-stop");
+
+        yield* eventRuntime.emitToolCall("shell-done-call", "inProgress", {
+          metadata: {
+            "cognition.ai/background": true,
+            "cognition.ai/backgroundShellId": "shell-done",
+            "cognition.ai/backgroundCommand": "bun run check",
+          },
+        });
+        yield* eventRuntime.emitToolCall("shell-done-call", "completed", {
+          metadata: { "cognition.ai/exitCode": 0 },
+        });
+
+        expect(acpInput?.clientCapabilities?._meta).toEqual({
+          "cognition.ai/subagentSupport": true,
+          "cognition.ai/subagentControl": true,
+        });
+        expect(acpRequests).toEqual([
+          {
+            method: "_cognition.ai/subagent/background",
+            payload: { sessionId: "devin-test-session", agentId: "agent-1" },
+          },
+          {
+            method: "_cognition.ai/subagent/cancel",
+            payload: { sessionId: "devin-test-session", agentId: "agent-1" },
+          },
+          {
+            method: "_cognition.ai/terminal/killBackgroundShell",
+            payload: { sessionId: "devin-test-session", shellId: "shell-stop" },
+          },
+        ]);
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.updated",
+            payload: expect.objectContaining({
+              itemType: "collab_agent_tool_call",
+              data: expect.objectContaining({
+                receiverThreadIds: ["agent-1"],
+                prompt: "Inspect the public API surface",
+                agentsStates: { "agent-1": { status: "running" } },
+              }),
+            }),
+          }),
+        );
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.completed",
+            payload: expect.objectContaining({
+              data: expect.objectContaining({
+                agentsStates: { "agent-1": { status: "stopped" } },
+              }),
+            }),
+          }),
+        );
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.updated",
+            payload: expect.objectContaining({
+              data: expect.objectContaining({
+                background: true,
+                agentsStates: { "agent-1": { status: "running" } },
+              }),
+            }),
+          }),
+        );
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "content.delta",
+            providerRefs: {
+              providerThreadId: "agent-1",
+              providerParentThreadId: "devin-test-session",
+            },
+          }),
+        );
+        expect(
+          events.filter((event) => event.type === "task.completed").map((event) => event.payload),
+        ).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ taskId: "agent-1", status: "stopped" }),
+            expect.objectContaining({ taskId: "shell-stop", status: "stopped" }),
+            expect.objectContaining({ taskId: "shell-done", status: "completed" }),
+          ]),
+        );
+        yield* adapter.stopSession(threadId);
+      }).pipe(Effect.scoped, Effect.provide(layer)),
+    );
+  });
+
+  it("keeps stopped Devin tasks reconcilable across turns", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    const firstPrompt = Effect.runSync(Deferred.make<Acp.PromptResponse>());
+    const secondPrompt = Effect.runSync(Deferred.make<Acp.PromptResponse>());
+    const prompts = [
+      Deferred.await(firstPrompt),
+      Deferred.await(secondPrompt),
+      Effect.never as Effect.Effect<Acp.PromptResponse>,
+    ];
+    const eventRuntime = makeEventAcpRuntime(() => prompts.shift() ?? Effect.never);
+    const layer = makeDevinAdapterLive(
+      {},
+      {
+        makeAcpRuntime: () => Effect.succeed(eventRuntime.runtime),
+        onSessionUpdateProcessed: eventRuntime.completeProcessedEvent,
+      },
+    ).pipe(
+      Layer.provideMerge(
+        ServerConfig.layerTest(process.cwd(), { prefix: "devin-agent-turn-test-" }),
+      ),
+      Layer.provideMerge(NodeServices.layer),
+    );
+
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe("thread-devin-late-task");
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        yield* adapter.startSession({
+          provider: "devin",
+          threadId,
+          runtimeMode: "full-access",
+          cwd: process.cwd(),
+        });
+        const firstTurn = yield* adapter.sendTurn({ threadId, input: "first", attachments: [] });
+        yield* eventRuntime.emitToolCall("old-shell-call", "inProgress", {
+          metadata: {
+            "cognition.ai/background": true,
+            "cognition.ai/backgroundShellId": "late-shell",
+            "cognition.ai/backgroundCommand": "bun run check",
+          },
+        });
+        yield* adapter.stopTask(threadId, "late-shell");
+        yield* Deferred.succeed(firstPrompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+        yield* advanceTimers(1);
+        const secondTurn = yield* adapter.sendTurn({ threadId, input: "second", attachments: [] });
+        yield* Deferred.succeed(secondPrompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+        yield* advanceTimers(1);
+        const thirdTurn = yield* adapter.sendTurn({ threadId, input: "third", attachments: [] });
+        // This sparse exit update arrives after the first turn's ACP state has
+        // been pruned from the normal one-turn correlation window.
+        yield* eventRuntime.emitToolCall("old-shell-call", "completed", {
+          metadata: { "cognition.ai/exitCode": 0 },
+        });
+        yield* advanceTimers(1);
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "task.started",
+            turnId: firstTurn.turnId,
+            payload: expect.objectContaining({ taskId: "late-shell" }),
+          }),
+        );
+        expect(
+          events.some(
+            (event) =>
+              event.type === "task.started" &&
+              event.turnId === secondTurn.turnId &&
+              event.payload.taskId === "late-shell",
+          ),
+        ).toBe(false);
+        const lateShellCompletions = events.flatMap((event) =>
+          event.type === "task.completed" && event.payload.taskId === "late-shell" ? [event] : [],
+        );
+        expect(lateShellCompletions.map((event) => event.payload.status)).toEqual([
+          "stopped",
+          "completed",
+        ]);
+        expect(lateShellCompletions).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              turnId: firstTurn.turnId,
+              payload: expect.objectContaining({ status: "completed", reconcilesStop: true }),
+            }),
+          ]),
+        );
+        expect(
+          events.some(
+            (event) =>
+              event.type === "task.completed" &&
+              event.turnId !== firstTurn.turnId &&
+              event.payload.taskId === "late-shell",
+          ),
+        ).toBe(false);
+        yield* adapter.stopSession(threadId);
+      }).pipe(Effect.scoped, Effect.provide(layer)),
+    );
+  });
+
+  it("projects a successful Devin background request before start metadata arrives", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    const eventRuntime = makeEventAcpRuntime(() => Effect.never);
+    const acpRequests: Array<{ method: string; payload: unknown }> = [];
+    const runtime = {
+      ...eventRuntime.runtime,
+      request: (method: string, payload: unknown) =>
+        Effect.sync(() => {
+          acpRequests.push({ method, payload });
+          return {};
+        }),
+    } as AcpSessionRuntimeShape;
+    const layer = makeDevinAdapterLive(
+      {},
+      {
+        makeAcpRuntime: () => Effect.succeed(runtime),
+        onSessionUpdateProcessed: eventRuntime.completeProcessedEvent,
+      },
+    ).pipe(
+      Layer.provideMerge(
+        ServerConfig.layerTest(process.cwd(), { prefix: "devin-late-start-test-" }),
+      ),
+      Layer.provideMerge(NodeServices.layer),
+    );
+
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe("thread-devin-background-before-start");
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        // Let the event collector subscribe before backgroundTask publishes
+        // its synthetic lifecycle events (there is no preceding ACP update in
+        // this regression case to yield to the collector).
+        yield* flushTimers();
+        yield* adapter.startSession({
+          provider: "devin",
+          threadId,
+          runtimeMode: "full-access",
+          cwd: process.cwd(),
+        });
+        yield* adapter.sendTurn({ threadId, input: "background the child", attachments: [] });
+        yield* adapter.backgroundTask(threadId, "late-agent");
+        yield* flushTimers();
+
+        expect(acpRequests).toEqual([
+          {
+            method: "_cognition.ai/subagent/background",
+            payload: { sessionId: "devin-test-session", agentId: "late-agent" },
+          },
+        ]);
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.updated",
+            payload: expect.objectContaining({
+              itemType: "collab_agent_tool_call",
+              data: expect.objectContaining({
+                receiverThreadIds: ["late-agent"],
+                background: true,
+                agentsStates: { "late-agent": { status: "running" } },
+              }),
+            }),
+          }),
+        );
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "task.updated",
+            payload: expect.objectContaining({
+              taskId: "late-agent",
+              status: "running",
+              isBackgrounded: true,
+            }),
+          }),
+        );
+        yield* adapter.stopSession(threadId);
+      }).pipe(Effect.scoped, Effect.provide(layer)),
+    );
+  });
+
+  it("preserves natural Devin completion when background and stop RPCs race it", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    const cancelStarted = Effect.runSync(Deferred.make<void>());
+    const allowCancelToReturn = Effect.runSync(Deferred.make<void>());
+    const killStarted = Effect.runSync(Deferred.make<void>());
+    const allowKillToReturn = Effect.runSync(Deferred.make<void>());
+    const backgroundStarted = Effect.runSync(Deferred.make<void>());
+    const allowBackgroundToReturn = Effect.runSync(Deferred.make<void>());
+    const eventRuntime = makeEventAcpRuntime(() => Effect.never);
+    const acpRequests: Array<{ method: string; payload: unknown }> = [];
+    const runtime = {
+      ...eventRuntime.runtime,
+      request: (method: string, payload: unknown) => {
+        acpRequests.push({ method, payload });
+        if (method === "_cognition.ai/subagent/cancel") {
+          return Effect.gen(function* () {
+            yield* Deferred.succeed(cancelStarted, undefined);
+            yield* Deferred.await(allowCancelToReturn);
+            return {};
+          });
+        }
+        if (method === "_cognition.ai/terminal/killBackgroundShell") {
+          return Effect.gen(function* () {
+            yield* Deferred.succeed(killStarted, undefined);
+            yield* Deferred.await(allowKillToReturn);
+            return {};
+          });
+        }
+        if (method === "_cognition.ai/subagent/background") {
+          return Effect.gen(function* () {
+            yield* Deferred.succeed(backgroundStarted, undefined);
+            yield* Deferred.await(allowBackgroundToReturn);
+            return {};
+          });
+        }
+        return Effect.succeed({});
+      },
+    } as AcpSessionRuntimeShape;
+    const layer = makeDevinAdapterLive(
+      {},
+      {
+        makeAcpRuntime: () => Effect.succeed(runtime),
+        onSessionUpdateProcessed: eventRuntime.completeProcessedEvent,
+        timeouts: { turnIdleMs: 3_600_000, toolIdleMs: 3_600_000 },
+      },
+    ).pipe(
+      Layer.provideMerge(ServerConfig.layerTest(process.cwd(), { prefix: "devin-race-test-" })),
+      Layer.provideMerge(NodeServices.layer),
+    );
+
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe("thread-devin-control-races");
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        yield* adapter.startSession({
+          provider: "devin",
+          threadId,
+          runtimeMode: "full-access",
+          cwd: process.cwd(),
+        });
+        yield* adapter.sendTurn({ threadId, input: "run concurrent work", attachments: [] });
+
+        yield* eventRuntime.emitToolCall("agent-race-call", "inProgress", {
+          metadata: {
+            "cognition.ai/subagent_started": {
+              agentId: "agent-race",
+              title: "Race test",
+              task: "Finish before cancel returns",
+            },
+          },
+        });
+        const cancelFiber = yield* adapter.stopTask(threadId, "agent-race").pipe(Effect.forkScoped);
+        yield* flushTimers();
+        yield* Deferred.await(cancelStarted);
+        yield* eventRuntime.emitToolCall("agent-race-call", "completed", {
+          metadata: {
+            "cognition.ai/subagent_completed": { agentId: "agent-race", success: true },
+          },
+        });
+        yield* Deferred.succeed(allowCancelToReturn, undefined);
+        yield* Fiber.join(cancelFiber);
+
+        yield* eventRuntime.emitToolCall("agent-late-call", "inProgress", {
+          metadata: {
+            "cognition.ai/subagent_started": {
+              agentId: "agent-late",
+              title: "Late completion test",
+              task: "Complete after cancel returns",
+            },
+          },
+        });
+        yield* adapter.stopTask(threadId, "agent-late");
+        // A sparse replay/start update after the stop acknowledgment must not
+        // erase the local correlation before Devin sends its terminal result.
+        yield* eventRuntime.emitToolCall("agent-late-call", "inProgress", {
+          metadata: {
+            "cognition.ai/subagent_started": {
+              agentId: "agent-late",
+              title: "Late completion test",
+            },
+          },
+        });
+        yield* eventRuntime.emitToolCall("agent-late-call", "completed", {
+          metadata: {
+            "cognition.ai/subagent_completed": {
+              agentId: "agent-late",
+              success: true,
+            },
+          },
+        });
+
+        yield* eventRuntime.emitToolCall("shell-race-call", "inProgress", {
+          metadata: {
+            "cognition.ai/background": true,
+            "cognition.ai/backgroundShellId": "shell-race",
+            "cognition.ai/backgroundCommand": "sleep 60",
+          },
+        });
+        const killFiber = yield* adapter.stopTask(threadId, "shell-race").pipe(Effect.forkScoped);
+        yield* flushTimers();
+        yield* Deferred.await(killStarted);
+        yield* eventRuntime.emitToolCall("shell-race-call", "completed", {
+          metadata: { "cognition.ai/exitCode": 0 },
+        });
+        yield* Deferred.succeed(allowKillToReturn, undefined);
+        yield* Fiber.join(killFiber);
+
+        yield* eventRuntime.emitToolCall("shell-late-call", "inProgress", {
+          metadata: {
+            "cognition.ai/background": true,
+            "cognition.ai/backgroundShellId": "shell-late",
+            "cognition.ai/backgroundCommand": "bun run build",
+          },
+        });
+        yield* adapter.stopTask(threadId, "shell-late");
+        yield* eventRuntime.emitToolCall("shell-late-call", "completed", {
+          metadata: { "cognition.ai/exitCode": 0 },
+        });
+
+        yield* eventRuntime.emitToolCall("agent-background-call", "inProgress", {
+          metadata: {
+            "cognition.ai/subagent_started": {
+              agentId: "agent-background-race",
+              title: "Background race test",
+              task: "Finish before background returns",
+            },
+          },
+        });
+        const backgroundFiber = yield* adapter
+          .backgroundTask(threadId, "agent-background-race")
+          .pipe(Effect.forkScoped);
+        yield* flushTimers();
+        yield* Deferred.await(backgroundStarted);
+        yield* eventRuntime.emitToolCall("agent-background-call", "completed", {
+          metadata: {
+            "cognition.ai/subagent_completed": {
+              agentId: "agent-background-race",
+              success: true,
+            },
+          },
+        });
+        yield* Deferred.succeed(allowBackgroundToReturn, undefined);
+        yield* Fiber.join(backgroundFiber);
+
+        expect(acpRequests.map((request) => request.method)).toEqual([
+          "_cognition.ai/subagent/cancel",
+          "_cognition.ai/subagent/cancel",
+          "_cognition.ai/terminal/killBackgroundShell",
+          "_cognition.ai/terminal/killBackgroundShell",
+          "_cognition.ai/subagent/background",
+        ]);
+        for (const [taskId, status] of [
+          ["agent-race", "completed"],
+          ["shell-race", "completed"],
+          ["agent-background-race", "completed"],
+        ]) {
+          expect(
+            events.filter(
+              (event) => event.type === "task.completed" && event.payload.taskId === taskId,
+            ),
+          ).toEqual([
+            expect.objectContaining({ payload: expect.objectContaining({ taskId, status }) }),
+          ]);
+        }
+        expect(
+          events.some(
+            (event) =>
+              event.type === "task.updated" &&
+              event.payload.taskId === "agent-background-race" &&
+              event.payload.isBackgrounded === true,
+          ),
+        ).toBe(false);
+        for (const [taskId, finalStatus] of [
+          ["agent-late", "completed"],
+          ["shell-late", "completed"],
+        ]) {
+          const completions = events.flatMap((event) =>
+            event.type === "task.completed" && event.payload.taskId === taskId ? [event] : [],
+          );
+          expect(completions.map((event) => event.payload.status)).toEqual([
+            "stopped",
+            finalStatus,
+          ]);
+          expect(completions[0]?.payload).toMatchObject({ awaitingProviderConfirmation: true });
+          expect(completions[1]?.payload).toMatchObject({ reconcilesStop: true });
+        }
+        yield* adapter.stopSession(threadId);
+      }).pipe(Effect.scoped, Effect.provide(layer)),
+    );
+  });
+
+  it("restores background shell controls from suppressed session replay", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    const eventRuntime = makeEventAcpRuntime(() => Effect.never);
+    const acpRequests: Array<{ method: string; payload: unknown }> = [];
+    const runtime = {
+      ...eventRuntime.runtime,
+      request: (method: string, payload: unknown) =>
+        Effect.sync(() => {
+          acpRequests.push({ method, payload });
+          return {};
+        }),
+    } as AcpSessionRuntimeShape;
+    const layer = makeDevinAdapterLive(
+      {},
+      {
+        makeAcpRuntime: () => Effect.succeed(runtime),
+        onSessionUpdateProcessed: eventRuntime.completeProcessedEvent,
+      },
+    ).pipe(
+      Layer.provideMerge(ServerConfig.layerTest(process.cwd(), { prefix: "devin-replay-test-" })),
+      Layer.provideMerge(NodeServices.layer),
+    );
+
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe("thread-devin-replayed-shell");
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        const replayUpdate = yield* eventRuntime
+          .emitToolCall("replayed-shell-call", "inProgress", {
+            metadata: {
+              "cognition.ai/background": true,
+              "cognition.ai/backgroundShellId": "replayed-shell",
+              "cognition.ai/backgroundCommand": "sleep 60",
+            },
+          })
+          .pipe(Effect.forkScoped);
+        const replayShellCompletion = yield* eventRuntime
+          .emitToolCall("replayed-done-shell-call", "completed", {
+            metadata: {
+              "cognition.ai/background": true,
+              "cognition.ai/backgroundShellId": "replayed-done-shell",
+              "cognition.ai/backgroundCommand": "bun run build",
+              "cognition.ai/exitCode": 0,
+            },
+          })
+          .pipe(Effect.forkScoped);
+        const replaySubagentCompletion = yield* eventRuntime
+          .emitToolCall("replayed-done-agent-call", "completed", {
+            metadata: {
+              "cognition.ai/subagent_started": {
+                agentId: "replayed-done-agent",
+                title: "Completed during replay",
+                task: "Recover its final state",
+              },
+              "cognition.ai/subagent_completed": {
+                agentId: "replayed-done-agent",
+                success: true,
+              },
+            },
+          })
+          .pipe(Effect.forkScoped);
+        const replayOrdinaryCompletion = yield* eventRuntime
+          .emitToolCall("replayed-ordinary-shell-call", "completed", {
+            metadata: {
+              "cognition.ai/background": true,
+              "cognition.ai/backgroundShellId": "ordinary-done-shell",
+              "cognition.ai/exitCode": 0,
+            },
+          })
+          .pipe(Effect.forkScoped);
+        const startSession = yield* adapter
+          .startSession({
+            provider: "devin",
+            threadId,
+            runtimeMode: "full-access",
+            cwd: process.cwd(),
+            resumeCursor: { schemaVersion: 1, sessionId: "previous-session" },
+            pendingTaskReconciliations: [
+              RuntimeTaskId.makeUnsafe("replayed-done-shell"),
+              RuntimeTaskId.makeUnsafe("replayed-done-agent"),
+            ],
+          })
+          .pipe(Effect.forkScoped);
+        yield* flushTimers();
+        yield* advanceTimers(250);
+        yield* Fiber.join(startSession);
+        yield* Fiber.join(replayUpdate);
+        yield* Fiber.join(replayShellCompletion);
+        yield* Fiber.join(replaySubagentCompletion);
+        yield* Fiber.join(replayOrdinaryCompletion);
+        yield* adapter.stopTask(threadId, "replayed-shell");
+        expect(acpRequests).toContainEqual({
+          method: "_cognition.ai/terminal/killBackgroundShell",
+          payload: { sessionId: "devin-test-session", shellId: "replayed-shell" },
+        });
+        expect(
+          events.some(
+            (event) => event.type === "task.started" && event.payload.taskId === "replayed-shell",
+          ),
+        ).toBe(false);
+        for (const taskId of ["replayed-done-shell", "replayed-done-agent"]) {
+          expect(events).toContainEqual(
+            expect.objectContaining({
+              type: "task.completed",
+              payload: expect.objectContaining({
+                taskId,
+                status: "completed",
+                reconcilesStop: true,
+              }),
+            }),
+          );
+          expect(
+            events.some(
+              (event) => event.type === "task.started" && event.payload.taskId === taskId,
+            ),
+          ).toBe(false);
+        }
+        expect(
+          events.some(
+            (event) =>
+              event.type === "task.completed" && event.payload.taskId === "ordinary-done-shell",
+          ),
+        ).toBe(false);
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.completed",
+            payload: expect.objectContaining({
+              data: expect.objectContaining({
+                agentsStates: {
+                  "replayed-done-agent": expect.objectContaining({ status: "completed" }),
+                },
+              }),
+            }),
+          }),
+        );
+        yield* adapter.stopSession(threadId);
+      }).pipe(Effect.scoped, Effect.provide(layer)),
+    );
   });
 
   it("rejects an overlapping send without replacing the active turn", async () => {

@@ -703,7 +703,8 @@ function deriveBackgroundTaskStates(ordered: ReadonlyArray<OrchestrationThreadAc
       });
     }
     const task = tasks.get(taskId);
-    if (!task || task.status !== "running") continue;
+    const reconcilesStop = payload?.reconcilesStop === true && task?.status === "stopped";
+    if (!task || (task.status !== "running" && !reconcilesStop)) continue;
     if (activity.kind === "task.updated" || activity.kind === "task.completed") {
       const outcome = backgroundTaskOutcome(payload?.status);
       if (!outcome) continue;

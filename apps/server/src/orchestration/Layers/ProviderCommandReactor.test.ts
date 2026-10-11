@@ -18036,6 +18036,65 @@ describe("ProviderCommandReactor", () => {
     expect(thread?.session?.providerName).toBe("claudeAgent");
   });
 
+  it("passes only unresolved Devin stop outcomes into provider session startup", async () => {
+    const harness = await createHarness({
+      threadModelSelection: { provider: "devin", model: "swe-1.7" },
+    });
+    const threadId = ThreadId.makeUnsafe("thread-1");
+    const appendActivity = (
+      id: string,
+      taskId: string,
+      status: string,
+      createdAt: string,
+      extra: Record<string, unknown> = {},
+    ) =>
+      harness.engine.dispatch({
+        type: "thread.activity.append",
+        commandId: CommandId.makeUnsafe(`cmd-${id}`),
+        threadId,
+        activity: {
+          id: EventId.makeUnsafe(id),
+          kind: "task.completed",
+          tone: "info",
+          summary: `Task ${status}`,
+          payload: { taskId, status, ...extra },
+          turnId: null,
+          createdAt,
+        },
+        createdAt,
+      });
+
+    await Effect.runPromise(
+      appendActivity("pending-stop-1", "shell-pending", "stopped", "2026-10-11T00:00:01.000Z", {
+        awaitingProviderConfirmation: true,
+      }),
+    );
+    await Effect.runPromise(
+      appendActivity("ordinary-stop-2", "shell-ordinary", "stopped", "2026-10-11T00:00:02.000Z"),
+    );
+    await Effect.runPromise(
+      appendActivity(
+        "already-corrected-3",
+        "shell-corrected",
+        "completed",
+        "2026-10-11T00:00:03.000Z",
+        { reconcilesStop: true },
+      ),
+    );
+
+    await dispatchHarnessUserTurn(harness, {
+      messageId: "message-devin-pending-stop",
+      text: "resume Devin",
+      createdAt: new Date().toISOString(),
+    });
+    await waitFor(() => harness.startSession.mock.calls.length === 1);
+
+    expect(harness.startSession.mock.calls[0]?.[1]).toMatchObject({
+      provider: "devin",
+      pendingTaskReconciliations: ["shell-pending"],
+    });
+  });
+
   it("clears a stale Claude resume cursor surfaced asynchronously and retries fresh once", async () => {
     const harness = await createHarness({
       threadModelSelection: { provider: "claudeAgent", model: "claude-opus-5-5" },

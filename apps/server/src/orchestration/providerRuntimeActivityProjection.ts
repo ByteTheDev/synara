@@ -1068,6 +1068,10 @@ export function projectProviderRuntimeActivities(
             ...(event.payload.workflowAgents
               ? { workflowAgents: event.payload.workflowAgents }
               : {}),
+            ...(event.payload.reconcilesStop ? { reconcilesStop: true } : {}),
+            ...(event.payload.awaitingProviderConfirmation
+              ? { awaitingProviderConfirmation: true }
+              : {}),
           }),
           turnId: toTurnId(event.turnId) ?? null,
           ...maybeSequence,

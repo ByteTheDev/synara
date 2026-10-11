@@ -184,6 +184,7 @@ export function makeAcpToolCallEvent(input: {
   readonly threadId: ThreadId;
   readonly turnId: TurnId | undefined;
   readonly toolCall: AcpToolCallState;
+  readonly providerRefs?: ProviderRuntimeEvent["providerRefs"];
   readonly rawPayload: unknown;
 }): ProviderRuntimeEvent {
   const runtimeStatus = runtimeItemStatusFromAcpToolStatus(input.toolCall.status);
@@ -194,6 +195,7 @@ export function makeAcpToolCallEvent(input: {
     threadId: input.threadId,
     turnId: input.turnId,
     itemId: RuntimeItemId.makeUnsafe(input.toolCall.toolCallId),
+    ...(input.providerRefs ? { providerRefs: input.providerRefs } : {}),
     payload: {
       itemType: canonicalItemTypeFromAcpToolKind(input.toolCall.kind),
       ...(runtimeStatus ? { status: runtimeStatus } : {}),
@@ -239,6 +241,7 @@ export function makeAcpContentDeltaEvent(input: {
   readonly itemId?: string;
   readonly text: string;
   readonly streamKind?: AcpTextStreamKind;
+  readonly providerRefs?: ProviderRuntimeEvent["providerRefs"];
   readonly rawPayload: unknown;
 }): ProviderRuntimeEvent {
   return {
@@ -248,6 +251,7 @@ export function makeAcpContentDeltaEvent(input: {
     threadId: input.threadId,
     turnId: input.turnId,
     ...(input.itemId ? { itemId: RuntimeItemId.makeUnsafe(input.itemId) } : {}),
+    ...(input.providerRefs ? { providerRefs: input.providerRefs } : {}),
     payload: {
       streamKind: input.streamKind ?? "assistant_text",
       delta: input.text,

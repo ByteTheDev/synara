@@ -659,7 +659,13 @@ describe("deriveWorkLogEntries", () => {
         turnId: "turn-bg",
         payload: { taskId, taskType: "local_bash", toolUseId, detail: `Run ${taskId}` },
       });
-    const taskCompleted = (taskId: string, status: string, detail: string, at: string) =>
+    const taskCompleted = (
+      taskId: string,
+      status: string,
+      detail: string,
+      at: string,
+      reconcilesStop = false,
+    ) =>
       makeActivity({
         id: `${taskId}-${status}`,
         createdAt: at,
@@ -667,7 +673,7 @@ describe("deriveWorkLogEntries", () => {
         summary: "Task completed",
         tone: "info",
         turnId: "turn-bg",
-        payload: { taskId, status, detail },
+        payload: { taskId, status, detail, ...(reconcilesStop ? { reconcilesStop: true } : {}) },
       });
     const options = { visibleTurnIds: new Set([TurnId.makeUnsafe("turn-bg")]) };
 
@@ -778,6 +784,45 @@ describe("deriveWorkLogEntries", () => {
           .filter((entry) => entry.backgroundTaskCompletion)
           .map((entry) => entry.backgroundTaskCompletion?.outcome),
       ).toEqual(["failed", "finished", "stopped"]);
+    });
+
+    it("lets a late provider completion correct a local stopped result", () => {
+      const entries = deriveWorkLogEntries(
+        [
+          launchCall("launch", "toolu_late", "bun run build", "2026-10-10T00:09:57.000Z"),
+          taskStarted("task-late", "toolu_late", "2026-10-10T00:09:57.100Z"),
+          makeActivity({
+            id: "task-late-background",
+            createdAt: "2026-10-10T00:09:57.200Z",
+            kind: "task.updated",
+            summary: "Task running in background",
+            tone: "info",
+            turnId: "turn-bg",
+            payload: { taskId: "task-late", status: "running", isBackgrounded: true },
+          }),
+          taskCompleted("task-late", "stopped", "Build stopped", "2026-10-10T00:09:58.000Z"),
+          taskCompleted(
+            "task-late",
+            "completed",
+            "Build finished",
+            "2026-10-10T00:09:59.000Z",
+            true,
+          ),
+        ],
+        undefined,
+        options,
+      );
+
+      expect(entries.filter((entry) => entry.backgroundTask)).toMatchObject([
+        {
+          id: "launch",
+          backgroundTask: {
+            taskId: "task-late",
+            status: "finished",
+            completedAt: "2026-10-10T00:09:59.000Z",
+          },
+        },
+      ]);
     });
 
     it("anchors the row at the notice when the launching call is not visible", () => {

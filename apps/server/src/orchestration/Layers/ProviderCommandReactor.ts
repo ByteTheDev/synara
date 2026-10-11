@@ -32,6 +32,7 @@ import {
   type ProviderInteractionMode,
   type ProviderRuntimeEvent,
   ProviderKind,
+  RuntimeTaskId,
   type ProviderReviewTarget,
   type ProviderStartOptions,
   type ProviderSkillReference,
@@ -1745,6 +1746,28 @@ const make = Effect.gen(function* () {
     return Option.getOrUndefined(yield* projectionSnapshotQuery.getThreadDetailById(threadId));
   });
 
+  const pendingDevinTaskReconciliations = (
+    thread: OrchestrationThread | undefined,
+  ): Array<RuntimeTaskId> => {
+    const pending = new Set<string>();
+    for (const activity of thread?.activities ?? []) {
+      if (activity.kind !== "task.completed") continue;
+      const rawPayload = activity.payload;
+      if (typeof rawPayload !== "object" || rawPayload === null || Array.isArray(rawPayload)) {
+        continue;
+      }
+      const payload = rawPayload as Record<string, unknown>;
+      const taskId = payload.taskId;
+      if (typeof taskId !== "string") continue;
+      if (payload.status === "stopped" && payload.awaitingProviderConfirmation === true) {
+        pending.add(taskId);
+      } else {
+        pending.delete(taskId);
+      }
+    }
+    return [...pending].map((taskId) => RuntimeTaskId.makeUnsafe(taskId));
+  };
+
   const lookupProviderSessionThread = Effect.fnUntraced(function* (threadId: ThreadId) {
     const projected = yield* resolveProviderSessionThreadFromProjection(
       projectionSnapshotQuery,
@@ -2357,21 +2380,32 @@ const make = Effect.gen(function* () {
     const startProviderSessionWithOutcome = (
       resumeCursor?: unknown,
       registerPriorTranscriptBootstrapOnFreshStart = false,
-    ) => {
-      const startInput = providerSessionStartInput(resumeCursor);
-      return providerService.startSessionWithOutcome
-        ? providerService.startSessionWithOutcome(threadId, startInput, {
-            registerPriorTranscriptBootstrapOnFreshStart,
-          })
-        : providerService.startSession(threadId, startInput).pipe(
-            Effect.map((session) => ({
-              session,
-              nativeResumeAttempted: resumeCursor !== undefined && resumeCursor !== null,
-              nativeResumeSucceeded: resumeCursor !== undefined && resumeCursor !== null,
-              priorTranscriptBootstrapPending: registerPriorTranscriptBootstrapOnFreshStart,
-            })),
-          );
-    };
+    ) =>
+      Effect.gen(function* () {
+        const pendingReconciliations =
+          preferredProvider === "devin"
+            ? pendingDevinTaskReconciliations(yield* resolveThread(threadId))
+            : [];
+        const startInput = {
+          ...providerSessionStartInput(resumeCursor),
+          ...(pendingReconciliations.length > 0
+            ? { pendingTaskReconciliations: pendingReconciliations }
+            : {}),
+        };
+        const startEffect = providerService.startSessionWithOutcome
+          ? providerService.startSessionWithOutcome(threadId, startInput, {
+              registerPriorTranscriptBootstrapOnFreshStart,
+            })
+          : providerService.startSession(threadId, startInput).pipe(
+              Effect.map((session) => ({
+                session,
+                nativeResumeAttempted: resumeCursor !== undefined && resumeCursor !== null,
+                nativeResumeSucceeded: resumeCursor !== undefined && resumeCursor !== null,
+                priorTranscriptBootstrapPending: registerPriorTranscriptBootstrapOnFreshStart,
+              })),
+            );
+        return yield* startEffect;
+      });
 
     const bindSessionToThread = (session: ProviderSession) =>
       setThreadSession({
