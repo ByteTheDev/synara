@@ -1,0 +1,21 @@
+{
+  "source": {
+    "head": "e0dc656efd9f6b4e45999f7925d9122eadba1c06",
+    "tree": "758d4b075cf1ba9313518f540a1c1fe0922970fa"
+  },
+  "probePath": "apps/server/src/platform/CimPhases.probe.ts",
+  "productionBlobs": {
+    "apps/server/src/platform/windowsProcessSnapshot.ts": "a9008e37f709a97cc06e790101a455a6180a9dee",
+    "packages/shared/src/processRuntime.ts": "fa4eb044a4a2059de4f9e4ff179482955df9cd90",
+    "packages/shared/src/platformEnvironment.ts": "4a6fa2cbab9369c55b4267b0ce51c55a764388ec",
+    "packages/shared/src/platformProcess.ts": "ba2655a9495622d56077f86721ea1c215560fa47",
+    "packages/shared/src/processSpawnOutcome.ts": "08c5ba8267f859e998a89760ec9bad88c9aec5de",
+    "packages/shared/src/executable.ts": "46b027390492f8e398723ca56dd7a1d3f5f5347d",
+    "packages/shared/src/windowsProcess.ts": "affb2b34a50bbd034603ab609022001627ee528e"
+  },
+  "probeBlob": "c61d1948a70b55b7b0368f863f29c52282bf1b92",
+  "probeSha256": "8df421a473ce9c409917e72486cfc7a56ce5988141f5cf82d5ab5cd24e9af62c",
+  "bundleSha256": "017cd8058c3c4541094e22b589ae9bd838e947fddd01ce28735a97dec8b8978b",
+  "productionScriptSha256": "38c726e2086f2a50311e8615cdd329ea83624423192e3f99a0c11cc515c24184",
+  "instrumentedScriptSha256": "f86b9722f31d67da4c09120f751a1f16802c928785e45a5aec08d79673006690"
+}
