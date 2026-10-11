@@ -37,7 +37,19 @@ function assertSource() {
   assert.equal(run("git", ["rev-parse", "HEAD"]), sourceSha);
   assert.equal(run("git", ["rev-parse", "HEAD^{tree}"]), sourceTree);
   assert.equal(run("git", ["diff", "--exit-code", "HEAD", "--"]), "");
-  assert.equal(run("git", ["status", "--porcelain=v1", "--untracked-files=all"]), "");
+  const status = run("git", ["status", "--porcelain=v1", "--untracked-files=all"]);
+  const routeTreePath = "apps/web/src/routeTree.gen.ts";
+  save(`${phase}-source-integrity.json`, {
+    status,
+    autoCrlf: run("git", ["config", "--get", "core.autocrlf"]),
+    generatedRouteTree: {
+      headBlob: run("git", ["rev-parse", `HEAD:${routeTreePath}`]),
+      worktreeBlob: run("git", ["hash-object", `--path=${routeTreePath}`, routeTreePath]),
+      rawSha256: digest(join(source, routeTreePath)),
+      crlfCount: (readFileSync(join(source, routeTreePath), "utf8").match(/\r\n/g) ?? []).length,
+    },
+  });
+  assert.equal(status, "");
   assert.equal(run("git", ["rev-parse", "HEAD"], driver), process.env.GITHUB_SHA);
   assert.equal(run("git", ["diff", "--exit-code", "HEAD", "--"], driver), "");
 }
