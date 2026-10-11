@@ -1,1 +1,1 @@
-PASS {"home":"/workspace/scratch/a47932516920/settings-acceptance-egwr4v","defaultOff":true,"persistedEnabled":true,"reloadRetained":true,"revertedOff":true}
+PASS {"home":"/tmp/synara-settings-acceptance-Cy2P0o","defaultOff":true,"persistedEnabled":true,"reloadRetained":true,"revertedOff":true}
