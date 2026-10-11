@@ -2387,14 +2387,14 @@ export default function ChatView({
         threadId,
         messageId: review.messageId,
         reviewId: review.reviewId,
-        decision,
+        decision: decision === "never" ? "continue" : decision,
         createdAt: new Date().toISOString(),
       });
     },
     [threadId],
   );
   const onStopAskingClaudeCacheReview = useCallback(
-    () => updateSettingsAndWait({ confirmClaudeCacheResume: false }, { throwOnError: true }),
+    () => updateSettingsAndWait({ claudeConfirmColdCacheResume: false }, { throwOnError: true }),
     [updateSettingsAndWait],
   );
   const activeRootBranch = useMemo(
@@ -5543,9 +5543,10 @@ export default function ChatView({
     );
   }
 
-  // Open-thread tabs belong to the single chat on desktop; split panes, the editor rail, and
-  // phone-width headers keep the plain thread title.
-  const showOpenThreadTabs = !isMobileViewport && surfaceMode === "single" && !isEditorRail;
+  // Open-thread tabs belong to the single chat on desktop; split panes, the editor rail,
+  // phone-width headers, and users who turned tabs off keep the plain thread title.
+  const showOpenThreadTabs =
+    settings.showOpenThreadTabs && !isMobileViewport && surfaceMode === "single" && !isEditorRail;
 
   const activeThreadDisplayTitle = resolveActiveThreadTitle({
     title: isCoordinatorConversation
@@ -6018,7 +6019,7 @@ export default function ChatView({
         <ComposerColumnFrame>
           {/* A bare wrapper keeps the normal-flow panels' -mb-px seam onto the input shell
                 via margin collapse. */}
-          <div>
+          <div data-composer-panels>
             <ComposerTransportNotice />
             {isSidechatExpired ? (
               <ExpiredSidechatNotice onStartNew={startReplacementSidechat} />

@@ -24,14 +24,13 @@ An explicit expired observation takes precedence over a local warm estimate. Mis
 sessions without timing evidence, and invalid clocks remain unknown.
 
 Before sending a user message, the orchestration layer obtains a bounded local observation without
-queueing the prompt. A context larger than 100,000 tokens with evidence of an expired cache requires
-a choice. This applies to a resumed process and a long pause in the same process. Unknown evidence
-does not block ordinary use. There is no periodic inference to maintain or inspect the cache.
-
-Users who prefer to always continue can turn the review off under Settings → Behavior → Expired
-Claude cache confirmation, or by choosing "Don't ask again" on the review. The server then sends such
-messages and goal iterations with the full context. If the setting cannot be read, the review still
-applies.
+queueing the prompt. The review is off by default, as embedded Claude Code never asks; when
+**Ask before resuming a long idle session** is on, then, as in Claude Code's resume prompt, a context
+of at least 100,000 tokens whose last response is at least 70 minutes old requires a choice, whatever
+the cache state. This applies to
+a resumed process and a long pause in the same process. Only messages a person sends are held; agent
+and automation messages and `/compact` are not. An unknown last-response time does not block
+ordinary use. There is no periodic inference to maintain or inspect the cache.
 
 The displayed input, cache-read, and cache-write counts describe requests. They are not percentages
 of an Anthropic subscription allowance. A warm estimate does not guarantee a hit if the provider
@@ -43,12 +42,17 @@ The original message and attachments use the existing conversation journal. A nu
 field stores the pending review, its message and source event, assessment, status, and optional
 compaction turn identity. The review appears in full, detail, and shell snapshots.
 
-| Choice                     | Behavior                                                                                          |
-| -------------------------- | ------------------------------------------------------------------------------------------------- |
-| Continue with full context | Revalidate the saved assessment and deliver the held message once through ordinary orchestration. |
-| Compact, then send         | Run a separate native `/compact` operation; deliver the held message only after verified success. |
-| Cancel this send           | Clear the pending send while retaining the conversation message.                                  |
-| Don't ask again            | Continue with full context, then turn the review off for later sends.                             |
+| Choice                            | Behavior                                                                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Resume from summary (recommended) | Run a separate native `/compact` operation; deliver the held message only after verified success. |
+| Resume full session as-is         | Revalidate the saved assessment and deliver the held message once through ordinary orchestration. |
+| Don't ask me again                | Resume as-is, then turn off the review in Settings → Providers → Claude.                          |
+| Cancel this send                  | Clear the pending send while retaining the conversation message.                                  |
+
+The preference change for **Don't ask me again** starts only after the saved choice is accepted.
+If that settings write fails, Synara keeps the accepted choice locked and reports that the cache
+preference was not saved, including if the review panel has already unmounted. The current send
+is not retried; future confirmations may still appear until the provider preference is saved.
 
 Once a choice is accepted, the review panel hides and progress moves to the transcript: the Claude
 adapter publishes a "Compacting context" row when native compaction starts (explicit `/compact` or a

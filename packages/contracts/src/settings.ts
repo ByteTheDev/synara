@@ -67,6 +67,10 @@ export const ClaudeServerProviderSettings = Schema.Struct({
   // Claude Code keeps Artifact publishing (and `/design`, `/slides`) off for
   // Agent SDK sessions unless the host opts in.
   enableArtifacts: Schema.Boolean.pipe(Schema.withDecodingDefault(() => false)),
+  // Off by default: embedded (SDK) Claude Code never asks before resuming a
+  // large session after a long pause. When on, Synara asks the way Claude
+  // Code's interactive resume prompt does.
+  confirmColdCacheResume: Schema.Boolean.pipe(Schema.withDecodingDefault(() => false)),
 });
 export type ClaudeServerProviderSettings = typeof ClaudeServerProviderSettings.Type;
 
@@ -152,8 +156,6 @@ export const ServerSettings = Schema.Struct({
   githubInboxIncludeUpstreams: Schema.Boolean.pipe(Schema.withDecodingDefault(() => false)),
   sidechatExpiry: SidechatExpiry.pipe(Schema.withDecodingDefault(() => "1h")),
   threadAutoArchive: ThreadAutoArchive.pipe(Schema.withDecodingDefault(() => "7d")),
-  // Hold a message for review before Claude re-reads a large, likely-uncached context.
-  confirmClaudeCacheResume: Schema.Boolean.pipe(Schema.withDecodingDefault(() => true)),
   sourceControlWritingStyle: SourceControlWritingStyle.pipe(
     Schema.withDecodingDefault(() => "repository"),
   ),
@@ -220,7 +222,6 @@ export const ServerSettingsPatch = Schema.Struct({
   githubInboxIncludeUpstreams: Schema.optionalKey(Schema.Boolean),
   sidechatExpiry: Schema.optionalKey(SidechatExpiry),
   threadAutoArchive: Schema.optionalKey(ThreadAutoArchive),
-  confirmClaudeCacheResume: Schema.optionalKey(Schema.Boolean),
   sourceControlWritingStyle: Schema.optionalKey(SourceControlWritingStyle),
   sourceControlCustomInstructions: Schema.optionalKey(SourceControlCustomInstructions),
   textGenerationModelSelection: Schema.optionalKey(ModelSelectionPatch),
@@ -240,6 +241,7 @@ export const ServerSettingsPatch = Schema.Struct({
           homePath: Schema.optionalKey(StringSetting),
           launchArgs: Schema.optionalKey(Schema.String.check(Schema.isMaxLength(4096))),
           enableArtifacts: Schema.optionalKey(Schema.Boolean),
+          confirmColdCacheResume: Schema.optionalKey(Schema.Boolean),
         }),
       ),
       cursor: Schema.optionalKey(

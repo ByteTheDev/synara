@@ -12,7 +12,6 @@ import {
 } from "@synara/contracts";
 import { GROUPS_ON, VISIBLE_PROVIDER_DESCRIPTORS } from "../betaFeatures";
 import { sameAppSnapShortcut } from "@synara/shared/appSnapShortcut";
-import { CLAUDE_LARGE_CONTEXT_TOKENS } from "@synara/shared/claudeCache";
 import { desktopFlavorFromProtocol } from "@synara/shared/betaFeatures";
 import { SafariAccessSetupButton } from "../components/SafariAccessOnboarding";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
@@ -118,7 +117,6 @@ import { KeepAwakeSettingsSection } from "../components/KeepAwakeControls";
 import { useTheme } from "../hooks/useTheme";
 import { isUiDensity } from "../lib/appDensity";
 import { isChatWidthMode, type ChatWidthMode } from "../lib/chatWidth";
-import { formatContextWindowTokens } from "../lib/contextWindow";
 import { isElectron } from "../env";
 import { ResetIcon } from "../lib/icons";
 import {
@@ -483,6 +481,7 @@ function SettingsRouteView() {
     ...(settings.anchorSentMessagesToTop !== defaults.anchorSentMessagesToTop
       ? ["Move sent messages to top"]
       : []),
+    ...(settings.showOpenThreadTabs !== defaults.showOpenThreadTabs ? ["Thread tabs"] : []),
     ...(settings.archiveDeletesOrphanedWorktree !== defaults.archiveDeletesOrphanedWorktree
       ? ["Delete worktree on archive"]
       : []),
@@ -579,9 +578,6 @@ function SettingsRouteView() {
       : []),
     ...(settings.confirmThreadArchive !== defaults.confirmThreadArchive
       ? ["Archive confirmation"]
-      : []),
-    ...(settings.confirmClaudeCacheResume !== defaults.confirmClaudeCacheResume
-      ? ["Expired Claude cache confirmation"]
       : []),
     ...(settings.confirmTerminalTabClose !== defaults.confirmTerminalTabClose
       ? ["Terminal close confirmation"]
@@ -777,6 +773,15 @@ function SettingsRouteView() {
             "Move each sent message to the top of the conversation. Turn off to keep it at the bottom and follow replies as they stream.",
           resetLabel: "move sent messages to top",
           ariaLabel: "Move sent messages to top",
+        })}
+
+        {renderBooleanSettingRow({
+          settingKey: "showOpenThreadTabs",
+          title: "Thread tabs",
+          description:
+            "Show open threads as tabs in the chat header. Turn off to show only the current thread's title.",
+          resetLabel: "thread tabs",
+          ariaLabel: "Show open threads as tabs in the chat header",
         })}
 
         <SettingsRow
@@ -1677,14 +1682,6 @@ function SettingsRouteView() {
           description: "Ask before archiving a thread.",
           resetLabel: "archive confirmation",
           ariaLabel: "Confirm thread archive",
-        })}
-
-        {renderBooleanSettingRow({
-          settingKey: "confirmClaudeCacheResume",
-          title: "Expired Claude cache confirmation",
-          description: `Hold a message for review before Claude re-reads a conversation over ${formatContextWindowTokens(CLAUDE_LARGE_CONTEXT_TOKENS)} tokens whose prompt cache likely expired.`,
-          resetLabel: "expired Claude cache confirmation",
-          ariaLabel: "Confirm expired Claude cache resume",
         })}
 
         {renderBooleanSettingRow({

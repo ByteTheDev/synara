@@ -64,7 +64,6 @@ function serverSettings(overrides: Partial<ServerSettings["providers"]> = {}): S
     githubInboxIncludeUpstreams: false,
     sidechatExpiry: "1h",
     threadAutoArchive: "7d",
-    confirmClaudeCacheResume: true,
     sourceControlWritingStyle: "repository",
     sourceControlCustomInstructions: "",
     textGenerationModelSelection: { provider: "codex", model: "gpt-5.4-mini" },
@@ -82,6 +81,7 @@ function serverSettings(overrides: Partial<ServerSettings["providers"]> = {}): S
         homePath: "",
         launchArgs: "",
         enableArtifacts: false,
+        confirmColdCacheResume: false,
       },
       cursor: { ...provider, binaryPath: "cursor-agent", apiEndpoint: "" },
       devin: { ...provider, binaryPath: "devin" },
@@ -139,6 +139,7 @@ describe("getVisibleProviderUpdateStatuses", () => {
           homePath: "",
           launchArgs: "",
           enableArtifacts: false,
+          confirmColdCacheResume: false,
           customModels: [],
         },
       });

@@ -86,6 +86,13 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
       "Move each sent message to the top of the conversation. Turn off to keep it at the bottom and follow replies as they stream. chat enter send scroll anchor",
   },
   {
+    id: "general:thread-tabs",
+    section: "general",
+    title: "Thread tabs",
+    keywords:
+      "Show open threads as tabs in the chat header. Turn off to show only the current thread's title. horizontal tabs strip header chat title",
+  },
+  {
     id: "general:welcome-tour",
     section: "general",
     title: "Welcome tour",
@@ -472,13 +479,6 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
     keywords: "Ask before archiving a thread. safety confirm",
   },
   {
-    id: "behavior:claude-cache-confirmation",
-    section: "behavior",
-    title: "Expired Claude cache confirmation",
-    keywords:
-      "Confirm expired Claude prompt cache resume before sending large context. hold review don't ask again disable off",
-  },
-  {
     id: "behavior:terminal-close-confirmation",
     section: "behavior",
     title: "Terminal close confirmation",
@@ -544,6 +544,14 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
   },
 
   // ── Providers ─────────────────────────────────────────────────────────────────
+  {
+    id: "providers:claude-cache-confirmation",
+    section: "providers",
+    title: "Ask before resuming a long idle session",
+    keywords:
+      "Claude expired prompt cache resume confirmation large context hold review don't ask again don't ask me again disable off",
+    target: null,
+  },
   {
     id: "providers:cpu-priority",
     section: "providers",

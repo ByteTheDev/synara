@@ -18,7 +18,17 @@ it("propagates opted-in save failures without breaking best-effort writes or the
   localStorage.removeItem(storageKeys[0]!);
   localStorage.setItem(storageKeys[1]!, "1");
   const client = new QueryClient({ defaultOptions: { queries: { enabled: false, retry: false } } });
-  client.setQueryData(serverQueryKeys.settings(), DEFAULT_SERVER_SETTINGS_VIEW);
+  const enabledSettings = {
+    ...DEFAULT_SERVER_SETTINGS_VIEW,
+    providers: {
+      ...DEFAULT_SERVER_SETTINGS_VIEW.providers,
+      claudeAgent: {
+        ...DEFAULT_SERVER_SETTINGS_VIEW.providers.claudeAgent,
+        confirmColdCacheResume: true,
+      },
+    },
+  };
+  client.setQueryData(serverQueryKeys.settings(), enabledSettings);
   const hook = await renderHook(() => useAppSettings(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -30,28 +40,36 @@ it("propagates opted-in save failures without breaking best-effort writes or the
       .mockRejectedValueOnce(failure)
       .mockRejectedValueOnce(failure)
       .mockResolvedValueOnce({
-        ...DEFAULT_SERVER_SETTINGS_VIEW,
-        confirmClaudeCacheResume: false,
+        ...enabledSettings,
+        providers: {
+          ...enabledSettings.providers,
+          claudeAgent: { ...enabledSettings.providers.claudeAgent, confirmColdCacheResume: false },
+        },
       });
     await expect(
       hook.result.current.updateSettingsAndWait(
-        { confirmClaudeCacheResume: false },
+        { claudeConfirmColdCacheResume: false },
         { throwOnError: true },
       ),
     ).rejects.toBe(failure);
     expect(client.getQueryData(serverQueryKeys.settings())).toMatchObject({
-      confirmClaudeCacheResume: true,
+      providers: { claudeAgent: { confirmColdCacheResume: true } },
     });
     await expect(
-      hook.result.current.updateSettingsAndWait({ confirmClaudeCacheResume: false }),
+      hook.result.current.updateSettingsAndWait({ claudeConfirmColdCacheResume: false }),
     ).resolves.toBeUndefined();
     await hook.result.current.updateSettingsAndWait(
-      { confirmClaudeCacheResume: false },
+      { claudeConfirmColdCacheResume: false },
       { throwOnError: true },
     );
     expect(updateSettings).toHaveBeenCalledTimes(3);
+    expect(updateSettings.mock.calls).toEqual(
+      Array.from({ length: 3 }, () => [
+        { providers: { claudeAgent: { confirmColdCacheResume: false } } },
+      ]),
+    );
     expect(client.getQueryData(serverQueryKeys.settings())).toMatchObject({
-      confirmClaudeCacheResume: false,
+      providers: { claudeAgent: { confirmColdCacheResume: false } },
     });
   } finally {
     await hook.unmount();
