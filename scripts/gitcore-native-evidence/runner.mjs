@@ -17,7 +17,9 @@ const EXPECTED = new Map([
 const root = process.cwd();
 const driver = path.join(root, ".pr-driver");
 const output = path.join(root, "gitcore-native-evidence");
+const liveReport = path.join(root, "gitcore-native-live", "results.json");
 mkdirSync(output, { recursive: true });
+mkdirSync(path.dirname(liveReport), { recursive: true });
 const hash = (data, algorithm = "sha256") => createHash(algorithm).update(data).digest("hex");
 const blob = (data) => hash(Buffer.concat([Buffer.from(`blob ${data.length}\0`), data]), "sha1");
 const writeJson = (name, value) => writeFileSync(path.join(output, name), `${JSON.stringify(value, null, 2)}\n`);
@@ -80,7 +82,7 @@ async function runTests() {
   const args = [
     "run", "test", "src/git/Layers/GitCore.test.ts",
     "--reporter=default", "--reporter=json",
-    `--outputFile=${path.join(output, "results.json")}`,
+    `--outputFile=${liveReport}`,
   ];
   writeJson("command.json", { executable: "bun", args, cwd: "apps/server", timeoutMs: 1_200_000 });
   writeFileSync(path.join(output, "vitest.log"), "");
@@ -197,6 +199,7 @@ const receipt = {
 try {
   receipt.before = guardSource();
   receipt.driver = guardDriver();
+  if (existsSync(liveReport)) throw new Error("Unexpected pre-existing live test report");
   receipt.environment = {
     bun: command("bun", ["--version"]),
     git: command("git", ["--version"]),
@@ -218,8 +221,24 @@ try {
       exit.processErrors.length || exit.deadlineReachedAt || exit.outputCutoff) {
     errors.push(`Actual test process observation ${JSON.stringify(exit)}`);
   }
-  if (!existsSync(path.join(output, "results.json"))) throw new Error("Missing actual Vitest JSON report");
-  const report = JSON.parse(readFileSync(path.join(output, "results.json"), "utf8"));
+  if (!existsSync(liveReport)) throw new Error("Missing actual Vitest JSON report");
+  const capturedAt = new Date().toISOString();
+  const reportBytes = readFileSync(liveReport);
+  // Only this snapshot is retained. A surviving descendant cannot write into
+  // the uploaded evidence directory after its observed process/output cutoff.
+  writeFileSync(path.join(output, "results.json"), reportBytes);
+  receipt.reportSnapshot = {
+    source: "gitcore-native-live/results.json",
+    capturedAt,
+    completedAt: new Date().toISOString(),
+    bytes: reportBytes.length,
+    sha256: hash(reportBytes),
+    rootExit: exit.rootExit,
+    closeObserved: exit.close !== null,
+    outputCutoff: exit.outputCutoff,
+    qualification: "Single observed byte snapshot; missing or partial JSON and every cutoff remain failures.",
+  };
+  const report = JSON.parse(reportBytes.toString("utf8"));
   receipt.results = {
     success: report.success,
     total: report.numTotalTests,
