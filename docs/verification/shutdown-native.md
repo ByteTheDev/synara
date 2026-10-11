@@ -13,3 +13,5 @@ OPENCODE_LIVE_BINARY=/absolute/path/to/opencode CHROMIUM_EXECUTABLE_PATH=/absolu
 ```
 
 This test explicitly attaches an external native CLI owned and cleaned by the test runner. It does not establish production ownership of native descendant processes, authenticated paid-provider acceptance, or packaged desktop prepareQuit behavior. Those broader #985 qualifications remain separate. No native process-cleanup receipt is inferred from the screenshots.
+
+The production web and CLI were rebuilt after integrating main `52f06318fdb3c0b4b310a8d55d0083cba0bde1a0`. The portable native shutdown/restart runner passed again on the combined source; the report, two screenshots, and raw output now belong to that rerun. The new transcript UI and actual SQLite settlement/recovery were exercised. The build used a scratch output directory to exclude concurrent workspace synchronization staging files from asset compression, then bundled that actual output into the CLI.

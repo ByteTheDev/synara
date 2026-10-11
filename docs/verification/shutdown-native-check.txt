@@ -49,6 +49,7 @@ BUTTON_INVENTORY [
   { text: '', aria: 'Tasks' },
   { text: '', aria: 'Code review' },
   { text: '', aria: 'Automations' },
+  { text: '', aria: 'Hubs' },
   { text: '', aria: 'More' },
   { text: '', aria: 'Help' },
   { text: '', aria: 'Settings' },
@@ -110,7 +111,7 @@ Worktree
 
 Ask anything, @tag files/folders, or use / to show available commands
 Full access
-Select effort
+Big Pickle
 
 Environment
 
@@ -132,38 +133,15 @@ Side chats
 Source control
 Activity
 See running tasks, completed work, and anything that needs your attention.
-OpenCode Zen
-Big Pickle
-Ctrl 1
-Exo Free
-Ctrl 2
-Ling 3.0 Flash Fin Free
-Ctrl 3
-Ling 3.1 Flash Free
-Ctrl 4
-LongCat 2.5 Preview Free
-Ctrl 5
-MiMo-V2.6-Flash Free
-Ctrl 6
-Muse Spark 1.3 Free
-Ctrl 7
-Nemotron 3 Ultra Free
-Ctrl 8
-Nemotron 3.5 Lightning Free
-Ctrl 9
-Space Bunny Free
-Step 5 Preview Free
-Agent
-Build
 LIVE_ACTIVE 1
 PRODUCTION_SHUTDOWN [ 130, null ]
 ACTUAL_TURNS_AFTER_SHUTDOWN [
   [Object: null prototype] {
-    thread_id: '71f3279a-07ce-4cf5-9534-ae5d45bac60c',
+    thread_id: '02ebc678-6ce1-4916-91bc-aa21ee37f8de',
     state: 'completed'
   },
   [Object: null prototype] {
-    thread_id: '71f3279a-07ce-4cf5-9534-ae5d45bac60c',
+    thread_id: '02ebc678-6ce1-4916-91bc-aa21ee37f8de',
     state: 'error'
   }
 ]
@@ -171,7 +149,7 @@ DELIVERY_STATES [
   [Object: null prototype] { state: 'inflight', count: 1 },
   [Object: null prototype] { state: 'succeeded', count: 8 }
 ]
-SHUTDOWN_HOME /tmp/shutdown-native-BroOg6
+SHUTDOWN_HOME /tmp/shutdown-native-STwFjQ
 AFTER_REAL_RESTART Toggle Sidebar
 Synara
 New thread
@@ -181,28 +159,24 @@ Reply with exactly NATIVE_SHUTDOWN_READY Do not
 Chats
 No chats yet
 Reply with exactly NATIVE_SHUTDOWN_READY Do not
-Start of conversation
-Go to first message
 
 Reply with exactly NATIVE_SHUTDOWN_READY. Do not use tools.
 
-2:10 AM
-
-Worked 10s
+2:43 AM
 
 NATIVE_SHUTDOWN_READY
 
-2:10 AM
+2:44 AM
 
 Without tools, output every integer from 1 to 20000, one per line, without commentary.
 
-2:10 AM
+2:44 AM
 
-Interrupted after 4.9s · Aborted
+Interrupted after 8.7s · Aborted
 
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 3
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 2
 
-2:10 AM
+2:44 AM
 
 Task interrupted
 
@@ -247,11 +221,11 @@ Not now
 Import projects
 RECOVERED_NATIVE_TURNS [
   [Object: null prototype] {
-    thread_id: '71f3279a-07ce-4cf5-9534-ae5d45bac60c',
+    thread_id: '02ebc678-6ce1-4916-91bc-aa21ee37f8de',
     state: 'completed'
   },
   [Object: null prototype] {
-    thread_id: '71f3279a-07ce-4cf5-9534-ae5d45bac60c',
+    thread_id: '02ebc678-6ce1-4916-91bc-aa21ee37f8de',
     state: 'error'
   }
 ]
