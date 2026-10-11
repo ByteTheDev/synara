@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ec8c940e07582454a475250ade40147e3c89d59f
+          ref: f73074c7a4e4145a8944292e2103964cdf83ecb8
           persist-credentials: false
       - uses: actions/checkout@v6
         with:
@@ -31,7 +31,7 @@ jobs:
         run: node .review-dependency-driver/.github/scripts/recover-review-dependencies.mjs
       - uses: actions/upload-artifact@v7
         with:
-          name: review-dependencies-ec8c940-metadata
+          name: review-dependencies-f73074c-metadata
           path: |
             ${{ runner.temp }}/review-dependencies/provenance.json
             ${{ runner.temp }}/review-dependencies/bun
@@ -40,7 +40,7 @@ jobs:
           retention-days: 14
       - uses: actions/upload-artifact@v7
         with:
-          name: review-dependencies-ec8c940-part-0
+          name: review-dependencies-f73074c-part-0
           path: ${{ runner.temp }}/review-dependencies/dependencies.part-0
           if-no-files-found: error
           compression-level: 0
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: ${{ fromJSON(steps.archive.outputs.parts) >= 2 }}
         with:
-          name: review-dependencies-ec8c940-part-1
+          name: review-dependencies-f73074c-part-1
           path: ${{ runner.temp }}/review-dependencies/dependencies.part-1
           if-no-files-found: error
           compression-level: 0
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: ${{ fromJSON(steps.archive.outputs.parts) >= 3 }}
         with:
-          name: review-dependencies-ec8c940-part-2
+          name: review-dependencies-f73074c-part-2
           path: ${{ runner.temp }}/review-dependencies/dependencies.part-2
           if-no-files-found: error
           compression-level: 0
@@ -64,7 +64,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         if: ${{ fromJSON(steps.archive.outputs.parts) >= 4 }}
         with:
-          name: review-dependencies-ec8c940-part-3
+          name: review-dependencies-f73074c-part-3
           path: ${{ runner.temp }}/review-dependencies/dependencies.part-3
           if-no-files-found: error
           compression-level: 0
