@@ -1,0 +1,80 @@
+name: Worktree documentation Before and After
+on:
+  push:
+    branches: [cleanup/20261011/worktree-docs-1847-evidence]
+permissions:
+  contents: read
+concurrency:
+  group: worktree-docs-evidence-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  capture:
+    name: Documentation ${{ matrix.side }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - side: before
+            source: 52f06318fdb3c0b4b310a8d55d0083cba0bde1a0
+            tree: a4159d11d36ade68727a11503a3912d973bad66f
+          - side: after
+            source: a1b087d984a39cf9df936d5da9465db9e7679600
+            tree: 6011b0c1b9d93e2dcbf9b78b79c981d587cf4a4b
+    env:
+      DOCS_EVIDENCE_SIDE: ${{ matrix.side }}
+      DOCS_SOURCE_SHA: ${{ matrix.source }}
+      DOCS_SOURCE_TREE: ${{ matrix.tree }}
+      DOCS_EVIDENCE_OUTPUT: ${{ github.workspace }}/worktree-docs-evidence
+      DOCS_LIVE_REPORT: ${{ runner.temp }}/worktree-docs-live/report.json
+      DOCS_PLAYWRIGHT_OUTPUT: ${{ runner.temp }}/worktree-docs-live/playwright
+      VISUAL_TEST: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+      - name: Verify exact source and install the isolated fixture
+        run: node .pr-driver/scripts/worktree-docs-evidence/runner.mjs prepare
+      - name: Build the actual production marketing application
+        working-directory: apps/marketing
+        shell: bash
+        run: |
+          set +e
+          bun run build 2>&1 | tee "$DOCS_EVIDENCE_OUTPUT/build.log"
+          statuses=("${PIPESTATUS[@]}")
+          printf '{"command":"bun run build","process":%s,"tee":%s}\n' "${statuses[0]}" "${statuses[1]}" > "$DOCS_EVIDENCE_OUTPUT/build-exit.json"
+          test "${statuses[0]}" -eq 0 && test "${statuses[1]}" -eq 0
+      - name: Install Chromium
+        working-directory: apps/marketing
+        run: bunx --no-install playwright install --with-deps chromium
+      - name: Capture six actual desktop and mobile documentation views
+        working-directory: apps/marketing
+        shell: bash
+        run: |
+          set +e
+          bunx --no-install playwright test --config=pr1847-docs-evidence.config.ts 2>&1 | tee "$DOCS_EVIDENCE_OUTPUT/playwright.log"
+          statuses=("${PIPESTATUS[@]}")
+          printf '{"process":%s,"tee":%s}\n' "${statuses[0]}" "${statuses[1]}" > "$DOCS_EVIDENCE_OUTPUT/test-exit.json"
+          test "${statuses[0]}" -eq 0 && test "${statuses[1]}" -eq 0
+      - name: Retain truthful results, remove the owned overlay and verify source
+        if: always()
+        run: node .pr-driver/scripts/worktree-docs-evidence/runner.mjs verify
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: worktree-docs-1847-${{ matrix.side }}
+          path: worktree-docs-evidence/
+          if-no-files-found: error
+          retention-days: 14
