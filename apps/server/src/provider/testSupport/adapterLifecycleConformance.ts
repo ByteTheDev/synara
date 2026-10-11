@@ -7,26 +7,7 @@ import {
 import { Effect } from "effect";
 import type { ProviderAdapterShape } from "../Services/ProviderAdapter.ts";
 
-const capabilityMethods = [
-  ["supportsTurnSteering", "steerTurn"],
-  ["supportsRuntimeModelList", "listModels"],
-  ["supportsSkillDiscovery", "listSkills"],
-  ["supportsNativeSlashCommandDiscovery", "listCommands"],
-  ["supportsPluginDiscovery", "listPlugins"],
-  ["supportsPluginDiscovery", "readPlugin"],
-  ["supportsForkThroughTurn", "forkThread"],
-] as const;
-
-/** Enabled capabilities must have their public entry points. A provider may
- * retain a method while disabling its discovery capability for a configuration. */
-export function assertAdapterCapabilityConformance<E>(
-  adapter: Pick<ProviderAdapterShape<E>, "capabilities" | (typeof capabilityMethods)[number][1]>,
-): void {
-  for (const [capability, method] of capabilityMethods) {
-    if (adapter.capabilities[capability] !== true) continue;
-    assert.equal(typeof adapter[method], "function", `${capability} requires ${method}`);
-  }
-}
+import { assertProviderAdapterConformance } from "../providerAdapterConformance.ts";
 
 /** Exercise the public ownership contract, independent of the native transport. */
 export function assertAdapterCleanupConformance<E>(
@@ -34,7 +15,7 @@ export function assertAdapterCleanupConformance<E>(
   input: Omit<ProviderSessionStartInput, "threadId">,
 ): Effect.Effect<void, E> {
   return Effect.gen(function* () {
-    assertAdapterCapabilityConformance(adapter);
+    assertProviderAdapterConformance(adapter);
     const first = ThreadId.makeUnsafe("conformance-first");
     const second = ThreadId.makeUnsafe("conformance-second");
     yield* adapter.stopSession(first);
@@ -58,13 +39,20 @@ export function assertTerminalOutcomeConformance(
   events: ReadonlyArray<ProviderRuntimeEvent>,
 ): void {
   const outcomes = new Set<string>();
+  const starts = new Set<string>();
   for (const event of events) {
+    if (event.type === "turn.started") {
+      assert.ok(event.turnId, "started turns must identify their turn");
+      starts.add(JSON.stringify([event.threadId, event.lifecycleGeneration, event.turnId]));
+    }
     if (event.type !== "turn.completed" && event.type !== "turn.aborted") continue;
     assert.ok(event.turnId, "terminal outcomes must identify their turn");
     const key = JSON.stringify([event.threadId, event.lifecycleGeneration, event.turnId]);
     assert.equal(outcomes.has(key), false, `duplicate terminal outcome for ${event.turnId}`);
     outcomes.add(key);
   }
+  for (const key of starts)
+    assert.ok(outcomes.has(key), `started turn must have a terminal outcome: ${key}`);
   assert.ok(outcomes.size > 0, "the observed lifecycle must settle a turn");
 }
 

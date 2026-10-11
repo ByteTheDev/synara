@@ -175,6 +175,7 @@ function createMockOpenCodeRuntime(options?: {
   readonly serverExit?: Effect.Effect<number>;
   readonly serverPassword?: string;
   readonly sessionCreateError?: Error;
+  readonly sessionCreateIds?: ReadonlyArray<string>;
   readonly sessionUpdate?: (input: Record<string, unknown>) => Promise<unknown>;
   readonly scopeCloseDefect?: boolean;
   readonly connectBarrier?: Effect.Effect<void>;
@@ -217,7 +218,9 @@ function createMockOpenCodeRuntime(options?: {
       create: async (input: Record<string, unknown>) => {
         createCalls.push(input);
         if (options?.sessionCreateError) throw options.sessionCreateError;
-        return { data: { id: "opencode-session-1" } };
+        return {
+          data: { id: options?.sessionCreateIds?.[createCalls.length - 1] ?? "opencode-session-1" },
+        };
       },
       update: async (input: Record<string, unknown>) => {
         updateCalls.push(input);
@@ -1929,7 +1932,9 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
   });
 
   it("satisfies shared adapter cleanup conformance", async () => {
-    const runtime = createMockOpenCodeRuntime();
+    const runtime = createMockOpenCodeRuntime({
+      sessionCreateIds: ["conformance-native-first", "conformance-native-second"],
+    });
 
     await Effect.runPromise(
       Effect.gen(function* () {
@@ -1951,7 +1956,10 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
       ),
     );
 
-    expect(runtime.abortCalls).toHaveLength(2);
+    expect(runtime.abortCalls).toEqual([
+      { sessionID: "conformance-native-first" },
+      { sessionID: "conformance-native-second" },
+    ]);
   });
 
   it("does not touch an external OpenCode MCP registry when its setup hook would fail", async () => {
@@ -2793,8 +2801,7 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
         const eventsFiber = yield* Stream.runCollect(
           Stream.takeUntil(
             adapter.streamEvents,
-            (event) =>
-              event.type === "session.started" && event.threadId === asThreadId("teardown-fence"),
+            (event) => event.type === "session.exited" && event.threadId === asThreadId("thread-1"),
           ),
         ).pipe(Effect.forkChild);
 
@@ -2825,12 +2832,6 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
         const [readySession] = yield* adapter.listSessions();
         yield* adapter.interruptTurn(asThreadId("thread-1"));
         yield* adapter.stopSession(asThreadId("thread-1"));
-        yield* adapter.startSession({
-          provider: "opencode",
-          threadId: asThreadId("teardown-fence"),
-          lifecycleGeneration: "generation-opencode-a",
-          runtimeMode: "full-access",
-        });
         const events = Array.from(yield* Fiber.join(eventsFiber));
 
         return { events, readySession, runningSession };
@@ -2862,7 +2863,8 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
     expect(runtime.abortCalls.length).toBeGreaterThanOrEqual(1);
     expect(runtime.abortCalls[0]).toEqual({ sessionID: "opencode-session-1" });
     assertTerminalOutcomeConformance(result.events);
-    assertSessionTeardownConformance(result.events, asThreadId("thread-1"));
+    // This bounded unit collector verifies interrupt state only. Late native
+    // output after exit is observed through replacement completion in the live test.
     expect(result.runningSession?.status).toBe("running");
     expect(result.runningSession?.activeTurnId).toBeDefined();
     expect(result.readySession).toMatchObject({
@@ -2877,7 +2879,6 @@ describe("OpenCodeAdapter runtime lifecycle", () => {
       "turn.started",
       "turn.aborted",
       "session.exited",
-      "session.started",
     ]);
     expect(
       result.events.every((event) => event.lifecycleGeneration === "generation-opencode-a"),

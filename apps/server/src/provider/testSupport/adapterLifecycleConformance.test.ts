@@ -1,8 +1,8 @@
+import { assertAdapterCapabilityConformance } from "../providerAdapterConformance.ts";
 import { ProviderRuntimeEvent, ThreadId } from "@synara/contracts";
 import { Schema } from "effect";
 import { expect, it } from "vitest";
 import {
-  assertAdapterCapabilityConformance,
   assertSessionTeardownConformance,
   assertTerminalOutcomeConformance,
 } from "./adapterLifecycleConformance";
