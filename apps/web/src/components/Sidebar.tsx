@@ -2282,6 +2282,8 @@ export default function Sidebar() {
 
   const openOrCreateProjectThreadFromSnapshot = useCallback(
     async (projectId: ProjectId, snapshot: OrchestrationShellSnapshot): Promise<boolean> => {
+      // Visit state is client-owned; read it after the fresh shell snapshot is applied.
+      const summaries = useStore.getState().sidebarThreadSummaryById;
       const latestThread = sortThreadsForSidebar(
         snapshot.threads
           .filter(
@@ -2297,8 +2299,13 @@ export default function Sidebar() {
             updatedAt: thread.updatedAt,
             latestUserMessageAt: thread.latestUserMessageAt,
             snoozeReminderAt: thread.snoozeReminderAt,
+            lastVisitedAt: summaries[thread.id]?.lastVisitedAt,
+            latestTurn: thread.latestTurn,
+            session: summaries[thread.id]?.session,
+            hasLiveTailWork: summaries[thread.id]?.hasLiveTailWork,
           })),
         appSettings.sidebarThreadSortOrder,
+        { attentionFirst: appSettings.sidebarThreadAttentionFirst },
       )[0];
       if (latestThread) {
         await navigate({
@@ -2310,7 +2317,12 @@ export default function Sidebar() {
 
       return (await handleNewThread(projectId).catch(() => null)) !== null;
     },
-    [appSettings.sidebarThreadSortOrder, handleNewThread, navigate],
+    [
+      appSettings.sidebarThreadAttentionFirst,
+      appSettings.sidebarThreadSortOrder,
+      handleNewThread,
+      navigate,
+    ],
   );
 
   const openExistingProjectFromSnapshot = useCallback(
@@ -2321,6 +2333,8 @@ export default function Sidebar() {
         return false;
       }
 
+      // Visit state is client-owned; read it after the fresh shell snapshot is applied.
+      const summaries = useStore.getState().sidebarThreadSummaryById;
       const latestThread = sortThreadsForSidebar(
         snapshot.threads
           .filter(
@@ -2335,8 +2349,13 @@ export default function Sidebar() {
             updatedAt: thread.updatedAt,
             latestUserMessageAt: thread.latestUserMessageAt,
             snoozeReminderAt: thread.snoozeReminderAt,
+            lastVisitedAt: summaries[thread.id]?.lastVisitedAt,
+            latestTurn: thread.latestTurn,
+            session: summaries[thread.id]?.session,
+            hasLiveTailWork: summaries[thread.id]?.hasLiveTailWork,
           })),
         appSettings.sidebarThreadSortOrder,
+        { attentionFirst: appSettings.sidebarThreadAttentionFirst },
       )[0];
       if (latestThread) {
         await navigate({
@@ -2349,7 +2368,13 @@ export default function Sidebar() {
       setProjectExpanded(projectId, true);
       return (await handleNewThread(projectId).catch(() => null)) !== null;
     },
-    [appSettings.sidebarThreadSortOrder, handleNewThread, navigate, setProjectExpanded],
+    [
+      appSettings.sidebarThreadAttentionFirst,
+      appSettings.sidebarThreadSortOrder,
+      handleNewThread,
+      navigate,
+      setProjectExpanded,
+    ],
   );
 
   // Poll the server read model briefly after project.create so we only recover from fresh state.
