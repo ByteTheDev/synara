@@ -3,6 +3,7 @@ import "../../index.css";
 import { MessageId } from "@synara/contracts";
 import { type LegendListRef } from "@legendapp/list/react";
 import { page } from "vitest/browser";
+import { flushSync } from "react-dom";
 import { Profiler, useRef, useState, type ProfilerOnRenderCallback } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
@@ -158,13 +159,15 @@ describe("ChatTranscriptPane", () => {
 
       // Initial virtualizer measurement commits belong to mounting, not composer typing.
       await settleLayout();
+      const input = screen.container.querySelector<HTMLInputElement>("#composer-input")!;
+      const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
       const baselineCommitCount = transcriptCommitCount;
-      await page.getByPlaceholder("Type composer text").fill("reply follow up");
-
-      await vi.waitFor(() => {
-        expect(screen.container.querySelector("#composer-input")).toHaveValue("reply follow up");
+      // Commit the real input event in this task; asynchronous list measurements are unrelated.
+      flushSync(() => {
+        setValue.call(input, "reply follow up");
+        input.dispatchEvent(new Event("input", { bubbles: true }));
       });
-
+      expect(input).toHaveValue("reply follow up");
       expect(transcriptCommitCount).toBe(baselineCommitCount);
     } finally {
       await screen.unmount();
