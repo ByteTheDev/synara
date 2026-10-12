@@ -847,8 +847,8 @@ export function trimOrNull<T extends string>(value: T | null | undefined): T | n
 export function normalizeClaudeModelOptions(
   model: string | null | undefined,
   modelOptions: ClaudeModelOptions | null | undefined,
+  caps = getModelCapabilities("claudeAgent", model),
 ): ClaudeModelOptions | undefined {
-  const caps = getModelCapabilities("claudeAgent", model);
   const defaultReasoningEffort = getDefaultEffort(caps);
   const defaultAutoCompactWindow = getDefaultAutoCompactWindow(caps);
   const resolvedEffort = trimOrNull(modelOptions?.effort);

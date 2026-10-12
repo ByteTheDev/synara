@@ -15468,3 +15468,92 @@ describe("Claude subagent tracking", () => {
     );
   });
 });
+
+it.effect("rejects startup effort excluded by Claude SDK discovery", () => {
+  const harness = makeHarness();
+  setSupportedModels(harness.query, [
+    {
+      value: "claude-opus-5",
+      displayName: "Opus",
+      description: "Limited runtime",
+      supportsEffort: true,
+      supportedEffortLevels: ["low", "medium", "high"],
+    },
+  ]);
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    const result = yield* adapter
+      .startSession({
+        threadId: THREAD_ID,
+        provider: "claudeAgent",
+        runtimeMode: "full-access",
+        modelSelection: {
+          provider: "claudeAgent",
+          model: "claude-opus-5",
+          options: { effort: "xhigh" },
+        },
+      })
+      .pipe(Effect.result);
+    assert.equal(result._tag, "Failure");
+    if (result._tag === "Failure")
+      assert.include(providerValidationIssue(result.failure), 'does not support effort "xhigh"');
+    assert.equal(yield* adapter.hasSession(THREAD_ID), false);
+    assert.equal(harness.query.closeCalls, 1);
+  }).pipe(Effect.provide(harness.layer));
+});
+it.effect(
+  "rejects an unsupported live effort before dispatch and preserves the usable session",
+  () => {
+    const harness = makeHarness();
+    setSupportedModels(harness.query, [
+      {
+        value: "claude-opus-5",
+        displayName: "Opus",
+        description: "Limited runtime",
+        supportsEffort: true,
+        supportedEffortLevels: ["low", "medium", "high"],
+      },
+    ]);
+    return Effect.gen(function* () {
+      const adapter = yield* ClaudeAdapter;
+      yield* adapter.startSession({
+        threadId: THREAD_ID,
+        provider: "claudeAgent",
+        runtimeMode: "full-access",
+        modelSelection: { provider: "claudeAgent", model: "claude-opus-5" },
+      });
+      const result = yield* adapter
+        .sendTurn({
+          threadId: THREAD_ID,
+          input: "do not dispatch",
+          attachments: [],
+          modelSelection: {
+            provider: "claudeAgent",
+            model: "claude-opus-5",
+            options: { effort: "xhigh" },
+          },
+        })
+        .pipe(Effect.result);
+      assert.equal(result._tag, "Failure");
+      if (result._tag === "Failure")
+        assert.include(providerValidationIssue(result.failure), 'does not support effort "xhigh"');
+      assert.deepEqual(harness.query.applyFlagSettingsCalls, []);
+      assert.deepEqual(harness.query.setModelCalls, []);
+      assert.equal(yield* adapter.hasSession(THREAD_ID), true);
+      yield* adapter.sendTurn({
+        threadId: THREAD_ID,
+        input: "supported effort",
+        attachments: [],
+        modelSelection: {
+          provider: "claudeAgent",
+          model: "claude-opus-5",
+          options: { effort: "high" },
+        },
+      });
+      assert.include(
+        harness.query.applyFlagSettingsCalls.map((value) => value.effortLevel),
+        "high",
+      );
+    }).pipe(Effect.provide(harness.layer));
+  },
+);

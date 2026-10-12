@@ -173,9 +173,10 @@ export const takeDevinSynaraHarnessPolicyTextPart = (
 
 const DEVIN_RESUME_VERSION = 1 as const;
 
+const DEFAULT_DEVIN_TURN_IDLE_TIMEOUT_MS = 6 * 60 * 60 * 1000;
 const DEVIN_TURN_IDLE_TIMEOUT_MS = resolveAcpTurnIdleTimeoutMs({
   envVar: "SYNARA_DEVIN_TURN_IDLE_TIMEOUT_MS",
-  defaultMs: 6 * 60 * 60 * 1000,
+  defaultMs: DEFAULT_DEVIN_TURN_IDLE_TIMEOUT_MS,
 });
 
 // Wedge recovery: the devin child can deadlock while staying alive (observed
@@ -352,7 +353,7 @@ export function resolveDevinAdapterTimeouts(
   return {
     turnIdleMs: resolveAcpTurnIdleTimeoutMs({
       envVar: "SYNARA_DEVIN_TURN_IDLE_TIMEOUT_MS",
-      defaultMs: 30 * 60 * 1000,
+      defaultMs: DEFAULT_DEVIN_TURN_IDLE_TIMEOUT_MS,
       env,
     }),
     toolIdleMs: resolveAcpTurnIdleTimeoutMs({

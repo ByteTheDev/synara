@@ -2430,12 +2430,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
     const failedDiscoveryProcessOwners = new Set<ClaudeProcessOwner>();
     const sessionLifecycleLock = makeKeyedLock<ThreadId>();
     const cachedAgentsByKey = new Map<string, ProviderListAgentsResult>();
-    const verifyClaudeAutoModelSupport = (input: {
+    const verifyClaudeModelSupport = (input: {
       readonly queryRuntime: ClaudeQueryRuntime;
       readonly discoveryKey: string;
       readonly selectedModel: string | undefined;
       readonly apiModelId: string | undefined;
       readonly operation: "startSession" | "sendTurn";
+      readonly requireAuto: boolean;
+      readonly effort: ClaudeApiEffort | null;
     }) =>
       Effect.gen(function* () {
         const requestedModel = input.selectedModel ?? input.apiModelId ?? "selected model";
@@ -2470,6 +2472,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           ),
         );
         const resolution = resolveClaudeAutoModeModel(discoveredModels, requestedModels);
+        if (resolution.status !== "matched" && !input.requireAuto) return;
         if (resolution.status === "absent") {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
@@ -2484,7 +2487,19 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             issue: `Claude model "${requestedModel}" has conflicting Auto mode capability metadata across context-window variants.`,
           });
         }
-        if (resolution.model.supportsAutoMode !== true) {
+        if (
+          input.effort &&
+          (resolution.model.supportsEffort === false ||
+            (Array.isArray(resolution.model.supportedEffortLevels) &&
+              !resolution.model.supportedEffortLevels.includes(input.effort)))
+        ) {
+          return yield* new ProviderAdapterValidationError({
+            provider: PROVIDER,
+            operation: input.operation,
+            issue: `Claude model "${requestedModel}" does not support effort "${input.effort}" in this runtime.`,
+          });
+        }
+        if (input.requireAuto && resolution.model.supportsAutoMode !== true) {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
             operation: input.operation,
@@ -7222,8 +7237,10 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         let installationComplete = false;
 
         return yield* Effect.gen(function* () {
-          if (input.runtimeMode === "auto") {
-            yield* verifyClaudeAutoModelSupport({
+          if (input.runtimeMode === "auto" || effectiveEffort) {
+            yield* verifyClaudeModelSupport({
+              requireAuto: input.runtimeMode === "auto",
+              effort: effectiveEffort,
               queryRuntime,
               discoveryKey: accountDiscoveryKey,
               selectedModel: effectiveClaudeModel,
@@ -7665,6 +7682,25 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           !isCompaction && input.modelSelection?.provider === "claudeAgent"
             ? input.modelSelection
             : undefined;
+        const requestedApiEffort = getEffectiveClaudeCodeEffort(
+          trimOrNull(modelSelection?.options?.effort),
+        );
+        if (
+          modelSelection &&
+          (requestedApiEffort ||
+            (context.session.runtimeMode === "auto" &&
+              resolveApiModelId(modelSelection) !== context.currentApiModelId))
+        ) {
+          yield* verifyClaudeModelSupport({
+            queryRuntime: context.query,
+            discoveryKey: context.accountDiscoveryKey,
+            selectedModel: modelSelection.model,
+            apiModelId: resolveApiModelId(modelSelection),
+            operation: "sendTurn",
+            requireAuto: context.session.runtimeMode === "auto",
+            effort: requestedApiEffort,
+          });
+        }
         const requestedAutoCompactWindow = resolveSelectedClaudeAutoCompactWindow(
           modelSelection?.model,
           normalizeClaudeModelOptions(modelSelection?.model, modelSelection?.options)
@@ -7687,15 +7723,6 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           const apiModelId = resolveApiModelId(modelSelection);
           if (apiModelId !== context.currentApiModelId) {
             apiModelChanged = true;
-            if (context.session.runtimeMode === "auto") {
-              yield* verifyClaudeAutoModelSupport({
-                queryRuntime: context.query,
-                discoveryKey: context.accountDiscoveryKey,
-                selectedModel: modelSelection.model,
-                apiModelId,
-                operation: "sendTurn",
-              });
-            }
             yield* Effect.tryPromise({
               try: () => context.query.setModel(apiModelId),
               catch: (cause) => toRequestError(input.threadId, "turn/setModel", cause),
