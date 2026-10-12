@@ -3,12 +3,12 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, appendFileSync } from "node:fs";
 import path from "node:path";
 
-const SOURCE = "e912032d29aa4bd9b1cef163cf3addeeffef47d5";
-const TREE = "25fc4e1a161a7c6a61f1ddb6959f75e3bd4f068d";
+const SOURCE = "1556cdf36a6caea141dbefd8458a2cabf74608e5";
+const TREE = "053d480bc0879aa18cd2f9af842984876cd69dc0";
 const TEST = "apps/server/src/git/Layers/GitCore.test.ts";
 const TEST_SHA256 = "b9694240e72639d8673f3639ac55f58a8a10a9d026b43c19fe542346be5c112a";
 const EXPECTED = new Map([
-  ["apps/server/src/git/Layers/GitCore.ts", "c061665bbd5d7ac0dc0351835249d825f2df09e0"],
+  ["apps/server/src/git/Layers/GitCore.ts", "4c074aa1bd2acaff668f1fb148fc1aa55e77c40c"],
   [TEST, "a9ec8635c65bc6f0651227b22a028d4407e51c92"],
   ["packages/shared/src/filesystemPlatform.ts", "8177805509291307814a721f0fc3fab9f69a037b"],
   ["apps/marketing/content/docs/workflows/worktrees.mdx", "4ce7108bdb099272b9037b309b4d4acefbf54109"],
@@ -96,6 +96,7 @@ function guardDriver() {
       ".github/workflows/gitcore-native-evidence.yml",
       "scripts/gitcore-native-evidence/runner.mjs",
       "scripts/gitcore-native-evidence/README.md",
+      "scripts/gitcore-native-evidence/format-proposal.mjs",
     ].map((relative) => {
       const data = readFileSync(path.join(driver, relative));
       return { path: relative, bytes: data.length, gitBlob: blob(data), sha256: hash(data) };

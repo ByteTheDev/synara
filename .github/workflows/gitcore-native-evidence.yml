@@ -25,7 +25,7 @@ jobs:
       - name: Check out exact reviewed application
         uses: actions/checkout@v6
         with:
-          ref: e912032d29aa4bd9b1cef163cf3addeeffef47d5
+          ref: 1556cdf36a6caea141dbefd8458a2cabf74608e5
           persist-credentials: false
       - name: Check out isolated evidence driver
         uses: actions/checkout@v6
@@ -70,7 +70,13 @@ jobs:
       - name: Check out exact reviewed application
         uses: actions/checkout@v6
         with:
-          ref: e912032d29aa4bd9b1cef163cf3addeeffef47d5
+          ref: 1556cdf36a6caea141dbefd8458a2cabf74608e5
+          persist-credentials: false
+      - name: Check out isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
           persist-credentials: false
       - name: Install the source's frozen runtime workspace
         id: install
@@ -81,6 +87,11 @@ jobs:
       - name: Check the two repaired files with the canonical formatter
         id: format
         run: bun run fmt:check apps/server/src/git/Layers/GitCore.ts apps/server/src/git/Layers/GitCore.test.ts
+      - name: Obtain bounded formatter proposals from owned copies
+        if: always() && steps.install.outcome == 'success'
+        env:
+          DRIVER_SHA: ${{ github.sha }}
+        run: node .pr-driver/scripts/gitcore-native-evidence/format-proposal.mjs
       - name: Check complete server types with the canonical script
         if: always() && steps.install.outcome == 'success'
         run: bun run --cwd apps/server typecheck
@@ -88,6 +99,14 @@ jobs:
         if: always()
         shell: bash
         run: |
-          test "$(git rev-parse HEAD)" = e912032d29aa4bd9b1cef163cf3addeeffef47d5
-          test "$(git rev-parse 'HEAD^{tree}')" = 25fc4e1a161a7c6a61f1ddb6959f75e3bd4f068d
+          test "$(git rev-parse HEAD)" = 1556cdf36a6caea141dbefd8458a2cabf74608e5
+          test "$(git rev-parse 'HEAD^{tree}')" = 053d480bc0879aa18cd2f9af842984876cd69dc0
           git diff --exit-code HEAD --
+      - name: Upload the immutable formatter proposal receipt
+        if: always() && steps.install.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitcore-1847-format-proposal
+          path: gitcore-format-evidence/proposal.json
+          if-no-files-found: error
+          retention-days: 14
