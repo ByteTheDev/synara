@@ -230,7 +230,7 @@ async function main() {
     return result;
   };
   try {
-    write("provenance.json", { variant, source: pin, author: pins.after, driverHead: process.env.GITHUB_SHA,
+    write("provenance.json", { variant, source: pin, author: pins.originalAuthorHead, driverHead: process.env.GITHUB_SHA,
       driver: driverProof(), platform: process.platform, architecture: process.arch, node: process.version,
       gitVersion: git(sourceRoot, "--version").toString().trim(), qualification: pins.qualification });
     write("source-initial.json", sourceProof(sourceRoot, pin, overlays, extras, "initial"));

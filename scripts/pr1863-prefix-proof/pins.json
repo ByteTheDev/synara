@@ -7,16 +7,16 @@
     "files": 9025
   },
   "after": {
-    "sha": "04f25e61fe8e6ff68b9a72218741300cee732cff",
-    "tree": "1fcd621c75e1b7ff6b97c45299d8e642f0b82f2e",
+    "sha": "d25d4238f516e1400346878f4d071b6bb88c1b0e",
+    "tree": "3916711faa268371dae6ea5d5fe19899fed1b3aa",
     "files": 9025
   },
   "feature": [
     {
       "path": "apps/server/src/checkpointing/Layers/CheckpointStore.test.ts",
       "before": "b1403775ecb10a29ebccde4ca2a772402002d238",
-      "after": "82cd5c385298a658db11e31874d997921af3d02b",
-      "bytes": 19271
+      "after": "c9f1247da0ae05be3ff748d5ac176faaebb95287",
+      "bytes": 19320
     },
     {
       "path": "apps/server/src/checkpointing/Layers/CheckpointStore.ts",
@@ -27,8 +27,8 @@
     {
       "path": "apps/server/src/git/Layers/GitCore.test.ts",
       "before": "a4faf489db071d3b8227d59e15154227df012897",
-      "after": "8aeab4284647f11dc715515376c6c163dc69aa1d",
-      "bytes": 157430
+      "after": "c75eaa6b35c520c91fd953a200c76d225cf82c94",
+      "bytes": 157493
     },
     {
       "path": "apps/server/src/git/Layers/GitCore.ts",
@@ -70,7 +70,7 @@
     {
       "path": "apps/server/src/checkpointing/Layers/CheckpointStore.test.ts",
       "before": "b1403775ecb10a29ebccde4ca2a772402002d238",
-      "after": "82cd5c385298a658db11e31874d997921af3d02b"
+      "after": "c9f1247da0ae05be3ff748d5ac176faaebb95287"
     },
     {
       "path": "apps/server/src/checkpointing/Layers/CheckpointStore.ts",
@@ -80,7 +80,7 @@
     {
       "path": "apps/server/src/git/Layers/GitCore.test.ts",
       "before": "a4faf489db071d3b8227d59e15154227df012897",
-      "after": "8aeab4284647f11dc715515376c6c163dc69aa1d"
+      "after": "c75eaa6b35c520c91fd953a200c76d225cf82c94"
     },
     {
       "path": "apps/server/src/git/Layers/GitCore.ts",
@@ -133,6 +133,11 @@
       "after": "967fc9b407419dafb2e867d18c3f2ccf472745c9"
     }
   ],
-  "qualification": "Before uses the exact three complete authored test blobs on unchanged main production. Ubuntu runs all190 cases; Windows selects only the three prefix regressions and explicitly reports187 unselected. Real Git probes use isolated repositories and local core.autocrlf=false; canonical authored fixtures retain their original setup. No live GitHub or provider calls.",
-  "probeBlob": "2d69ed1257146f95e325ee76c0d9cb27afeaddbe"
+  "qualification": "Before uses the exact three complete repaired author test blobs on unchanged main production. The two new native fixtures pin LF using only their private repository config, retaining every original equality/assertion and host global configuration. Ubuntu runs all190 cases; Windows selects only the three prefix regressions and explicitly reports187 unselected. Real Git probes use isolated repositories and local core.autocrlf=false. No live GitHub or provider calls.",
+  "probeBlob": "2d69ed1257146f95e325ee76c0d9cb27afeaddbe",
+  "originalAuthorHead": {
+    "sha": "04f25e61fe8e6ff68b9a72218741300cee732cff",
+    "tree": "1fcd621c75e1b7ff6b97c45299d8e642f0b82f2e",
+    "files": 9025
+  }
 }

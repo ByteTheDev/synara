@@ -23,7 +23,7 @@ jobs:
       - name: Check out immutable source
         uses: actions/checkout@v6
         with:
-          ref: ${{ matrix.variant == 'before' && 'd4509644c8b7c2ba419680f7da8c2441f230d67e' || '04f25e61fe8e6ff68b9a72218741300cee732cff' }}
+          ref: ${{ matrix.variant == 'before' && 'd4509644c8b7c2ba419680f7da8c2441f230d67e' || 'd25d4238f516e1400346878f4d071b6bb88c1b0e' }}
           fetch-depth: 1
           persist-credentials: false
       - name: Check out immutable isolated driver
