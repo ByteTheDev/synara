@@ -5173,6 +5173,7 @@ function registerIpcHandlers(): void {
     isTrustedRenderer: (id) => browserManager.isTrustedRenderer(id),
     openExternal: (url) => shell.openExternal(url),
     showItemInFolder: (path) => shell.showItemInFolder(path),
+    homeDir: OS.homedir(),
   });
 
   ipcMain.removeHandler(IPC.openExternal);
