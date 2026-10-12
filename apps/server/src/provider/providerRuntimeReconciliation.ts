@@ -27,9 +27,7 @@ export const DEFAULT_RUNTIME_RECONCILIATION_STALE_AFTER_MS = 15_000;
  * wins, regardless of age; this bound is for abandoned starts and missing or
  * otherwise unidentifiable runtime turns.
  */
-// A silent tool can legitimately run for hours. Specific providers have their
-// own process/transport wedge detection; do not infer death after 45 minutes.
-export const RUNTIME_RECONCILIATION_MAX_TURN_AGE_MS = 6 * 60 * 60_000;
+export const RUNTIME_RECONCILIATION_MAX_TURN_AGE_MS = 45 * 60_000;
 
 /**
  * Upper bound for a lifecycle stranded in `starting`/`running` with no turn to

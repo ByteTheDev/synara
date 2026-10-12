@@ -3388,10 +3388,11 @@ describe("ProviderCommandReactor", () => {
     it.each(["compaction", "follow-up", "cancel-follow-up"] as const)(
       "keeps slow %s alive beyond the command deadline while another chat sends",
       async (phase) => {
+        const commandDeadline = Duration.seconds(1);
         const { harness, startClaudeCompaction, setObservation } = await createCompactionHarness(
           undefined,
           false,
-          Duration.millis(100),
+          commandDeadline,
         );
         const review = await sendHeldMessage(harness);
         const releaseDispatch = Deferred.makeUnsafe<void>();
@@ -3433,7 +3434,9 @@ describe("ProviderCommandReactor", () => {
             );
             await waitFor(() => harness.sendTurn.mock.calls.length === 1);
           }
-          await new Promise((resolve) => setTimeout(resolve, 200));
+          await new Promise((resolve) =>
+            setTimeout(resolve, Duration.toMillis(commandDeadline) * 2),
+          );
           const expectedStatus = phase === "compaction" ? "compacting" : "responding";
           expect((await readHarnessThread(harness))?.claudeCacheReview?.status).toBe(
             expectedStatus,
@@ -15981,7 +15984,8 @@ describe("ProviderCommandReactor", () => {
 
   it("releases a timed-out promoted turn when its live provider turn settles", async () => {
     const harness = await createHarness({
-      commandEventTimeout: Duration.millis(25),
+      // Admission must finish before the deliberately non-returning provider call times out.
+      commandEventTimeout: Duration.seconds(1),
     });
     await seedQueuedTurnBehindLiveTurn(harness, {
       liveTurnId: asTurnId("turn-running-timeout"),
