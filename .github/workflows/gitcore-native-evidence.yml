@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   native:
-    name: GitCore 144 cases (${{ matrix.os }})
+    name: GitCore 146 cases (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
@@ -25,7 +25,7 @@ jobs:
       - name: Check out exact reviewed application
         uses: actions/checkout@v6
         with:
-          ref: 2a6008e65a7b88cbfe89795ac067f55d8693c6ac
+          ref: b193af59058aa49fa8ad467afe20e75dca6e6139
           persist-credentials: false
       - name: Check out isolated evidence driver
         uses: actions/checkout@v6
