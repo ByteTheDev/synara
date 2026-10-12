@@ -1911,6 +1911,20 @@ export const checkOpenCodeProviderStatus = makeCheckOpenCodeProviderStatus();
 // ── Pi health check ─────────────────────────────────────────────
 
 const PI_SDK_SETUP_FILE_NAMES = ["auth.json", "models.json"] as const;
+// Additional credential names supported by the installed Pi SDK; these are not
+// all plain API-key overrides, so do not add them to the runtime override mapping.
+const PI_SDK_AUTH_ENV_KEYS = [
+  "ANTHROPIC_AUTH_TOKEN",
+  "ANT_LING_API_KEY",
+  "QWEN_TOKEN_PLAN_API_KEY",
+  "QWEN_TOKEN_PLAN_CN_API_KEY",
+  "NVIDIA_API_KEY",
+  "RADIUS_API_KEY",
+  "TOGETHER_API_KEY",
+  "BASETEN_API_KEY",
+  "META_API_KEY",
+  "ZAI_CODING_CN_API_KEY",
+] as const;
 // Pi also supports cloud credentials that are not provider API keys.
 const PI_SDK_CLOUD_AUTH_ENV_KEYS = [
   "AWS_PROFILE",
@@ -1939,12 +1953,14 @@ function hasPiSdkSetup(
     const value = entry as Record<string, unknown>;
     if (fileName === "models.json") {
       return (
+        (typeof value.apiKey === "string" && value.apiKey.trim().length > 0) ||
         typeof value.baseUrl === "string" ||
         (Array.isArray(value.models) && value.models.length > 0)
       );
     }
     return value.type === "oauth"
-      ? typeof value.refresh === "string" && value.refresh.trim().length > 0
+      ? (typeof value.refresh === "string" && value.refresh.trim().length > 0) ||
+          (typeof value.access === "string" && value.access.trim().length > 0)
       : value.type === "api_key" &&
           ((typeof value.key === "string" && value.key.trim().length > 0) ||
             (value.env !== null &&
@@ -1981,29 +1997,35 @@ const inspectPiSdkSetup = (input: {
       sdkAgentDir: defaultPiSdkAgentDir(),
     });
     const runtimeEnv = input.runtimeEnvironment;
+    const defaultAccount =
+      environment === undefined && (!input.instanceId || input.instanceId === PI_PROVIDER);
     if (
-      MODEL_PROVIDER_API_KEY_ENV_MAPPINGS.some(({ envKeys }) =>
-        envKeys.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined),
+      MODEL_PROVIDER_API_KEY_ENV_MAPPINGS.some(
+        ({ provider, envKeys }) =>
+          (defaultAccount || provider !== "azure-openai-responses") &&
+          envKeys.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined),
       ) ||
-      PI_SDK_CLOUD_AUTH_ENV_KEYS.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined) ||
-      (nonEmptyTrimmed(runtimeEnv.AWS_ACCESS_KEY_ID) !== undefined &&
-        nonEmptyTrimmed(runtimeEnv.AWS_SECRET_ACCESS_KEY) !== undefined)
+      PI_SDK_AUTH_ENV_KEYS.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined) ||
+      (defaultAccount &&
+        (PI_SDK_CLOUD_AUTH_ENV_KEYS.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined) ||
+          (nonEmptyTrimmed(runtimeEnv.AWS_ACCESS_KEY_ID) !== undefined &&
+            nonEmptyTrimmed(runtimeEnv.AWS_SECRET_ACCESS_KEY) !== undefined)))
     ) {
       return { found: true, agentDir };
     }
     const fileSystem = yield* FileSystem.FileSystem;
     if (
-      nonEmptyTrimmed(runtimeEnv.GOOGLE_CLOUD_PROJECT ?? runtimeEnv.GCLOUD_PROJECT) &&
+      defaultAccount &&
+      (nonEmptyTrimmed(runtimeEnv.GOOGLE_CLOUD_PROJECT) ??
+        nonEmptyTrimmed(runtimeEnv.GCLOUD_PROJECT)) &&
       nonEmptyTrimmed(runtimeEnv.GOOGLE_CLOUD_LOCATION)
     ) {
       const adcPath =
         nonEmptyTrimmed(runtimeEnv.GOOGLE_APPLICATION_CREDENTIALS) ??
-        (environment === undefined && (!input.instanceId || input.instanceId === PI_PROVIDER)
-          ? nodePath.join(
-              input.paths?.homeDir ?? OS.homedir(),
-              ".config/gcloud/application_default_credentials.json",
-            )
-          : undefined);
+        nodePath.join(
+          input.paths?.homeDir ?? OS.homedir(),
+          ".config/gcloud/application_default_credentials.json",
+        );
       if (adcPath && (yield* fileSystem.exists(adcPath).pipe(Effect.orElseSucceed(() => false)))) {
         return { found: true, agentDir };
       }
