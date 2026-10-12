@@ -46,14 +46,15 @@ export interface InlineVisualTheme {
 }
 
 /**
- * Categorical chart series. The app's own `--chart-*` tokens are neutral grays
- * meant for UI chrome, so visuals get a distinguishable set per appearance.
+ * Categorical chart series 2 to 6, muted so several read as one palette.
+ * Series 1 is the theme's accent (`--chart-accent`), set in the base styles.
+ * The app's own `--chart-*` tokens are neutral grays meant for UI chrome.
  */
 export const INLINE_VISUAL_SERIES_COLORS: Readonly<
   Record<InlineVisualAppearance, readonly string[]>
 > = {
-  light: ["#2563eb", "#d97706", "#059669", "#db2777", "#7c3aed", "#0891b2"],
-  dark: ["#60a5fa", "#fbbf24", "#34d399", "#f472b6", "#a78bfa", "#22d3ee"],
+  light: ["#64748b", "#0f766e", "#b45309", "#be123c", "#6d28d9"],
+  dark: ["#94a3b8", "#2dd4bf", "#fbbf24", "#fb7185", "#a78bfa"],
 };
 
 export function clampInlineVisualHeight(height: number): number {
@@ -136,11 +137,29 @@ export function inlineVisualThemeMessage(theme: InlineVisualTheme) {
 
 // The page sits on the transcript's own background, inherits the reader's
 // font and chat size, and honors reduced motion even when its own CSS forgets.
-// Its own later rules still win over these.
+// Plain elements (headings, tables, buttons, inputs) look like the app, so a
+// page reads as part of the reply without its own design system. Everything
+// sits in :where() (no specificity), so the page's own rules always win.
 const BASE_CSS =
+  // Derived from the theme variables, so they follow theme changes live.
+  ":root{--chart-accent:var(--info);--series-1:var(--chart-accent);--chart-muted:color-mix(in srgb,var(--foreground) 18%,var(--background));--chart-grid:color-mix(in srgb,var(--foreground) 8%,transparent);--rule:color-mix(in srgb,var(--foreground) 11%,transparent);--surface:color-mix(in srgb,var(--foreground) 3%,var(--background));--control-height:2.15em}" +
   "html{color:var(--foreground);font-family:var(--font-sans);font-size:var(--font-size);line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;scrollbar-width:none}" +
   "html::-webkit-scrollbar{display:none}body{margin:0}code,kbd,pre,samp{font-family:var(--font-mono)}" +
-  ":where(:focus-visible){outline:2px solid var(--ring);outline-offset:-2px}" +
+  ":where(h1,h2,h3,h4){margin:0 0 .5em;font-weight:600;line-height:1.3}:where(h1){font-size:1.3em}:where(h2){font-size:1.15em}:where(h3){font-size:1em}:where(h4){font-size:.85em;font-weight:500;color:var(--muted-foreground)}" +
+  ":where(p){margin:0 0 .75em}:where(p:last-child){margin-bottom:0}:where(small){font-size:.85em}:where(small,.muted){color:var(--muted-foreground)}:where(hr){border:0;border-top:1px solid var(--rule);margin:1em 0}" +
+  ":where(table){border-collapse:collapse;font-variant-numeric:tabular-nums}:where(th){font-size:.85em;font-weight:500;color:var(--muted-foreground);text-align:left}:where(th,td){padding:.45em 1.25em .45em 0;border-bottom:1px solid var(--rule)}:where(th:last-child,td:last-child){padding-right:0}:where(tbody tr:last-child>td){border-bottom:0}" +
+  // After the table rules, so a numeric header cell lines up with its column.
+  ":where(.num){text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}" +
+  ":where(button,input,select,textarea){font:inherit;color:inherit}" +
+  ":where(button,select,input:not([type=checkbox],[type=radio],[type=range],[type=color])){box-sizing:border-box;min-height:var(--control-height);padding:0 .75em;border:1px solid var(--rule);border-radius:calc(var(--radius) - 2px);background:transparent}" +
+  ":where(button){display:inline-flex;align-items:center;justify-content:center;gap:.4em;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color .15s,border-color .15s}:where(button:hover){background:var(--secondary)}" +
+  ":where(button[aria-pressed=true]){background:var(--secondary);border-color:color-mix(in srgb,var(--foreground) 24%,transparent)}:where(button.primary){background:var(--primary);color:var(--primary-foreground);border-color:transparent}" +
+  ":where(button,input,select,textarea):where(:disabled){opacity:.5;cursor:default}:where(input[type=checkbox],input[type=radio],input[type=range],progress){accent-color:var(--chart-accent)}:where(label){display:inline-flex;align-items:center;gap:.5em}" +
+  // A segmented control: buttons with aria-pressed inside .segmented.
+  ":where(.segmented){display:inline-flex;gap:2px;padding:2px;border-radius:calc(var(--radius) - 1px);background:var(--secondary)}:where(.segmented>button){min-height:calc(var(--control-height) - 4px);border-color:transparent;background:transparent;color:var(--muted-foreground)}:where(.segmented>button[aria-pressed=true]){background:var(--background);color:var(--foreground);border-color:var(--rule);box-shadow:0 1px 2px rgb(0 0 0/.06)}" +
+  // A status tag: .tag with data-tone accent, success, warning, or danger.
+  ":where(.tag){display:inline-flex;align-items:center;gap:.3em;padding:.05em .55em;border-radius:999px;font-size:.85em;font-weight:500;white-space:nowrap;background:var(--secondary);color:var(--muted-foreground)}:where(.tag[data-tone=accent]){background:color-mix(in srgb,var(--chart-accent) 14%,transparent);color:color-mix(in srgb,var(--chart-accent) 80%,var(--foreground))}:where(.tag[data-tone=success]){background:color-mix(in srgb,var(--success) 14%,transparent);color:color-mix(in srgb,var(--success) 70%,var(--foreground))}:where(.tag[data-tone=warning]){background:color-mix(in srgb,var(--warning) 16%,transparent);color:color-mix(in srgb,var(--warning) 60%,var(--foreground))}:where(.tag[data-tone=danger]){background:color-mix(in srgb,var(--destructive) 14%,transparent);color:color-mix(in srgb,var(--destructive) 75%,var(--foreground))}" +
+  ":where(:focus-visible){outline:2px solid var(--ring);outline-offset:1px}" +
   "@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}";
 
 function themeCss(theme: InlineVisualTheme): string {

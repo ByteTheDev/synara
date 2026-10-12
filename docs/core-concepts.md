@@ -173,22 +173,31 @@ using the same highlighting limit as file previews. Find, Copy code, and soft wr
 ### Inline visuals (Beta)
 
 In Synara Beta, an agent can answer with a visual: a chart, table, diagram, or small interactive
-view. Ask for one ("show this as a chart") and the agent publishes a self-contained HTML page with
-the `synara_show_visual` tool. The page appears in the conversation where the agent published it,
-usually above its final reply, and stays visible when the turn folds into **Worked for**. This
-works with every provider that has Synara's thread tools (see [Providers](providers.md)).
+tool. Ask for one ("show this as a chart") and the agent publishes a self-contained HTML page with
+the `synara_show_visual` tool. While the turn runs, the visual appears where the agent published
+it. When the turn settles, the response reads as one block: **Worked for** first, then the turn's
+visuals, then the answer text. Tool details stay inside **Worked for**, and visuals stay visible
+when it is collapsed. Expanding or collapsing it, or the turn settling, never reloads a visual, so
+anything you changed in an interactive visual is kept. This works with every provider that has
+Synara's thread tools (see [Providers](providers.md)).
 
 A visual has no border, caption, or card of its own. It sits on the chat background, spans the
 reply column, and lines up with the reply text; its title is the name screen readers announce.
-The tool tells agents to draw at natural size: text that never scales with the column, SVG at its
-own size, and compact charts sized to their data. That guidance shapes the page; Synara does not
-rewrite it. Visuals use the current light or dark theme, custom theme colors, and the chat font
-size, and follow changes without reloading.
+Plain headings, tables, buttons, inputs, and selects inside a visual already look like Synara,
+with a visible keyboard focus ring. Charts use the theme's accent for the value that matters and a
+muted tone for the rest. The tool also tells agents to draw at natural size: text that never
+scales with the column, SVG at its own size, and charts sized to their data. That guidance shapes
+the page; Synara does not rewrite it. Visuals use the current light or dark theme, custom theme
+colors, and the chat font size, and follow changes without reloading.
 
-Scripts in a visual run in an isolated, sandboxed frame. It cannot reach Synara, your session, files, or the network, open windows or dialogs, or navigate
-away. A visual that tries to navigate stops and offers **Reload**. Clicking an `http(s)` link
-opens it in your browser. Hover a visual to copy its source or reload it. Each page is limited
-to 256 KiB, and a turn can show at most six visuals.
+Scripts in a visual run in a sandboxed frame with its own origin. They cannot read Synara's
+pages, your session, or your files, or open windows or dialogs, and the page's fetches and remote
+scripts, fonts, and images are blocked. WebRTC is not blocked. A visual that tries to navigate
+stops and offers **Reload**: the desktop app refuses the navigation, while a plain browser can
+start it before Synara stops the visual. Clicking an `http(s)` link opens it in your browser. Hover
+a visual to copy its source or reload it. Each page is limited to 256 KiB, and a turn can show at
+most six visuals. A turn you stop after it showed a visual ends with the stop line below that
+visual.
 
 The transcript keeps following the end while a visual grows if you were at the end; scrolling
 up, including over a visual, leaves you where you are. A visual that is no longer available

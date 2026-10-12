@@ -29,17 +29,22 @@ export const INLINE_VISUALS_PER_TURN_LIMIT = 6;
 const TRACKED_TURNS_MAX = 512;
 
 const DESCRIPTION = [
-  "Show a finished visual - a chart, table, diagram, or small interactive view - inline in this chat, above your final reply. Call it before writing that reply.",
+  "Show a finished visual - a chart, table, diagram, or small interactive tool - inline in this chat. It appears in your answer, under the turn's Worked for line and above your reply text. Call it before writing that reply.",
   "The reader sees the visual, so keep the reply brief: state the key finding in words and do not describe the visual or say where it is.",
   "Send one complete, self-contained HTML document with inline <style> and <script>.",
-  "The page has no network: remote URLs, fetch, external scripts, fonts, and images do not load. Draw with inline SVG, canvas, or HTML, and embed images as data: URIs.",
-  "Link clicks open http(s) URLs in the reader's browser; the page cannot navigate, open windows, or show dialogs, and storage is in-memory only.",
-  "Theme variables on :root follow the app's light/dark theme: --background --foreground --muted --muted-foreground --card --card-foreground --border --primary --primary-foreground --accent --accent-foreground --destructive --warning --success --info --ring --series-1 to --series-6 (categorical chart colors) --radius --font-sans --font-mono --font-size.",
-  "The frame is borderless on the chat background, as wide as the reply column (728px on desktop, wider if the reader widens chat, about 360px on phones), and lines up with your reply text. The title is not shown; it names the visual for screen readers, so put a short heading in the page when the visual needs one.",
-  "The page is part of your reply: no outer card, border, padding, or banner title, and leave html and body without a background. A box that needs its own background gets at least 16px of padding and var(--radius) corners.",
-  'Draw at natural size rather than stretching to the frame: keep text at the inherited font size, never scaled with the width. Give inline SVG width and height attributes equal to its viewBox plus max-width:100%;height:auto, and never use preserveAspectRatio="none".',
-  "Size charts to their data: bars 14-20px thick with each value right after its bar, a plot area no wider than about 480px, and a handful of points kept compact instead of spread across the column. Use fixed pixel heights and no 100vh; the frame fits the page's height.",
-  "Style controls with the theme variables (for example accent-color: var(--primary)). Respect prefers-reduced-motion.",
+  "Network loads are blocked: fetch, remote URLs, external scripts, fonts, and images do not load. Draw with inline SVG, canvas, or HTML, and embed images as data: URIs.",
+  "Link clicks open http(s) URLs in the reader's browser. Navigating the frame stops the visual; the page cannot open windows or show dialogs, and storage is in-memory only.",
+  // Placement and the base styles the page starts from.
+  "Placement: borderless on the chat background, left-aligned with your reply text, as wide as the reply column (728px on desktop, wider if the reader widens chat, about 360px on phones). The title is not shown; it is the accessible name, so start the page with a short h3 when the visual needs a heading. No outer card, border, padding, banner, or page background.",
+  "Base styles already match the app: text at --font-size, h1-h4, p, small, hr, tables (muted headers, hairline rules, tabular numbers), and buttons, inputs, selects, checkboxes, and ranges with a visible focus ring. Use these plain elements before writing your own CSS. Helpers: class num right-aligns numbers; muted is secondary text; a .segmented group of buttons with aria-pressed is a segmented control; .tag with data-tone accent, success, warning, or danger is a status tag.",
+  "Theme variables on :root follow the app's theme live: --background --foreground --muted-foreground --secondary --border --rule (hairlines) --surface (a faint panel fill) --primary --primary-foreground --success --warning --destructive --ring --radius --font-sans --font-mono --font-size, and for data --chart-accent --chart-muted --chart-grid --series-1 to --series-6.",
+  // Concrete design rules; each one fixes a way generated pages went wrong.
+  "Color: one accent. Use --chart-accent for the value or item that matters and --chart-muted for the rest; never color unrelated categories differently. Use --series-1 to --series-6 only for separate series, with a legend. Use status colors only for status. Text and labels use --foreground and --muted-foreground.",
+  'Size by content, not by the column: tables, lists, and controls take their natural width; a chart\'s size follows its data (columns about 28-40px wide; horizontal bars 12-18px thick with lengths scaled so the longest fits; time series wider) and stops at the column. Draw inline SVG at its viewBox size (width and height attributes equal to the viewBox, plus max-width:100%;height:auto) and never use preserveAspectRatio="none". Keep text at the inherited size, labels about 0.85em and never under 11px.',
+  "Charts: sort bars by value, start bar axes at zero, label values directly (beside the bar or at the line end) instead of relying on axes, right-align numbers, keep gridlines faint (--chart-grid) or omit them, and give the chart a fixed pixel height. Space on a 4/8/12/16/24px rhythm.",
+  "Interactive tools: put labeled controls above what they change, show the current value, keep all state in the page, make every control work from the keyboard, and render an explicit empty state in text (for example: Nothing is over budget).",
+  "Diagrams: nodes are rounded boxes with --surface fill and a --rule or --border outline, titles at the inherited size with a muted subtitle, edges in --muted-foreground with arrowheads, and at most one highlighted node or path in --chart-accent. Lay them out left to right on wide columns and stack them vertically below about 560px (CSS grid or flex wraps well).",
+  "Let content set the page's height: no 100vh; the frame grows to fit. Respect prefers-reduced-motion.",
 ].join(" ");
 
 interface InlineVisualDraft {

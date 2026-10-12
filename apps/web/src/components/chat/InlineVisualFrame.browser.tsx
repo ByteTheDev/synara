@@ -147,6 +147,27 @@ it("stops a page that navigates its own frame", async () => {
   expect(frame()).toBeNull();
 });
 
+it("keeps showing a page whose frame is re-inserted into the document", async () => {
+  const moved = visual("b");
+  await mount(
+    {
+      [moved.visualId]: `<p>moved</p><script>parent.postMessage({ probe: "moved-ready" }, "*");</script>`,
+    },
+    moved,
+  );
+  await expect.poll(() => probes.filter((entry) => entry.probe === "moved-ready").length).toBe(1);
+
+  // A list that cannot move a row intact re-inserts it; the frame gets a new
+  // browsing context and loads its srcdoc again. That is not a navigation.
+  const element = frame()!;
+  element.parentElement!.insertBefore(element, element.nextSibling);
+
+  await expect.poll(() => probes.filter((entry) => entry.probe === "moved-ready").length).toBe(2);
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  expect(page.getByText("This visual stopped", { exact: false }).query()).toBeNull();
+  expect(frame()).toBe(element);
+});
+
 it("opens a link only from the reader's own click", async () => {
   const links = visual("4", 200);
   const { openExternal } = await mount(

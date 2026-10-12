@@ -1396,6 +1396,65 @@ describe("deriveMessagesTimelineRows", () => {
     });
   });
 
+  it("ends a turn stopped after publishing a visual below that visual", () => {
+    const turnId = TurnId.makeUnsafe("t1");
+    const rows = deriveMessagesTimelineRows({
+      ...baseInput,
+      timelineEntries: [
+        userEntry("u1", "2026-01-01T00:00:00Z"),
+        {
+          id: "entry-tool",
+          kind: "work",
+          createdAt: "2026-01-01T00:00:01Z",
+          entry: {
+            id: "tool",
+            createdAt: "2026-01-01T00:00:01Z",
+            label: "Agent",
+            tone: "tool",
+            turnId,
+          },
+        },
+        {
+          id: "entry-visual",
+          kind: "work",
+          createdAt: "2026-01-01T00:00:02Z",
+          entry: {
+            id: "visual",
+            createdAt: "2026-01-01T00:00:02Z",
+            label: "Visual: Budget",
+            tone: "info",
+            activityKind: "visual.shown",
+            turnId,
+            inlineVisual: {
+              visualId: `vis_${"c".repeat(32)}`,
+              title: "Budget",
+              height: 200,
+              byteLength: 100,
+              sha256: "d".repeat(64),
+            },
+          },
+        },
+      ],
+      turnTimingByTurnId: deriveTurnTimingByTurnId({
+        turnDiffSummaries: [],
+        latestTurn: {
+          turnId,
+          state: "interrupted",
+          startedAt: "2026-01-01T00:00:00.500Z",
+          completedAt: "2026-01-01T00:00:16.500Z",
+        },
+        activities: [],
+      }),
+    });
+
+    // The stop line closes the turn after everything it showed.
+    expect(rows.map((row) => row.kind)).toEqual(["message", "work", "inline-visual"]);
+    expect(rows[1]).not.toHaveProperty("turnEndMarker");
+    expect(rows[2]).toMatchObject({
+      turnEndMarker: { elapsed: "16s", outcome: "interrupted", reason: null },
+    });
+  });
+
   it("anchors the live header to the running turn's request, above queued requests", () => {
     const request = userEntry("u1", "2026-01-01T00:00:00Z");
     if (request.kind !== "message") throw new Error("Expected a message");
@@ -2255,6 +2314,118 @@ describe("deriveMessagesTimelineRows", () => {
       "narration:a0",
       "work:w2",
     ]);
+  });
+
+  it("opens each settled response with its header above the visuals it kept", () => {
+    const visualEntry = (id: string, createdAt: string, turnId: string): TimelineEntry => ({
+      id: `entry-${id}`,
+      kind: "work",
+      createdAt,
+      entry: {
+        id,
+        createdAt,
+        label: `Visual: ${id}`,
+        tone: "info",
+        activityKind: "visual.shown",
+        turnId: TurnId.makeUnsafe(turnId),
+        inlineVisual: {
+          visualId: `vis_${id.padEnd(32, "0").slice(0, 32)}`,
+          title: id,
+          height: 200,
+          byteLength: 100,
+          sha256: "b".repeat(64),
+        },
+      },
+    });
+    const settled = [
+      userEntry("u1", "2026-01-01T00:00:00Z", "t1"),
+      workEntry("w1", "2026-01-01T00:00:01Z", "tool 1"),
+      assistantEntry("a0", "2026-01-01T00:00:01.500Z", {
+        turnId: "t1",
+        text: "Measuring",
+        completedAt: "2026-01-01T00:00:01.500Z",
+      }),
+      visualEntry("chart", "2026-01-01T00:00:02Z", "t1"),
+      visualEntry("table", "2026-01-01T00:00:03Z", "t1"),
+      assistantEntry("a1", "2026-01-01T00:00:04Z", {
+        turnId: "t1",
+        text: "Web dominates.",
+        completedAt: "2026-01-01T00:00:05Z",
+      }),
+      userEntry("u2", "2026-01-01T00:01:00Z", "t2"),
+      workEntry("w2", "2026-01-01T00:01:01Z", "tool 2"),
+      visualEntry("trend", "2026-01-01T00:01:02Z", "t2"),
+      assistantEntry("a2", "2026-01-01T00:01:03Z", {
+        turnId: "t2",
+        text: "It got faster.",
+        completedAt: "2026-01-01T00:01:04Z",
+      }),
+      userEntry("u3", "2026-01-01T00:02:00Z", "t3"),
+      workEntry("w3", "2026-01-01T00:02:01Z", "tool 3"),
+      assistantEntry("a3", "2026-01-01T00:02:02Z", {
+        turnId: "t3",
+        text: "Text only.",
+        completedAt: "2026-01-01T00:02:03Z",
+      }),
+    ];
+    const rows = deriveMessagesTimelineRows({ ...baseInput, timelineEntries: settled });
+
+    // Chronology holds: each turn's visuals, then its answer, then the next request.
+    expect(rows.map((row) => (row.kind === "message" ? String(row.message.id) : row.id))).toEqual([
+      "u1",
+      "entry-chart",
+      "entry-table",
+      "a1",
+      "u2",
+      "entry-trend",
+      "a2",
+      "u3",
+      "a3",
+    ]);
+    const visualRow = (id: string) =>
+      rows.find(
+        (row): row is Extract<MessagesTimelineRow, { kind: "inline-visual" }> =>
+          row.kind === "inline-visual" && row.id === `entry-${id}`,
+      )!;
+    // The first visual of each turn renders that turn's header; later visuals
+    // and the answer follow it, and the answer no longer renders it.
+    expect(visualRow("chart").turnHeaderSource?.message.id).toBe(MessageId.makeUnsafe("a1"));
+    expect(visualRow("table").turnHeaderSource).toBeUndefined();
+    expect(messageRow(rows, "a1")).toMatchObject({ turnHeaderRowId: "entry-chart" });
+    expect(visualRow("trend").turnHeaderSource?.message.id).toBe(MessageId.makeUnsafe("a2"));
+    expect(messageRow(rows, "a2")).toMatchObject({ turnHeaderRowId: "entry-trend" });
+    // Tool details stay in the header's disclosure.
+    expect(collapsedSignature(messageRow(rows, "a1")!)).toEqual(["work:w1", "narration:a0"]);
+    // A text-only turn keeps its header on its answer.
+    expect(messageRow(rows, "a3")!.turnHeaderRowId).toBeUndefined();
+    expect(messageRow(rows, "a3")!.turnHeader?.elapsed).toBeTruthy();
+    expect(collapsedSignature(messageRow(rows, "a3")!)).toEqual(["work:w3"]);
+    // Find opens folded narration on the row that renders the disclosure.
+    expect(resolveThreadFindJumpTarget(rows, { messageId: MessageId.makeUnsafe("a0") })).toEqual({
+      rowIndex: rows.indexOf(visualRow("chart")),
+      visibleMessageId: MessageId.makeUnsafe("a1"),
+      expandCollapsedWorkMessageId: MessageId.makeUnsafe("a1"),
+      collapsedNarrationMessageId: MessageId.makeUnsafe("a0"),
+    });
+
+    // While a turn runs nothing moves: its visual has no header yet.
+    const live = deriveMessagesTimelineRows({
+      ...baseInput,
+      isWorking: true,
+      activeTurnInProgress: true,
+      activeTurnId: TurnId.makeUnsafe("t4"),
+      activeTurnStartedAt: "2026-01-01T00:03:00Z",
+      timelineEntries: [
+        ...settled,
+        userEntry("u4", "2026-01-01T00:03:00Z", "t4"),
+        visualEntry("live", "2026-01-01T00:03:01Z", "t4"),
+        assistantEntry("a4", "2026-01-01T00:03:02Z", { turnId: "t4", streaming: true }),
+      ],
+    });
+    const liveVisual = live.find((row) => row.id === "entry-live");
+    expect(liveVisual).toMatchObject({ kind: "inline-visual" });
+    expect(liveVisual).not.toHaveProperty("turnHeaderSource");
+    expect(messageRow(live, "a4")!.turnHeaderRowId).toBeUndefined();
   });
 
   it("keeps an answered question visible while the rest of the turn collapses", () => {

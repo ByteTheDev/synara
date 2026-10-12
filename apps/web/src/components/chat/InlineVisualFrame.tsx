@@ -161,6 +161,7 @@ function InlineVisualDocument({
   const [srcDoc] = useState(() => buildInlineVisualDocument(html, theme));
   const callbacks = useRef({ onStopped, onScrollIntent });
   const loads = useRef(0);
+  const loadedWindow = useRef<Window | null>(null);
   useLayoutEffect(() => {
     callbacks.current = { onStopped, onScrollIntent };
   });
@@ -200,8 +201,16 @@ function InlineVisualDocument({
   }, []);
 
   const onLoad = () => {
-    // srcdoc loads exactly once. A second load means the page navigated its
-    // own frame (desktop blocks that; a browser cannot), so stop showing it.
+    // srcdoc loads exactly once per browsing context. A second load in the same
+    // context means the page navigated its own frame (desktop blocks that; a
+    // browser cannot), so stop showing it. A frame re-inserted into the
+    // document, where the list cannot move it intact, gets a new context and
+    // its own srcdoc again: that is a fresh first load, not a navigation.
+    const frameWindow = frameRef.current?.contentWindow ?? null;
+    if (frameWindow !== loadedWindow.current) {
+      loadedWindow.current = frameWindow;
+      loads.current = 0;
+    }
     loads.current += 1;
     if (loads.current > 1) {
       callbacks.current.onStopped();

@@ -54,6 +54,62 @@ diff --git a/react.js b/react.js
    if (firstVisibleAnchorIndex !== null && firstVisibleAnchorIndex !== void 0 && range.endNoBuffer !== null) {
      for (let i = firstVisibleAnchorIndex; i <= range.endNoBuffer; i++) {
        const id = (_b = state.idCache[i]) != null ? _b : getId(state, i);
+@@ -5610,6 +5629,18 @@
+ });
+ 
+ // src/utils/reordering.ts
++// Element.moveBefore keeps the moved subtree's state, so an iframe in a row (an
++// inline visual) does not reload and lose its page when the list puts its
++// containers back in item order. insertBefore is the fallback where unsupported.
++function moveChildBefore(container, element, reference) {
++  if (typeof container.moveBefore === "function") {
++    container.moveBefore(element, reference);
++  } else if (reference) {
++    container.insertBefore(element, reference);
++  } else {
++    container.appendChild(element);
++  }
++}
+ function sortDOMElements(container, indexByElement) {
+   const elements = Array.from(container.children);
+   if (elements.length <= 1) return elements;
+@@ -5649,9 +5680,9 @@
+         }
+       }
+       if (nextStableElement) {
+-        container.insertBefore(element, nextStableElement);
++        moveChildBefore(container, element, nextStableElement);
+       } else {
+-        container.appendChild(element);
++        moveChildBefore(container, element, null);
+       }
+     }
+   }
+@@ -7406,12 +7437,22 @@
+   }
+   const {
+     indexByKey,
+-    props: { data, getItemType, renderItem }
++    props: { data, getItemType, keyExtractor, renderItem }
+   } = state;
+-  const index = indexByKey.get(key);
++  let index = indexByKey.get(key);
+   if (index === void 0) {
+     return null;
+   }
++  // New data reaches render before indexByKey is rebuilt, so after rows are
++  // inserted or removed a cached index can point at another row. Rendering
++  // that row for one commit remounts this container's content (an iframe in
++  // it reloads), so look the key up in the new data instead.
++  if (keyExtractor && (index >= data.length || keyExtractor(data[index], index) !== key)) {
++    index = data.findIndex((candidate, candidateIndex) => keyExtractor(candidate, candidateIndex) === key);
++    if (index < 0) {
++      return null;
++    }
++  }
+   let renderedItem = null;
+   const extraData = peek$(ctx, "extraData");
+   const item = data[index];
 diff --git a/react.mjs b/react.mjs
 --- a/react.mjs
 +++ b/react.mjs
@@ -110,3 +166,59 @@ diff --git a/react.mjs b/react.mjs
    if (firstVisibleAnchorIndex !== null && firstVisibleAnchorIndex !== void 0 && range.endNoBuffer !== null) {
      for (let i = firstVisibleAnchorIndex; i <= range.endNoBuffer; i++) {
        const id = (_b = state.idCache[i]) != null ? _b : getId(state, i);
+@@ -5589,6 +5608,18 @@
+ });
+ 
+ // src/utils/reordering.ts
++// Element.moveBefore keeps the moved subtree's state, so an iframe in a row (an
++// inline visual) does not reload and lose its page when the list puts its
++// containers back in item order. insertBefore is the fallback where unsupported.
++function moveChildBefore(container, element, reference) {
++  if (typeof container.moveBefore === "function") {
++    container.moveBefore(element, reference);
++  } else if (reference) {
++    container.insertBefore(element, reference);
++  } else {
++    container.appendChild(element);
++  }
++}
+ function sortDOMElements(container, indexByElement) {
+   const elements = Array.from(container.children);
+   if (elements.length <= 1) return elements;
+@@ -5628,9 +5659,9 @@
+         }
+       }
+       if (nextStableElement) {
+-        container.insertBefore(element, nextStableElement);
++        moveChildBefore(container, element, nextStableElement);
+       } else {
+-        container.appendChild(element);
++        moveChildBefore(container, element, null);
+       }
+     }
+   }
+@@ -7385,12 +7416,22 @@
+   }
+   const {
+     indexByKey,
+-    props: { data, getItemType, renderItem }
++    props: { data, getItemType, keyExtractor, renderItem }
+   } = state;
+-  const index = indexByKey.get(key);
++  let index = indexByKey.get(key);
+   if (index === void 0) {
+     return null;
+   }
++  // New data reaches render before indexByKey is rebuilt, so after rows are
++  // inserted or removed a cached index can point at another row. Rendering
++  // that row for one commit remounts this container's content (an iframe in
++  // it reloads), so look the key up in the new data instead.
++  if (keyExtractor && (index >= data.length || keyExtractor(data[index], index) !== key)) {
++    index = data.findIndex((candidate, candidateIndex) => keyExtractor(candidate, candidateIndex) === key);
++    if (index < 0) {
++      return null;
++    }
++  }
+   let renderedItem = null;
+   const extraData = peek$(ctx, "extraData");
+   const item = data[index];

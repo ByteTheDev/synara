@@ -1475,6 +1475,224 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     [cancelUserMessageEdit, onEditUserMessage],
   );
 
+  // The settled turn header ("Worked for", its disclosure, and pinned
+  // background tasks). It opens the response: the terminal message renders
+  // it, unless the turn kept visuals, whose first row renders it instead so
+  // the visuals and the answer read as one block below it.
+  const renderSettledTurnHeader = (row: Extract<MessagesTimelineRow, { kind: "message" }>) => {
+    const knownAbsoluteFilePaths = collectAbsoluteFilePathsFromWorkEntries([
+      ...(row.leadingWorkEntries ?? []),
+      ...(row.inlineWorkEntries ?? []),
+      ...(row.collapsedTurnItems ?? []).flatMap((item) =>
+        item.kind === "work" ? [item.entry] : [],
+      ),
+    ]);
+    // Background tasks stay visible under the header while the turn is
+    // folded: each is one row whose status is the turn's lasting result.
+    const pinnedBackgroundEntries = (row.collapsedTurnItems ?? []).flatMap((item) =>
+      item.kind === "work" && item.entry.backgroundTask ? [item.entry] : [],
+    );
+    const collapsedTurnItems = row.collapsedTurnItems?.filter(
+      (item) =>
+        item.kind !== "work" ||
+        !(
+          item.entry.synaraThreadCreation ||
+          item.entry.computerSetupRequired ||
+          item.entry.computerControlDenied ||
+          item.entry.backgroundTask
+        ),
+    );
+    const hasCollapsedWork = Boolean(collapsedTurnItems && collapsedTurnItems.length > 0);
+    const isCollapsedWorkExpanded = hasCollapsedWork
+      ? (expandedCollapsedWork[row.message.id] ?? false)
+      : false;
+    const settledCollapseTransition = isCollapsedWorkExpanded
+      ? undefined
+      : settledTurnCollapseTransitions[row.message.id];
+    const renderCollapsedTurnItem = (item: CollapsedTurnItem, keyPrefix: string) =>
+      item.kind === "work" ? (
+        <TimelineWorkEntryRow
+          key={`${keyPrefix}:work:${row.message.id}:${item.id}`}
+          workEntry={item.entry}
+          chatMetaFontSizePx={appTypographyScale.chatMetaPx}
+          textFontSizePx={normalizedChatFontSizePx}
+          density={prefersCompactWorkEntryRow(item.entry) ? "compact" : "default"}
+          markdownCwd={markdownCwd}
+          onImageExpand={onImageExpand}
+          timestampFormat={timestampFormat}
+          {...(onOpenAgentActivity ? { onOpenAgentActivity } : {})}
+          {...(onOpenAutomation ? { onOpenAutomation } : {})}
+          {...(computerControlEnabled !== undefined ? { computerControlEnabled } : {})}
+          {...(onEnableComputerControl ? { onEnableComputerControl } : {})}
+        />
+      ) : (
+        <div
+          key={`${keyPrefix}:narration:${row.message.id}:${item.id}`}
+          className={MUTED_LABEL_TEXT_CLASS_NAME}
+          data-chat-find-narration-id={item.message.id}
+          data-chat-find-document-id={item.message.id}
+        >
+          <ChatMarkdown
+            text={item.message.text}
+            cwd={markdownCwd}
+            directionMode="auto-blocks"
+            isStreaming={false}
+            style={chatTypographyStyle}
+            onImageExpand={onImageExpand}
+            knownAbsoluteFilePaths={knownAbsoluteFilePaths}
+            {...threadFindMarkdownProps(findHighlight, item.message.id)}
+          />
+        </div>
+      );
+    const renderCollapsedTurnChunk = (chunk: CollapsedTurnChunk, keyPrefix: string) => {
+      if (chunk.kind === "item") {
+        return renderCollapsedTurnItem(chunk.item, keyPrefix);
+      }
+      if (chunk.kind === "background-group") {
+        const groupKey = `turn:${row.message.id}:background:${chunk.id}`;
+        return (
+          <BackgroundTaskGroupRow
+            key={`${keyPrefix}:background-group:${row.message.id}:${chunk.id}`}
+            entries={chunk.entries}
+            open={toolGroupSummaryOverrides[groupKey] ?? false}
+            onToggle={(open) => setToolGroupSummaryOpen(groupKey, open)}
+            fontSizePx={normalizedChatFontSizePx}
+            renderEntry={(entry) =>
+              renderCollapsedTurnItem({ kind: "work", id: entry.id, entry }, keyPrefix)
+            }
+          />
+        );
+      }
+      const summary = summarizeToolCallGroup(chunk.entries);
+      if (!summary) {
+        return chunk.entries.map((entry) =>
+          renderCollapsedTurnItem({ kind: "work", id: entry.id, entry }, keyPrefix),
+        );
+      }
+      const summaryOverrideKey = `turn:${row.message.id}:${chunk.id}`;
+      return (
+        <ToolCallGroupSummaryRow
+          key={`${keyPrefix}:tool-group:${row.message.id}:${chunk.id}`}
+          summary={summary}
+          open={toolGroupSummaryOverrides[summaryOverrideKey] ?? false}
+          onToggle={(open) => setToolGroupSummaryOpen(summaryOverrideKey, open)}
+          fontSizePx={normalizedChatFontSizePx}
+          renderChildren={() => (
+            <div className="space-y-0.5 pt-0.5">
+              {chunk.entries.map((entry) =>
+                renderCollapsedTurnItem({ kind: "work", id: entry.id, entry }, keyPrefix),
+              )}
+            </div>
+          )}
+        />
+      );
+    };
+    return (
+      <>
+        {settledCollapseTransition && (
+          <div
+            aria-hidden="true"
+            inert
+            // The clone is visual-only for the entire close transition; keep it inert
+            // even while the inner DisclosureRegion starts open for its first frame.
+            className="pointer-events-none mb-3 select-none"
+            data-settled-turn-collapse-transition="true"
+          >
+            <DisclosureRegion
+              open={settledCollapseTransition.open}
+              contentClassName="space-y-1.5 pb-2.5"
+            >
+              {chunkCollapsedTurnItems(settledCollapseTransition.items).map((chunk) =>
+                renderCollapsedTurnChunk(chunk, "settling-turn-close"),
+              )}
+            </DisclosureRegion>
+          </div>
+        )}
+        {row.turnHeader &&
+          (hasCollapsedWork ||
+            pinnedBackgroundEntries.length > 0 ||
+            row.turnHeader.outcome !== "completed") &&
+          !conversationOnly && (
+            <div className="mb-3">
+              {hasCollapsedWork ? (
+                <Collapsible
+                  className="group/collapsed-work"
+                  open={isCollapsedWorkExpanded}
+                  onOpenChange={(open) => {
+                    setCollapsedWorkExpanded(row.message.id, open);
+                  }}
+                >
+                  <TurnHeaderLine
+                    kind="settled"
+                    header={row.turnHeader}
+                    fontSize={chatTypographyStyle.fontSize}
+                    disclosure={{
+                      open: isCollapsedWorkExpanded,
+                      renderTrigger: (content) => (
+                        <CollapsibleTrigger
+                          // ChatView's click anchor preserves this trigger's screen position
+                          // while the disclosure height animates, so opening it should not tail-scroll.
+                          className="inline-flex min-w-0 items-center text-left transition-colors duration-200 hover:text-foreground"
+                        >
+                          {content}
+                        </CollapsibleTrigger>
+                      ),
+                    }}
+                  />
+                  <CollapsiblePanel>
+                    <div
+                      className={disclosureContentClassName(
+                        isCollapsedWorkExpanded,
+                        "mb-2.5 space-y-1.5",
+                      )}
+                    >
+                      {chunkCollapsedTurnItems(collapsedTurnItems!).map((chunk) =>
+                        renderCollapsedTurnChunk(chunk, "collapsed-panel"),
+                      )}
+                    </div>
+                  </CollapsiblePanel>
+                  <div className="h-px w-full bg-border" />
+                </Collapsible>
+              ) : row.turnHeader.outcome !== "completed" ? (
+                <TurnHeaderLine
+                  kind="settled"
+                  header={row.turnHeader}
+                  fontSize={chatTypographyStyle.fontSize}
+                />
+              ) : null}
+              {pinnedBackgroundEntries.length > 0 ? (
+                <div className="space-y-0.5">
+                  {pinnedBackgroundEntries.length >= MIN_BACKGROUND_TASK_GROUP_SIZE ? (
+                    <BackgroundTaskGroupRow
+                      entries={pinnedBackgroundEntries}
+                      open={toolGroupSummaryOverrides[`turn:${row.message.id}:background`] ?? false}
+                      onToggle={(open) =>
+                        setToolGroupSummaryOpen(`turn:${row.message.id}:background`, open)
+                      }
+                      fontSizePx={normalizedChatFontSizePx}
+                      renderEntry={(entry) =>
+                        renderCollapsedTurnItem(
+                          { kind: "work", id: entry.id, entry },
+                          "pinned-background",
+                        )
+                      }
+                    />
+                  ) : (
+                    pinnedBackgroundEntries.map((entry) =>
+                      renderCollapsedTurnItem(
+                        { kind: "work", id: entry.id, entry },
+                        "pinned-background",
+                      ),
+                    )
+                  )}
+                </div>
+              ) : null}
+            </div>
+          )}
+      </>
+    );
+  };
+
   const renderRowContent = (row: MessagesTimelineRow) => (
     <div
       ref={observeTimelineRow}
@@ -2180,12 +2398,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
               ),
             ).values(),
           ];
-          // Background tasks stay visible under the header while the turn is
-          // folded: each is one row whose status is the turn's lasting result.
-          const pinnedBackgroundEntries = (row.collapsedTurnItems ?? []).flatMap((item) =>
-            item.kind === "work" && item.entry.backgroundTask ? [item.entry] : [],
-          );
-          const collapsedTurnItems = row.collapsedTurnItems?.filter(
+          const hasCollapsedWork = (row.collapsedTurnItems ?? []).some(
             (item) =>
               item.kind !== "work" ||
               !(
@@ -2195,13 +2408,6 @@ export const MessagesTimeline = memo(function MessagesTimeline({
                 item.entry.backgroundTask
               ),
           );
-          const hasCollapsedWork = Boolean(collapsedTurnItems && collapsedTurnItems.length > 0);
-          const isCollapsedWorkExpanded = hasCollapsedWork
-            ? (expandedCollapsedWork[row.message.id] ?? false)
-            : false;
-          const settledCollapseTransition = isCollapsedWorkExpanded
-            ? undefined
-            : settledTurnCollapseTransitions[row.message.id];
           const isTailContentRow = row.id === tailContentRowId;
           const renderWorkDisplay = (
             display: typeof leadingWorkDisplay,
@@ -2374,189 +2580,9 @@ export const MessagesTimeline = memo(function MessagesTimeline({
               </>
             );
           };
-          const renderCollapsedTurnItem = (item: CollapsedTurnItem, keyPrefix: string) =>
-            item.kind === "work" ? (
-              <TimelineWorkEntryRow
-                key={`${keyPrefix}:work:${row.message.id}:${item.id}`}
-                workEntry={item.entry}
-                chatMetaFontSizePx={appTypographyScale.chatMetaPx}
-                textFontSizePx={normalizedChatFontSizePx}
-                density={prefersCompactWorkEntryRow(item.entry) ? "compact" : "default"}
-                markdownCwd={markdownCwd}
-                onImageExpand={onImageExpand}
-                timestampFormat={timestampFormat}
-                {...(onOpenAgentActivity ? { onOpenAgentActivity } : {})}
-                {...(onOpenAutomation ? { onOpenAutomation } : {})}
-                {...(computerControlEnabled !== undefined ? { computerControlEnabled } : {})}
-                {...(onEnableComputerControl ? { onEnableComputerControl } : {})}
-              />
-            ) : (
-              <div
-                key={`${keyPrefix}:narration:${row.message.id}:${item.id}`}
-                className={MUTED_LABEL_TEXT_CLASS_NAME}
-                data-chat-find-narration-id={item.message.id}
-                data-chat-find-document-id={item.message.id}
-              >
-                <ChatMarkdown
-                  text={item.message.text}
-                  cwd={markdownCwd}
-                  directionMode="auto-blocks"
-                  isStreaming={false}
-                  style={chatTypographyStyle}
-                  onImageExpand={onImageExpand}
-                  knownAbsoluteFilePaths={knownAbsoluteFilePaths}
-                  {...threadFindMarkdownProps(findHighlight, item.message.id)}
-                />
-              </div>
-            );
-          const renderCollapsedTurnChunk = (chunk: CollapsedTurnChunk, keyPrefix: string) => {
-            if (chunk.kind === "item") {
-              return renderCollapsedTurnItem(chunk.item, keyPrefix);
-            }
-            if (chunk.kind === "background-group") {
-              const groupKey = `turn:${row.message.id}:background:${chunk.id}`;
-              return (
-                <BackgroundTaskGroupRow
-                  key={`${keyPrefix}:background-group:${row.message.id}:${chunk.id}`}
-                  entries={chunk.entries}
-                  open={toolGroupSummaryOverrides[groupKey] ?? false}
-                  onToggle={(open) => setToolGroupSummaryOpen(groupKey, open)}
-                  fontSizePx={normalizedChatFontSizePx}
-                  renderEntry={(entry) =>
-                    renderCollapsedTurnItem({ kind: "work", id: entry.id, entry }, keyPrefix)
-                  }
-                />
-              );
-            }
-            const summary = summarizeToolCallGroup(chunk.entries);
-            if (!summary) {
-              return chunk.entries.map((entry) =>
-                renderCollapsedTurnItem({ kind: "work", id: entry.id, entry }, keyPrefix),
-              );
-            }
-            const summaryOverrideKey = `turn:${row.message.id}:${chunk.id}`;
-            return (
-              <ToolCallGroupSummaryRow
-                key={`${keyPrefix}:tool-group:${row.message.id}:${chunk.id}`}
-                summary={summary}
-                open={toolGroupSummaryOverrides[summaryOverrideKey] ?? false}
-                onToggle={(open) => setToolGroupSummaryOpen(summaryOverrideKey, open)}
-                fontSizePx={normalizedChatFontSizePx}
-                renderChildren={() => (
-                  <div className="space-y-0.5 pt-0.5">
-                    {chunk.entries.map((entry) =>
-                      renderCollapsedTurnItem({ kind: "work", id: entry.id, entry }, keyPrefix),
-                    )}
-                  </div>
-                )}
-              />
-            );
-          };
           return (
             <>
-              {settledCollapseTransition && (
-                <div
-                  aria-hidden="true"
-                  inert
-                  // The clone is visual-only for the entire close transition; keep it inert
-                  // even while the inner DisclosureRegion starts open for its first frame.
-                  className="pointer-events-none mb-3 select-none"
-                  data-settled-turn-collapse-transition="true"
-                >
-                  <DisclosureRegion
-                    open={settledCollapseTransition.open}
-                    contentClassName="space-y-1.5 pb-2.5"
-                  >
-                    {chunkCollapsedTurnItems(settledCollapseTransition.items).map((chunk) =>
-                      renderCollapsedTurnChunk(chunk, "settling-turn-close"),
-                    )}
-                  </DisclosureRegion>
-                </div>
-              )}
-              {row.turnHeader &&
-                (hasCollapsedWork ||
-                  pinnedBackgroundEntries.length > 0 ||
-                  row.turnHeader.outcome !== "completed") &&
-                !conversationOnly && (
-                  <div className="mb-3">
-                    {hasCollapsedWork ? (
-                      <Collapsible
-                        className="group/collapsed-work"
-                        open={isCollapsedWorkExpanded}
-                        onOpenChange={(open) => {
-                          setCollapsedWorkExpanded(row.message.id, open);
-                        }}
-                      >
-                        <TurnHeaderLine
-                          kind="settled"
-                          header={row.turnHeader}
-                          fontSize={chatTypographyStyle.fontSize}
-                          disclosure={{
-                            open: isCollapsedWorkExpanded,
-                            renderTrigger: (content) => (
-                              <CollapsibleTrigger
-                                // ChatView's click anchor preserves this trigger's screen position
-                                // while the disclosure height animates, so opening it should not tail-scroll.
-                                className="inline-flex min-w-0 items-center text-left transition-colors duration-200 hover:text-foreground"
-                              >
-                                {content}
-                              </CollapsibleTrigger>
-                            ),
-                          }}
-                        />
-                        <CollapsiblePanel>
-                          <div
-                            className={disclosureContentClassName(
-                              isCollapsedWorkExpanded,
-                              "mb-2.5 space-y-1.5",
-                            )}
-                          >
-                            {chunkCollapsedTurnItems(collapsedTurnItems!).map((chunk) =>
-                              renderCollapsedTurnChunk(chunk, "collapsed-panel"),
-                            )}
-                          </div>
-                        </CollapsiblePanel>
-                        <div className="h-px w-full bg-border" />
-                      </Collapsible>
-                    ) : row.turnHeader.outcome !== "completed" ? (
-                      <TurnHeaderLine
-                        kind="settled"
-                        header={row.turnHeader}
-                        fontSize={chatTypographyStyle.fontSize}
-                      />
-                    ) : null}
-                    {pinnedBackgroundEntries.length > 0 ? (
-                      <div className="space-y-0.5">
-                        {pinnedBackgroundEntries.length >= MIN_BACKGROUND_TASK_GROUP_SIZE ? (
-                          <BackgroundTaskGroupRow
-                            entries={pinnedBackgroundEntries}
-                            open={
-                              toolGroupSummaryOverrides[`turn:${row.message.id}:background`] ??
-                              false
-                            }
-                            onToggle={(open) =>
-                              setToolGroupSummaryOpen(`turn:${row.message.id}:background`, open)
-                            }
-                            fontSizePx={normalizedChatFontSizePx}
-                            renderEntry={(entry) =>
-                              renderCollapsedTurnItem(
-                                { kind: "work", id: entry.id, entry },
-                                "pinned-background",
-                              )
-                            }
-                          />
-                        ) : (
-                          pinnedBackgroundEntries.map((entry) =>
-                            renderCollapsedTurnItem(
-                              { kind: "work", id: entry.id, entry },
-                              "pinned-background",
-                            ),
-                          )
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
-                )}
+              {row.turnHeaderRowId === undefined ? renderSettledTurnHeader(row) : null}
               <div className="group min-w-0 py-0.5">
                 {conversationOnly ? null : renderWorkDisplay(leadingWorkDisplay, "leading")}
                 {row.message.asyncUserInput ? (
@@ -2924,13 +2950,18 @@ export const MessagesTimeline = memo(function MessagesTimeline({
       )}
 
       {row.kind === "inline-visual" && threadId ? (
-        <div className="min-w-0">
-          <InlineVisualFrame
-            threadId={ThreadId.makeUnsafe(threadId)}
-            visual={row.visual}
-            onScrollIntent={handleEmbeddedScrollIntent}
-          />
-        </div>
+        <>
+          {/* Added above the frame when the turn settles; the frame's own
+              element stays where it is, so its page keeps its state. */}
+          {row.turnHeaderSource ? renderSettledTurnHeader(row.turnHeaderSource) : null}
+          <div className="min-w-0">
+            <InlineVisualFrame
+              threadId={ThreadId.makeUnsafe(threadId)}
+              visual={row.visual}
+              onScrollIntent={handleEmbeddedScrollIntent}
+            />
+          </div>
+        </>
       ) : null}
 
       {row.kind === "user-input" && (
@@ -2942,7 +2973,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
         />
       )}
 
-      {(row.kind === "work" || row.kind === "message") &&
+      {(row.kind === "work" || row.kind === "message" || row.kind === "inline-visual") &&
         row.turnEndMarker !== undefined &&
         !conversationOnly && (
           <div

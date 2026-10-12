@@ -60,8 +60,9 @@ function readInlineVisualTheme(
   // From the setting itself: the root size variables are applied in an effect
   // that may not have run yet when this reads.
   variables["--font-size"] = `${getAppTypographyScale(chatFontSizePx).chatPx}px`;
+  // Series 1 is the theme accent, derived inside the page.
   INLINE_VISUAL_SERIES_COLORS[appearance].forEach((color, index) => {
-    variables[`--series-${index + 1}`] = color;
+    variables[`--series-${index + 2}`] = color;
   });
   return { appearance, variables };
 }

@@ -1,7 +1,7 @@
 import "../../index.css";
 
 import type { LegendListRef } from "@legendapp/list/react";
-import { MessageId, type NativeApi, ThreadId } from "@synara/contracts";
+import { MessageId, type NativeApi, ThreadId, TurnId } from "@synara/contracts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRef } from "react";
 import { userEvent } from "vitest/browser";
@@ -59,14 +59,21 @@ const baseEntries: TimelineEntry[] = [
     },
   },
 ];
+interface TurnState {
+  readonly timelineEntries: TimelineEntry[];
+  readonly activeTurnId?: TurnId;
+  readonly activeTurnStartedAt?: string;
+}
+
 /** The transcript as ChatView wires it: the real follow hook drives the list. */
-function Transcript() {
+function Transcript({ turn = { timelineEntries: baseEntries } }: { turn?: TurnState }) {
   const listRef = useRef<LegendListRef | null>(null);
+  const working = turn.activeTurnId !== undefined;
   const scroll = useChatTranscriptScroll({
     activeThreadId: THREAD_ID,
     legendListRef: listRef,
-    timelineEntries: baseEntries,
-    hasStreamingAssistantText: false,
+    timelineEntries: turn.timelineEntries,
+    hasStreamingAssistantText: working,
     composerTranscriptInsetPx: 0,
     isInactiveSplitPane: false,
   });
@@ -77,9 +84,10 @@ function Transcript() {
     >
       <MessagesTimeline
         hasMessages
-        isWorking={false}
-        activeTurnInProgress={false}
-        activeTurnStartedAt={null}
+        isWorking={working}
+        activeTurnInProgress={working}
+        activeTurnStartedAt={turn.activeTurnStartedAt ?? null}
+        {...(turn.activeTurnId ? { activeTurnId: turn.activeTurnId } : {})}
         listRef={listRef}
         threadId={THREAD_ID}
         followLiveOutput={!scroll.isUserScrollDetached}
@@ -89,7 +97,7 @@ function Transcript() {
         onMessagesPointerDown={scroll.onMessagesPointerDownBase}
         onMessagesPointerUp={scroll.onMessagesPointerUpBase}
         onEmbeddedScrollIntent={scroll.onEmbeddedScrollIntent}
-        timelineEntries={baseEntries}
+        timelineEntries={turn.timelineEntries}
         turnDiffSummaryByAssistantMessageId={new Map()}
         nowIso={NOW}
         onOpenTurnDiff={() => {}}
@@ -201,4 +209,180 @@ it("releases follow when the reader scrolls up over a visual", async () => {
 
   expect(list.scrollTop).toBeCloseTo(readingTop, 0);
   expect(followState()).toBe("detached");
+});
+
+const TURN_ID = TurnId.makeUnsafe("turn-visual");
+const at = (second: number) => `2026-10-12T12:01:0${second}.000Z`;
+const TURN_VISUAL = { ...VISUAL, visualId: `vis_${"7".repeat(32)}`, title: "Budget" };
+// The page keeps a value the reader set and reports it when asked.
+const TURN_PAGE = `<p style="height:160px">budget tool</p><script>
+  let value = 0;
+  addEventListener("message", (event) => {
+    if (event.data && typeof event.data.set === "number") value = event.data.set;
+    if (event.data && event.data.ask) parent.postMessage({ probe: "value", value }, "*");
+  });
+  parent.postMessage({ probe: "visual-ready" }, "*");
+</script>`;
+
+/** A turn that publishes a visual, live (answer streaming) or settled. */
+function turnEntries(settled: boolean): TimelineEntry[] {
+  return [
+    {
+      id: "entry-request",
+      kind: "message",
+      createdAt: at(0),
+      message: {
+        id: MessageId.makeUnsafe("request"),
+        role: "user",
+        text: "Check the bundle budget.",
+        createdAt: at(0),
+        streaming: false,
+        turnId: TURN_ID,
+      },
+    },
+    {
+      id: "entry-tool",
+      kind: "work",
+      createdAt: at(1),
+      entry: {
+        id: "tool",
+        createdAt: at(1),
+        label: "Read bundle stats",
+        tone: "tool",
+        turnId: TURN_ID,
+      },
+    },
+    {
+      id: "entry-turn-visual",
+      kind: "work",
+      createdAt: at(2),
+      entry: {
+        id: "turn-visual",
+        createdAt: at(2),
+        label: "Visual: Budget",
+        tone: "info",
+        activityKind: "visual.shown",
+        turnId: TURN_ID,
+        inlineVisual: TURN_VISUAL,
+      },
+    },
+    {
+      id: "entry-answer",
+      kind: "message",
+      createdAt: at(3),
+      message: {
+        id: MessageId.makeUnsafe("answer"),
+        role: "assistant",
+        text: "Two dependencies are over budget.",
+        createdAt: at(3),
+        streaming: !settled,
+        turnId: TURN_ID,
+        ...(settled ? { completedAt: at(4) } : {}),
+      },
+    },
+  ];
+}
+
+/** Mounts the live turn after `earlier` rows; `settle` re-renders it settled. */
+async function mountLiveTurn(earlier: TimelineEntry[] = []) {
+  vi.stubGlobal("nativeApi", {
+    orchestration: {
+      getInlineVisual: vi.fn(async () => ({ visualId: TURN_VISUAL.visualId, html: TURN_PAGE })),
+    },
+  } as unknown as NativeApi);
+  const probes: Array<Record<string, unknown>> = [];
+  const onProbe = (event: MessageEvent) => {
+    if (event.data?.probe) probes.push(event.data as Record<string, unknown>);
+  };
+  window.addEventListener("message", onProbe);
+  const client = new QueryClient();
+  const view = (turn: TurnState) => (
+    <QueryClientProvider client={client}>
+      <Transcript turn={turn} />
+    </QueryClientProvider>
+  );
+  const screen = await render(
+    view({
+      timelineEntries: [...earlier, ...turnEntries(false)],
+      activeTurnId: TURN_ID,
+      activeTurnStartedAt: at(0),
+    }),
+  );
+  cleanup = async () => {
+    window.removeEventListener("message", onProbe);
+    await screen.unmount();
+    client.clear();
+  };
+  await expect.poll(() => probes.some((entry) => entry.probe === "visual-ready")).toBe(true);
+  const frame = document.querySelector<HTMLIFrameElement>(`iframe[title="${TURN_VISUAL.title}"]`)!;
+  const list = document.querySelector<HTMLElement>("[data-chat-scroll-container]")!;
+  const settle = async () => {
+    await screen.rerender(view({ timelineEntries: [...earlier, ...turnEntries(true)] }));
+    await vi.waitUntil(() =>
+      [...document.querySelectorAll("button, span")].some((element) =>
+        element.textContent?.trim().startsWith("Worked for"),
+      ),
+    );
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 50))),
+    );
+  };
+  return { frame, list, probes, settle };
+}
+
+it("keeps a visual's page, under its turn header, when the turn settles", async () => {
+  const { frame, probes, settle } = await mountLiveTurn();
+  // The reader uses the visual while the answer still streams.
+  frame.contentWindow!.postMessage({ set: 7 }, "*");
+
+  await settle();
+  const header = [...document.querySelectorAll("button, span")].find((element) =>
+    element.textContent?.trim().startsWith("Worked for"),
+  )!;
+
+  // Same frame and page, never reloaded: the value the reader set survives.
+  expect(document.querySelector("iframe[data-inline-visual-frame]")).toBe(frame);
+  frame.contentWindow!.postMessage({ ask: true }, "*");
+  await expect.poll(() => probes.find((entry) => entry.probe === "value")?.value).toBe(7);
+  expect(probes.filter((entry) => entry.probe === "visual-ready")).toHaveLength(1);
+  // One reading block: Worked for, then the visual, then the answer.
+  const answer = [...document.querySelectorAll("p")].find(
+    (element) => element.textContent === "Two dependencies are over budget.",
+  )!;
+  expect(header.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+    frame.getBoundingClientRect().top,
+  );
+  expect(frame.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+    answer.getBoundingClientRect().top,
+  );
+});
+
+it("leaves follow as the reader set it when a turn with a visual settles", async () => {
+  // An earlier long answer makes the transcript scroll.
+  const { list, settle } = await mountLiveTurn(baseEntries.slice(0, 1));
+  const distanceFromEnd = () => list.scrollHeight - list.clientHeight - list.scrollTop;
+  await expect.poll(distanceFromEnd).toBeLessThanOrEqual(4);
+  expect(followState()).toBe("following");
+
+  // The reader scrolls up into the earlier answer while this one streams.
+  await userEvent.wheel(list, { delta: { y: -300 } });
+  await expect.poll(followState).toBe("detached");
+  const readingTop = list.scrollTop;
+
+  await settle();
+
+  // Settling folds rows below the reader; it neither moves them nor rearms follow.
+  expect(list.scrollTop).toBeCloseTo(readingTop, 0);
+  expect(followState()).toBe("detached");
+});
+
+it("keeps a reader at the end when a turn with a visual settles", async () => {
+  const { list, settle } = await mountLiveTurn(baseEntries.slice(0, 1));
+  const distanceFromEnd = () => list.scrollHeight - list.clientHeight - list.scrollTop;
+  await expect.poll(distanceFromEnd).toBeLessThanOrEqual(4);
+
+  await settle();
+
+  await expect.poll(distanceFromEnd).toBeLessThanOrEqual(4);
+  expect(followState()).toBe("following");
 });

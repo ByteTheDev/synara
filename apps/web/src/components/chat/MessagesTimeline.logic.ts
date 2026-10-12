@@ -585,6 +585,9 @@ export type MessagesTimelineRow =
       // Set on the terminal assistant, or the request if an interrupted turn
       // produced no assistant/work rows.
       turnHeader?: TurnHeader;
+      // Set when a kept visual row opens the response and renders this header,
+      // so the header sits above the visuals and the answer instead of between.
+      turnHeaderRowId?: string;
       // Set on the last row of a stopped turn that has no settled header.
       turnEndMarker?: TurnEndMarker;
       durationStart: string;
@@ -627,6 +630,12 @@ export type MessagesTimelineRow =
       id: string;
       createdAt: string;
       visual: InlineVisualActivityPayload;
+      turnId?: TurnId;
+      // The settled terminal message whose turn header this row renders above
+      // its visual: set on the first visual a settled turn keeps.
+      turnHeaderSource?: Extract<MessagesTimelineRow, { kind: "message" }>;
+      // Set when a stopped turn without a settled header ends on this visual.
+      turnEndMarker?: TurnEndMarker;
     }
   | { kind: "working"; id: string; createdAt: string | null }
   | {
@@ -685,7 +694,10 @@ export function resolveWorkEntryJumpTarget(
         (item) => item.kind === "work" && item.entry.id === entryId,
       )
     ) {
-      return { rowIndex, expandCollapsedWorkMessageId: row.message.id };
+      return {
+        rowIndex: turnHeaderRowIndex(rows, rowIndex),
+        expandCollapsedWorkMessageId: row.message.id,
+      };
     }
   }
   return null;
@@ -734,7 +746,7 @@ export function resolveThreadFindJumpTarget(
       continue;
     }
     return {
-      rowIndex,
+      rowIndex: turnHeaderRowIndex(rows, rowIndex),
       visibleMessageId: row.message.id,
       expandCollapsedWorkMessageId: row.message.id,
       collapsedNarrationMessageId: messageId,
@@ -742,6 +754,16 @@ export function resolveThreadFindJumpTarget(
   }
 
   return null;
+}
+
+// The row that renders a settled message's turn header, and so its folded
+// work: the message's own row, or the first visual its turn kept.
+function turnHeaderRowIndex(rows: readonly MessagesTimelineRow[], messageRowIndex: number): number {
+  const row = rows[messageRowIndex];
+  const headerRowId = row?.kind === "message" ? row.turnHeaderRowId : undefined;
+  if (headerRowId === undefined) return messageRowIndex;
+  const headerRowIndex = rows.findIndex((candidate) => candidate.id === headerRowId);
+  return headerRowIndex >= 0 ? headerRowIndex : messageRowIndex;
 }
 
 export function computeMessageDurationStart(
@@ -1099,6 +1121,7 @@ export function deriveMessagesTimelineRows(input: {
             id: runEntry.id,
             createdAt: runEntry.createdAt,
             visual: inlineVisual,
+            ...(runEntry.entry.turnId ? { turnId: runEntry.entry.turnId } : {}),
           });
           continue;
         }
@@ -1307,6 +1330,9 @@ function markInterruptedTurnsWithoutHeader(
       for (const entry of row.groupedEntries) {
         if (entry.turnId) lastRowIndexByTurnId.set(entry.turnId, index);
       }
+    } else if (row.kind === "inline-visual" && row.turnId) {
+      // A visual published before the stop still belongs above the stop line.
+      lastRowIndexByTurnId.set(row.turnId, index);
     } else if (
       row.kind === "message" &&
       row.message.role === "user" &&
@@ -1321,7 +1347,7 @@ function markInterruptedTurnsWithoutHeader(
     const timing = turnTimingByTurnId.get(turnId);
     if (!timing || (!timing.interrupted && !timing.failed) || headedTurnIds.has(turnId)) continue;
     const row = rows[index]!;
-    if (row.kind !== "work" && row.kind !== "message") continue;
+    if (row.kind !== "work" && row.kind !== "message" && row.kind !== "inline-visual") continue;
     row.turnEndMarker = {
       elapsed:
         timing.startedAt && timing.completedAt
@@ -1496,6 +1522,8 @@ function collapseSettledTurns(
     // mini-turns can have distinct turnIds inside one assistant answer, so the
     // user message boundary is the stable UI grouping point.
     const foldIndices: number[] = [];
+    // Scanning backwards, so this ends as the earliest visual the turn keeps.
+    let firstKeptVisual: Extract<MessagesTimelineRow, { kind: "inline-visual" }> | null = null;
     let wokenAt: string | null = null;
     let resumedBy: TurnResumedBy[] | null = null;
     for (let scan = pass - 1; scan >= 0; scan -= 1) {
@@ -1535,6 +1563,7 @@ function collapseSettledTurns(
       ) {
         // The plan card, answered questions, and visuals stay visible, but they should not
         // strand earlier narration/work outside the final turn header disclosure.
+        if (prev.kind === "inline-visual") firstKeptVisual = prev;
         continue;
       }
       break;
@@ -1666,6 +1695,12 @@ function collapseSettledTurns(
       continue;
     }
     row.turnHeader = header;
+    if (firstKeptVisual) {
+      // The header opens the whole response; kept visuals belong to the answer
+      // below it. Their row renders it, so a live frame never changes parent.
+      row.turnHeaderRowId = firstKeptVisual.id;
+      firstKeptVisual.turnHeaderSource = row;
+    }
     if (collapsedItems.length > 0) {
       row.collapsedTurnItems = collapsedItems;
       delete row.leadingWorkEntries;
@@ -2054,8 +2089,16 @@ function isRowUnchanged(a: MessagesTimelineRow, b: MessagesTimelineRow): boolean
     case "user-input":
       return a.entry.userInputExchange === (b as typeof a).entry.userInputExchange;
 
-    case "inline-visual":
-      return a.visual === (b as typeof a).visual;
+    case "inline-visual": {
+      const bv = b as typeof a;
+      return (
+        a.visual === bv.visual &&
+        turnEndMarkersEqual(a.turnEndMarker, bv.turnEndMarker) &&
+        (a.turnHeaderSource === undefined || bv.turnHeaderSource === undefined
+          ? a.turnHeaderSource === bv.turnHeaderSource
+          : isRowUnchanged(a.turnHeaderSource, bv.turnHeaderSource))
+      );
+    }
 
     case "work":
       return (
@@ -2074,6 +2117,7 @@ function isRowUnchanged(a: MessagesTimelineRow, b: MessagesTimelineRow): boolean
         a.inlineWorkGroupId === bm.inlineWorkGroupId &&
         collapsedTurnItemsEqual(a.collapsedTurnItems, bm.collapsedTurnItems) &&
         turnHeadersEqual(a.turnHeader, bm.turnHeader) &&
+        a.turnHeaderRowId === bm.turnHeaderRowId &&
         turnEndMarkersEqual(a.turnEndMarker, bm.turnEndMarker) &&
         a.durationStart === bm.durationStart &&
         a.showAssistantCopyButton === bm.showAssistantCopyButton &&
