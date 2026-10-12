@@ -71,19 +71,22 @@ jobs:
           HANDOFF_EVIDENCE_SOURCE: ${{ matrix.source }}
         run: node .pr-handoff-driver/scripts/handoff-evidence/runner.mjs prepare
       - name: Execute both original cases and retain actual failing exits
+        id: browser
         timeout-minutes: 12
         working-directory: apps/web
         run: |
           set +e
-          bun x --no-install vitest run --config vitest.handoff-evidence.config.ts --reporter=default --reporter=json --outputFile="$HANDOFF_EVIDENCE_LIVE_REPORT" 2>&1 | tee "$VITE_HANDOFF_EVIDENCE_OUTPUT/vitest.log"
+          bun x --no-install vitest run --config vitest.handoff-evidence.config.ts --reporter=default --reporter=json --outputFile="$HANDOFF_EVIDENCE_LIVE_REPORT" 2>&1 | tee "$HANDOFF_EVIDENCE_LIVE_LOG"
           result=("${PIPESTATUS[@]}")
           set -e
-          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$VITE_HANDOFF_EVIDENCE_OUTPUT/exits.json"
+          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$HANDOFF_EVIDENCE_LIVE_EXITS"
           if [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi
           exit "${result[1]}"
       - name: Verify exact source, immutable report and observed media
         if: always()
         timeout-minutes: 2
+        env:
+          HANDOFF_EVIDENCE_BROWSER_OUTCOME: ${{ steps.browser.outcome }}
         run: node .pr-handoff-driver/scripts/handoff-evidence/runner.mjs verify
       - name: Retain actual Before or After evidence including failures
         if: always()

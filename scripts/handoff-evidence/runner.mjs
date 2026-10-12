@@ -12,6 +12,7 @@ import {
 } from "node:fs";
 import { dirname, isAbsolute, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { boundedStableRead, freezeDirectory, freezeFile } from "./snapshots.mjs";
 
 const root = process.cwd();
 const directory = dirname(fileURLToPath(import.meta.url));
@@ -31,6 +32,7 @@ const driverPaths = [
   ".github/workflows/handoff-evidence.yml",
   ...[
     "runner.mjs",
+    "snapshots.mjs",
     "helpers.ts",
     "overlay.json",
     "vitest.handoff-evidence.config.ts",
@@ -169,7 +171,10 @@ if (command === "matrix") {
     throw new Error("Expected runner-owned temporary root.");
   const liveDirectory = resolve(temporary, "handoff-evidence-live-" + target.id);
   if (existsSync(liveDirectory)) throw new Error("Live report output already exists.");
+  const liveMedia = resolve(root, ".pr-handoff-live-media", target.id);
+  if (existsSync(liveMedia)) throw new Error("Live browser media already exists.");
   mkdirSync(liveDirectory);
+  mkdirSync(liveMedia, { recursive: true });
   mkdirSync(output, { recursive: true });
   writeFileSync(resolve(root, fixturePath), observed);
   copyFileSync(resolve(directory, "vitest.handoff-evidence.config.ts"), resolve(root, configPath));
@@ -195,6 +200,9 @@ if (command === "matrix") {
     originalAssertionsPreserved: true,
     applicationCodeModified: false,
     liveReport: resolve(liveDirectory, "vitest.json"),
+    liveLog: resolve(liveDirectory, "vitest.log"),
+    liveExits: resolve(liveDirectory, "exits.json"),
+    liveMedia,
     qualification:
       "Actual full production Router/ChatView/composer/theme under the same controlled orchestration snapshots and synthetic draft. Two complete canonical regression cases are selected; other cases are filtered and are not passing evidence. No authenticated provider, native CLI, desktop or OS behavior is exercised. Before failures remain failed steps; only observed media is retained.",
     run: process.env.GITHUB_RUN_ID,
@@ -205,7 +213,7 @@ if (command === "matrix") {
   appendFileSync(
     process.env.GITHUB_ENV,
     "VITE_HANDOFF_EVIDENCE_OUTPUT=" +
-      output +
+      liveMedia +
       "\n" +
       "VITE_HANDOFF_EVIDENCE_SOURCE=" +
       target.source +
@@ -215,66 +223,110 @@ if (command === "matrix") {
       "\n" +
       "HANDOFF_EVIDENCE_LIVE_REPORT=" +
       manifest.liveReport +
+      "\n" +
+      "HANDOFF_EVIDENCE_LIVE_LOG=" +
+      manifest.liveLog +
+      "\n" +
+      "HANDOFF_EVIDENCE_LIVE_EXITS=" +
+      manifest.liveExits +
+      "\n" +
+      "HANDOFF_EVIDENCE_ARTIFACT_OUTPUT=" +
+      output +
       "\n",
   );
   console.log(
     JSON.stringify({ target, driver: manifest.driver, originalAssertionsPreserved: true }),
   );
 } else if (command === "verify") {
-  const output = process.env.VITE_HANDOFF_EVIDENCE_OUTPUT;
+  const output = process.env.HANDOFF_EVIDENCE_ARTIFACT_OUTPUT;
   if (!output || !output.startsWith(resolve(root, "pr-handoff-evidence") + "/"))
     throw new Error("Unexpected evidence output directory.");
   const manifest = JSON.parse(readFileSync(resolve(output, "provenance.json"), "utf8"));
-  if (
-    JSON.stringify(assertSource(manifest.target)) !== JSON.stringify(manifest.sourceFiles) ||
-    JSON.stringify(assertDriver()) !== JSON.stringify(manifest.driverFiles)
-  )
-    throw new Error("Source or driver changed during execution.");
-  for (const entry of manifest.overlays)
-    if (digest(readFileSync(resolve(root, entry.path))) !== entry.sha256)
-      throw new Error("Observed fixture/config changed during execution.");
-  const exits = JSON.parse(readFileSync(resolve(output, "exits.json"), "utf8"));
-  if (
-    Object.keys(exits).sort().join(",") !== "tee,vitest" ||
-    Object.values(exits).some((value) => !Number.isInteger(value) || value < 0 || value > 255)
-  )
-    throw new Error("Invalid actual command/tee exit receipt.");
   const errors = [];
-  let report = null;
-  const reportCapture = {
-    source: manifest.liveReport,
-    capturedAt: new Date().toISOString(),
-    exists: false,
-  };
-  const reportPath = resolve(output, "vitest.json");
-  if (existsSync(reportPath)) throw new Error("Refusing to overwrite a retained report snapshot.");
-  if (existsSync(manifest.liveReport)) {
-    const bytes = readFileSync(manifest.liveReport);
-    writeFileSync(reportPath, bytes);
-    Object.assign(reportCapture, { exists: true, bytes: bytes.length, sha256: digest(bytes) });
+  const attempt = (label, run) => {
     try {
-      report = JSON.parse(bytes.toString("utf8"));
-    } catch {
-      errors.push("The observed original report is invalid JSON.");
+      return run();
+    } catch (error) {
+      errors.push(label + ": " + String(error));
+      return null;
     }
-  } else errors.push("The original report is missing.");
-  writeFileSync(
-    resolve(output, "report-snapshot.json"),
-    JSON.stringify(reportCapture, null, 2) + "\n",
-  );
-  const log = readFileSync(resolve(output, "vitest.log"), "utf8");
-  const prefix = "HANDOFF_EVIDENCE_OBSERVATION ";
-  const observations = log
-    .split("\n")
-    .filter((line) => line.includes(prefix))
-    .map((line) =>
-      line
-        .slice(line.indexOf(prefix) + prefix.length)
-        .replace(/\x1b\[[0-9;]*m/g, "")
-        .trim(),
+  };
+  const browserOutcome = process.env.HANDOFF_EVIDENCE_BROWSER_OUTCOME ?? null;
+  if (browserOutcome !== "success")
+    errors.push("The actual browser step failed, timed out, was cancelled, or did not execute.");
+  attempt("Application and driver integrity", () => {
+    if (
+      JSON.stringify(assertSource(manifest.target)) !== JSON.stringify(manifest.sourceFiles) ||
+      JSON.stringify(assertDriver()) !== JSON.stringify(manifest.driverFiles)
     )
-    .filter((line) => line.startsWith("{"))
-    .map((line) => JSON.parse(line));
+      throw new Error("Source or driver changed during execution.");
+  });
+  for (const entry of manifest.overlays)
+    attempt("Observed fixture integrity", () => {
+      if (digest(readFileSync(resolve(root, entry.path))) !== entry.sha256)
+        throw new Error("Observed fixture/config changed during execution: " + entry.path);
+    });
+  const snapshots = [];
+  for (const [source, path, maxBytes] of [
+    [manifest.liveLog, "vitest.log", 40 * 1024 * 1024],
+    [manifest.liveExits, "exits.json", 8 * 1024],
+    [manifest.liveReport, "vitest.json", 20 * 1024 * 1024],
+  ])
+    attempt("Freeze " + path, () => freezeFile(source, output, path, snapshots, maxBytes));
+  attempt("Freeze browser media", () =>
+    freezeDirectory(manifest.liveMedia, output, snapshots, 100 * 1024 * 1024),
+  );
+  writeFileSync(
+    resolve(output, "output-snapshots.json"),
+    JSON.stringify(
+      {
+        files: snapshots,
+        browserOutcome,
+        cutoffFinishedAt: new Date().toISOString(),
+        qualification:
+          "Only bounded stable regular-file copies enter the artifact. Missing, oversized, truncated, replaced or changing files fail verification. Later live writes cannot alter these frozen copies; this cutoff does not prove descendant cleanup or full writer lifetime completion.",
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  const exits = attempt("Read frozen actual exits", () => {
+    const value = JSON.parse(
+      boundedStableRead(resolve(output, "exits.json"), 8 * 1024).bytes.toString("utf8"),
+    );
+    if (
+      Object.keys(value).sort().join(",") !== "tee,vitest" ||
+      Object.values(value).some((value) => !Number.isInteger(value) || value < 0 || value > 255)
+    )
+      throw new Error("Invalid actual command/tee exit receipt.");
+    return value;
+  });
+  let report = null;
+  const reportCapture = snapshots.find((entry) => entry.path === "vitest.json") ?? null;
+  report = attempt("Read frozen actual report", () =>
+    JSON.parse(
+      boundedStableRead(resolve(output, "vitest.json"), 20 * 1024 * 1024).bytes.toString("utf8"),
+    ),
+  );
+  const log =
+    attempt("Read frozen actual log", () =>
+      boundedStableRead(resolve(output, "vitest.log"), 40 * 1024 * 1024).bytes.toString("utf8"),
+    ) ?? "";
+  const prefix = "HANDOFF_EVIDENCE_OBSERVATION ";
+  const observations =
+    attempt("Read frozen observations", () =>
+      log
+        .split("\n")
+        .filter((line) => line.includes(prefix))
+        .map((line) =>
+          line
+            .slice(line.indexOf(prefix) + prefix.length)
+            .replace(/\x1b\[[0-9;]*m/g, "")
+            .trim(),
+        )
+        .filter((line) => line.startsWith("{"))
+        .map((line) => JSON.parse(line)),
+    ) ?? [];
   const phases = observations.map((entry) => entry.phase);
   const expected = ["completed", "failed"].flatMap((outcome) =>
     (manifest.target.variant === "after" ? ["pending", "settled"] : ["pending"]).flatMap((stage) =>
@@ -306,6 +358,7 @@ if (command === "matrix") {
     const width = file.path.endsWith("-desktop.png") ? 960 : 480;
     if (
       !expected.some((phase) => file.path === phase + ".png") ||
+      bytes.length < 24 ||
       bytes.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a" ||
       bytes.readUInt32BE(16) !== width ||
       bytes.readUInt32BE(20) !== (width === 960 ? 1100 : 640)
@@ -342,10 +395,12 @@ if (command === "matrix") {
       report?.numFailedTests !== 0)
   )
     errors.push("Both unchanged repaired-source cases must pass.");
-  const actualExitCode = exits.vitest || exits.tee;
+  const actualExitCode = exits === null ? null : exits.vitest || exits.tee;
+  const failed = browserOutcome !== "success" || actualExitCode !== 0 || errors.length > 0;
   const result = {
     ...manifest,
-    status: actualExitCode || errors.length ? "failed" : "completed",
+    status: failed ? "failed" : "completed",
+    browserOutcome,
     actualExitCode,
     exits,
     verificationErrors: errors,
@@ -375,5 +430,5 @@ if (command === "matrix") {
       phases,
     }),
   );
-  if (actualExitCode || errors.length) process.exitCode = actualExitCode || 1;
+  if (failed) process.exitCode = actualExitCode || 1;
 } else throw new Error("Use matrix, prepare or verify.");
