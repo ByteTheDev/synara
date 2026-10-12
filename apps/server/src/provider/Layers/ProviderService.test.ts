@@ -1650,6 +1650,73 @@ it.effect(
 );
 
 routing.layer("ProviderServiceLive routing", (it) => {
+  it.effect("preserves a pending send before the adapter exposes its active turn", () =>
+    Effect.gen(function* () {
+      const provider = yield* ProviderService;
+      const threadId = asThreadId("thread-reaper-pending-send");
+      yield* provider.startSession(threadId, {
+        provider: "codex",
+        threadId,
+        runtimeMode: "full-access",
+      });
+      const accepted = Deferred.makeUnsafe<void>();
+      const release = Deferred.makeUnsafe<void>();
+      const originalSend = routing.codex.sendTurn.getMockImplementation()!;
+      routing.codex.sendTurn.mockImplementationOnce((input) =>
+        Deferred.succeed(accepted, undefined).pipe(
+          Effect.andThen(Deferred.await(release)),
+          Effect.andThen(originalSend(input)),
+        ),
+      );
+      const sending = yield* provider
+        .sendTurn({ threadId, input: "continue the goal", attachments: [] })
+        .pipe(Effect.forkChild);
+      yield* Deferred.await(accepted);
+      const stops = routing.codex.stopSession.mock.calls.length;
+      yield* provider.stopRuntimeSession!({ threadId, onlyIfIdleSince: new Date().toISOString() });
+      assert.equal(routing.codex.stopSession.mock.calls.length, stops);
+      yield* Deferred.succeed(release, undefined);
+      const sent = yield* Fiber.join(sending);
+      assert.isDefined(sent.turnId);
+      assert.isTrue(yield* routing.codex.adapter.hasSession(threadId));
+      yield* provider.stopSession({ threadId });
+    }),
+  );
+
+  it.effect("settles explicit Stop when an idle sweep arrives during teardown", () =>
+    Effect.gen(function* () {
+      const provider = yield* ProviderService;
+      const directory = yield* ProviderSessionDirectory;
+      const threadId = asThreadId("thread-stop-reaper-overlap");
+      yield* provider.startSession(threadId, {
+        provider: "codex",
+        threadId,
+        runtimeMode: "full-access",
+      });
+      const stopping = Deferred.makeUnsafe<void>();
+      const release = Deferred.makeUnsafe<void>();
+      const originalStop = routing.codex.stopSession.getMockImplementation()!;
+      routing.codex.stopSession.mockImplementationOnce((id) =>
+        Deferred.succeed(stopping, undefined).pipe(
+          Effect.andThen(Deferred.await(release)),
+          Effect.andThen(originalStop(id)),
+        ),
+      );
+      const explicitStop = yield* provider.stopSession({ threadId }).pipe(Effect.forkChild);
+      yield* Deferred.await(stopping);
+      const sweep = yield* provider.stopRuntimeSession!({
+        threadId,
+        onlyIfIdleSince: new Date().toISOString(),
+      }).pipe(Effect.forkChild);
+      yield* Effect.yieldNow;
+      yield* Deferred.succeed(release, undefined);
+      yield* Fiber.join(explicitStop);
+      yield* Fiber.join(sweep);
+      assert.isTrue(Option.isNone(yield* directory.getBinding(threadId)));
+      assert.isFalse(yield* routing.codex.adapter.hasSession(threadId));
+    }),
+  );
+
   it.effect("starts another provider on a Codex thread only after a continuation reset", () =>
     Effect.gen(function* () {
       const provider = yield* ProviderService;
