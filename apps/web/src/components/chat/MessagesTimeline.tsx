@@ -430,6 +430,8 @@ function WorktreeSetupCard({
 
 interface MessagesTimelineProps {
   hasMessages: boolean;
+  /** Thread-owned namespace for safe reuse of immutable row measurements. */
+  heightCacheScope?: string;
   isWorking: boolean;
   workingLabel?: WorkingLabel | undefined;
   activeTurnInProgress: boolean;
@@ -568,6 +570,7 @@ interface MessagesTimelineProps {
 
 export const MessagesTimeline = memo(function MessagesTimeline({
   hasMessages,
+  heightCacheScope,
   historyHeader,
   isWorking,
   workingLabel: workingLabelProp,
@@ -810,7 +813,33 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     activeFindMatchRef.current = findHighlight?.activeMatch ?? null;
   }, [findHighlight]);
   const observeTimelineRow = useTimelineRowOverlapGuard();
-  const rowHeightHints = useTimelineRowHeightHints(resolvedListRef, normalizedChatFontSizePx);
+  // Expanded/editing/context rows own presentation beyond their message content.
+  const canRememberRowHeight = useCallback(
+    (row: MessagesTimelineRow) =>
+      row.kind === "message" &&
+      !expandedUserMessagesById[row.message.id] &&
+      editingUserMessageId !== row.message.id &&
+      submittingEditedUserMessageId !== row.message.id &&
+      !forkSource &&
+      !crossTaskOrigin &&
+      !subagentThread &&
+      !hubWorkItemsByMessageId?.has(row.message.id),
+    [
+      expandedUserMessagesById,
+      editingUserMessageId,
+      submittingEditedUserMessageId,
+      forkSource,
+      crossTaskOrigin,
+      subagentThread,
+      hubWorkItemsByMessageId,
+    ],
+  );
+  const rowHeightHints = useTimelineRowHeightHints(
+    resolvedListRef,
+    normalizedChatFontSizePx,
+    heightCacheScope,
+    canRememberRowHeight,
+  );
   useTailAnchorScroll({
     listRef: resolvedListRef,
     timelineRootRef,

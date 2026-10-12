@@ -168,6 +168,7 @@ it("reveals a remounted transcript of measured rows without waiting for a timer 
     <div style={{ width: 500, height: 400 }}>
       <MessagesTimeline
         hasMessages
+        heightCacheScope="measured-transcript"
         isWorking={false}
         activeTurnInProgress={false}
         activeTurnStartedAt={null}

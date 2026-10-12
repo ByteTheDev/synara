@@ -1,9 +1,8 @@
 // FILE: timelineRowHeight.logic.ts
 // Purpose: Size hints for transcript rows the virtualizer has not measured yet.
 //          A content-aware estimate keeps the scroll range close to the real
-//          transcript, and heights measured in an earlier mount make revisited
-//          chats lay out exactly, so scrolling into older messages does not keep
-//          re-anchoring the viewport as rows render.
+//          transcript. Validated plain-message measurements can survive remounts;
+//          mutable rows are re-estimated instead of borrowing stale geometry.
 // Layer: Web chat presentation helpers
 // Exports: estimateTimelineRowHeight, createTimelineRowHeightEstimator,
 //          rememberTimelineRowHeight, TimelineRowHeightLayout
@@ -14,11 +13,14 @@ import { USER_MESSAGE_COLLAPSED_MAX_LINES } from "./userMessageCollapse";
 
 /** The default 46rem chat column; used until a rendered row reports its real width. */
 export const DEFAULT_TIMELINE_ROW_WIDTH_PX = 736;
+// Estimate invisible rows from a bounded sample; never scan the full transcript text.
+const MAX_TEXT_SAMPLE_CHARS = 4096;
 
 export interface TimelineRowHeightLayout {
   /** Width of a transcript row (the chat column), in CSS pixels. */
   readonly rowWidthPx: number;
   readonly chatFontSizePx: number;
+  readonly fontKey?: string;
 }
 
 // Calibrated against measured rows of real transcripts at the default 13px chat font
@@ -53,6 +55,7 @@ const MIN_ROW_HEIGHT_PX = 24;
 
 /** Height of Markdown-ish text laid out in `widthPx`, counting fences and blank lines. */
 function estimateTextHeight(text: string, widthPx: number, fontSizePx: number): number {
+  const sample = text.length > MAX_TEXT_SAMPLE_CHARS ? text.slice(0, MAX_TEXT_SAMPLE_CHARS) : text;
   const charsPerLine = Math.max(8, Math.floor(widthPx / (fontSizePx * GLYPH_WIDTH_EM)));
   let proseLines = 0;
   let blankLines = 0;
@@ -60,14 +63,14 @@ function estimateTextHeight(text: string, widthPx: number, fontSizePx: number): 
   let codeBlocks = 0;
   let inCode = false;
   let start = 0;
-  while (start <= text.length) {
-    const newline = text.indexOf("\n", start);
-    const end = newline === -1 ? text.length : newline;
+  while (start <= sample.length) {
+    const newline = sample.indexOf("\n", start);
+    const end = newline === -1 ? sample.length : newline;
     let lineStart = start;
     let lineEnd = end;
-    while (lineStart < lineEnd && text.charCodeAt(lineStart) <= 32) lineStart += 1;
-    while (lineEnd > lineStart && text.charCodeAt(lineEnd - 1) <= 32) lineEnd -= 1;
-    if (text.startsWith("```", lineStart)) {
+    while (lineStart < lineEnd && sample.charCodeAt(lineStart) <= 32) lineStart += 1;
+    while (lineEnd > lineStart && sample.charCodeAt(lineEnd - 1) <= 32) lineEnd -= 1;
+    if (sample.startsWith("```", lineStart)) {
       if (!inCode) codeBlocks += 1;
       inCode = !inCode;
     } else if (inCode) {
@@ -80,12 +83,12 @@ function estimateTextHeight(text: string, widthPx: number, fontSizePx: number): 
     if (newline === -1) break;
     start = newline + 1;
   }
-  return (
+  const sampledHeight =
     proseLines * fontSizePx * PROSE_LINE_HEIGHT_EM +
     blankLines * fontSizePx * PARAGRAPH_GAP_EM +
     codeLines * fontSizePx * CODE_LINE_HEIGHT_EM +
-    codeBlocks * CODE_BLOCK_CHROME_PX
-  );
+    codeBlocks * CODE_BLOCK_CHROME_PX;
+  return sampledHeight * (sample.length > 0 ? text.length / sample.length : 1);
 }
 
 function estimateWorkEntriesHeight(entryCount: number): number {
@@ -166,45 +169,109 @@ export function estimateTimelineRowHeight(
   return Math.max(MIN_ROW_HEIGHT_PX, Math.round(height));
 }
 
-// Measured heights outlive the list: MessagesTimeline remounts per thread, and a
-// revisited chat should lay out at its real size instead of re-estimating. Row ids
-// are message/turn scoped, so one bounded map serves every thread.
+// Only unchanged, settled plain messages can retain a measured height across mounts.
+// Live/work/rich rows have disclosure or external geometry that a message ID cannot validate.
 const MAX_REMEMBERED_ROW_HEIGHTS = 20_000;
-const rememberedRowHeights = new Map<string, number>();
+type MessageRow = Extract<MessagesTimelineRow, { kind: "message" }>;
+const rememberedRowHeights = new Map<
+  string,
+  { height: number; message: WeakRef<MessageRow["message"]>; copyButton: boolean }
+>();
+const plainMessageContent = new WeakMap<MessageRow["message"], boolean>();
 
-function rowHeightCacheKey(rowId: string, layout: TimelineRowHeightLayout): string {
-  return `${Math.round(layout.rowWidthPx)}:${layout.chatFontSizePx}:${rowId}`;
+export interface TimelineRowHeightCacheOptions {
+  readonly namespace?: string | undefined;
+  readonly canRememberRow?: (row: MessagesTimelineRow) => boolean;
+}
+
+function isPlainSettledMessage(row: MessagesTimelineRow): row is MessageRow {
+  if (
+    row.kind !== "message" ||
+    row.message.streaming ||
+    row.assistantCopyStreaming ||
+    row.assistantTurnInProgress ||
+    row.turnHeader ||
+    row.turnEndMarker ||
+    row.assistantTurnDiffSummary ||
+    row.leadingWorkEntries?.length ||
+    row.inlineWorkEntries?.length ||
+    row.collapsedTurnItems?.length ||
+    row.message.attachments?.length
+  )
+    return false;
+  let plain = plainMessageContent.get(row.message);
+  if (plain === undefined) {
+    const text = row.message.text;
+    // Rich Markdown and multiline user contexts can own independent disclosures.
+    plain =
+      text.length <= MAX_TEXT_SAMPLE_CHARS &&
+      !text.includes("`") &&
+      !text.includes("~~~") &&
+      !text.includes("![") &&
+      !text.includes("<") &&
+      (row.message.role !== "user" || !text.includes("\n"));
+    plainMessageContent.set(row.message, plain);
+  }
+  return plain;
+}
+
+function rowHeightCacheKey(
+  namespace: string,
+  rowId: string,
+  layout: TimelineRowHeightLayout,
+): string {
+  return `${namespace.length}:${namespace}:${Math.round(layout.rowWidthPx)}:${layout.chatFontSizePx}:${layout.fontKey ?? ""}:${rowId}`;
 }
 
 export function rememberTimelineRowHeight(
   rowId: string,
   layout: TimelineRowHeightLayout,
   heightPx: number,
+  options: { namespace?: string | undefined; row: MessagesTimelineRow; allowed?: boolean },
 ): void {
-  if (!(heightPx > 0)) return;
-  const key = rowHeightCacheKey(rowId, layout);
+  if (
+    !(heightPx > 0) ||
+    !options.namespace ||
+    options.allowed === false ||
+    !isPlainSettledMessage(options.row)
+  )
+    return;
+  const key = rowHeightCacheKey(options.namespace, rowId, layout);
   rememberedRowHeights.delete(key);
-  rememberedRowHeights.set(key, heightPx);
+  rememberedRowHeights.set(key, {
+    height: heightPx,
+    message: new WeakRef(options.row.message),
+    copyButton: options.row.showAssistantCopyButton,
+  });
   if (rememberedRowHeights.size > MAX_REMEMBERED_ROW_HEIGHTS) {
     const oldest = rememberedRowHeights.keys().next().value;
     if (oldest !== undefined) rememberedRowHeights.delete(oldest);
   }
 }
 
-/**
- * Returns a size-hint function for one list instance. Text estimates are cached per
- * row object (rows keep their identity while unchanged), so the virtualizer can ask
- * for every unmeasured row on each position pass without rescanning transcripts.
- */
+/** Cache estimates per immutable row, and reuse only validated plain-row measurements. */
 export function createTimelineRowHeightEstimator(
   getLayout: () => TimelineRowHeightLayout,
+  options: TimelineRowHeightCacheOptions = {},
 ): (row: MessagesTimelineRow) => number {
   const estimates = new WeakMap<MessagesTimelineRow, { layoutKey: string; height: number }>();
   return (row) => {
     const layout = getLayout();
-    const remembered = rememberedRowHeights.get(rowHeightCacheKey(row.id, layout));
-    if (remembered !== undefined) return remembered;
-    const layoutKey = `${Math.round(layout.rowWidthPx)}:${layout.chatFontSizePx}`;
+    if (
+      options.namespace &&
+      (options.canRememberRow?.(row) ?? true) &&
+      isPlainSettledMessage(row)
+    ) {
+      const remembered = rememberedRowHeights.get(
+        rowHeightCacheKey(options.namespace, row.id, layout),
+      );
+      if (
+        remembered?.message.deref() === row.message &&
+        remembered.copyButton === row.showAssistantCopyButton
+      )
+        return remembered.height;
+    }
+    const layoutKey = `${Math.round(layout.rowWidthPx)}:${layout.chatFontSizePx}:${layout.fontKey ?? ""}`;
     const cached = estimates.get(row);
     if (cached?.layoutKey === layoutKey) return cached.height;
     const height = estimateTimelineRowHeight(row, layout);

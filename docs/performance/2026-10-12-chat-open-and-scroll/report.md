@@ -173,3 +173,36 @@ node apps/web/perf/chat-open-runner.mjs http://127.0.0.1:3899 <neutral-thread> <
 
 Run it once per build. Headless Chromium rasterizes in software, so use a headed browser
 for frame pacing.
+
+## Review repair: bounded estimates and valid measurements
+
+The reviewed implementation now samples at most 4,096 text characters per row and
+extrapolates larger messages. Rendering, copy and search still receive the complete
+message; this is only a best-effort virtualizer height hint. A heterogeneous remainder
+may differ from the sample, and actual row measurement remains authoritative.
+
+Cross-mount measurements are thread-scoped and reused only for unchanged, settled plain
+messages with default presentation. Expanded/editing messages, live work, rich disclosures,
+attachments and compound rows are re-estimated. Message identity is kept through a weak
+reference so remembering geometry cannot retain an unloaded transcript's content. Font
+family/UI font size join the existing width/chat font size layout key. This conservative
+policy can reuse fewer measurements than the original implementation; the opening and
+switching gains above have not been re-measured for this repaired policy.
+
+Cache regressions exercise the measurement owner directly: matching IDs across threads,
+background content growth, expanded user rows and synthetic mutable rows all fail the
+original implementation. The existing browser suite verifies immediate remount reveal,
+attached follow and independent horizontal code scrolling. A total-scroll-range browser
+probe could not isolate stale cache entries from deliberately approximate rich-row hints,
+so it is not used as evidence of near-exact geometry or a new application-level timing.
+
+An isolated estimator benchmark compares the original and bounded implementations on
+the **same 2,000 newline-heavy messages**, under Bun 1.4.2, with five alternating samples
+per implementation and a fresh estimator per sample. No measurement cache is populated.
+These are helper execution times, not application CPU or browser frame-time results.
+Raw samples: [repair-estimator-measurements.json](repair-estimator-measurements.json).
+
+| Identical input    | Original median | Bounded median |
+| ------------------ | --------------: | -------------: |
+| 20 MB / 2000 rows  |        37.50 ms |       16.30 ms |
+| 200 MB / 2000 rows |       345.56 ms |       16.01 ms |

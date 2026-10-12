@@ -50,15 +50,15 @@ describe.skipIf(!DB || THREADS.length === 0)("thread detail delivery stages", ()
             const encoded = encodeItem({ kind: "snapshot", snapshot: snapshot.value });
             const t2 = performance.now();
             const json = JSON.stringify(encoded);
-            const t3 = performance.now();
+            const serializedAt = performance.now();
             const parsed: unknown = JSON.parse(json);
             const t4 = performance.now();
             decodeItem(parsed);
             const t5 = performance.now();
             stage.load.push(t1 - t0);
             stage.encode.push(t2 - t1);
-            stage.stringify.push(t3 - t2);
-            client.parse.push(t4 - t3);
+            stage.stringify.push(serializedAt - t2);
+            client.parse.push(t4 - serializedAt);
             client.decode.push(t5 - t4);
             bytes = json.length;
             messages = snapshot.value.thread.messages.length;

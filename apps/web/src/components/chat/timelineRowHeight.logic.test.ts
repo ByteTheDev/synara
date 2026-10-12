@@ -8,6 +8,8 @@ import {
   rememberTimelineRowHeight,
 } from "./timelineRowHeight.logic";
 
+const CACHE = { namespace: "plain-chat" };
+
 const LAYOUT = { rowWidthPx: 736, chatFontSizePx: 13 };
 
 function messageRow(id: string, role: "user" | "assistant", text: string): MessagesTimelineRow {
@@ -64,16 +66,16 @@ describe("estimateTimelineRowHeight", () => {
 describe("createTimelineRowHeightEstimator", () => {
   it("prefers a height measured in an earlier mount for the same layout", () => {
     const row = messageRow("remembered-row", "assistant", paragraph);
-    const estimate = createTimelineRowHeightEstimator(() => LAYOUT);
+    const estimate = createTimelineRowHeightEstimator(() => LAYOUT, CACHE);
     const estimated = estimate(row);
 
-    rememberTimelineRowHeight(row.id, LAYOUT, estimated + 333);
+    rememberTimelineRowHeight(row.id, LAYOUT, estimated + 333, { ...CACHE, row });
 
-    expect(createTimelineRowHeightEstimator(() => LAYOUT)(row)).toBe(estimated + 333);
+    expect(createTimelineRowHeightEstimator(() => LAYOUT, CACHE)(row)).toBe(estimated + 333);
     // A different column width cannot reuse that measurement.
-    expect(createTimelineRowHeightEstimator(() => ({ ...LAYOUT, rowWidthPx: 420 }))(row)).not.toBe(
-      estimated + 333,
-    );
+    expect(
+      createTimelineRowHeightEstimator(() => ({ ...LAYOUT, rowWidthPx: 420 }), CACHE)(row),
+    ).not.toBe(estimated + 333);
   });
 
   it("re-estimates when the layout changes", () => {
@@ -83,5 +85,41 @@ describe("createTimelineRowHeightEstimator", () => {
     const wide = estimate(row);
     layout = { ...LAYOUT, rowWidthPx: 360 };
     expect(estimate(row)).toBeGreaterThan(wide);
+  });
+  it("does not reuse another thread's measurement for a matching row id", () => {
+    const row = messageRow("shared-id", "assistant", "Done.");
+    rememberTimelineRowHeight(row.id, LAYOUT, 500, { namespace: "thread-a", row });
+    expect(
+      createTimelineRowHeightEstimator(() => LAYOUT, { namespace: "thread-b" })(row),
+    ).toBeLessThan(100);
+  });
+  it("re-estimates content that grew while the thread was not mounted", () => {
+    const row = messageRow("grown-row", "assistant", "Done.");
+    rememberTimelineRowHeight(row.id, LAYOUT, 72, { ...CACHE, row });
+    const changed = messageRow(row.id, "assistant", paragraph.repeat(20));
+    expect(createTimelineRowHeightEstimator(() => LAYOUT, CACHE)(changed)).toBeGreaterThan(1000);
+  });
+  it("does not carry an expanded user message into a collapsed remount", () => {
+    const row = messageRow("expanded-row", "user", "word ".repeat(300));
+    rememberTimelineRowHeight(row.id, LAYOUT, 2000, { ...CACHE, row, allowed: false });
+    expect(createTimelineRowHeightEstimator(() => LAYOUT, CACHE)(row)).toBeLessThan(500);
+  });
+  it("does not persist synthetic worktree rows with mutable steps", () => {
+    const row: MessagesTimelineRow = {
+      kind: "worktree-setup",
+      id: "worktree-setup-row",
+      steps: [],
+      open: true,
+    };
+    rememberTimelineRowHeight(row.id, LAYOUT, 1000, { ...CACHE, row });
+    expect(createTimelineRowHeightEstimator(() => LAYOUT, CACHE)(row)).toBeLessThan(100);
+  });
+  it("bounds estimation to the prefix instead of scanning unseen text", () => {
+    const prefix = "Bounded prose text. ".repeat(300).slice(0, 4096);
+    const prose = messageRow("budget-prose", "assistant", prefix + "a".repeat(1_000_000));
+    const breaks = messageRow("budget-breaks", "assistant", prefix + "\n".repeat(1_000_000));
+    expect(estimateTimelineRowHeight(prose, LAYOUT)).toBe(
+      estimateTimelineRowHeight(breaks, LAYOUT),
+    );
   });
 });
