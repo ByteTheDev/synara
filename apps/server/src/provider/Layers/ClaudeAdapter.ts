@@ -1877,7 +1877,7 @@ function claudeAssistantErrorMessage(error: SDKAssistantMessageError): string {
     case "account_on_hold":
       return "The active Claude account is on hold. Resolve the account issue, then retry.";
     case "verification_required":
-      return "Claude requires organization verification before this account can continue. Complete verification, then retry.";
+      return "Claude requires organization verification for this account. Complete it, then retry.";
     case "billing_error":
       return "Claude billing or subscription access failed. Check the active Claude account, then retry.";
     case "rate_limit":
@@ -1896,6 +1896,8 @@ function claudeAssistantErrorMessage(error: SDKAssistantMessageError): string {
       return "Claude could not load its cloud provider credentials. Check or refresh them, then retry.";
     case "unknown":
       return "Claude failed to complete the turn.";
+    case "cloud_credential_error":
+      return "Claude could not use the cloud provider credentials. Check or refresh them, then retry.";
   }
 }
 
@@ -1905,7 +1907,8 @@ function claudeAssistantErrorRequiresProcessRestart(error: SDKAssistantMessageEr
     error === "oauth_org_not_allowed" ||
     error === "account_on_hold" ||
     error === "verification_required" ||
-    error === "billing_error"
+    error === "billing_error" ||
+    error === "cloud_credential_error"
   );
 }
 
