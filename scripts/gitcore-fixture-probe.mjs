@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   chmodSync,
+  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -40,7 +41,7 @@ const blob = (bytes) =>
 const writeJSON = (name, value) =>
   writeFileSync(join(output, name), `${JSON.stringify(value, null, 2)}\n`);
 
-function git(cwd, args) {
+function git(cwd, args, isolatedEnvironment) {
   const startedAt = new Date().toISOString();
   const useShortProcessDirectory = longPathRepositories.has(cwd);
   const processArgs = useShortProcessDirectory
@@ -48,6 +49,7 @@ function git(cwd, args) {
     : args;
   const result = spawnSync("git", processArgs, {
     cwd: useShortProcessDirectory ? owned : cwd,
+    ...(isolatedEnvironment ? { env: { ...process.env, ...isolatedEnvironment } } : {}),
     encoding: "utf8",
     timeout: 15_000,
     killSignal: "SIGKILL",
@@ -56,6 +58,7 @@ function git(cwd, args) {
   const entry = {
     cwd: cwd === workspace ? "source" : cwd === driver ? "driver" : cwd.slice(owned.length + 1),
     args,
+    ...(isolatedEnvironment ? { isolatedEnvironment } : {}),
     ...(useShortProcessDirectory
       ? { processDirectory: "owned temporary parent", processArgs }
       : {}),
@@ -71,8 +74,8 @@ function git(cwd, args) {
   return entry;
 }
 
-function successful(cwd, args) {
-  const result = git(cwd, args);
+function successful(cwd, args, isolatedEnvironment) {
+  const result = git(cwd, args, isolatedEnvironment);
   assert(!result.error && result.status === 0 && result.signal === null, `git ${args[0]} failed`);
   return result.stdout;
 }
@@ -303,6 +306,73 @@ try {
     assert(result.stdout.includes("+hello"), "Git omitted the actual file content");
     return { paths, argument, patch: result.stdout };
   });
+  observe("owned content index preserves the exact trailing-space path", () => {
+    const cwd = repository("literal-content-index");
+    const filename = " spaced file.txt ";
+    const physicalPath = join(cwd, filename);
+    writeFileSync(physicalPath, "hello\n");
+    assert(readdirSync(cwd).includes(filename), "the actual filesystem filename changed");
+    assert.equal(readFileSync(physicalPath, "utf8"), "hello\n");
+    const indexBefore = readFileSync(join(cwd, ".git", "index"));
+    const objectManifest = () => {
+      const entries = [];
+      const root = join(cwd, ".git", "objects");
+      const visit = (relative) => {
+        for (const entry of readdirSync(join(root, relative), { withFileTypes: true })) {
+          const name = join(relative, entry.name);
+          if (entry.isDirectory()) visit(name);
+          else {
+            assert(entry.isFile(), "unexpected original object entry");
+            const bytes = readFileSync(join(root, name));
+            entries.push({ name, bytes: bytes.length, sha256: digest(bytes) });
+          }
+        }
+      };
+      visit("");
+      return entries.sort((left, right) => left.name.localeCompare(right.name));
+    };
+    const objectsBefore = objectManifest();
+    const scratch = mkdtempSync(join(owned, "literal-content-"));
+    const content = join(scratch, "content");
+    const empty = join(scratch, "empty");
+    const objects = join(scratch, "objects");
+    mkdirSync(objects);
+    copyFileSync(physicalPath, content);
+    writeFileSync(empty, Buffer.alloc(0));
+    const isolatedEnvironment = {
+      GIT_INDEX_FILE: join(scratch, "index"),
+      GIT_OBJECT_DIRECTORY: objects,
+    };
+    const object = successful(cwd, ["hash-object", "-w", "--no-filters", "--", content], isolatedEnvironment).trim();
+    const emptyTree = successful(cwd, ["hash-object", "-w", "-t", "tree", "--", empty], isolatedEnvironment).trim();
+    assert.match(object, /^[a-f0-9]{40}$/);
+    assert.match(emptyTree, /^[a-f0-9]{40}$/);
+    successful(cwd, [
+      "-c", "core.protectNTFS=false", "update-index", "--add", "--cacheinfo",
+      `100644,${object},${filename}`,
+    ], isolatedEnvironment);
+    const result = git(cwd, [
+      "diff", "--cached", "--patch", "--no-renames", "--no-color", "--no-ext-diff",
+      "--no-textconv", "--src-prefix=a/", "--dst-prefix=b/", emptyTree, "--",
+    ], isolatedEnvironment);
+    writeJSON("literal-content-index.json", {
+      result, object, emptyTree, filename,
+      originalIndexBefore: digest(indexBefore),
+      originalIndexAfter: digest(readFileSync(join(cwd, ".git", "index"))),
+      originalObjectsBefore: objectsBefore,
+      originalObjectsAfter: objectManifest(),
+      qualification:
+        "Separate read-only content/index capability control. Real Node reads the original file; real Git owns patch rendering. The original six assertions remain unchanged and this is not a GitCore production pass.",
+    });
+    assert(!result.error && result.status === 0 && result.signal === null, "owned-index diff failed");
+    assert(result.stdout.includes("diff --git a/ spaced file.txt  b/ spaced file.txt "));
+    assert(result.stdout.includes("+++ b/ spaced file.txt \t\n"));
+    assert(result.stdout.includes("+hello"));
+    assert.deepEqual(readFileSync(join(cwd, ".git", "index")), indexBefore);
+    assert.deepEqual(objectManifest(), objectsBefore);
+    assert.equal(readFileSync(physicalPath, "utf8"), "hello\n");
+    return { patch: result.stdout, originalIndexUnchanged: true, originalObjectsUnchanged: true };
+  });
   observe("filesystem monitor command starts", () => {
     const cwd = repository("fsmonitor-launch");
     const hook = join(cwd, ".git", "hooks", "fsmonitor");
@@ -336,7 +406,7 @@ try {
   const failed =
     Boolean(fatal) ||
     !cleanup.removed ||
-    cases.length !== 6 ||
+    cases.length !== 7 ||
     cases.some((entry) => entry.status !== "passed");
   writeJSON("commands.json", commands);
   writeJSON("results.json", {
