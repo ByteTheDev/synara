@@ -1,0 +1,344 @@
+{
+  "rounds": 3,
+  "statistic": "median",
+  "baseline": {
+    "666 msgs / 2,031 activities (synthetic)": {
+      "cold": {
+        "snapshotArriveMs": 155.3,
+        "firstRowMs": 293.1,
+        "bottomMs": 317.3,
+        "longTaskMs": 138
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 85.8,
+        "bottomMs": 109.2,
+        "longTaskMs": 83
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 701,
+        "corrections": 191,
+        "correctionPx": 119637,
+        "startHeight": 51787,
+        "endHeight": 182676,
+        "styleRecalcMs": 2278,
+        "wholeDocumentRecalcs": 322,
+        "mainThreadTaskMs": 6561
+      },
+      "reload": {
+        "firstRowMs": 638.3,
+        "subscribeRequests": 2
+      }
+    },
+    "1,400 msgs (synthetic)": {
+      "cold": {
+        "snapshotArriveMs": 95.6,
+        "firstRowMs": 155.7,
+        "bottomMs": 175.9,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 74.8,
+        "bottomMs": 93.1,
+        "longTaskMs": 73
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 55,
+        "corrections": 10,
+        "correctionPx": 5975,
+        "startHeight": 7429,
+        "endHeight": 13392,
+        "styleRecalcMs": 91,
+        "wholeDocumentRecalcs": 17,
+        "mainThreadTaskMs": 272
+      },
+      "reload": {
+        "firstRowMs": 477.8,
+        "subscribeRequests": 2
+      }
+    },
+    "111 msgs / 1,373 activities": {
+      "cold": {
+        "snapshotArriveMs": 103.9,
+        "firstRowMs": 203.8,
+        "bottomMs": 231.9,
+        "longTaskMs": 72
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 80.3,
+        "bottomMs": 104.1,
+        "longTaskMs": 77
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 125,
+        "corrections": 33,
+        "correctionPx": 18146,
+        "startHeight": 12366,
+        "endHeight": 32115,
+        "styleRecalcMs": 430,
+        "wholeDocumentRecalcs": 62,
+        "mainThreadTaskMs": 1250
+      },
+      "reload": {
+        "firstRowMs": 563.5,
+        "subscribeRequests": 2
+      }
+    },
+    "66 msgs / 1,475 activities": {
+      "cold": {
+        "snapshotArriveMs": 112.8,
+        "firstRowMs": 213.3,
+        "bottomMs": 230.5,
+        "longTaskMs": 63
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 74.9,
+        "bottomMs": 92.6,
+        "longTaskMs": 71
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 40,
+        "corrections": 7,
+        "correctionPx": 4687,
+        "startHeight": 5045,
+        "endHeight": 9773,
+        "styleRecalcMs": 93,
+        "wholeDocumentRecalcs": 18,
+        "mainThreadTaskMs": 250
+      },
+      "reload": {
+        "firstRowMs": 560.7,
+        "subscribeRequests": 2
+      }
+    },
+    "68 msgs / 1,249 activities": {
+      "cold": {
+        "snapshotArriveMs": 105.9,
+        "firstRowMs": 209.6,
+        "bottomMs": 227.6,
+        "longTaskMs": 68
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 78.7,
+        "bottomMs": 99.3,
+        "longTaskMs": 77
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 80,
+        "corrections": 25,
+        "correctionPx": 11101,
+        "startHeight": 8423,
+        "endHeight": 19356,
+        "styleRecalcMs": 264,
+        "wholeDocumentRecalcs": 40,
+        "mainThreadTaskMs": 715
+      },
+      "reload": {
+        "firstRowMs": 544.1,
+        "subscribeRequests": 2
+      }
+    },
+    "18 msgs / 449 activities": {
+      "cold": {
+        "snapshotArriveMs": 65.7,
+        "firstRowMs": 120.5,
+        "bottomMs": 127.8,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 66.4,
+        "bottomMs": 77.3,
+        "longTaskMs": 62
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 15,
+        "corrections": 0,
+        "correctionPx": 0,
+        "startHeight": 3186,
+        "endHeight": 3186,
+        "styleRecalcMs": 10,
+        "wholeDocumentRecalcs": 0,
+        "mainThreadTaskMs": 49
+      },
+      "reload": {
+        "firstRowMs": 486,
+        "subscribeRequests": 2
+      }
+    }
+  },
+  "candidate": {
+    "666 msgs / 2,031 activities (synthetic)": {
+      "cold": {
+        "snapshotArriveMs": 159.6,
+        "firstRowMs": 260.4,
+        "bottomMs": 274.2,
+        "longTaskMs": 108
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 47.1,
+        "bottomMs": 62,
+        "longTaskMs": 0
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 701,
+        "corrections": 58,
+        "correctionPx": 2783,
+        "startHeight": 185949,
+        "endHeight": 187088,
+        "styleRecalcMs": 899,
+        "wholeDocumentRecalcs": 0,
+        "mainThreadTaskMs": 5270
+      },
+      "reload": {
+        "firstRowMs": 588.4,
+        "subscribeRequests": 1
+      }
+    },
+    "1,400 msgs (synthetic)": {
+      "cold": {
+        "snapshotArriveMs": 79.4,
+        "firstRowMs": 119.4,
+        "bottomMs": 128.7,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 45.2,
+        "bottomMs": 45.2,
+        "longTaskMs": 0
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 55,
+        "corrections": 0,
+        "correctionPx": 0,
+        "startHeight": 14330,
+        "endHeight": 13392,
+        "styleRecalcMs": 113,
+        "wholeDocumentRecalcs": 30,
+        "mainThreadTaskMs": 368
+      },
+      "reload": {
+        "firstRowMs": 512.2,
+        "subscribeRequests": 1
+      }
+    },
+    "111 msgs / 1,373 activities": {
+      "cold": {
+        "snapshotArriveMs": 104.6,
+        "firstRowMs": 173.1,
+        "bottomMs": 186.3,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 45.5,
+        "bottomMs": 60.8,
+        "longTaskMs": 0
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 125,
+        "corrections": 15,
+        "correctionPx": 547,
+        "startHeight": 31220,
+        "endHeight": 32115,
+        "styleRecalcMs": 284,
+        "wholeDocumentRecalcs": 28,
+        "mainThreadTaskMs": 1211
+      },
+      "reload": {
+        "firstRowMs": 520.1,
+        "subscribeRequests": 1
+      }
+    },
+    "66 msgs / 1,475 activities": {
+      "cold": {
+        "snapshotArriveMs": 111.4,
+        "firstRowMs": 187.6,
+        "bottomMs": 194.6,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 46.8,
+        "bottomMs": 46.8,
+        "longTaskMs": 0
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 40,
+        "corrections": 8,
+        "correctionPx": 585,
+        "startHeight": 9492,
+        "endHeight": 9773,
+        "styleRecalcMs": 72,
+        "wholeDocumentRecalcs": 13,
+        "mainThreadTaskMs": 248
+      },
+      "reload": {
+        "firstRowMs": 560.3,
+        "subscribeRequests": 1
+      }
+    },
+    "68 msgs / 1,249 activities": {
+      "cold": {
+        "snapshotArriveMs": 101.8,
+        "firstRowMs": 176,
+        "bottomMs": 182.4,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 42.9,
+        "bottomMs": 42.9,
+        "longTaskMs": 0
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 80,
+        "corrections": 4,
+        "correctionPx": 36,
+        "startHeight": 20827,
+        "endHeight": 19356,
+        "styleRecalcMs": 247,
+        "wholeDocumentRecalcs": 38,
+        "mainThreadTaskMs": 777
+      },
+      "reload": {
+        "firstRowMs": 511.9,
+        "subscribeRequests": 1
+      }
+    },
+    "18 msgs / 449 activities": {
+      "cold": {
+        "snapshotArriveMs": 57.5,
+        "firstRowMs": 101.4,
+        "bottomMs": 107.5,
+        "longTaskMs": 0
+      },
+      "warm": {
+        "snapshotArriveMs": null,
+        "firstRowMs": 39.8,
+        "bottomMs": 39.8,
+        "longTaskMs": 0
+      },
+      "readingOlderMessages": {
+        "wheelTicks": 15,
+        "corrections": 0,
+        "correctionPx": 0,
+        "startHeight": 3586,
+        "endHeight": 3186,
+        "styleRecalcMs": 36,
+        "wholeDocumentRecalcs": 0,
+        "mainThreadTaskMs": 103
+      },
+      "reload": {
+        "firstRowMs": 496.2,
+        "subscribeRequests": 1
+      }
+    }
+  }
+}

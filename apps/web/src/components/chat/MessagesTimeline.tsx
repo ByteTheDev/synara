@@ -148,6 +148,7 @@ import { BackgroundTaskStopContext } from "./BackgroundTaskRow";
 import { TurnHeaderLine } from "./TurnHeaderLine";
 import { useTailAnchorScroll } from "./useTailAnchorScroll";
 import { useTimelineRowOverlapGuard } from "./useTimelineRowOverlapGuard";
+import { useTimelineRowHeightHints } from "./useTimelineRowHeightHints";
 import {
   deriveDisplayedUserMessageState,
   type ParsedTerminalContextEntry,
@@ -808,6 +809,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     activeFindMatchRef.current = findHighlight?.activeMatch ?? null;
   }, [findHighlight]);
   const observeTimelineRow = useTimelineRowOverlapGuard();
+  const rowHeightHints = useTimelineRowHeightHints(resolvedListRef, normalizedChatFontSizePx);
   useTailAnchorScroll({
     listRef: resolvedListRef,
     timelineRootRef,
@@ -2997,6 +2999,8 @@ export const MessagesTimeline = memo(function MessagesTimeline({
           keyExtractor={(row) => row.id}
           renderItem={({ item }) => renderRowContent(item)}
           estimatedItemSize={90}
+          getEstimatedItemSize={rowHeightHints.getEstimatedItemSize}
+          onItemSizeChanged={rowHeightHints.onItemSizeChanged}
           // LegendList caches rendered rows, so every local expansion map that changes row content
           // has to be surfaced through extraData.
           extraData={timelineExtraData}
