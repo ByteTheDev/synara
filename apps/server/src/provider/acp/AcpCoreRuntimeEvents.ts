@@ -94,6 +94,7 @@ export function makeAcpRequestOpenedEvent(input: {
   readonly provider: ProviderKind;
   readonly threadId: ThreadId;
   readonly turnId: TurnId | undefined;
+  readonly providerRefs?: ProviderRuntimeEvent["providerRefs"];
   readonly requestId: RuntimeRequestId;
   readonly permissionRequest: AcpPermissionRequest;
   readonly detail: string;
@@ -108,6 +109,7 @@ export function makeAcpRequestOpenedEvent(input: {
     provider: input.provider,
     threadId: input.threadId,
     turnId: input.turnId,
+    ...(input.providerRefs ? { providerRefs: input.providerRefs } : {}),
     requestId: input.requestId,
     payload: {
       requestType: canonicalRequestTypeFromAcpKind(input.permissionRequest.kind),
@@ -127,6 +129,7 @@ export function makeAcpRequestResolvedEvent(input: {
   readonly provider: ProviderKind;
   readonly threadId: ThreadId;
   readonly turnId: TurnId | undefined;
+  readonly providerRefs?: ProviderRuntimeEvent["providerRefs"];
   readonly requestId: RuntimeRequestId;
   readonly permissionRequest: AcpPermissionRequest;
   readonly decision: ProviderApprovalDecision;
@@ -137,6 +140,7 @@ export function makeAcpRequestResolvedEvent(input: {
     provider: input.provider,
     threadId: input.threadId,
     turnId: input.turnId,
+    ...(input.providerRefs ? { providerRefs: input.providerRefs } : {}),
     requestId: input.requestId,
     payload: {
       requestType: canonicalRequestTypeFromAcpKind(input.permissionRequest.kind),

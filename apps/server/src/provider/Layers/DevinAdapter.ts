@@ -383,15 +383,18 @@ interface DevinAdapterLiveOptions {
 }
 
 interface PendingApproval {
+  readonly ownerAgentId?: string | undefined;
   readonly decision: Deferred.Deferred<ProviderApprovalDecision>;
   readonly kind: string;
 }
 
 interface PendingUserInput {
+  readonly ownerAgentId?: string | undefined;
   readonly answers: Deferred.Deferred<ProviderUserInputAnswers>;
 }
 
 interface DevinSubagentState {
+  interactionMode?: ProviderInteractionMode | undefined;
   readonly agentId: string;
   readonly toolCallId: string;
   readonly turnId: TurnId | undefined;
@@ -1647,9 +1650,16 @@ export function summarizeDevinPermissionToolCall(toolCall: AcpToolCallState | un
 // dispatch prunes tool-call provenance against: clearAcpActiveTurn wipes
 // activeTurnId, so the dispatch cannot recover the settled turn from it.
 function settleDevinActiveTurn(ctx: DevinSessionContext, turnId: TurnId): boolean {
+  const childItems = [...ctx.assistantItemOwners]
+    .filter(([, owner]) => owner.parentAgentId)
+    .map(([itemId, owner]) =>
+      owner.turnId ? scopeDevinRuntimeItemIdForTurn(owner.turnId, itemId) : itemId,
+    )
+    .filter((itemId) => ctx.activeAssistantItemsWithContent.has(itemId));
   if (!clearAcpActiveTurn(ctx, turnId)) {
     return false;
   }
+  for (const itemId of childItems) ctx.activeAssistantItemsWithContent.add(itemId);
   ctx.lastSettledTurnId = turnId;
   clearDevinActiveToolCallIdleState(ctx);
   return true;
@@ -2613,12 +2623,24 @@ export function makeDevinAdapter(
                   ? toolCall.data.rawInput
                   : params.toolCall.rawInput;
 
+                const ownerAgentId = readDevinSubagentContext(
+                  params.toolCall._meta ?? params._meta ?? trackedToolCall?.metadata,
+                )?.parentAgentId;
+                const owner = ownerAgentId ? ctx?.devinSubagents.get(ownerAgentId) : undefined;
+                const requestTurnId = ownerAgentId ? owner?.turnId : ctx?.activeTurnId;
+                const requestInteractionMode = ownerAgentId
+                  ? owner?.status === "running"
+                    ? owner.interactionMode
+                    : undefined
+                  : ctx?.activeInteractionMode;
                 const policyOutcome = resolveAcpPermissionPolicy({
                   runtimeMode: input.runtimeMode,
-                  interactionMode: ctx?.activeInteractionMode,
+                  interactionMode: requestInteractionMode,
                   options: params.options,
                   computerControlEnabled: ctx?.enableComputerControl === true,
-                  activeTurn: ctx?.activeTurnId !== undefined,
+                  activeTurn: ownerAgentId
+                    ? owner?.status === "running" && requestInteractionMode !== undefined
+                    : ctx?.activeTurnId !== undefined,
                   autoApproveSynaraTools: input.autoApproveSynaraTools === true,
                   gatewaySessionActive: gatewaySessionLease !== undefined,
                   toolCall: {
@@ -2668,6 +2690,7 @@ export function makeDevinAdapter(
                 const decision = yield* Deferred.make<ProviderApprovalDecision>();
                 pendingApprovals.set(requestId, {
                   decision,
+                  ownerAgentId,
                   kind: permissionRequest.kind,
                 });
 
@@ -2677,7 +2700,8 @@ export function makeDevinAdapter(
                     stamp: yield* makeEventStamp(),
                     provider: PROVIDER,
                     threadId: input.threadId,
-                    turnId: ctx?.activeTurnId,
+                    turnId: requestTurnId,
+                    providerRefs: ctx ? devinProviderRefsForAgent(ctx, ownerAgentId) : undefined,
                     requestId: runtimeRequestId,
                     permissionRequest,
                     detail:
@@ -2716,7 +2740,8 @@ export function makeDevinAdapter(
                     stamp: yield* makeEventStamp(),
                     provider: PROVIDER,
                     threadId: input.threadId,
-                    turnId: ctx?.activeTurnId,
+                    turnId: requestTurnId,
+                    providerRefs: ctx ? devinProviderRefsForAgent(ctx, ownerAgentId) : undefined,
                     requestId: runtimeRequestId,
                     permissionRequest,
                     decision: resolved,
@@ -2749,18 +2774,28 @@ export function makeDevinAdapter(
                   } satisfies Acp.CreateElicitationResponse;
                 }
 
+                const ownerAgentId = readDevinSubagentContext(
+                  params._meta ?? undefined,
+                )?.parentAgentId;
+                const owner = ownerAgentId ? ctx?.devinSubagents.get(ownerAgentId) : undefined;
+                if (ownerAgentId && owner?.status !== "running")
+                  return { action: "decline" } satisfies Acp.CreateElicitationResponse;
+                const requestTurnId = ownerAgentId ? owner?.turnId : ctx?.activeTurnId;
                 const questions = elicitationQuestionsFromRequest(params);
                 const requestId = ApprovalRequestId.makeUnsafe(crypto.randomUUID());
                 const runtimeRequestId = RuntimeRequestId.makeUnsafe(requestId);
                 const answers = yield* Deferred.make<ProviderUserInputAnswers>();
-                pendingUserInputs.set(requestId, { answers });
+                pendingUserInputs.set(requestId, { answers, ownerAgentId });
 
                 yield* offerRuntimeEvent(input.lifecycleGeneration, {
                   type: "user-input.requested",
                   ...(yield* makeEventStamp()),
                   provider: PROVIDER,
                   threadId: input.threadId,
-                  turnId: ctx?.activeTurnId,
+                  turnId: requestTurnId,
+                  ...(ctx && ownerAgentId
+                    ? { providerRefs: devinProviderRefsForAgent(ctx, ownerAgentId) }
+                    : {}),
                   requestId: runtimeRequestId,
                   payload: { questions },
                   raw: {
@@ -2778,7 +2813,10 @@ export function makeDevinAdapter(
                   ...(yield* makeEventStamp()),
                   provider: PROVIDER,
                   threadId: input.threadId,
-                  turnId: ctx?.activeTurnId,
+                  turnId: requestTurnId,
+                  ...(ctx && ownerAgentId
+                    ? { providerRefs: devinProviderRefsForAgent(ctx, ownerAgentId) }
+                    : {}),
                   requestId: runtimeRequestId,
                   payload: { answers: resolved },
                   raw: {
@@ -3037,6 +3075,7 @@ export function makeDevinAdapter(
                               }
                             : replayStart;
                           subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
+                          subagent.interactionMode ??= ctx.activeInteractionMode;
                           ctx.devinSubagents.set(subagent.agentId, subagent);
                           ctx.devinSubagentIdByToolCallId.set(
                             subagent.toolCallId,
@@ -3081,6 +3120,7 @@ export function makeDevinAdapter(
                               yield* emitDevinSubagentItemUpdate(ctx, subagent);
                             }
                           }
+                          subagent.interactionMode ??= ctx.activeInteractionMode;
                           ctx.devinSubagents.set(subagent.agentId, subagent);
                           ctx.devinSubagentIdByToolCallId.set(
                             subagent.toolCallId,
@@ -3169,6 +3209,7 @@ export function makeDevinAdapter(
                             }
                           : startedSubagent;
                         subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
+                        subagent.interactionMode ??= ctx.activeInteractionMode;
                         ctx.devinSubagents.set(subagent.agentId, subagent);
                         ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
                         if (previous === undefined) {
@@ -3195,6 +3236,7 @@ export function makeDevinAdapter(
                           status: "running" as const,
                         };
                         subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
+                        subagent.interactionMode ??= ctx.activeInteractionMode;
                         ctx.devinSubagents.set(subagent.agentId, subagent);
                         ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
                         if (
@@ -3315,8 +3357,9 @@ export function makeDevinAdapter(
                           ? shell.parentAgentId
                           : subagentContext?.parentAgentId;
                       if (
-                        (parent || trackedSubagent || shell || recordedTurnId !== undefined) &&
-                        recordedTurnId !== ctx.activeTurnId
+                        parent ||
+                        ((trackedSubagent || shell || recordedTurnId !== undefined) &&
+                          recordedTurnId !== ctx.activeTurnId)
                       ) {
                         yield* logNative(ctx.threadId, "session/update", event.rawPayload);
                         yield* offerRuntimeEvent(
@@ -4181,6 +4224,28 @@ export function makeDevinAdapter(
           ) {
             return;
           }
+        }
+        const stoppedOwners = new Set([agentId]);
+        for (let changed = true; changed; ) {
+          changed = false;
+          for (const child of ctx.devinSubagents.values()) {
+            if (
+              child.parentAgentId &&
+              stoppedOwners.has(child.parentAgentId) &&
+              !stoppedOwners.has(child.agentId)
+            ) {
+              stoppedOwners.add(child.agentId);
+              changed = true;
+            }
+          }
+        }
+        for (const pending of ctx.pendingApprovals.values()) {
+          if (pending.ownerAgentId && stoppedOwners.has(pending.ownerAgentId))
+            yield* Deferred.succeed(pending.decision, "cancel");
+        }
+        for (const pending of ctx.pendingUserInputs.values()) {
+          if (pending.ownerAgentId && stoppedOwners.has(pending.ownerAgentId))
+            yield* Deferred.succeed(pending.answers, {});
         }
         yield* withAgentGatewayTurnCancellation(
           ctx.gatewaySessionLease,

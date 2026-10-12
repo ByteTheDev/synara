@@ -2792,7 +2792,7 @@ describe("Devin stale resume classification", () => {
   });
 });
 
-function makePermissionRuntime() {
+function makePermissionRuntime(prompt: AcpSessionRuntimeShape["prompt"] = () => Effect.never) {
   let permissionHandler:
     | ((
         request: Acp.RequestPermissionRequest,
@@ -2801,18 +2801,24 @@ function makePermissionRuntime() {
   // Permission requests must arrive while a turn is still active: an
   // immediately-completing prompt clears the interaction mode and the policy
   // layer would cancel the request before it ever reaches the approval card.
-  const handles = makeEventAcpRuntime(() => Effect.never as Effect.Effect<Acp.PromptResponse>);
+  const handles = makeEventAcpRuntime(prompt);
+  let modeId = "code";
   const runtime = {
     ...handles.runtime,
     // Approval-required sessions resolve their ACP mode id from the reported
     // modes, so the harness must advertise one besides "bypass".
-    getModeState: Effect.succeed({
-      currentModeId: "code",
+    getModeState: Effect.sync(() => ({
+      currentModeId: modeId,
       availableModes: [
         { id: "code", name: "Accept Edits" },
         { id: "bypass", name: "Full Access" },
       ],
-    }),
+    })),
+    setMode: (next: string) =>
+      Effect.sync(() => {
+        modeId = next;
+        return {} as Acp.SetSessionModeResponse;
+      }),
     handleRequestPermission: (
       handler: (
         request: Acp.RequestPermissionRequest,
@@ -2825,6 +2831,8 @@ function makePermissionRuntime() {
   return {
     runtime,
     emitToolCall: handles.emitToolCall,
+    emitProgress: handles.emitProgress,
+    emitAssistantCompleted: handles.emitAssistantCompleted,
     completeProcessedEvent: handles.completeProcessedEvent,
     requestPermission: (request: Acp.RequestPermissionRequest) =>
       permissionHandler === undefined
@@ -3978,7 +3986,20 @@ it("routes late child tools, text and completion to the launch turn after a new 
           "cognition.ai/subagent_started": { agentId: "outer", task: "Work", isBackground: true },
         },
       });
+      yield* runtime.emitProgress(
+        "Child started before parent settled",
+        { "cognition.ai/subagent_context": { parentAgentId: "outer" } },
+        "early-child-message",
+      );
       yield* Deferred.succeed(firstPrompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+      yield* runtime.emitAssistantCompleted("early-child-message");
+      yield* flushTimers();
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "item.completed",
+          itemId: scopeDevinRuntimeItemIdForTurn(first.turnId, "early-child-message"),
+        }),
+      );
       yield* advanceTimers(100);
       const refs = { providerThreadId: "outer", providerParentThreadId: "devin-test-session" };
       const context = { "cognition.ai/subagent_context": { parentAgentId: "outer" } };
@@ -4077,3 +4098,133 @@ it("settles unrecoverable task tracking when a resumed session falls back to a f
 });
 
 afterEach(() => vi.useRealTimers());
+
+it("keeps a background child's launch permission policy after its parent settles", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const prompt = Effect.runSync(Deferred.make<Acp.PromptResponse>());
+  const handles = makePermissionRuntime(() => Deferred.await(prompt));
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("child-launch-policy");
+      yield* adapter.startSession({ provider: "devin", threadId, runtimeMode: "full-access" });
+      yield* adapter.sendTurn({ threadId, input: "launch", attachments: [] });
+      yield* handles.emitToolCall("launch", "inProgress", {
+        metadata: { "cognition.ai/subagent_started": { agentId: "child", isBackground: true } },
+      });
+      yield* Deferred.succeed(prompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+      yield* advanceTimers(100);
+      const response = yield* handles.requestPermission(
+        makePermissionParams("child-tool", {
+          _meta: { "cognition.ai/subagent_context": { parentAgentId: "child" } },
+        }),
+      );
+      expect(response).toEqual({ outcome: { outcome: "selected", optionId: "allow-once" } });
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(handles.runtime, handles.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
+  );
+});
+it("cancels a stopped child's pending approval without cancelling its parent request", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const handles = makePermissionRuntime();
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("child-stop-approval");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      yield* adapter.startSession({
+        provider: "devin",
+        threadId,
+        runtimeMode: "approval-required",
+      });
+      yield* adapter.sendTurn({ threadId, input: "launch", attachments: [] });
+      yield* handles.emitToolCall("launch", "inProgress", {
+        metadata: { "cognition.ai/subagent_started": { agentId: "child", isBackground: true } },
+      });
+      const child = yield* handles
+        .requestPermission(
+          makePermissionParams("child-tool", {
+            _meta: { "cognition.ai/subagent_context": { parentAgentId: "child" } },
+          }),
+        )
+        .pipe(Effect.forkChild);
+      yield* flushTimers();
+      yield* adapter.stopTask!(threadId, "child");
+      expect(yield* Fiber.join(child)).toEqual({ outcome: { outcome: "cancelled" } });
+      yield* flushTimers();
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "request.resolved",
+          payload: expect.objectContaining({ decision: "cancel" }),
+        }),
+      );
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(handles.runtime, handles.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
+  );
+});
+it("does not mark the root prompt failed when a child tool fails in the same turn", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const prompt = Effect.runSync(Deferred.make<Acp.PromptResponse>());
+  const handles = makeEventAcpRuntime(() => Deferred.await(prompt));
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("child-failure-isolation");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      yield* adapter.startSession({ provider: "devin", threadId, runtimeMode: "full-access" });
+      const turn = yield* adapter.sendTurn({ threadId, input: "launch", attachments: [] });
+      yield* handles.emitToolCall("launch", "inProgress", {
+        metadata: { "cognition.ai/subagent_started": { agentId: "child", isBackground: true } },
+      });
+      yield* handles.emitToolCall("child-tool", "failed", {
+        metadata: { "cognition.ai/subagent_context": { parentAgentId: "child" } },
+        data: { rawOutput: "child failed" },
+      });
+      yield* Deferred.succeed(prompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+      yield* advanceTimers(100);
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "turn.completed",
+          turnId: turn.turnId,
+          payload: expect.objectContaining({ state: "completed" }),
+        }),
+      );
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(handles.runtime, handles.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
+  );
+});
