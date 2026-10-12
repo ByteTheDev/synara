@@ -1,0 +1,31 @@
+name: PR 1863 fixed native artifact inspection
+on:
+  push:
+    branches: [cleanup/20261012/pr1863-prefix-artifact-reader]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: pr1863-prefix-artifact-reader-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 8
+          persist-credentials: false
+      - name: Read four exact completed native artifacts without rerunning tests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/pr1863-prefix-artifact-reader.py
+      - name: Retain original ZIPs and exact failed outcomes
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1863-prefix-artifact-reader-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1863-prefix-artifact-reader
+          if-no-files-found: error
+          retention-days: 30
