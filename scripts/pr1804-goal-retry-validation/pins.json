@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "originalPr": 1158,
+  "continuationPr": 1804,
+  "originalAuthorHead": "d62afc79a107ec1b3cbec895419b51202cc01429",
+  "reviewedContinuationHead": "392bc7e3614e35d59c42add5a1c1bf6f153dd76a",
+  "currentMain": {
+    "sha": "d4509644c8b7c2ba419680f7da8c2441f230d67e",
+    "tree": "877444c1badcb38871bd6ac38ebe401e81022212",
+    "files": 9025
+  },
+  "before": {
+    "sha": "b7ce9417bda2d2b2da644cf43e5865a67a5f7a61",
+    "tree": "fd4212af7201cc409c7f6b12fb23e0c96effb7ea",
+    "files": 9025
+  },
+  "candidate": {
+    "sha": "beb3f13af6377783ad6b32f47c29976d682cc6b9",
+    "tree": "b0697fe001c019839e23e0fba28a8d45b8b77566",
+    "files": 9025
+  },
+  "setupWorkspaceBlob": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+  "feature": [
+    {
+      "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts",
+      "sha": "a548d766dfc1051002bfa1a93d7a9e8939a43474",
+      "bytes": 900855
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.ts",
+      "sha": "c4e95f3ad9c693e6feceba7378c136dac7283843",
+      "bytes": 408919
+    }
+  ],
+  "beforeProductionBlob": "eeabfa3776299ad0abe151f1568b4ea11708cbb8",
+  "suite": "src/orchestration/Layers/ProviderCommandReactor.test.ts",
+  "originalNames": [
+    "recovers a startup failure that settles after the command deadline within the settle grace",
+    "honors a provider start that completes after the command deadline within the settle grace",
+    "rejects a startup failure that lands inside the settle grace window",
+    "settles uncertain when a startup failure lands beyond the settle grace",
+    "uses the production 120s/15s deadline ratio with a controlled clock: accepted",
+    "uses the production 120s/15s deadline ratio with a controlled clock: rejected",
+    "uses the production 120s/15s deadline ratio with a controlled clock: beyond-grace",
+    "rejects a turn start retryably when the thread checkpoint lease never frees",
+    "recovers a turn start after a held checkpoint lease frees",
+    "surfaces a goal continuation blocked by a held checkpoint lease",
+    "surfaces a rollback blocked by a held checkpoint lease",
+    "surfaces an edit resend blocked by a held checkpoint lease"
+  ],
+  "goalNames": [
+    "retries a goal after its held checkpoint lease frees unless the goal was paused: false",
+    "retries a goal after its held checkpoint lease frees unless the goal was paused: true"
+  ],
+  "variants": [
+    "before",
+    "after"
+  ],
+  "observerSource": {
+    "head": "0d46607f4d76be872d57a9b25562186d2f27a5cb",
+    "blob": "3747b9454ddb5665f590e365764d5c5a294d8a06",
+    "functionGitBlob": "f85082937843a77fec68659c1c842c702e5492eb"
+  },
+  "qualification": "The complete Before and After source trees contain the identical two added controls. Before has the current-main-integrated original grace repair and no deferred-goal retry call; After adds only the reviewed retry-map admission. No test/source overlay, native provider execution, original phase-budget completion, or local execution is claimed."
+}

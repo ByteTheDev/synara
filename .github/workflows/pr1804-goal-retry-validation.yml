@@ -1,0 +1,60 @@
+name: PR 1804 goal retry source validation
+on:
+  push:
+    branches: [codex/runtime-goal-retry-1804-20261012]
+permissions:
+  contents: read
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+jobs:
+  validate:
+    name: PR 1804 goal retry ${{ matrix.variant }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: before
+            source: b7ce9417bda2d2b2da644cf43e5865a67a5f7a61
+          - variant: after
+            source: beb3f13af6377783ad6b32f47c29976d682cc6b9
+    steps:
+      - name: Checkout exact source with the identical test fixture
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout exact isolated observer
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .runtime-goal-retry-driver
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/pr1804-goal-retry-validation.yml
+            scripts/pr1804-goal-retry-validation
+      - name: Check diagnostic syntax
+        run: |
+          node --check .runtime-goal-retry-driver/scripts/pr1804-goal-retry-validation/owned-command-observer.mjs
+          node --check .runtime-goal-retry-driver/scripts/pr1804-goal-retry-validation/runner.mjs
+      - name: Install exact frozen workspace dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+          turbo: "false"
+      # Before retains its real failed test exit. No inversion or continue-on-error.
+      - name: Execute original and new assertions and retain real process results
+        run: node .runtime-goal-retry-driver/scripts/pr1804-goal-retry-validation/runner.mjs '${{ matrix.variant }}'
+      - name: Retain immutable diagnostics even after failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1804-goal-retry-${{ matrix.variant }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1804-goal-retry-${{ matrix.variant }}/frozen
+          if-no-files-found: error
+          retention-days: 30
