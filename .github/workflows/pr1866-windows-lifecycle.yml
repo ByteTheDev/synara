@@ -1,0 +1,51 @@
+name: PR1866 Windows original lifecycle protocol cases
+on:
+  push:
+    branches: [codex/runtime-reconciliation-1866-windows-20261012]
+permissions:
+  contents: read
+concurrency:
+  group: pr1866-windows-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+  GIT_CONFIG_COUNT: 1
+  GIT_CONFIG_KEY_0: core.autocrlf
+  GIT_CONFIG_VALUE_0: "false"
+jobs:
+  native:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout immutable final feature source with LF bytes
+        uses: actions/checkout@v6
+        with:
+          ref: 4c31e23b888e40d21868fa8325a8641b0424c517
+          persist-credentials: false
+      - name: Checkout isolated reviewed driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .runtime-windows-lifecycle-driver
+          persist-credentials: false
+      - name: Check diagnostic syntax
+        run: |
+          node --check .runtime-windows-lifecycle-driver/scripts/pr1866-windows-lifecycle/runner.mjs
+          node --check .runtime-windows-lifecycle-driver/scripts/pr1866-windows-lifecycle/owned-command-observer.mjs
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+          turbo: "false"
+      - name: Execute both unchanged native protocol cases and retain actual exit
+        run: node .runtime-windows-lifecycle-driver/scripts/pr1866-windows-lifecycle/runner.mjs windows-native
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pr1866-windows-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1866-windows-lifecycle-windows-native/frozen
+          if-no-files-found: error
+          retention-days: 30

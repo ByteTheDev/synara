@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "originalPr": 1147,
+  "continuationPr": 1866,
+  "originalAuthorHead": "aedf51d103f5449bd3aad07575d8e076ff45baab",
+  "candidate": {
+    "sha": "4c31e23b888e40d21868fa8325a8641b0424c517",
+    "tree": "720a114ad765645b93d7ed984e2e6665c404167f",
+    "files": 9027
+  },
+  "setupWorkspaceBlob": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+  "suite": "integration/overlappingTurnLifecycle.integration.test.ts",
+  "nativeNames": [
+    "preserves manual ownership and completes queued automation (legacy interruption: false)",
+    "preserves manual ownership and completes queued automation (legacy interruption: true)"
+  ],
+  "feature": [
+    {
+      "path": "apps/server/integration/OrchestrationEngineHarness.integration.ts",
+      "sha": "25b04e65ce7defe5fda14d23cb513bb1b4d4e107",
+      "bytes": 23886
+    },
+    {
+      "path": "apps/server/integration/fixtures/codexLifecycle.cjs",
+      "sha": "37068578947a2167bedd5f9b6732df58f109ea31",
+      "bytes": 3191
+    },
+    {
+      "path": "apps/server/integration/overlappingTurnLifecycle.integration.test.ts",
+      "sha": "1a4c9d59ca27ee486468317502124a6b09062d5a",
+      "bytes": 12092
+    },
+    {
+      "path": "apps/server/src/agentGateway/Layers/AgentGateway.test.ts",
+      "sha": "8d18560eaf198520d531383d9e46dabe39d25b56",
+      "bytes": 246189
+    },
+    {
+      "path": "apps/server/src/agentGateway/threadDiagnosticTools.ts",
+      "sha": "eb56f9f11a14c5667b42c4ad39c01e103de63c89",
+      "bytes": 22433
+    },
+    {
+      "path": "apps/server/src/automation/Layers/AutomationService.test.ts",
+      "sha": "c559a39596dbc05dc861d8ad367caa79dc3d1b64",
+      "bytes": 241457
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProjectionPipeline.test.ts",
+      "sha": "156c2e532c347afabcab8c2b05f6d1302044975c",
+      "bytes": 240789
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProjectionPipeline.ts",
+      "sha": "2755fbb9edb98ce8cdb8a155ef47808ab61ab393",
+      "bytes": 107138
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProjectionSnapshotQuery.test.ts",
+      "sha": "2faf7fdbf5b5c2ca81dad7f3004a4e30197369d1",
+      "bytes": 132331
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProjectionSnapshotQuery.ts",
+      "sha": "b2e2063bf6925d209c866424e8d8d007f57f8610",
+      "bytes": 157572
+    },
+    {
+      "path": "apps/server/src/provider/Layers/ProviderRuntimeReconciler.ts",
+      "sha": "c135c467ea15eb454e81a576c838b023f38afaf3",
+      "bytes": 13475
+    },
+    {
+      "path": "apps/server/src/provider/providerRuntimeReconciliation.test.ts",
+      "sha": "ca209da83c43749c77aa23b6855f6d17be4040ae",
+      "bytes": 30884
+    },
+    {
+      "path": "apps/server/src/provider/providerRuntimeReconciliation.ts",
+      "sha": "61c6ba4e2bc66a9c07b98c53ee3615049e1a7106",
+      "bytes": 18048
+    },
+    {
+      "path": "apps/server/src/orchestration/Services/ProjectionSnapshotQuery.ts",
+      "sha": "a1df4e752c8a6d8b77e95c3445c3ee4903195c18",
+      "bytes": 11957
+    },
+    {
+      "path": "apps/server/src/orchestration/testing/fakeProjectionSnapshotQuery.ts",
+      "sha": "eb9a9bdc8ff17e954399e9a26498a6927b6875b0",
+      "bytes": 1922
+    },
+    {
+      "path": "apps/server/src/provider/Layers/ProviderRuntimeReconciler.test.ts",
+      "sha": "79abd51f6c634a7d26f1d21de7983c23f4d24374",
+      "bytes": 23784
+    }
+  ],
+  "originalFixtureBlobs": [
+    {
+      "path": "apps/server/integration/overlappingTurnLifecycle.integration.test.ts",
+      "sha": "1a4c9d59ca27ee486468317502124a6b09062d5a",
+      "bytes": 12092
+    },
+    {
+      "path": "apps/server/integration/fixtures/codexLifecycle.cjs",
+      "sha": "37068578947a2167bedd5f9b6732df58f109ea31",
+      "bytes": 3191
+    }
+  ],
+  "qualification": "Run the two original unchanged author process cases on final reviewed4c31 Windows source. Full current tracked bytes are checked before and after. Native Codex protocol ownership is exercised through a deterministic isolated Node peer; no live model, account credential, universal cleanup or descendant exit claim."
+}
