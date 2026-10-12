@@ -11,6 +11,12 @@ import { describe, expect, it } from "vitest";
 const COSTLY_HAS_VARIANT =
   /(?<![\w[-])(?:(?:group|peer)-has-[^\s"'`]*|(?:not-)?has-[^\s"'`:]*(?:\[[^\s"'`]*?\])?[^\s"'`:]*:\*{1,2}:[^\s"'`]*)/g;
 
+// Samples use "~" for "-": Tailwind scans this file too, and a literal sample would be
+// compiled into a real stylesheet rule and bring the cost back.
+function unscanned(classes: string[]): string[] {
+  return classes.map((name) => name.replaceAll("~", "-"));
+}
+
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
@@ -32,9 +38,6 @@ describe(":has() selector variants", () => {
   });
 
   it("recognizes each costly variant shape", () => {
-    // Samples use "~" for "-": Tailwind scans this file too, and a literal sample would
-    // be compiled into a real stylesheet rule and bring the cost back.
-    const unscanned = (classes: string[]) => classes.map((name) => name.replaceAll("~", "-"));
     const samples = unscanned([
       "md:group~has~[:focus~visible]/project~header:opacity~100",
       "group~has~data~[sidebar=menu~action]/menu~item:pe~8",
