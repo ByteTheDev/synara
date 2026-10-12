@@ -22,6 +22,7 @@ import {
   type ProviderModelDescriptor,
   type ProviderRuntimeEvent,
   type ProviderSession,
+  type ProviderTaskReconciliation,
   type ProviderUserInputAnswers,
   RuntimeTaskId,
   RuntimeItemId,
@@ -471,7 +472,7 @@ interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
   /** Native background shell jobs keyed by Devin shell id. */
   readonly devinBackgroundShells: Map<string, DevinBackgroundShellState>;
   /** Locally stopped tasks awaiting a provider terminal update, including after resume. */
-  readonly pendingTaskReconciliations: Set<string>;
+  readonly pendingTaskReconciliations: Map<string, ProviderTaskReconciliation>;
   // Session-scoped approval keys recorded by "Always allow this session".
   // Each key is (canonical request kind + the exact thing approved): the full
   // command string for execute, the provider's tool name for other tools — so
@@ -540,6 +541,38 @@ interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function taskReconciliation(
+  taskId: string,
+  task: DevinSubagentState | DevinBackgroundShellState,
+): ProviderTaskReconciliation {
+  return {
+    taskId: RuntimeTaskId.makeUnsafe(taskId),
+    ...(task.turnId ? { turnId: task.turnId } : {}),
+    toolUseId: task.toolCallId,
+    ...(task.parentAgentId ? { parentAgentId: task.parentAgentId } : {}),
+  };
+}
+
+function restoreTaskCorrelation<T extends DevinSubagentState | DevinBackgroundShellState>(
+  ctx: DevinSessionContext,
+  taskId: string,
+  task: T,
+): T {
+  const correlation = ctx.pendingTaskReconciliations.get(taskId);
+  if (!correlation) return task;
+  const parentAgentId = correlation.parentAgentId ?? task.parentAgentId;
+  return {
+    ...task,
+    turnId: correlation.turnId ?? task.turnId,
+    // Older stop activities used the agent ID here; replay supplies the real tool ID.
+    toolCallId:
+      correlation.toolUseId && correlation.toolUseId !== taskId
+        ? correlation.toolUseId
+        : task.toolCallId,
+    ...(parentAgentId ? { parentAgentId } : {}),
+  };
 }
 
 function metadataString(value: unknown, ...keys: string[]): string | undefined {
@@ -1906,7 +1939,7 @@ export function makeDevinAdapter(
               : {}),
             taskType: "subagent",
             ...(subagent.profile ? { subagentType: subagent.profile } : {}),
-            toolUseId: subagent.agentId,
+            toolUseId: subagent.toolCallId,
           },
         });
         yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
@@ -1920,7 +1953,7 @@ export function makeDevinAdapter(
             taskId,
             status: "running",
             isBackgrounded: subagent.isBackground,
-            toolUseId: subagent.agentId,
+            toolUseId: subagent.toolCallId,
           },
         });
       });
@@ -1946,7 +1979,7 @@ export function makeDevinAdapter(
           payload: {
             taskId: RuntimeTaskId.makeUnsafe(subagent.agentId),
             status,
-            toolUseId: subagent.agentId,
+            toolUseId: subagent.toolCallId,
             ...(summary ? { summary } : {}),
             ...(reconcilesStop ? { reconcilesStop: true } : {}),
             ...(awaitingProviderConfirmation ? { awaitingProviderConfirmation: true } : {}),
@@ -2067,7 +2100,7 @@ export function makeDevinAdapter(
       return Effect.succeed(ctx);
     };
 
-    const stopSessionInternal = (ctx: DevinSessionContext) =>
+    const stopSessionInternal = (ctx: DevinSessionContext, preserveTasksForResume = false) =>
       Effect.gen(function* () {
         if (ctx.stopped) return;
         ctx.stopped = true;
@@ -2077,18 +2110,42 @@ export function makeDevinAdapter(
         for (const subagent of ctx.devinSubagents.values()) {
           if (subagent.status !== "running") continue;
           subagent.status = "stopped";
+          if (preserveTasksForResume) {
+            subagent.locallyStopped = true;
+            ctx.pendingTaskReconciliations.set(
+              subagent.agentId,
+              taskReconciliation(subagent.agentId, subagent),
+            );
+          }
           yield* emitDevinSubagentCompleted(
             ctx,
             subagent,
             "stopped",
             subagent.turnId ?? ctx.activeTurnId,
+            undefined,
+            false,
+            preserveTasksForResume,
           );
           yield* emitDevinSubagentItemUpdate(ctx, subagent);
         }
         for (const shell of ctx.devinBackgroundShells.values()) {
           if (shell.status !== "running") continue;
           shell.status = "stopped";
-          yield* emitDevinBackgroundShellCompleted(ctx, shell, "stopped", "Devin session stopped");
+          if (preserveTasksForResume) {
+            shell.locallyStopped = true;
+            ctx.pendingTaskReconciliations.set(
+              shell.shellId,
+              taskReconciliation(shell.shellId, shell),
+            );
+          }
+          yield* emitDevinBackgroundShellCompleted(
+            ctx,
+            shell,
+            "stopped",
+            "Devin session stopped",
+            false,
+            preserveTasksForResume,
+          );
         }
         yield* cancelAgentGatewayTurn(ctx.gatewaySessionLease, ctx.activeTurnId);
         ctx.gatewaySessionLease?.release();
@@ -2344,8 +2401,11 @@ export function makeDevinAdapter(
           ) {
             return yield* Effect.interrupt;
           }
+          const preserveTasksForResume =
+            existing !== undefined &&
+            parseDevinResume(input.resumeCursor)?.sessionId === existing.acpSessionId;
           if (existing && !existing.stopped) {
-            yield* stopSessionInternal(existing);
+            yield* stopSessionInternal(existing, preserveTasksForResume);
           }
 
           const pendingApprovals = new Map<ApprovalRequestId, PendingApproval>();
@@ -2788,7 +2848,12 @@ export function makeDevinAdapter(
             devinSubagents: new Map(),
             devinSubagentIdByToolCallId: new Map(),
             devinBackgroundShells: new Map(),
-            pendingTaskReconciliations: new Set(input.pendingTaskReconciliations ?? []),
+            pendingTaskReconciliations: new Map([
+              ...(input.pendingTaskReconciliations ?? []).map(
+                (task) => [task.taskId, task] as const,
+              ),
+              ...(preserveTasksForResume && existing ? existing.pendingTaskReconciliations : []),
+            ]),
             devinSessionApprovedRequestKeys: new Set(),
             devinStallWatchDetectedAt: undefined,
             devinSpawnStalls: new Map(),
@@ -2916,7 +2981,7 @@ export function makeDevinAdapter(
                         );
                         if (replayStart) {
                           const previous = ctx.devinSubagents.get(replayStart.agentId);
-                          const subagent: DevinSubagentState = previous
+                          let subagent: DevinSubagentState = previous
                             ? {
                                 ...previous,
                                 ...replayStart,
@@ -2931,6 +2996,7 @@ export function makeDevinAdapter(
                                 status: previous.status,
                               }
                             : replayStart;
+                          subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
                           ctx.devinSubagents.set(subagent.agentId, subagent);
                           ctx.devinSubagentIdByToolCallId.set(
                             subagent.toolCallId,
@@ -2945,7 +3011,7 @@ export function makeDevinAdapter(
                           const previous =
                             ctx.devinSubagents.get(replayCompletion.agentId) ??
                             (knownId ? ctx.devinSubagents.get(knownId) : undefined);
-                          const subagent: DevinSubagentState = previous ?? {
+                          let subagent: DevinSubagentState = previous ?? {
                             agentId: replayCompletion.agentId,
                             toolCallId: event.toolCall.toolCallId,
                             turnId: ctx.activeTurnId,
@@ -2955,6 +3021,7 @@ export function makeDevinAdapter(
                             isBackground: false,
                             status: "running",
                           };
+                          subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
                           if (subagent.status === "running") {
                             subagent.status = replayCompletion.success ? "completed" : "failed";
                             if (replayCompletion.summary)
@@ -2997,6 +3064,7 @@ export function makeDevinAdapter(
                           } else if (replayShell.command && !shell.command) {
                             shell = { ...shell, command: replayShell.command };
                           }
+                          shell = restoreTaskCorrelation(ctx, shell.shellId, shell);
                           if (
                             typeof replayShell.exitCode === "number" &&
                             shell.status === "running"
@@ -3036,7 +3104,7 @@ export function makeDevinAdapter(
                       );
                       if (startedSubagent) {
                         const previous = ctx.devinSubagents.get(startedSubagent.agentId);
-                        const subagent = previous
+                        let subagent = previous
                           ? {
                               ...previous,
                               ...startedSubagent,
@@ -3057,6 +3125,7 @@ export function makeDevinAdapter(
                               status: previous.status,
                             }
                           : startedSubagent;
+                        subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
                         ctx.devinSubagents.set(subagent.agentId, subagent);
                         ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
                         if (previous === undefined) {
@@ -3072,7 +3141,7 @@ export function makeDevinAdapter(
                         const existingSubagent =
                           ctx.devinSubagents.get(completion.agentId) ??
                           (knownId ? ctx.devinSubagents.get(knownId) : undefined);
-                        const subagent = existingSubagent ?? {
+                        let subagent: DevinSubagentState = existingSubagent ?? {
                           agentId: completion.agentId,
                           toolCallId: event.toolCall.toolCallId,
                           turnId: toolCallTurnId,
@@ -3082,12 +3151,13 @@ export function makeDevinAdapter(
                           isBackground: false,
                           status: "running" as const,
                         };
-                        if (existingSubagent === undefined) {
-                          ctx.devinSubagents.set(subagent.agentId, subagent);
-                          ctx.devinSubagentIdByToolCallId.set(
-                            subagent.toolCallId,
-                            subagent.agentId,
-                          );
+                        subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
+                        ctx.devinSubagents.set(subagent.agentId, subagent);
+                        ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
+                        if (
+                          existingSubagent === undefined &&
+                          !ctx.pendingTaskReconciliations.has(subagent.agentId)
+                        ) {
                           yield* emitDevinSubagentStarted(ctx, subagent, subagent.turnId);
                         }
                         if (
@@ -3136,8 +3206,10 @@ export function makeDevinAdapter(
                           turnId: toolCallTurnId,
                           status: "running",
                         };
+                        shell = restoreTaskCorrelation(ctx, shell.shellId, shell);
                         ctx.devinBackgroundShells.set(shell.shellId, shell);
-                        yield* emitDevinBackgroundShellStarted(ctx, shell);
+                        if (!ctx.pendingTaskReconciliations.has(shell.shellId))
+                          yield* emitDevinBackgroundShellStarted(ctx, shell);
                       } else if (shell && shellUpdate?.command && !shell.command) {
                         shell = { ...shell, command: shellUpdate.command };
                         ctx.devinBackgroundShells.set(shell.shellId, shell);
@@ -3528,9 +3600,7 @@ export function makeDevinAdapter(
                 : {}),
               ...(ctx.pendingTaskReconciliations.size > 0
                 ? {
-                    pendingTaskReconciliations: [...ctx.pendingTaskReconciliations].map((taskId) =>
-                      RuntimeTaskId.makeUnsafe(taskId),
-                    ),
+                    pendingTaskReconciliations: [...ctx.pendingTaskReconciliations.values()],
                   }
                 : {}),
               resumeCursor,
@@ -4036,7 +4106,10 @@ export function makeDevinAdapter(
         if (current?.status === "running") {
           current.status = "stopped";
           current.locallyStopped = true;
-          ctx.pendingTaskReconciliations.add(current.agentId);
+          ctx.pendingTaskReconciliations.set(
+            current.agentId,
+            taskReconciliation(current.agentId, current),
+          );
           yield* emitDevinSubagentCompleted(
             ctx,
             current,
@@ -4090,7 +4163,10 @@ export function makeDevinAdapter(
           if (current?.status !== "running") return;
           current.status = "stopped";
           current.locallyStopped = true;
-          ctx.pendingTaskReconciliations.add(current.shellId);
+          ctx.pendingTaskReconciliations.set(
+            current.shellId,
+            taskReconciliation(current.shellId, current),
+          );
           yield* emitDevinBackgroundShellCompleted(
             ctx,
             current,
@@ -4637,7 +4713,7 @@ export function makeDevinAdapter(
       );
 
     yield* Effect.addFinalizer(() =>
-      Effect.forEach(Array.from(sessions.values()), stopSessionInternal, {
+      Effect.forEach(Array.from(sessions.values()), (ctx) => stopSessionInternal(ctx), {
         discard: true,
       }).pipe(
         Effect.tap(() => PubSub.shutdown(runtimeEventPubSub)),

@@ -21,10 +21,16 @@ describe("ProviderSessionStartInput", () => {
     const parsed = decodeProviderSessionStartInput({
       threadId: "thread-devin-resume",
       provider: "devin",
-      pendingTaskReconciliations: ["shell-1", "agent-1"],
+      pendingTaskReconciliations: [
+        { taskId: "shell-1", turnId: "old-turn", toolUseId: "tool-1" },
+        { taskId: "agent-1" },
+      ],
       runtimeMode: "full-access",
     });
-    expect(parsed.pendingTaskReconciliations).toEqual(["shell-1", "agent-1"]);
+    expect(parsed.pendingTaskReconciliations).toEqual([
+      { taskId: "shell-1", turnId: "old-turn", toolUseId: "tool-1" },
+      { taskId: "agent-1" },
+    ]);
   });
 
   it("rejects payloads without runtime mode", () => {

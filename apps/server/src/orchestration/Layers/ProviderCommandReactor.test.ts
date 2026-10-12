@@ -18047,18 +18047,20 @@ describe("ProviderCommandReactor", () => {
       status: string,
       createdAt: string,
       extra: Record<string, unknown> = {},
+      ownerId = threadId,
+      turnId: TurnId | null = null,
     ) =>
       harness.engine.dispatch({
         type: "thread.activity.append",
         commandId: CommandId.makeUnsafe(`cmd-${id}`),
-        threadId,
+        threadId: ownerId,
         activity: {
           id: EventId.makeUnsafe(id),
           kind: "task.completed",
           tone: "info",
           summary: `Task ${status}`,
           payload: { taskId, status, ...extra },
-          turnId: null,
+          turnId,
           createdAt,
         },
         createdAt,
@@ -18082,6 +18084,52 @@ describe("ProviderCommandReactor", () => {
       ),
     );
 
+    for (const [id, parentId, agentId] of [
+      ["nested-parent", "thread-1", "parent-agent"],
+      ["nested-owner", "nested-parent", "nested-agent"],
+      ["unrelated-owner", null, "unrelated-agent"],
+    ] as const) {
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.create",
+          commandId: CommandId.makeUnsafe(`create-${id}`),
+          threadId: ThreadId.makeUnsafe(id),
+          projectId: asProjectId("project-1"),
+          title: id,
+          modelSelection: { provider: "devin", model: "swe-1.7" },
+          interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
+          runtimeMode: "full-access",
+          branch: null,
+          worktreePath: null,
+          parentThreadId: parentId ? ThreadId.makeUnsafe(parentId) : null,
+          subagentAgentId: agentId,
+          creationSource: "provider_native",
+          createdAt: new Date().toISOString(),
+        }),
+      );
+    }
+    await Effect.runPromise(
+      appendActivity(
+        "nested-stop",
+        "nested-task",
+        "stopped",
+        "2026-10-11T00:00:04.000Z",
+        { awaitingProviderConfirmation: true, toolUseId: "nested-tool" },
+        ThreadId.makeUnsafe("nested-owner"),
+        asTurnId("original-nested-turn"),
+      ),
+    );
+    await Effect.runPromise(
+      appendActivity(
+        "unrelated-stop",
+        "unrelated-task",
+        "stopped",
+        "2026-10-11T00:00:05.000Z",
+        { awaitingProviderConfirmation: true },
+        ThreadId.makeUnsafe("unrelated-owner"),
+      ),
+    );
+
     await dispatchHarnessUserTurn(harness, {
       messageId: "message-devin-pending-stop",
       text: "resume Devin",
@@ -18091,7 +18139,15 @@ describe("ProviderCommandReactor", () => {
 
     expect(harness.startSession.mock.calls[0]?.[1]).toMatchObject({
       provider: "devin",
-      pendingTaskReconciliations: ["shell-pending"],
+      pendingTaskReconciliations: [
+        { taskId: "shell-pending" },
+        {
+          taskId: "nested-task",
+          turnId: "original-nested-turn",
+          toolUseId: "nested-tool",
+          parentAgentId: "nested-agent",
+        },
+      ],
     });
   });
 

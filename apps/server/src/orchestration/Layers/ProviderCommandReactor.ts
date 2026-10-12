@@ -32,7 +32,7 @@ import {
   type ProviderInteractionMode,
   type ProviderRuntimeEvent,
   ProviderKind,
-  RuntimeTaskId,
+  ProviderTaskReconciliation,
   type ProviderReviewTarget,
   type ProviderStartOptions,
   type ProviderSkillReference,
@@ -1746,27 +1746,65 @@ const make = Effect.gen(function* () {
     return Option.getOrUndefined(yield* projectionSnapshotQuery.getThreadDetailById(threadId));
   });
 
-  const pendingDevinTaskReconciliations = (
+  const pendingDevinTaskReconciliations = Effect.fnUntraced(function* (
     thread: OrchestrationThread | undefined,
-  ): Array<RuntimeTaskId> => {
-    const pending = new Set<string>();
-    for (const activity of thread?.activities ?? []) {
-      if (activity.kind !== "task.completed") continue;
-      const rawPayload = activity.payload;
-      if (typeof rawPayload !== "object" || rawPayload === null || Array.isArray(rawPayload)) {
-        continue;
-      }
-      const payload = rawPayload as Record<string, unknown>;
-      const taskId = payload.taskId;
-      if (typeof taskId !== "string") continue;
-      if (payload.status === "stopped" && payload.awaitingProviderConfirmation === true) {
-        pending.add(taskId);
-      } else {
-        pending.delete(taskId);
+  ) {
+    if (!thread) return [];
+    const owned = new Map([[thread.id, thread]]);
+    const shell = yield* projectionSnapshotQuery.getShellSnapshot();
+    let discovered = true;
+    while (discovered) {
+      discovered = false;
+      for (const child of shell.threads) {
+        if (
+          child.parentThreadId == null ||
+          !owned.has(child.parentThreadId) ||
+          child.subagentAgentId == null ||
+          owned.has(child.id)
+        )
+          continue;
+        const detail = yield* resolveThread(child.id);
+        if (detail) {
+          owned.set(child.id, detail);
+          discovered = true;
+        }
       }
     }
-    return [...pending].map((taskId) => RuntimeTaskId.makeUnsafe(taskId));
-  };
+    const pending = new Map<string, ProviderTaskReconciliation>();
+    for (const owner of owned.values()) {
+      for (const activity of owner.activities) {
+        if (activity.kind !== "task.completed") continue;
+        const payload = activity.payload;
+        if (
+          typeof payload !== "object" ||
+          payload === null ||
+          Array.isArray(payload) ||
+          !("taskId" in payload) ||
+          typeof payload.taskId !== "string"
+        )
+          continue;
+        if (
+          "status" in payload &&
+          payload.status === "stopped" &&
+          "awaitingProviderConfirmation" in payload &&
+          payload.awaitingProviderConfirmation === true
+        ) {
+          const correlation = Schema.decodeUnknownOption(ProviderTaskReconciliation)({
+            taskId: payload.taskId,
+            ...(activity.turnId ? { turnId: activity.turnId } : {}),
+            ...("toolUseId" in payload && typeof payload.toolUseId === "string"
+              ? { toolUseId: payload.toolUseId }
+              : {}),
+            ...(owner.subagentAgentId ? { parentAgentId: owner.subagentAgentId } : {}),
+          });
+          if (Option.isSome(correlation)) pending.set(payload.taskId, correlation.value);
+        } else {
+          pending.delete(payload.taskId);
+        }
+      }
+    }
+    return [...pending.values()];
+  });
 
   const lookupProviderSessionThread = Effect.fnUntraced(function* (threadId: ThreadId) {
     const projected = yield* resolveProviderSessionThreadFromProjection(
@@ -2384,7 +2422,7 @@ const make = Effect.gen(function* () {
       Effect.gen(function* () {
         const pendingReconciliations =
           preferredProvider === "devin"
-            ? pendingDevinTaskReconciliations(yield* resolveThread(threadId))
+            ? yield* pendingDevinTaskReconciliations(yield* resolveThread(threadId))
             : [];
         const startInput = {
           ...providerSessionStartInput(resumeCursor),

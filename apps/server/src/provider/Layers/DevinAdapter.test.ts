@@ -49,6 +49,7 @@ import {
   resolveDevinStartModel,
   resolveDevinToolCallUpdatedTurnId,
   resolveRequestedModeId,
+  scopeDevinRuntimeItemIdForTurn,
 } from "./DevinAdapter.ts";
 
 const asTurnId = (value: string): TurnId => TurnId.makeUnsafe(value);
@@ -227,7 +228,7 @@ interface WedgeRuntimePlan {
   readonly prompts: ReadonlyArray<AcpSessionRuntimeShape["prompt"]>;
   /** When present, the makeAcpRuntime call at this index fails instead. */
   readonly failStartAtIndex?: number;
-  readonly beforeCreate?: (index: number) => Effect.Effect<void>;
+  readonly beforeCreate?: (index: number) => Effect.Effect<void, never, Scope.Scope>;
   readonly cancel?: (index: number) => Effect.Effect<void>;
 }
 
@@ -492,6 +493,93 @@ describe("Devin wedge auto-recovery", () => {
       );
     },
   );
+
+  it("reconciles live child tasks onto their original turn when wedge recovery replaces the session", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1_000);
+    let factory: ReturnType<typeof makeWedgeRuntimeFactory>;
+    factory = makeWedgeRuntimeFactory({
+      prompts: [() => Effect.never],
+      beforeCreate: (index) =>
+        index === 1
+          ? Effect.gen(function* () {
+              yield* factory
+                .emitToolCall("recovery-agent-call", "completed", {
+                  metadata: {
+                    "cognition.ai/subagent_started": {
+                      agentId: "recovery-agent",
+                      task: "Inspect API",
+                    },
+                    "cognition.ai/subagent_completed": { agentId: "recovery-agent", success: true },
+                  },
+                })
+                .pipe(Effect.forkScoped);
+              yield* factory
+                .emitToolCall("recovery-shell-call", "completed", {
+                  metadata: {
+                    "cognition.ai/background": true,
+                    "cognition.ai/backgroundShellId": "recovery-shell",
+                    "cognition.ai/exitCode": 0,
+                  },
+                })
+                .pipe(Effect.forkScoped);
+            })
+          : Effect.void,
+    });
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe("thread-devin-wedge-tasks");
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        yield* adapter.startSession({
+          provider: "devin",
+          threadId,
+          runtimeMode: "full-access",
+          cwd: process.cwd(),
+        });
+        const turn = yield* adapter.sendTurn({ threadId, input: "run tasks", attachments: [] });
+        yield* factory.emitToolCall("recovery-agent-call", "inProgress", {
+          metadata: {
+            "cognition.ai/subagent_started": { agentId: "recovery-agent", task: "Inspect API" },
+          },
+        });
+        yield* factory.emitToolCall("recovery-shell-call", "inProgress", {
+          metadata: {
+            "cognition.ai/background": true,
+            "cognition.ai/backgroundShellId": "recovery-shell",
+          },
+        });
+        factory.stderrTaps[0]!(STALL_WATCH_LINE);
+        yield* advanceThroughRecovery();
+        expect(factory.stderrTaps).toHaveLength(2);
+        for (const taskId of ["recovery-agent", "recovery-shell"]) {
+          const completions = events.filter(
+            (event) => event.type === "task.completed" && event.payload.taskId === taskId,
+          );
+          expect(completions).toHaveLength(2);
+          expect(completions[0]?.payload).toMatchObject({
+            status: "stopped",
+            awaitingProviderConfirmation: true,
+          });
+          expect(completions[1]).toMatchObject({
+            turnId: turn.turnId,
+            payload: { status: "completed", reconcilesStop: true },
+          });
+        }
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.completed",
+            turnId: turn.turnId,
+            itemId: scopeDevinRuntimeItemIdForTurn(turn.turnId, "recovery-agent-call"),
+          }),
+        );
+      }).pipe(Effect.scoped, Effect.provide(makeWedgeTestLayer(factory))),
+    );
+  });
 
   it("recovers a spawn-stall wedge when a command never reaches shell-ready", async () => {
     vi.useFakeTimers();
@@ -873,7 +961,7 @@ describe("Devin adapter lifecycle", () => {
           attachments: [],
         });
 
-        yield* eventRuntime.emitToolCall("agent-1", "inProgress", {
+        yield* eventRuntime.emitToolCall("agent-launch-call", "inProgress", {
           metadata: {
             "cognition.ai/subagent_started": {
               agentId: "agent-1",
@@ -884,7 +972,7 @@ describe("Devin adapter lifecycle", () => {
           },
         });
         yield* adapter.backgroundTask(threadId, "agent-1");
-        yield* eventRuntime.emitToolCall("agent-1", "inProgress");
+        yield* eventRuntime.emitToolCall("agent-launch-call", "inProgress");
         yield* eventRuntime.emitProgress("Child agent output", {
           "cognition.ai/subagent_context": { parentAgentId: "agent-1" },
         });
@@ -910,6 +998,12 @@ describe("Devin adapter lifecycle", () => {
           metadata: { "cognition.ai/exitCode": 0 },
         });
 
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "task.started",
+            payload: expect.objectContaining({ taskId: "agent-1", toolUseId: "agent-launch-call" }),
+          }),
+        );
         expect(acpInput?.clientCapabilities?._meta).toEqual({
           "cognition.ai/subagentSupport": true,
           "cognition.ai/subagentControl": true,
@@ -1472,8 +1566,16 @@ describe("Devin adapter lifecycle", () => {
             cwd: process.cwd(),
             resumeCursor: { schemaVersion: 1, sessionId: "previous-session" },
             pendingTaskReconciliations: [
-              RuntimeTaskId.makeUnsafe("replayed-done-shell"),
-              RuntimeTaskId.makeUnsafe("replayed-done-agent"),
+              {
+                taskId: RuntimeTaskId.makeUnsafe("replayed-done-shell"),
+                turnId: TurnId.makeUnsafe("original-replayed-turn"),
+                toolUseId: "replayed-done-shell-call",
+              },
+              {
+                taskId: RuntimeTaskId.makeUnsafe("replayed-done-agent"),
+                turnId: TurnId.makeUnsafe("original-replayed-turn"),
+                toolUseId: "replayed-done-agent-call",
+              },
             ],
           })
           .pipe(Effect.forkScoped);
@@ -1494,6 +1596,16 @@ describe("Devin adapter lifecycle", () => {
             (event) => event.type === "task.started" && event.payload.taskId === "replayed-shell",
           ),
         ).toBe(false);
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "item.completed",
+            turnId: "original-replayed-turn",
+            itemId: scopeDevinRuntimeItemIdForTurn(
+              TurnId.makeUnsafe("original-replayed-turn"),
+              "replayed-done-agent-call",
+            ),
+          }),
+        );
         for (const taskId of ["replayed-done-shell", "replayed-done-agent"]) {
           expect(events).toContainEqual(
             expect.objectContaining({
