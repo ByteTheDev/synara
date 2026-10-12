@@ -198,9 +198,15 @@ function rememberedMessage(row: MessagesTimelineRow): ChatMessage | undefined {
   return row.message;
 }
 
-function rowHeightCacheKey(row: MessagesTimelineRow, layout: TimelineRowHeightLayout): string {
+function rowHeightCacheKey(
+  row: MessagesTimelineRow,
+  layout: TimelineRowHeightLayout,
+  presentationKey: string,
+): string {
   const copyButton = row.kind === "message" && row.showAssistantCopyButton;
-  return `${Math.round(layout.rowWidthPx)}:${layout.chatFontSizePx}:${copyButton}:${row.id}`;
+  return JSON.stringify([
+    layout.rowWidthPx, layout.chatFontSizePx, copyButton, row.id, presentationKey,
+  ]);
 }
 
 export function rememberTimelineRowHeight(
@@ -209,13 +215,14 @@ export function rememberTimelineRowHeight(
   heightPx: number,
   row?: MessagesTimelineRow,
   enabled = true,
+  presentationKey = "",
 ): void {
   if (!enabled) return;
   if (!Number.isFinite(heightPx) || heightPx <= 0 || !row || row.id !== rowId) return;
   const message = rememberedMessage(row);
   if (!message) return;
   const layouts = rememberedRowHeights.get(message) ?? new Map<string, number>();
-  const key = rowHeightCacheKey(row, layout);
+  const key = rowHeightCacheKey(row, layout, presentationKey);
   layouts.delete(key);
   layouts.set(key, heightPx);
   if (layouts.size > MAX_REMEMBERED_LAYOUTS_PER_MESSAGE) {
@@ -234,16 +241,17 @@ export function createTimelineRowHeightEstimator(
   getLayout: () => TimelineRowHeightLayout,
   enabled = true,
   isWidthMeasured: () => boolean = () => true,
+  getPresentationKey: (row: MessagesTimelineRow) => string = () => "",
 ): (row: MessagesTimelineRow) => number {
   const estimates = new WeakMap<MessagesTimelineRow, { layoutKey: string; height: number }>();
   return (row) => {
     const layout = getLayout();
     const message = enabled && isWidthMeasured() ? rememberedMessage(row) : undefined;
     const remembered = message
-      ? rememberedRowHeights.get(message)?.get(rowHeightCacheKey(row, layout))
+      ? rememberedRowHeights.get(message)?.get(rowHeightCacheKey(row, layout, getPresentationKey(row)))
       : undefined;
     if (remembered !== undefined) return remembered;
-    const layoutKey = `${Math.round(layout.rowWidthPx)}:${layout.chatFontSizePx}`;
+    const layoutKey = `${layout.rowWidthPx}:${layout.chatFontSizePx}`;
     const cached = estimates.get(row);
     if (cached?.layoutKey === layoutKey) return cached.height;
     const height = estimateTimelineRowHeight(row, layout);

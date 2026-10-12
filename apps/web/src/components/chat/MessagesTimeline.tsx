@@ -857,6 +857,20 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     ],
   );
   const rows = useStableRows(rawRows);
+  const getRowHeightPresentationKey = useCallback(
+    (row: MessagesTimelineRow) => {
+      if (row.kind !== "message" || !row.showAssistantCopyButton) return "";
+      // A settled footer can wrap differently on narrow layouts when its date,
+      // clock preference or available actions change between mounts.
+      const canPin = canPinMessage?.(row.message.id) ?? true;
+      return JSON.stringify([
+        formatDayAwareTimestamp(row.message.createdAt, timestampFormat),
+        canPin && Boolean(onForkFromMessage),
+        canPin && Boolean(onTogglePinMessage),
+      ]);
+    },
+    [timestampFormat, canPinMessage, onForkFromMessage, onTogglePinMessage],
+  );
   const rowHeightHints = useTimelineRowHeightHints(
     resolvedListRef,
     normalizedChatFontSizePx,
@@ -865,6 +879,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     // measurements remain local to this mount, where LegendList owns them.
     !subagentThread && !crossTaskOrigin && !forkSource && !conversationOnly &&
       goalAchievements.length === 0 && !findHighlight && (pinnedMessageIds?.size ?? 0) === 0,
+    getRowHeightPresentationKey,
   );
   const canRenderForkSourceDivider = forkSource !== null && onOpenThread !== undefined;
   const forkSourceDivider = useMemo(

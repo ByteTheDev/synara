@@ -2,6 +2,7 @@ import { MessageId } from "@synara/contracts";
 import { describe, expect, it, vi } from "vitest";
 
 import type { MessagesTimelineRow } from "./MessagesTimeline.logic";
+import { formatDayAwareTimestamp } from "../../timestampFormat";
 import {
   createTimelineRowHeightEstimator,
   estimateTimelineRowHeight,
@@ -197,5 +198,41 @@ describe("bounded text estimation", () => {
     const prompt = estimateTimelineRowHeight(messageRow("long-prompt", "user", text), LAYOUT);
     expect(answer).toBeGreaterThan(estimateTimelineRowHeight(messageRow("sample", "assistant", text.slice(0, 4096)), LAYOUT));
     expect(prompt).toBe(estimateTimelineRowHeight(messageRow("prompt-sample", "user", text.slice(0, 4096)), LAYOUT));
+  });
+});
+
+describe("remembered presentation identity", () => {
+  it("separates actual clock/date labels and available footer actions on a narrow row", () => {
+    const row = messageRow("footer-layout", "assistant", paragraph);
+    const layout = { ...LAYOUT, rowWidthPx: 320 };
+    const today = new Date("2026-10-11T15:00:00.000Z");
+    const tomorrow = new Date("2026-10-12T15:00:00.000Z");
+    const todayClock = formatDayAwareTimestamp(row.message.createdAt, "12-hour", today);
+    const sourceKey = JSON.stringify([todayClock, true, true]);
+    rememberTimelineRowHeight(row.id, layout, 987, row, true, sourceKey);
+    const estimate = (key: string) =>
+      createTimelineRowHeightEstimator(() => layout, true, () => true, () => key)(row);
+    expect(estimate(sourceKey)).toBe(987);
+    for (const key of [
+      JSON.stringify([formatDayAwareTimestamp(row.message.createdAt, "24-hour", today), true, true]),
+      JSON.stringify([formatDayAwareTimestamp(row.message.createdAt, "12-hour", tomorrow), true, true]),
+      JSON.stringify([todayClock, false, true]),
+      JSON.stringify([todayClock, true, false]),
+      JSON.stringify([todayClock, false, false]),
+    ]) {
+      expect(key).not.toBe(sourceKey);
+      expect(estimate(key)).toBe(estimateTimelineRowHeight(row, layout));
+    }
+  });
+
+  it("does not round two distinct fractional row widths into one remembered layout", () => {
+    const row = messageRow("fractional-width", "assistant", paragraph);
+    const before = { ...LAYOUT, rowWidthPx: 420.1 };
+    const after = { ...LAYOUT, rowWidthPx: 420.4 };
+    rememberTimelineRowHeight(row.id, before, 654, row);
+    expect(createTimelineRowHeightEstimator(() => before)(row)).toBe(654);
+    expect(createTimelineRowHeightEstimator(() => after)(row)).toBe(
+      estimateTimelineRowHeight(row, after),
+    );
   });
 });

@@ -20,6 +20,7 @@ export function useTimelineRowHeightHints(
   chatFontSizePx: number,
   rows: readonly MessagesTimelineRow[],
   enabled: boolean,
+  getPresentationKey: (row: MessagesTimelineRow) => string,
 ) {
   const rowsById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const rowWidthPxRef = useRef(DEFAULT_TIMELINE_ROW_WIDTH_PX);
@@ -29,18 +30,25 @@ export function useTimelineRowHeightHints(
   // list's own measurement pass), so this does not force an extra layout.
   const measureRowWidth = useCallback(() => {
     const node: unknown = listRef.current?.getScrollableNode?.();
-    if (!(node instanceof HTMLElement)) return;
+    if (!(node instanceof HTMLElement)) {
+      rowWidthMeasuredRef.current = false;
+      return null;
+    }
     const width =
       node.querySelector<HTMLElement>("[data-timeline-row-kind]")?.getBoundingClientRect().width ??
       0;
-    if (width > 0) {
-      rowWidthPxRef.current = width;
-      rowWidthMeasuredRef.current = true;
+    if (!Number.isFinite(width) || width <= 0) {
+      rowWidthMeasuredRef.current = false;
+      return null;
     }
+    rowWidthPxRef.current = width;
+    rowWidthMeasuredRef.current = true;
+    return width;
   }, [listRef]);
 
   useLayoutEffect(() => {
     const node: unknown = listRef.current?.getScrollableNode?.();
+    measureRowWidth();
     if (!(node instanceof HTMLElement) || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(measureRowWidth);
     observer.observe(node);
@@ -52,22 +60,27 @@ export function useTimelineRowHeightHints(
       createTimelineRowHeightEstimator(() => ({
         rowWidthPx: rowWidthPxRef.current,
         chatFontSizePx,
-      }), enabled, () => rowWidthMeasuredRef.current),
-    [chatFontSizePx, enabled],
+      }), enabled, () => rowWidthMeasuredRef.current, getPresentationKey),
+    [chatFontSizePx, enabled, getPresentationKey],
   );
 
   const onItemSizeChanged = useCallback(
     ({ itemKey, size }: { itemKey: string; size: number }) => {
-      if (!rowWidthMeasuredRef.current) measureRowWidth();
+      // Item and viewport observers may run in either order after a resize. Pair
+      // this height with the current rendered width, never the previous callback.
+      const width = measureRowWidth();
+      const row = rowsById.get(itemKey);
+      if (width === null || !row) return;
       rememberTimelineRowHeight(
         itemKey,
-        { rowWidthPx: rowWidthPxRef.current, chatFontSizePx },
+        { rowWidthPx: width, chatFontSizePx },
         size,
-        rowsById.get(itemKey),
+        row,
         enabled,
+        getPresentationKey(row),
       );
     },
-    [chatFontSizePx, measureRowWidth, rowsById, enabled],
+    [chatFontSizePx, measureRowWidth, rowsById, enabled, getPresentationKey],
   );
 
   return { getEstimatedItemSize, onItemSizeChanged };
