@@ -1,0 +1,30 @@
+{
+  "canonicalBlob": "c300ce2e6fcc39a4c7ccce93c7a379de975a7d66",
+  "observedBlob": "5258d17545001488c23aa63a4a897c8f7b4d3e4a",
+  "replacements": [
+    {
+      "before": "import { describe, expect, vi } from \"vitest\";",
+      "after": "import { afterAll, describe, expect, vi } from \"vitest\";"
+    },
+    {
+      "before": "// ── Helpers ──\n",
+      "after": "// ── Helpers ──\n\n// Diagnostic-only observations. Every original assertion and command is retained.\ntype GitObservation = Record<string, unknown>;\nconst gitObservations: GitObservation[] = [];\nconst activeObservedGit = new Map<number, GitObservation>();\nconst observedDirectories = new Map<string, string>();\nlet nextObservedCommand = 0;\nlet droppedGitObservations = 0;\nconst observedDirectory = (cwd: string) => {\n  let label = observedDirectories.get(cwd);\n  if (!label) {\n    label = `owned-directory-${observedDirectories.size + 1}`;\n    observedDirectories.set(cwd, label);\n  }\n  return label;\n};\nfunction traceGitObservation(kind: string, fields: GitObservation = {}) {\n  if (gitObservations.length >= 4096) {\n    droppedGitObservations++;\n    return;\n  }\n  gitObservations.push({\n    kind,\n    at: performance.now(),\n    ...fields,\n    activeCommands: [...activeObservedGit.keys()],\n  });\n}\nfunction observeGitExecution(execute: GitCoreShape[\"execute\"]): GitCoreShape[\"execute\"] {\n  return (input) =>\n    Effect.gen(function* () {\n      const id = ++nextObservedCommand;\n      const startedAt = performance.now();\n      const context = {\n        id,\n        operation: input.operation,\n        command: input.args[0] ?? null,\n        directory: observedDirectory(input.cwd),\n      };\n      activeObservedGit.set(id, context);\n      traceGitObservation(\"command-start\", context);\n      return yield* Effect.suspend(() => execute(input)).pipe(\n        Effect.onExit((exit) =>\n          Effect.sync(() => {\n            activeObservedGit.delete(id);\n            traceGitObservation(\"command-finish\", {\n              ...context,\n              elapsedMs: performance.now() - startedAt,\n              exit: exit._tag,\n            });\n          }),\n        ),\n      );\n    });\n}\nafterAll(() => {\n  traceGitObservation(\"outer-afterAll\", {\n    remaining: [...activeObservedGit.values()],\n  });\n  console.log(\n    \"SYNARA_GIT_COMMAND_OBSERVATIONS \" +\n      JSON.stringify({\n        events: gitObservations,\n        dropped: droppedGitObservations,\n        activeAtEnd: [...activeObservedGit.values()],\n        qualification:\n          \"Read-only delegated Git command and fixture-scope observations. No command, timer, cancellation, cleanup, or test assertion is replaced.\",\n      }),\n  );\n});\n"
+    },
+    {
+      "before": "const GitCoreTestLayer = GitCoreLive.pipe(\n  Layer.provide(ServerConfigLayer),\n  Layer.provide(NodeServices.layer),\n);",
+      "after": "const GitCoreTestLayer = Layer.effect(\n  GitCore,\n  Effect.gen(function* () {\n    const real = yield* GitCore;\n    return yield* makeGitCore({ executeOverride: observeGitExecution(real.execute) });\n  }),\n).pipe(\n  Layer.provide(GitCoreLive),\n  Layer.provide(ServerConfigLayer),\n  Layer.provide(NodeServices.layer),\n);"
+    },
+    {
+      "before": "    return yield* fileSystem.makeTempDirectoryScoped({ prefix });",
+      "after": "    let directory: string | undefined;\n    yield* Effect.addFinalizer(() =>\n      Effect.sync(() => traceGitObservation(\"temporary-release-finished\", {\n        directory: directory ? observedDirectory(directory) : null,\n      })),\n    );\n    directory = yield* fileSystem.makeTempDirectoryScoped({ prefix });\n    yield* Effect.addFinalizer(() =>\n      Effect.sync(() => traceGitObservation(\"temporary-release-starting\", {\n        directory: directory ? observedDirectory(directory) : null,\n      })),\n    );\n    traceGitObservation(\"temporary-acquired\", { directory: observedDirectory(directory) });\n    return directory;"
+    },
+    {
+      "before": "        const elapsedMs = performance.now() - startedAt;\n        yield* Effect.promise(() =>\n          vi.waitFor(() => {\n            expect(fetchStarted).toBe(true);\n          }),\n        );",
+      "after": "        const elapsedMs = performance.now() - startedAt;\n        traceGitObservation(\"ui-status-returned\", { elapsedMs, fetchStarted });\n        yield* Effect.promise(() =>\n          vi.waitFor(() => {\n            expect(fetchStarted).toBe(true);\n          }),\n        );"
+    },
+    {
+      "before": "        const skipped = yield* core.pushCurrentBranch(tmp, null);\n        expect(skipped.status).toBe(\"skipped_up_to_date\");\n      }),",
+      "after": "        const skipped = yield* core.pushCurrentBranch(tmp, null);\n        expect(skipped.status).toBe(\"skipped_up_to_date\");\n        traceGitObservation(\"large-push-test-returning\", { directory: observedDirectory(tmp) });\n      }),"
+    }
+  ]
+}

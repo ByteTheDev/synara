@@ -1,0 +1,63 @@
+name: GitCore command and scope observations
+
+on:
+  push:
+    branches:
+      - cleanup/20261012/gitcore-command-observer
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gitcore-command-observer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native:
+    name: Observe two original GitCore cases (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact reviewed application
+        uses: actions/checkout@v6
+        with:
+          ref: 7ff5f383c482b5b9dfadce509394932a6d0d9d71
+          persist-credentials: false
+      - name: Check out isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+      - name: Materialize committed source bytes
+        shell: bash
+        run: |
+          # This affects checkout bytes only. Runtime Git configuration, including
+          # the Windows runner's autocrlf default, remains unchanged for the tests.
+          for checkout in . .pr-driver; do
+            # Discard cached checkout stat information before rewriting every blob.
+            git -C "$checkout" read-tree HEAD
+            git -C "$checkout" -c core.autocrlf=false checkout-index --force --all --index
+          done
+      - name: Install the source's frozen runtime workspace
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - name: Observe unchanged assertions, commands and temporary-scope release
+        env:
+          DRIVER_SHA: ${{ github.sha }}
+          CI: "true"
+        run: node .pr-driver/scripts/gitcore-command-observer/runner.mjs
+      - name: Upload actual source, failed assertions and command observations
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitcore-command-observer-${{ matrix.os }}
+          path: gitcore-command-observer-evidence/
+          if-no-files-found: error
+          retention-days: 14
