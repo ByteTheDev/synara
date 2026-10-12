@@ -15480,6 +15480,11 @@ it.effect("rejects startup effort excluded by Claude SDK discovery", () => {
       supportedEffortLevels: ["low", "medium", "high"],
     },
   ]);
+  const discoveredModels = harness.query.supportedModels;
+  vi.spyOn(harness.query, "supportedModels").mockImplementation(async () => {
+    assert.ok(harness.query.iteratorNextCalls > 0, "effort discovery must drive the SDK handshake");
+    return discoveredModels();
+  });
   return Effect.gen(function* () {
     const adapter = yield* ClaudeAdapter;
     const result = yield* adapter

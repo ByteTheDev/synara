@@ -617,7 +617,7 @@ function cancellableClaudeMessageStream(
   // generator: its `return()` queues behind the pending `next()`, which never settles
   // while Claude sits idle. Cancellation must win that race, or stopping an idle session
   // hangs before the process tree is torn down, and quit leaves Claude running.
-  // SDK discovery (Auto mode) waits for a handshake that only starts on the first
+  // SDK capability discovery waits for a handshake that only starts on the first
   // iterator read, so `prestart` issues that read now and keeps it for the consumer.
   const iterator = queryRuntime[Symbol.asyncIterator]();
   let firstResult = options.prestart ? iterator.next() : undefined;
@@ -7230,7 +7230,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           ),
         );
         const messageStream = cancellableClaudeMessageStream(queryRuntime, {
-          prestart: input.runtimeMode === "auto",
+          prestart: input.runtimeMode === "auto" || effectiveEffort !== null,
         });
 
         let installationContext: ClaudeSessionContext | undefined;
