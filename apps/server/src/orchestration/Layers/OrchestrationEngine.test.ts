@@ -1,4 +1,4 @@
-import { withWorktreeLifecycle } from "../../worktreeLifecycle";
+import { withWorktreeRemoval } from "../../worktreeLifecycle";
 import {
   CheckpointRef,
   CommandId,
@@ -257,10 +257,10 @@ describe("OrchestrationEngine", () => {
         }),
       );
       removal = Effect.runPromise(
-        withWorktreeLifecycle(
+        withWorktreeRemoval(
           system.homeDir,
           Deferred.succeed(entered, undefined).pipe(Effect.andThen(Deferred.await(release))),
-        ),
+        ).pipe(Effect.asVoid),
       );
       await Effect.runPromise(Deferred.await(entered));
       restore = system.run(

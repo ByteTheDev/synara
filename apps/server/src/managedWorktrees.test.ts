@@ -1,11 +1,11 @@
-import { withWorktreeLifecycle } from "./worktreeLifecycle";
+import { withWorktreeLifecycle, withWorktreeRemoval } from "./worktreeLifecycle";
 import { createHash } from "node:crypto";
 import * as fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 
 import type { OrchestrationThread } from "@synara/contracts";
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import { afterEach, describe, expect, it } from "vitest";
 
 import type { GitCoreShape } from "./git/Services/GitCore.ts";
@@ -245,7 +245,8 @@ describe("managed worktrees", () => {
             ),
     };
     const policy: ManagedWorktreeMergeCleanup = {
-      withOwnership: (effect) => withWorktreeLifecycle(root, effect),
+      withOwnership: (effect) =>
+        withWorktreeRemoval(root, effect).pipe(Effect.map(Option.getOrElse(() => false))),
       enabled: Effect.succeed(scenario !== "disabled"),
       isProtected: () => Effect.succeed(scenario === "protected"),
       github: {

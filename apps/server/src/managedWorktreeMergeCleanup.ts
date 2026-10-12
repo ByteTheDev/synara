@@ -1,5 +1,5 @@
 import { ServerConfig } from "./config";
-import { withWorktreeLifecycle } from "./worktreeLifecycle";
+import { withWorktreeRemoval } from "./worktreeLifecycle";
 import { ThreadId } from "@synara/contracts";
 import { automationContinuationThreadId } from "@synara/shared/automationMode";
 import { terminalScopeIdsForThread } from "@synara/shared/terminalThreads";
@@ -29,7 +29,10 @@ export const resolveManagedWorktreeMergeCleanup: Effect.Effect<
   )
     return undefined;
   return {
-    withOwnership: (effect) => withWorktreeLifecycle(config.value.homeDir, effect),
+    withOwnership: (effect) =>
+      withWorktreeRemoval(config.value.homeDir, effect).pipe(
+        Effect.map(Option.getOrElse(() => false)),
+      ),
     enabled: settings.value.getSettings.pipe(
       Effect.map((value) => value.worktrees.pruneAfterMerge),
     ),

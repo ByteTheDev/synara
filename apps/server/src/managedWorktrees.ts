@@ -105,7 +105,7 @@ export interface ManagedWorktreeThreadRef {
 export type ManagedWorktreeRemovalReason = "deleted" | "archived-retention" | "merged";
 
 export interface ManagedWorktreeMergeCleanup {
-  readonly withOwnership: <A, E, R>(effect: Effect.Effect<A, E, R>) => Effect.Effect<A, E, R>;
+  readonly withOwnership: (effect: Effect.Effect<boolean, Error>) => Effect.Effect<boolean, Error>;
   readonly enabled: Effect.Effect<boolean, Error>;
   readonly github: Pick<GitHubCliShape, "getPullRequestWithChecks">;
   readonly isProtected: (threadId: string) => Effect.Effect<boolean, Error>;
