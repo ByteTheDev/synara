@@ -201,7 +201,23 @@ export function makeNativeStartupProbe(name: string) {
             else signal.addEventListener("abort", abort, { once: true });
           });
         } finally {
-          await response.body?.cancel();
+          // The caller may already have aborted this exact response stream.
+          // Only its expected AbortError is benign; keep every other failure
+          // visible to the diagnostic instead of treating cleanup as proven.
+          try {
+            await response.body?.cancel();
+          } catch (error) {
+            if (
+              !init.signal?.aborted ||
+              !(error instanceof Error && error.name === "AbortError")
+            ) {
+              record("controlled-readiness-body-cancel-failed", {
+                error: error instanceof Error ? error.message : String(error),
+              });
+              throw error;
+            }
+            record("controlled-readiness-body-already-aborted");
+          }
           record("controlled-readiness-hold-ended");
         }
       }
