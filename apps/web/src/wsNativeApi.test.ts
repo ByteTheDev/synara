@@ -4,6 +4,7 @@
 // Depends on: wsTransport mock plus contracts channel constants.
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   ApprovalRequestId,
   CommandId,
   type ContextMenuItem,
@@ -312,7 +313,7 @@ describe("wsNativeApi", () => {
         sidechatExpiry: "1h",
         sourceControlWritingStyle: "repository",
         sourceControlCustomInstructions: "",
-        textGenerationModelSelection: { provider: "codex", model: "gpt-5.4-mini" },
+        textGenerationModelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4-mini" },
         providers: {
           codex: {
             enabled: true,
@@ -521,6 +522,7 @@ describe("wsNativeApi", () => {
       workspaceRoot: "/tmp/project",
       defaultModelSelection: {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       },
       createdAt: "2026-02-24T00:00:00.000Z",
@@ -753,7 +755,11 @@ describe("wsNativeApi", () => {
       commandId: CommandId.makeUnsafe("command-1"),
       projectId: ProjectId.makeUnsafe("project-1"),
       newProjectSpaceId: null,
-      defaultModelSelection: { provider: "codex" as const, model: "gpt-5" },
+      defaultModelSelection: {
+        provider: "codex" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
+        model: "gpt-5",
+      },
       createdAt: "2026-08-04T00:00:00.000Z",
     };
     const result = {

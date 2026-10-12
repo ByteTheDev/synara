@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import {
   DEFAULT_SERVER_SETTINGS,
+  DEFAULT_PROVIDER_PROFILE_ID,
   type OrchestrationCommand,
   type OrchestrationThread,
   ProjectId,
@@ -110,7 +111,11 @@ function makeCodexThread(): OrchestrationThread {
     id: threadId,
     projectId,
     title: "Imported thread",
-    modelSelection: { provider: "codex", model: "gpt-5.5" },
+    modelSelection: {
+      provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+      model: "gpt-5.5",
+    },
     runtimeMode: "full-access",
     interactionMode: "default",
     envMode: "local",
@@ -211,7 +216,11 @@ it.effect("imports Codex history through a provider-owned fork", () =>
       {
         threadId,
         provider: "codex",
-        modelSelection: { provider: "codex", model: "gpt-5.5" },
+        modelSelection: {
+          provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+          model: "gpt-5.5",
+        },
         forkSourceResumeCursor: { threadId: externalId },
         runtimeMode: "full-access",
       },
@@ -227,7 +236,7 @@ it.effect("rejects imports before inspecting a disabled provider adapter", () =>
     const path = yield* Path.Path;
     const thread = {
       ...makeCodexThread(),
-      modelSelection: { provider: "opencode" as const, model: "openai/gpt-5" },
+      modelSelection: { provider: "opencode" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "openai/gpt-5" },
     };
     const getByProvider = vi.fn(() => Effect.die("disabled provider adapter must not be read"));
     const startSession = vi.fn(() => Effect.die("disabled provider session must not start"));
@@ -292,7 +301,7 @@ it("rejects disabled provider instances before import preflight can materialize 
             },
           },
         },
-        { provider: "opencode", instanceId: "opencode_disabled", model: "opencode/model" },
+        { provider: "opencode", instanceId: "opencode_disabled", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "opencode/model" },
       ),
     /disabled for thread import/,
   );
@@ -333,6 +342,7 @@ it("passes the resolved OpenCode instance into external-thread preflight", async
             modelSelection: {
               provider: "opencode",
               instanceId,
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "opencode/test-model",
             },
             runtimeMode: "full-access",

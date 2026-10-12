@@ -5,7 +5,7 @@
 
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { it } from "@effect/vitest";
-import { DEFAULT_PROVIDER_PROFILE_ID } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProviderProfileId } from "@synara/contracts";
 import { Duration, Effect, Fiber, Layer } from "effect";
 import { TestClock } from "effect/testing";
 import { beforeEach, expect, test } from "vitest";
@@ -198,6 +198,28 @@ const advanceIdleClock = Effect.gen(function* () {
 });
 
 it.layer(OpenCodeTextGenerationTestLayer)("OpenCodeTextGenerationServiceLive", (it) => {
+
+  it.effect("rejects an unavailable named profile before using the shared OpenCode server", () =>
+    Effect.gen(function* () {
+      const service = yield* OpenCodeTextGeneration;
+      const error = yield* service.generateCommitMessage({
+        cwd: process.cwd(),
+        branch: "profile-refusal",
+        stagedSummary: "M README.md",
+        stagedPatch: "diff --git a/README.md b/README.md",
+        modelSelection: {
+          ...DEFAULT_TEST_MODEL_SELECTION,
+          profileId: ProviderProfileId.makeUnsafe("work"),
+        },
+      }).pipe(Effect.flip);
+      expect(error.message).toContain("provider profile is unavailable");
+      expect(runtimeMock.state.startCalls).toEqual([]);
+      expect(runtimeMock.state.sessionCreateInputs).toEqual([]);
+      expect(runtimeMock.state.promptInputs).toEqual([]);
+      expect(runtimeMock.state.authHeaders).toEqual([]);
+    }),
+  );
+
   it.effect("reuses a warm server across back-to-back requests and closes it after idling", () =>
     Effect.gen(function* () {
       const textGeneration = yield* OpenCodeTextGeneration;
@@ -525,6 +547,7 @@ it.layer(OpenCodeTextGenerationTestLayer)("OpenCodeTextGenerationServiceLive", (
         modelSelection: {
           provider: "opencode",
           instanceId: "opencode_work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5",
         },
         providerOptions: {
@@ -539,6 +562,7 @@ it.layer(OpenCodeTextGenerationTestLayer)("OpenCodeTextGenerationServiceLive", (
         modelSelection: {
           provider: "opencode",
           instanceId: "opencode_work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5",
         },
         providerOptions: {

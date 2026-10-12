@@ -5,6 +5,7 @@ import {
   CheckpointRef,
   CommandId,
   CorrelationId,
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   MessageId,
   ProjectId,
@@ -158,7 +159,7 @@ it.layer(makeProjectionPipelinePrefixedTestLayer("synara-latest-turn-test-"))(
             threadId,
             projectId: ProjectId.makeUnsafe("project-idle-latest-turn"),
             title: "Idle latest turn",
-            modelSelection: { provider: "codex", model: "gpt-5-codex" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
             runtimeMode: "full-access",
             branch: null,
             worktreePath: null,
@@ -263,6 +264,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           title: "Thread 1",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -385,6 +387,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           title: "Thread",
           modelSelection: {
             provider: "pi",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "openai/gpt-5.1",
           },
           runtimeMode: "full-access",
@@ -410,6 +413,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           messageId: MessageId.makeUnsafe("message-turn-settings"),
           modelSelection: {
             provider: "pi",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "openai/gpt-5.5",
           },
           runtimeMode: "approval-required",
@@ -439,6 +443,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
       assert.deepEqual(JSON.parse(rows[0]!.modelSelectionJson), {
         provider: "pi",
         instanceId: "pi",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "openai/gpt-5.5",
       });
       assert.equal(rows[0]!.runtimeMode, "approval-required");
@@ -539,7 +544,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
         payload: {
           threadId: ThreadId.makeUnsafe("thread-turn-settings"),
           messageId: MessageId.makeUnsafe("message-turn-settings-cross-provider"),
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "full-access",
           interactionMode: "debug",
           createdAt: crossProviderRequestedAt,
@@ -562,6 +567,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
       assert.deepEqual(JSON.parse(providerRows[0]!.modelSelectionJson), {
         provider: "pi",
         instanceId: "pi",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "openai/gpt-5.5",
       });
       assert.equal(providerRows[0]!.providerName, "pi");
@@ -652,7 +658,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           threadId,
           projectId: ProjectId.makeUnsafe("project-retained-error"),
           title: "Retained error thread",
-          modelSelection: { provider: "codex", model: "gpt-5.6-sol" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.6-sol" },
           runtimeMode: "full-access",
           branch: null,
           worktreePath: null,
@@ -673,7 +679,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
         payload: {
           threadId,
           messageId: MessageId.makeUnsafe("message-retained-error"),
-          modelSelection: { provider: "codex", model: "gpt-5.6-sol" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.6-sol" },
           runtimeMode: "full-access",
           interactionMode: "default",
           dispatchMode: "queue",
@@ -782,6 +788,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
       const projectId = ProjectId.makeUnsafe("project-stale-session-updated");
       const modelSelection = {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.6-sol",
       } as const;
       const createdAt = "2026-09-01T00:00:00.000Z";
@@ -951,6 +958,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -1023,6 +1031,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           modelSelection: {
             provider: "claudeAgent",
             instanceId: "claude_work",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
           },
           runtimeMode: "approval-required",
@@ -1043,6 +1052,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
       assert.deepEqual(JSON.parse(rows[0]!.modelSelectionJson), {
         provider: "claudeAgent",
         instanceId: "claude_work",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-sonnet-4-6",
       });
     }),
@@ -1098,6 +1108,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
             modelSelection: {
               provider: "codex",
               instanceId: "codex_personal",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.4",
             },
             runtimeMode: "full-access",
@@ -1149,6 +1160,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
             modelSelection: {
               provider: "codex",
               instanceId: "codex_work",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.4",
             },
             runtimeMode: "full-access",
@@ -1183,6 +1195,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
             modelSelection: {
               provider: "codex",
               instanceId: "codex_work",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.4",
             },
           },
@@ -1191,6 +1204,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
             modelSelection: {
               provider: "codex",
               instanceId: "codex_work",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.4",
             },
           },
@@ -1428,7 +1442,7 @@ it.layer(Layer.fresh(makeProjectionPipelinePrefixedTestLayer("synara-text-segmen
               threadId,
               projectId,
               title: "Text Segments Thread",
-              modelSelection: { provider: "codex", model: "gpt-5-codex" },
+              modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
               runtimeMode: "full-access",
               branch: null,
               worktreePath: null,
@@ -1788,6 +1802,7 @@ it.effect("restores a sessionless imported thread's routed model selection after
     const expectedModelSelection = {
       provider: "claudeAgent",
       instanceId: "claude_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-4-6",
     } as const;
 
@@ -1833,6 +1848,7 @@ it.effect("restores a sessionless imported thread's routed model selection after
           modelSelection: {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -1978,6 +1994,7 @@ it.effect("fast-forwards lagging hot projector cursors before restart replay", (
           title: "Bootstrap fast-forward thread",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-5-20250929",
           },
           runtimeMode: "full-access",
@@ -2122,6 +2139,7 @@ it.effect("rebuilds a deleted hot cursor and advances a stalled projector on boo
           title: "Hot cursor repair thread",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-5-20250929",
           },
           runtimeMode: "full-access",
@@ -2274,6 +2292,7 @@ it.effect("replays a backlog larger than one commit batch without losing rows or
           title: "Batched replay thread",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-5-20250929",
           },
           runtimeMode: "full-access",
@@ -2560,6 +2579,7 @@ it.layer(
           title: "Approvals Thread",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -2695,6 +2715,7 @@ it.layer(
           title: "Streaming Shell Thread",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -2797,6 +2818,7 @@ it.layer(
           title: "User Input Thread",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -3118,6 +3140,7 @@ it.layer(
           title: "Stale Reconcile Thread",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-5",
           },
           runtimeMode: "full-access",
@@ -3338,6 +3361,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
             title: "Thread Clear Attachments",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5-codex",
             },
             runtimeMode: "full-access",
@@ -3466,6 +3490,7 @@ it.layer(
           title: "Thread Overwrite",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -3611,6 +3636,7 @@ it.layer(
           title: "Thread Rollback",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -3730,7 +3756,7 @@ it.layer(
           threadId,
           projectId,
           title: "Stream Append Thread",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "full-access",
           branch: null,
           worktreePath: null,
@@ -3939,7 +3965,7 @@ it.layer(
           threadId,
           projectId,
           title: "Stream Restart Thread",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "full-access",
           branch: null,
           worktreePath: null,
@@ -4107,6 +4133,7 @@ it.layer(
           title: "Thread Revert Files",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -4387,6 +4414,7 @@ it.layer(
           title: "Thread Delete Files",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -4545,6 +4573,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           title: "Thread A",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -4681,6 +4710,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
             title: "Thread Conflict",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5-codex",
             },
             runtimeMode: "full-access",
@@ -4878,6 +4908,7 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           title: "Thread Revert",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           runtimeMode: "full-access",
@@ -5207,6 +5238,7 @@ engineLayer("OrchestrationProjectionPipeline via engine dispatch", (it) => {
         workspaceRoot: "/tmp/project-live",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         createdAt,
@@ -5282,6 +5314,7 @@ engineLayer("OrchestrationProjectionPipeline via engine dispatch", (it) => {
         workspaceRoot: "/tmp/project-scripts",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         createdAt,
@@ -5303,6 +5336,7 @@ engineLayer("OrchestrationProjectionPipeline via engine dispatch", (it) => {
         isPinned: true,
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
       });
@@ -5323,7 +5357,12 @@ engineLayer("OrchestrationProjectionPipeline via engine dispatch", (it) => {
         {
           scriptsJson:
             '[{"id":"script-1","name":"Build","command":"bun run build","icon":"build","runOnWorktreeCreate":false}]',
-          defaultModelSelection: '{"provider":"codex","instanceId":"codex","model":"gpt-5"}',
+          defaultModelSelection: JSON.stringify({
+            provider: "codex",
+            instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
+            model: "gpt-5",
+          }),
           isPinned: 1,
         },
       ]);
@@ -5347,6 +5386,7 @@ engineLayer("OrchestrationProjectionPipeline via engine dispatch", (it) => {
         defaultModelSelection: {
           provider: "codex",
           instanceId: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         createdAt,
@@ -5357,7 +5397,7 @@ engineLayer("OrchestrationProjectionPipeline via engine dispatch", (it) => {
         threadId,
         projectId,
         title: "Routed telemetry",
-        modelSelection: { provider: "codex", model: "gpt-5-codex" },
+        modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
         interactionMode: "default",
         runtimeMode: "full-access",
         branch: null,
@@ -6090,7 +6130,7 @@ it.layer(makeProjectionPipelinePrefixedTestLayer("synara-projection-interleaved-
               threadId,
               projectId,
               title: "Summary",
-              modelSelection: { provider: "codex", model: "gpt-5" },
+              modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
               runtimeMode: "full-access",
               branch: null,
               worktreePath: null,
@@ -6204,7 +6244,7 @@ it.layer(makeProjectionPipelinePrefixedTestLayer("synara-projection-interleaved-
             threadId,
             projectId,
             title: "Sidechat",
-            modelSelection: { provider: "codex", model: "gpt-5" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
             runtimeMode: "full-access",
             branch: null,
             worktreePath: null,
@@ -6420,7 +6460,7 @@ it.layer(Layer.fresh(makeProjectionPipelinePrefixedTestLayer("synara-human-recen
               threadId,
               projectId,
               title: "Recency",
-              modelSelection: { provider: "codex", model: "gpt-5" },
+              modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
               runtimeMode: "full-access",
               branch: null,
               worktreePath: null,

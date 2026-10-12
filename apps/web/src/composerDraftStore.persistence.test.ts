@@ -1,4 +1,9 @@
-import { OrchestrationProposedPlanId, ProjectId, ThreadId } from "@synara/contracts";
+import {
+  DEFAULT_PROVIDER_PROFILE_ID,
+  OrchestrationProposedPlanId,
+  ProjectId,
+  ThreadId,
+} from "@synara/contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { partializeComposerDraftStoreState, useComposerDraftStore } from "./composerDraftStore";
 import {
@@ -275,6 +280,7 @@ describe("composerDraftStore persisted-state hydration", () => {
     expect(hydrated.draftsByThreadId[threadId]?.activeProvider).toBe("opencode");
     expect(hydrated.draftsByThreadId[threadId]?.modelSelectionByProvider?.opencode).toEqual({
       provider: "opencode",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "openai/gpt-5",
     });
     expect(hydrated.stickyActiveProvider).toBe("opencode");
@@ -321,6 +327,70 @@ describe("composerDraftStore persisted-state hydration", () => {
       "clean the directory and build a snake game",
     );
     expect(hydrated.draftThreadsByThreadId[blankGoalThreadId]?.goal).toBeUndefined();
+  });
+
+  it("normalizes current-format provider selections without losing explicit profiles", () => {
+    const threadId = ThreadId.makeUnsafe("thread-provider-profile-hydration");
+
+    const hydrated = normalizeCurrentPersistedComposerDraftStoreState({
+      draftsByThreadId: {
+        [threadId]: {
+          prompt: "Continue this draft",
+          attachments: [],
+          modelSelectionByProvider: {
+            codex: { provider: "codex", model: "gpt-5.6-sol" },
+            claudeAgent: {
+              provider: "claudeAgent",
+              profileId: "work",
+              model: "opus-4.8",
+            },
+            cursor: {
+              provider: "codex",
+              instanceId: "codex_rekeyed",
+              profileId: "work",
+              model: "mismatched-key",
+            },
+            cursor_invalid: {
+              provider: "cursor",
+              instanceId: "cursor_invalid",
+              profileId: "../work",
+              model: "cursor-auto",
+            },
+          },
+          activeProvider: "codex",
+        },
+      },
+      draftThreadsByThreadId: {},
+      projectDraftThreadIdByProjectId: {},
+      stickyModelSelectionByProvider: {
+        codex: { provider: "codex", model: "gpt-5.6-sol" },
+        claudeAgent: {
+          provider: "claudeAgent",
+          profileId: "work",
+          model: "opus-4.8",
+        },
+      },
+      stickyActiveProvider: "codex",
+    });
+
+    expect(hydrated.draftsByThreadId[threadId]?.modelSelectionByProvider?.codex?.profileId).toBe(
+      DEFAULT_PROVIDER_PROFILE_ID,
+    );
+    expect(
+      hydrated.draftsByThreadId[threadId]?.modelSelectionByProvider?.claudeAgent?.profileId,
+    ).toBe("work");
+    expect(hydrated.draftsByThreadId[threadId]?.modelSelectionByProvider?.cursor).toBeUndefined();
+    expect(hydrated.draftsByThreadId[threadId]?.modelSelectionByProvider?.codex_rekeyed).toEqual({
+      provider: "codex",
+      instanceId: "codex_rekeyed",
+      profileId: "work",
+      model: "mismatched-key",
+    });
+    expect(hydrated.draftsByThreadId[threadId]?.modelSelectionByProvider?.cursor_invalid).toBeUndefined();
+    expect(hydrated.stickyModelSelectionByProvider?.codex?.profileId).toBe(
+      DEFAULT_PROVIDER_PROFILE_ID,
+    );
+    expect(hydrated.stickyModelSelectionByProvider?.claudeAgent?.profileId).toBe("work");
   });
 });
 

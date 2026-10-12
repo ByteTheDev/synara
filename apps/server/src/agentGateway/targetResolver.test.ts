@@ -1,6 +1,7 @@
 import { assert, describe, it } from "@effect/vitest";
 import {
   DEFAULT_MODEL_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
   type ModelSelection,
   type ProviderKind,
   type ProviderModelDescriptor,
@@ -65,6 +66,7 @@ describe("agent gateway target resolver", () => {
         for (const supported of [true, false, undefined]) {
           const target = {
             provider: "claudeAgent" as const,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "sonnet",
             supportsAutoMode: supported !== true,
             options: { autoCompactWindow: "200k" },
@@ -95,6 +97,7 @@ describe("agent gateway target resolver", () => {
           });
           assert.deepEqual(result, {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-5",
             options: target.options,
             ...(supported !== undefined ? { supportsAutoMode: supported } : {}),
@@ -103,6 +106,7 @@ describe("agent gateway target resolver", () => {
         const fallback = yield* resolveAgentGatewayTarget({
           target: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: DEFAULT_MODEL_BY_PROVIDER.claudeAgent,
             supportsAutoMode: true,
           },
@@ -145,15 +149,16 @@ describe("agent gateway target resolver", () => {
 
       assert.deepEqual(
         yield* resolveAgentGatewayTarget({
-          target: { provider: "claudeAgent", model: "claude-opus-6" },
+          target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-6" },
           discovery: claudeDiscovery,
         }),
-        { provider: "claudeAgent", model: "claude-opus-6", supportsAutoMode: true },
+        { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-6", supportsAutoMode: true },
       );
       assert.deepEqual(
         yield* resolveAgentGatewayTarget({
           target: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-6",
             options: { autoCompactWindow: "200k" },
           },
@@ -161,6 +166,7 @@ describe("agent gateway target resolver", () => {
         }),
         {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-6",
           options: { autoCompactWindow: "200k" },
           supportsAutoMode: true,
@@ -172,7 +178,7 @@ describe("agent gateway target resolver", () => {
   it.effect("rejects an ambiguous Claude resolved id", () =>
     Effect.gen(function* () {
       const result = yield* resolveAgentGatewayTarget({
-        target: { provider: "claudeAgent", model: "claude-opus-6" },
+        target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-6" },
         discovery: {
           listModels: () =>
             Effect.succeed({
@@ -217,10 +223,16 @@ describe("agent gateway target resolver", () => {
       });
       assert.deepEqual(
         yield* resolveAgentGatewayTarget({
-          target: codexGuidance.exampleTarget!,
+          target: {
+            ...codexGuidance.exampleTarget!,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
+          },
           discovery,
         }),
-        codexGuidance.exampleTarget,
+        {
+          ...codexGuidance.exampleTarget,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+        },
       );
 
       const antigravityGuidance = agentGatewayTargetOptionGuidance({
@@ -282,7 +294,7 @@ describe("agent gateway target resolver", () => {
   it.effect("rejects a guessed model slug before creation", () =>
     Effect.gen(function* () {
       const result = yield* resolveAgentGatewayTarget({
-        target: { provider: "codex", model: "gpt-5.6-terra-low" },
+        target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.6-terra-low" },
         discovery,
       }).pipe(
         Effect.map(() => ({ code: "unexpected-success" })),
@@ -316,6 +328,7 @@ describe("agent gateway target resolver", () => {
       } as unknown as ProviderDiscoveryServiceShape;
       const accepted = {
         provider: "opencode" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "openai/gpt-5",
         options: { variant: "high" },
       };
@@ -325,6 +338,7 @@ describe("agent gateway target resolver", () => {
       );
       const explicitAgent = {
         provider: "opencode" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "openai/gpt-5",
         options: { agent: "build" },
       };
@@ -335,6 +349,7 @@ describe("agent gateway target resolver", () => {
       const result = yield* resolveAgentGatewayTarget({
         target: {
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5",
           options: { inventedOption: "invented-value" },
         } as unknown as ModelSelection,
@@ -458,6 +473,7 @@ describe("agent gateway target resolver", () => {
         for (const entry of providerCases) {
           const accepted = {
             provider,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: descriptor.slug,
             options: { [entry.optionKey]: entry.acceptedValue },
           } as unknown as ModelSelection;
@@ -469,6 +485,7 @@ describe("agent gateway target resolver", () => {
           const rejected = yield* resolveAgentGatewayTarget({
             target: {
               provider,
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: descriptor.slug,
               options: { [entry.optionKey]: entry.rejectedValue },
             } as unknown as ModelSelection,
@@ -498,6 +515,7 @@ describe("agent gateway target resolver", () => {
       const accepted = yield* resolveAgentGatewayTarget({
         target: {
           provider: "omp",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "omp-bare",
           options: { thinkingLevel: "max" },
         } as unknown as ModelSelection,
@@ -505,6 +523,7 @@ describe("agent gateway target resolver", () => {
       });
       assert.deepEqual(accepted, {
         provider: "omp",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "omp-bare",
         options: { thinkingLevel: "max" },
       });
@@ -512,6 +531,7 @@ describe("agent gateway target resolver", () => {
       const rejected = yield* resolveAgentGatewayTarget({
         target: {
           provider: "omp",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "omp-bare",
           options: { thinkingLevel: "invented" },
         } as unknown as ModelSelection,
@@ -562,6 +582,7 @@ describe("agent gateway target resolver", () => {
       } as unknown as ProviderDiscoveryServiceShape;
       const accepted = {
         provider: "cursor" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: descriptor.slug,
         options: {
           reasoningEffort: "low",
@@ -590,7 +611,7 @@ describe("agent gateway target resolver", () => {
           listModels: () => Effect.succeed({ source: "test", models: [unavailableDescriptor] }),
         } as unknown as ProviderDiscoveryServiceShape;
         const result = yield* resolveAgentGatewayTarget({
-          target: { provider: "cursor", model: descriptor.slug, options },
+          target: { provider: "cursor", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: descriptor.slug, options },
           discovery: unavailableDiscovery,
         }).pipe(
           Effect.map(() => ({ code: "unexpected-success" })),
@@ -637,6 +658,7 @@ describe("agent gateway target resolver", () => {
 
       const accepted = {
         provider: "opencode" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: descriptor.slug,
         options: { agent: "build" },
       };
@@ -687,7 +709,7 @@ describe("agent gateway target resolver", () => {
         },
       } as unknown as ProviderDiscoveryServiceShape;
       const result = yield* resolveAgentGatewayTarget({
-        target: { provider: "codex", model: "gpt-5.5" },
+        target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
         discovery: trackedDiscovery,
         availability: { enabled: false },
       }).pipe(
@@ -714,6 +736,7 @@ describe("agent gateway target resolver", () => {
       const target = {
         provider: "codex" as const,
         instanceId: "codex_work",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.5-work",
       };
       assert.deepEqual(
@@ -781,7 +804,7 @@ describe("agent gateway target resolver", () => {
         ["codex_disabled", "disabled"],
       ] as const) {
         const result = yield* resolveAgentGatewayTarget({
-          target: { provider: "codex", instanceId, model: "gpt-5.5" },
+          target: { provider: "codex", instanceId, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
           discovery: trackedDiscovery,
           availability,
         }).pipe(
@@ -798,7 +821,7 @@ describe("agent gateway target resolver", () => {
   it.effect("rejects a known unavailable or unauthenticated provider", () =>
     Effect.gen(function* () {
       const result = yield* resolveAgentGatewayTarget({
-        target: { provider: "codex", model: "gpt-5.5" },
+        target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
         discovery,
         availability: {
           enabled: true,
@@ -824,6 +847,7 @@ describe("agent gateway target resolver", () => {
       } as unknown as ProviderDiscoveryServiceShape;
       const defaultTarget = {
         provider: "codex" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: DEFAULT_MODEL_BY_PROVIDER.codex,
       };
       assert.deepEqual(
@@ -836,7 +860,7 @@ describe("agent gateway target resolver", () => {
       );
 
       const customResult = yield* resolveAgentGatewayTarget({
-        target: { provider: "codex", model: "gpt-5.6-terra" },
+        target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.6-terra" },
         discovery: unavailableDiscovery,
         availability: { enabled: true, available: true, authStatus: "authenticated" },
       }).pipe(
@@ -848,6 +872,7 @@ describe("agent gateway target resolver", () => {
       const invalidOption = yield* resolveAgentGatewayTarget({
         target: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: DEFAULT_MODEL_BY_PROVIDER.codex,
           options: { reasoningEffort: "invented" },
         },

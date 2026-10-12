@@ -3,6 +3,7 @@ import "../index.css";
 import {
   ApprovalRequestId,
   CommandId,
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   MessageId,
   DEVICE_WS_METHODS,
@@ -144,6 +145,7 @@ function createSnapshot(overrides?: Partial<OrchestrationReadModel["threads"][nu
         workspaceRoot: "/repo/project",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         scripts: [],
@@ -159,6 +161,7 @@ function createSnapshot(overrides?: Partial<OrchestrationReadModel["threads"][nu
         title: "Root test thread",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         interactionMode: "default",

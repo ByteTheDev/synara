@@ -1,4 +1,4 @@
-import { ProviderInstanceId, ThreadId, type ModelSelection } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProviderProfileId, ProviderInstanceId, ThreadId, type ModelSelection } from "@synara/contracts";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   deriveEffectiveComposerModelState,
@@ -98,6 +98,7 @@ describe("resolvePreferredComposerModelSelection", () => {
     expect(resolved).toEqual({
       provider: "claudeAgent",
       instanceId: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-5",
     });
   });
@@ -136,6 +137,7 @@ describe("OMP role-era persisted selections", () => {
     ).toEqual({
       provider: "omp",
       instanceId: "omp_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "upstream/catalog-model",
       options: { thinkingLevel: "high" },
     });
@@ -202,6 +204,7 @@ describe("OMP role-era persisted selections", () => {
       ).toMatchObject({
         provider: "omp",
         instanceId: "omp_work",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "upstream/catalog-model",
       });
     },
@@ -897,6 +900,7 @@ describe("composerDraftStore sticky composer settings", () => {
     const threadId = ThreadId.makeUnsafe("thread-claude-auto-capability");
     const selection: ModelSelection = {
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-haiku-4-5",
       supportsAutoMode: false,
     };
@@ -959,12 +963,14 @@ describe("composerDraftStore sticky composer settings", () => {
     const threadId = ThreadId.makeUnsafe("thread-claude-auto-model-switch");
     store.setModelSelection(threadId, {
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-haiku-4-5",
       supportsAutoMode: false,
     });
 
     store.setModelSelection(threadId, {
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-5",
     });
 
@@ -973,6 +979,7 @@ describe("composerDraftStore sticky composer settings", () => {
         .claudeAgent,
     ).toEqual({
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-5",
     });
   });
@@ -1048,6 +1055,27 @@ describe("composerDraftStore sticky composer settings", () => {
     });
     store.setStickyModelSelection(
       modelSelection("codex", "gpt-5.6-sol", { reasoningEffort: "ultra" }),
+    );
+    store.setModelSelection(threadId, currentSelection);
+
+    store.applyStickyState(threadId);
+
+    expect(
+      useComposerDraftStore.getState().draftsByThreadId[threadId]?.modelSelectionByProvider.codex,
+    ).toEqual(currentSelection);
+  });
+
+  it("does not overwrite an existing profile with sticky state from another profile", () => {
+    const store = useComposerDraftStore.getState();
+    const threadId = ThreadId.makeUnsafe("thread-sticky-profile-scope");
+    const currentSelection: ModelSelection = {
+      provider: "codex",
+      profileId: ProviderProfileId.makeUnsafe("work"),
+      model: "gpt-5.4",
+      options: { reasoningEffort: "xhigh" },
+    };
+    store.setStickyModelSelection(
+      modelSelection("codex", "gpt-5.4", { reasoningEffort: "medium" }),
     );
     store.setModelSelection(threadId, currentSelection);
 

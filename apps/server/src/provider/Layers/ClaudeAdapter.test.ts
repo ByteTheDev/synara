@@ -15,6 +15,7 @@ import type {
   SDKUserMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   ApprovalRequestId,
   ProviderItemId,
   ProviderRuntimeEvent,
@@ -410,6 +411,7 @@ function verifyClaudeAutoSessionStart(input: ClaudeAutoSessionStartCase) {
         runtimeMode: "auto",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: input.requestedModel,
         },
       });
@@ -847,6 +849,7 @@ describe("ClaudeAdapterLive", () => {
             modelSelection: {
               provider: "claudeAgent",
               instanceId: "claude_work",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-sonnet-4-5",
             },
             providerOptions: {
@@ -975,6 +978,7 @@ describe("ClaudeAdapterLive", () => {
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
         },
       });
@@ -1374,6 +1378,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             autoCompactWindow: "1m",
@@ -1403,6 +1408,7 @@ describe("ClaudeAdapterLive", () => {
             provider: "claudeAgent",
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-sonnet-5",
               options: { effort },
             },
@@ -1434,6 +1440,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-5",
           options: {
             effort: "ultracode",
@@ -1465,6 +1472,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-haiku-4-5",
           options: {
             effort: "high",
@@ -1490,6 +1498,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-haiku-4-5",
           options: {
             thinking: false,
@@ -1518,6 +1527,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4-6",
           options: {
             thinking: false,
@@ -1545,6 +1555,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             fastMode: true,
@@ -1584,6 +1595,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: { fastMode: true },
         },
@@ -1627,6 +1639,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4-6",
           options: {
             fastMode: true,
@@ -1654,6 +1667,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4-6",
           options: {
             effort: "ultrathink",
@@ -1668,6 +1682,7 @@ describe("ClaudeAdapterLive", () => {
         attachments: [],
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4-6",
           options: {
             effort: "ultrathink",
@@ -2250,6 +2265,7 @@ describe("ClaudeAdapterLive", () => {
         provider: "claudeAgent",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4-5",
         },
         runtimeMode: "full-access",
@@ -6172,7 +6188,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         threadId: THREAD_ID,
         provider: "claudeAgent" as const,
         runtimeMode: "auto" as const,
-        modelSelection: { provider: "claudeAgent" as const, model: "claude-sonnet-5" },
+        modelSelection: { provider: "claudeAgent" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
       };
       assert.isTrue(Exit.isFailure(yield* Effect.exit(adapter.startSession(input))));
       assert.equal(teardownCalls, 1);
@@ -7421,7 +7437,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         threadId: THREAD_ID,
         provider: "claudeAgent",
         runtimeMode: "full-access",
-        modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+        modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
       });
 
       yield* adapter.sendTurn({
@@ -7488,7 +7504,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           threadId: THREAD_ID,
           provider: "claudeAgent",
           runtimeMode: "full-access",
-          modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
         });
 
         yield* adapter.sendTurn({
@@ -8977,6 +8993,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "auto",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
         },
       });
@@ -8987,6 +9004,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           input: "switch to Haiku",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-haiku-4-5",
           },
           attachments: [],
@@ -9001,6 +9019,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "switch to Fable",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
         },
         attachments: [],
@@ -9037,6 +9056,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "auto",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-5",
         },
       });
@@ -9046,6 +9066,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "switch to Opus",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-5",
         },
         attachments: [],
@@ -9065,7 +9086,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
       yield* adapter.startSession({
         threadId: THREAD_ID,
         runtimeMode: "full-access",
-        modelSelection: { provider: "claudeAgent", model: "claude-fable-5-1" },
+        modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-fable-5-1" },
       });
       const entered = yield* Deferred.make<void>();
       const release = yield* Deferred.make<void>();
@@ -9079,7 +9100,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           threadId: THREAD_ID,
           input: "continue",
           attachments: [],
-          modelSelection: { provider: "claudeAgent", model: "claude-opus-4-8" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-8" },
         })
         .pipe(Effect.forkChild);
       yield* Deferred.await(entered);
@@ -9098,6 +9119,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           attachments: [],
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-4-8",
             options: { autoCompactWindow: "200k" },
           },
@@ -9121,6 +9143,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5-1",
           options: { autoCompactWindow: "", contextWindow: "200k" },
         },
@@ -9135,6 +9158,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         attachments: [],
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5-1",
           options: { autoCompactWindow: "200k" },
         },
@@ -9159,6 +9183,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           runtimeMode: "full-access",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-fable-5-1",
             ...(previous ? { options: { autoCompactWindow: previous } } : {}),
           },
@@ -9170,6 +9195,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
             attachments: [],
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-opus-4-8",
               ...(next ? { options: { autoCompactWindow: next } } : {}),
             },
@@ -9187,6 +9213,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           attachments: [],
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-fable-5-1",
             ...(previous ? { options: { autoCompactWindow: previous } } : {}),
           },
@@ -9213,6 +9240,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
         },
       });
@@ -9221,6 +9249,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "switch to Fable 1M",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5-1[1m]",
         },
         attachments: [],
@@ -9257,6 +9286,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-haiku-4-5",
           options: { thinking: false },
         },
@@ -9270,6 +9300,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "hello",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-haiku-4-5",
           options: { thinking: true },
         },
@@ -9283,6 +9314,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "continue",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-haiku-4-5",
           options: { thinking: true },
         },
@@ -9306,6 +9338,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
           options: { effort: "high" },
         },
@@ -9317,6 +9350,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "hello",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
           options: { effort: "ultracode", fastMode: true },
         },
@@ -9332,6 +9366,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "continue",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
           options: { effort: "ultracode", fastMode: true },
         },
@@ -9347,6 +9382,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "wrap up",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
         },
         attachments: [],
@@ -9510,6 +9546,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
         },
       });
@@ -9519,6 +9556,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
         },
         attachments: [],
@@ -9579,6 +9617,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
         },
       });
@@ -9589,6 +9628,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
         },
         attachments: [],
@@ -9637,6 +9677,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
         },
         attachments: [],
@@ -9664,6 +9705,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
           options: { autoCompactWindow: "1m" },
         },
@@ -9694,6 +9736,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
           options: { autoCompactWindow: "1m" },
         },
@@ -9713,6 +9756,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-fable-5",
           options: { autoCompactWindow: "1m" },
         },
@@ -9736,6 +9780,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         modelSelection: {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
         },
       });
@@ -9750,6 +9795,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           modelSelection: {
             provider: "claudeAgent",
             instanceId: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-4-8",
             options: { effort: "max" },
           },
@@ -9787,6 +9833,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           runtimeMode: "full-access",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-4-8",
             options: { effort: "max" },
           },
@@ -9893,6 +9940,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           runtimeMode: "auto",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-haiku-4-5",
           },
         }),
@@ -9942,6 +9990,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           runtimeMode: "auto",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-5",
           },
         }),
@@ -9986,6 +10035,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           runtimeMode: "auto",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-5",
           },
         }),
@@ -10785,6 +10835,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-5",
           options: { autoCompactWindow: "200k" },
         },
@@ -10857,6 +10908,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         runtimeMode: "full-access",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: { autoCompactWindow: "1m" },
         },
@@ -10866,6 +10918,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         input: "hello",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             autoCompactWindow: "1m",
@@ -10938,7 +10991,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         threadId: THREAD_ID,
         provider: "claudeAgent",
         runtimeMode: "full-access",
-        modelSelection: { provider: "claudeAgent", model: "claude-sonnet-5" },
+        modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
       });
       harness.query.emit({
         type: "result",
@@ -11003,7 +11056,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           threadId: THREAD_ID,
           provider: "claudeAgent",
           runtimeMode: "full-access",
-          modelSelection: { provider: "claudeAgent", model: "claude-sonnet-5" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
         });
         harness.query.emit({
           type: "result",
@@ -11023,7 +11076,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
           threadId: THREAD_ID,
           input: "continue",
           attachments: [],
-          modelSelection: { provider: "claudeAgent", model: nextModel },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: nextModel },
         });
         harness.query.emit({
           type: "system",
@@ -12835,6 +12888,7 @@ describe("ClaudeAdapterLive forkThread", () => {
           modelSelection: {
             provider: "claudeAgent",
             instanceId: "work",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-4-8",
           },
           providerOptions: {
@@ -13033,6 +13087,7 @@ describe("Claude explicit native compaction", () => {
             interactionMode: "plan",
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-sonnet-4-6",
               options: { effort: "ultrathink" },
             },
@@ -13613,7 +13668,7 @@ describe("Claude explicit native compaction", () => {
           threadId: THREAD_ID,
           runtimeMode: "full-access",
           resumeCursor: { resume: nativeSessionId },
-          modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
         });
         const completed = yield* adapter.streamEvents.pipe(
           Stream.filter((event) => event.type === "turn.completed"),
@@ -13646,6 +13701,7 @@ describe("Claude explicit native compaction", () => {
           attachments: [],
           modelSelection: {
             provider: "claudeAgent" as const,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
             options: { thinking: true, effort: "max" as const, autoCompactWindow: "200k" },
           },
@@ -13766,6 +13822,7 @@ describe("Claude explicit native compaction", () => {
             runtimeMode: "approval-required",
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-fable-5-1",
               options: { autoCompactWindow: "200k" },
             },
@@ -13880,6 +13937,7 @@ describe("Claude explicit native compaction", () => {
             resumeCursor: (yield* adapter.listSessions())[0]?.resumeCursor,
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-fable-5-1",
               options: { autoCompactWindow: "200k" },
             },
@@ -14034,7 +14092,7 @@ describe("Claude cache preflight", () => {
             yield* adapter.startSession({
               threadId: THREAD_ID,
               runtimeMode: "full-access",
-              ...(model ? { modelSelection: { provider: "claudeAgent" as const, model } } : {}),
+              ...(model ? { modelSelection: { provider: "claudeAgent" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model } } : {}),
               resumeCursor: { resume: nativeSessionId },
             });
             if (timing === "late") {
@@ -14098,6 +14156,7 @@ describe("Claude cache preflight", () => {
         const adapter = yield* ClaudeAdapter;
         const modelSelection = {
           provider: "claudeAgent" as const,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: update === "model-change" ? "claude-sonnet-4-6" : "claude-opus-4-6",
         };
         const savedMetadata = {
@@ -14271,7 +14330,7 @@ describe("Claude cache preflight", () => {
       yield* adapter.startSession({
         threadId: THREAD_ID,
         runtimeMode: "full-access",
-        modelSelection: { provider: "claudeAgent", model: "claude-sonnet-4-6" },
+        modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
         resumeCursor: {
           resume: nativeSessionId,
           claudeCache: { ...resumedObservation, model: "claude-opus-4-6" },

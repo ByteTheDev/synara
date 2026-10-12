@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   CommandId,
   DEFAULT_PROVIDER_INTERACTION_MODE,
   MessageId,
@@ -69,7 +70,7 @@ describe("thread annotations round-trip", () => {
           projectId,
           title: "Goal project",
           workspaceRoot: "/tmp/project-goal",
-          defaultModelSelection: { provider: "codex", model: "gpt-5-codex" },
+          defaultModelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           createdAt,
         }),
       );
@@ -80,7 +81,7 @@ describe("thread annotations round-trip", () => {
           threadId,
           projectId,
           title: "Goal thread",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
           runtimeMode: "approval-required",
           branch: null,
@@ -154,7 +155,7 @@ describe("thread annotations round-trip", () => {
           projectId,
           title: "Pins project",
           workspaceRoot: "/tmp/project-pins",
-          defaultModelSelection: { provider: "codex", model: "gpt-5-codex" },
+          defaultModelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           createdAt,
         }),
       );
@@ -165,7 +166,7 @@ describe("thread annotations round-trip", () => {
           threadId,
           projectId,
           title: "Pins thread",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
           runtimeMode: "approval-required",
           branch: null,

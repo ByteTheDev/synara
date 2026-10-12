@@ -3,12 +3,13 @@
 // Layer: Web unit tests
 // Depends on: providerModelOptions shared formatting helpers.
 
-import { MODEL_OPTIONS_BY_PROVIDER } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProviderProfileId, MODEL_OPTIONS_BY_PROVIDER } from "@synara/contracts";
 import { describe, expect, it } from "vitest";
 import { getAppModelOptions } from "./appSettings";
 
 import {
   buildModelSelection,
+  buildModelSelectionForTarget,
   buildNextProviderOptions,
   formatProviderModelOptionName,
   getOmpModelSelectionIssue,
@@ -30,6 +31,7 @@ describe("Antigravity model options", () => {
     expect(options).toEqual({ reasoningEffort: "high" });
     expect(buildModelSelection("antigravity", "Gemini 3.5 Flash", options)).toEqual({
       provider: "antigravity",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "Gemini 3.5 Flash",
       options: { reasoningEffort: "high" },
     });
@@ -49,6 +51,7 @@ describe("OMP model options", () => {
     ).toEqual({
       provider: "omp",
       instanceId: "omp_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "upstream/catalog-model",
       options: { thinkingLevel: "high" },
     });
@@ -76,6 +79,7 @@ describe("OMP model options", () => {
       buildModelSelection("omp", "anthropic/claude-sonnet-4", { thinkingLevel: "max" }),
     ).toEqual({
       provider: "omp",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "anthropic/claude-sonnet-4",
       options: { thinkingLevel: "max" },
     });
@@ -84,6 +88,7 @@ describe("OMP model options", () => {
   it("builds an OMP model selection without options when none are provided", () => {
     expect(buildModelSelection("omp", "anthropic/claude-sonnet-4")).toEqual({
       provider: "omp",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "anthropic/claude-sonnet-4",
     });
   });
@@ -105,8 +110,54 @@ describe("Claude model selections", () => {
   it("preserves the discovered Auto capability with the selected model", () => {
     expect(buildModelSelection("claudeAgent", "claude-haiku-4-5", undefined, false)).toEqual({
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-haiku-4-5",
       supportsAutoMode: false,
+    });
+  });
+
+  it("builds selections for an explicit provider profile", () => {
+    expect(
+      buildModelSelectionForTarget({
+        target: {
+          provider: "claudeAgent",
+          profileId: ProviderProfileId.makeUnsafe("work"),
+        },
+        model: "claude-haiku-4-5",
+        supportsAutoMode: true,
+      }),
+    ).toEqual({
+      provider: "claudeAgent",
+      profileId: "work",
+      model: "claude-haiku-4-5",
+      supportsAutoMode: true,
+    });
+  });
+
+  it("keeps an existing non-default target when rebuilding an edited selection", () => {
+    const existingSelection = buildModelSelectionForTarget({
+      target: {
+        provider: "claudeAgent",
+        profileId: ProviderProfileId.makeUnsafe("work"),
+      },
+      model: "claude-haiku-4-5",
+      options: { effort: "high" },
+    });
+
+    expect(
+      buildModelSelectionForTarget({
+        target: {
+          provider: existingSelection.provider,
+          profileId: existingSelection.profileId,
+        },
+        model: "claude-sonnet-5",
+        options: { effort: "max" },
+      }),
+    ).toEqual({
+      provider: "claudeAgent",
+      profileId: ProviderProfileId.makeUnsafe("work"),
+      model: "claude-sonnet-5",
+      options: { effort: "max" },
     });
   });
 });

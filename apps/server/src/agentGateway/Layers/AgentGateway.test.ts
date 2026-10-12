@@ -20,6 +20,7 @@ import {
   DEFAULT_AUTOMATION_STOP_CONFIDENCE_THRESHOLD,
   DEFAULT_MODEL_BY_PROVIDER,
   COMPUTER_CONTROL_DENIED_ACTIVITY_KIND,
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   MessageId,
   ModelSelection,
@@ -120,7 +121,7 @@ function makeThreadShell(
     id: ThreadId.makeUnsafe(id),
     projectId: PROJECT_ID,
     title: `Thread ${id}`,
-    modelSelection: { provider: "codex", model: "gpt-5.5" },
+    modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
     runtimeMode: "approval-required",
     interactionMode: "default",
     envMode: "local",
@@ -328,7 +329,7 @@ function makeAutomationDefinition(
     schedule: { type: "interval", everySeconds: 300 },
     enabled: true,
     nextRunAt: NOW,
-    modelSelection: { provider: "codex", model: "gpt-5.5" },
+    modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
     runtimeMode: "approval-required",
     interactionMode: "default",
     worktreeMode: "local",
@@ -1625,6 +1626,7 @@ describe("AgentGateway", () => {
                 prompt: "work",
                 target: {
                   provider: "claudeAgent",
+                  profileId: DEFAULT_PROVIDER_PROFILE_ID,
                   model: model.value,
                   options: { autoCompactWindow: "2m" },
                 },
@@ -1656,6 +1658,7 @@ describe("AgentGateway", () => {
                   prompt: "work",
                   target: {
                     provider: "claudeAgent",
+                    profileId: DEFAULT_PROVIDER_PROFILE_ID,
                     model: model.value,
                     ...(options ? { options } : {}),
                   },
@@ -1793,6 +1796,7 @@ describe("AgentGateway", () => {
                   prompt: "work",
                   target: {
                     provider: "claudeAgent",
+                    profileId: DEFAULT_PROVIDER_PROFILE_ID,
                     model: model.value,
                     options: { [key]: "1m" },
                   },
@@ -1928,7 +1932,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "should not run",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
             },
           ],
         },
@@ -2159,7 +2163,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: requestId,
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               },
             ],
           },
@@ -2524,7 +2528,15 @@ describe("AgentGateway", () => {
       for (const construction of Object.values(targetConstruction)) {
         const exampleTarget = construction.exampleTarget;
         if (exampleTarget === null || exampleTarget === undefined) continue;
-        assert.deepEqual(Schema.decodeUnknownSync(ModelSelection)(exampleTarget), exampleTarget);
+        assert.equal("profileId" in exampleTarget, false);
+        assert.equal(
+          Schema.decodeUnknownSync(ModelSelection)(exampleTarget).profileId,
+          DEFAULT_PROVIDER_PROFILE_ID,
+        );
+        assert.deepEqual(Schema.decodeUnknownSync(ModelSelection)(exampleTarget), {
+          ...exampleTarget,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+        });
       }
 
       const serialized = JSON.stringify(payload);
@@ -2645,7 +2657,7 @@ describe("AgentGateway", () => {
         }),
         makeThreadShell("thread-other", {
           title: "Unrelated task",
-          modelSelection: { provider: "claudeAgent", model: "opus-4.8" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "opus-4.8" },
           updatedAt: "2026-02-01T10:00:00.000Z",
         }),
       ];
@@ -2939,7 +2951,7 @@ describe("AgentGateway", () => {
           const harness = yield* makeHarness;
           const spec = {
             prompt: "delegated task",
-            target: { provider: "codex", model: "gpt-5.5" },
+            target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
             notifyCreatorOnComplete: true,
           };
           const response = yield* harness.callTool({
@@ -2983,6 +2995,7 @@ describe("AgentGateway", () => {
               prompt: "plan the OpenCode work",
               target: {
                 provider: "opencode",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "openai/gpt-5",
                 options: { agent: "plan" },
               },
@@ -3571,7 +3584,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "must not reuse it",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               environment: "worktree",
               branchName: "agent/user-owned",
             },
@@ -3611,7 +3624,7 @@ describe("AgentGateway", () => {
                 threads: [
                   {
                     prompt: "worker from turn A",
-                    target: { provider: "codex", model: "gpt-5.5" },
+                    target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
                     environment: "worktree",
                   },
                 ],
@@ -3629,7 +3642,7 @@ describe("AgentGateway", () => {
                 threads: [
                   {
                     prompt: "late worker",
-                    target: { provider: "codex", model: "gpt-5.5" },
+                    target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
                   },
                 ],
               },
@@ -3696,7 +3709,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "late",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               },
             ],
           },
@@ -3773,11 +3786,11 @@ describe("AgentGateway", () => {
         threads: [
           {
             prompt: "worker one",
-            target: { provider: "codex", model: "gpt-5.5" },
+            target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
           },
           {
             prompt: "worker two",
-            target: { provider: "claudeAgent", model: "claude-sonnet-5" },
+            target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
           },
         ],
       };
@@ -3852,7 +3865,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "changed payload",
-              target: { provider: "codex", model: "made-up-model" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "made-up-model" },
             },
           ],
         },
@@ -3899,7 +3912,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "one exact worker",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
                 environment: "worktree",
               },
             ],
@@ -3937,7 +3950,7 @@ describe("AgentGateway", () => {
           name: "synara_create_threads",
           args: {
             requestId,
-            threads: [{ prompt, target: { provider: "codex", model: "gpt-5.5" } }],
+            threads: [{ prompt, target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" } }],
           },
         });
       yield* create("first-plan", "first");
@@ -3949,7 +3962,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "invalid second plan",
-              target: { provider: "codex", model: "made-up-model" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "made-up-model" },
             },
           ],
         },
@@ -3991,7 +4004,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "must not dispatch",
-              target: { provider: "claudeAgent", model: "claude-sonnet-5" },
+              target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
             },
           ],
         },
@@ -4019,6 +4032,7 @@ describe("AgentGateway", () => {
               prompt: "inspect repo",
               target: {
                 provider: "codex",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "gpt-5.6-terra",
                 options: { reasoningEffort: "low" },
               },
@@ -4033,6 +4047,7 @@ describe("AgentGateway", () => {
         assert.deepEqual(create.modelSelection, {
           provider: "codex",
           instanceId: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.6-terra",
           options: { reasoningEffort: "low" },
         });
@@ -4052,11 +4067,11 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "valid",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
             },
             {
               prompt: "invalid",
-              target: { provider: "claudeAgent", model: "made-up-claude" },
+              target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "made-up-claude" },
             },
           ],
         },
@@ -4086,7 +4101,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "must not leak a worktree",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
                 environment: "worktree",
               },
             ],
@@ -4124,7 +4139,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "retain cleanup evidence",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               environment: "worktree",
             },
           ],
@@ -4165,7 +4180,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "must not strand a reserved operation",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               },
             ],
           },
@@ -4207,7 +4222,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "must compensate the interrupted worktree",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
                 environment: "worktree",
               },
             ],
@@ -4270,7 +4285,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "must not block interruption on the setup script",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
                 environment: "worktree",
               },
             ],
@@ -4318,7 +4333,7 @@ describe("AgentGateway", () => {
             threads: [
               {
                 prompt: "must compensate the interrupted child",
-                target: { provider: "codex", model: "gpt-5.5" },
+                target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               },
             ],
           },
@@ -4367,7 +4382,7 @@ describe("AgentGateway", () => {
         threads: [
           {
             prompt: "keep the committed child",
-            target: { provider: "codex", model: "gpt-5.5" },
+            target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
           },
         ],
       },
@@ -4424,12 +4439,12 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "first",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
               environment: "worktree",
             },
             {
               prompt: "second",
-              target: { provider: "claudeAgent", model: "claude-sonnet-5" },
+              target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
               environment: "worktree",
             },
           ],
@@ -4475,7 +4490,7 @@ describe("AgentGateway", () => {
         args: {
           requestId: "registration-failure",
           threads: [
-            { prompt: "track before committing", target: { provider: "codex", model: "gpt-5.5" } },
+            { prompt: "track before committing", target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" } },
           ],
         },
       } as const;
@@ -4510,7 +4525,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "dispatch then compensate",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
             },
           ],
         },
@@ -4547,7 +4562,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "fail and compensate",
-              target: { provider: "codex", model: "gpt-5.5" },
+              target: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
             },
           ],
         },
@@ -4799,13 +4814,14 @@ describe("AgentGateway", () => {
             prompt: "What is this repository about?",
             target: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.6-terra",
               options: { reasoningEffort: "low" },
             },
           },
           {
             prompt: "What is this repository about?",
-            target: { provider: "claudeAgent", model: "claude-sonnet-5" },
+            target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
           },
         ],
       };
@@ -4833,10 +4849,11 @@ describe("AgentGateway", () => {
             index === 0
               ? {
                   provider: "codex",
+                  profileId: DEFAULT_PROVIDER_PROFILE_ID,
                   model: "gpt-5.6-terra",
                   options: { reasoningEffort: "low" },
                 }
-              : { provider: "claudeAgent", model: "claude-sonnet-5" },
+              : { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
           latestTurn: {
             turnId: runId,
             state: "completed",
@@ -4897,7 +4914,7 @@ describe("AgentGateway", () => {
           threads: [
             {
               prompt: "Try again",
-              target: { provider: "opencode", model: "openai/gpt-5" },
+              target: { provider: "opencode", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "openai/gpt-5" },
             },
           ],
         },
@@ -4914,12 +4931,14 @@ describe("AgentGateway", () => {
           {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.6-terra",
             options: { reasoningEffort: "low" },
           },
           {
             provider: "claudeAgent",
             instanceId: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-5",
           },
         ],
@@ -5399,7 +5418,7 @@ describe("AgentGateway", () => {
       assert.equal(created.stopAfterConsecutiveFailures, 3);
       // Omitting target keeps the legacy behavior: the heartbeat inherits the
       // continued thread's exact provider session.
-      assert.deepEqual(created.modelSelection, { provider: "codex", model: "gpt-5.5" });
+      assert.deepEqual(created.modelSelection, { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" });
       assert.isTrue(created.enabled);
       // Local-checkout targets must carry the matching environment + risk
       // acknowledgement so AutomationService policy checks stay enforced.
@@ -5407,7 +5426,7 @@ describe("AgentGateway", () => {
       assert.deepEqual(created.acknowledgedRisks, ["local-checkout"]);
       const payload = toolResultJson(response.result);
       assert.isTrue(payload.enabled as boolean);
-      assert.deepEqual(payload.modelSelection, { provider: "codex", model: "gpt-5.5" });
+      assert.deepEqual(payload.modelSelection, { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" });
     }).pipe(Effect.provide(gatewayLayer));
   });
 
@@ -5892,11 +5911,11 @@ describe("AgentGateway", () => {
     return Effect.gen(function* () {
       const harness = yield* makeHarness;
       const targets = [
-        { provider: "codex", model: "gpt-5.6-sol", options: { reasoningEffort: "high" } },
-        { provider: "opencode", model: "deepseek/deepseek-flash", options: { variant: "high" } },
-        { provider: "antigravity", model: "Gemini 3.8 Flash", options: { reasoningEffort: "low" } },
+        { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.6-sol", options: { reasoningEffort: "high" } },
+        { provider: "opencode", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "deepseek/deepseek-flash", options: { variant: "high" } },
+        { provider: "antigravity", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "Gemini 3.8 Flash", options: { reasoningEffort: "low" } },
         // The discovered alias resolves to the concrete model before persistence.
-        { provider: "claudeAgent", model: "sonnet", options: { autoCompactWindow: "200k" } },
+        { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "sonnet", options: { autoCompactWindow: "200k" } },
       ] as const;
 
       for (const [index, target] of targets.entries()) {
@@ -5915,6 +5934,7 @@ describe("AgentGateway", () => {
         const expectedModel = target.provider === "claudeAgent" ? "claude-sonnet-5" : target.model;
         const expectedSelection = {
           provider: target.provider,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: expectedModel,
           options: target.options,
         } as ModelSelection;
@@ -5944,6 +5964,7 @@ describe("AgentGateway", () => {
       const harness = yield* makeHarness;
       const target: ModelSelection = {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.6-sol",
         options: { reasoningEffort: "medium" },
       };
@@ -5973,6 +5994,7 @@ describe("AgentGateway", () => {
       );
       assert.deepEqual(harness.automationUpdates[1]?.modelSelection, {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.6-sol",
         options: { reasoningEffort: "low" },
       } as ModelSelection);
@@ -6022,13 +6044,14 @@ describe("AgentGateway", () => {
           },
         });
 
-      const unavailableModel = yield* create({ provider: "codex", model: "gpt-5.6-sol-low" });
+      const unavailableModel = yield* create({ provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.6-sol-low" });
       assert.equal(
         (toolResultJson(unavailableModel.result).error as { code: string }).code,
         "model_unavailable",
       );
       const unavailableProvider = yield* create({
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-sonnet-5",
       });
       assert.equal(
@@ -6037,6 +6060,7 @@ describe("AgentGateway", () => {
       );
       const invalidOption = yield* create({
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.6-sol",
         options: { reasoningEffort: "ultra" },
       });
@@ -6047,6 +6071,7 @@ describe("AgentGateway", () => {
       // Unknown option keys must reach the resolver instead of being silently stripped.
       const inventedOption = yield* create({
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.6-sol",
         options: { inventedOption: "invented-value" },
       });
@@ -6071,6 +6096,7 @@ describe("AgentGateway", () => {
           completionPolicy: { type: "none" },
           target: {
             provider: "antigravity",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "Gemini 3.8 Flash",
             options: { reasoningEffort: "ultra" },
           },
@@ -6095,7 +6121,7 @@ describe("AgentGateway", () => {
         args: {
           name: "Switch session",
           prompt: "This heartbeat cannot switch its session.",
-          target: { provider: "claudeAgent", model: "claude-sonnet-5" },
+          target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
         },
       });
       assert.isTrue(isToolError(created.result));
@@ -6115,7 +6141,7 @@ describe("AgentGateway", () => {
           stopAfterConsecutiveFailures: definition.stopAfterConsecutiveFailures,
           notificationPolicy: "all",
           completionPolicy: { type: "none" },
-          target: { provider: "claudeAgent", model: "claude-sonnet-5" },
+          target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
         },
       });
       assert.isTrue(isToolError(updated.result));
@@ -6164,6 +6190,7 @@ describe("AgentGateway", () => {
     const definition = makeAutomationDefinition({
       modelSelection: {
         provider: "antigravity",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "Gemini 3.8 Flash",
         options: { reasoningEffort: "low" },
       },

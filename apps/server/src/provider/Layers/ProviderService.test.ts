@@ -20,6 +20,8 @@ import type {
   ProviderTurnStartResult,
 } from "@synara/contracts";
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
+  ProviderProfileId,
   ApprovalRequestId,
   EventId,
   type ProviderInstanceId,
@@ -325,6 +327,7 @@ function makeFakeCodexAdapter(
         const now = new Date().toISOString();
         const session: ProviderSession = {
           provider,
+          profileId: input.profileId ?? DEFAULT_PROVIDER_PROFILE_ID,
           status: "ready",
           runtimeMode: input.runtimeMode,
           threadId: input.threadId,
@@ -670,6 +673,204 @@ function makeProviderServiceLayer(
   };
 }
 
+
+const profileBoundaryRouting = makeProviderServiceLayer();
+profileBoundaryRouting.layer("unavailable named provider profile boundaries", (it) => {
+  const profileId = ProviderProfileId.makeUnsafe("work");
+  const issue =
+    "The requested provider profile is unavailable. Named profiles require the server profile registry.";
+
+  for (const location of ["request", "model", "conflicting-model"] as const) {
+    it.effect(`rejects a ${location} profile before session preparation or persistence`, () =>
+      Effect.gen(function* () {
+        const service = yield* ProviderService;
+        const directory = yield* ProviderSessionDirectory;
+        const threadId = asThreadId(`profile-start-${location}`);
+        profileBoundaryRouting.codex.startSession.mockClear();
+        profileBoundaryRouting.codex.prepareSessionReplacement.mockClear();
+        const result = yield* Effect.result(
+          service.startSession(threadId, {
+            provider: "codex",
+            threadId,
+            runtimeMode: "full-access",
+            ...(location !== "model"
+              ? { profileId: location === "conflicting-model" ? DEFAULT_PROVIDER_PROFILE_ID : profileId }
+              : {}),
+            ...(location !== "request"
+              ? { modelSelection: { provider: "codex" as const, profileId, model: "gpt-5" } }
+              : {}),
+          }),
+        );
+        assertFailure(result, new ProviderValidationError({ operation: "ProviderService.startSession", issue }));
+        assert.equal(profileBoundaryRouting.codex.prepareSessionReplacement.mock.calls.length, 0);
+        assert.equal(profileBoundaryRouting.codex.startSession.mock.calls.length, 0);
+        assert.equal(Option.isNone(yield* directory.getBinding(threadId)), true);
+      }),
+    );
+  }
+
+  for (const operation of ["sendTurn", "steerTurn"] as const) {
+    it.effect(`rejects named-profile ${operation} without altering the active default binding`, () =>
+      Effect.gen(function* () {
+        const service = yield* ProviderService;
+        const directory = yield* ProviderSessionDirectory;
+        const threadId = asThreadId(`profile-${operation}`);
+        yield* service.startSession(threadId, {
+          provider: "codex", threadId, runtimeMode: "full-access",
+        });
+        try {
+          const original = yield* directory.getBinding(threadId);
+          profileBoundaryRouting.codex.sendTurn.mockClear();
+          profileBoundaryRouting.codex.steerTurn.mockClear();
+          const result = yield* Effect.result(service[operation]({
+            threadId,
+            input: "This account must not execute",
+            modelSelection: { provider: "codex", profileId, model: "gpt-5" },
+          }));
+          assertFailure(result, new ProviderValidationError({ operation: `ProviderService.${operation}`, issue }));
+          assert.equal(profileBoundaryRouting.codex.sendTurn.mock.calls.length, 0);
+          assert.equal(profileBoundaryRouting.codex.steerTurn.mock.calls.length, 0);
+          assert.deepEqual(yield* directory.getBinding(threadId), original);
+        } finally {
+          yield* service.stopSession({ threadId });
+        }
+      }),
+    );
+  }
+
+  for (const location of ["request", "model"] as const) {
+    it.effect(`refuses a named-profile fork ${location} before copying the source continuation`, () =>
+      Effect.gen(function* () {
+        const service = yield* ProviderService;
+        const directory = yield* ProviderSessionDirectory;
+        const sourceThreadId = asThreadId(`profile-fork-source-${location}`);
+        const threadId = asThreadId(`profile-fork-target-${location}`);
+        yield* service.startSession(sourceThreadId, {
+          provider: "codex", threadId: sourceThreadId, runtimeMode: "full-access",
+        });
+        try {
+          const original = yield* directory.getBinding(sourceThreadId);
+          profileBoundaryRouting.codex.forkThread.mockClear();
+          const fork = service.forkThread;
+          if (!fork) throw new Error("Expected native fork service");
+          const result = yield* Effect.result(fork({
+            sourceThreadId, threadId, runtimeMode: "full-access",
+            ...(location === "request"
+              ? { profileId }
+              : { modelSelection: { provider: "codex" as const, profileId, model: "gpt-5" } }),
+          }));
+          assertFailure(result, new ProviderValidationError({ operation: "ProviderService.forkThread", issue }));
+          assert.equal(profileBoundaryRouting.codex.forkThread.mock.calls.length, 0);
+          assert.deepEqual(yield* directory.getBinding(sourceThreadId), original);
+          assert.equal(Option.isNone(yield* directory.getBinding(threadId)), true);
+        } finally {
+          yield* service.stopSession({ threadId: sourceThreadId });
+        }
+      }),
+    );
+  }
+
+  for (const location of ["payload", "model"] as const) {
+    for (const storedProfile of ["work", "../invalid"] as const) {
+      it.effect(`preserves an unavailable ${location} profile ${storedProfile} without recovery or dispatch`, () =>
+        Effect.gen(function* () {
+          const service = yield* ProviderService;
+          const directory = yield* ProviderSessionDirectory;
+          const threadId = asThreadId(`profile-recovery-${location}-${storedProfile.replaceAll("/", "_")}`);
+          yield* directory.upsert({
+            provider: "codex",
+            threadId,
+            status: "stopped",
+            resumeCursor: { nativeThreadId: "retained-source" },
+            runtimePayload: {
+              runtimeMode: "full-access",
+              modelSelection: {
+                provider: "codex",
+                instanceId: "codex",
+                profileId: location === "model" ? storedProfile : DEFAULT_PROVIDER_PROFILE_ID,
+                model: "gpt-5",
+              },
+              ...(location === "payload" ? { profileId: storedProfile } : {}),
+            },
+          });
+          const original = yield* directory.getBinding(threadId);
+          profileBoundaryRouting.codex.startSession.mockClear();
+          profileBoundaryRouting.codex.sendTurn.mockClear();
+          profileBoundaryRouting.codex.stopSession.mockClear();
+          const result = yield* Effect.result(service.sendTurn({
+            threadId, input: "Recover the exact retained account",
+          }));
+          assertFailure(result, new ProviderValidationError({ operation: "ProviderService.sendTurn", issue }));
+          assert.equal(profileBoundaryRouting.codex.startSession.mock.calls.length, 0);
+          assert.equal(profileBoundaryRouting.codex.sendTurn.mock.calls.length, 0);
+          assert.equal(profileBoundaryRouting.codex.stopSession.mock.calls.length, 0);
+          assert.deepEqual(yield* directory.getBinding(threadId), original);
+        }),
+      );
+    }
+  }
+
+  for (const persisted of [false, true] as const) {
+    it.effect(`refuses an unavailable live account with persisted binding ${persisted} while allowing Stop`, () =>
+      Effect.gen(function* () {
+        const service = yield* ProviderService;
+        const directory = yield* ProviderSessionDirectory;
+        const threadId = asThreadId(`profile-live-${persisted}`);
+        const input = { provider: "codex" as const, threadId, runtimeMode: "full-access" as const };
+        if (persisted) {
+          yield* service.startSession(threadId, input);
+          profileBoundaryRouting.codex.updateSession(threadId, (session) => ({ ...session, profileId }));
+        } else {
+          yield* profileBoundaryRouting.codex.adapter.startSession({ ...input, profileId });
+        }
+        try {
+          const original = yield* directory.getBinding(threadId);
+          profileBoundaryRouting.codex.sendTurn.mockClear();
+          profileBoundaryRouting.codex.stopSession.mockClear();
+          const result = yield* Effect.result(service.sendTurn({
+            threadId, input: "Do not adopt an unavailable account",
+          }));
+          assertFailure(result, new ProviderValidationError({ operation: "ProviderService.sendTurn", issue }));
+          assert.equal(profileBoundaryRouting.codex.sendTurn.mock.calls.length, 0);
+          assert.equal(profileBoundaryRouting.codex.stopSession.mock.calls.length, 0);
+          assert.deepEqual(yield* directory.getBinding(threadId), original);
+        } finally {
+          yield* service.stopSession({ threadId });
+        }
+        assert.equal(profileBoundaryRouting.codex.stopSession.mock.calls.length, 1);
+        assert.equal(yield* profileBoundaryRouting.codex.hasSession(threadId), false);
+      }),
+    );
+  }
+
+  it.effect("continues routing a default profile on a distinct configured provider instance", () =>
+    Effect.gen(function* () {
+      const service = yield* ProviderService;
+      const settings = yield* ServerSettingsService;
+      const threadId = asThreadId("profile-default-distinct-instance");
+      const instanceId = asProviderInstanceId("codex_profile_boundary");
+      yield* settings.updateSettings({
+        providerInstances: { [instanceId]: { driver: "codex", enabled: true } },
+      });
+      const modelSelection: ModelSelection = {
+        provider: "codex", instanceId, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5",
+      };
+      yield* service.startSession(threadId, {
+        provider: "codex", providerInstanceId: instanceId, modelSelection,
+        threadId, runtimeMode: "full-access",
+      });
+      try {
+        profileBoundaryRouting.codex.sendTurn.mockClear();
+        yield* service.sendTurn({ threadId, input: "Use this explicit instance", modelSelection });
+        assert.equal(profileBoundaryRouting.codex.sendTurn.mock.calls.length, 1);
+        assert.deepEqual(profileBoundaryRouting.codex.sendTurn.mock.calls[0]?.[0].modelSelection, modelSelection);
+      } finally {
+        yield* service.stopSession({ threadId });
+      }
+    }),
+  );
+});
+
 const routing = makeProviderServiceLayer();
 const replacementEvents = new Map<string, ProviderRuntimeEvent>();
 const replacementRouting = makeProviderServiceLayer({
@@ -881,6 +1082,7 @@ routing.layer("ProviderServiceLive native forks", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: "codex_work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.4",
         },
         runtimeMode: "full-access",
@@ -960,6 +1162,7 @@ routing.layer("ProviderServiceLive native forks", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: "codex_work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.4",
         },
         runtimeMode: "full-access",
@@ -2099,7 +2302,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         externalThreadId: "external-original",
         sourceCwd: "/repo/original",
         cwd: "/repo/original",
-        modelSelection: { provider: "codex" as const, model: "gpt-5.4" },
+        modelSelection: { provider: "codex" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
         providerOptions: {
           codex: {
             homePath: codexHome,
@@ -2187,7 +2390,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           provider: "codex" as const,
           externalThreadId: "external-original",
           sourceCwd: "/repo/original",
-          modelSelection: { provider: "codex" as const, model: "gpt-5.4" },
+          modelSelection: { provider: "codex" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
           providerOptions: { codex: { homePath: codexHome, environment: importEnvironment } },
           runtimeMode: "full-access" as const,
         };
@@ -2262,7 +2465,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           provider: "codex",
           externalThreadId: "external-original",
           sourceCwd: "/repo/original",
-          modelSelection: { provider: "codex", model: "gpt-5.4" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
           providerOptions: {
             codex: {
               homePath: fixture.homePath,
@@ -2306,7 +2509,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           provider: "codex",
           externalThreadId: "source",
           sourceCwd: "/missing/project",
-          modelSelection: { provider: "codex", model: "gpt-5.4" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
           runtimeMode: "full-access",
         }),
       );
@@ -2331,7 +2534,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         provider: "codex",
         externalThreadId: "source",
         sourceCwd: "/repo/source",
-        modelSelection: { provider: "codex", model: "gpt-5.4" },
+        modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
         runtimeMode: "full-access",
       }).pipe(Effect.forkChild);
       yield* Deferred.await(started);
@@ -2358,7 +2561,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           provider: "claudeAgent",
           externalThreadId: "source",
           sourceCwd: "/repo/project",
-          modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
           runtimeMode: "full-access",
         }),
       );
@@ -3644,7 +3847,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
               provider: "claudeAgent",
               threadId,
               runtimeMode: "full-access",
-              modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+              modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
             });
             const cancellation = yield* Deferred.make<void>();
             if (cancelled) yield* Deferred.succeed(cancellation, undefined);
@@ -3656,7 +3859,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
                 threadId,
                 input: "/compact Preserve project decisions",
                 attachments: [],
-                modelSelection: { provider: "claudeAgent", model: "claude-sonnet-4-6" },
+                modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
               },
               { claudeCompactionCancellation: cancellation },
             ).pipe(Effect.result);
@@ -3673,7 +3876,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
                 asRuntimePayloadRecord(
                   Option.getOrUndefined(yield* directory.getBinding(threadId))?.runtimePayload,
                 ).modelSelection,
-                { provider: "claudeAgent", instanceId: "claudeAgent", model: "claude-opus-4-6" },
+                { provider: "claudeAgent", instanceId: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
               );
             }
           }),
@@ -4299,6 +4502,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           attachments: [],
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-4-6",
           },
         }),
@@ -4347,6 +4551,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: "claude_work",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "custom-claude-model",
             options: { reasoningEffort: "high" },
           },
@@ -4356,6 +4561,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         assert.deepEqual(routing.claude.sendTurn.mock.calls[0]?.[0].modelSelection, {
           provider: "claudeAgent",
           instanceId: "claude_work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "custom-claude-model",
         });
       }),
@@ -5020,6 +5226,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         cwd: "/tmp/project-claude-send-turn",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             effort: "max",
@@ -5054,6 +5261,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         assert.deepEqual(startPayload.modelSelection, {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             effort: "max",
@@ -5188,6 +5396,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         attachments: [],
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
       });
@@ -5223,6 +5432,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           assert.deepEqual(runtimePayload.modelSelection, {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           });
         }
@@ -5242,11 +5452,13 @@ routing.layer("ProviderServiceLive routing", (it) => {
       const olderModelSelection = {
         provider: "codex" as const,
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.1-codex-mini",
       };
       const newerModelSelection = {
         provider: "codex" as const,
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.4",
       };
       let olderDispatchStarted = false;
@@ -5376,6 +5588,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
       const olderModelSelection = {
         provider: "codex" as const,
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       };
       const newerFailure = new ProviderAdapterSessionNotFoundError({
@@ -5560,6 +5773,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
       const modelSelection = {
         provider: "codex" as const,
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.4",
       };
 
@@ -5601,11 +5815,13 @@ routing.layer("ProviderServiceLive routing", (it) => {
       const initialModelSelection = {
         provider: "codex" as const,
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       };
       const staleSteerModelSelection = {
         provider: "codex" as const,
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.4",
       };
       let steerStarted = false;
@@ -6251,6 +6467,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
       };
       const savedSelection: ModelSelection = {
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-opus-4-6",
         options: { effort: "high" },
       };
@@ -8741,7 +8958,7 @@ validation.layer("ProviderServiceLive validation", (it) => {
       const session = yield* provider.startSession(threadId, {
         threadId,
         runtimeMode: "full-access",
-        modelSelection: { provider: "claudeAgent", model: "claude-sonnet-5" },
+        modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
       });
 
       assert.equal(session.provider, "claudeAgent");
@@ -8863,7 +9080,7 @@ disabledProviderStart.layer("ProviderServiceLive enablement", (it) => {
           provider: "codex",
           externalThreadId: "source",
           sourceCwd: "/repo/source",
-          modelSelection: { provider: "codex", model: "gpt-5.4" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
           runtimeMode: "full-access",
         }),
       );

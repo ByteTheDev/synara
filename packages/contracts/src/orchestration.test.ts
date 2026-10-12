@@ -17,6 +17,7 @@ import {
   PROVIDER_SEND_TURN_MAX_ATTACHMENTS,
   PROVIDER_SEND_TURN_MAX_INPUT_CHARS,
   ProviderStartOptions,
+  ProviderTarget,
   ProjectCreateCommand,
   THREAD_NOTES_MAX_CHARS,
   THREAD_GOAL_MAX_CHARS,
@@ -28,6 +29,7 @@ import {
   ThreadTurnStartRequestedPayload,
   ThreadTurnInterruptRequestedPayload,
 } from "./orchestration";
+import { DEFAULT_PROVIDER_PROFILE_ID } from "./providerProfile";
 
 const decodeTurnDiffInput = Schema.decodeUnknownEffect(OrchestrationGetTurnDiffInput);
 const decodeThreadTurnDiff = Schema.decodeUnknownEffect(ThreadTurnDiff);
@@ -43,6 +45,7 @@ const decodeOrchestrationSession = Schema.decodeUnknownEffect(OrchestrationSessi
 const decodeThreadCreatedPayload = Schema.decodeUnknownEffect(ThreadCreatedPayload);
 const decodeThreadMetaUpdatedPayload = Schema.decodeUnknownEffect(ThreadMetaUpdatedPayload);
 const decodeProviderStartOptions = Schema.decodeUnknownEffect(ProviderStartOptions);
+const decodeProviderTarget = Schema.decodeUnknownEffect(ProviderTarget);
 const decodeClientOrchestrationCommand = Schema.decodeUnknownEffect(ClientOrchestrationCommand);
 const decodeOrchestrationCommand = Schema.decodeUnknownEffect(OrchestrationCommand);
 const decodeThreadPullRequest = Schema.decodeUnknownEffect(OrchestrationThreadPullRequest);
@@ -80,7 +83,7 @@ it.effect(
 it.effect("preserves account-scoped model selections through the JSON codec", () =>
   Effect.gen(function* () {
     const codec = Schema.toCodecJson(ModelSelection);
-    const selection = { provider: "codex", instanceId: "codex_work", model: "gpt-5.5" };
+    const selection = { provider: "codex", instanceId: "codex_work", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" };
     const wire = JSON.parse(JSON.stringify(Schema.encodeUnknownSync(codec)(selection)));
     assert.deepStrictEqual(wire, selection);
     const decoded = yield* Schema.decodeUnknownEffect(codec)(wire);
@@ -137,6 +140,7 @@ it.effect("preserves thread activity payloads through the RPC JSON codec", () =>
           title: "Thread 1",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.5",
           },
           interactionMode: "default",
@@ -214,8 +218,65 @@ it.effect("preserves provider instance ids when decoding model selections", () =
     assert.deepStrictEqual(parsed, {
       provider: "claudeAgent",
       instanceId: "claude_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-4-6",
     });
+  }),
+);
+
+it.effect("defaults legacy model selections to the default provider profile", () =>
+  Effect.gen(function* () {
+    const parsed = yield* decodeModelSelection({
+      provider: "pi",
+      model: "openai/gpt-5.5",
+    });
+
+    assert.deepStrictEqual(parsed, {
+      provider: "pi",
+      instanceId: "pi",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+      model: "openai/gpt-5.5",
+    });
+  }),
+);
+
+it.effect("defaults legacy provider targets to the default profile", () =>
+  Effect.gen(function* () {
+    assert.deepStrictEqual(yield* decodeProviderTarget({ provider: "codex" }), {
+      provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+    });
+  }),
+);
+
+it.effect("preserves explicit provider profile routing on model selections", () =>
+  Effect.gen(function* () {
+    const parsed = yield* decodeModelSelection({
+      provider: "codex",
+      profileId: "work",
+      model: "gpt-5.6-codex",
+    });
+
+    assert.deepStrictEqual(parsed, {
+      provider: "codex",
+      instanceId: "codex",
+      profileId: "work",
+      model: "gpt-5.6-codex",
+    });
+  }),
+);
+
+it.effect("rejects an invalid explicit model-selection profile", () =>
+  Effect.gen(function* () {
+    const result = yield* Effect.exit(
+      decodeModelSelection({
+        provider: "codex",
+        profileId: "../work",
+        model: "gpt-5.6-codex",
+      }),
+    );
+
+    assert.equal(result._tag, "Failure");
   }),
 );
 
@@ -236,6 +297,7 @@ it.effect("normalizes mixed legacy option payloads when decoding model selection
     assert.deepStrictEqual(parsed, {
       provider: "claudeAgent",
       instanceId: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-4-6",
       options: { effort: "max", fastMode: true },
     });
@@ -252,6 +314,7 @@ it.effect("decodes providerless instance-id model selections from instance-id pa
     assert.deepStrictEqual(parsed, {
       provider: "claudeAgent",
       instanceId: "claude_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-4-6",
     });
   }),
@@ -267,6 +330,7 @@ it.effect("infers Claude for providerless opaque Sonnet instance selections", ()
     assert.deepStrictEqual(parsed, {
       provider: "claudeAgent",
       instanceId: "work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "sonnet-4",
     });
   }),
@@ -282,6 +346,7 @@ it.effect("infers OpenCode for providerless OpenCode model selections", () =>
     assert.deepStrictEqual(parsed, {
       provider: "opencode",
       instanceId: "work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "opencode/minimax-m2.5-free",
     });
   }),
@@ -297,6 +362,7 @@ it.effect("decodes providerless Codex account selections from instance-id payloa
     assert.deepStrictEqual(parsed, {
       provider: "codex",
       instanceId: "codex_personal",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
     });
   }),
@@ -315,6 +381,7 @@ it.effect("preserves Pi model selections through the JSON codec", () =>
     assert.deepStrictEqual(parsed, {
       provider: "pi",
       instanceId: "pi",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "openai/gpt-5.5",
     });
   }),
@@ -407,6 +474,7 @@ it.effect("trims branded ids and command string fields at decode boundaries", ()
     assert.deepStrictEqual(parsed.defaultModelSelection, {
       provider: "codex",
       instanceId: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.2",
     });
   }),

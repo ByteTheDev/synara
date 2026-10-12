@@ -1,7 +1,9 @@
 import {
   DEFAULT_MODEL_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   MessageId,
+  ProviderProfileId,
   type ModelSelection,
   type OrchestrationThreadActivity,
   type ProviderKind,
@@ -286,6 +288,7 @@ describe("threadHandoff", () => {
     const stickySelection = {
       provider: "antigravity",
       instanceId: "antigravity_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "Gemini 3.5 Flash",
     } satisfies ModelSelection;
 
@@ -294,6 +297,7 @@ describe("threadHandoff", () => {
         sourceThread: {
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
           },
         },
@@ -301,6 +305,7 @@ describe("threadHandoff", () => {
         targetProviderInstanceId: "antigravity_work",
         projectDefaultModelSelection: {
           provider: "antigravity",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "Claude Sonnet 4.6",
         },
         stickyModelSelectionByProvider: {
@@ -316,6 +321,7 @@ describe("threadHandoff", () => {
         sourceThread: {
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
           },
         },
@@ -325,6 +331,7 @@ describe("threadHandoff", () => {
         stickyModelSelectionByProvider: {
           antigravity: {
             provider: "antigravity",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "Gemini 3.1 Pro",
           },
         },
@@ -332,6 +339,7 @@ describe("threadHandoff", () => {
     ).toEqual({
       provider: "antigravity",
       instanceId: "antigravity_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "Gemini 3.5 Flash",
     });
   });
@@ -342,6 +350,7 @@ describe("threadHandoff", () => {
         sourceThread: {
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.4",
           },
         },
@@ -349,6 +358,7 @@ describe("threadHandoff", () => {
         targetProviderInstanceId: "claude_work",
         projectDefaultModelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4-6",
         },
         stickyModelSelectionByProvider: {},
@@ -356,8 +366,34 @@ describe("threadHandoff", () => {
     ).toEqual({
       provider: "claudeAgent",
       instanceId: "claude_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-4-6",
     });
+  });
+
+  it("preserves a sticky non-default target so handoff dispatch can fail closed", () => {
+    const workProfileId = ProviderProfileId.makeUnsafe("work");
+
+    expect(
+      resolveThreadHandoffModelSelection({
+        sourceThread: {
+          modelSelection: {
+            provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
+            model: "claude-sonnet-4-6",
+          },
+        },
+        targetProvider: "codex",
+        projectDefaultModelSelection: null,
+        stickyModelSelectionByProvider: {
+          codex: {
+            provider: "codex",
+            profileId: workProfileId,
+            model: "gpt-5.6-sol",
+          },
+        },
+      }),
+    ).toMatchObject({ profileId: workProfileId });
   });
 
   it("falls back to the resolved provider default model when no sticky or project default exists", () => {
@@ -366,6 +402,7 @@ describe("threadHandoff", () => {
         sourceThread: {
           modelSelection: {
             provider: "antigravity",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "Gemini 3.5 Flash",
           },
         },
@@ -377,6 +414,7 @@ describe("threadHandoff", () => {
     ).toEqual({
       provider: "codex",
       instanceId: "codex_personal",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: DEFAULT_MODEL_BY_PROVIDER.codex,
     });
   });

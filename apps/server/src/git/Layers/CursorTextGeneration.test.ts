@@ -12,6 +12,7 @@ import { TextGenerationError } from "../Errors.ts";
 import { ServerConfig } from "../../config.ts";
 import { TextGeneration } from "../Services/TextGeneration.ts";
 import { CursorTextGenerationLive, resolveCursorSettings } from "./CursorTextGeneration.ts";
+import { DEFAULT_PROVIDER_PROFILE_ID } from "@synara/contracts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const mockAgentPath = path.join(__dirname, "../../../scripts/acp-mock-agent.ts");
@@ -129,6 +130,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
               "diff --git a/apps/server/src/git/Layers/CursorTextGeneration.ts b/apps/server/src/git/Layers/CursorTextGeneration.ts",
             modelSelection: {
               provider: "cursor",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.4",
               options: {
                 reasoningEffort: "xhigh",
@@ -212,6 +214,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
             stagedPatch: "diff --git a/README.md b/README.md",
             modelSelection: {
               provider: "cursor",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "composer-2",
             },
             providerOptions: {
@@ -243,6 +246,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
             patch: "diff --git a/file.ts b/file.ts",
             modelSelection: {
               provider: "cursor",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "composer-2",
             },
             providerOptions: {
@@ -268,6 +272,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
           modelSelection: {
             provider: "cursor",
             instanceId: "cursor_work",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
           providerOptions: {
@@ -301,6 +306,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
             message: "Improve sidebar thread row spacing and hover states.",
             modelSelection: {
               provider: "cursor",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "composer-2",
             },
             providerOptions: {
@@ -329,6 +335,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
             message: "Fix the websocket reconnect backoff.",
             modelSelection: {
               provider: "cursor",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "composer-2",
             },
             providerOptions: {
@@ -359,6 +366,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
               message: "Fix the websocket reconnect backoff.",
               modelSelection: {
                 provider: "cursor",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "composer-2",
               },
               providerOptions: {
@@ -405,6 +413,7 @@ it.layer(CursorTextGenerationTestLayer)("CursorTextGenerationLive", (it) => {
             message: "Fix the reconnect spinner after a resumed session.",
             modelSelection: {
               provider: "cursor",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "composer-2",
             },
             providerOptions: {

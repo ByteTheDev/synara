@@ -2,6 +2,7 @@ import {
   ApprovalRequestId,
   CheckpointRef,
   CommandId,
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   MessageId,
   ProjectId,
@@ -772,6 +773,7 @@ projectionSnapshotLayer("ProjectionSnapshotQuery", (it) => {
           defaultModelSelection: {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           scripts: [
@@ -798,6 +800,7 @@ projectionSnapshotLayer("ProjectionSnapshotQuery", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           interactionMode: "default",
@@ -1863,12 +1866,14 @@ projectionSnapshotLayer("ProjectionSnapshotQuery", (it) => {
       const expectedProjectSelection = {
         provider: "codex",
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "imported-project-model",
         options: { reasoningEffort: "medium" },
       } as const;
       const expectedThreadSelection = {
         provider: "codex",
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.5",
         options: { reasoningEffort: "medium" },
       } as const;
@@ -2385,6 +2390,7 @@ projectionSnapshotLayer("ProjectionSnapshotQuery", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           interactionMode: "default",

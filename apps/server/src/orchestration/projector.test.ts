@@ -1,5 +1,6 @@
 import {
   CommandId,
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   ProjectId,
   SpaceId,
@@ -92,6 +93,7 @@ async function projectThreadWithRunningTurn(input: { createdAt: string; startedA
           title: "demo",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.3-codex",
           },
           runtimeMode: "full-access",
@@ -195,6 +197,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5-codex",
             },
             runtimeMode: "full-access",
@@ -216,6 +219,7 @@ describe("orchestration projector", () => {
         modelSelection: {
           instanceId: "codex",
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         runtimeMode: "full-access",
@@ -280,7 +284,7 @@ describe("orchestration projector", () => {
             threadId: "thread-sidechat",
             projectId: "project-1",
             title: "Side investigation",
-            modelSelection: { provider: "codex", model: "gpt-5-codex" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
             runtimeMode: "full-access",
             branch: null,
             worktreePath: null,
@@ -381,6 +385,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "pi",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "openai/gpt-5.1",
             },
             runtimeMode: "full-access",
@@ -408,6 +413,7 @@ describe("orchestration projector", () => {
             messageId: "message-1",
             modelSelection: {
               provider: "pi",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "openai/gpt-5.5",
             },
             runtimeMode: "approval-required",
@@ -421,6 +427,7 @@ describe("orchestration projector", () => {
     expect(next.threads[0]?.modelSelection).toEqual({
       provider: "pi",
       instanceId: "pi",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "openai/gpt-5.5",
     });
     expect(next.threads[0]?.runtimeMode).toBe("approval-required");
@@ -459,6 +466,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5-codex",
             },
             runtimeMode: "full-access",
@@ -486,6 +494,7 @@ describe("orchestration projector", () => {
             messageId: "message-1",
             modelSelection: {
               provider: "opencode",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "openai/gpt-5",
             },
             runtimeMode: "approval-required",
@@ -499,6 +508,7 @@ describe("orchestration projector", () => {
     expect(next.threads[0]?.modelSelection).toEqual({
       provider: "opencode",
       instanceId: "opencode",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "openai/gpt-5",
     });
     expect(next.threads[0]?.session).toMatchObject({
@@ -530,6 +540,7 @@ describe("orchestration projector", () => {
             modelSelection: {
               provider: "codex",
               instanceId: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5-codex",
             },
             runtimeMode: "full-access",
@@ -608,6 +619,7 @@ describe("orchestration projector", () => {
             modelSelection: {
               provider: "claudeAgent",
               instanceId: "claude_work",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-sonnet-4-6",
             },
             runtimeMode: "approval-required",
@@ -621,6 +633,7 @@ describe("orchestration projector", () => {
     expect(next.threads[0]?.modelSelection).toEqual({
       provider: "claudeAgent",
       instanceId: "claude_work",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-sonnet-4-6",
     });
   });
@@ -646,6 +659,7 @@ describe("orchestration projector", () => {
               title: "demo",
               modelSelection: {
                 provider: "codex",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "gpt-5-codex",
               },
               branch: null,
@@ -709,6 +723,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -776,6 +791,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -1229,6 +1245,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -1326,6 +1343,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -1383,6 +1401,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -1470,6 +1489,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -1685,6 +1705,7 @@ describe("orchestration projector", () => {
             title: "demo",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.3-codex",
             },
             runtimeMode: "full-access",
@@ -1834,7 +1855,7 @@ describe("orchestration projector", () => {
             threadId: "thread-activity-order",
             projectId: "project-1",
             title: "Activity order",
-            modelSelection: { provider: "codex", model: "gpt-5-codex" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
             runtimeMode: "full-access",
             branch: null,
             worktreePath: null,
@@ -1913,6 +1934,7 @@ describe("orchestration projector", () => {
             title: "capped",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5-codex",
             },
             runtimeMode: "full-access",
@@ -2010,7 +2032,7 @@ describe("orchestration projector", () => {
             threadId: "thread-skewed-revert",
             projectId: "project-1",
             title: "Skewed revert",
-            modelSelection: { provider: "codex", model: "gpt-5-codex" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
             runtimeMode: "full-access",
             branch: null,
             worktreePath: null,
@@ -2109,7 +2131,7 @@ describe("orchestration projector", () => {
             threadId: "thread-stream",
             projectId: "project-1",
             title: "Streaming",
-            modelSelection: { provider: "codex", model: "gpt-5-codex" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
             runtimeMode: "full-access",
             branch: null,
             worktreePath: null,

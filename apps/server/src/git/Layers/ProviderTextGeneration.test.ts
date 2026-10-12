@@ -1,3 +1,4 @@
+import { DEFAULT_PROVIDER_PROFILE_ID, ProviderProfileId } from "@synara/contracts";
 import { Effect, Layer } from "effect";
 import { describe, expect, it, vi } from "vitest";
 
@@ -198,7 +199,7 @@ describe("ProviderTextGenerationLive", () => {
           const service = yield* TextGeneration;
           yield* service.generateCommitMessage({
             ...commitInput,
-            modelSelection: { provider: "claudeAgent", model: "claude-sonnet-4-6" },
+            modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
           });
         }).pipe(Effect.provide(layer)),
       );
@@ -266,7 +267,7 @@ describe("ProviderTextGenerationLive", () => {
           return yield* textGeneration.generateDiffSummary({
             cwd: "/repo",
             patch: "diff --git a/file.ts b/file.ts",
-            modelSelection: { provider: "codex", model: "gpt-5.5" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
           });
         }).pipe(Effect.provide(layer)),
       ),
@@ -281,7 +282,7 @@ describe("ProviderTextGenerationLive", () => {
 
   it("routes unsupported selections through the configured supported fallback", async () => {
     const { layer, codex, cursor } = makeProviderTextGenerationTestLayer({
-      textGenerationModelSelection: { provider: "cursor", model: "composer-2" },
+      textGenerationModelSelection: { provider: "cursor", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "composer-2" },
     });
 
     await Effect.runPromise(
@@ -291,7 +292,7 @@ describe("ProviderTextGenerationLive", () => {
           cwd: "/repo",
           patch: "diff --git a/file.ts b/file.ts",
           model: "Gemini 3.5 Flash",
-          modelSelection: { provider: "antigravity", model: "Gemini 3.5 Flash" },
+          modelSelection: { provider: "antigravity", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "Gemini 3.5 Flash" },
         });
       }).pipe(Effect.provide(layer)),
     );
@@ -300,7 +301,7 @@ describe("ProviderTextGenerationLive", () => {
     expect(cursor.generateDiffSummary).toHaveBeenCalledWith(
       expect.objectContaining({
         model: "composer-2",
-        modelSelection: { provider: "cursor", instanceId: "cursor", model: "composer-2" },
+        modelSelection: { provider: "cursor", instanceId: "cursor", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "composer-2" },
       }),
     );
   });
@@ -345,6 +346,7 @@ describe("ProviderTextGenerationLive", () => {
           modelSelection: {
             provider: "codex",
             instanceId: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.4-mini",
           },
         });
@@ -387,6 +389,7 @@ describe("ProviderTextGenerationLive", () => {
           message: "Plan the deployment work",
           modelSelection: {
             provider: "opencode",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "openai/gpt-5",
             options: {
               agent: "plan",
@@ -409,6 +412,7 @@ describe("ProviderTextGenerationLive", () => {
         modelSelection: expect.objectContaining({
           instanceId: "opencode",
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5",
           options: {
             agent: "plan",
@@ -439,6 +443,7 @@ describe("ProviderTextGenerationLive", () => {
           message: "Plan the Droid integration work",
           modelSelection: {
             provider: "droid",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "deepseek-v4-flash-0731",
             options: { reasoningEffort: "high" },
           },
@@ -453,6 +458,7 @@ describe("ProviderTextGenerationLive", () => {
         modelSelection: {
           provider: "droid",
           instanceId: "droid",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "deepseek-v4-flash-0731",
           options: { reasoningEffort: "high" },
         },
@@ -488,6 +494,7 @@ describe("ProviderTextGenerationLive", () => {
           modelSelection: {
             provider: "droid",
             instanceId: "droid",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "deepseek-v4-flash-0731",
           },
         }),
@@ -508,6 +515,7 @@ describe("ProviderTextGenerationLive", () => {
           nowIso: "2026-06-19T10:00:00.000Z",
           modelSelection: {
             provider: "cursor",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
         });
@@ -540,6 +548,7 @@ describe("ProviderTextGenerationLive", () => {
           runAssistantText: "Still working.",
           modelSelection: {
             provider: "cursor",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
         });
@@ -581,6 +590,7 @@ describe("ProviderTextGenerationLive", () => {
           modelSelection: {
             provider: "codex",
             instanceId: "claude_work",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4",
           },
         });
@@ -594,6 +604,7 @@ describe("ProviderTextGenerationLive", () => {
         modelSelection: expect.objectContaining({
           provider: "claudeAgent",
           instanceId: "claude_work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-sonnet-4",
         }),
         providerOptions: {
@@ -629,6 +640,7 @@ describe("ProviderTextGenerationLive", () => {
             modelSelection: {
               provider: "claudeAgent",
               instanceId: "claude_disabled",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-sonnet-4",
             },
           });
@@ -637,4 +649,37 @@ describe("ProviderTextGenerationLive", () => {
     ).rejects.toThrow("Provider instance 'claude_disabled' is disabled.");
     expect(claude.generateThreadTitle).not.toHaveBeenCalled();
   });
+});
+
+
+describe("text-generation profile execution boundary", () => {
+  for (const driver of ["codex", "claudeAgent", "cursor", "droid", "opencode"] as const) {
+    for (const origin of ["request", "configured"] as const) {
+      it(`rejects the unavailable ${origin} profile for ${driver} before any delegate runs`, async () => {
+        const modelSelection = {
+          provider: driver,
+          profileId: ProviderProfileId.makeUnsafe("work"),
+          model: "profile-scoped-model",
+        };
+        const fixture = makeProviderTextGenerationTestLayer(
+          origin === "configured" ? { textGenerationModelSelection: modelSelection } : {},
+        );
+        await expect(
+          Effect.runPromise(
+            Effect.gen(function* () {
+              const service = yield* TextGeneration;
+              return yield* service.generateThreadTitle({
+                cwd: "/repo",
+                message: "Do not use the default account for this named profile",
+                ...(origin === "request" ? { modelSelection } : {}),
+              });
+            }).pipe(Effect.provide(fixture.layer)),
+          ),
+        ).rejects.toThrow("provider profile is unavailable");
+        for (const delegate of [fixture.codex, fixture.claude, fixture.cursor, fixture.droid, fixture.opencode]) {
+          expect(delegate.generateThreadTitle).not.toHaveBeenCalled();
+        }
+      });
+    }
+  }
 });

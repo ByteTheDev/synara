@@ -1,5 +1,5 @@
 import type { ModelSelection, NativeApi, OrchestrationShellSnapshot } from "@synara/contracts";
-import { ProjectId, ThreadId } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProjectId, ThreadId } from "@synara/contracts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Project, Thread } from "../types";
@@ -43,7 +43,11 @@ const project = {
   cwd: "/repo",
 } as Project;
 
-const selectedModelSelection = { provider: "codex", model: "gpt-5.6" } as const;
+const selectedModelSelection = {
+  provider: "codex",
+  profileId: DEFAULT_PROVIDER_PROFILE_ID,
+  model: "gpt-5.6",
+} as const;
 
 function makeApi(input?: {
   dispatchCommand?: ReturnType<typeof vi.fn>;
@@ -72,7 +76,7 @@ describe("createSidechatThread", () => {
         api: makeApi({ dispatchCommand }),
         project,
         sourceThread,
-        selectedModelSelection: { provider, model: "test-model" },
+        selectedModelSelection: { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "test-model" },
         initialPrompt: "Investigate this",
         openSidechat: vi.fn(),
         syncServerShellSnapshot: vi.fn(),
@@ -85,13 +89,13 @@ describe("createSidechatThread", () => {
   );
 
   it.each([
-    [{ provider: "codex", model: "test-model" }, "auto"],
-    [{ provider: "claudeAgent", model: "test-model", supportsAutoMode: true }, "auto"],
+    [{ provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "test-model" }, "auto"],
+    [{ provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "test-model", supportsAutoMode: true }, "auto"],
     [
-      { provider: "claudeAgent", model: "test-model", supportsAutoMode: false },
+      { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "test-model", supportsAutoMode: false },
       "approval-required",
     ],
-    [{ provider: "claudeAgent", model: "test-model" }, "approval-required"],
+    [{ provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "test-model" }, "approval-required"],
   ] satisfies [ModelSelection, string][])(
     "normalizes inherited Auto for %j to %s",
     async (modelSelection, expectedRuntimeMode) => {
@@ -308,7 +312,7 @@ describe("createStandaloneSidechat", () => {
       projectId: project.id,
       context,
       itemTitle: "Crash on launch",
-      modelSelection: { provider: "claudeAgent", model: "claude-opus-4-6" },
+      modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
       runtimeMode: "auto",
       dispatchCreate,
       openSidechat,
@@ -343,7 +347,7 @@ describe("createStandaloneSidechat", () => {
       projectId: project.id,
       context,
       itemTitle: "Crash on launch",
-      modelSelection: { provider: "opencode", model: "openai/gpt-5.4" },
+      modelSelection: { provider: "opencode", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "openai/gpt-5.4" },
       runtimeMode: "auto",
       dispatchCreate,
       openSidechat: vi.fn(),

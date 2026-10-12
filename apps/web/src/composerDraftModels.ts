@@ -378,6 +378,7 @@ function makeProfiledModelSelection(input: ProfiledModelSelectionInput): ModelSe
     case "omp":
       return {
         provider,
+        profileId,
         model,
         ...(instance ? { instanceId: instance } : {}),
         ...(options

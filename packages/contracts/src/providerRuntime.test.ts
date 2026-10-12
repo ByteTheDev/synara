@@ -6,6 +6,29 @@ import { ProviderRuntimeEvent } from "./providerRuntime";
 const decodeRuntimeEvent = Schema.decodeUnknownSync(ProviderRuntimeEvent);
 
 describe("ProviderRuntimeEvent", () => {
+  it("decodes optional provider profile identity", () => {
+    const profiled = decodeRuntimeEvent({
+      type: "session.started",
+      eventId: "event-profiled-runtime",
+      provider: "codex",
+      profileId: "work",
+      createdAt: "2026-08-10T00:00:00.000Z",
+      threadId: "thread-profiled-runtime",
+      payload: {},
+    });
+    const legacy = decodeRuntimeEvent({
+      type: "session.started",
+      eventId: "event-legacy-runtime",
+      provider: "codex",
+      createdAt: "2026-08-10T00:00:01.000Z",
+      threadId: "thread-legacy-runtime",
+      payload: {},
+    });
+
+    expect(profiled.profileId).toBe("work");
+    expect(legacy.profileId).toBeUndefined();
+  });
+
   it("decodes user-input.requested with structured questions", () => {
     const parsed = decodeRuntimeEvent({
       type: "user-input.requested",

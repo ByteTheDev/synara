@@ -1,4 +1,4 @@
-import { CommandId, EventId, MessageId, ProjectId, ThreadId } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, CommandId, EventId, MessageId, ProjectId, ThreadId } from "@synara/contracts";
 import { assert, it } from "@effect/vitest";
 import { Effect, Layer, Schema, Stream } from "effect";
 import * as SqlClient from "effect/unstable/sql/SqlClient";
@@ -56,6 +56,7 @@ layer("OrchestrationEventStore", (it) => {
           modelSelection: {
             provider: "opencode",
             instanceId: "opencode_work",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "openai/gpt-5",
           },
           providerOptions: {
@@ -525,6 +526,7 @@ layer("OrchestrationEventStore", (it) => {
         {
           provider: "codex",
           instanceId: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "imported-project-model",
         },
       );
@@ -533,6 +535,7 @@ layer("OrchestrationEventStore", (it) => {
         {
           provider: "codex",
           instanceId: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.5",
           options: {
             reasoningEffort: "medium",
@@ -546,6 +549,7 @@ layer("OrchestrationEventStore", (it) => {
         {
           provider: "codex",
           instanceId: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.5",
           options: {
             reasoningEffort: "medium",
@@ -733,6 +737,7 @@ providerInstanceSettingsLayer("OrchestrationEventStore with settings", (it) => {
         {
           provider: "claudeAgent",
           instanceId: "work",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "custom-model",
         },
       );

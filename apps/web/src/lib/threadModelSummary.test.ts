@@ -1,3 +1,4 @@
+import { DEFAULT_PROVIDER_PROFILE_ID } from "@synara/contracts";
 import { describe, expect, it } from "vitest";
 import type { ProviderModelDescriptor } from "@synara/contracts";
 
@@ -19,6 +20,7 @@ describe("resolveThreadModelSummary", () => {
     const summary = resolveThreadModelSummary(
       {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-6.1-sol",
         options: { reasoningEffort: "xhigh", fastMode: true },
       },
@@ -30,14 +32,14 @@ describe("resolveThreadModelSummary", () => {
 
   it("uses the runtime default effort when no override is stored", () => {
     expect(
-      resolveThreadModelSummary({ provider: "codex", model: "gpt-6.1-sol" }, runtimeModel),
+      resolveThreadModelSummary({ provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-6.1-sol" }, runtimeModel),
     ).toMatchObject({ statusLabel: "Medium", fastMode: false });
   });
 
   it("respects runtime Fast support instead of the static catalog", () => {
     expect(
       resolveThreadModelSummary(
-        { provider: "codex", model: "gpt-5.5", options: { fastMode: true } },
+        { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5", options: { fastMode: true } },
         { ...runtimeModel, slug: "gpt-5.5", supportsFastMode: false },
       ),
     ).toMatchObject({ fastMode: false });
@@ -46,6 +48,7 @@ describe("resolveThreadModelSummary", () => {
   it("summarizes a codex selection with its reasoning effort", () => {
     const summary = resolveThreadModelSummary({
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.5",
       options: { reasoningEffort: "high" },
     });
@@ -58,11 +61,13 @@ describe("resolveThreadModelSummary", () => {
   it("falls back to the model's default effort when none is stored", () => {
     const withEffort = resolveThreadModelSummary({
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.5",
       options: { reasoningEffort: "low" },
     });
     const withoutOptions = resolveThreadModelSummary({
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.5",
     });
 
@@ -76,6 +81,7 @@ describe("formatThreadModelSummaryLabel", () => {
   it("joins model and effort without repeating the provider name", () => {
     const claude = resolveThreadModelSummary({
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "claude-opus-5.5",
       options: { effort: "medium" },
     });

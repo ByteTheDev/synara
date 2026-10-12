@@ -8,6 +8,7 @@ import "../index.css";
 
 import {
   ApprovalRequestId,
+  DEFAULT_PROVIDER_PROFILE_ID,
   AutomationId,
   type AutomationCreateInput,
   type AutomationDefinition,
@@ -360,6 +361,7 @@ function createSnapshotForTargetUser(options: {
         workspaceRoot: "/repo/project",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         scripts: [],
@@ -375,6 +377,7 @@ function createSnapshotForTargetUser(options: {
         title: THREAD_TITLE,
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         interactionMode: "default",
@@ -584,6 +587,7 @@ function addThreadToSnapshot(
         title: "New thread",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         interactionMode: "default",
@@ -694,6 +698,7 @@ function withOpenProjectPickerFixtures(snapshot: OrchestrationReadModel): Orches
         workspaceRoot: "/repo/other",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         scripts: [],
@@ -717,6 +722,7 @@ function withHomeChatProject(snapshot: OrchestrationReadModel): OrchestrationRea
         workspaceRoot: "/Users/tester",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         scripts: [],
@@ -750,6 +756,7 @@ function withStudioProject(snapshot: OrchestrationReadModel): OrchestrationReadM
         workspaceRoot: "/Users/tester/Documents/Synara/Studio",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         scripts: [],
@@ -1206,6 +1213,7 @@ function recordProjectCreateCommand(command: unknown): boolean {
               ? (command.defaultModelSelection as OrchestrationReadModel["projects"][number]["defaultModelSelection"])
               : {
                   provider: "codex" as const,
+                  profileId: DEFAULT_PROVIDER_PROFILE_ID,
                   model: "gpt-5",
                 },
           scripts: [],
@@ -3526,7 +3534,7 @@ describe("ChatView transcript geometry (full app)", () => {
         branch: "main",
         worktreePath: null,
         runtimeMode: "full-access",
-        modelSelection: { provider: "codex", model: "gpt-5" },
+        modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
       });
       releaseFork();
       let sideEditor = await waitForElement(
@@ -4453,7 +4461,7 @@ describe("ChatView transcript geometry (full app)", () => {
           threads: [
             {
               ...thread,
-              modelSelection: { provider: "claudeAgent", model: "claude-sonnet-4-6" },
+              modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
               session: { ...thread.session!, providerName: "claudeAgent" },
             },
           ],
@@ -4468,7 +4476,7 @@ describe("ChatView transcript geometry (full app)", () => {
           await expect.element(note).not.toBeInTheDocument();
           const surface = document.querySelector<HTMLElement>(".chat-composer-surface")!;
           const originalHeight = surface.getBoundingClientRect().height;
-          useComposerDraftStore.getState().setModelSelection(THREAD_ID, { provider, model });
+          useComposerDraftStore.getState().setModelSelection(THREAD_ID, { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model });
           await vi.waitFor(() => expect(note.query()).not.toBeNull(), { timeout: 3_000 });
           await expect.element(note).toBeVisible();
           expect(surface.contains(note.element())).toBe(false);
@@ -4510,11 +4518,12 @@ describe("ChatView transcript geometry (full app)", () => {
 
           useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
             options: { effort: "high" },
           });
           await expect.element(note).not.toBeInTheDocument();
-          useComposerDraftStore.getState().setModelSelection(THREAD_ID, { provider, model });
+          useComposerDraftStore.getState().setModelSelection(THREAD_ID, { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model });
           await expect.element(note).toBeVisible();
           document
             .querySelector<HTMLFormElement>('form[data-chat-composer-form="true"]')!
@@ -4533,7 +4542,7 @@ describe("ChatView transcript geometry (full app)", () => {
             await vi.waitFor(() => {
               expect(
                 useComposerDraftStore.getState().draftsByThreadId[THREAD_ID]?.queuedTurns[0],
-              ).toMatchObject({ kind: "chat", modelSelection: { provider, model } });
+              ).toMatchObject({ kind: "chat", modelSelection: { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model } });
               expect(document.querySelector('[data-testid="queued-follow-up-row"]')).not.toBeNull();
             });
             expect(fixture.snapshot.threads[0]?.modelSelection.provider).toBe("claudeAgent");
@@ -4641,6 +4650,7 @@ describe("ChatView transcript geometry (full app)", () => {
                     ? {
                         modelSelection: {
                           provider: targetProvider,
+                          profileId: DEFAULT_PROVIDER_PROFILE_ID,
                           model: targetModel,
                         },
                         session: {
@@ -4688,6 +4698,7 @@ describe("ChatView transcript geometry (full app)", () => {
     async function pickClaudeAndSend(text: string) {
       useComposerDraftStore.getState().setModelSelectionAndSticky(THREAD_ID, {
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-sonnet-4-6",
       });
       useComposerDraftStore.getState().setPrompt(THREAD_ID, text);
@@ -4742,7 +4753,7 @@ describe("ChatView transcript geometry (full app)", () => {
         expect(mounted.commands[handoffIndex]).toMatchObject({
           threadId: THREAD_ID,
           providerHandoff: true,
-          modelSelection: { provider: "claudeAgent", model: "claude-sonnet-4-6" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
         });
         const handoffActivity = fixture.snapshot.threads
           .find((thread) => thread.id === THREAD_ID)!
@@ -4825,6 +4836,7 @@ describe("ChatView transcript geometry (full app)", () => {
         );
         useComposerDraftStore.getState().setModelSelectionAndSticky(THREAD_ID, {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.5",
         });
         await vi.waitFor(() =>
@@ -4846,7 +4858,7 @@ describe("ChatView transcript geometry (full app)", () => {
           ),
         ).toMatchObject({
           threadId: THREAD_ID,
-          modelSelection: { provider: "claudeAgent", model: "claude-sonnet-4-6" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
         });
         expect(
           mounted.commands.find((command) => command.type === "thread.turn.start"),
@@ -4890,7 +4902,7 @@ describe("ChatView transcript geometry (full app)", () => {
       const thread = snapshot.threads[0]!;
       const handedOffThread = {
         ...thread,
-        modelSelection: { provider: "claudeAgent" as const, model: "claude-sonnet-4-6" },
+        modelSelection: { provider: "claudeAgent" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-4-6" },
         activities: [
           {
             id: EventId.makeUnsafe("provider-handoff:event"),
@@ -4910,11 +4922,13 @@ describe("ChatView transcript geometry (full app)", () => {
               contextText: "Most recent imported messages:\nUser:\nFix the flaky reconnect test",
               sourceModelSelection: {
                 provider: "codex",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "gpt-5.5",
                 options: { reasoningEffort: "high", fastMode: true },
               },
               targetModelSelection: {
                 provider: "claudeAgent",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "claude-sonnet-4-6",
                 options: { effort: "medium" },
               },
@@ -7393,6 +7407,7 @@ describe("ChatView transcript geometry (full app)", () => {
     });
     useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       options: {
         reasoningEffort: "low",
@@ -7446,6 +7461,7 @@ describe("ChatView transcript geometry (full app)", () => {
             associatedWorktreeRef: "feature/draft-automation",
             modelSelection: {
               provider: "codex",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "gpt-5.4",
               options: {
                 reasoningEffort: "low",
@@ -8112,6 +8128,7 @@ describe("ChatView transcript geometry (full app)", () => {
     );
     useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       options: { reasoningEffort: "medium", fastMode: true },
     });
@@ -8193,6 +8210,7 @@ describe("ChatView transcript geometry (full app)", () => {
         expect(event.defaultPrevented).toBe(true);
         expect(readModelSelection()).toMatchObject({
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.4",
           options: { reasoningEffort: effort, fastMode: true },
         });
@@ -8210,6 +8228,7 @@ describe("ChatView transcript geometry (full app)", () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: true }));
     useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       options: { reasoningEffort: "low" },
     });
@@ -8263,6 +8282,7 @@ describe("ChatView transcript geometry (full app)", () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: true }));
     useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       options: { reasoningEffort: "medium" },
     });
@@ -8307,6 +8327,7 @@ describe("ChatView transcript geometry (full app)", () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: true }));
     useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       options: { reasoningEffort: "medium" },
     });
@@ -8366,6 +8387,7 @@ describe("ChatView transcript geometry (full app)", () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: false }));
     useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       options: { reasoningEffort: "medium" },
     });
@@ -8504,7 +8526,7 @@ describe("ChatView transcript geometry (full app)", () => {
         expect(
           useComposerDraftStore.getState().draftsByThreadId[THREAD_ID]?.modelSelectionByProvider
             .codex,
-        ).toMatchObject({ provider: "codex", model: DEFAULT_MODEL_BY_PROVIDER.codex });
+        ).toMatchObject({ provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: DEFAULT_MODEL_BY_PROVIDER.codex });
       });
       expect(document.querySelector('[data-slot="menu-popup"]')).toBeNull();
 
@@ -8513,7 +8535,7 @@ describe("ChatView transcript geometry (full app)", () => {
         expect(
           useComposerDraftStore.getState().draftsByThreadId[THREAD_ID]?.modelSelectionByProvider
             .codex,
-        ).toMatchObject({ provider: "codex", model: "gpt-5.2" });
+        ).toMatchObject({ provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.2" });
       });
     } finally {
       await mounted.cleanup();
@@ -9065,6 +9087,7 @@ describe("ChatView transcript geometry (full app)", () => {
         selectedPromptEffort: null,
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         runtimeMode: "full-access",
@@ -9092,6 +9115,7 @@ describe("ChatView transcript geometry (full app)", () => {
         selectedPromptEffort: null,
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         runtimeMode: "full-access",
@@ -9214,6 +9238,7 @@ describe("ChatView transcript geometry (full app)", () => {
         selectedPromptEffort: null,
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         runtimeMode: "full-access",
@@ -9322,7 +9347,7 @@ describe("ChatView transcript geometry (full app)", () => {
         selectedProvider: "codex" as const,
         selectedModel: "gpt-5",
         selectedPromptEffort: null,
-        modelSelection: { provider: "codex" as const, model: "gpt-5" },
+        modelSelection: { provider: "codex" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
         runtimeMode: "full-access" as const,
         interactionMode: "default" as const,
         envMode: "local" as const,
@@ -9604,6 +9629,7 @@ describe("ChatView transcript geometry (full app)", () => {
         selectedPromptEffort: null,
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         runtimeMode: "full-access",
@@ -9686,6 +9712,7 @@ describe("ChatView transcript geometry (full app)", () => {
         selectedPromptEffort: null,
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5",
         },
         runtimeMode: "full-access",
@@ -10574,9 +10601,9 @@ describe("ChatView transcript geometry (full app)", () => {
             projectId: STUDIO_PROJECT_ID,
             coordinatorThreadId: THREAD_ID,
             coordinatorName: "Studio lead",
-            coordinatorModelSelection: { provider: "codex", model: "gpt-5" },
+            coordinatorModelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
             workerRouting: {
-              modelSelection: { provider: "claudeAgent", model: "claude-opus-4-5" },
+              modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-5" },
               providerOptions: { claudeAgent: { enableArtifacts: true } },
             },
             limits: {
@@ -10706,9 +10733,9 @@ describe("ChatView transcript geometry (full app)", () => {
             projectId: STUDIO_PROJECT_ID,
             coordinatorThreadId: "thread-studio-coordinator" as ThreadId,
             coordinatorName: "Studio lead",
-            coordinatorModelSelection: { provider: "codex", model: "gpt-5" },
+            coordinatorModelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
             workerRouting: {
-              modelSelection: { provider: "claudeAgent", model: "claude-opus-4-5" },
+              modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-5" },
               providerOptions: { claudeAgent: { enableArtifacts: true } },
             },
             limits: {
@@ -10783,7 +10810,7 @@ describe("ChatView transcript geometry (full app)", () => {
           kind: "group",
           title: "Team Alpha",
           workspaceRoot: "/Users/tester/Groups/team-alpha",
-          defaultModelSelection: { provider: "codex", model: "gpt-5" },
+          defaultModelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5" },
           scripts: [],
           createdAt: NOW_ISO,
           updatedAt: NOW_ISO,
@@ -12620,6 +12647,7 @@ describe("ChatView transcript geometry (full app)", () => {
       stickyModelSelectionByProvider: {
         claudeAgent: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             effort: "max",
@@ -12679,6 +12707,7 @@ describe("ChatView transcript geometry (full app)", () => {
         modelSelectionByProvider: {
           claudeAgent: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-opus-4-6",
             options: {
               effort: "max",
@@ -12698,6 +12727,7 @@ describe("ChatView transcript geometry (full app)", () => {
       stickyModelSelectionByProvider: {
         claudeAgent: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
           options: {
             effort: "max",
@@ -12757,6 +12787,7 @@ describe("ChatView transcript geometry (full app)", () => {
         modelSelectionByProvider: {
           codex: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5",
           },
         },
@@ -12800,6 +12831,7 @@ describe("ChatView transcript geometry (full app)", () => {
       stickyModelSelectionByProvider: {
         codex: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.3-codex",
           options: {
             reasoningEffort: "medium",
@@ -12835,6 +12867,7 @@ describe("ChatView transcript geometry (full app)", () => {
         modelSelectionByProvider: {
           codex: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.3-codex",
             options: {
               reasoningEffort: "medium",
@@ -12847,6 +12880,7 @@ describe("ChatView transcript geometry (full app)", () => {
 
       useComposerDraftStore.getState().setModelSelection(threadId, {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.4",
         options: {
           reasoningEffort: "low",
@@ -12859,6 +12893,7 @@ describe("ChatView transcript geometry (full app)", () => {
             modelSelectionByProvider: {
               codex: {
                 provider: "codex",
+                profileId: DEFAULT_PROVIDER_PROFILE_ID,
                 model: "gpt-5.4",
                 options: {
                   reasoningEffort: "low",
@@ -14242,6 +14277,7 @@ describe("ChatView transcript geometry (full app)", () => {
           modelSelectionByProvider: {
             claudeAgent: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-opus-4-6",
               options: {
                 effort: "max",
@@ -14335,6 +14371,7 @@ describe("ChatView transcript geometry (full app)", () => {
             runtimeMode: "approval-required",
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-opus-4-6",
               options: {
                 effort: "max",

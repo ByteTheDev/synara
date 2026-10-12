@@ -5,6 +5,7 @@ import {
   ApprovalRequestId,
   CommandId,
   DEFAULT_PROVIDER_INTERACTION_MODE,
+  DEFAULT_PROVIDER_PROFILE_ID,
   DEFAULT_MODEL_BY_PROVIDER,
   EventId,
   MessageId,
@@ -135,6 +136,7 @@ const seedProjectAndThread = (harness: OrchestrationIntegrationHarness) =>
       workspaceRoot: harness.workspaceDir,
       defaultModelSelection: {
         provider,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: defaultModel,
       },
       createdAt,
@@ -148,6 +150,7 @@ const seedProjectAndThread = (harness: OrchestrationIntegrationHarness) =>
       title: "Integration Thread",
       modelSelection: {
         provider,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: defaultModel,
       },
       interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -284,6 +287,7 @@ it.live.skipIf(!process.env.CODEX_BINARY_PATH)(
           workspaceRoot: harness.workspaceDir,
           defaultModelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.3-codex",
           },
           createdAt,
@@ -297,6 +301,7 @@ it.live.skipIf(!process.env.CODEX_BINARY_PATH)(
           title: "Integration Thread",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.3-codex",
           },
           interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -962,6 +967,7 @@ it.live("starts a claudeAgent session on first turn when provider is requested",
           text: "Use Claude",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
           },
         });
@@ -1021,6 +1027,7 @@ itLiveUnlessCi(
             text: "Before restart",
             modelSelection: {
               provider: "claudeAgent",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "claude-sonnet-4-6",
             },
           });
@@ -1137,6 +1144,7 @@ it.live("forwards thread.turn.interrupt to claudeAgent provider sessions", () =>
           text: "Start long turn",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
           },
         });
@@ -1210,6 +1218,7 @@ itLiveUnlessCi("reverts claudeAgent turns and rolls back provider conversation s
           text: "First Claude edit",
           modelSelection: {
             provider: "claudeAgent",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "claude-sonnet-4-6",
           },
         });

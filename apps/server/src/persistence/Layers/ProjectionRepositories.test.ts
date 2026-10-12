@@ -1,4 +1,5 @@
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   MessageId,
   ProjectId,
   SpaceId,
@@ -96,7 +97,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
         threadId,
         projectId,
         title: "Cache review",
-        modelSelection: { provider: "claudeAgent" as const, model: "claude-opus-4-6" },
+        modelSelection: { provider: "claudeAgent" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-4-6" },
         runtimeMode: "full-access" as const,
         interactionMode: "default" as const,
         envMode: "local" as const,
@@ -237,6 +238,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
         workspaceRoot: "/tmp/project-null-options",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.4",
         },
         scripts: [],
@@ -263,6 +265,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
         row.defaultModelSelection,
         JSON.stringify({
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.4",
         }),
       );
@@ -273,6 +276,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
       assert.deepStrictEqual(Option.getOrNull(persisted)?.defaultModelSelection, {
         provider: "codex",
         instanceId: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5.4",
       });
     }),
@@ -289,6 +293,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
         title: "Null options thread",
         modelSelection: {
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
         },
         runtimeMode: "full-access",
@@ -331,6 +336,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
         row.modelSelection,
         JSON.stringify({
           provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-6",
         }),
       );
@@ -341,6 +347,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
       assert.deepStrictEqual(Option.getOrNull(persisted)?.modelSelection, {
         provider: "claudeAgent",
         instanceId: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-opus-4-6",
       });
     }),
@@ -358,7 +365,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
       } as const;
       const base = {
         projectId: ProjectId.makeUnsafe("project-sidechat-context"),
-        modelSelection: { provider: "codex", model: "gpt-5-codex" },
+        modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
         runtimeMode: "approval-required",
         interactionMode: "default",
         envMode: "local",
@@ -437,7 +444,7 @@ projectionRepositoriesLayer("Projection repositories", (it) => {
         threadId: ThreadId.makeUnsafe(threadId),
         projectId: ProjectId.makeUnsafe("project-wait-snapshot"),
         title: threadId,
-        modelSelection: { provider: "codex" as const, model: "gpt-5.5" },
+        modelSelection: { provider: "codex" as const, profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
         runtimeMode: "approval-required" as const,
         interactionMode: "default" as const,
         envMode: "local" as const,

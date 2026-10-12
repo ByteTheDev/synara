@@ -50,7 +50,7 @@ import {
   sortProjectsForSidebar,
   sortThreadsForSidebar,
 } from "./Sidebar.logic";
-import { ProjectId, SpaceId, ThreadId } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProjectId, SpaceId, ThreadId } from "@synara/contracts";
 import { buildActivityViewModel } from "./SidebarActivityView.logic";
 import {
   DEFAULT_INTERACTION_MODE,
@@ -822,6 +822,7 @@ describe("pin helpers", () => {
       title: id,
       modelSelection: {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       },
       runtimeMode: DEFAULT_RUNTIME_MODE,
@@ -1503,6 +1504,7 @@ function makeProject(overrides: Partial<Project> = {}): Project {
     cwd: "/tmp/project",
     defaultModelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       ...defaultModelSelection,
     },
@@ -1523,6 +1525,7 @@ function makeThread(overrides: Partial<Thread> = {}): Thread {
     title: "Thread",
     modelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
       ...overrides?.modelSelection,
     },
@@ -1552,6 +1555,7 @@ function makeSidebarThreadSummary(
     title: "Thread",
     modelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.4",
     },
     interactionMode: DEFAULT_INTERACTION_MODE,

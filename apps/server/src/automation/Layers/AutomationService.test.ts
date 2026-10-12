@@ -6,6 +6,7 @@ import {
   AutomationRunId,
   CommandId,
   DEFAULT_AUTOMATION_STOP_CONFIDENCE_THRESHOLD,
+  DEFAULT_PROVIDER_PROFILE_ID,
   MessageId,
   ProjectId,
   ThreadId,
@@ -60,6 +61,7 @@ const project: OrchestrationProjectShell = {
   workspaceRoot: "/tmp/automation-project",
   defaultModelSelection: {
     provider: "codex",
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model: "gpt-5-codex",
   },
   scripts: [],
@@ -112,6 +114,7 @@ it("drops stale completion fallback provider options when the fallback instance 
       modelSelection: {
         provider: "antigravity",
         instanceId: "gemini",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gemini-2.5-pro",
       },
       providerOptions: {
@@ -128,6 +131,7 @@ it("drops stale completion fallback provider options when the fallback instance 
       textGenerationModelSelection: {
         provider: "codex",
         instanceId: "codex_fallback_removed" as ProviderInstanceId,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       },
     },
@@ -172,7 +176,7 @@ function makeThreadShell(overrides: {
   return {
     id: overrides.id ?? ThreadId.makeUnsafe("thread-shell"),
     projectId: overrides.projectId ?? projectId,
-    modelSelection: overrides.modelSelection ?? { provider: "codex", model: "gpt-5-codex" },
+    modelSelection: overrides.modelSelection ?? { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
     latestTurn: overrides.latestTurn ?? null,
     hasPendingApprovals: overrides.hasPendingApprovals,
     hasPendingUserInput: overrides.hasPendingUserInput,
@@ -404,6 +408,7 @@ const createInput = (
   schedule: { type: "manual" },
   modelSelection: {
     provider: "codex",
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model: "gpt-5-codex",
   },
   worktreeMode,
@@ -660,7 +665,7 @@ layer("AutomationService", (it) => {
           resetHarness();
           const service = yield* AutomationService;
           const targetThreadId = ThreadId.makeUnsafe(`auto-check-in-${liveModel}-${instanceId}`);
-          const modelSelection = { provider: "claudeAgent", model: "claude-opus-5-5" } as const;
+          const modelSelection = { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-opus-5-5" } as const;
           threadShell = Option.some(makeThreadShell({ id: targetThreadId, modelSelection }));
           const definition = yield* service.createProjectManaged({
             ...createInput("local"),
@@ -714,7 +719,7 @@ layer("AutomationService", (it) => {
       resetHarness();
       const service = yield* AutomationService;
       const target = readModelSelectionArg(
-        { target: { provider: "claudeAgent", model: "claude-sonnet-5" } },
+        { target: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" } },
         "target",
       )!;
       const resolved = yield* resolveAgentGatewayTarget({
@@ -733,6 +738,7 @@ layer("AutomationService", (it) => {
       });
       assert.deepEqual(created.modelSelection, {
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: target.model,
         supportsAutoMode: true,
       });
@@ -748,6 +754,7 @@ layer("AutomationService", (it) => {
         {
           provider: "claudeAgent",
           instanceId: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: target.model,
           supportsAutoMode: true,
         },
@@ -769,7 +776,7 @@ layer("AutomationService", (it) => {
         // Before any run, the automation has no provider-owned task to preserve.
         const selected = yield* service.update({
           id: created.id,
-          modelSelection: { provider: "claudeAgent", model: "claude-sonnet-5" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
         });
         assert.strictEqual(selected.targetThreadId, null);
         const first = yield* service.runNow({ automationId: created.id });
@@ -795,7 +802,7 @@ layer("AutomationService", (it) => {
             listed.runs.find((entry) => entry.id === first.run.id)?.status === "succeeded",
         });
         const rejected = yield* service
-          .update({ id: created.id, modelSelection: { provider: "codex", model: "gpt-5-codex" } })
+          .update({ id: created.id, modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" } })
           .pipe(Effect.flip);
         assert.match(rejected.message, /bound to "claudeAgent"/);
         const unchanged = yield* service.list({ projectId });
@@ -805,6 +812,7 @@ layer("AutomationService", (it) => {
         );
         const nextSelection = {
           provider: "claudeAgent" as const,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "claude-opus-4-8",
           options: { effort: "high" as const },
         };
@@ -829,7 +837,7 @@ layer("AutomationService", (it) => {
           ? service
               .update({
                 id: created.id,
-                modelSelection: { provider: "claudeAgent", model: "claude-sonnet-5" },
+                modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
               })
               .pipe(
                 Effect.match({
@@ -867,7 +875,7 @@ layer("AutomationService", (it) => {
         threadShell = Option.some(makeThreadShell({ id: ownedThreadId }));
         const unstarted = yield* service.update({
           id: created.id,
-          modelSelection: { provider: "claudeAgent", model: "claude-sonnet-5" },
+          modelSelection: { provider: "claudeAgent", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "claude-sonnet-5" },
         });
         assert.strictEqual(unstarted.targetThreadId, ownedThreadId);
         // The actual session wins over a stale stored automation/model selection.
@@ -917,6 +925,7 @@ layer("AutomationService", (it) => {
             modelSelection: {
               provider: "codex",
               instanceId: unresolvedId,
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: "legacy-automation-unresolved",
             },
           },
@@ -966,6 +975,7 @@ layer("AutomationService", (it) => {
       const service = yield* AutomationService;
       const unsupportedModelSelection = {
         provider: "claudeAgent" as const,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-haiku-4-5",
         supportsAutoMode: false,
       };
@@ -1461,6 +1471,7 @@ layer("AutomationService", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: codexWorkInstanceId,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         providerOptions: {
@@ -1533,6 +1544,7 @@ layer("AutomationService", (it) => {
       assert.deepStrictEqual(turnStart.modelSelection, {
         provider: "codex",
         instanceId: codexWorkInstanceId,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       });
       assert.strictEqual(turnStart.providerOptions, undefined);
@@ -2545,7 +2557,7 @@ layer("AutomationService", (it) => {
         scheduledFor: "2000-01-01T00:00:00.000Z",
         permissionSnapshot: {
           provider: "codex",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "approval-required",
           interactionMode: "default",
           worktreeMode: "local",
@@ -2610,7 +2622,7 @@ layer("AutomationService", (it) => {
         scheduledFor: "2000-01-01T00:00:00.000Z",
         permissionSnapshot: {
           provider: "codex",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "approval-required",
           interactionMode: "default",
           worktreeMode: "local",
@@ -2938,6 +2950,7 @@ layer("AutomationService", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: codexWorkInstanceId,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         providerOptions: {
@@ -2963,6 +2976,7 @@ layer("AutomationService", (it) => {
       assert.deepStrictEqual(command.modelSelection, {
         provider: "codex",
         instanceId: codexWorkInstanceId,
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       });
       assert.strictEqual(command.providerOptions, undefined);
@@ -3001,6 +3015,7 @@ layer("AutomationService", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: collidingInstanceId,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
       });
@@ -3030,6 +3045,7 @@ layer("AutomationService", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: removedInstanceId,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         providerOptions: {
@@ -3078,6 +3094,7 @@ layer("AutomationService", (it) => {
         modelSelection: {
           provider: "codex",
           instanceId: disabledInstanceId,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         providerOptions: {
@@ -3702,6 +3719,7 @@ layer("AutomationService", (it) => {
       yield* serverSettings.updateSettings({
         textGenerationModelSelection: {
           provider: "cursor",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "composer-2",
         },
       });
@@ -3712,6 +3730,7 @@ layer("AutomationService", (it) => {
         targetThreadId,
         modelSelection: {
           provider: "antigravity",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "Gemini 3.5 Flash",
         },
         completionPolicy: aiCompletionPolicy("the PR is ready"),
@@ -3735,6 +3754,7 @@ layer("AutomationService", (it) => {
       assert.deepStrictEqual(completionEvaluationInputs.at(-1)?.modelSelection, {
         provider: "cursor",
         instanceId: "cursor",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "composer-2",
       });
     }),
@@ -3771,6 +3791,7 @@ layer("AutomationService", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: codexWorkInstanceId,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           providerOptions: {
@@ -3835,6 +3856,7 @@ layer("AutomationService", (it) => {
           textGenerationModelSelection: {
             provider: "cursor",
             instanceId: "cursor",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
         });
@@ -3846,6 +3868,7 @@ layer("AutomationService", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: "codex_removed" as ProviderInstanceId,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           providerOptions: {
@@ -3864,6 +3887,7 @@ layer("AutomationService", (it) => {
           textGenerationModelSelection: {
             provider: "cursor",
             instanceId: "cursor",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
         });
@@ -3885,6 +3909,7 @@ layer("AutomationService", (it) => {
         assert.deepStrictEqual(completionEvaluationInputs.at(-1)?.modelSelection, {
           provider: "cursor",
           instanceId: "cursor",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "composer-2",
         });
         assert.isUndefined(completionEvaluationInputs.at(-1)?.providerOptions);
@@ -3916,6 +3941,7 @@ layer("AutomationService", (it) => {
           textGenerationModelSelection: {
             provider: "cursor",
             instanceId: "cursor",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
         });
@@ -3927,6 +3953,7 @@ layer("AutomationService", (it) => {
           modelSelection: {
             provider: "codex",
             instanceId: disabledInstanceId,
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5-codex",
           },
           providerOptions: {
@@ -3955,6 +3982,7 @@ layer("AutomationService", (it) => {
           textGenerationModelSelection: {
             provider: "cursor",
             instanceId: "cursor",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "composer-2",
           },
         });
@@ -3976,6 +4004,7 @@ layer("AutomationService", (it) => {
         assert.deepStrictEqual(completionEvaluationInputs.at(-1)?.modelSelection, {
           provider: "cursor",
           instanceId: "cursor",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "composer-2",
         });
         assert.isUndefined(completionEvaluationInputs.at(-1)?.providerOptions);
@@ -3994,6 +4023,7 @@ layer("AutomationService", (it) => {
         textGenerationModelSelection: {
           provider: "codex",
           instanceId: "codex_fallback_removed" as ProviderInstanceId,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
       });
@@ -4005,6 +4035,7 @@ layer("AutomationService", (it) => {
         modelSelection: {
           provider: "antigravity",
           instanceId: "antigravity",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gemini-2.5-pro",
         },
         providerOptions: {
@@ -4260,6 +4291,7 @@ layer("AutomationService", (it) => {
       yield* serverSettings.updateSettings({
         textGenerationModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.6-luna",
         },
         providers: {
@@ -4284,6 +4316,7 @@ layer("AutomationService", (it) => {
         targetThreadId,
         modelSelection: {
           provider: "antigravity",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "Gemini 3.5 Flash",
         },
         completionPolicy: aiCompletionPolicy("the PR is ready"),
@@ -5962,7 +5995,7 @@ layer("AutomationService", (it) => {
         scheduledFor: "2026-06-16T10:00:00.000Z",
         permissionSnapshot: {
           provider: "codex",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "approval-required",
           interactionMode: "default",
           worktreeMode: "local",
@@ -6020,7 +6053,7 @@ layer("AutomationService", (it) => {
             scheduledFor: now,
             permissionSnapshot: {
               provider: "codex",
-              modelSelection: { provider: "codex", model: "gpt-5-codex" },
+              modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
               runtimeMode: "approval-required",
               interactionMode: "default",
               worktreeMode: "local",
@@ -6070,7 +6103,7 @@ layer("AutomationService", (it) => {
         scheduledFor: "2026-06-16T10:00:00.000Z",
         permissionSnapshot: {
           provider: "codex",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           runtimeMode: "approval-required",
           interactionMode: "default",
           worktreeMode: "local",
@@ -6217,7 +6250,7 @@ layer("AutomationService", (it) => {
           scheduledFor,
           permissionSnapshot: {
             provider: "codex",
-            modelSelection: { provider: "codex", model: "gpt-5-codex" },
+            modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
             runtimeMode: "approval-required",
             interactionMode: "default",
             worktreeMode: "local",
@@ -6423,7 +6456,7 @@ layer("Saved Groups automations with Hubs disabled", (it) => {
             deferredUntil: state === "deferred" ? now : null,
             permissionSnapshot: {
               provider: "codex",
-              modelSelection: { provider: "codex", model: "gpt-5-codex" },
+              modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
               runtimeMode: "approval-required",
               interactionMode: "default",
               worktreeMode: "local",

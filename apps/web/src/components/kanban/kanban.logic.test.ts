@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ProjectId, ThreadId } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProjectId, ThreadId } from "@synara/contracts";
 import { DEFAULT_INTERACTION_MODE } from "../../types";
 import type { SidebarThreadSummary, ThreadSession } from "../../types";
 import {
@@ -61,7 +61,7 @@ function makeSidebarThreadSummary(
     id: ThreadId.makeUnsafe("thread-1"),
     projectId: PROJECT_1,
     title: "Thread",
-    modelSelection: { provider: "codex", model: "gpt-5.4" },
+    modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
     interactionMode: DEFAULT_INTERACTION_MODE,
     branch: null,
     worktreePath: null,

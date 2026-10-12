@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { PassThrough } from "node:stream";
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   ApprovalRequestId,
   ProviderItemId,
@@ -318,6 +319,7 @@ validationLayer("CodexAdapterLive validation", (it) => {
         lifecycleGeneration: "generation-start-a",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.3-codex",
           options: {
             reasoningEffort: "high",
@@ -393,6 +395,7 @@ validationLayer("CodexAdapterLive validation", (it) => {
         resumeCursor: { threadId: "previously-fast-thread" },
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.4",
           options: { fastMode: false },
         },
@@ -542,6 +545,7 @@ sessionErrorLayer("CodexAdapterLive session errors", (it) => {
           input: "hello",
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.3-codex",
             options: {
               reasoningEffort: "high",
@@ -585,6 +589,7 @@ turnPreparationLayer("CodexAdapterLive turn input preparation", (it) => {
           attachments: [],
           modelSelection: {
             provider: "codex",
+            profileId: DEFAULT_PROVIDER_PROFILE_ID,
             model: "gpt-5.4",
             ...(fastMode !== undefined ? { options: { fastMode } } : {}),
           },
@@ -637,6 +642,7 @@ turnPreparationLayer("CodexAdapterLive turn input preparation", (it) => {
         mentions: [{ name: "github", path: "plugin://github@openai-curated" }],
         modelSelection: {
           provider: "codex" as const,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.3-codex",
           options: {
             reasoningEffort: "high",
