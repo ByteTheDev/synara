@@ -680,6 +680,37 @@ const replacementRouting = makeProviderServiceLayer({
     }),
 });
 replacementRouting.layer("Claude replacement preparation", (it) => {
+  it.effect("releases a stalled replacement preparation without rotating the live session", () =>
+    Effect.gen(function* () {
+      const provider = yield* ProviderService;
+      const directory = yield* ProviderSessionDirectory;
+      const threadId = asThreadId("stalled-preparation");
+      const input = {
+        threadId,
+        provider: "claudeAgent" as const,
+        runtimeMode: "full-access" as const,
+      };
+      yield* provider.startSession(threadId, input);
+      const before = Option.getOrThrow(yield* directory.getBinding(threadId));
+      const entered = yield* Deferred.make<void>();
+      replacementRouting.claude.prepareSessionReplacement.mockImplementationOnce(() =>
+        Deferred.succeed(entered, undefined).pipe(Effect.andThen(Effect.never)),
+      );
+      const pending = yield* provider
+        .startSession(threadId, input)
+        .pipe(Effect.result, Effect.forkChild);
+      yield* Deferred.await(entered);
+      yield* TestClock.adjust("61 seconds");
+      const result = yield* Fiber.join(pending);
+      assert.equal(result._tag, "Failure");
+      assert.equal(
+        Option.getOrThrow(yield* directory.getBinding(threadId)).lifecycleGeneration,
+        before.lifecycleGeneration,
+      );
+      assert.isTrue(yield* replacementRouting.claude.hasSession(threadId));
+      yield* provider.startSession(threadId, input);
+    }),
+  );
   for (const failure of ["background", "unsupported-auto"] as const) {
     it.effect(
       `preserves events and generation when preparation rejects (${failure}), then resumes idle`,

@@ -31,7 +31,7 @@ import { useThreadDetailPrewarm } from "../threadDetailPrewarm";
 
 /**
  * Open threads as display tabs, in tab order. `projectId` scopes them to one project
- * (the editor view). Stale ids (deleted threads, discarded drafts) are dropped from the
+ * or defaults to the saved thread/draft on screen. Stale ids are dropped from the
  * persisted list once the thread snapshot has hydrated.
  */
 export function useOpenThreadTabs(input: {
@@ -39,6 +39,13 @@ export function useOpenThreadTabs(input: {
   projectId?: ProjectId | null | undefined;
 }): OpenThreadTab[] {
   const { activeThreadId } = input;
+  const savedProjectId = useStore((state) =>
+    activeThreadId ? state.sidebarThreadSummaryById[activeThreadId]?.projectId : undefined,
+  );
+  const draftProjectId = useComposerDraftStore((state) =>
+    activeThreadId ? state.draftThreadsByThreadId[activeThreadId]?.projectId : undefined,
+  );
+  const projectId = input.projectId ?? savedProjectId ?? draftProjectId;
   const threadIds = useOpenThreadTabsStore((state) => state.threadIds);
   const pruneThreadTabs = useOpenThreadTabsStore((state) => state.pruneThreadTabs);
   const threadsHydrated = useStore((state) => state.threadsHydrated);
@@ -110,7 +117,8 @@ export function useOpenThreadTabs(input: {
     };
   });
 
-  return buildOpenThreadTabs({ sources, activeThreadId, projectId: input.projectId });
+  // Do not flash other projects while the active thread is still hydrating.
+  return projectId ? buildOpenThreadTabs({ sources, activeThreadId, projectId }) : [];
 }
 
 /**

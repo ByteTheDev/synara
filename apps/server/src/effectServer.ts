@@ -40,6 +40,9 @@ import { ThreadDeletionReactor } from "./orchestration/Services/ThreadDeletionRe
 import { ThreadSnoozeReactor } from "./orchestration/Services/ThreadSnoozeReactor";
 import {
   claimQuitResumeRecordAtStartup,
+  captureCrashResumeRecord,
+  persistQuitResumeRecord,
+  readQuitResumeRecord,
   resumeQuitInterruptedChats,
 } from "./orchestration/quitResume";
 import { reconcileRestartStuckTurns } from "./orchestration/startupTurnReconciliation";
@@ -260,14 +263,31 @@ export const createEffectServer = Effect.fn(function* (
       subscriptionsScope,
     }),
   );
+  const previousResumeRecord = yield* readQuitResumeRecord(config.quitResumeStatePath);
   yield* startServerRuntimePipeline({
     orchestrationReactor,
     // Heal turns orphaned by the previous process exit (their in-memory runtimes
     // died, so they can never complete on their own) before clients can observe
     // the stale "Working" state.
-    reconcileRestartStuckTurns: reconcileRestartStuckTurns.pipe(
-      Effect.provide(ProjectionPendingInteractionRepositoryLive),
-    ),
+    reconcileRestartStuckTurns: Effect.gen(function* () {
+      // Journal replay has finished; capture only work still orphaned now.
+      // An explicit quit record (including an invalid one) takes precedence.
+      if (previousResumeRecord.kind === "absent") {
+        const crashResumeRecord = yield* captureCrashResumeRecord;
+        if (crashResumeRecord.kind === "record") {
+          // Keep the captured intent if this startup dies during reconciliation.
+          yield* persistQuitResumeRecord({
+            path: config.quitResumeStatePath,
+            record: crashResumeRecord.record,
+          }).pipe(
+            Effect.catchCause((cause) =>
+              Effect.logWarning("could not persist crash recovery", { cause }),
+            ),
+          );
+        }
+      }
+      yield* reconcileRestartStuckTurns;
+    }).pipe(Effect.provide(ProjectionPendingInteractionRepositoryLive)),
     reactors: [
       automationScheduler,
       automationRunReactor,
@@ -286,8 +306,8 @@ export const createEffectServer = Effect.fn(function* (
       (cause) => new ServerLifecycleError({ operation: "recoverGitHandoffOperations", cause }),
     ),
   );
-  // Claim the previous quit's "Resume chats automatically" record while no
-  // command (and so no new quit) can run yet; a missing record costs one stat.
+  // Consume only after reconciliation, before admitting commands. If startup
+  // fails earlier, both explicit quit and crash records remain available.
   const quitResumeRecord = yield* claimQuitResumeRecordAtStartup;
   yield* runtimeStartup.markCommandReady;
   // The recorded chats get their continuation turn now that the orphaned turns

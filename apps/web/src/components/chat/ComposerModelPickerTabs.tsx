@@ -118,7 +118,7 @@ function resolveAccountTabState(input: {
   const { label, status } = input;
   if (input.lockedToSibling) {
     return {
-      unavailableLabel: `${label} is unavailable in this thread. Start a new thread to switch accounts.`,
+      unavailableLabel: `${label} is unavailable in this thread. Use Hand off thread → Continue in a new thread to switch accounts with the conversation history. Add accounts in Settings → Providers.`,
       blocked: true,
       setupMessage: null,
     };

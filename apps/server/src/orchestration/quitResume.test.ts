@@ -1,12 +1,13 @@
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { ProjectId, ThreadId, TurnId, type OrchestrationCommand } from "@synara/contracts";
-import { Duration, Effect, FileSystem, Layer } from "effect";
+import { Duration, Effect, FileSystem, Layer, Option } from "effect";
 import { describe, expect, it } from "vitest";
 
 import { ServerConfig } from "../config";
 import {
   buildQuitInterruptCommand,
   buildQuitResumeRecord,
+  captureCrashResumeRecord,
   claimQuitResumeRecord,
   clearQuitResumeRecord,
   persistQuitResumeRecord,
@@ -16,6 +17,9 @@ import {
   type QuitResumeRecord,
   type QuitResumeThread,
 } from "./quitResume.ts";
+import { OrchestrationEngineService } from "./Services/OrchestrationEngine.ts";
+import { ProjectionPendingInteractionRepository } from "../persistence/Services/ProjectionPendingInteractions.ts";
+import { ProjectionSnapshotQuery } from "./Services/ProjectionSnapshotQuery.ts";
 
 const RECORD_ID = "record-1";
 const RECORDED_AT = "2026-06-14T10:00:00.000Z";
@@ -97,6 +101,94 @@ const makeConnectingThread = (id: string, overrides: Partial<QuitResumeThread> =
   });
 
 const liveProjects = [{ id: PROJECT, deletedAt: null }];
+
+describe("crash recovery", () => {
+  it("captures orphaned running work before reconciliation and preserves human decision gates", async () => {
+    const threads = [
+      makeRunningThread("running"),
+      makeRunningThread("resumed"),
+      makeRunningThread("heartbeat"),
+      makeRunningThread("unknown-prompt"),
+      { ...makeRunningThread("approval"), hasPendingApprovals: true },
+      { ...makeRunningThread("question"), hasPendingUserInput: true },
+      makeRunningThread("durable-callback"),
+      { ...makeRunningThread("child"), parentThreadId: threadId("running") },
+      { ...makeRunningThread("goal"), goal: "finish" },
+      { ...makeRunningThread("scheduled"), creationSource: "automation_run" },
+      makeRunningThread("archived", { archivedAt: NOW }),
+      makeThread("stopped"),
+      makeConnectingThread("starting"),
+    ];
+    const record = await Effect.runPromise(
+      captureCrashResumeRecord.pipe(
+        Effect.provideService(OrchestrationEngineService, {
+          getReadModel: () =>
+            Effect.succeed({
+              threads: threads.map((thread) => ({ ...thread, messages: [] })),
+              projects: liveProjects,
+            }),
+        } as never),
+        Effect.provideService(ProjectionPendingInteractionRepository, {
+          listUnsettled: () => Effect.succeed([{ threadId: threadId("durable-callback") }]),
+        } as never),
+        Effect.provideService(ProjectionSnapshotQuery, {
+          getThreadDetailById: (id: string) =>
+            Effect.succeed(
+              Option.some({
+                ...threads.find((thread) => thread.id === id),
+                messages:
+                  id === "resumed" || id === "heartbeat"
+                    ? [
+                        {
+                          id:
+                            id === "resumed" ? "quit-resume:previous:resumed" : "scheduled-message",
+                          role: "user",
+                          turnId: `${id}-turn`,
+                          dispatchOrigin: "automation",
+                        },
+                      ]
+                    : id === "unknown-prompt"
+                      ? []
+                      : [{ id: `message:${id}`, role: "user", turnId: `${id}-turn` }],
+              }),
+            ),
+        } as never),
+      ),
+    );
+    expect(record.kind).toBe("record");
+    if (record.kind !== "record") throw new Error("missing recovery record");
+    expect(record.record.threads).toEqual([
+      { threadId: threadId("running"), turnId: turnId("running-turn") },
+      { threadId: threadId("resumed"), turnId: turnId("resumed-turn") },
+    ]);
+    const plan = planQuitResumeTurns({
+      record: record.record,
+      threads: [makeThread("running")],
+      projects: liveProjects,
+      now: NOW,
+    });
+    expect(plan.commands).toHaveLength(1);
+    expect(plan.commands[0]).toMatchObject({
+      threadId: "running",
+      dispatchOrigin: "automation",
+      resumePrecondition: { recordedTurnId: "running-turn" },
+    });
+  });
+  it("does not guess that human callbacks are absent when their durable read fails", async () => {
+    const captured = await Effect.runPromise(
+      captureCrashResumeRecord.pipe(
+        Effect.provideService(OrchestrationEngineService, {
+          getReadModel: () => Effect.succeed({ threads: [makeRunningThread("running")] }),
+        } as never),
+        Effect.provideService(ProjectionPendingInteractionRepository, {
+          listUnsettled: () => Effect.fail(new Error("unavailable")),
+        } as never),
+        Effect.provideService(ProjectionSnapshotQuery, {} as never),
+      ),
+    );
+    expect(captured).toEqual({ kind: "absent" });
+  });
+});
 
 describe("buildQuitResumeRecord", () => {
   it("snapshots only threads that are in flight right now, dropping unknown, deleted, idle, and duplicate ids", () => {

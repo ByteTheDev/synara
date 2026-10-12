@@ -2971,7 +2971,18 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                 ...(resolved.providerOptions !== undefined
                   ? { providerOptions: resolved.providerOptions }
                   : {}),
-              });
+              }).pipe(
+                Effect.timeoutOrElse({
+                  duration: PROVIDER_START_SESSION_TIMEOUT,
+                  onTimeout: () =>
+                    Effect.fail(
+                      toValidationError(
+                        "ProviderService.startSession",
+                        `Provider '${adapter.provider}' session preparation timed out. Try again after checking the provider runtime.`,
+                      ),
+                    ),
+                }),
+              );
               retiredSession = prepared?.previousSession;
               preparedStart = prepared?.startSession;
             })
