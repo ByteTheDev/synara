@@ -165,6 +165,9 @@ export function estimateTimelineRowHeight(
     case "worktree-setup":
       height = WORKTREE_SETUP_ROW_PX + WORKTREE_SETUP_STEP_PX * row.steps.length;
       break;
+    default:
+      // Additive row kinds use the list's existing fallback until actually measured.
+      height = 90;
   }
   return Math.max(MIN_ROW_HEIGHT_PX, Math.round(height));
 }

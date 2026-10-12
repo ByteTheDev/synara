@@ -34,7 +34,7 @@ async function settleLayout(): Promise<void> {
   await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
 }
 
-function TranscriptPerfHarness(props: { onTranscriptRender: () => void }) {
+function TranscriptPerfHarness(props: { onTranscriptRender: (actualDuration: number) => void }) {
   const [composerValue, setComposerValue] = useState("");
   const composerImagesRef = useRef<readonly []>([]);
   const composerFilesRef = useRef<readonly []>([]);
@@ -72,8 +72,8 @@ function TranscriptPerfHarness(props: { onTranscriptRender: () => void }) {
   const handleComposerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setComposerValue(event.target.value);
   };
-  const handleTranscriptRender: ProfilerOnRenderCallback = () => {
-    props.onTranscriptRender();
+  const handleTranscriptRender: ProfilerOnRenderCallback = (_id, _phase, actualDuration) => {
+    props.onTranscriptRender(actualDuration);
   };
 
   return (
@@ -145,8 +145,9 @@ describe("ChatTranscriptPane", () => {
 
     const screen = await render(
       <TranscriptPerfHarness
-        onTranscriptRender={() => {
-          transcriptCommitCount += 1;
+        onTranscriptRender={(actualDuration) => {
+          // Profiler also reports zero-work parent commits when its subtree bails out.
+          if (actualDuration > 0) transcriptCommitCount += 1;
         }}
       />,
     );
@@ -155,6 +156,8 @@ describe("ChatTranscriptPane", () => {
         expect(transcriptCommitCount).toBeGreaterThan(0);
       });
 
+      // Initial virtualizer measurement commits belong to mounting, not composer typing.
+      await settleLayout();
       const baselineCommitCount = transcriptCommitCount;
       await page.getByPlaceholder("Type composer text").fill("reply follow up");
 

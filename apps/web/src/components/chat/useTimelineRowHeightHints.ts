@@ -17,7 +17,7 @@ import type { MessagesTimelineRow } from "./MessagesTimeline.logic";
 
 // The root owns these typography variables, so their signature is available before rows mount.
 function readTimelineFontKey(): string {
-  if (typeof document === "undefined") return "";
+  if (typeof document === "undefined" || typeof getComputedStyle === "undefined") return "";
   const style = getComputedStyle(document.documentElement);
   return JSON.stringify([
     style.getPropertyValue("--font-ui-family"),
