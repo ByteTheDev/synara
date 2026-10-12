@@ -263,18 +263,21 @@ describe("ProviderSessionReaperLive", () => {
     await assertIdleReaperPreservesResumeCursor("codex", "thread-reaper-idle-codex");
   });
 
-  it.each(["live-turn", "running", "connecting", "recent-activity"] as const)(
-    "preserves %s when the idle sweep sees a lagging projection",
-    async (scenario) => {
-      await assertIdleReaperPreservesResumeCursor("codex", `thread-reaper-${scenario}`, scenario);
-    },
-  );
+  it.each([
+    "live-turn",
+    "running",
+    "connecting",
+    "recent-activity",
+    "live-recent-activity",
+  ] as const)("preserves %s when the idle sweep sees a lagging projection", async (scenario) => {
+    await assertIdleReaperPreservesResumeCursor("codex", `thread-reaper-${scenario}`, scenario);
+  });
 });
 
 async function assertIdleReaperPreservesResumeCursor(
   provider: ProviderKind,
   threadIdValue: string,
-  scenario?: "live-turn" | "running" | "connecting" | "recent-activity",
+  scenario?: "live-turn" | "running" | "connecting" | "recent-activity" | "live-recent-activity",
 ): Promise<void> {
   const threadId = ThreadId.makeUnsafe(threadIdValue);
   const fake = makeFakeAdapter(provider);
@@ -380,7 +383,20 @@ async function assertIdleReaperPreservesResumeCursor(
     yield* Effect.promise(() => new Promise<void>((resolve) => setTimeout(resolve, 20)));
     const adapterStopsBeforeSweep = fake.stopSession.mock.calls.length;
     const activeTurnId = TurnId.makeUnsafe("live-turn-missing-from-projection");
-    if (scenario && scenario !== "recent-activity") {
+    if (scenario === "live-recent-activity") {
+      const hasSession = fake.adapter.hasSession;
+      vi.spyOn(fake.adapter, "hasSession").mockImplementationOnce((id) =>
+        Effect.sync(() => {
+          // The adapter settles first, after the reaper captured its cutoff;
+          // the durable terminal event has not reached SQLite yet.
+          fake.sessions.set(threadId, {
+            ...prewarmed,
+            status: "ready",
+            updatedAt: new Date().toISOString(),
+          });
+        }).pipe(Effect.andThen(hasSession(id))),
+      );
+    } else if (scenario && scenario !== "recent-activity") {
       // The adapter has accepted work but persistence/projection has not caught up.
       fake.sessions.set(threadId, {
         ...prewarmed,

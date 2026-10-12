@@ -1336,12 +1336,16 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
         );
         const existingIdleStop = runtimeIdleStopsInFlight.get(threadId);
         const displacedIdleStop = existingIdleStop !== undefined || runtimeIdleTimers.has(threadId);
-        const waitForExistingIdleStop =
-          existingIdleStop !== undefined ? Effect.promise(() => existingIdleStop) : Effect.void;
+        // A sweep can publish its fence while we await an interruption. Drain
+        // the current owner before invalidating its generation, without an async gap.
+        const claimIdleWork: Effect.Effect<void> = Effect.suspend(() => {
+          const stop = runtimeIdleStopsInFlight.get(threadId);
+          return stop
+            ? Effect.promise(() => stop).pipe(Effect.andThen(claimIdleWork))
+            : Effect.sync(() => clearRuntimeIdleTimer(threadId));
+        });
         return waitForInterruptionFence.pipe(
-          Effect.andThen(waitForExistingIdleStop),
-          Effect.tap(() => Effect.sync(() => clearRuntimeIdleTimer(threadId))),
-          Effect.flatMap(() => waitForRuntimeIdleStop(threadId)),
+          Effect.andThen(claimIdleWork),
           Effect.flatMap(() => effect),
           Effect.onExit((exit) =>
             Exit.isSuccess(exit)
@@ -4593,7 +4597,9 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
             input.threadId,
             (lease): StopRuntimeSessionEffect =>
               Effect.gen(function* () {
-                if (!stoppedState || !isExpectedIdleStopCurrent()) return;
+                // Once teardown succeeded, persist that irreversible retirement even
+                // if a runtime event displaced its idle generation while draining.
+                if (!stoppedState) return;
                 const { binding, resumeCursor } = stoppedState;
                 clearLiveRuntimeTasks(input.threadId);
                 yield* withBindingWriteLock(
@@ -4650,7 +4656,9 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                   (!activeSession ||
                     activeSession.status === "connecting" ||
                     activeSession.status === "running" ||
-                    activeSession.activeTurnId !== undefined)
+                    activeSession.activeTurnId !== undefined ||
+                    !Number.isFinite(Date.parse(activeSession.updatedAt)) ||
+                    Date.parse(activeSession.updatedAt) > Date.parse(rawInput.onlyIfIdleSince))
                 )
                   return;
                 if (activeSession?.resumeCursor !== undefined)
@@ -4681,7 +4689,7 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                 [adapter.stopSession(input.threadId), flushRuntimeText(input.threadId)],
                 (teardown) => teardown,
               );
-              if (isExpectedIdleStopCurrent()) stoppedState = { binding, resumeCursor };
+              stoppedState = { binding, resumeCursor };
             }),
           )
           .pipe(Effect.ensuring(Effect.sync(() => releaseIdleStopFence?.())));
@@ -4696,11 +4704,21 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                 Effect.andThen(stopRuntimeSession(rawInput)),
               );
             }
+            const displacedTimer = runtimeIdleTimers.has(rawInput.threadId);
             clearRuntimeIdleTimer(rawInput.threadId);
             const generation = runtimeIdleGenerations.get(rawInput.threadId)!;
             return stopRuntimeSessionInternal(rawInput, generation).pipe(
               Effect.ensuring(
-                Effect.sync(() => retireRuntimeIdleGeneration(rawInput.threadId, generation)),
+                Effect.sync(() => {
+                  // Rejected stale sweeps must not cancel a freshly armed normal
+                  // timeout. A newer owner or successful retirement needs no timer.
+                  if (
+                    displacedTimer &&
+                    isRuntimeIdleGenerationCurrent(rawInput.threadId, generation)
+                  )
+                    scheduleRuntimeIdleStop(rawInput.threadId);
+                  else retireRuntimeIdleGeneration(rawInput.threadId, generation);
+                }),
               ),
             );
           });
