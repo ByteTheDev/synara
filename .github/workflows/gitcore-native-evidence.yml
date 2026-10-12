@@ -3,7 +3,7 @@ name: GitCore native filesystem evidence
 on:
   push:
     branches:
-      - cleanup/20261011/gitcore-native-1847-evidence
+      - cleanup/20261012/gitcore-status-scope-validation
 
 permissions:
   contents: read
@@ -25,7 +25,7 @@ jobs:
       - name: Check out exact reviewed application
         uses: actions/checkout@v6
         with:
-          ref: 7ff5f383c482b5b9dfadce509394932a6d0d9d71
+          ref: e912032d29aa4bd9b1cef163cf3addeeffef47d5
           persist-credentials: false
       - name: Check out isolated evidence driver
         uses: actions/checkout@v6
@@ -61,3 +61,33 @@ jobs:
           path: gitcore-native-evidence/
           if-no-files-found: error
           retention-days: 14
+
+  static:
+    name: Focused format and complete server types
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact reviewed application
+        uses: actions/checkout@v6
+        with:
+          ref: e912032d29aa4bd9b1cef163cf3addeeffef47d5
+          persist-credentials: false
+      - name: Install the source's frozen runtime workspace
+        id: install
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - name: Check the two repaired files with the canonical formatter
+        id: format
+        run: bun run fmt:check apps/server/src/git/Layers/GitCore.ts apps/server/src/git/Layers/GitCore.test.ts
+      - name: Check complete server types with the canonical script
+        if: always() && steps.install.outcome == 'success'
+        run: bun run --cwd apps/server typecheck
+      - name: Require unchanged tracked source
+        if: always()
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = e912032d29aa4bd9b1cef163cf3addeeffef47d5
+          test "$(git rev-parse 'HEAD^{tree}')" = 25fc4e1a161a7c6a61f1ddb6959f75e3bd4f068d
+          git diff --exit-code HEAD --
