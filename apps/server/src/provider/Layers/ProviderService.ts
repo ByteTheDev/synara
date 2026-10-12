@@ -4588,7 +4588,7 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
         } else if (!isExpectedIdleStopCurrent()) {
           return;
         }
-        const runtimeCursorWriteBaseline = runtimeCursorWriteVersion;
+        let runtimeCursorWriteBaseline = runtimeCursorWriteVersion;
         let stoppedState:
           | { readonly binding: ProviderRuntimeBinding; readonly resumeCursor: unknown }
           | undefined;
@@ -4677,8 +4677,12 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                     Date.parse(activeSession.updatedAt) > Date.parse(rawInput.onlyIfIdleSince))
                 )
                   return;
-                if (activeSession?.resumeCursor !== undefined)
+                if (activeSession?.resumeCursor !== undefined) {
+                  // A live cursor supersedes writes completed before this read,
+                  // including writes while stop waited for its lifecycle lock.
                   resumeCursor = activeSession.resumeCursor;
+                  runtimeCursorWriteBaseline = runtimeCursorWriteVersion;
+                }
               }
               if (rawInput.onlyIfIdleSince !== undefined) {
                 // Runs before generation rotation, with new dispatch fenced.

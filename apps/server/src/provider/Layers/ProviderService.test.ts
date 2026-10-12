@@ -6896,6 +6896,67 @@ idleCleanup.layer("ProviderServiceLive idle cleanup", (it) => {
       }),
   );
 
+  it.effect("keeps a newer live cursor over an event cursor persisted before the live probe", () =>
+    Effect.gen(function* () {
+      const provider = yield* ProviderService;
+      const directory = yield* ProviderSessionDirectory;
+      const threadId = asThreadId("thread-reaper-live-cursor-after-event");
+      yield* provider.startSession(threadId, {
+        provider: "codex",
+        threadId,
+        runtimeMode: "full-access",
+      });
+      yield* idleCleanup.codex.waitForRuntimeSubscribers();
+      const earlierCursor = { resume: "earlier-event-cursor" };
+      const latestCursor = { resume: "newer-live-cursor" };
+      const hasSession = idleCleanup.codex.hasSession.getMockImplementation()!;
+      idleCleanup.codex.hasSession.mockImplementationOnce((id) =>
+        Effect.gen(function* () {
+          idleCleanup.codex.updateSession(threadId, (session) => ({
+            ...session,
+            resumeCursor: earlierCursor,
+          }));
+          idleCleanup.codex.emit({
+            type: "turn.tasks.updated",
+            eventId: asEventId("reaper-pre-probe-cursor"),
+            provider: "codex",
+            createdAt: new Date().toISOString(),
+            threadId,
+            payload: { tasks: [] },
+          });
+          yield* waitUntilEffect(
+            () =>
+              directory
+                .getBinding(threadId)
+                .pipe(
+                  Effect.map(
+                    (binding) =>
+                      Option.isSome(binding) &&
+                      JSON.stringify(binding.value.resumeCursor) === JSON.stringify(earlierCursor),
+                  ),
+                ),
+            500,
+            10,
+            "older cursor persisted before the live read",
+          );
+          idleCleanup.codex.updateSession(threadId, (session) => ({
+            ...session,
+            resumeCursor: latestCursor,
+          }));
+          return yield* hasSession(id);
+        }).pipe(Effect.orDie),
+      );
+      yield* provider.stopRuntimeSession!({
+        threadId,
+        onlyIfIdleSince: new Date(Date.now() + 60_000).toISOString(),
+      });
+      assert.deepEqual(
+        Option.getOrThrow(yield* directory.getBinding(threadId)).resumeCursor,
+        latestCursor,
+      );
+    }),
+  );
+
   it.effect("restores the normal idle timeout after a stale reaper stop is rejected", () =>
     Effect.gen(function* () {
       const provider = yield* ProviderService;
