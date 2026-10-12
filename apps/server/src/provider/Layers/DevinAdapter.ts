@@ -2150,7 +2150,11 @@ export function makeDevinAdapter(
         }
       });
 
-    const stopSessionInternal = (ctx: DevinSessionContext, preserveTasksForResume = false) =>
+    const stopSessionInternal = (
+      ctx: DevinSessionContext,
+      preserveTasksForResume = false,
+      exitKind: "graceful" | "error" = "graceful",
+    ) =>
       Effect.gen(function* () {
         if (ctx.stopped) return;
         ctx.stopped = true;
@@ -2224,7 +2228,12 @@ export function makeDevinAdapter(
           ...(yield* makeEventStamp()),
           provider: PROVIDER,
           threadId: ctx.threadId,
-          payload: { exitKind: "graceful" },
+          payload: {
+            exitKind,
+            ...(exitKind === "error"
+              ? { reason: "Devin runtime exited unexpectedly.", recoverable: true }
+              : {}),
+          },
         });
       });
 
@@ -3622,7 +3631,9 @@ export function makeDevinAdapter(
 
           yield* acp.awaitExit.pipe(
             Effect.andThen(
-              Effect.suspend(() => (ctx.stopped ? Effect.void : stopSessionInternal(ctx))),
+              Effect.suspend(() =>
+                ctx.stopped ? Effect.void : stopSessionInternal(ctx, true, "error"),
+              ),
             ),
             Effect.forkIn(wedgeRecoveryScope),
           );
@@ -4293,8 +4304,9 @@ export function makeDevinAdapter(
           .pipe(Effect.mapError(acpToAdapterError(ctx.threadId)), Effect.asVoid);
         yield* waitForDevinQueuedTurnEventsDrained(ctx);
         yield* closeOwnedChildAssistantItems(ctx, stoppedOwners);
-        const current = ctx.devinSubagents.get(agentId);
-        if (current?.status === "running") {
+        for (const stoppedAgent of stoppedOwners) {
+          const current = ctx.devinSubagents.get(stoppedAgent);
+          if (current?.status !== "running") continue;
           current.status = "stopped";
           current.locallyStopped = true;
           ctx.pendingTaskReconciliations.set(

@@ -4145,6 +4145,9 @@ it.each(["stop", "exit"] as const)(
         const terminal = events.findIndex((event) => event.type === "session.exited");
         expect(completion).toBeGreaterThanOrEqual(0);
         expect(terminal).toBeGreaterThan(completion);
+        expect(events[terminal]?.payload).toMatchObject({
+          exitKind: kind === "exit" ? "error" : "graceful",
+        });
         expect(yield* adapter.hasSession(threadId)).toBe(false);
       }).pipe(
         Effect.scoped,
@@ -4158,3 +4161,64 @@ it.each(["stop", "exit"] as const)(
     );
   },
 );
+
+it("marks all owned descendants locally stopped and preserves their reconciliation records", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const handles = makeEventAcpRuntime(() => Effect.never);
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("stop-descendants");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      yield* adapter.startSession({ provider: "devin", threadId, runtimeMode: "full-access" });
+      yield* adapter.sendTurn({ threadId, input: "launch", attachments: [] });
+      yield* handles.emitToolCall("parent-call", "inProgress", {
+        metadata: { "cognition.ai/subagent_started": { agentId: "parent" } },
+      });
+      yield* handles.emitToolCall("child-call", "inProgress", {
+        metadata: {
+          "cognition.ai/subagent_context": { parentAgentId: "parent" },
+          "cognition.ai/subagent_started": { agentId: "child" },
+        },
+      });
+      yield* adapter.stopTask(threadId, "parent");
+      yield* flushTimers();
+      for (const taskId of ["parent", "child"])
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "task.completed",
+            payload: expect.objectContaining({
+              taskId,
+              status: "stopped",
+              awaitingProviderConfirmation: true,
+              interactionMode: "default",
+            }),
+          }),
+        );
+      const before = events.length;
+      yield* handles.emitToolCall("child-call", "completed", {
+        metadata: { "cognition.ai/subagent_completed": { agentId: "child", success: false } },
+      });
+      expect(events.slice(before)).toContainEqual(
+        expect.objectContaining({
+          type: "task.completed",
+          payload: expect.objectContaining({ taskId: "child", reconcilesStop: true }),
+        }),
+      );
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(handles.runtime, handles.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
+  );
+});
