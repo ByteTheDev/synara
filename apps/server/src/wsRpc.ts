@@ -63,6 +63,7 @@ import {
 } from "@synara/contracts";
 import { clamp } from "effect/Number";
 import { Effect, FileSystem, Layer, Option, Path, Queue, Schema, Scope, Stream } from "effect";
+import * as Arr from "effect/Array";
 import { Headers, HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
 import { RpcMiddleware, RpcSchema, RpcSerialization, RpcServer } from "effect/unstable/rpc";
 
@@ -1759,34 +1760,38 @@ const makeWsRpcHandlersLayer = () =>
                     ),
                   ),
             }).pipe(
-              Stream.flatMap((item) => {
-                if (item.kind === "event") {
-                  return Stream.succeed<OrchestrationThreadStreamItem>({
-                    kind: "event",
-                    event: item.event,
-                  });
-                }
-                if (item.kind === "replay") {
-                  return Stream.succeed<OrchestrationThreadStreamItem>({
-                    kind: "replay",
-                    events: item.events,
-                  });
-                }
+              // Map whole batches: each RPC chunk waits for the client's ACK, so
+              // splitting the live batch into one-event chunks capped a streamed
+              // reply at one event per round trip, seconds behind over a relay.
+              Stream.mapArrayEffect((items) =>
                 // A silently empty snapshot would leave the client waiting forever
                 // for thread history; fail identifiably so it can surface the state.
-                return Option.isSome(item.snapshot.detail)
-                  ? Stream.succeed<OrchestrationThreadStreamItem>({
-                      kind: "snapshot",
-                      snapshot: item.snapshot.detail.value,
-                    })
-                  : Stream.fail(
+                items.some(
+                  (item) => item.kind === "snapshot" && Option.isNone(item.snapshot.detail),
+                )
+                  ? Effect.fail(
                       new WsRpcError({
                         message: `Thread detail snapshot not found for thread ${input.threadId}.`,
                         code: "THREAD_SNAPSHOT_NOT_FOUND",
                         retryable: false,
                       }),
-                    );
-              }),
+                    )
+                  : Effect.succeed(
+                      Arr.map(items, (item): OrchestrationThreadStreamItem => {
+                        switch (item.kind) {
+                          case "event":
+                            return { kind: "event", event: item.event };
+                          case "replay":
+                            return { kind: "replay", events: item.events };
+                          case "snapshot":
+                            return {
+                              kind: "snapshot",
+                              snapshot: Option.getOrThrow(item.snapshot.detail),
+                            };
+                        }
+                      }),
+                    ),
+              ),
               trackSidechatVisibility(input.threadId),
             ),
           ),
