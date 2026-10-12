@@ -109,6 +109,7 @@ describe("crash recovery", () => {
       makeRunningThread("running"),
       makeRunningThread("resumed"),
       makeRunningThread("heartbeat"),
+      makeRunningThread("agent-turn"),
       { ...makeRunningThread("delegated"), creationSource: "synara_mcp" },
       { ...makeRunningThread("external-delegated"), creationSource: "external_mcp" },
       makeRunningThread("unknown-prompt"),
@@ -152,7 +153,14 @@ describe("crash recovery", () => {
                       ]
                     : id === "unknown-prompt"
                       ? []
-                      : [{ id: `message:${id}`, role: "user", turnId: `${id}-turn` }],
+                      : [
+                          {
+                            id: `message:${id}`,
+                            role: "user",
+                            turnId: `${id}-turn`,
+                            ...(id === "agent-turn" ? { dispatchOrigin: "agent" } : {}),
+                          },
+                        ],
               }),
             ),
         } as never),

@@ -249,6 +249,7 @@ function buildCrashResumeRecord(input: {
       thread.creationSource !== "synara_mcp" &&
       thread.creationSource !== "external_mcp" &&
       !isScheduledTurn &&
+      message.dispatchOrigin !== "agent" &&
       !thread.hasPendingApprovals &&
       !thread.hasPendingUserInput &&
       !input.blocked.has(thread.id) &&
