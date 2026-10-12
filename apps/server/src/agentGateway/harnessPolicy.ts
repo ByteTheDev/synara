@@ -42,7 +42,7 @@ export function renderSynaraHarnessPolicy(capabilities: SynaraHarnessCapabilitie
         "If synara_create_threads fails before returning an operationId, correct the rejected plan and reuse its requestId; no durable task was created.",
         "Use synara_capabilities to select canonical provider, model, and option values. Never guess a model slug or silently substitute a provider or model.",
         "Use synara_capabilities.targetConstruction: Codex options.reasoningEffort and Claude Agent options.effort are not interchangeable.",
-        "For requested results, use synara_wait_for_threads and wait for all, then synthesize. Hub coordinator packets allow async reports unless results are requested now.",
+        "For results, repeat synara_wait_for_threads with runIds until allTerminal, then synthesize. Await native subagents. Hub packets may allow async reports.",
         "After operationId, retry the same requestId and exact plan. Report failures; no replacement threads without a new user request. Hub retries are server-owned.",
         "Synara automations support heartbeat, standalone, and dedicated modes plus interval, once, daily, weekdays, weekly, and cron schedules. Existing everyMinutes heartbeat calls remain supported. Use fastInterval: true only when the user explicitly accepts a sub-minute bounded loop.",
         "Mode controls execution: heartbeat appends to an idle target thread; standalone opens a fresh thread per independent run; dedicated reuses one automation-owned thread so runs build on each other without writing into another thread.",

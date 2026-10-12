@@ -153,6 +153,7 @@ import { BackgroundTaskStopContext } from "./BackgroundTaskRow";
 import { TurnHeaderLine } from "./TurnHeaderLine";
 import { useTailAnchorScroll } from "./useTailAnchorScroll";
 import { useTimelineRowOverlapGuard } from "./useTimelineRowOverlapGuard";
+import { useTimelineRowHeightHints } from "./useTimelineRowHeightHints";
 import {
   deriveDisplayedUserMessageState,
   type ParsedTerminalContextEntry,
@@ -433,6 +434,8 @@ function WorktreeSetupCard({
 
 interface MessagesTimelineProps {
   hasMessages: boolean;
+  /** Thread-owned namespace for safe reuse of immutable row measurements. */
+  heightCacheScope?: string;
   isWorking: boolean;
   workingLabel?: WorkingLabel | undefined;
   activeTurnInProgress: boolean;
@@ -580,6 +583,7 @@ interface MessagesTimelineProps {
 
 export const MessagesTimeline = memo(function MessagesTimeline({
   hasMessages,
+  heightCacheScope,
   historyHeader,
   isWorking,
   workingLabel: workingLabelProp,
@@ -825,6 +829,33 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     activeFindMatchRef.current = findHighlight?.activeMatch ?? null;
   }, [findHighlight]);
   const observeTimelineRow = useTimelineRowOverlapGuard();
+  // Expanded/editing/context rows own presentation beyond their message content.
+  const canRememberRowHeight = useCallback(
+    (row: MessagesTimelineRow) =>
+      row.kind === "message" &&
+      !expandedUserMessagesById[row.message.id] &&
+      editingUserMessageId !== row.message.id &&
+      submittingEditedUserMessageId !== row.message.id &&
+      !forkSource &&
+      !crossTaskOrigin &&
+      !subagentThread &&
+      !hubWorkItemsByMessageId?.has(row.message.id),
+    [
+      expandedUserMessagesById,
+      editingUserMessageId,
+      submittingEditedUserMessageId,
+      forkSource,
+      crossTaskOrigin,
+      subagentThread,
+      hubWorkItemsByMessageId,
+    ],
+  );
+  const rowHeightHints = useTimelineRowHeightHints(
+    resolvedListRef,
+    normalizedChatFontSizePx,
+    heightCacheScope,
+    canRememberRowHeight,
+  );
   useTailAnchorScroll({
     listRef: resolvedListRef,
     timelineRootRef,
@@ -3111,6 +3142,8 @@ export const MessagesTimeline = memo(function MessagesTimeline({
             keyExtractor={(row) => row.id}
             renderItem={({ item }) => renderRowContent(item)}
             estimatedItemSize={90}
+            getEstimatedItemSize={rowHeightHints.getEstimatedItemSize}
+            onItemSizeChanged={rowHeightHints.onItemSizeChanged}
             // LegendList caches rendered rows, so every local expansion map that changes row content
             // has to be surfaced through extraData.
             extraData={timelineExtraData}
