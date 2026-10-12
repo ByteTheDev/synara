@@ -74,29 +74,25 @@ try {
   await page.mouse.move(1400, 900);
   await page.waitForTimeout(1500);
   await page.screenshot({ path: root + "/docs/verification/worktree-settings-real-default.png" });
+  const waitForStoredSetting = async (expected) => {
+    let stored;
+    for (let attempt = 0; attempt < 50; attempt++) {
+      stored = JSON.parse(await fs.readFile(home + "/userdata/settings.json", "utf8")).settings
+        .worktrees.pruneAfterMerge;
+      if (stored === expected) return;
+      await page.waitForTimeout(100);
+    }
+    assert.equal(stored, expected);
+  };
   await toggle.click();
-  for (let i = 0; i < 50; i++) {
-    const s = JSON.parse(await fs.readFile(home + "/userdata/settings.json", "utf8"));
-    if ((s.settings ?? s).worktrees?.pruneAfterMerge === true) break;
-    await new Promise((r) => setTimeout(r, 100));
-  }
-  assert.equal(
-    JSON.parse(await fs.readFile(home + "/userdata/settings.json", "utf8")).settings.worktrees
-      .pruneAfterMerge,
-    true,
-  );
+  await waitForStoredSetting(true);
   await page.reload();
   await toggle.waitFor();
   for (let i = 0; i < 50 && !(await toggle.isChecked()); i++) await page.waitForTimeout(100);
   assert.equal(await toggle.isChecked(), true);
   await page.screenshot({ path: root + "/docs/verification/worktree-settings-real-enabled.png" });
   await toggle.click();
-  await page.waitForTimeout(500);
-  assert.equal(
-    JSON.parse(await fs.readFile(home + "/userdata/settings.json", "utf8")).settings.worktrees
-      .pruneAfterMerge,
-    false,
-  );
+  await waitForStoredSetting(false);
   console.log(
     "PASS",
     JSON.stringify({
