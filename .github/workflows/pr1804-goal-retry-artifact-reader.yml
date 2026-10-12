@@ -1,0 +1,29 @@
+name: Inspect retained PR 1804 goal retry artifacts
+on:
+  push:
+    branches: [codex/runtime-goal-retry-1804-artifact-reader-20261012]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          # Reader -> 648 driver -> beb source -> 4eac retry repair.
+          fetch-depth: 4
+          persist-credentials: false
+      - name: Verify fixed failed-job ZIPs and expose assertion and formatter evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/pr1804-goal-retry-artifact-reader.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pr1804-goal-retry-artifact-reader
+          path: ${{ runner.temp }}/pr1804-goal-retry-artifact-reader/
+          if-no-files-found: error
+          retention-days: 30
