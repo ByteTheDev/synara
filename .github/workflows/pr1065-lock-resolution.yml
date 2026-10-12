@@ -1,0 +1,74 @@
+name: Resolve the PR 1065 dependency graph
+on:
+  push:
+    branches: [cleanup/20261012/pr1065-lock-resolution]
+permissions:
+  contents: read
+concurrency:
+  group: pr1065-lock-resolution-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  resolve:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: d4509644c8b7c2ba419680f7da8c2441f230d67e
+          path: source
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - name: Prepare a private manifest-only graph from exact source
+        id: prepare
+        run: bun driver/scripts/pr1065-lock-resolution/runner.mjs prepare
+      - name: Resolve with Bun, retaining the actual command exits
+        id: resolve
+        timeout-minutes: 12
+        working-directory: ${{ env.PR1065_GRAPH }}
+        shell: bash
+        run: |
+          set +e
+          bun install --lockfile-only --ignore-scripts 2>&1 | tee "$PR1065_PRIVATE/resolve.log"
+          exits=("${PIPESTATUS[@]}")
+          printf '{"bunExit":%d,"teeExit":%d}\n' "${exits[0]}" "${exits[1]}" > "$PR1065_PRIVATE/resolve-exit.json"
+          test "${exits[0]}" -eq 0 && test "${exits[1]}" -eq 0
+      - name: Inspect all workspace declarations and package tuple changes
+        id: inspect
+        run: bun driver/scripts/pr1065-lock-resolution/runner.mjs resolved
+      - name: Verify the resolved graph with a frozen scripts-disabled install
+        id: frozen
+        timeout-minutes: 20
+        working-directory: ${{ env.PR1065_GRAPH }}
+        shell: bash
+        run: |
+          set +e
+          bun install --frozen-lockfile --ignore-scripts 2>&1 | tee "$PR1065_PRIVATE/frozen.log"
+          exits=("${PIPESTATUS[@]}")
+          printf '{"bunExit":%d,"teeExit":%d}\n' "${exits[0]}" "${exits[1]}" > "$PR1065_PRIVATE/frozen-exit.json"
+          test "${exits[0]}" -eq 0 && test "${exits[1]}" -eq 0
+      - name: Require unchanged lock, manifests and source after the frozen install
+        id: verify
+        run: bun driver/scripts/pr1065-lock-resolution/runner.mjs frozen
+      - name: Freeze bounded evidence and preserve every failed phase
+        if: always()
+        env:
+          PREPARE_OUTCOME: ${{ steps.prepare.outcome }}
+          RESOLVE_OUTCOME: ${{ steps.resolve.outcome }}
+          INSPECT_OUTCOME: ${{ steps.inspect.outcome }}
+          FROZEN_OUTCOME: ${{ steps.frozen.outcome }}
+          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+        run: bun driver/scripts/pr1065-lock-resolution/runner.mjs finish
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pr1065-lock-resolution-${{ github.run_attempt }}
+          path: pr1065-lock-evidence/
+          if-no-files-found: error
+          retention-days: 14

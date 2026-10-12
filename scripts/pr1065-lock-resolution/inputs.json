@@ -1,0 +1,324 @@
+{
+  "format": 1,
+  "source": {
+    "commit": "d4509644c8b7c2ba419680f7da8c2441f230d67e",
+    "tree": "877444c1badcb38871bd6ac38ebe401e81022212"
+  },
+  "original": {
+    "commit": "df7c59d65b6747c54e765fd387260fdfb92ba0bc",
+    "base": "bbae09b75364a0dc0f860cf029fc9b488abcd0d1"
+  },
+  "bunVersion": "1.4.2",
+  "baseFiles": [
+    {
+      "path": "apps/desktop/package.json",
+      "bytes": 1809,
+      "sha256": "e24b04a2dd8e2de7e50e802d23968dff7c4a2d6af58458a8b576dd3aca3464df",
+      "gitBlob": "86915fa95fad0f6cb7f3ab0d2f27e2e7f909f5a5",
+      "mode": "100644"
+    },
+    {
+      "path": "apps/marketing/package.json",
+      "bytes": 2251,
+      "sha256": "85355378be428567dbc20a8f958af4fecd6d8ff65898112e1b7e87393b5124dd",
+      "gitBlob": "3a2832be28c7b7056dd75e47e09d9149e6081c89",
+      "mode": "100644"
+    },
+    {
+      "path": "apps/server/package.json",
+      "bytes": 1924,
+      "sha256": "9ae17c748d8d94ceed6454fdc3f8bf2e238a316d334b54711c454c31378f705f",
+      "gitBlob": "4cd2a4146c652205697f0078d2cc792fdbad6ff8",
+      "mode": "100644"
+    },
+    {
+      "path": "apps/web/package.json",
+      "bytes": 3240,
+      "sha256": "a03a737b8b176831d6a5ccd4c64218e68f86f368094917c420a5bf9704df9562",
+      "gitBlob": "c206b01ad478ca547d9dc8acbe77d24f586aeb1f",
+      "mode": "100644"
+    },
+    {
+      "path": "bun.lock",
+      "bytes": 776515,
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7",
+      "gitBlob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "mode": "100644"
+    },
+    {
+      "path": "bunfig.toml",
+      "bytes": 30,
+      "sha256": "486ae875aa8c4c9588d4797bd1809ef3982b79b475bc68ff101942eeb06d5907",
+      "gitBlob": "641e878fd332ca4428d98984c425ae667ab6e811",
+      "mode": "100644"
+    },
+    {
+      "path": "package.json",
+      "bytes": 5664,
+      "sha256": "ed94729f24c2261037bf04ad6c04a607d80648118b2a9d533da3d3b2231e8b4f",
+      "gitBlob": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea",
+      "mode": "100644"
+    },
+    {
+      "path": "packages/contracts/package.json",
+      "bytes": 932,
+      "sha256": "9ce0aa9bc6258d7dc471ae07a7059ca78ffe6dc46df5edb121de8df6d71e948c",
+      "gitBlob": "36eab8df8c85d6652d64c2e58edddf2aaeee8bf2",
+      "mode": "100644"
+    },
+    {
+      "path": "packages/shared/package.json",
+      "bytes": 13676,
+      "sha256": "9325961d2ce4d1fdce2c6d326e2b5c32c3e93cf237b6069ca6b3e91f91757250",
+      "gitBlob": "ac5881289427b87a805e4206f8b528600042f0c0",
+      "mode": "100644"
+    },
+    {
+      "path": "patches/@effect%2Fplatform-node-shared@8881a9b.patch",
+      "bytes": 15261,
+      "sha256": "48df950815f45d947a89605bdc03b488f9bd3cc401c3c3c36e7a03b059aa5ba4",
+      "gitBlob": "8e8e5da12ade2e33a94dd6ec5b0381946ce11ce1",
+      "mode": "100644"
+    },
+    {
+      "path": "patches/@legendapp%2Flist@3.3.3.patch",
+      "bytes": 6576,
+      "sha256": "896ec429ff33a9764b53ff4babb1ff53d6dcdfa6d3593b7bbaf0c9ee89b082a2",
+      "gitBlob": "51bad30c3e70d7fa67abf14254a458ce343c2385",
+      "mode": "100644"
+    },
+    {
+      "path": "patches/@pierre%2Fdiffs@1.3.5.patch",
+      "bytes": 669,
+      "sha256": "837b6dd2d54dd78ec34a06f8049fd2b10b6e624fa7df9bf8c19d36bc85917956",
+      "gitBlob": "58da8b131ccbaf035bb19471a18e8219948869b6",
+      "mode": "100644"
+    },
+    {
+      "path": "patches/betterwright@2.7.3.patch",
+      "bytes": 3677,
+      "sha256": "7dbaa55de4e1c067bdbcddbcf559800f78098c42e4eeee2682735775e1498342",
+      "gitBlob": "7ad18778367f3c53a7549c3e008091366d2494e1",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/package.json",
+      "bytes": 916,
+      "sha256": "3493ebc80d9c6333cd1017c252f359d57837a52ebf892f7adda39b9fabf6cd88",
+      "gitBlob": "ee3722925b511bb43357c0c6fbc6da0abb4e5f3f",
+      "mode": "100644"
+    }
+  ],
+  "currentManifestPaths": [
+    "apps/desktop/package.json",
+    "apps/marketing/package.json",
+    "apps/server/package.json",
+    "apps/web/package.json",
+    "package.json",
+    "packages/contracts/package.json",
+    "packages/shared/package.json",
+    "scripts/package.json"
+  ],
+  "candidateManifests": [
+    {
+      "path": "apps/api/package.json",
+      "content": "{\n  \"name\": \"@synara/api\",\n  \"version\": \"0.0.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"bun run --hot src/index.ts\",\n    \"start\": \"bun run src/index.ts\",\n    \"build\": \"echo 'no build step'\",\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"vitest run\",\n    \"db:generate\": \"drizzle-kit generate\",\n    \"db:migrate\": \"bun run src/db/migrate.ts\"\n  },\n  \"dependencies\": {\n    \"@hono/node-server\": \"^1.14.0\",\n    \"@synara/contracts\": \"workspace:*\",\n    \"drizzle-orm\": \"^0.45.2\",\n    \"effect\": \"catalog:\",\n    \"hono\": \"^4.7.0\",\n    \"jose\": \"^6.1.0\",\n    \"pg\": \"^8.16.0\"\n  },\n  \"devDependencies\": {\n    \"@types/bun\": \"catalog:\",\n    \"@types/node\": \"catalog:\",\n    \"@types/pg\": \"^8.15.0\",\n    \"drizzle-kit\": \"^0.31.10\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "",
+          "authorBefore": null,
+          "authorAfter": "exact original added workspace"
+        }
+      ],
+      "baseBlob": null,
+      "authorBlob": "10b3faacf3601db9cb1464281d5d48d6fa36703c",
+      "bytes": 796,
+      "sha256": "cd3ef663b6e5cc543edd9ec35e5f875678c6fb799e0ff4fb1ad12eb578d13de1",
+      "gitBlob": "10b3faacf3601db9cb1464281d5d48d6fa36703c"
+    },
+    {
+      "path": "apps/e2e/package.json",
+      "content": "{\n  \"name\": \"@synara/e2e\",\n  \"version\": \"0.0.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"build\": \"echo 'no build step'\",\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"vitest run --maxWorkers=1 --no-file-parallelism\",\n    \"test:docker\": \"bun docker/run.ts\"\n  },\n  \"dependencies\": {\n    \"@effect/platform-node\": \"catalog:\",\n    \"@hono/node-server\": \"^1.14.0\",\n    \"@synara/contracts\": \"workspace:*\",\n    \"@synara/relay-protocol\": \"workspace:*\",\n    \"@synara/shared\": \"workspace:*\",\n    \"effect\": \"catalog:\",\n    \"hono\": \"^4.7.0\",\n    \"jose\": \"^6.1.0\",\n    \"pg\": \"^8.16.0\",\n    \"ws\": \"^8.21.0\"\n  },\n  \"devDependencies\": {\n    \"@types/bun\": \"catalog:\",\n    \"@types/node\": \"catalog:\",\n    \"@types/pg\": \"^8.15.0\",\n    \"@types/ws\": \"^8.18.1\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "",
+          "authorBefore": null,
+          "authorAfter": "exact original added workspace"
+        }
+      ],
+      "baseBlob": null,
+      "authorBlob": "c5669e724cd2089b3b486f6f691a3ac55bdd24f4",
+      "bytes": 816,
+      "sha256": "9c62a6993eb9422aa939b9503fba4816df1af0ba80cad37d5522387164ff0723",
+      "gitBlob": "c5669e724cd2089b3b486f6f691a3ac55bdd24f4"
+    },
+    {
+      "path": "apps/profiles/package.json",
+      "content": "{\n  \"name\": \"@synara/profiles\",\n  \"version\": \"0.0.0\",\n  \"private\": true,\n  \"scripts\": {\n    \"dev\": \"next dev --port 4321\",\n    \"build\": \"next build\",\n    \"start\": \"next start\",\n    \"preview\": \"opennextjs-cloudflare build && opennextjs-cloudflare preview\",\n    \"deploy\": \"opennextjs-cloudflare build && opennextjs-cloudflare deploy\",\n    \"typecheck\": \"tsc --noEmit\"\n  },\n  \"dependencies\": {\n    \"@synara/profile-ui\": \"workspace:*\",\n    \"next\": \"^16.1.0\",\n    \"react\": \"^19.2.0\",\n    \"react-dom\": \"^19.2.0\"\n  },\n  \"devDependencies\": {\n    \"@opennextjs/cloudflare\": \"^1.20.2\",\n    \"@tailwindcss/postcss\": \"^4.1.0\",\n    \"@types/react\": \"^19.2.0\",\n    \"@types/react-dom\": \"^19.2.0\",\n    \"tailwindcss\": \"^4.1.0\",\n    \"typescript\": \"catalog:\",\n    \"wrangler\": \"^4.122.0\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "",
+          "authorBefore": null,
+          "authorAfter": "exact original added workspace"
+        }
+      ],
+      "baseBlob": null,
+      "authorBlob": "56ea973b7ed16cb5ac0a90e893a23ad387528721",
+      "bytes": 770,
+      "sha256": "844d2db01c03df031a27991a0f36f54df505b63d871fd03cf9a4872009c76dd3",
+      "gitBlob": "56ea973b7ed16cb5ac0a90e893a23ad387528721"
+    },
+    {
+      "path": "apps/relay/package.json",
+      "content": "{\n  \"name\": \"@synara/relay\",\n  \"version\": \"0.0.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"bun run --hot src/index.ts\",\n    \"start\": \"bun run src/index.ts\",\n    \"build\": \"echo 'no build step'\",\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"vitest run\"\n  },\n  \"dependencies\": {\n    \"@hono/node-server\": \"^1.14.0\",\n    \"@synara/contracts\": \"workspace:*\",\n    \"@synara/relay-protocol\": \"workspace:*\",\n    \"effect\": \"catalog:\",\n    \"hono\": \"^4.7.0\",\n    \"jose\": \"^6.1.0\",\n    \"ws\": \"^8.21.0\"\n  },\n  \"devDependencies\": {\n    \"@types/bun\": \"catalog:\",\n    \"@types/node\": \"catalog:\",\n    \"@types/ws\": \"^8.18.1\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "",
+          "authorBefore": null,
+          "authorAfter": "exact original added workspace"
+        }
+      ],
+      "baseBlob": null,
+      "authorBlob": "e642ab27b20c666e09acc126ba305d0a21c75805",
+      "bytes": 692,
+      "sha256": "e2988201c2e8e06923ee80ff6558f05a689a59adc673902ddd206a47120719c7",
+      "gitBlob": "e642ab27b20c666e09acc126ba305d0a21c75805"
+    },
+    {
+      "path": "apps/server/package.json",
+      "content": "{\n  \"name\": \"@synara/cli\",\n  \"version\": \"1.0.3\",\n  \"license\": \"MIT\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Emanuele-web04/Synara.git\",\n    \"directory\": \"apps/server\"\n  },\n  \"bin\": {\n    \"synara\": \"dist/index.mjs\",\n    \"synara-restore-migration-backup\": \"dist/restoreMigrationBackup.mjs\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"bun run src/index.ts\",\n    \"build\": \"node scripts/cli.ts build\",\n    \"start\": \"node dist/index.mjs\",\n    \"typecheck\": \"node ../../node_modules/@typescript/native/bin/tsc --noEmit --tsBuildInfoFile node_modules/.cache/typescript-native.tsbuildinfo\",\n    \"typecheck:native\": \"bun run typecheck\",\n    \"typecheck:legacy\": \"tsc --noEmit\",\n    \"test\": \"vitest run --maxWorkers=1 --no-file-parallelism\"\n  },\n  \"dependencies\": {\n    \"@agentclientprotocol/sdk\": \"1.2.1\",\n    \"@anthropic-ai/claude-agent-sdk\": \"0.3.296\",\n    \"@anthropic-ai/sdk\": \"^0.100.0\",\n    \"@earendil-works/pi-agent-core\": \"^0.87.1\",\n    \"@earendil-works/pi-ai\": \"^0.87.1\",\n    \"@earendil-works/pi-coding-agent\": \"^0.87.1\",\n    \"@effect/platform-node\": \"catalog:\",\n    \"@effect/sql-sqlite-bun\": \"catalog:\",\n    \"@opencode-ai/sdk\": \"1.18.31\",\n    \"@opencode/client\": \"2.0.25\",\n    \"@pierre/diffs\": \"^1.2.12\",\n    \"@xterm/headless\": \"^6.0.0\",\n    \"effect\": \"catalog:\",\n    \"node-pty\": \"^1.1.0\",\n    \"open\": \"^10.1.0\",\n    \"smol-toml\": \"^1.7.0\",\n    \"ws\": \"^8.21.0\",\n    \"yaml\": \"^2.8.3\",\n    \"zod\": \"4.3.6\",\n    \"@synara/relay-protocol\": \"workspace:*\",\n    \"jose\": \"^6.1.0\"\n  },\n  \"devDependencies\": {\n    \"@effect/language-service\": \"catalog:\",\n    \"@effect/vitest\": \"catalog:\",\n    \"@synara/contracts\": \"workspace:*\",\n    \"@synara/shared\": \"workspace:*\",\n    \"@synara/web\": \"workspace:*\",\n    \"@types/bun\": \"catalog:\",\n    \"@types/node\": \"catalog:\",\n    \"@types/ws\": \"^8.5.13\",\n    \"tsdown\": \"catalog:\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  },\n  \"engines\": {\n    \"node\": \"^22.19 || ^23.11 || >=24.10\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "/dependencies/@synara/relay-protocol",
+          "authorBefore": null,
+          "authorAfter": "workspace:*"
+        },
+        {
+          "field": "/dependencies/jose",
+          "authorBefore": null,
+          "authorAfter": "^6.1.0"
+        }
+      ],
+      "baseBlob": "4cd2a4146c652205697f0078d2cc792fdbad6ff8",
+      "bytes": 1991,
+      "sha256": "8e0948532af5759386309780b94e09c6ac8bde50c6976eff78dba8c32c20588e",
+      "gitBlob": "ef5aaf22959e39895fd2d7947671d17a73ca74f6"
+    },
+    {
+      "path": "apps/web/package.json",
+      "content": "{\n  \"name\": \"@synara/web\",\n  \"version\": \"1.0.3\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"vite build\",\n    \"preview\": \"vite preview\",\n    \"typecheck\": \"node ../../node_modules/@typescript/native/bin/tsc --noEmit --tsBuildInfoFile node_modules/.cache/typescript-native.tsbuildinfo\",\n    \"typecheck:native\": \"bun run typecheck\",\n    \"typecheck:legacy\": \"tsc --noEmit\",\n    \"test\": \"vitest run --passWithNoTests\",\n    \"test:browser\": \"vitest run --config vitest.browser.config.ts\",\n    \"test:browser:stable\": \"vitest run --config vitest.browser.stable.config.ts\",\n    \"test:browser:ci\": \"vitest run --config vitest.browser.ci.config.ts\",\n    \"test:browser:geometry\": \"vitest run --config vitest.browser.geometry.config.ts\",\n    \"test:electron:e2e\": \"playwright test --config playwright.electron.config.ts\",\n    \"test:browser:install\": \"playwright install --with-deps chromium\",\n    \"measure:lcp\": \"node scripts/measure-lcp.mjs\"\n  },\n  \"dependencies\": {\n    \"@base-ui/react\": \"^1.5.0\",\n    \"@dnd-kit/core\": \"^6.3.1\",\n    \"@dnd-kit/modifiers\": \"^9.0.0\",\n    \"@dnd-kit/sortable\": \"^10.0.0\",\n    \"@dnd-kit/utilities\": \"^3.2.2\",\n    \"@fontsource-variable/jetbrains-mono\": \"^5.2.8\",\n    \"@formkit/auto-animate\": \"^0.9.0\",\n    \"@legendapp/list\": \"3.3.3\",\n    \"@lexical/react\": \"^0.41.0\",\n    \"@pierre/diffs\": \"1.3.5\",\n    \"@synara/contracts\": \"workspace:*\",\n    \"@synara/shared\": \"workspace:*\",\n    \"@tabler/icons-react\": \"^3.44.0\",\n    \"@tanstack/react-pacer\": \"^0.19.4\",\n    \"@tanstack/react-query\": \"^5.90.0\",\n    \"@tanstack/react-router\": \"^1.160.2\",\n    \"@tanstack/react-virtual\": \"^3.13.18\",\n    \"@xterm/addon-clipboard\": \"0.2.0\",\n    \"@xterm/addon-fit\": \"^0.11.0\",\n    \"@xterm/addon-image\": \"0.9.0\",\n    \"@xterm/addon-ligatures\": \"0.10.0\",\n    \"@xterm/addon-search\": \"^0.16.0\",\n    \"@xterm/addon-unicode11\": \"^0.9.0\",\n    \"@xterm/addon-webgl\": \"^0.19.0\",\n    \"@xterm/xterm\": \"^6.0.0\",\n    \"class-variance-authority\": \"^0.7.1\",\n    \"effect\": \"catalog:\",\n    \"html-to-image\": \"^1.11.13\",\n    \"katex\": \"^0.16.45\",\n    \"lexical\": \"^0.41.0\",\n    \"micromark-util-decode-string\": \"2.0.1\",\n    \"pdfjs-dist\": \"^5.4.296\",\n    \"react\": \"^19.0.0\",\n    \"react-colorful\": \"^5.6.1\",\n    \"react-dom\": \"^19.0.0\",\n    \"react-icons\": \"^5.6.0\",\n    \"react-markdown\": \"^10.1.0\",\n    \"rehype-katex\": \"^7.0.1\",\n    \"rehype-raw\": \"^7.0.0\",\n    \"rehype-sanitize\": \"^6.0.0\",\n    \"remark-breaks\": \"^4.0.0\",\n    \"remark-gfm\": \"^4.0.1\",\n    \"remark-math\": \"^6.0.0\",\n    \"shadcn\": \"^4.8.3\",\n    \"tailwind-merge\": \"^3.6.0\",\n    \"zustand\": \"^5.0.11\",\n    \"@synara/profile-ui\": \"workspace:*\",\n    \"@synara/relay-protocol\": \"workspace:*\"\n  },\n  \"devDependencies\": {\n    \"@babel/core\": \"^8.0.1\",\n    \"@effect/language-service\": \"catalog:\",\n    \"@rolldown/plugin-babel\": \"^0.2.0\",\n    \"@tailwindcss/vite\": \"^4.0.0\",\n    \"@tanstack/router-plugin\": \"^1.161.0\",\n    \"@types/babel__core\": \"^7.20.5\",\n    \"@types/mdast\": \"4.0.4\",\n    \"@types/react\": \"^19.0.0\",\n    \"@types/react-dom\": \"^19.0.0\",\n    \"@vitejs/plugin-react\": \"^6.0.0\",\n    \"@vitest/browser-playwright\": \"^4.1.10\",\n    \"babel-plugin-react-compiler\": \"1.0.0\",\n    \"msw\": \"2.12.11\",\n    \"playwright\": \"^1.58.2\",\n    \"tailwindcss\": \"^4.0.0\",\n    \"typescript\": \"catalog:\",\n    \"vite\": \"^8.1.4\",\n    \"vitest\": \"catalog:\",\n    \"vitest-browser-react\": \"^2.0.5\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "/dependencies/@synara/profile-ui",
+          "authorBefore": null,
+          "authorAfter": "workspace:*"
+        },
+        {
+          "field": "/dependencies/@synara/relay-protocol",
+          "authorBefore": null,
+          "authorAfter": "workspace:*"
+        }
+      ],
+      "baseBlob": "c206b01ad478ca547d9dc8acbe77d24f586aeb1f",
+      "bytes": 3326,
+      "sha256": "71a6ca0ccb6aa06dc99680dda39e33514f82e7a4c246434d9355a4842d9e072c",
+      "gitBlob": "72c399ebe6c5d7a7f151aad090effba403fd4633"
+    },
+    {
+      "path": "packages/profile-ui/package.json",
+      "content": "{\n  \"name\": \"@synara/profile-ui\",\n  \"version\": \"0.0.0-alpha.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"exports\": {\n    \"./logo\": {\n      \"types\": \"./src/logo.tsx\",\n      \"import\": \"./src/logo.tsx\"\n    },\n    \"./avatar\": {\n      \"types\": \"./src/avatar.tsx\",\n      \"import\": \"./src/avatar.tsx\"\n    },\n    \"./heatmap\": {\n      \"types\": \"./src/heatmap.tsx\",\n      \"import\": \"./src/heatmap.tsx\"\n    },\n    \"./formatting\": {\n      \"types\": \"./src/formatting.ts\",\n      \"import\": \"./src/formatting.ts\"\n    },\n    \"./sections\": {\n      \"types\": \"./src/sections.tsx\",\n      \"import\": \"./src/sections.tsx\"\n    },\n    \"./provider-icon\": {\n      \"types\": \"./src/providerIcon.tsx\",\n      \"import\": \"./src/providerIcon.tsx\"\n    },\n    \"./skeleton\": {\n      \"types\": \"./src/skeleton.tsx\",\n      \"import\": \"./src/skeleton.tsx\"\n    }\n  },\n  \"scripts\": {\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"vitest run\"\n  },\n  \"dependencies\": {\n    \"class-variance-authority\": \"^0.7.1\",\n    \"tailwind-merge\": \"^3.6.0\"\n  },\n  \"devDependencies\": {\n    \"@types/react\": \"^19.0.0\",\n    \"react\": \"^19.0.0\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  },\n  \"peerDependencies\": {\n    \"react\": \"^19.0.0\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "",
+          "authorBefore": null,
+          "authorAfter": "exact original added workspace"
+        }
+      ],
+      "baseBlob": null,
+      "authorBlob": "8bf24bd51df1bd44ce20da9eb368e70dda438713",
+      "bytes": 1192,
+      "sha256": "0932d38c59b18963b269ed21e39316b99941d19bba4a2cdcfa510a86f8e9c1f0",
+      "gitBlob": "8bf24bd51df1bd44ce20da9eb368e70dda438713"
+    },
+    {
+      "path": "packages/relay-protocol/package.json",
+      "content": "{\n  \"name\": \"@synara/relay-protocol\",\n  \"version\": \"0.0.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"exports\": {\n    \".\": {\n      \"types\": \"./src/index.ts\",\n      \"import\": \"./src/index.ts\"\n    }\n  },\n  \"scripts\": {\n    \"build\": \"echo 'no build step'\",\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"vitest run\"\n  },\n  \"dependencies\": {\n    \"@synara/contracts\": \"workspace:*\",\n    \"effect\": \"catalog:\"\n  },\n  \"devDependencies\": {\n    \"@types/node\": \"catalog:\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "",
+          "authorBefore": null,
+          "authorAfter": "exact original added workspace"
+        }
+      ],
+      "baseBlob": null,
+      "authorBlob": "f6b46988bf0b14ea27349ec1ee50eebb88525458",
+      "bytes": 522,
+      "sha256": "62373404ed8967d7b71689e85f62fb8ff112d13e8bb1f8dbf31b686562b645f7",
+      "gitBlob": "f6b46988bf0b14ea27349ec1ee50eebb88525458"
+    },
+    {
+      "path": "packages/shared/package.json",
+      "content": "{\n  \"name\": \"@synara/shared\",\n  \"version\": \"0.0.0-alpha.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"exports\": {\n    \"./turnStopActivity\": {\n      \"types\": \"./src/turnStopActivity.ts\",\n      \"import\": \"./src/turnStopActivity.ts\"\n    },\n    \"./diagnosticIssue\": {\n      \"types\": \"./src/diagnosticIssue.ts\",\n      \"import\": \"./src/diagnosticIssue.ts\"\n    },\n    \"./betaFeatures\": {\n      \"types\": \"./src/betaFeatures.ts\",\n      \"import\": \"./src/betaFeatures.ts\"\n    },\n    \"./cuaActionDiagnostics\": {\n      \"types\": \"./src/cuaActionDiagnostics.ts\",\n      \"import\": \"./src/cuaActionDiagnostics.ts\"\n    },\n    \"./computerInvocation\": {\n      \"types\": \"./src/computerInvocation.ts\",\n      \"import\": \"./src/computerInvocation.ts\"\n    },\n    \"./modelImageBudget\": {\n      \"types\": \"./src/modelImageBudget.ts\",\n      \"import\": \"./src/modelImageBudget.ts\"\n    },\n    \"./claudeCache\": {\n      \"types\": \"./src/claudeCache.ts\",\n      \"import\": \"./src/claudeCache.ts\"\n    },\n    \"./model\": {\n      \"types\": \"./src/model.ts\",\n      \"import\": \"./src/model.ts\"\n    },\n    \"./runtimeMode\": {\n      \"types\": \"./src/runtimeMode.ts\",\n      \"import\": \"./src/runtimeMode.ts\"\n    },\n    \"./approvalSessionGrant\": {\n      \"types\": \"./src/approvalSessionGrant.ts\",\n      \"import\": \"./src/approvalSessionGrant.ts\"\n    },\n    \"./git\": {\n      \"types\": \"./src/git.ts\",\n      \"import\": \"./src/git.ts\"\n    },\n    \"./kanban\": {\n      \"types\": \"./src/kanban.ts\",\n      \"import\": \"./src/kanban.ts\"\n    },\n    \"./githubAvatar\": {\n      \"types\": \"./src/githubAvatar.ts\",\n      \"import\": \"./src/githubAvatar.ts\"\n    },\n    \"./githubRepository\": {\n      \"types\": \"./src/githubRepository.ts\",\n      \"import\": \"./src/githubRepository.ts\"\n    },\n    \"./logging\": {\n      \"types\": \"./src/logging.ts\",\n      \"import\": \"./src/logging.ts\"\n    },\n    \"./KeyedSingleFlightCache\": {\n      \"types\": \"./src/KeyedSingleFlightCache.ts\",\n      \"import\": \"./src/KeyedSingleFlightCache.ts\"\n    },\n    \"./errorMessages\": {\n      \"types\": \"./src/errorMessages.ts\",\n      \"import\": \"./src/errorMessages.ts\"\n    },\n    \"./shell\": {\n      \"types\": \"./src/shell.ts\",\n      \"import\": \"./src/shell.ts\"\n    },\n    \"./loginShellEnvironment\": {\n      \"types\": \"./src/loginShellEnvironment.ts\",\n      \"import\": \"./src/loginShellEnvironment.ts\"\n    },\n    \"./synaraHome\": {\n      \"types\": \"./src/synaraHome.ts\",\n      \"import\": \"./src/synaraHome.ts\"\n    },\n    \"./staticSnapshot\": {\n      \"types\": \"./src/staticSnapshot.ts\",\n      \"import\": \"./src/staticSnapshot.ts\"\n    },\n    \"./windowsProcess\": {\n      \"types\": \"./src/windowsProcess.ts\",\n      \"import\": \"./src/windowsProcess.ts\"\n    },\n    \"./executable\": {\n      \"types\": \"./src/executable.ts\",\n      \"import\": \"./src/executable.ts\"\n    },\n    \"./platformProcess\": {\n      \"types\": \"./src/platformProcess.ts\",\n      \"import\": \"./src/platformProcess.ts\"\n    },\n    \"./processRuntime\": {\n      \"types\": \"./src/processRuntime.ts\",\n      \"import\": \"./src/processRuntime.ts\"\n    },\n    \"./filesystemPlatform\": {\n      \"types\": \"./src/filesystemPlatform.ts\",\n      \"import\": \"./src/filesystemPlatform.ts\"\n    },\n    \"./platformEnvironment\": {\n      \"types\": \"./src/platformEnvironment.ts\",\n      \"import\": \"./src/platformEnvironment.ts\"\n    },\n    \"./wslBridge\": {\n      \"types\": \"./src/wslBridge.ts\",\n      \"import\": \"./src/wslBridge.ts\"\n    },\n    \"./windowsCertificate\": {\n      \"types\": \"./src/windowsCertificate.ts\",\n      \"import\": \"./src/windowsCertificate.ts\"\n    },\n    \"./codexConfig\": {\n      \"types\": \"./src/codexConfig.ts\",\n      \"import\": \"./src/codexConfig.ts\"\n    },\n    \"./desktopChrome\": {\n      \"types\": \"./src/desktopChrome.ts\",\n      \"import\": \"./src/desktopChrome.ts\"\n    },\n    \"./desktopTitleBar\": {\n      \"types\": \"./src/desktopTitleBar.ts\",\n      \"import\": \"./src/desktopTitleBar.ts\"\n    },\n    \"./desktopIdentity\": {\n      \"types\": \"./src/desktopIdentity.ts\",\n      \"import\": \"./src/desktopIdentity.ts\"\n    },\n    \"./betaChannel\": {\n      \"types\": \"./src/betaChannel.ts\",\n      \"import\": \"./src/betaChannel.ts\"\n    },\n    \"./diagnosticsRedaction\": {\n      \"types\": \"./src/diagnosticsRedaction.ts\",\n      \"import\": \"./src/diagnosticsRedaction.ts\"\n    },\n    \"./Net\": {\n      \"types\": \"./src/Net.ts\",\n      \"import\": \"./src/Net.ts\"\n    },\n    \"./KeyedDrainableWorker\": {\n      \"types\": \"./src/KeyedDrainableWorker.ts\",\n      \"import\": \"./src/KeyedDrainableWorker.ts\"\n    },\n    \"./DrainableWorker\": {\n      \"types\": \"./src/DrainableWorker.ts\",\n      \"import\": \"./src/DrainableWorker.ts\"\n    },\n    \"./chatThreads\": {\n      \"types\": \"./src/chatThreads.ts\",\n      \"import\": \"./src/chatThreads.ts\"\n    },\n    \"./todo\": {\n      \"types\": \"./src/todo.ts\",\n      \"import\": \"./src/todo.ts\"\n    },\n    \"./localServers\": {\n      \"types\": \"./src/localServers.ts\",\n      \"import\": \"./src/localServers.ts\"\n    },\n    \"./browserShortcuts\": {\n      \"types\": \"./src/browserShortcuts.ts\",\n      \"import\": \"./src/browserShortcuts.ts\"\n    },\n    \"./appSnapShortcut\": {\n      \"types\": \"./src/appSnapShortcut.ts\",\n      \"import\": \"./src/appSnapShortcut.ts\"\n    },\n    \"./browserSession\": {\n      \"types\": \"./src/browserSession.ts\",\n      \"import\": \"./src/browserSession.ts\"\n    },\n    \"./conversationEdit\": {\n      \"types\": \"./src/conversationEdit.ts\",\n      \"import\": \"./src/conversationEdit.ts\"\n    },\n    \"./schemaJson\": {\n      \"types\": \"./src/schemaJson.ts\",\n      \"import\": \"./src/schemaJson.ts\"\n    },\n    \"./Struct\": {\n      \"types\": \"./src/Struct.ts\",\n      \"import\": \"./src/Struct.ts\"\n    },\n    \"./serverSettings\": {\n      \"types\": \"./src/serverSettings.ts\",\n      \"import\": \"./src/serverSettings.ts\"\n    },\n    \"./terminalThreads\": {\n      \"types\": \"./src/terminalThreads.ts\",\n      \"import\": \"./src/terminalThreads.ts\"\n    },\n    \"./threadEnvironment\": {\n      \"types\": \"./src/threadEnvironment.ts\",\n      \"import\": \"./src/threadEnvironment.ts\"\n    },\n    \"./threadDetailEvents\": {\n      \"types\": \"./src/threadDetailEvents.ts\",\n      \"import\": \"./src/threadDetailEvents.ts\"\n    },\n    \"./sidechatExpiry\": {\n      \"types\": \"./src/sidechatExpiry.ts\",\n      \"import\": \"./src/sidechatExpiry.ts\"\n    },\n    \"./sidechatThread\": {\n      \"types\": \"./src/sidechatThread.ts\",\n      \"import\": \"./src/sidechatThread.ts\"\n    },\n    \"./threadSummary\": {\n      \"types\": \"./src/threadSummary.ts\",\n      \"import\": \"./src/threadSummary.ts\"\n    },\n    \"./pendingInteractions\": {\n      \"types\": \"./src/pendingInteractions.ts\",\n      \"import\": \"./src/pendingInteractions.ts\"\n    },\n    \"./groupSlug\": {\n      \"types\": \"./src/groupSlug.ts\",\n      \"import\": \"./src/groupSlug.ts\"\n    },\n    \"./projectContainers\": {\n      \"types\": \"./src/projectContainers.ts\",\n      \"import\": \"./src/projectContainers.ts\"\n    },\n    \"./projectDirectoryName\": {\n      \"types\": \"./src/projectDirectoryName.ts\",\n      \"import\": \"./src/projectDirectoryName.ts\"\n    },\n    \"./projectAgent\": {\n      \"types\": \"./src/projectAgent.ts\",\n      \"import\": \"./src/projectAgent.ts\"\n    },\n    \"./pinnedMessages\": {\n      \"types\": \"./src/pinnedMessages.ts\",\n      \"import\": \"./src/pinnedMessages.ts\"\n    },\n    \"./threadWorkspace\": {\n      \"types\": \"./src/threadWorkspace.ts\",\n      \"import\": \"./src/threadWorkspace.ts\"\n    },\n    \"./projectFolders\": {\n      \"types\": \"./src/projectFolders.ts\",\n      \"import\": \"./src/projectFolders.ts\"\n    },\n    \"./threadHierarchy\": {\n      \"types\": \"./src/threadHierarchy.ts\",\n      \"import\": \"./src/threadHierarchy.ts\"\n    },\n    \"./subagents\": {\n      \"types\": \"./src/subagents.ts\",\n      \"import\": \"./src/subagents.ts\"\n    },\n    \"./agentMentions\": {\n      \"types\": \"./src/agentMentions.ts\",\n      \"import\": \"./src/agentMentions.ts\"\n    },\n    \"./automationCompletionPolicy\": {\n      \"types\": \"./src/automationCompletionPolicy.ts\",\n      \"import\": \"./src/automationCompletionPolicy.ts\"\n    },\n    \"./automationMode\": {\n      \"types\": \"./src/automationMode.ts\",\n      \"import\": \"./src/automationMode.ts\"\n    },\n    \"./worktreeHandoff\": {\n      \"types\": \"./src/worktreeHandoff.ts\",\n      \"import\": \"./src/worktreeHandoff.ts\"\n    },\n    \"./path\": {\n      \"types\": \"./src/path.ts\",\n      \"import\": \"./src/path.ts\"\n    },\n    \"./text\": {\n      \"types\": \"./src/text.ts\",\n      \"import\": \"./src/text.ts\"\n    },\n    \"./toolOutputSummary\": {\n      \"types\": \"./src/toolOutputSummary.ts\",\n      \"import\": \"./src/toolOutputSummary.ts\"\n    },\n    \"./workspaceFileWrite\": {\n      \"types\": \"./src/workspaceFileWrite.ts\",\n      \"import\": \"./src/workspaceFileWrite.ts\"\n    },\n    \"./localPreviewFiles\": {\n      \"types\": \"./src/localPreviewFiles.ts\",\n      \"import\": \"./src/localPreviewFiles.ts\"\n    },\n    \"./binaryTransfer\": {\n      \"types\": \"./src/binaryTransfer.ts\",\n      \"import\": \"./src/binaryTransfer.ts\"\n    },\n    \"./outboundHttpPolicy\": {\n      \"types\": \"./src/outboundHttpPolicy.ts\",\n      \"import\": \"./src/outboundHttpPolicy.ts\"\n    },\n    \"./outboundHttp\": {\n      \"types\": \"./src/outboundHttp.ts\",\n      \"import\": \"./src/outboundHttp.ts\"\n    },\n    \"./chatGptVoiceTranscription\": {\n      \"types\": \"./src/chatGptVoiceTranscription.ts\",\n      \"import\": \"./src/chatGptVoiceTranscription.ts\"\n    },\n    \"./composerSlashCommands\": {\n      \"types\": \"./src/composerSlashCommands.ts\",\n      \"import\": \"./src/composerSlashCommands.ts\"\n    },\n    \"./threadExport\": {\n      \"types\": \"./src/threadExport.ts\",\n      \"import\": \"./src/threadExport.ts\"\n    },\n    \"./editorIcons\": {\n      \"types\": \"./src/editorIcons.ts\",\n      \"import\": \"./src/editorIcons.ts\"\n    },\n    \"./providerUsage\": {\n      \"types\": \"./src/providerUsage.ts\",\n      \"import\": \"./src/providerUsage.ts\"\n    },\n    \"./providerMetadata\": {\n      \"types\": \"./src/providerMetadata.ts\",\n      \"import\": \"./src/providerMetadata.ts\"\n    },\n    \"./providerInstances\": {\n      \"types\": \"./src/providerInstances.ts\",\n      \"import\": \"./src/providerInstances.ts\"\n    },\n    \"./providerCliProfiles\": {\n      \"types\": \"./src/providerCliProfiles.ts\",\n      \"import\": \"./src/providerCliProfiles.ts\"\n    },\n    \"./formatBytes\": {\n      \"types\": \"./src/formatBytes.ts\",\n      \"import\": \"./src/formatBytes.ts\"\n    },\n    \"./cli\": {\n      \"types\": \"./src/cli.ts\",\n      \"import\": \"./src/cli.ts\"\n    },\n    \"./migrationRecovery\": {\n      \"types\": \"./src/migrationRecovery.ts\",\n      \"import\": \"./src/migrationRecovery.ts\"\n    },\n    \"./threadMentions\": {\n      \"types\": \"./src/threadMentions.ts\",\n      \"import\": \"./src/threadMentions.ts\"\n    },\n    \"./browserAutomationCatalogue\": {\n      \"types\": \"./src/browserAutomationCatalogue.ts\",\n      \"import\": \"./src/browserAutomationCatalogue.ts\"\n    },\n    \"./browserAutomationPresentation\": {\n      \"types\": \"./src/browserAutomationPresentation.ts\",\n      \"import\": \"./src/browserAutomationPresentation.ts\"\n    },\n    \"./browserAutomationErrors\": {\n      \"types\": \"./src/browserAutomationErrors.ts\",\n      \"import\": \"./src/browserAutomationErrors.ts\"\n    },\n    \"./browserAutomationMcpError\": {\n      \"types\": \"./src/browserAutomationMcpError.ts\",\n      \"import\": \"./src/browserAutomationMcpError.ts\"\n    },\n    \"./providerDeliveryBlock\": {\n      \"types\": \"./src/providerDeliveryBlock.ts\",\n      \"import\": \"./src/providerDeliveryBlock.ts\"\n    },\n    \"./browserAnnotations\": {\n      \"types\": \"./src/browserAnnotations.ts\",\n      \"import\": \"./src/browserAnnotations.ts\"\n    },\n    \"./deviceFrame\": {\n      \"types\": \"./src/deviceFrame.ts\",\n      \"import\": \"./src/deviceFrame.ts\"\n    },\n    \"./jsonrpc-stdio\": {\n      \"types\": \"./src/jsonrpc-stdio.ts\",\n      \"import\": \"./src/jsonrpc-stdio.ts\"\n    },\n    \"./frameTransport\": {\n      \"types\": \"./src/frameTransport.ts\",\n      \"import\": \"./src/frameTransport.ts\"\n    },\n    \"./computerFrame\": {\n      \"types\": \"./src/computerFrame.ts\",\n      \"import\": \"./src/computerFrame.ts\"\n    },\n    \"./deviceHelperCache\": {\n      \"types\": \"./src/deviceHelperCache.ts\",\n      \"import\": \"./src/deviceHelperCache.ts\"\n    },\n    \"./computerKeyNames\": {\n      \"types\": \"./src/computerKeyNames.ts\",\n      \"import\": \"./src/computerKeyNames.ts\"\n    },\n    \"./computerGrants\": {\n      \"types\": \"./src/computerGrants.ts\",\n      \"import\": \"./src/computerGrants.ts\"\n    },\n    \"./lengthPrefixedRecords\": {\n      \"types\": \"./src/lengthPrefixedRecords.ts\",\n      \"import\": \"./src/lengthPrefixedRecords.ts\"\n    },\n    \"./uiTreeTargeting\": {\n      \"types\": \"./src/uiTreeTargeting.ts\",\n      \"import\": \"./src/uiTreeTargeting.ts\"\n    },\n    \"./searchQuery\": {\n      \"types\": \"./src/searchQuery.ts\",\n      \"import\": \"./src/searchQuery.ts\"\n    },\n    \"./cuaDriverProtocol\": {\n      \"types\": \"./src/cuaDriverProtocol.ts\",\n      \"import\": \"./src/cuaDriverProtocol.ts\"\n    },\n    \"./desktopOperationQueue\": {\n      \"types\": \"./src/desktopOperationQueue.ts\",\n      \"import\": \"./src/desktopOperationQueue.ts\"\n    },\n    \"./asyncUserInput\": {\n      \"types\": \"./src/asyncUserInput.ts\",\n      \"import\": \"./src/asyncUserInput.ts\"\n    },\n    \"./groupThreadState\": {\n      \"types\": \"./src/groupThreadState.ts\",\n      \"import\": \"./src/groupThreadState.ts\"\n    },\n    \"./coordinatorCheckin\": {\n      \"types\": \"./src/coordinatorCheckin.ts\",\n      \"import\": \"./src/coordinatorCheckin.ts\"\n    },\n    \"./keybindingRules\": {\n      \"types\": \"./src/keybindingRules.ts\",\n      \"import\": \"./src/keybindingRules.ts\"\n    },\n    \"./account\": {\n      \"types\": \"./src/account.ts\",\n      \"import\": \"./src/account.ts\"\n    },\n    \"./deviceKey\": {\n      \"types\": \"./src/deviceKey.ts\",\n      \"import\": \"./src/deviceKey.ts\"\n    },\n    \"./transportRace\": {\n      \"types\": \"./src/transportRace.ts\",\n      \"import\": \"./src/transportRace.ts\"\n    },\n    \"./hostSecrets\": {\n      \"types\": \"./src/hostSecrets.ts\",\n      \"import\": \"./src/hostSecrets.ts\"\n    }\n  },\n  \"scripts\": {\n    \"typecheck\": \"node ../../node_modules/@typescript/native/bin/tsc --noEmit\",\n    \"typecheck:native\": \"bun run typecheck\",\n    \"typecheck:legacy\": \"tsc --noEmit\",\n    \"test\": \"vitest run\"\n  },\n  \"dependencies\": {\n    \"@synara/contracts\": \"workspace:*\",\n    \"effect\": \"catalog:\",\n    \"jose\": \"^6.1.0\"\n  },\n  \"devDependencies\": {\n    \"@effect/language-service\": \"catalog:\",\n    \"@effect/vitest\": \"catalog:\",\n    \"@types/node\": \"catalog:\",\n    \"typescript\": \"catalog:\",\n    \"vitest\": \"catalog:\"\n  }\n}\n",
+      "changes": [
+        {
+          "field": "/exports/./account",
+          "authorBefore": null,
+          "authorAfter": {
+            "types": "./src/account.ts",
+            "import": "./src/account.ts"
+          }
+        },
+        {
+          "field": "/exports/./deviceKey",
+          "authorBefore": null,
+          "authorAfter": {
+            "types": "./src/deviceKey.ts",
+            "import": "./src/deviceKey.ts"
+          }
+        },
+        {
+          "field": "/exports/./transportRace",
+          "authorBefore": null,
+          "authorAfter": {
+            "types": "./src/transportRace.ts",
+            "import": "./src/transportRace.ts"
+          }
+        },
+        {
+          "field": "/exports/./hostSecrets",
+          "authorBefore": null,
+          "authorAfter": {
+            "types": "./src/hostSecrets.ts",
+            "import": "./src/hostSecrets.ts"
+          }
+        },
+        {
+          "field": "/dependencies/jose",
+          "authorBefore": null,
+          "authorAfter": "^6.1.0"
+        }
+      ],
+      "baseBlob": "ac5881289427b87a805e4206f8b528600042f0c0",
+      "bytes": 14118,
+      "sha256": "8c638a6fd3f4985112cf0d0cb0206eb7e671713f24c5128b4f068361bcf12300",
+      "gitBlob": "afc4299eb0210150d377bf7acfd6246ae3e07a69"
+    }
+  ],
+  "allManifestPaths": [
+    "apps/api/package.json",
+    "apps/desktop/package.json",
+    "apps/e2e/package.json",
+    "apps/marketing/package.json",
+    "apps/profiles/package.json",
+    "apps/relay/package.json",
+    "apps/server/package.json",
+    "apps/web/package.json",
+    "package.json",
+    "packages/contracts/package.json",
+    "packages/profile-ui/package.json",
+    "packages/relay-protocol/package.json",
+    "packages/shared/package.json",
+    "scripts/package.json"
+  ],
+  "qualification": "Dependency-only candidate recomputed from authoritative current/original/base manifests through the connector during local executor outage. Existing fields preserve current main; only original dependency/exports additions and six exact original added workspace manifests are overlaid. Not a claim of unread local WIP byte identity or full application install/lifecycle/test execution."
+}
