@@ -6,6 +6,7 @@
 // Exports: useTimelineRowHeightHints
 
 import type { LegendListRef } from "@legendapp/list/react";
+import type { MessagesTimelineRow } from "./MessagesTimeline.logic";
 import { useCallback, useLayoutEffect, useMemo, useRef, type RefObject } from "react";
 
 import {
@@ -17,7 +18,10 @@ import {
 export function useTimelineRowHeightHints(
   listRef: RefObject<LegendListRef | null>,
   chatFontSizePx: number,
+  rows: readonly MessagesTimelineRow[],
+  enabled: boolean,
 ) {
+  const rowsById = useMemo(() => new Map(rows.map((row) => [row.id, row])), [rows]);
   const rowWidthPxRef = useRef(DEFAULT_TIMELINE_ROW_WIDTH_PX);
   const rowWidthMeasuredRef = useRef(false);
 
@@ -48,8 +52,8 @@ export function useTimelineRowHeightHints(
       createTimelineRowHeightEstimator(() => ({
         rowWidthPx: rowWidthPxRef.current,
         chatFontSizePx,
-      })),
-    [chatFontSizePx],
+      }), enabled, () => rowWidthMeasuredRef.current),
+    [chatFontSizePx, enabled],
   );
 
   const onItemSizeChanged = useCallback(
@@ -59,9 +63,11 @@ export function useTimelineRowHeightHints(
         itemKey,
         { rowWidthPx: rowWidthPxRef.current, chatFontSizePx },
         size,
+        rowsById.get(itemKey),
+        enabled,
       );
     },
-    [chatFontSizePx, measureRowWidth],
+    [chatFontSizePx, measureRowWidth, rowsById, enabled],
   );
 
   return { getEstimatedItemSize, onItemSizeChanged };

@@ -492,7 +492,8 @@ it.skipIf(process.platform === "win32")(
       // The process-table scan runs in a child process; RPCs keep being served.
       expect(timerFiredDuringScan).toBe(true);
     } finally {
-      child.kill("SIGKILL");
+      // The shell waits for its finite sleep child. Await both natural exits;
+      // killing only the shell would orphan the still-running descendant.
       await exited;
     }
   },

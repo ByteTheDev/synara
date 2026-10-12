@@ -809,7 +809,6 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     activeFindMatchRef.current = findHighlight?.activeMatch ?? null;
   }, [findHighlight]);
   const observeTimelineRow = useTimelineRowOverlapGuard();
-  const rowHeightHints = useTimelineRowHeightHints(resolvedListRef, normalizedChatFontSizePx);
   useTailAnchorScroll({
     listRef: resolvedListRef,
     timelineRootRef,
@@ -858,6 +857,15 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     ],
   );
   const rows = useStableRows(rawRows);
+  const rowHeightHints = useTimelineRowHeightHints(
+    resolvedListRef,
+    normalizedChatFontSizePx,
+    rows,
+    // These contexts add chrome outside the immutable row payload. Their native
+    // measurements remain local to this mount, where LegendList owns them.
+    !subagentThread && !crossTaskOrigin && !forkSource && !conversationOnly &&
+      goalAchievements.length === 0 && !findHighlight && (pinnedMessageIds?.size ?? 0) === 0,
+  );
   const canRenderForkSourceDivider = forkSource !== null && onOpenThread !== undefined;
   const forkSourceDivider = useMemo(
     () =>
