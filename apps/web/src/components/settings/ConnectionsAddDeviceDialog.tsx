@@ -129,15 +129,6 @@ function AddDeviceDialogContent({
         )
       : null;
 
-  const cancel = async () => {
-    if (invitation && remaining && joined.length === 0) {
-      await callRemoteAccess({ operation: "cancel-invitation", inviteId: invitation.inviteId })
-        .then(() => onChanged())
-        .catch(() => {});
-    }
-    onClose();
-  };
-
   return (
     <DialogPopup className="max-w-sm">
       <DialogHeader>
@@ -293,8 +284,10 @@ function AddDeviceDialogContent({
                 {invitation ? "New code" : "Try again"}
               </Button>
             ) : null}
-            <Button shape="capsule" variant="subtle" onClick={() => void cancel()}>
-              Cancel
+            {/* Closing keeps the code: people close this to type it on the phone.
+                It expires on its own and can be cancelled from Connections. */}
+            <Button shape="capsule" variant="subtle" onClick={onClose}>
+              Close
             </Button>
           </>
         )}

@@ -423,16 +423,17 @@ describe("Connections settings", () => {
         deviceJkt: "Exact-requesting-device-fingerprint-123456789",
       }),
     );
-    await page.getByRole("button", { name: "Cancel", exact: true }).click();
-    await vi.waitFor(() =>
-      expect(fixture.request).toHaveBeenCalledWith({
-        operation: "cancel-invitation",
-        inviteId: "qr-fixture",
-      }),
-    );
+    await page.getByRole("button", { name: "Close", exact: true }).click();
     await expect
       .element(page.getByRole("heading", { name: "Add a device" }))
       .not.toBeInTheDocument();
+    // Closing keeps the code redeemable: it is often closed to type the code on the phone.
+    expect(
+      fixture.request.mock.calls.filter(
+        ([request]) =>
+          request.operation === "cancel-invitation" && request.inviteId === "qr-fixture",
+      ),
+    ).toHaveLength(0);
     await page.getByRole("button", { name: "Add", exact: true }).click();
     await expect.element(page.getByText("ABCD-2345", { exact: true })).toBeVisible();
     expect(
