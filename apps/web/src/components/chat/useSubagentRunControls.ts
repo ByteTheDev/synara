@@ -56,13 +56,19 @@ export function useSubagentRunControls(stripSourceThreadId: ThreadId | null) {
       const api = readNativeApi();
       if (!api || !stripSourceThreadId) return;
       try {
-        const provider = getThreadFromState(useStore.getState(), stripSourceThreadId)?.session
-          ?.provider;
+        const snapshot = useStore.getState();
+        let owner = getThreadFromState(snapshot, stripSourceThreadId);
+        const visited = new Set<ThreadId>();
+        while (owner && !owner.session && owner.parentThreadId && !visited.has(owner.id)) {
+          visited.add(owner.id);
+          owner = getThreadFromState(snapshot, owner.parentThreadId);
+        }
+        const provider = owner?.session?.provider;
         if (provider === "devin") {
           await api.orchestration.dispatchCommand({
             type: "thread.task.stop",
             commandId: newCommandId(),
-            threadId: stripSourceThreadId,
+            threadId: owner?.id ?? stripSourceThreadId,
             taskId: item.providerThreadId,
             createdAt: new Date().toISOString(),
           });

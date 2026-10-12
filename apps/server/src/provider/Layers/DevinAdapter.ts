@@ -2570,6 +2570,7 @@ export function makeDevinAdapter(
           };
 
           const acp = yield* createAcpRuntime({
+            assistantItemScope: (metadata) => readDevinSubagentContext(metadata)?.parentAgentId,
             devinSettings: effectiveDevinSettings,
             childProcessSpawner,
             cwd,
@@ -3483,6 +3484,27 @@ export function makeDevinAdapter(
               );
             }
 
+            if (resumeSessionId === undefined) {
+              for (const task of ctx.pendingTaskReconciliations.values()) {
+                yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+                  type: "task.completed",
+                  ...(yield* makeEventStamp()),
+                  provider: PROVIDER,
+                  threadId: ctx.threadId,
+                  turnId: task.turnId,
+                  providerRefs: devinProviderRefsForAgent(ctx, task.parentAgentId),
+                  payload: {
+                    taskId: task.taskId,
+                    status: "failed",
+                    reconcilesStop: true,
+                    ...(task.toolUseId ? { toolUseId: task.toolUseId } : {}),
+                    summary:
+                      "The prior Devin session could not be resumed; this task cannot be tracked or controlled.",
+                  },
+                });
+              }
+              ctx.pendingTaskReconciliations.clear();
+            }
             yield* registerReplayedDevinTasks(ctx);
             yield* offerRuntimeEvent(input.lifecycleGeneration, {
               type: "session.started",

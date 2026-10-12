@@ -4023,3 +4023,57 @@ it("routes late child tools, text and completion to the launch turn after a new 
     ),
   );
 });
+
+it("settles unrecoverable task tracking when a resumed session falls back to a fresh session", async () => {
+  const runtime = makeEventAcpRuntime(() => Effect.never);
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("fresh-recovery-tasks");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      yield* Effect.yieldNow;
+      yield* adapter.startSession({
+        provider: "devin",
+        threadId,
+        runtimeMode: "full-access",
+        pendingTaskReconciliations: [
+          {
+            taskId: RuntimeTaskId.makeUnsafe("prior-task"),
+            turnId: TurnId.makeUnsafe("prior-turn"),
+            toolUseId: "prior-tool",
+          },
+        ],
+      });
+      yield* Effect.sleep(1);
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "task.completed",
+          turnId: "prior-turn",
+          payload: expect.objectContaining({
+            taskId: "prior-task",
+            toolUseId: "prior-tool",
+            status: "failed",
+            reconcilesStop: true,
+          }),
+        }),
+      );
+      expect(events.some((event) => event.type === "task.started")).toBe(false);
+      yield* adapter.sendTurn({ threadId, input: "Fresh work", attachments: [] });
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(runtime.runtime, runtime.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
+  );
+});
+
+afterEach(() => vi.useRealTimers());
