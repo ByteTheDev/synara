@@ -184,7 +184,7 @@ describe("planProviderRuntimeReconciliation", () => {
     expect(plans).toEqual([]);
   });
 
-  it("does not preserve an abandoned live runtime with no durable routing binding", () => {
+  it("restores an abandoned live runtime with no durable routing binding", () => {
     expect(
       planProviderRuntimeReconciliation({
         threads: [threadShell()],
@@ -194,7 +194,9 @@ describe("planProviderRuntimeReconciliation", () => {
         nowMs: NOW + 60 * 60_000,
         staleAfterMs: 10_000,
       }),
-    ).toEqual([expect.objectContaining({ action: "settle-interrupted", threadId: THREAD_ID })]);
+    ).toEqual([
+      expect.objectContaining({ action: "restore-running-binding", threadId: THREAD_ID }),
+    ]);
   });
 
   it("does not second-guess matching, fresh, or shared child runtime state", () => {
@@ -1006,4 +1008,23 @@ describe("planProviderRuntimeReconciliation", () => {
       }),
     ]);
   });
+});
+
+it("restores routing for an abandoned live orphan without declaring its turn interrupted", () => {
+  const staleAt = "2026-07-23T19:00:00.000Z";
+  const plans = planProviderRuntimeReconciliation({
+    threads: [
+      threadShell({
+        updatedAt: staleAt,
+        session: { ...threadShell().session!, updatedAt: staleAt },
+      }),
+    ],
+    bindings: [],
+    liveSessions: [liveSession({ status: "running", activeTurnId: LIVE_TURN_ID })],
+    pumpHealth: [],
+    nowMs: NOW,
+  });
+  expect(plans).toEqual([
+    expect.objectContaining({ action: "restore-running-binding", runtimeTurnId: LIVE_TURN_ID }),
+  ]);
 });

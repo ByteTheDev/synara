@@ -1172,6 +1172,7 @@ Gemini 3.8 Flash (Low)
     const root = await fs.mkdtemp(path.join(os.tmpdir(), "synara-antigravity-subagent-events-"));
     let eventFile: string | undefined;
     let child: ChildProcess | undefined;
+    let fakeProcessClosed = false;
     const spawnProcess = ((
       _command: string,
       _args: readonly string[],
@@ -1184,6 +1185,9 @@ Gemini 3.8 Flash (Low)
         stderr: new PassThrough(),
         killed: false,
         kill: () => true,
+      });
+      spawned.once("close", () => {
+        fakeProcessClosed = true;
       });
       child = spawned;
       return spawned;
@@ -1334,6 +1338,10 @@ Gemini 3.8 Flash (Low)
             makeAntigravityAdapterLive({
               ensurePlugin: async () => undefined,
               spawnProcess,
+              teardownProcessTree: async () => {
+                expect(fakeProcessClosed).toBe(true);
+                return completeProcessTeardown();
+              },
             }).pipe(
               Layer.provideMerge(
                 ServerConfig.layerTest(root, { prefix: "antigravity-subagent-events-" }),

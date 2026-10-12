@@ -74,6 +74,7 @@ import {
   getDefaultModel,
   getEffectiveClaudeCodeEffort,
   getModelCapabilities,
+  EMPTY_MODEL_CAPABILITIES,
   getProviderOptionDescriptors,
   hasEffortLevel,
   normalizeClaudeModelOptions,
@@ -466,6 +467,7 @@ interface ClaudeSessionContext {
   currentAutoCompactWindow: number | undefined;
   currentAlwaysThinkingEnabled: boolean | undefined;
   currentEffort: ClaudeApiEffort | null;
+  modelCapabilities: ReturnType<typeof getModelCapabilities>;
   currentUltracode: boolean;
   currentFastMode: boolean;
   lastKnownAutoCompactThreshold: number | undefined;
@@ -1160,7 +1162,7 @@ function toPermissionMode(value: unknown): PermissionMode | undefined {
   }
 }
 
-function mapClaudeModelInfo(model: ModelInfo): ProviderListModelsResult["models"][number] {
+function claudeModelInfoCapabilities(model: ModelInfo) {
   const staticCapabilities = getModelCapabilities(PROVIDER, model.resolvedModel ?? model.value);
   // The SDK knows about new model releases ahead of Synara's static catalog.
   // Explicit no-effort support and an advertised effort ladder are authoritative;
@@ -1206,6 +1208,14 @@ function mapClaudeModelInfo(model: ModelInfo): ProviderListModelsResult["models"
             ),
           ],
         };
+  return capabilities;
+}
+
+function mapClaudeModelInfo(model: ModelInfo): ProviderListModelsResult["models"][number] {
+  const capabilities = claudeModelInfoCapabilities(model);
+  const staticDefault = getDefaultEffort(capabilities);
+  const hasSdkEfforts =
+    model.supportsEffort === false || Array.isArray(model.supportedEffortLevels);
   const optionDescriptors = getProviderOptionDescriptors({
     provider: PROVIDER,
     caps: capabilities,
@@ -1214,13 +1224,14 @@ function mapClaudeModelInfo(model: ModelInfo): ProviderListModelsResult["models"
     slug: model.value,
     ...(model.resolvedModel ? { resolvedModel: model.resolvedModel } : {}),
     name: model.displayName,
-    ...(sdkOptions !== undefined
+    ...(hasSdkEfforts
       ? {
           supportedReasoningEfforts: capabilities.reasoningEffortLevels.map(({ value, label }) => ({
             value,
             label,
           })),
-          ...(staticDefault && sdkEfforts?.some((effort) => effort === staticDefault)
+          ...(staticDefault &&
+          capabilities.reasoningEffortLevels.some((effort) => effort.value === staticDefault)
             ? { defaultReasoningEffort: staticDefault }
             : {}),
         }
@@ -1632,6 +1643,7 @@ function isClaudeNativeSlashCommand(
 function buildPromptText(
   input: ProviderSendTurnInput,
   nativeCommandNames?: ReadonlySet<string>,
+  modelCapabilities?: ReturnType<typeof getModelCapabilities>,
 ): string {
   // Native slash commands (`/compact`, `/design`, plugin commands) must start
   // the payload, including in Plan mode or with a prompt-based effort option.
@@ -1643,7 +1655,7 @@ function buildPromptText(
   const requestedEffort = trimOrNull(rawEffort);
   const claudeModel =
     input.modelSelection?.provider === "claudeAgent" ? input.modelSelection.model : undefined;
-  const caps = getModelCapabilities("claudeAgent", claudeModel);
+  const caps = modelCapabilities ?? getModelCapabilities("claudeAgent", claudeModel);
   const promptEffort =
     requestedEffort === "ultrathink" && caps.promptInjectedEffortLevels.includes("ultrathink")
       ? "ultrathink"
@@ -1690,10 +1702,15 @@ function buildUserMessageEffect(
     readonly fileSystem: FileSystem.FileSystem;
     readonly attachmentsDir: string;
     readonly nativeCommandNames?: ReadonlySet<string> | undefined;
+    readonly modelCapabilities?: ReturnType<typeof getModelCapabilities>;
   },
 ): Effect.Effect<SDKUserMessage, ProviderAdapterRequestError> {
   return Effect.gen(function* () {
-    const text = buildPromptText(input, dependencies.nativeCommandNames);
+    const text = buildPromptText(
+      input,
+      dependencies.nativeCommandNames,
+      dependencies.modelCapabilities,
+    );
     const sdkContent: Array<Record<string, unknown>> = [];
 
     if (text.length > 0) {
@@ -2476,7 +2493,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           ),
         );
         const resolution = resolveClaudeAutoModeModel(discoveredModels, requestedModels);
-        if (resolution.status !== "matched" && !input.requireAuto) return;
+        if (resolution.status !== "matched" && !input.requireAuto) return undefined;
         if (resolution.status === "absent") {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
@@ -2510,6 +2527,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             issue: `Claude model "${resolution.model.displayName}" does not support Auto mode.`,
           });
         }
+        return resolution.model;
       });
     const runtimeEventQueue = yield* Queue.bounded<ProviderRuntimeEvent>(
       PROVIDER_ADAPTER_RUNTIME_EVENT_BUFFER_CAPACITY,
@@ -3954,6 +3972,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           currentAutoCompactWindow: context.currentAutoCompactWindow,
           currentAlwaysThinkingEnabled: undefined,
           currentEffort: context.currentEffort,
+          modelCapabilities: context.modelCapabilities,
           currentUltracode: context.currentUltracode,
           currentFastMode: context.currentFastMode,
           lastKnownAutoCompactThreshold: context.lastKnownAutoCompactThreshold,
@@ -7073,21 +7092,24 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           modelSelection?.options,
         )?.autoCompactWindow;
         const effectiveClaudeModel = modelSelection?.model ?? getDefaultModel("claudeAgent");
-        const caps = getModelCapabilities("claudeAgent", effectiveClaudeModel);
-        const requestedAutoCompactWindowTokens = resolveSelectedClaudeAutoCompactWindow(
+        let caps = getModelCapabilities("claudeAgent", effectiveClaudeModel);
+        const needsSdkCapabilities = caps === EMPTY_MODEL_CAPABILITIES;
+        let requestedAutoCompactWindowTokens = resolveSelectedClaudeAutoCompactWindow(
           effectiveClaudeModel,
           requestedAutoCompactWindow,
         );
         const apiModelId = modelSelection ? resolveApiModelId(modelSelection) : undefined;
-        const effort =
-          requestedEffort && hasEffortLevel(caps, requestedEffort) ? requestedEffort : null;
-        const fastMode = modelSelection?.options?.fastMode === true && caps.supportsFastMode;
-        const thinking = resolveSelectedClaudeThinkingToggle(
+        let effort =
+          requestedEffort && (hasEffortLevel(caps, requestedEffort) || needsSdkCapabilities)
+            ? requestedEffort
+            : null;
+        let fastMode = modelSelection?.options?.fastMode === true && caps.supportsFastMode;
+        let thinking = resolveSelectedClaudeThinkingToggle(
           effectiveClaudeModel,
           modelSelection?.options?.thinking,
         );
-        const effectiveEffort = getEffectiveClaudeCodeEffort(effort);
-        const ultracode = effort === "ultracode" && hasEffortLevel(caps, "xhigh");
+        let effectiveEffort = getEffectiveClaudeCodeEffort(effort);
+        let ultracode = effort === "ultracode" && hasEffortLevel(caps, "xhigh");
         const permissionMode =
           input.runtimeMode === "auto"
             ? "auto"
@@ -7234,15 +7256,16 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           ),
         );
         const messageStream = cancellableClaudeMessageStream(queryRuntime, {
-          prestart: input.runtimeMode === "auto" || effectiveEffort !== null,
+          prestart:
+            input.runtimeMode === "auto" || effectiveEffort !== null || needsSdkCapabilities,
         });
 
         let installationContext: ClaudeSessionContext | undefined;
         let installationComplete = false;
 
         return yield* Effect.gen(function* () {
-          if (input.runtimeMode === "auto" || effectiveEffort) {
-            yield* verifyClaudeModelSupport({
+          if (input.runtimeMode === "auto" || effectiveEffort || needsSdkCapabilities) {
+            const discoveredModel = yield* verifyClaudeModelSupport({
               requireAuto: input.runtimeMode === "auto",
               effort: effectiveEffort,
               queryRuntime,
@@ -7251,6 +7274,40 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
               apiModelId,
               operation: "startSession",
             });
+            if (discoveredModel) {
+              caps = claudeModelInfoCapabilities(discoveredModel);
+              effort =
+                requestedEffort && hasEffortLevel(caps, requestedEffort) ? requestedEffort : null;
+              effectiveEffort = getEffectiveClaudeCodeEffort(effort);
+              fastMode = modelSelection?.options?.fastMode === true && caps.supportsFastMode;
+              thinking = caps.supportsThinkingToggle
+                ? modelSelection?.options?.thinking
+                : undefined;
+              ultracode = effort === "ultracode" && hasEffortLevel(caps, "xhigh");
+              const resolvedModel = discoveredModel.resolvedModel ?? discoveredModel.value;
+              requestedAutoCompactWindowTokens = resolveSelectedClaudeAutoCompactWindow(
+                resolvedModel,
+                normalizeClaudeModelOptions(resolvedModel, modelSelection?.options, caps)
+                  ?.autoCompactWindow,
+              );
+              if (needsSdkCapabilities) {
+                yield* Effect.tryPromise({
+                  try: () =>
+                    queryRuntime.applyFlagSettings({
+                      ...(effectiveEffort && effectiveEffort !== "max"
+                        ? { effortLevel: effectiveEffort }
+                        : {}),
+                      ...(fastMode ? { fastMode: true } : {}),
+                      ...(typeof thinking === "boolean" ? { alwaysThinkingEnabled: thinking } : {}),
+                      ...(ultracode ? { ultracode: true } : {}),
+                      ...(requestedAutoCompactWindowTokens !== undefined
+                        ? { autoCompactWindow: requestedAutoCompactWindowTokens }
+                        : {}),
+                    }),
+                  catch: (cause) => toRequestError(threadId, "session/reconfigure", cause),
+                });
+              }
+            }
           }
 
           // Populate agent cache in background from first session
@@ -7359,6 +7416,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             currentAutoCompactWindow: requestedAutoCompactWindowTokens,
             currentAlwaysThinkingEnabled: thinking,
             currentEffort: effectiveEffort,
+            modelCapabilities: caps,
             currentUltracode: ultracode,
             currentFastMode: fastMode,
             lastKnownAutoCompactThreshold: requestedAutoCompactWindowTokens,
@@ -7686,16 +7744,21 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           !isCompaction && input.modelSelection?.provider === "claudeAgent"
             ? input.modelSelection
             : undefined;
+        let turnCaps = modelSelection
+          ? getModelCapabilities(PROVIDER, modelSelection.model)
+          : context.modelCapabilities;
+        let resolvedModel = modelSelection?.model;
         const requestedApiEffort = getEffectiveClaudeCodeEffort(
           trimOrNull(modelSelection?.options?.effort),
         );
         if (
           modelSelection &&
-          (requestedApiEffort ||
+          (turnCaps === EMPTY_MODEL_CAPABILITIES ||
+            requestedApiEffort ||
             (context.session.runtimeMode === "auto" &&
               resolveApiModelId(modelSelection) !== context.currentApiModelId))
         ) {
-          yield* verifyClaudeModelSupport({
+          const discoveredModel = yield* verifyClaudeModelSupport({
             queryRuntime: context.query,
             discoveryKey: context.accountDiscoveryKey,
             selectedModel: modelSelection.model,
@@ -7704,10 +7767,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             requireAuto: context.session.runtimeMode === "auto",
             effort: requestedApiEffort,
           });
+          if (discoveredModel) {
+            turnCaps = claudeModelInfoCapabilities(discoveredModel);
+            resolvedModel = discoveredModel.resolvedModel ?? discoveredModel.value;
+          }
         }
         const requestedAutoCompactWindow = resolveSelectedClaudeAutoCompactWindow(
-          modelSelection?.model,
-          normalizeClaudeModelOptions(modelSelection?.model, modelSelection?.options)
+          resolvedModel,
+          normalizeClaudeModelOptions(resolvedModel, modelSelection?.options, turnCaps)
             ?.autoCompactWindow,
         );
 
@@ -7768,10 +7835,9 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
 
         // The thinking toggle mirrors the spawn-time `alwaysThinkingEnabled`
         // setting; flipping it live avoids a restart-and-resume replay.
-        const requestedThinking = resolveSelectedClaudeThinkingToggle(
-          modelSelection?.model,
-          modelSelection?.options?.thinking,
-        );
+        const requestedThinking = turnCaps.supportsThinkingToggle
+          ? modelSelection?.options?.thinking
+          : undefined;
         if (modelSelection && requestedThinking !== context.currentAlwaysThinkingEnabled) {
           yield* Effect.tryPromise({
             try: () =>
@@ -7788,7 +7854,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         // `max` effort has no Settings equivalent; transitions involving it
         // restart upstream (claudeSelectionRequiresRestart) before this runs.
         if (modelSelection) {
-          const turnCaps = getModelCapabilities("claudeAgent", modelSelection.model);
+          context.modelCapabilities = turnCaps;
           const requestedEffortOption = trimOrNull(modelSelection.options?.effort ?? null);
           const validEffort =
             requestedEffortOption && hasEffortLevel(turnCaps, requestedEffortOption)
@@ -7939,6 +8005,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         const message = yield* buildUserMessageEffect(input, {
           fileSystem,
           attachmentsDir: serverConfig.attachmentsDir,
+          modelCapabilities: context.modelCapabilities,
           // Compaction already validated these commands before turn admission.
           nativeCommandNames:
             nativeCommandNames ?? (yield* resolveNativeCommandNames(context, input.input)),
@@ -8104,6 +8171,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           const message = yield* buildUserMessageEffect(input, {
             fileSystem,
             attachmentsDir: serverConfig.attachmentsDir,
+            modelCapabilities: context.modelCapabilities,
             nativeCommandNames: yield* resolveNativeCommandNames(context, input.input),
           });
           yield* Queue.offer(context.promptQueue, {

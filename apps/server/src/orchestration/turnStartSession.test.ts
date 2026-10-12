@@ -25,6 +25,7 @@ function derive(currentSession: OrchestrationSession | null) {
     currentSession,
     providerName: "pi",
     requestedRuntimeMode: "full-access",
+    observedAt: REQUESTED_AT,
     requestedAt: REQUESTED_AT,
   });
 }
@@ -83,7 +84,7 @@ describe("deriveTurnStartSession", () => {
 
   it("fences accepted ready-session work despite a client timestamp behind the server", () => {
     const session = { ...makeSession("ready"), updatedAt: "2026-07-22T00:00:00.000Z" };
-    expect(derive(session)).toMatchObject({ status: "starting", updatedAt: session.updatedAt });
+    expect(derive(session)).toMatchObject({ status: "starting", updatedAt: REQUESTED_AT });
   });
 
   it("does not overwrite newer terminal state with a delayed start request", () => {
@@ -101,4 +102,18 @@ describe("deriveTurnStartSession", () => {
       lastError: null,
     });
   });
+});
+
+it("timestamps a pending follow-up with server observation despite a slow client clock", () => {
+  const observedAt = "2026-07-23T01:00:00.000Z";
+  expect(
+    deriveTurnStartSession({
+      threadId: THREAD_ID,
+      currentSession: makeSession("ready"),
+      providerName: "codex",
+      requestedRuntimeMode: "full-access",
+      requestedAt: "2026-07-19T00:00:00.000Z",
+      observedAt,
+    }),
+  ).toMatchObject({ status: "starting", updatedAt: observedAt });
 });

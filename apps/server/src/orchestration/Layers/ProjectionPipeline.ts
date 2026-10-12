@@ -1374,13 +1374,14 @@ const makeOrchestrationProjectionPipeline = Effect.gen(function* () {
               null,
             ...(providerInstanceId !== undefined ? { providerInstanceId } : {}),
             requestedRuntimeMode: event.payload.runtimeMode,
+            observedAt: event.occurredAt,
             requestedAt: event.payload.createdAt,
           });
           if (turnStartSession !== null) {
             yield* projectionThreadSessionRepository.upsert({
               ...turnStartSession,
-              lastActivityAt: event.payload.createdAt,
-              lastProgressAt: event.payload.createdAt,
+              lastActivityAt: event.occurredAt,
+              lastProgressAt: event.occurredAt,
               providerInstanceId: turnStartSession.providerInstanceId ?? null,
             });
           }

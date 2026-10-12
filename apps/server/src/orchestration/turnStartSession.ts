@@ -55,6 +55,7 @@ export function deriveTurnStartSession(input: {
   readonly providerInstanceId?: ProviderInstanceId;
   readonly requestedRuntimeMode: RuntimeMode;
   readonly requestedAt: string;
+  readonly observedAt: string;
   /**
    * Whether the projected session's provider binding is established (running,
    * ready, or has already produced a turn). A pre-turn optimistic placeholder
@@ -98,10 +99,6 @@ export function deriveTurnStartSession(input: {
     runtimeMode: input.currentSession?.runtimeMode ?? input.requestedRuntimeMode,
     activeTurnId: null,
     lastError: null,
-    updatedAt:
-      input.currentSession?.status === "ready" &&
-      Date.parse(input.currentSession.updatedAt) > Date.parse(input.requestedAt)
-        ? input.currentSession.updatedAt
-        : input.requestedAt,
+    updatedAt: input.observedAt,
   };
 }

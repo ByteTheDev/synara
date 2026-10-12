@@ -2666,6 +2666,30 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
         return matches.find((match) => match !== null) ?? null;
       });
 
+    const restoreSessionBinding: NonNullable<ProviderServiceShape["restoreSessionBinding"]> = (
+      input,
+    ) =>
+      lifecycle.runCurrent(input.threadId, (generation) =>
+        withBindingWriteLock(
+          input.threadId,
+          Effect.gen(function* () {
+            if (Option.isSome(yield* directory.getBinding(input.threadId))) return false;
+            const live = yield* findLiveSession(input.threadId);
+            if (
+              !live ||
+              live.session.status !== "running" ||
+              live.session.activeTurnId !== input.expectedTurnId
+            )
+              return false;
+            yield* upsertSessionBinding(live.session, input.threadId, {
+              ...(generation !== undefined ? { lifecycleGeneration: generation } : {}),
+              launchOptionsAuthoritative: false,
+            });
+            return true;
+          }),
+        ),
+      );
+
     const stopStaleSessionsForThread = (input: {
       readonly threadId: ThreadId;
       readonly provider: ProviderKind;
@@ -5163,6 +5187,7 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
       respondToUserInput,
       stopSession,
       stopRuntimeSession,
+      restoreSessionBinding,
       hasLiveRuntimeTasks,
       clearSessionResumeCursor,
       listSessions,

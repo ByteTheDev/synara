@@ -15570,3 +15570,56 @@ it.effect(
     }).pipe(Effect.provide(harness.layer));
   },
 );
+
+it.effect("applies resolved SDK alias capabilities at startup and live dispatch", () => {
+  const harness = makeHarness();
+  setSupportedModels(harness.query, [
+    {
+      value: "opus-full-effort",
+      resolvedModel: "claude-opus-5",
+      displayName: "SDK Opus",
+      description: "SDK alias",
+      supportsEffort: true,
+      supportedEffortLevels: ["low", "medium", "high", "xhigh", "max"],
+    },
+  ]);
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: {
+        provider: "claudeAgent",
+        model: "opus-full-effort",
+        options: { effort: "xhigh", fastMode: true },
+      },
+    });
+    assert.include(
+      harness.query.applyFlagSettingsCalls.map((value) => value.effortLevel),
+      "xhigh",
+    );
+    assert.include(
+      harness.query.applyFlagSettingsCalls.map((value) => value.fastMode),
+      true,
+    );
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "use live capabilities",
+      attachments: [],
+      modelSelection: {
+        provider: "claudeAgent",
+        model: "opus-full-effort",
+        options: { effort: "high", fastMode: false },
+      },
+    });
+    assert.include(
+      harness.query.applyFlagSettingsCalls.map((value) => value.effortLevel),
+      "high",
+    );
+    assert.include(
+      harness.query.applyFlagSettingsCalls.map((value) => value.fastMode),
+      null,
+    );
+  }).pipe(Effect.provide(harness.layer));
+});

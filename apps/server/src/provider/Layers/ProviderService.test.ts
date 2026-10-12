@@ -9173,3 +9173,42 @@ liveFallback.layer("ProviderServiceLive live-fallback settled turns", (it) => {
     }),
   );
 });
+
+const orphanRecovery = makeProviderServiceLayer();
+orphanRecovery.layer("live orphan recovery", (it) => {
+  it.effect("restores the exact live turn under the lifecycle boundary", () =>
+    Effect.gen(function* () {
+      const provider = yield* ProviderService;
+      const directory = yield* ProviderSessionDirectory;
+      const threadId = asThreadId("live-orphan-recovery");
+      yield* provider.startSession(threadId, {
+        threadId,
+        provider: "codex",
+        runtimeMode: "full-access",
+      });
+      const turn = yield* provider.sendTurn({ threadId, input: "keep running", attachments: [] });
+      orphanRecovery.codex.updateSession(threadId, (session) => ({
+        ...session,
+        status: "running",
+        activeTurnId: turn.turnId,
+      }));
+      yield* directory.remove(threadId);
+      assert.equal(
+        yield* provider.restoreSessionBinding!({ threadId, expectedTurnId: "different-turn" }),
+        false,
+      );
+      assert.equal(Option.isNone(yield* directory.getBinding(threadId)), true);
+      assert.equal(
+        yield* provider.restoreSessionBinding!({ threadId, expectedTurnId: turn.turnId }),
+        true,
+      );
+      const restored = Option.getOrThrow(yield* directory.getBinding(threadId));
+      assert.equal(restored.status, "running");
+      assert.equal(asRuntimePayloadRecord(restored.runtimePayload).activeTurnId, turn.turnId);
+      assert.equal(
+        yield* provider.restoreSessionBinding!({ threadId, expectedTurnId: turn.turnId }),
+        false,
+      );
+    }),
+  );
+});

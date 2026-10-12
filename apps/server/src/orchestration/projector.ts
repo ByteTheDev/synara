@@ -978,6 +978,7 @@ export function projectEvent(
               thread.session?.providerInstanceId ??
               projectedModelSelection.provider,
             requestedRuntimeMode: payload.runtimeMode,
+            observedAt: event.occurredAt,
             requestedAt: payload.createdAt,
           });
           return {

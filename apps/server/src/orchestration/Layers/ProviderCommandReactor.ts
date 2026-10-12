@@ -1692,6 +1692,7 @@ const make = Effect.gen(function* () {
       providerInstanceId: resolveModelSelectionInstanceId(projectedModelSelection),
       requestedRuntimeMode:
         input.thread.session?.runtimeMode ?? input.runtimeMode ?? DEFAULT_RUNTIME_MODE,
+      observedAt: new Date().toISOString(),
       requestedAt: input.createdAt,
       sessionProviderEstablished,
     });
@@ -4709,6 +4710,7 @@ const make = Effect.gen(function* () {
           thread.modelSelection.instanceId ??
           providerName,
         requestedRuntimeMode: event.payload.runtimeMode ?? DEFAULT_RUNTIME_MODE,
+        observedAt: new Date().toISOString(),
         requestedAt: event.payload.createdAt,
         sessionProviderEstablished,
       });
@@ -5780,6 +5782,7 @@ const make = Effect.gen(function* () {
           providerInstanceId:
             thread.session?.providerInstanceId ?? thread.modelSelection.instanceId ?? providerName,
           requestedRuntimeMode: thread.runtimeMode,
+          observedAt: new Date().toISOString(),
           requestedAt: createdAt,
         });
         if (turnStartSession !== null) {

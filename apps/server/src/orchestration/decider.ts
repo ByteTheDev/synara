@@ -2059,7 +2059,7 @@ export const decideOrchestrationCommand = Effect.fn("decideOrchestrationCommand"
         ...withEventBase({
           aggregateKind: "thread",
           aggregateId: command.threadId,
-          occurredAt: command.createdAt,
+          occurredAt: nowIso(),
           commandId: command.commandId,
         }),
         causationEventId: userMessageEvent.eventId,
@@ -2271,7 +2271,7 @@ export const decideOrchestrationCommand = Effect.fn("decideOrchestrationCommand"
         ...withEventBase({
           aggregateKind: "thread",
           aggregateId: command.threadId,
-          occurredAt: command.createdAt,
+          occurredAt: nowIso(),
           commandId: command.commandId,
         }),
         type: "thread.turn-start-requested",
