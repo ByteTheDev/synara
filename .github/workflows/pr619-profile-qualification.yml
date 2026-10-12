@@ -1,0 +1,69 @@
+name: PR 619 exact profile source qualification
+on:
+  push:
+    branches: [cleanup/20261012/pr619-profile-qualification]
+permissions:
+  contents: read
+concurrency:
+  group: pr619-profile-qualification-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+  ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+jobs:
+  qualify:
+    name: Profile source (${{ matrix.lane }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [static, contracts, shared, server, web]
+    steps:
+      - name: Check out exact combined product source
+        id: source
+        uses: actions/checkout@v6
+        with:
+          ref: 01a59df4186139a9c888301a01eb688eff2baaeb
+          path: source
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Check out exact isolated diagnostic
+        id: driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Set up Bun from the exact product package manifest
+        id: bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: source/package.json
+      - name: Set up Node from the exact product package manifest
+        id: node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: source/package.json
+      - name: Parse diagnostic modules before execution
+        id: syntax
+        run: |
+          node --check driver/scripts/pr619-profile-qualification/owned-command-observer.mjs
+          node --check driver/scripts/pr619-profile-qualification/runner.mjs
+      - name: Install frozen dependencies and execute actual complete source checks
+        if: always() && steps.source.outcome == 'success' && steps.driver.outcome == 'success' && steps.node.outcome == 'success' && steps.syntax.outcome == 'success'
+        env:
+          PR619_BUN_OUTCOME: ${{ steps.bun.outcome }}
+          PR619_NODE_OUTCOME: ${{ steps.node.outcome }}
+          PR619_SYNTAX_OUTCOME: ${{ steps.syntax.outcome }}
+        run: node driver/scripts/pr619-profile-qualification/runner.mjs '${{ matrix.lane }}'
+      - name: Preserve fixed reports, all failures and separate formatter proposals
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr619-profile-${{ matrix.lane }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr619-profile-${{ matrix.lane }}/frozen
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
