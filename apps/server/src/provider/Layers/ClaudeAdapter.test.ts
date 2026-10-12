@@ -15674,3 +15674,66 @@ it.effect("restarts runtime aliases for max effort and explicit compaction windo
     );
   }).pipe(Effect.provide(harness.layer));
 });
+
+it.effect("selects the resolved extended-context API id before an alias's first prompt", () => {
+  const harness = makeHarness();
+  setSupportedModels(harness.query, [
+    {
+      value: "opus-full-effort",
+      resolvedModel: "claude-opus-5",
+      displayName: "Opus",
+      description: "Alias",
+      supportsEffort: true,
+      supportedEffortLevels: ["high", "xhigh", "max"],
+    },
+  ]);
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    const selection = {
+      provider: "claudeAgent" as const,
+      model: "opus-full-effort",
+      options: { autoCompactWindow: "1m" },
+    };
+    const session = yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: selection,
+    });
+    assert.deepEqual(harness.query.setModelCalls, ["claude-opus-5[1m]"]);
+    assert.equal(session.model, "opus-full-effort");
+    assert.equal(yield* adapter.requiresModelSelectionRestart!(THREAD_ID, selection), false);
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "extended",
+      attachments: [],
+      modelSelection: selection,
+    });
+    assert.deepEqual(harness.query.setModelCalls, ["claude-opus-5[1m]"]);
+  }).pipe(Effect.provide(harness.layer));
+});
+it.effect("switches known Claude models without depending on discovery", () => {
+  const harness = makeHarness();
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: { provider: "claudeAgent", model: "claude-opus-5" },
+    });
+    const discover = vi
+      .spyOn(harness.query, "supportedModels")
+      .mockRejectedValue(new Error("discovery unavailable"));
+    const selection = { provider: "claudeAgent" as const, model: "claude-sonnet-5" };
+    assert.equal(yield* adapter.requiresModelSelectionRestart!(THREAD_ID, selection), false);
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "switch",
+      attachments: [],
+      modelSelection: selection,
+    });
+    assert.deepEqual(harness.query.setModelCalls, ["claude-sonnet-5"]);
+    assert.equal(discover.mock.calls.length, 0);
+  }).pipe(Effect.provide(harness.layer));
+});

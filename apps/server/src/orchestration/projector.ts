@@ -979,7 +979,6 @@ export function projectEvent(
               projectedModelSelection.provider,
             requestedRuntimeMode: payload.runtimeMode,
             observedAt: event.occurredAt,
-            requestedAt: payload.createdAt,
           });
           return {
             ...nextBase,

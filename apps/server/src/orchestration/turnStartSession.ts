@@ -54,7 +54,6 @@ export function deriveTurnStartSession(input: {
   readonly providerName: OrchestrationSession["providerName"];
   readonly providerInstanceId?: ProviderInstanceId;
   readonly requestedRuntimeMode: RuntimeMode;
-  readonly requestedAt: string;
   readonly observedAt: string;
   /**
    * Whether the projected session's provider binding is established (running,
