@@ -1,0 +1,5521 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-12T00:20:08.529Z",
+  "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+  "tree": "6b5e0bc1756d8f0586aa67b9bf1c30ea266cd158",
+  "side": "after",
+  "driverHead": "cbc0116fc8ad607fd0f68f0665b2806bf6dcdb80",
+  "actualExits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "immutableSnapshotBoundary": "All subprocess-written outputs were copied once before parsing. No live path is uploaded.",
+  "snapshots": [
+    {
+      "path": "00-initial.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/00-initial.png",
+      "captureStartedAt": "2026-10-12T00:20:08.034Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.035Z",
+      "observedInitialBytes": 48853,
+      "observedEndBytes": 48853,
+      "capBytes": 16777216,
+      "capturedBytes": 48853,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 48853,
+      "sha256": "a69d536ac3efcde2dc41129f21e227a150500da40b146e33624115a7c77c0cc4",
+      "gitBlob": "49e9c6b1b43defd99e7bc5eceb849909111c9a40"
+    },
+    {
+      "path": "01-answer-actions.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/01-answer-actions.png",
+      "captureStartedAt": "2026-10-12T00:20:08.035Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.035Z",
+      "observedInitialBytes": 48853,
+      "observedEndBytes": 48853,
+      "capBytes": 16777216,
+      "capturedBytes": 48853,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 48853,
+      "sha256": "a69d536ac3efcde2dc41129f21e227a150500da40b146e33624115a7c77c0cc4",
+      "gitBlob": "49e9c6b1b43defd99e7bc5eceb849909111c9a40"
+    },
+    {
+      "path": "02-effort-menu.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/02-effort-menu.png",
+      "captureStartedAt": "2026-10-12T00:20:08.035Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.035Z",
+      "observedInitialBytes": 54139,
+      "observedEndBytes": 54139,
+      "capBytes": 16777216,
+      "capturedBytes": 54139,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 54139,
+      "sha256": "24d11b08a08dc61c7066ea12251a94b685bd8736ef8965491a65d184945f0447",
+      "gitBlob": "7c96a6ddc3daba3bd0c53ee707b55ea7b106d0e5"
+    },
+    {
+      "path": "03-confirmation.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/03-confirmation.png",
+      "captureStartedAt": "2026-10-12T00:20:08.035Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.036Z",
+      "observedInitialBytes": 71642,
+      "observedEndBytes": 71642,
+      "capBytes": 16777216,
+      "capturedBytes": 71642,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 71642,
+      "sha256": "d81391819c63cd1a7b658685bdd9c0b2bd9ad372b4fe786b197ad195a22676ca",
+      "gitBlob": "bbac6d7990cdbbb90a022b4f8f5226568ad9b1af"
+    },
+    {
+      "path": "04-latest-attempt.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/04-latest-attempt.png",
+      "captureStartedAt": "2026-10-12T00:20:08.036Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.036Z",
+      "observedInitialBytes": 52980,
+      "observedEndBytes": 52980,
+      "capBytes": 16777216,
+      "capturedBytes": 52980,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 52980,
+      "sha256": "d8632f70b2f6450b723d73dc9442b4b9fdff78922e7de84683bbfa24a971d9b5",
+      "gitBlob": "657bc51e3ca91efdbeb770790ecff38758a8294c"
+    },
+    {
+      "path": "05-previous-attempt.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/05-previous-attempt.png",
+      "captureStartedAt": "2026-10-12T00:20:08.036Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.036Z",
+      "observedInitialBytes": 49441,
+      "observedEndBytes": 49441,
+      "capBytes": 16777216,
+      "capturedBytes": 49441,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 49441,
+      "sha256": "17a1643647d6d8ae4597fb9fc64634f7b4d728205f239e0f9aa444671132f903",
+      "gitBlob": "08ff11ffc691dfb7b979c65ade45b145441bbe0c"
+    },
+    {
+      "path": "06-returned-latest.png",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/06-returned-latest.png",
+      "captureStartedAt": "2026-10-12T00:20:08.036Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.036Z",
+      "observedInitialBytes": 52980,
+      "observedEndBytes": 52980,
+      "capBytes": 16777216,
+      "capturedBytes": 52980,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 52980,
+      "sha256": "d8632f70b2f6450b723d73dc9442b4b9fdff78922e7de84683bbfa24a971d9b5",
+      "gitBlob": "657bc51e3ca91efdbeb770790ecff38758a8294c"
+    },
+    {
+      "path": "exits.json",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/exits.json",
+      "captureStartedAt": "2026-10-12T00:20:08.036Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.036Z",
+      "observedInitialBytes": 21,
+      "observedEndBytes": 21,
+      "capBytes": 16777216,
+      "capturedBytes": 21,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 21,
+      "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+      "gitBlob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+    },
+    {
+      "path": "video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+      "captureStartedAt": "2026-10-12T00:20:08.036Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.037Z",
+      "observedInitialBytes": 620086,
+      "observedEndBytes": 620086,
+      "capBytes": 134217728,
+      "capturedBytes": 620086,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 620086,
+      "sha256": "4d0513a072ce1f79c499e955da8fd719358ba08bd536c7eb0d09e0838ba9881d",
+      "gitBlob": "11880394159d30916830d11c789e4a45e31aa9c1"
+    },
+    {
+      "path": "vitest.log",
+      "capturedFrom": "/home/runner/work/synara/synara/runtime-retry-evidence-live/after/vitest.log",
+      "captureStartedAt": "2026-10-12T00:20:08.038Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.038Z",
+      "observedInitialBytes": 82481,
+      "observedEndBytes": 82481,
+      "capBytes": 16777216,
+      "capturedBytes": 82481,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 82481,
+      "sha256": "1182ddaec92bf0c894d67942482e5eb3cde7e7e92744c9e3a12f51443406b705",
+      "gitBlob": "8ab45b0d2eed91ece150a8266fcc37dfd5bcca05"
+    },
+    {
+      "path": "vitest.json",
+      "capturedFrom": "/home/runner/work/_temp/pr1858-retry-after/vitest.json",
+      "captureStartedAt": "2026-10-12T00:20:08.038Z",
+      "captureCompletedAt": "2026-10-12T00:20:08.038Z",
+      "observedInitialBytes": 77716,
+      "observedEndBytes": 77716,
+      "capBytes": 16777216,
+      "capturedBytes": 77716,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 77716,
+      "sha256": "7b8de77321a7e1a2b7d3fa6c3635c71da4aaea265bde92c130cd3409bce8a3a9",
+      "gitBlob": "e9bc74fd06e00855507313d60d2a69a38c11fa8a"
+    }
+  ],
+  "verificationErrors": [],
+  "passed": true,
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) effort retry uses the settled turn model and instance while preserving a different composer draft",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) effort retry refuses a stale confirmation before dispatching a retry",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) effort retry pages and copies the durable previous answer on a client without a local archive",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) effort retry clears local retry history after an ordinary edit and does not reattach old durable answers",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) effort retry disables the action when the settled turn has no checkpoint",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) PR1858 review evidence uses the real retry menu and prior-answer pager",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "unselectedTests": 222,
+  "observations": [
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "00-initial",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": false,
+        "label": "Retry with different effort"
+      },
+      "dialogText": null,
+      "menuText": null,
+      "pagerText": null,
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nThe assertion uses an earlier session snapshot. Compare the provider's current session before deciding whether to restart, and add a regression test for a rebind that fails after the projected mode changes.\n\nMar 4 12:00 PM\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nMedium\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control",
+      "commandTypes": [],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    },
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "01-answer-actions",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": false,
+        "label": "Retry with different effort"
+      },
+      "dialogText": null,
+      "menuText": null,
+      "pagerText": null,
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nThe assertion uses an earlier session snapshot. Compare the provider's current session before deciding whether to restart, and add a regression test for a rebind that fails after the projected mode changes.\n\nMar 4 12:00 PM\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nMedium\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control",
+      "commandTypes": [],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    },
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "02-effort-menu",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": false,
+        "label": "Retry with different effort"
+      },
+      "dialogText": null,
+      "menuText": "Retry with different effort\nLow\nMedium (current)\nHigh\nExtra High",
+      "pagerText": null,
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nThe assertion uses an earlier session snapshot. Compare the provider's current session before deciding whether to restart, and add a regression test for a rebind that fails after the projected mode changes.\n\nMar 4 12:00 PM\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nMedium\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control\nRetry with different effort\nLow\nMedium (current)\nHigh\nExtra High",
+      "commandTypes": [],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    },
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "03-confirmation",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": true,
+        "label": "Retry with different effort"
+      },
+      "dialogText": "Retry with High effort (currently Medium).\n\nThe previous answer stays available in the variant pager. Workspace checkpoint 0 will be restored before the new attempt. A pre-retry snapshot is captured so current files are not discarded silently.\n\nCancel\nConfirm",
+      "menuText": null,
+      "pagerText": null,
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nThe assertion uses an earlier session snapshot. Compare the provider's current session before deciding whether to restart, and add a regression test for a rebind that fails after the projected mode changes.\n\nMar 4 12:00 PM\n\nThinking\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nMedium\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control\nRetry with High effort (currently Medium).\n\nThe previous answer stays available in the variant pager. Workspace checkpoint 0 will be restored before the new attempt. A pre-retry snapshot is captured so current files are not discarded silently.\n\nCancel\nConfirm",
+      "commandTypes": [],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    },
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "04-latest-attempt",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": false,
+        "label": "Retry with different effort"
+      },
+      "dialogText": null,
+      "menuText": null,
+      "pagerText": "2 / 2 · High",
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nRead the live session's runtime mode when handling a failed rebind, and compare that same live mode before deciding whether a restart is needed. Preserve the original provider error. Cover both a failed rebind and a stale approval-mode projection with separate regression tests.\n\n2 / 2 · High\n\nMar 4 12:00 PM\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nHigh\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control",
+      "commandTypes": [
+        "thread.message.edit-and-resend"
+      ],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    },
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "05-previous-attempt",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": false,
+        "label": "Retry with different effort"
+      },
+      "dialogText": null,
+      "menuText": null,
+      "pagerText": "1 / 2 · Medium",
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nThe assertion uses an earlier session snapshot. Compare the provider's current session before deciding whether to restart, and add a regression test for a rebind that fails after the projected mode changes.\n\n1 / 2 · Medium\n\nMar 4 12:00 PM\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nHigh\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control",
+      "commandTypes": [
+        "thread.message.edit-and-resend"
+      ],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    },
+    {
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "phase": "06-returned-latest",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "retryButton": {
+        "disabled": false,
+        "label": "Retry with different effort"
+      },
+      "dialogText": null,
+      "menuText": null,
+      "pagerText": "2 / 2 · High",
+      "visibleText": "Toggle Sidebar\nSynara\nNew thread\nProjects\nProject\nReview the stale-session failure\nChats\nNo chats yet\nReview the stale-session failure\n\nExplain the stale-session failure and propose a focused repair.\n\nMar 4 12:00 PM\n\nRead the live session's runtime mode when handling a failed rebind, and compare that same live mode before deciding whether a restart is needed. Preserve the original provider error. Cover both a failed rebind and a stale approval-mode projection with separate regression tests.\n\n2 / 2 · High\n\nMar 4 12:00 PM\n\n\n\n\nAsk anything, @tag files/folders, or use / to show available commands\nAsk for approval\nGPT-5.4\nHigh\n\nEnvironment\n\nChanges\nLocal\nmain\nCommit and Push\nLocal Servers\n\nEditor\n\nEditor view\nTerminal\nBrowser\nFiles\nSide chats\nSource control",
+      "commandTypes": [
+        "thread.message.edit-and-resend"
+      ],
+      "backendBoundary": "Controlled acknowledgement and projected read model; no provider run."
+    }
+  ],
+  "focusTraces": [
+    {
+      "schemaVersion": 1,
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "testName": "uses the settled turn model and instance while preserving a different composer draft",
+      "suiteName": "effort retry",
+      "cap": 512,
+      "droppedEvents": 0,
+      "observerErrors": 0,
+      "owned": true,
+      "restored": true,
+      "pendingObservedRafs": [],
+      "events": [
+        {
+          "sequence": 0,
+          "elapsedMs": 55808,
+          "kind": "observer-installed",
+          "hasDocumentFocus": false,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 1,
+          "elapsedMs": 65240,
+          "kind": "raf-request",
+          "hasDocumentFocus": false,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 9,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 65305.79999999999,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": false,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 9,
+          "frameId": 9,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 65305.899999999994,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": false,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 9,
+          "frameId": 9
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 67662.9,
+          "kind": "window-focus",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 67663.69999999998,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 37,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3515,
+              "column": 27
+            }
+          ]
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 67664.79999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "false"
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "false"
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 67709.29999999999,
+          "kind": "menu-count-change",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "previousMenuCount": 0,
+          "nextMenuCount": 1
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 67716.79999999999,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": 37,
+          "frameId": 37,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3515,
+              "column": 27
+            }
+          ]
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 67716.9,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": 37,
+          "frameId": 37
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 67721,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 223,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 67722,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          }
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 67722.29999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 67778.5,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 223,
+              "column": 7
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 226,
+              "column": 3
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 87,
+              "column": 40
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 94,
+              "column": 20
+            },
+            {
+              "file": "useId-ZcWFYWBl.js",
+              "line": 156,
+              "column": 45
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 157,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            }
+          ]
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 67780.29999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 67780.69999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 67785.29999999999,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "frameId": 47,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 8,
+              "column": 9
+            },
+            {
+              "file": "wsNativeApi.ts",
+              "line": 420,
+              "column": 12
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 567,
+              "column": 43
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 628,
+              "column": 6
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 5681,
+              "column": 5
+            },
+            {
+              "file": "AssistantRetryEffortControls.tsx",
+              "line": 282,
+              "column": 34
+            }
+          ]
+        },
+        {
+          "sequence": 17,
+          "elapsedMs": 67785.5,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 294,
+              "column": 50
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 142,
+              "column": 10
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 129,
+              "column": 57
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 128,
+              "column": 19
+            },
+            {
+              "file": "useButton-BW9nWb4N.js",
+              "line": 106,
+              "column": 23
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 142,
+              "column": 10
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9141,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            }
+          ]
+        },
+        {
+          "sequence": 18,
+          "elapsedMs": 67785.6,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 19,
+          "elapsedMs": 67901,
+          "kind": "menu-count-change",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "previousMenuCount": 1,
+          "nextMenuCount": 0
+        },
+        {
+          "sequence": 20,
+          "elapsedMs": 67901.19999999998,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 528,
+              "column": 28
+            }
+          ]
+        },
+        {
+          "sequence": 21,
+          "elapsedMs": 67901.29999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 22,
+          "elapsedMs": 67901.4,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 539,
+              "column": 50
+            }
+          ]
+        },
+        {
+          "sequence": 23,
+          "elapsedMs": 67901.4,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 24,
+          "elapsedMs": 67903.1,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 47,
+          "frameId": 47,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 8,
+              "column": 9
+            },
+            {
+              "file": "wsNativeApi.ts",
+              "line": 420,
+              "column": 12
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 567,
+              "column": 43
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 628,
+              "column": 6
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 5681,
+              "column": 5
+            },
+            {
+              "file": "AssistantRetryEffortControls.tsx",
+              "line": 282,
+              "column": 34
+            }
+          ]
+        },
+        {
+          "sequence": 25,
+          "elapsedMs": 67903.19999999998,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 47,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 42
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 26,
+          "elapsedMs": 67903.19999999998,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 47,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 27,
+          "elapsedMs": 67903.4,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 47,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 28,
+          "elapsedMs": 67903.4,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 47,
+          "frameId": 47
+        },
+        {
+          "sequence": 29,
+          "elapsedMs": 68092.29999999999,
+          "kind": "observer-finishing",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        }
+      ],
+      "qualification": "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied."
+    },
+    {
+      "schemaVersion": 1,
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "testName": "refuses a stale confirmation before dispatching a retry",
+      "suiteName": "effort retry",
+      "cap": 512,
+      "droppedEvents": 0,
+      "observerErrors": 0,
+      "owned": true,
+      "restored": true,
+      "pendingObservedRafs": [],
+      "events": [
+        {
+          "sequence": 0,
+          "elapsedMs": 68098.29999999999,
+          "kind": "observer-installed",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 1,
+          "elapsedMs": 68437.9,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 64,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 68514.29999999999,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 64,
+          "frameId": 64,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 68514.6,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 64,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 974,
+              "column": 18
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 1056,
+              "column": 5
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3388,
+              "column": 11
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4324,
+              "column": 5
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 68515,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 64,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 68515.19999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 64,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 68516.19999999998,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 64,
+          "frameId": 64
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 68845.79999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "false"
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "false"
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 68885.4,
+          "kind": "menu-count-change",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "previousMenuCount": 0,
+          "nextMenuCount": 1
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 68893.69999999998,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 223,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 68894.9,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          }
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 68895.1,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 68961.9,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 223,
+              "column": 7
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 226,
+              "column": 3
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 87,
+              "column": 40
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 94,
+              "column": 20
+            },
+            {
+              "file": "useId-ZcWFYWBl.js",
+              "line": 156,
+              "column": 45
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 157,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            }
+          ]
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 68963,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 68963.19999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 68965.9,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "frameId": 100,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 8,
+              "column": 9
+            },
+            {
+              "file": "wsNativeApi.ts",
+              "line": 420,
+              "column": 12
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 567,
+              "column": 43
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 628,
+              "column": 6
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 5681,
+              "column": 5
+            },
+            {
+              "file": "AssistantRetryEffortControls.tsx",
+              "line": 282,
+              "column": 34
+            }
+          ]
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 68966,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 294,
+              "column": 50
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 142,
+              "column": 10
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 129,
+              "column": 57
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 128,
+              "column": 19
+            },
+            {
+              "file": "useButton-BW9nWb4N.js",
+              "line": 106,
+              "column": 23
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 142,
+              "column": 10
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9141,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            }
+          ]
+        },
+        {
+          "sequence": 17,
+          "elapsedMs": 68966.1,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 18,
+          "elapsedMs": 69061,
+          "kind": "menu-count-change",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "previousMenuCount": 1,
+          "nextMenuCount": 0
+        },
+        {
+          "sequence": 19,
+          "elapsedMs": 69061.1,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 528,
+              "column": 28
+            }
+          ]
+        },
+        {
+          "sequence": 20,
+          "elapsedMs": 69061.19999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 21,
+          "elapsedMs": 69061.29999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 539,
+              "column": 50
+            }
+          ]
+        },
+        {
+          "sequence": 22,
+          "elapsedMs": 69061.29999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 23,
+          "elapsedMs": 69062.69999999998,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 100,
+          "frameId": 100,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 8,
+              "column": 9
+            },
+            {
+              "file": "wsNativeApi.ts",
+              "line": 420,
+              "column": 12
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 567,
+              "column": 43
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 628,
+              "column": 6
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 5681,
+              "column": 5
+            },
+            {
+              "file": "AssistantRetryEffortControls.tsx",
+              "line": 282,
+              "column": 34
+            }
+          ]
+        },
+        {
+          "sequence": 24,
+          "elapsedMs": 69062.79999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 100,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 42
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 25,
+          "elapsedMs": 69062.79999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 100,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 26,
+          "elapsedMs": 69062.9,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 100,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 27,
+          "elapsedMs": 69062.9,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 100,
+          "frameId": 100
+        },
+        {
+          "sequence": 28,
+          "elapsedMs": 69394.1,
+          "kind": "observer-finishing",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        }
+      ],
+      "qualification": "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied."
+    },
+    {
+      "schemaVersion": 1,
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "testName": "pages and copies the durable previous answer on a client without a local archive",
+      "suiteName": "effort retry",
+      "cap": 512,
+      "droppedEvents": 0,
+      "observerErrors": 0,
+      "owned": true,
+      "restored": true,
+      "pendingObservedRafs": [],
+      "events": [
+        {
+          "sequence": 0,
+          "elapsedMs": 69398.1,
+          "kind": "observer-installed",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 1,
+          "elapsedMs": 69677.4,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 120,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 69740.79999999999,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 120,
+          "frameId": 120,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 69741,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 120,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 974,
+              "column": 18
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 1056,
+              "column": 5
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3388,
+              "column": 11
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4324,
+              "column": 5
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 69741.19999999998,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 120,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 69741.5,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 120,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 69741.9,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 120,
+          "frameId": 120
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 70044.19999999998,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 70074.6,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 70074.69999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 70127.29999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 70152.4,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 70152.5,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 70212.29999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 70229.5,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 70229.5,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 70266.79999999999,
+          "kind": "observer-finishing",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        }
+      ],
+      "qualification": "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied."
+    },
+    {
+      "schemaVersion": 1,
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "testName": "clears local retry history after an ordinary edit and does not reattach old durable answers",
+      "suiteName": "effort retry",
+      "cap": 512,
+      "droppedEvents": 0,
+      "observerErrors": 0,
+      "owned": true,
+      "restored": true,
+      "pendingObservedRafs": [],
+      "events": [
+        {
+          "sequence": 0,
+          "elapsedMs": 70271.6,
+          "kind": "observer-installed",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 1,
+          "elapsedMs": 70563,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 162,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 70626.69999999998,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 162,
+          "frameId": 162,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 70626.79999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 162,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 974,
+              "column": 18
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 1056,
+              "column": 5
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3388,
+              "column": 11
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4324,
+              "column": 5
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 70627,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 162,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 70627.1,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 162,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 70627.5,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 162,
+          "frameId": 162
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 70925.6,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 70953.29999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 70953.29999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 71058,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 71080.29999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "TEXTAREA",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "MessagesTimeline.tsx",
+              "line": 4151,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7672,
+              "column": 14
+            }
+          ]
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 71093.29999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "TEXTAREA",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "TEXTAREA",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 71093.79999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "TEXTAREA",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "TEXTAREA",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 71175.6,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "TEXTAREA",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 71241.29999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 71241.29999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 17,
+          "elapsedMs": 71433.19999999998,
+          "kind": "observer-finishing",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        }
+      ],
+      "qualification": "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied."
+    },
+    {
+      "schemaVersion": 1,
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "testName": "disables the action when the settled turn has no checkpoint",
+      "suiteName": "effort retry",
+      "cap": 512,
+      "droppedEvents": 0,
+      "observerErrors": 0,
+      "owned": true,
+      "restored": true,
+      "pendingObservedRafs": [],
+      "events": [
+        {
+          "sequence": 0,
+          "elapsedMs": 71435.9,
+          "kind": "observer-installed",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 1,
+          "elapsedMs": 71703.9,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 212,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 71767.79999999999,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 212,
+          "frameId": 212,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 71767.9,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 212,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 974,
+              "column": 18
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 1056,
+              "column": 5
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3388,
+              "column": 11
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4324,
+              "column": 5
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 71768.1,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 212,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 71768.19999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 212,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 71768.6,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 212,
+          "frameId": 212
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 72080.5,
+          "kind": "observer-finishing",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        }
+      ],
+      "qualification": "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied."
+    },
+    {
+      "schemaVersion": 1,
+      "side": "after",
+      "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+      "testName": "uses the real retry menu and prior-answer pager",
+      "suiteName": "PR1858 review evidence",
+      "cap": 512,
+      "droppedEvents": 0,
+      "observerErrors": 0,
+      "owned": true,
+      "restored": true,
+      "pendingObservedRafs": [],
+      "events": [
+        {
+          "sequence": 0,
+          "elapsedMs": 72083.5,
+          "kind": "observer-installed",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        },
+        {
+          "sequence": 1,
+          "elapsedMs": 72355.19999999998,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "frameId": 241,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "elapsedMs": 72421.1,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 241,
+          "frameId": 241,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4323,
+              "column": 27
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6617,
+              "column": 153
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 6652,
+              "column": 55
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7618,
+              "column": 22
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7606,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 7617,
+              "column": 6
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "elapsedMs": 72421.29999999999,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 241,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 974,
+              "column": 18
+            },
+            {
+              "file": "ComposerPromptEditor.tsx",
+              "line": 1056,
+              "column": 5
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 3388,
+              "column": 11
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 4324,
+              "column": 5
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 4,
+          "elapsedMs": 72421.5,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 241,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 5,
+          "elapsedMs": 72421.69999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 241,
+          "target": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 6,
+          "elapsedMs": 72422,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 241,
+          "frameId": 241
+        },
+        {
+          "sequence": 7,
+          "elapsedMs": 73060.79999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "false"
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "false"
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "textbox",
+            "contentEditable": "true",
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 8,
+          "elapsedMs": 73100.19999999998,
+          "kind": "menu-count-change",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "previousMenuCount": 0,
+          "nextMenuCount": 1
+        },
+        {
+          "sequence": 9,
+          "elapsedMs": 73106.6,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 223,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "sequence": 10,
+          "elapsedMs": 73107.5,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": true,
+            "expanded": "true"
+          }
+        },
+        {
+          "sequence": 11,
+          "elapsedMs": 73107.69999999998,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 12,
+          "elapsedMs": 73342.5,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 223,
+              "column": 7
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 226,
+              "column": 3
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 87,
+              "column": 40
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 94,
+              "column": 20
+            },
+            {
+              "file": "useId-ZcWFYWBl.js",
+              "line": 156,
+              "column": 45
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 157,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 12902,
+              "column": 13
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            }
+          ]
+        },
+        {
+          "sequence": 13,
+          "elapsedMs": 73343.4,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 14,
+          "elapsedMs": 73343.6,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 15,
+          "elapsedMs": 73345.4,
+          "kind": "raf-request",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "frameId": 292,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 8,
+              "column": 9
+            },
+            {
+              "file": "wsNativeApi.ts",
+              "line": 420,
+              "column": 12
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 567,
+              "column": 43
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 628,
+              "column": 6
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 5681,
+              "column": 5
+            },
+            {
+              "file": "AssistantRetryEffortControls.tsx",
+              "line": 282,
+              "column": 34
+            }
+          ]
+        },
+        {
+          "sequence": 16,
+          "elapsedMs": 73345.4,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "getPseudoElementBounds-QxV6XcRv.js",
+              "line": 294,
+              "column": 50
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 142,
+              "column": 10
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 129,
+              "column": 57
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 128,
+              "column": 19
+            },
+            {
+              "file": "useButton-BW9nWb4N.js",
+              "line": 106,
+              "column": 23
+            },
+            {
+              "file": "merge-props-CT1VvuTm.js",
+              "line": 142,
+              "column": 10
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9141,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 851,
+              "column": 66
+            }
+          ]
+        },
+        {
+          "sequence": 17,
+          "elapsedMs": 73345.5,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 1,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menuitem",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 18,
+          "elapsedMs": 73441.79999999999,
+          "kind": "menu-count-change",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "previousMenuCount": 1,
+          "nextMenuCount": 0
+        },
+        {
+          "sequence": 19,
+          "elapsedMs": 73442,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 528,
+              "column": 28
+            }
+          ]
+        },
+        {
+          "sequence": 20,
+          "elapsedMs": 73442,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 21,
+          "elapsedMs": 73442.1,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "useOpenInteractionType-B8Zy2LnK.js",
+              "line": 539,
+              "column": 50
+            }
+          ]
+        },
+        {
+          "sequence": 22,
+          "elapsedMs": 73442.1,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "DIV",
+            "role": "menu",
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 23,
+          "elapsedMs": 73443.69999999998,
+          "kind": "raf-callback-enter",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 292,
+          "frameId": 292,
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12699,
+              "column": 20
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 3
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 8,
+              "column": 9
+            },
+            {
+              "file": "wsNativeApi.ts",
+              "line": 420,
+              "column": 12
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 567,
+              "column": 43
+            },
+            {
+              "file": "useChatTurnFollowUps.ts",
+              "line": 628,
+              "column": 6
+            },
+            {
+              "file": "ChatView.tsx",
+              "line": 5681,
+              "column": 5
+            },
+            {
+              "file": "AssistantRetryEffortControls.tsx",
+              "line": 282,
+              "column": 34
+            }
+          ]
+        },
+        {
+          "sequence": 24,
+          "elapsedMs": 73443.69999999998,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 292,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "confirmDialogFallback.ts",
+              "line": 85,
+              "column": 42
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12711,
+              "column": 21
+            }
+          ]
+        },
+        {
+          "sequence": 25,
+          "elapsedMs": 73443.79999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 292,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 26,
+          "elapsedMs": 73443.79999999999,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 292,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 27,
+          "elapsedMs": 73443.79999999999,
+          "kind": "raf-callback-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": 292,
+          "frameId": 292
+        },
+        {
+          "sequence": 28,
+          "elapsedMs": 74162.69999999998,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 29,
+          "elapsedMs": 74187.9,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 30,
+          "elapsedMs": 74187.9,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 31,
+          "elapsedMs": 74366.79999999999,
+          "kind": "focusin",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "relatedTarget": null
+        },
+        {
+          "sequence": 32,
+          "elapsedMs": 74381.6,
+          "kind": "focus-call",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "callers": [
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12655,
+              "column": 25
+            },
+            {
+              "file": "PrUiEvidence1858Retry.browser.tsx",
+              "line": 12690,
+              "column": 14
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8633,
+              "column": 73
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8583,
+              "column": 5
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8079,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8051,
+              "column": 8
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9067,
+              "column": 4
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 8984,
+              "column": 302
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9005,
+              "column": 101
+            },
+            {
+              "file": "client-DvzwluM7.js",
+              "line": 9078,
+              "column": 150
+            }
+          ]
+        },
+        {
+          "sequence": 33,
+          "elapsedMs": 74381.6,
+          "kind": "focus-return",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null,
+          "target": {
+            "tag": "BUTTON",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          }
+        },
+        {
+          "sequence": 34,
+          "elapsedMs": 74533.4,
+          "kind": "observer-finishing",
+          "hasDocumentFocus": true,
+          "activeElement": {
+            "tag": "BODY",
+            "role": null,
+            "contentEditable": null,
+            "retryTrigger": false,
+            "expanded": null
+          },
+          "menuCount": 0,
+          "activeRaf": null
+        }
+      ],
+      "qualification": "Delegated native focus and animation-frame observation; caller filenames and coordinates only. Instrumentation can affect timing. No synthetic focus, DOM, input or test outcome is applied."
+    }
+  ],
+  "sourceProof": {
+    "stage": "after-browser-and-overlay-removal",
+    "capturedAt": "2026-10-12T00:20:08.457Z",
+    "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+    "tree": "6b5e0bc1756d8f0586aa67b9bf1c30ea266cd158",
+    "trackedFiles": 9035,
+    "gitTreeListingSha256": "ef3237ecaeb64cf25beeb66d56fde9a9c47c251f657564412f8bbc91f05a98e6",
+    "rawTrackedBlobsAndModesVerified": true,
+    "status": [
+      "?? .pr1858-driver/",
+      "?? runtime-retry-evidence-live/after/00-initial.png",
+      "?? runtime-retry-evidence-live/after/01-answer-actions.png",
+      "?? runtime-retry-evidence-live/after/02-effort-menu.png",
+      "?? runtime-retry-evidence-live/after/03-confirmation.png",
+      "?? runtime-retry-evidence-live/after/04-latest-attempt.png",
+      "?? runtime-retry-evidence-live/after/05-previous-attempt.png",
+      "?? runtime-retry-evidence-live/after/06-returned-latest.png",
+      "?? runtime-retry-evidence-live/after/exits.json",
+      "?? runtime-retry-evidence-live/after/video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+      "?? runtime-retry-evidence/after/00-initial.png",
+      "?? runtime-retry-evidence/after/01-answer-actions.png",
+      "?? runtime-retry-evidence/after/02-effort-menu.png",
+      "?? runtime-retry-evidence/after/03-confirmation.png",
+      "?? runtime-retry-evidence/after/04-latest-attempt.png",
+      "?? runtime-retry-evidence/after/05-previous-attempt.png",
+      "?? runtime-retry-evidence/after/06-returned-latest.png",
+      "?? runtime-retry-evidence/after/append-fixture.tsx",
+      "?? runtime-retry-evidence/after/canonical-fixture.tsx",
+      "?? runtime-retry-evidence/after/exits.json",
+      "?? runtime-retry-evidence/after/observed-fixture.tsx",
+      "?? runtime-retry-evidence/after/provenance.json",
+      "?? runtime-retry-evidence/after/snapshot-captures.json",
+      "?? runtime-retry-evidence/after/source-before.json",
+      "?? runtime-retry-evidence/after/video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+      "?? runtime-retry-evidence/after/vitest.config.ts",
+      "?? runtime-retry-evidence/after/vitest.json"
+    ],
+    "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+    "mismatches": []
+  },
+  "files": [
+    {
+      "path": "00-initial.png",
+      "bytes": 48853,
+      "sha256": "a69d536ac3efcde2dc41129f21e227a150500da40b146e33624115a7c77c0cc4",
+      "gitBlob": "49e9c6b1b43defd99e7bc5eceb849909111c9a40"
+    },
+    {
+      "path": "01-answer-actions.png",
+      "bytes": 48853,
+      "sha256": "a69d536ac3efcde2dc41129f21e227a150500da40b146e33624115a7c77c0cc4",
+      "gitBlob": "49e9c6b1b43defd99e7bc5eceb849909111c9a40"
+    },
+    {
+      "path": "02-effort-menu.png",
+      "bytes": 54139,
+      "sha256": "24d11b08a08dc61c7066ea12251a94b685bd8736ef8965491a65d184945f0447",
+      "gitBlob": "7c96a6ddc3daba3bd0c53ee707b55ea7b106d0e5"
+    },
+    {
+      "path": "03-confirmation.png",
+      "bytes": 71642,
+      "sha256": "d81391819c63cd1a7b658685bdd9c0b2bd9ad372b4fe786b197ad195a22676ca",
+      "gitBlob": "bbac6d7990cdbbb90a022b4f8f5226568ad9b1af"
+    },
+    {
+      "path": "04-latest-attempt.png",
+      "bytes": 52980,
+      "sha256": "d8632f70b2f6450b723d73dc9442b4b9fdff78922e7de84683bbfa24a971d9b5",
+      "gitBlob": "657bc51e3ca91efdbeb770790ecff38758a8294c"
+    },
+    {
+      "path": "05-previous-attempt.png",
+      "bytes": 49441,
+      "sha256": "17a1643647d6d8ae4597fb9fc64634f7b4d728205f239e0f9aa444671132f903",
+      "gitBlob": "08ff11ffc691dfb7b979c65ade45b145441bbe0c"
+    },
+    {
+      "path": "06-returned-latest.png",
+      "bytes": 52980,
+      "sha256": "d8632f70b2f6450b723d73dc9442b4b9fdff78922e7de84683bbfa24a971d9b5",
+      "gitBlob": "657bc51e3ca91efdbeb770790ecff38758a8294c"
+    },
+    {
+      "path": "append-fixture.tsx",
+      "bytes": 20229,
+      "sha256": "7fee3c8b59446e2713331b76d722140db2a69dcf5658e790a0fbbf0388b4cac5",
+      "gitBlob": "602f6e773bb7eeca52e8fda9a71ed56c805b22a0"
+    },
+    {
+      "path": "canonical-fixture.tsx",
+      "bytes": 594602,
+      "sha256": "1ca616f17a5e6b1591e39ee482c16b916e1c4e26035b0f93c104fb175ceaa7ce",
+      "gitBlob": "dc7ebbc25a343b4081bbd3a6143a3357afe712b5"
+    },
+    {
+      "path": "exits.json",
+      "bytes": 21,
+      "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+      "gitBlob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+    },
+    {
+      "path": "focus-traces.json",
+      "bytes": 124425,
+      "sha256": "d7c7a1986c9ef8daf1768a9ea7ad161b01ffd4ea8002a5b1833ac68995eefa53",
+      "gitBlob": "ce59cdddf06e87f787648ef3bc2c0eaaa84a8c90"
+    },
+    {
+      "path": "observed-fixture.tsx",
+      "bytes": 614831,
+      "sha256": "634033724d691a8fe8b67fa9925c2dc8faf99d7bdc7f6c53cab7766a01d4810b",
+      "gitBlob": "2e7fc4204e3a037a556a0a4a146978dc64cda28e"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 3567,
+      "sha256": "a7332ee3d3cd7c83015a834d54504bcb1ef58552b34a67ac78ac13434b80dd3c",
+      "gitBlob": "25ea07c49151010a88f7e43549b4f02a90c552cc"
+    },
+    {
+      "path": "snapshot-captures.json",
+      "bytes": 8954,
+      "sha256": "457d539025dbd6ecfe4873859039546b6897a5b797d5062c4b618abfa40418ef",
+      "gitBlob": "71a96c5750a89ec977ce5d6bef95da13d74c9054"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 2191,
+      "sha256": "8bb48206ab55e939ad38121a2fcf48ed1da22df8393d4eb968288d812dde8949",
+      "gitBlob": "56c79123d1d83acb0cf6334fe57b895151d93c7f"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 554,
+      "sha256": "8c47bfe1c0f7da39c2f9be9739355e35033ebdcdb9e1d7d3b945232ae6ca119b",
+      "gitBlob": "fdf830ea068e7b6652f1140dd9d0f98f62fc1daa"
+    },
+    {
+      "path": "video-probe.json",
+      "bytes": 396,
+      "sha256": "efec576d0a62556af04f19b41c61cbc0855141b85fd66d981246c2633e023e54",
+      "gitBlob": "54cf7e6cdf40fb0d00483c352498790800ff4861"
+    },
+    {
+      "path": "video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+      "bytes": 620086,
+      "sha256": "4d0513a072ce1f79c499e955da8fd719358ba08bd536c7eb0d09e0838ba9881d",
+      "gitBlob": "11880394159d30916830d11c789e4a45e31aa9c1"
+    },
+    {
+      "path": "vitest.config.ts",
+      "bytes": 923,
+      "sha256": "e326130d50c1be645f47581492af000e675abd95535c13958f429de2675f371c",
+      "gitBlob": "c0a7aa029de0ef87dc8b9f5c14891f79703755c7"
+    },
+    {
+      "path": "vitest.json",
+      "bytes": 77716,
+      "sha256": "7b8de77321a7e1a2b7d3fa6c3635c71da4aaea265bde92c130cd3409bce8a3a9",
+      "gitBlob": "e9bc74fd06e00855507313d60d2a69a38c11fa8a"
+    },
+    {
+      "path": "vitest.log",
+      "bytes": 82481,
+      "sha256": "1182ddaec92bf0c894d67942482e5eb3cde7e7e92744c9e3a12f51443406b705",
+      "gitBlob": "8ab45b0d2eed91ece150a8266fcc37dfd5bcca05"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "stage": "after-browser-and-overlay-removal",
+  "capturedAt": "2026-10-12T00:21:00.618Z",
+  "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+  "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+  "trackedFiles": 9025,
+  "gitTreeListingSha256": "da96dc668a4bbe8b64bfc5a1695d34a9b3bd7bac78d9acd83ffc480ec1759790",
+  "rawTrackedBlobsAndModesVerified": true,
+  "status": [
+    "?? .pr1858-driver/",
+    "?? runtime-retry-evidence-live/before/00-initial.png",
+    "?? runtime-retry-evidence-live/before/01-answer-actions.png",
+    "?? runtime-retry-evidence-live/before/exits.json",
+    "?? runtime-retry-evidence-live/before/video/page@9ad0386c13f955f4542b6f972ac5d07f.webm",
+    "?? runtime-retry-evidence/before/00-initial.png",
+    "?? runtime-retry-evidence/before/01-answer-actions.png",
+    "?? runtime-retry-evidence/before/append-fixture.tsx",
+    "?? runtime-retry-evidence/before/canonical-fixture.tsx",
+    "?? runtime-retry-evidence/before/exits.json",
+    "?? runtime-retry-evidence/before/observed-fixture.tsx",
+    "?? runtime-retry-evidence/before/provenance.json",
+    "?? runtime-retry-evidence/before/snapshot-captures.json",
+    "?? runtime-retry-evidence/before/source-before.json",
+    "?? runtime-retry-evidence/before/video/page@9ad0386c13f955f4542b6f972ac5d07f.webm",
+    "?? runtime-retry-evidence/before/vitest.config.ts",
+    "?? runtime-retry-evidence/before/vitest.json"
+  ],
+  "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+  "mismatches": []
+}

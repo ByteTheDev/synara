@@ -1,0 +1,172 @@
+{
+  "at": "2026-10-12T01:03:05.934Z",
+  "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+  "run": 38187373364,
+  "runAttempt": 2,
+  "status": "completed",
+  "conclusion": "success",
+  "checks": [
+    {
+      "id": 114620755675,
+      "name": "Format, Lint, Typecheck, Test, Browser Test, Build",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114620755675"
+    },
+    {
+      "id": 114619379445,
+      "name": "Static Checks (fast)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619379445"
+    },
+    {
+      "id": 114619357915,
+      "name": "Browser Tests (components 3/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357915"
+    },
+    {
+      "id": 114619357397,
+      "name": "Migration Lineage",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357397"
+    },
+    {
+      "id": 114619357308,
+      "name": "Browser Tests (chat-projects 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357308"
+    },
+    {
+      "id": 114619357298,
+      "name": "Unit Tests (server 1/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357298"
+    },
+    {
+      "id": 114619357274,
+      "name": "Unit Tests (server 2/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357274"
+    },
+    {
+      "id": 114619357269,
+      "name": "Browser Tests (chat-follow 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357269"
+    },
+    {
+      "id": 114619357250,
+      "name": "Static Checks (typecheck)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357250"
+    },
+    {
+      "id": 114619357243,
+      "name": "Windows Process Regression",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357243"
+    },
+    {
+      "id": 114619357235,
+      "name": "Desktop Build",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357235"
+    },
+    {
+      "id": 114619357219,
+      "name": "Browser Tests (chat-workflows 1/1)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357219"
+    },
+    {
+      "id": 114619357207,
+      "name": "Browser Tests (components 1/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357207"
+    },
+    {
+      "id": 114619357205,
+      "name": "Browser Tests (components 2/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357205"
+    },
+    {
+      "id": 114619357181,
+      "name": "Unit Tests (core)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357181"
+    },
+    {
+      "id": 114619357177,
+      "name": "Unit Tests (web)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619357177"
+    },
+    {
+      "id": 114619356658,
+      "name": "Unit Tests (server 3/3)",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619356658"
+    },
+    {
+      "id": 114619356571,
+      "name": "Detect code changes",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114619356571"
+    },
+    {
+      "id": 114612544958,
+      "name": "Label PR size",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187371896/job/114612544958"
+    },
+    {
+      "id": 114612535734,
+      "name": "Label PR 1858",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187371937/job/114612535734"
+    },
+    {
+      "id": 114612527228,
+      "name": "Sync PR size label definitions",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187371896/job/114612527228"
+    },
+    {
+      "id": 114612512273,
+      "name": "Collect PR targets",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187371937/job/114612512273"
+    },
+    {
+      "id": 114612511798,
+      "name": "Prepare PR size config",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187371896/job/114612511798"
+    }
+  ],
+  "qualification": "Only failed canonical jobs were requested again after the independently verified exact-source unchanged-command uncached diagnostic passed. Original attempt1 failure remains a historical failure with inaccessible log and no demonstrated cause."
+}

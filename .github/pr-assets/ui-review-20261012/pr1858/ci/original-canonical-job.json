@@ -1,0 +1,92 @@
+{
+  "id": 114612552287,
+  "run_id": 38187373364,
+  "workflow_name": "CI",
+  "head_branch": "codex/pr1220-effort-retry-20261011",
+  "run_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/runs/38187373364",
+  "run_attempt": 1,
+  "node_id": "CR_kwDORyuZ6c8AAAAar3DCXw",
+  "head_sha": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/jobs/114612552287",
+  "html_url": "https://github.com/Emanuele-web04/synara/actions/runs/38187373364/job/114612552287",
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2026-10-12T00:16:39Z",
+  "started_at": "2026-10-12T00:16:41Z",
+  "completed_at": "2026-10-12T00:23:42Z",
+  "name": "Unit Tests (server 3/3)",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-10-12T00:16:42Z",
+      "completed_at": "2026-10-12T00:16:43Z"
+    },
+    {
+      "name": "Checkout",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-10-12T00:16:43Z",
+      "completed_at": "2026-10-12T00:16:46Z"
+    },
+    {
+      "name": "Setup workspace",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-10-12T00:16:46Z",
+      "completed_at": "2026-10-12T00:17:15Z"
+    },
+    {
+      "name": "Verify Linux terminal PTY native dependency",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 4,
+      "started_at": "2026-10-12T00:17:15Z",
+      "completed_at": "2026-10-12T00:17:15Z"
+    },
+    {
+      "name": "Test (server 3/3)",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 5,
+      "started_at": "2026-10-12T00:17:15Z",
+      "completed_at": "2026-10-12T00:23:37Z"
+    },
+    {
+      "name": "Post Setup workspace",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-10-12T00:23:37Z",
+      "completed_at": "2026-10-12T00:23:37Z"
+    },
+    {
+      "name": "Post Checkout",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-10-12T00:23:37Z",
+      "completed_at": "2026-10-12T00:23:37Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-10-12T00:23:37Z",
+      "completed_at": "2026-10-12T00:23:38Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/Emanuele-web04/synara/check-runs/114612552287",
+  "labels": [
+    "ubuntu-24.04"
+  ],
+  "runner_id": 1000089068,
+  "runner_name": "GitHub Actions 1000089068",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

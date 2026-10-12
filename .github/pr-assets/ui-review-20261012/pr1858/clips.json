@@ -1,0 +1,118 @@
+[
+  {
+    "path": "clips/before-interaction.webm",
+    "source": "before/video/page@9ad0386c13f955f4542b6f972ac5d07f.webm",
+    "sourceSha256": "786e64641905a9a3778fc1b828c4398ce2d709b913819ff8306ec2b4dfaae51f",
+    "sourceStartSeconds": 101.0,
+    "requestedDurationSeconds": 5.44,
+    "actualProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 960,
+          "height": 1100
+        }
+      ],
+      "format": {
+        "duration": "5.440000"
+      }
+    },
+    "bytes": 39162,
+    "sha256": "92892752340d7e1855687ef4191f19e1c9bbef7ad1aeae0af0ad19d8e69431d8",
+    "encoderArgv": [
+      "ffmpeg",
+      "-loglevel",
+      "error",
+      "-nostdin",
+      "-ss",
+      "101.00",
+      "-i",
+      "PACKAGE/before/video/page@9ad0386c13f955f4542b6f972ac5d07f.webm",
+      "-t",
+      "5.44",
+      "-map",
+      "0:v:0",
+      "-an",
+      "-sn",
+      "-dn",
+      "-map_metadata",
+      "-1",
+      "-c:v",
+      "libvpx-vp9",
+      "-crf",
+      "28",
+      "-b:v",
+      "0",
+      "-threads",
+      "1",
+      "-row-mt",
+      "0",
+      "-fflags",
+      "+bitexact",
+      "-flags:v",
+      "+bitexact",
+      "-y",
+      "PACKAGE/clips/before-interaction.webm"
+    ],
+    "qualification": "New reproducible derivative: continuous original full-frame interval at original speed, re-encoded as VP9 solely for trimming. No overlays, speed change, synthesized frames or internal cuts. Complete original WebM remains unchanged."
+  },
+  {
+    "path": "clips/after-interaction.webm",
+    "source": "after/video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+    "sourceSha256": "4d0513a072ce1f79c499e955da8fd719358ba08bd536c7eb0d09e0838ba9881d",
+    "sourceStartSeconds": 72.4,
+    "requestedDurationSeconds": 3.52,
+    "actualProbe": {
+      "programs": [],
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "width": 960,
+          "height": 1100
+        }
+      ],
+      "format": {
+        "duration": "3.520000"
+      }
+    },
+    "bytes": 121254,
+    "sha256": "8e57d12824a8c87fc5aa4328d4cb53e4a5f684906fec80990b79425a3ab7a848",
+    "encoderArgv": [
+      "ffmpeg",
+      "-loglevel",
+      "error",
+      "-nostdin",
+      "-ss",
+      "72.40",
+      "-i",
+      "PACKAGE/after/video/page@8dbd6182ca981133a95990d37b9fbe03.webm",
+      "-t",
+      "3.52",
+      "-map",
+      "0:v:0",
+      "-an",
+      "-sn",
+      "-dn",
+      "-map_metadata",
+      "-1",
+      "-c:v",
+      "libvpx-vp9",
+      "-crf",
+      "28",
+      "-b:v",
+      "0",
+      "-threads",
+      "1",
+      "-row-mt",
+      "0",
+      "-fflags",
+      "+bitexact",
+      "-flags:v",
+      "+bitexact",
+      "-y",
+      "PACKAGE/clips/after-interaction.webm"
+    ],
+    "qualification": "New reproducible derivative: continuous original full-frame interval at original speed, re-encoded as VP9 solely for trimming. No overlays, speed change, synthesized frames or internal cuts. Complete original WebM remains unchanged."
+  }
+]

@@ -1,0 +1,76 @@
+[
+  {
+    "side": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "driverHead": "7627023e6df8e90ca877343cd96619683d9c8979",
+    "verifiedFileCount": 16,
+    "selectedTests": [
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1858 review evidence uses the real retry menu and prior-answer pager",
+        "status": "passed",
+        "failureMessages": []
+      }
+    ],
+    "actualExits": {
+      "vitest": 0,
+      "tee": 0
+    },
+    "verificationErrors": [],
+    "sourceTrackedFiles": 9025,
+    "traceCount": 1,
+    "allManifestBytesVerified": true
+  },
+  {
+    "side": "after",
+    "source": "21fe82fd87581515e975a75325ea6e791536ed23",
+    "tree": "26bbfe0d367c5439c3cc8e8240d81c6580205004",
+    "driverHead": "7627023e6df8e90ca877343cd96619683d9c8979",
+    "verifiedFileCount": 21,
+    "selectedTests": [
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry uses the settled turn model and instance while preserving a different composer draft",
+        "status": "failed",
+        "failureMessages": [
+          "Error: Cannot find element with locator: getByRole('menuitem', { name: /^Medium \\(current\\)/ })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mstyle\u001b[39m=\u001b[32m\"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]\"\u001b[39m\n      \u001b[33mdata-sidebar-layout\u001b[39m=\u001b[32m\"rail\"\u001b[39m\n      \u001b[33mdata-sidebar-side\u001b[39m=\u001b[32m\"left\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"sidebar-wrapper\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m \u2026\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m \u2026\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m \u2026\u001b[36m />\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal-anchored\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_1f_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"outline-none\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport-anchored\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_1g_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2\"\u001b[39m\n      \u001b[33mdata-position\u001b[39m=\u001b[32m\"top-center\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--toast-frontmost-height: 0px;\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m...\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=61410d7b:3748:47)\n    at openHighEffortConfirmation (http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1858Retry.browser.tsx?import&browserv=1791763028743:12360:86)\n    at async http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1858Retry.browser.tsx?import&browserv=1791763028743:12385:5\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=61410d7b:1903:20"
+        ]
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry refuses a stale confirmation before dispatching a retry",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry pages and copies the durable previous answer on a client without a local archive",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry clears local retry history after an ordinary edit and does not reattach old durable answers",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry disables the action when the settled turn has no checkpoint",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1858 review evidence uses the real retry menu and prior-answer pager",
+        "status": "passed",
+        "failureMessages": []
+      }
+    ],
+    "actualExits": {
+      "vitest": 1,
+      "tee": 0
+    },
+    "verificationErrors": [
+      "Actual Vitest exit was 1",
+      "AssertionError [ERR_ASSERTION]: Every selected case must pass."
+    ],
+    "sourceTrackedFiles": 9035,
+    "traceCount": 6,
+    "allManifestBytesVerified": true
+  }
+]

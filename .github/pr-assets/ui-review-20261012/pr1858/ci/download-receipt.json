@@ -1,0 +1,16 @@
+{
+  "artifact": 11721090417,
+  "expectedSize": 140607,
+  "expectedSha256": "62c218537d3d0b4652eaad666820647ca1a06d53423329cca9f636d339914dfa",
+  "verifiedAt": 1791766150.785088,
+  "files": [
+    "log-snapshot.json",
+    "manifest.json",
+    "process.json",
+    "provenance.json",
+    "result.json",
+    "source-after.json",
+    "source-before.json",
+    "vitest.log"
+  ]
+}

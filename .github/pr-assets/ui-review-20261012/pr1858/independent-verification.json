@@ -1,0 +1,77 @@
+[
+  {
+    "side": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "driverHead": "cbc0116fc8ad607fd0f68f0665b2806bf6dcdb80",
+    "selected": [
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1858 review evidence uses the real retry menu and prior-answer pager",
+        "status": "passed",
+        "failureMessages": []
+      }
+    ],
+    "actualExits": {
+      "vitest": 0,
+      "tee": 0
+    },
+    "verifiedFiles": 16,
+    "exactInventory": true,
+    "canonicalOverlayReversed": true,
+    "driverBytesVerified": true,
+    "sourceGuardsPassed": true,
+    "screenshots": 2,
+    "videos": 1,
+    "verifiedAt": "2026-10-12T00:28:34.468209+00:00"
+  },
+  {
+    "side": "after",
+    "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+    "tree": "6b5e0bc1756d8f0586aa67b9bf1c30ea266cd158",
+    "driverHead": "cbc0116fc8ad607fd0f68f0665b2806bf6dcdb80",
+    "selected": [
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry uses the settled turn model and instance while preserving a different composer draft",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry refuses a stale confirmation before dispatching a retry",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry pages and copies the durable previous answer on a client without a local archive",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry clears local retry history after an ordinary edit and does not reattach old durable answers",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) effort retry disables the action when the settled turn has no checkpoint",
+        "status": "passed",
+        "failureMessages": []
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1858 review evidence uses the real retry menu and prior-answer pager",
+        "status": "passed",
+        "failureMessages": []
+      }
+    ],
+    "actualExits": {
+      "vitest": 0,
+      "tee": 0
+    },
+    "verifiedFiles": 21,
+    "exactInventory": true,
+    "canonicalOverlayReversed": true,
+    "driverBytesVerified": true,
+    "sourceGuardsPassed": true,
+    "screenshots": 7,
+    "videos": 1,
+    "verifiedAt": "2026-10-12T00:28:34.480706+00:00"
+  }
+]

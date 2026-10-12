@@ -1,0 +1,65 @@
+[
+  {
+    "path": "frames/before-0_5.png",
+    "clip": "clips/before-interaction.webm",
+    "clipOffsetSeconds": 0.5,
+    "sha256": "961cb7e9b4ab287eb04c1a101fc40569a3fdd6897f87d99b602cf1117eed62ef",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/before-2_0.png",
+    "clip": "clips/before-interaction.webm",
+    "clipOffsetSeconds": 2.0,
+    "sha256": "81a90192a67ce854f890d8f959a64bc6dcffa27860cc0201dede5f3876074b52",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/before-4_0.png",
+    "clip": "clips/before-interaction.webm",
+    "clipOffsetSeconds": 4.0,
+    "sha256": "c22da1dce6effafa70b6beeb22d7f499258194a6fcd816aefcb275f5b9328522",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/after-0_8.png",
+    "clip": "clips/after-interaction.webm",
+    "clipOffsetSeconds": 0.8,
+    "sha256": "654e7f5dc2aed7bd0ff0a8af37f8d6db469d530381ba91cf6ed67449477e894f",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/after-1_25.png",
+    "clip": "clips/after-interaction.webm",
+    "clipOffsetSeconds": 1.25,
+    "sha256": "f03ddfb1362847f8aa4b5dd2492843c4396a0128d5869f2b926b1413861b0512",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/after-1_5.png",
+    "clip": "clips/after-interaction.webm",
+    "clipOffsetSeconds": 1.5,
+    "sha256": "cd96202aa342513dad80f8e7fde7c41b78e0d72d05fba69d06b603f42d2b48c8",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/after-1_85.png",
+    "clip": "clips/after-interaction.webm",
+    "clipOffsetSeconds": 1.85,
+    "sha256": "952875a2f8586348d756f8188df11acdb78f3acdb552ceafc0cf179f43b11f57",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/after-2_15.png",
+    "clip": "clips/after-interaction.webm",
+    "clipOffsetSeconds": 2.15,
+    "sha256": "01a1770d0b29f807edf54534ee916e11376ee36e7d03e73c1f56f38be8ede75d",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  },
+  {
+    "path": "frames/after-2_6.png",
+    "clip": "clips/after-interaction.webm",
+    "clipOffsetSeconds": 2.6,
+    "sha256": "749c995cdb5c8139dbae9aa84270f60c4118c9f251e7476df6be9704bad24514",
+    "qualification": "Actual full derivative-video frame; source interval is recorded in clips.json."
+  }
+]

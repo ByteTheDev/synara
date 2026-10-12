@@ -1,0 +1,108 @@
+{
+  "id": 114616569760,
+  "run_id": 38188706612,
+  "workflow_name": "PR1858 retained server shard diagnostic",
+  "head_branch": "codex/runtime-pr1858-server3-observer-20261012",
+  "run_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/runs/38188706612",
+  "run_attempt": 1,
+  "node_id": "CR_kwDORyuZ6c8AAAAar64PoA",
+  "head_sha": "0d46607f4d76be872d57a9b25562186d2f27a5cb",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/jobs/114616569760",
+  "html_url": "https://github.com/Emanuele-web04/synara/actions/runs/38188706612/job/114616569760",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-10-12T00:37:20Z",
+  "started_at": "2026-10-12T00:37:22Z",
+  "completed_at": "2026-10-12T00:44:59Z",
+  "name": "server",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-10-12T00:37:23Z",
+      "completed_at": "2026-10-12T00:37:24Z"
+    },
+    {
+      "name": "Checkout immutable application source",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-10-12T00:37:24Z",
+      "completed_at": "2026-10-12T00:37:29Z"
+    },
+    {
+      "name": "Checkout isolated log observer",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-10-12T00:37:29Z",
+      "completed_at": "2026-10-12T00:37:33Z"
+    },
+    {
+      "name": "Setup workspace with the canonical action and defaults",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-10-12T00:37:33Z",
+      "completed_at": "2026-10-12T00:38:06Z"
+    },
+    {
+      "name": "Run unchanged server 3 of 3 command and retain actual failure",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-10-12T00:38:06Z",
+      "completed_at": "2026-10-12T00:44:30Z"
+    },
+    {
+      "name": "Upload frozen raw log, actual process result, and source guards",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-10-12T00:44:30Z",
+      "completed_at": "2026-10-12T00:44:31Z"
+    },
+    {
+      "name": "Post Setup workspace with the canonical action and defaults",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-10-12T00:44:31Z",
+      "completed_at": "2026-10-12T00:44:57Z"
+    },
+    {
+      "name": "Post Checkout isolated log observer",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-10-12T00:44:57Z",
+      "completed_at": "2026-10-12T00:44:57Z"
+    },
+    {
+      "name": "Post Checkout immutable application source",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12,
+      "started_at": "2026-10-12T00:44:57Z",
+      "completed_at": "2026-10-12T00:44:57Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13,
+      "started_at": "2026-10-12T00:44:57Z",
+      "completed_at": "2026-10-12T00:44:57Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/Emanuele-web04/synara/check-runs/114616569760",
+  "labels": [
+    "ubuntu-24.04"
+  ],
+  "runner_id": 1000089139,
+  "runner_name": "GitHub Actions 1000089139",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

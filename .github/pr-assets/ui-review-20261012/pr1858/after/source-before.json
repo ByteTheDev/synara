@@ -1,0 +1,14 @@
+{
+  "stage": "before-overlay",
+  "capturedAt": "2026-10-12T00:18:49.895Z",
+  "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+  "tree": "6b5e0bc1756d8f0586aa67b9bf1c30ea266cd158",
+  "trackedFiles": 9035,
+  "gitTreeListingSha256": "ef3237ecaeb64cf25beeb66d56fde9a9c47c251f657564412f8bbc91f05a98e6",
+  "rawTrackedBlobsAndModesVerified": true,
+  "status": [
+    "?? .pr1858-driver/"
+  ],
+  "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+  "mismatches": []
+}

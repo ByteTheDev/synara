@@ -1,0 +1,7 @@
+{
+  "ffmpegVersion": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+  "ffprobeVersion": "ffprobe version 6.1.1-3ubuntu5 Copyright (c) 2007-2023 the FFmpeg developers",
+  "clips": 2,
+  "frames": 9,
+  "byteIdenticalReproduction": false
+}

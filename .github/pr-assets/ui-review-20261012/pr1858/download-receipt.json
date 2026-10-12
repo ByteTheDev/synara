@@ -1,0 +1,18 @@
+[
+  {
+    "label": "before",
+    "artifactId": 11720441958,
+    "size": 414886,
+    "sha256": "0e075727d2f67fcc6ff55382fa17f41cfbc6d8bb560b11de4576e1778e152aba",
+    "verifiedAt": 1791764794.674798,
+    "files": 17
+  },
+  {
+    "label": "after",
+    "artifactId": 11719299549,
+    "size": 1062886,
+    "sha256": "2ebbe9d85c6bdc1a0436502438150bfce1d8faf75491c19fed6edc8a00feae75",
+    "verifiedAt": 1791764795.0083477,
+    "files": 22
+  }
+]

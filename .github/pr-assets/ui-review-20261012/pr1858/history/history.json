@@ -1,0 +1,50 @@
+[
+  {
+    "run": 38184609411,
+    "path": "history/38184609411-before.zip",
+    "side": "before",
+    "artifactId": 11719252050,
+    "sha256": "d67f9a8ac3ec5d4717d9cc9e136cfdeee453db81009a61728c1fac1b141e8041",
+    "bytes": 408580,
+    "actualVitestExit": 0,
+    "selectedPassed": 1,
+    "selectedFailed": 0,
+    "failure": null
+  },
+  {
+    "run": 38184609411,
+    "path": "history/38184609411-after.zip",
+    "side": "after",
+    "artifactId": 11718798450,
+    "sha256": "b1fed120032358e71a53aea119630bf91d02b9977902a09f0b421e8d70b90204",
+    "bytes": 1670244,
+    "actualVitestExit": 1,
+    "selectedPassed": 5,
+    "selectedFailed": 1,
+    "failure": "High menu lookup timeout in first canonical retry case"
+  },
+  {
+    "run": 38186101796,
+    "path": "history/38186101796-after.zip",
+    "side": "after",
+    "artifactId": 11719856253,
+    "sha256": "efcb36b782759e13f87011af710be60596d09a38a3a0cb60d99e4fb5686fb762",
+    "bytes": 1664103,
+    "actualVitestExit": 1,
+    "selectedPassed": 5,
+    "selectedFailed": 1,
+    "failure": "Medium(current) lookup timeout in the same canonical case; actual focus/RAF trace establishes menu dismissal"
+  },
+  {
+    "run": 38186101796,
+    "path": "history/38186101796-before.zip",
+    "side": "before",
+    "artifactId": 11719188106,
+    "sha256": "39cb10dcd50caeedd0588ba3918774913ad09ba93cff6b2e421f6e412a694294",
+    "bytes": 413112,
+    "actualVitestExit": 0,
+    "selectedPassed": 1,
+    "selectedFailed": 0,
+    "failure": null
+  }
+]

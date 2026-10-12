@@ -1,0 +1,32 @@
+{
+  "source": "b7fd69812cb169c60a5b9fac17b05b6ff81b5322",
+  "tree": "6b5e0bc1756d8f0586aa67b9bf1c30ea266cd158",
+  "driver": "0d46607f4d76be872d57a9b25562186d2f27a5cb",
+  "actualCommand": [
+    "bunx",
+    "turbo",
+    "run",
+    "test",
+    "--filter=@synara/cli",
+    "--",
+    "--shard=3/3"
+  ],
+  "run": 38188706612,
+  "job": 114616569760,
+  "artifact": 11721090417,
+  "manifestFilesVerified": 7,
+  "trackedFilesVerified": 9035,
+  "actualRootExit": 0,
+  "closeCode": 0,
+  "elapsedMs": 382193.16079299996,
+  "logBytes": 5061356,
+  "logSha256": "ee5ee7332636fba8195bdd0901c2536f18857a1d83417d9b92d71545d7feb16f",
+  "observedSummaryLines": [
+    "00:43:46.440 INFO [omp] model/list cache hit cacheKey=\"/bin/omp-fixture\\u0000\\u0000\" modelCount=1",
+    " Test Files  190 passed | 4 skipped (194)",
+    "      Tests  3362 passed | 17 skipped (3379)",
+    "   Duration  381.32s (transform 9.16s, setup 0ms, import 82.16s, tests 274.45s, environment 22ms)",
+    " Tasks:    1 successful, 1 total"
+  ],
+  "qualification": "Separate exact-source diagnostic pass; original canonical job114612552287 remains a failed job with inaccessible log and no demonstrated cause."
+}

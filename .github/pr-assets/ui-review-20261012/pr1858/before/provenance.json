@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-10-12T00:18:55.657Z",
+  "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+  "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+  "side": "before",
+  "expectedSelected": 1,
+  "expectedPhases": [
+    "00-initial",
+    "01-answer-actions"
+  ],
+  "viewport": {
+    "width": 960,
+    "height": 1100
+  },
+  "liveOutput": "/home/runner/work/synara/synara/runtime-retry-evidence-live/before",
+  "liveReportPath": "/home/runner/work/_temp/pr1858-retry-before/vitest.json",
+  "originalFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "bytes": 577781,
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+    "gitBlob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+  },
+  "overlay": {
+    "path": "apps/web/src/components/PrUiEvidence1858Retry.browser.tsx",
+    "bytes": 598010,
+    "sha256": "6485766e1ae652c7d90aef8e18573155677cce6bd24932fecf038501428d9d47",
+    "gitBlob": "b986cf4bd95d3282bdaf14cf1a44f352c1492cc0"
+  },
+  "config": {
+    "path": "apps/web/vitest.pr1858-retry-evidence.config.ts",
+    "bytes": 923,
+    "sha256": "e326130d50c1be645f47581492af000e675abd95535c13958f429de2675f371c",
+    "gitBlob": "c0a7aa029de0ef87dc8b9f5c14891f79703755c7"
+  },
+  "driver": {
+    "head": "cbc0116fc8ad607fd0f68f0665b2806bf6dcdb80",
+    "files": [
+      {
+        "path": ".github/workflows/pr1858-retry-evidence.yml",
+        "bytes": 3175,
+        "sha256": "8e61a1edcd09fb65dc197054f49c610cc28f867260c17ee69fbd4d9dc850e990",
+        "gitBlob": "91dd90c2e3f7cd7b7a10c6964925ff721431c346"
+      },
+      {
+        "path": "scripts/pr1858-retry-evidence/runner.mjs",
+        "bytes": 24175,
+        "sha256": "843114e4e9ded2d320ac3b4b1c9c27efed2819ef53372ee7679be2d7b954fa36",
+        "gitBlob": "a7b8a63915768f096204946fbc6bec23d2098f50"
+      },
+      {
+        "path": "scripts/pr1858-retry-evidence/append-fixture.tsx",
+        "bytes": 20229,
+        "sha256": "7fee3c8b59446e2713331b76d722140db2a69dcf5658e790a0fbbf0388b4cac5",
+        "gitBlob": "602f6e773bb7eeca52e8fda9a71ed56c805b22a0"
+      },
+      {
+        "path": "scripts/pr1858-retry-evidence/vitest.pr1858-retry-evidence.config.ts",
+        "bytes": 923,
+        "sha256": "e326130d50c1be645f47581492af000e675abd95535c13958f429de2675f371c",
+        "gitBlob": "c0a7aa029de0ef87dc8b9f5c14891f79703755c7"
+      },
+      {
+        "path": "scripts/pr1858-retry-evidence/targets.json",
+        "bytes": 789,
+        "sha256": "0dae875b2c4242d269f91ffc8943b0ce1523be5281afbfb063ee5300dae04b69",
+        "gitBlob": "287d4b99eaffcd2818f54355807e023215e00dcb"
+      },
+      {
+        "path": "scripts/pr1858-retry-evidence/README.md",
+        "bytes": 6210,
+        "sha256": "41a0557dc63144eed9ae4c6df131408d90582f231611db8d20c5561e38e7d507",
+        "gitBlob": "cb15f50eb406543b648b7685696174e87f032cd1"
+      }
+    ]
+  },
+  "interpretation": "Before is current main without the feature. After is the reviewed repair. This pair demonstrates component behavior, not a causal control for every repaired backend defect.",
+  "backendBoundary": "Real production ChatView, CSS, router, menus and clicks; controlled native API acknowledgement and explicit projected server snapshot. No provider execution, checkpoint creation or native workspace restore is claimed.",
+  "fixtureTime": "Fixed fixture timestamps define settled turn durations. They do not measure test runtime or model latency."
+}

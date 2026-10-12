@@ -1,0 +1,55 @@
+[
+  {
+    "id": 11719252050,
+    "side": "before",
+    "sha256": "d67f9a8ac3ec5d4717d9cc9e136cfdeee453db81009a61728c1fac1b141e8041",
+    "bytes": 408580,
+    "files": [
+      "before/00-initial.png",
+      "before/append-fixture.tsx",
+      "before/01-answer-actions.png",
+      "before/canonical-fixture.tsx",
+      "before/exits.json",
+      "before/observed-fixture.tsx",
+      "before/provenance.json",
+      "before/snapshot-captures.json",
+      "before/source-after.json",
+      "before/source-before.json",
+      "before/verified.json",
+      "before/video/page@1b903bbf916062b6f25f1be078ad7baf.webm",
+      "before/video-probe.json",
+      "before/vitest.config.ts",
+      "before/vitest.json",
+      "before/vitest.log"
+    ]
+  },
+  {
+    "id": 11718798450,
+    "side": "after",
+    "sha256": "b1fed120032358e71a53aea119630bf91d02b9977902a09f0b421e8d70b90204",
+    "bytes": 1670244,
+    "files": [
+      "after/00-initial.png",
+      "after/02-effort-menu.png",
+      "after/01-answer-actions.png",
+      "after/03-confirmation.png",
+      "after/04-latest-attempt.png",
+      "after/05-previous-attempt.png",
+      "after/06-returned-latest.png",
+      "after/append-fixture.tsx",
+      "after/canonical-fixture.tsx",
+      "after/exits.json",
+      "after/observed-fixture.tsx",
+      "after/provenance.json",
+      "after/snapshot-captures.json",
+      "after/source-after.json",
+      "after/source-before.json",
+      "after/video/page@e190f5fdfea1599adef0d6b2e593cf59.webm",
+      "after/verified.json",
+      "after/video-probe.json",
+      "after/vitest.config.ts",
+      "after/vitest.json",
+      "after/vitest.log"
+    ]
+  }
+]
