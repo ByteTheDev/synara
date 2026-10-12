@@ -62,8 +62,12 @@ export async function probeSafariFullDiskAccess(
     () => fileSystem.openAndClose(join(homeDir, "Library/Cookies/Cookies.binarycookies")),
     () => fileSystem.listDirectory(join(homeDir, "Library/Safari")),
   ];
+  let expired = false;
   const run = async (): Promise<DesktopSafariFullDiskAccess> => {
     for (const probe of probes) {
+      // An in-flight filesystem call cannot be cancelled; do not start a new
+      // protected-path access after the startup probe has already timed out.
+      if (expired) return "unknown";
       try {
         await probe();
         return "granted";
@@ -79,7 +83,10 @@ export async function probeSafariFullDiskAccess(
   // filesystem must not hold them back.
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<DesktopSafariFullDiskAccess>((resolve) => {
-    timer = setTimeout(() => resolve("unknown"), PROBE_TIMEOUT_MS);
+    timer = setTimeout(() => {
+      expired = true;
+      resolve("unknown");
+    }, PROBE_TIMEOUT_MS);
   });
   try {
     return await Promise.race([run(), timeout]);

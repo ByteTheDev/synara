@@ -163,6 +163,31 @@ describe("Safari access setup IPC", () => {
     await expect(call("getInfo")).resolves.toMatchObject({ fullDiskAccess: "granted" });
   });
 
+  it("does not start another protected-path probe after its deadline", async () => {
+    vi.useFakeTimers();
+    try {
+      let rejectFirst!: (reason: Error) => void;
+      const openAndClose = vi.fn(async () => {});
+      openAndClose.mockImplementationOnce(
+        () =>
+          new Promise<void>((_resolve, reject) => {
+            rejectFirst = reject;
+          }),
+      );
+      const listDirectory = vi.fn(async () => {});
+      const result = probeSafariFullDiskAccess(HOME, { openAndClose, listDirectory });
+      await vi.advanceTimersByTimeAsync(2_000);
+      await expect(result).resolves.toBe("unknown");
+      // A slow filesystem can report absence after the caller already timed out.
+      rejectFirst(fsError("ENOENT"));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(openAndClose).toHaveBeenCalledTimes(1);
+      expect(listDirectory).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("does not hold startup on a stuck filesystem", async () => {
     vi.useFakeTimers();
     try {
