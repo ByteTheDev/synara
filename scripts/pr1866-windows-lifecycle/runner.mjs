@@ -210,6 +210,7 @@ async function main() {
   const overlays = new Map();
   let reportVerification = null;
   let testResult = null;
+  let driverBefore = null;
   const capture = (name, filename, cap) => {
     const receipt = snapshotFile(path.join(live, filename), path.join(frozen, filename), cap);
     writeJson(name + "-snapshot.json", receipt);
@@ -239,9 +240,10 @@ async function main() {
     return result;
   };
   try {
+    driverBefore = verifyDriver();
     writeJson("provenance.json", {
       variant, source: sourcePin, candidate: pins.candidate, author: pins.originalAuthorHead,
-      driverHead: process.env.GITHUB_SHA, driver: verifyDriver(),
+      driverHead: process.env.GITHUB_SHA, driver: driverBefore,
       environment: { platform: process.platform, architecture: process.arch, node: process.version },
       qualification: pins.qualification,
       productionSourceIsNeverFormattedInPlace: true,
@@ -275,6 +277,14 @@ async function main() {
     try {
       writeJson("source-restored.json", sourceProof(sourceRoot, sourcePin, new Map(), "restored"));
     } catch (error) { failures.push({ phase: "restored-source", ...recordError(error) }); }
+    try {
+      const driverAfter = verifyDriver();
+      assert(driverBefore, "Initial driver identity was not established");
+      assert.deepEqual(driverAfter, driverBefore, "Driver bytes changed during execution");
+      writeJson("driver-final.json", { head: process.env.GITHUB_SHA, files: driverAfter });
+    } catch (error) {
+      failures.push({ phase: "driver-final", ...recordError(error) });
+    }
     const actualTestStatus = testResult?.observerStatus ?? 1;
     const exitCode = failures.length ? (actualTestStatus || 1) : actualTestStatus;
     writeJson("result.json", {
