@@ -2452,10 +2452,16 @@ const make = Effect.gen(function* () {
       // session was actually spawned from so spawn-fixed changes still restart.
       const shouldRestartForModelSelectionChange =
         currentProvider === "claudeAgent"
-          ? claudeSelectionRequiresRestart(
+          ? ((providerService.requiresModelSelectionRestart
+              ? yield* providerService.requiresModelSelectionRestart(
+                  threadId,
+                  desiredModelSelection,
+                )
+              : undefined) ??
+            claudeSelectionRequiresRestart(
               previousModelSelection ?? thread.modelSelection,
               desiredModelSelection,
-            )
+            ))
           : (currentProvider === "droid" ||
               currentProvider === "grok" ||
               currentProvider === "devin") &&

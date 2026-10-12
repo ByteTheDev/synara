@@ -4945,6 +4945,22 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
           ),
         );
 
+    const requiresModelSelectionRestart: NonNullable<
+      ProviderServiceShape["requiresModelSelectionRestart"]
+    > = (threadId, selection) =>
+      lifecycle.runCurrent(threadId, () =>
+        Effect.gen(function* () {
+          const routed = yield* resolveRoutableSession({
+            threadId,
+            operation: "ProviderService.requiresModelSelectionRestart",
+            allowRecovery: false,
+          });
+          return routed.adapter.requiresModelSelectionRestart
+            ? yield* routed.adapter.requiresModelSelectionRestart(threadId, selection)
+            : undefined;
+        }),
+      );
+
     const getClaudeCacheObservation: NonNullable<
       ProviderServiceShape["getClaudeCacheObservation"]
     > = (threadId) =>
@@ -5193,6 +5209,7 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
       listSessions,
       getCapabilities,
       getClaudeCacheObservation,
+      requiresModelSelectionRestart,
       startClaudeCompaction,
       cancelClaudeCompactionDiscovery,
       rollbackConversation,

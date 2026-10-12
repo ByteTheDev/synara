@@ -96,6 +96,11 @@ export interface ProviderServiceShape {
   readonly cancelClaudeCompactionDiscovery?: (
     threadId: ThreadId,
   ) => Effect.Effect<void, ProviderServiceError>;
+  readonly requiresModelSelectionRestart?: (
+    threadId: ThreadId,
+    modelSelection: ModelSelection,
+  ) => Effect.Effect<boolean | undefined, ProviderServiceError>;
+
   readonly getClaudeCacheObservation?: (
     threadId: ThreadId,
   ) => Effect.Effect<ClaudeCacheObservation | undefined, ProviderServiceError>;

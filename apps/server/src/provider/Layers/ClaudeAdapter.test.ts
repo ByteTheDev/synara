@@ -15623,3 +15623,54 @@ it.effect("applies resolved SDK alias capabilities at startup and live dispatch"
     );
   }).pipe(Effect.provide(harness.layer));
 });
+
+it.effect("restarts runtime aliases for max effort and explicit compaction windows", () => {
+  const harness = makeHarness();
+  setSupportedModels(harness.query, [
+    {
+      value: "opus-full-effort",
+      resolvedModel: "claude-opus-5",
+      displayName: "SDK Opus",
+      description: "Alias",
+      supportsEffort: true,
+      supportedEffortLevels: ["low", "medium", "high", "xhigh", "max"],
+    },
+  ]);
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: {
+        provider: "claudeAgent",
+        model: "opus-full-effort",
+        options: { effort: "high" },
+      },
+    });
+    assert.equal(
+      yield* adapter.requiresModelSelectionRestart!(THREAD_ID, {
+        provider: "claudeAgent",
+        model: "opus-full-effort",
+        options: { effort: "max" },
+      }),
+      true,
+    );
+    assert.equal(
+      yield* adapter.requiresModelSelectionRestart!(THREAD_ID, {
+        provider: "claudeAgent",
+        model: "opus-full-effort",
+        options: { effort: "high", autoCompactWindow: "1m" },
+      }),
+      true,
+    );
+    assert.equal(
+      yield* adapter.requiresModelSelectionRestart!(THREAD_ID, {
+        provider: "claudeAgent",
+        model: "opus-full-effort",
+        options: { effort: "xhigh" },
+      }),
+      false,
+    );
+  }).pipe(Effect.provide(harness.layer));
+});

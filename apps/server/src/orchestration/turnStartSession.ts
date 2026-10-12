@@ -74,8 +74,8 @@ export function deriveTurnStartSession(input: {
   // during recovery). Its timestamp is not permission to roll the session back.
   if (input.currentSession !== null && input.currentSession.status !== "ready") {
     const previousAt = Date.parse(input.currentSession.updatedAt);
-    const requestedAt = Date.parse(input.requestedAt);
-    if (Number.isFinite(previousAt) && Number.isFinite(requestedAt) && previousAt > requestedAt) {
+    const observedAt = Date.parse(input.observedAt);
+    if (Number.isFinite(previousAt) && Number.isFinite(observedAt) && previousAt > observedAt) {
       return null;
     }
   }

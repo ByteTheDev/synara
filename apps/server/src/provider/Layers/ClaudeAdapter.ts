@@ -7564,6 +7564,40 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
     const startSession: ClaudeAdapterShape["startSession"] = (input) =>
       withSessionLifecycleLock(input.threadId, startSessionUnlocked(input));
 
+    const requiresModelSelectionRestart: NonNullable<
+      ClaudeAdapterShape["requiresModelSelectionRestart"]
+    > = (threadId, selection) =>
+      Effect.gen(function* () {
+        const context = yield* requireSession(threadId);
+        if (selection.provider !== PROVIDER) return true;
+        let caps = context.modelCapabilities;
+        if (resolveApiModelId(selection) !== context.currentApiModelId) {
+          const model = yield* verifyClaudeModelSupport({
+            queryRuntime: context.query,
+            discoveryKey: context.accountDiscoveryKey,
+            selectedModel: selection.model,
+            apiModelId: resolveApiModelId(selection),
+            operation: "sendTurn",
+            requireAuto: context.session.runtimeMode === "auto",
+            effort: getEffectiveClaudeCodeEffort(trimOrNull(selection.options?.effort)),
+          });
+          caps = model
+            ? claudeModelInfoCapabilities(model)
+            : getModelCapabilities(PROVIDER, selection.model);
+        }
+        const effort = trimOrNull(selection.options?.effort);
+        const maxEffort = effort === "max" && hasEffortLevel(caps, "max");
+        const window = resolveSelectedClaudeAutoCompactWindow(
+          selection.model,
+          normalizeClaudeModelOptions(selection.model, selection.options, caps)?.autoCompactWindow,
+          caps,
+        );
+        return (
+          (context.currentEffort === "max") !== maxEffort ||
+          context.currentAutoCompactWindow !== window
+        );
+      });
+
     const getClaudeCacheObservation: NonNullable<
       ClaudeAdapterShape["getClaudeCacheObservation"]
     > = (threadId) =>
@@ -8967,6 +9001,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
       didResumeSession,
       prepareSessionReplacement,
       getClaudeCacheObservation,
+      requiresModelSelectionRestart,
       startClaudeCompaction,
       cancelClaudeCompactionDiscovery,
       sendTurn,

@@ -117,3 +117,20 @@ it("timestamps a pending follow-up with server observation despite a slow client
     }),
   ).toMatchObject({ status: "starting", updatedAt: observedAt });
 });
+
+it.each(["stopped", "error", "interrupted"] as const)(
+  "fences a %s retry using server ordering despite clock skew",
+  (status) => {
+    const observedAt = "2026-07-23T01:00:00.000Z";
+    expect(
+      deriveTurnStartSession({
+        threadId: THREAD_ID,
+        currentSession: makeSession(status),
+        providerName: "codex",
+        requestedRuntimeMode: "full-access",
+        requestedAt: "2026-07-19T00:00:00.000Z",
+        observedAt,
+      }),
+    ).toMatchObject({ status: "starting", updatedAt: observedAt });
+  },
+);
