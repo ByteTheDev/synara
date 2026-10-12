@@ -1,0 +1,122 @@
+{
+  "cold:mega": {
+    "scripting": 299,
+    "rendering": 73,
+    "painting": 29,
+    "other": 1,
+    "busy": 533,
+    "longTasks": 3,
+    "maxTask": 88,
+    "styleRecalcs500": 0
+  },
+  "scroll:mega": {
+    "scripting": 413,
+    "rendering": 500,
+    "painting": 108,
+    "other": 5,
+    "busy": 1168,
+    "longTasks": 0,
+    "maxTask": 21,
+    "styleRecalcs500": 1
+  },
+  "cold:handoff": {
+    "scripting": 159,
+    "rendering": 37,
+    "painting": 6,
+    "other": 1,
+    "busy": 262,
+    "longTasks": 2,
+    "maxTask": 66,
+    "styleRecalcs500": 0
+  },
+  "warm:mega": {
+    "scripting": 81,
+    "rendering": 39,
+    "painting": 9,
+    "other": 0,
+    "busy": 147,
+    "longTasks": 1,
+    "maxTask": 64,
+    "styleRecalcs500": 0
+  },
+  "cold:long": {
+    "scripting": 158,
+    "rendering": 37,
+    "painting": 6,
+    "other": 1,
+    "busy": 239,
+    "longTasks": 1,
+    "maxTask": 60,
+    "styleRecalcs500": 0
+  },
+  "scroll:long": {
+    "scripting": 198,
+    "rendering": 174,
+    "painting": 33,
+    "other": 2,
+    "busy": 464,
+    "longTasks": 0,
+    "maxTask": 12,
+    "styleRecalcs500": 1
+  },
+  "cold:hero": {
+    "scripting": 118,
+    "rendering": 35,
+    "painting": 7,
+    "other": 0,
+    "busy": 204,
+    "longTasks": 1,
+    "maxTask": 56,
+    "styleRecalcs500": 0
+  },
+  "scroll:hero": {
+    "scripting": 233,
+    "rendering": 396,
+    "painting": 81,
+    "other": 3,
+    "busy": 811,
+    "longTasks": 0,
+    "maxTask": 18,
+    "styleRecalcs500": 1
+  },
+  "warm:handoff": {
+    "scripting": 104,
+    "rendering": 35,
+    "painting": 8,
+    "other": 0,
+    "busy": 196,
+    "longTasks": 1,
+    "maxTask": 69,
+    "styleRecalcs500": 0
+  },
+  "cold:small": {
+    "scripting": 108,
+    "rendering": 42,
+    "painting": 8,
+    "other": 1,
+    "busy": 179,
+    "longTasks": 1,
+    "maxTask": 59,
+    "styleRecalcs500": 0
+  },
+  "warm:long": {
+    "scripting": 96,
+    "rendering": 33,
+    "painting": 9,
+    "other": 1,
+    "busy": 162,
+    "longTasks": 1,
+    "maxTask": 66,
+    "styleRecalcs500": 0
+  },
+  "warm:hero": {
+    "scripting": 81,
+    "rendering": 34,
+    "painting": 6,
+    "other": 1,
+    "busy": 137,
+    "longTasks": 1,
+    "maxTask": 67,
+    "styleRecalcs500": 0
+  }
+}
