@@ -3,13 +3,13 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, appendFileSync } from "node:fs";
 import path from "node:path";
 
-const SOURCE = "1556cdf36a6caea141dbefd8458a2cabf74608e5";
-const TREE = "053d480bc0879aa18cd2f9af842984876cd69dc0";
+const SOURCE = "c2ad55894c40d46f6685d332cc87cb6365c6d0a4";
+const TREE = "94a54e15174d904613abeae2380c04c30b00d448";
 const TEST = "apps/server/src/git/Layers/GitCore.test.ts";
-const TEST_SHA256 = "b9694240e72639d8673f3639ac55f58a8a10a9d026b43c19fe542346be5c112a";
+const TEST_SHA256 = "ba6c5d913052f758c63f4838536090537737e7fc05c66cec1351c2b48853bb16";
 const EXPECTED = new Map([
-  ["apps/server/src/git/Layers/GitCore.ts", "4c074aa1bd2acaff668f1fb148fc1aa55e77c40c"],
-  [TEST, "a9ec8635c65bc6f0651227b22a028d4407e51c92"],
+  ["apps/server/src/git/Layers/GitCore.ts", "0edcd0aa35825d1bd171b0ddb8d18dcf40553f59"],
+  [TEST, "e8c01bc51583886e4eb46998992bd86fa9593398"],
   ["packages/shared/src/filesystemPlatform.ts", "8177805509291307814a721f0fc3fab9f69a037b"],
   ["apps/marketing/content/docs/workflows/worktrees.mdx", "4ce7108bdb099272b9037b309b4d4acefbf54109"],
   ["apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx", "c4a6cdef035ade671c26a63c6d03e03b4457dd5d"],
@@ -213,7 +213,7 @@ let exit = null;
 const receipt = {
   source: SOURCE,
   tree: TREE,
-  expectedCases: 146,
+  expectedCases: 151,
   startedAt: new Date().toISOString(),
   platform: process.platform,
   arch: process.arch,
@@ -278,10 +278,10 @@ try {
       failureMessages: test.failureMessages,
     }))),
   };
-  if (report.success !== true || report.numTotalTests !== 146 || report.numPassedTests !== 146 ||
+  if (report.success !== true || report.numTotalTests !== 151 || report.numPassedTests !== 151 ||
       report.numFailedTests !== 0 || report.numPendingTests !== 0 || report.numTodoTests !== 0 ||
-      receipt.results.assertions.length !== 146 || receipt.results.assertions.some((test) => test.status !== "passed")) {
-    errors.push("The unfiltered 146-case suite did not fully pass");
+      receipt.results.assertions.length !== 151 || receipt.results.assertions.some((test) => test.status !== "passed")) {
+    errors.push("The unfiltered 151-case suite did not fully pass");
   }
 } catch (error) {
   errors.push(error.stack ?? String(error));

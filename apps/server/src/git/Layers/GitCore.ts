@@ -23,7 +23,7 @@ import {
 import { ChildProcessSpawner } from "effect/unstable/process";
 import { makeEffectProcessCommand } from "../../platform/effectProcessRuntime.ts";
 import { createHash, randomUUID } from "node:crypto";
-import { createReadStream } from "node:fs";
+import { constants as nodeFsConstants, createReadStream, type Stats } from "node:fs";
 import * as nodeFs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as nodePath from "node:path";
@@ -140,6 +140,7 @@ const UNCOMMITTED_BLAME_RESULT: GitBlameLineResult = {
   uncommitted: true,
 };
 const WORKING_TREE_DIFF_TIMEOUT_MS = 15_000;
+const MAX_UNTRACKED_FALLBACK_BYTES = 8 * 1024 * 1024;
 const BLAME_LINE_TIMEOUT_MS = 10_000;
 const MAX_UNTRACKED_DIFF_CONCURRENCY = 4;
 const MAX_QUEUED_REPOSITORY_MUTATIONS = 64;
@@ -1938,6 +1939,163 @@ export const makeGitCore = (options?: { executeOverride?: GitCoreShape["execute"
         { allowNonZeroExit: true, ...(env ? { env } : {}) },
       ).pipe(Effect.map((result) => result.stdout.split("\0").filter((entry) => entry.length > 0)));
 
+    const recoverUntrackedDiffWithIndex = (
+      cwd: string,
+      operation: string,
+      filePath: string,
+      format: "patch" | "numstat",
+      failed: ExecuteGitResult,
+      capture: Pick<ExecuteGitOptions, "maxOutputBytes" | "outputMode"> = {},
+    ): Effect.Effect<ExecuteGitResult, GitCommandError> => {
+      if (
+        failed.code !== 1 ||
+        failed.stdout.length > 0 ||
+        !filePath.endsWith(" ") ||
+        !isWorkspaceRelativePathSafe(filePath) ||
+        filePath.includes("\0")
+      ) {
+        return Effect.succeed(failed);
+      }
+      return Effect.scoped(
+        Effect.gen(function* () {
+          const physicalPath = nodePath.join(cwd, filePath);
+          // This fallback is deliberately capped. Larger or unstable inputs keep
+          // the original Git error instead of silently omitting file contents.
+          const snapshot = yield* Effect.tryPromise(async () => {
+            const initial = await nodeFs.lstat(physicalPath);
+            if (
+              !initial.isFile() ||
+              !Number.isSafeInteger(initial.size) ||
+              initial.size < 0 ||
+              initial.size > MAX_UNTRACKED_FALLBACK_BYTES
+            ) {
+              return null;
+            }
+            const handle = await nodeFs.open(
+              physicalPath,
+              nodeFsConstants.O_RDONLY |
+                (nodeFsConstants.O_NOFOLLOW ?? 0) |
+                (nodeFsConstants.O_NONBLOCK ?? 0),
+            );
+            try {
+              const sameFile = (left: Stats, right: Stats) =>
+                left.dev === right.dev &&
+                left.ino === right.ino &&
+                left.mode === right.mode &&
+                left.size === right.size &&
+                left.mtimeMs === right.mtimeMs &&
+                left.ctimeMs === right.ctimeMs;
+              const opened = await handle.stat();
+              if (!opened.isFile() || !sameFile(initial, opened)) return null;
+              // File identity and size are checked before allocating or reading.
+              const contents = Buffer.alloc(opened.size);
+              let offset = 0;
+              while (offset < contents.length) {
+                const result = await handle.read(
+                  contents,
+                  offset,
+                  Math.min(64 * 1024, contents.length - offset),
+                  offset,
+                );
+                if (result.bytesRead === 0) return null;
+                offset += result.bytesRead;
+              }
+              const tail = await handle.read(Buffer.alloc(1), 0, 1, opened.size);
+              const finalHandle = await handle.stat();
+              const finalPath = await nodeFs.lstat(physicalPath);
+              if (
+                tail.bytesRead !== 0 ||
+                !finalPath.isFile() ||
+                !sameFile(opened, finalHandle) ||
+                !sameFile(opened, finalPath)
+              ) {
+                return null;
+              }
+              return { contents, mode: opened.mode };
+            } finally {
+              await handle.close();
+            }
+          }).pipe(
+            // Native descriptor operations cannot be cancelled. Settle every
+            // bounded read and the owned close before scope cleanup can proceed.
+            Effect.uninterruptible,
+            Effect.catch(() => Effect.succeed(null)),
+          );
+          if (snapshot === null) return failed;
+          const directory = yield* fileSystem.makeTempDirectoryScoped({
+            prefix: "synara-untracked-content-",
+          });
+          const content = nodePath.join(directory, "content");
+          const empty = nodePath.join(directory, "empty");
+          const objects = nodePath.join(directory, "objects");
+          yield* fileSystem.makeDirectory(objects);
+          const copied = yield* Effect.tryPromise(() =>
+            nodeFs.writeFile(content, snapshot.contents, { flag: "wx" }),
+          ).pipe(
+            // This write owns only the capped snapshot. Await its actual
+            // settlement before the scoped directory can be removed.
+            Effect.uninterruptible,
+            Effect.as(true),
+            Effect.catch(() => Effect.succeed(false)),
+          );
+          if (!copied) return failed;
+          yield* fileSystem.writeFileString(empty, "");
+          const env = {
+            GIT_INDEX_FILE: nodePath.join(directory, "index"),
+            GIT_OBJECT_DIRECTORY: objects,
+          };
+          const hashObject = (args: ReadonlyArray<string>) =>
+            executeGit(`${operation}.literalObject`, cwd, args, {
+              env,
+              timeoutMs: WORKING_TREE_DIFF_TIMEOUT_MS,
+              maxOutputBytes: 4_096,
+            }).pipe(
+              Effect.flatMap((result) => {
+                const object = result.stdout.trim();
+                return /^[a-f0-9]{40}(?:[a-f0-9]{24})?$/u.test(object)
+                  ? Effect.succeed(object)
+                  : Effect.fail(
+                      createGitCommandError(operation, cwd, args, "Git returned an invalid object id."),
+                    );
+              }),
+            );
+          const object = yield* hashObject(["hash-object", "-w", "--no-filters", "--", content]);
+          const emptyTree = yield* hashObject(["hash-object", "-w", "-t", "tree", "--", empty]);
+          const mode = (snapshot.mode & 0o111) === 0 ? "100644" : "100755";
+          const indexOptions = [
+            "-c", "core.protectNTFS=false",
+            "-c", "core.splitIndex=false",
+            "-c", "core.fsmonitor=false",
+          ];
+          yield* executeGit(
+            `${operation}.literalIndex`,
+            cwd,
+            [...indexOptions, "update-index", "--add", "--cacheinfo", `${mode},${object},${filePath}`],
+            { env, timeoutMs: WORKING_TREE_DIFF_TIMEOUT_MS },
+          );
+          // Real Git owns path quoting, binary detection, mode and patch rendering.
+          // Both its index and object writes stay inside this owned directory.
+          const outputArgs = format === "patch"
+            ? ["--patch", "--no-color", "--src-prefix=a/", "--dst-prefix=b/"]
+            : ["--numstat", "-z"];
+          return yield* executeGit(
+            `${operation}.literalIndexDiff`,
+            cwd,
+            [...indexOptions, "diff", "--cached", "--no-renames", "--no-ext-diff", "--no-textconv",
+              ...outputArgs, emptyTree, "--"],
+            { env, timeoutMs: WORKING_TREE_DIFF_TIMEOUT_MS, ...capture },
+          );
+        }),
+      ).pipe(
+        Effect.mapError(
+          toGitCommandError(
+            { operation, cwd, args: ["diff", "--no-index", "--", "/dev/null", filePath] },
+            "failed to render the untracked file through an isolated content index.",
+          ),
+        ),
+      );
+    };
+
     const readUntrackedPatches = (
       cwd: string,
       operationPrefix: string,
@@ -1986,7 +2144,14 @@ export const makeGitCore = (options?: { executeOverride?: GitCoreShape["execute"
                 timeoutMs: WORKING_TREE_DIFF_TIMEOUT_MS,
                 maxOutputBytes: remainingBytes,
                 outputMode: "truncate",
-              });
+              }).pipe(
+                Effect.flatMap((result) =>
+                  recoverUntrackedDiffWithIndex(cwd, operation, filePath, "patch", result, {
+                    maxOutputBytes: remainingBytes,
+                    outputMode: "truncate",
+                  }),
+                ),
+              );
               const stderr = result.stderr.trim();
               if (!isSuccessfulNoIndexDiff(result)) {
                 return yield* createGitCommandError(
@@ -2034,6 +2199,9 @@ export const makeGitCore = (options?: { executeOverride?: GitCoreShape["execute"
                 allowNonZeroExit: true,
                 timeoutMs: WORKING_TREE_DIFF_TIMEOUT_MS,
               }).pipe(
+                Effect.flatMap((result) =>
+                  recoverUntrackedDiffWithIndex(cwd, operation, filePath, "numstat", result),
+                ),
                 Effect.flatMap((result) => {
                   const stderr = result.stderr.trim();
                   if (isSuccessfulNoIndexDiff(result)) {
