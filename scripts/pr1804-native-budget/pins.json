@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "version": "2.0.25",
+  "model": "opencode/mimo-v2.6-flash-free",
+  "metadataDriver": "1bf02db1fe4e14172816978ad50dfcc206c81825",
+  "metadataRun": 38164333685,
+  "metadataArtifact": 11711667971,
+  "metadataArtifactSha256": "7f7a4d32f44a5106ef3a153fdbd1e8fa03b832f89cdbaceb1af826846bc871df",
+  "platforms": {
+    "linux-x64": {
+      "name": "@opencode/cli-linux-x64",
+      "os": "linux",
+      "url": "https://registry.npmjs.org/@opencode/cli-linux-x64/-/cli-linux-x64-2.0.25.tgz",
+      "archiveBytes": 97499517,
+      "unpackedBytes": 209901260,
+      "sha1": "d99c06a1e3ffd9fe4680f68be18cf6c15ef39e1b",
+      "sha256": "5b3e50ad1c06214aaf1c26eb30f90a15f66975a6e3e48fef5a31c34466e37b5a",
+      "sha512Base64": "GlqAQ1w5K+MHJ32oVl7Yxg5pE+NyZS2cjpuzGbk4LAmhDrqHbv9JVhwLCLKoPMASdWnHkzpj0W5hs8avYW4NVA==",
+      "metadataSha256": "c695bdf296ed60154707129ea27329a626c124857b6f222a0d368449631cbdec"
+    },
+    "windows-x64": {
+      "name": "@opencode/cli-windows-x64",
+      "os": "win32",
+      "url": "https://registry.npmjs.org/@opencode/cli-windows-x64/-/cli-windows-x64-2.0.25.tgz",
+      "archiveBytes": 99644112,
+      "unpackedBytes": 212355350,
+      "sha1": "b2ea737ca04e670ae19ce3d7a38bf552acc20834",
+      "sha256": "65bb6a47afb1d541daaf8ca8bb143ac91c5ff3e70287eb182400bd33d82a2b4d",
+      "sha512Base64": "EiC55LXubK+5mN+ZZedoWw0hn6QdiPB6QHydIqP/l3vLiLvrkmJXDVRUKnv3BCZEt7CVTm6+Ssv2SnSCZeWF4A==",
+      "metadataSha256": "581f112157b4540f6917c40e52547e947ae1b4f766b22ad6db08fa2fdfc109d9"
+    }
+  },
+  "before": {
+    "sha": "e32a73c59ac4ffef6e8367406914f514610e0dbb",
+    "tree": "2821b44a7a892178ecfff12874cce4256fe0684a",
+    "files": 9025,
+    "productionFiles": [
+      {
+        "path": ".github/actions/setup-workspace/action.yml",
+        "sha": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/package.json",
+        "sha": "4cd2a4146c652205697f0078d2cc792fdbad6ff8",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/vitest.config.ts",
+        "sha": "a0a14e539840c84c00d65e0623527aac99125703",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.ts",
+        "sha": "c4e95f3ad9c693e6feceba7378c136dac7283843",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts",
+        "sha": "63f278db4c20784074a92d494402f167cba1a290",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/provider/Layers/ProviderService.ts",
+        "sha": "db5e5226ab7dc1310b5ec869b47975a70d633d2b",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/provider/Layers/OpenCodeAdapter.ts",
+        "sha": "166392068bbb9f31e2444e40e7057edd1a940efa",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/provider/opencodeRuntime.ts",
+        "sha": "65e7d09c19ee1408ac6eccdbb3fc44fcb9291ad1",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/windowsProcessSnapshot.ts",
+        "sha": "c33c5d6da06b1ff6f0e8536559e9bf49d89b0c30",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/supervisedProcessTeardown.ts",
+        "sha": "b274a6e6ebd680e685feca3970bee543500a17b3",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/processTreeController.ts",
+        "sha": "b34e937e01c9c72635598ebd960d1d81bf777893",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/effectProcessRuntime.ts",
+        "sha": "a5fd9fbb5527d79c6d2e2314c24d681ea5e8225d",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/DatabaseLifecycleLock.test.ts",
+        "sha": "8fba5696282df03305e4fe79db12f756692f5864",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/DatabaseLifecycleLock.ts",
+        "sha": "18d916a67333971e42c0e6c78b9f6eed87d80034",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/Layers/Sqlite.ts",
+        "sha": "1b6ffbc5a5a4634b71fbe2243b76a9e2f78882f4",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/Services/OrchestrationEventDeliveries.ts",
+        "sha": "94c403b516e7abeb5260c121b8236152d6c24355",
+        "mode": "100644"
+      }
+    ]
+  },
+  "candidate": {
+    "sha": "a06d5b2bbf704e19aeeb027762f59a4a1dbad066",
+    "tree": "7ed7570f4849bfd7797439048ec8b6974c5d98e7",
+    "files": 9025,
+    "productionFiles": [
+      {
+        "path": ".github/actions/setup-workspace/action.yml",
+        "sha": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/package.json",
+        "sha": "4cd2a4146c652205697f0078d2cc792fdbad6ff8",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/vitest.config.ts",
+        "sha": "a0a14e539840c84c00d65e0623527aac99125703",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.ts",
+        "sha": "c4e95f3ad9c693e6feceba7378c136dac7283843",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts",
+        "sha": "63f278db4c20784074a92d494402f167cba1a290",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/provider/Layers/ProviderService.ts",
+        "sha": "db5e5226ab7dc1310b5ec869b47975a70d633d2b",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/provider/Layers/OpenCodeAdapter.ts",
+        "sha": "166392068bbb9f31e2444e40e7057edd1a940efa",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/provider/opencodeRuntime.ts",
+        "sha": "b28350c0cc4eb4a245cfd7063c4600734c8e9596",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/windowsProcessSnapshot.ts",
+        "sha": "d2493e92d2346d79ee238f25096c338ec44115d7",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/supervisedProcessTeardown.ts",
+        "sha": "1dd78a060eaaa6d1fc8ce452734e0075a10bde3b",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/processTreeController.ts",
+        "sha": "b34e937e01c9c72635598ebd960d1d81bf777893",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/platform/effectProcessRuntime.ts",
+        "sha": "a5fd9fbb5527d79c6d2e2314c24d681ea5e8225d",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/DatabaseLifecycleLock.test.ts",
+        "sha": "8fba5696282df03305e4fe79db12f756692f5864",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/DatabaseLifecycleLock.ts",
+        "sha": "18d916a67333971e42c0e6c78b9f6eed87d80034",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/Layers/Sqlite.ts",
+        "sha": "1b6ffbc5a5a4634b71fbe2243b76a9e2f78882f4",
+        "mode": "100644"
+      },
+      {
+        "path": "apps/server/src/persistence/Services/OrchestrationEventDeliveries.ts",
+        "sha": "94c403b516e7abeb5260c121b8236152d6c24355",
+        "mode": "100644"
+      }
+    ]
+  },
+  "candidateParents": [
+    "e32a73c59ac4ffef6e8367406914f514610e0dbb",
+    "879dc7b2c727d781995a012c509bccd2cf7af505"
+  ],
+  "readinessDependency": "879dc7b2c727d781995a012c509bccd2cf7af505",
+  "testPath": "apps/server/src/orchestration/Layers/ProviderCommandReactor.test.ts",
+  "testBaselineBlob": "63f278db4c20784074a92d494402f167cba1a290",
+  "testBaselineSha256": "190c2ef799e04ce555ab3033ce7c89f4510f54a918dbc13a50390087ea709fed",
+  "testBaselineBytes": 900871,
+  "testResultBlob": "43e021400637f4f96c3d7911dbd48c122aa55984",
+  "testResultSha256": "ef22e48f9e46871672888419cfac6adab85bb667bd0394c1806325ac80ffed6c",
+  "testResultBytes": 915424,
+  "probeTarget": "apps/server/src/orchestration/Layers/NativeStartupProbe.ts",
+  "probeBlob": "266b1423632ceeca8f462bc55bea52958db0d8cb",
+  "probeSha256": "87a289c3fe600715470788d0f552cb0589aff80770f00ae7cf3a9f12cf193690",
+  "probeBytes": 19375,
+  "originalTestCount": 481,
+  "nativeTestCount": 3,
+  "nativeTestName": "native startup phase measurement",
+  "nativeNames": [
+    "measures real cold admission, checkpoint prelude, warm reuse and final owned exit",
+    "measures the unchanged thirty-second lease under an explicitly controlled checkpoint hold",
+    "measures owned cancellation after a real readiness response before session admission"
+  ],
+  "databaseSuite": "src/persistence/DatabaseLifecycleLock.test.ts",
+  "databaseCount": 14,
+  "databaseNames": [
+    "allows one same-process owner and releases only its owner token",
+    "recovers a well-formed lock owned by a dead process",
+    "recovers a reaper guard whose owner process died",
+    "recovers an ownerless lock directory containing Finder metadata",
+    "recovers an ownerless lock.reaper directory containing Finder metadata",
+    "preserves a live owner even when Finder metadata is present",
+    "preserves an unverifiable lock containing owner.json and Finder metadata",
+    "preserves an unverifiable lock containing unrecognized-file and Finder metadata",
+    "admits only one concurrent owner when recovering Finder metadata",
+    "does not recover Finder metadata that is a symbolic link",
+    "does not take over a reaper guard owned by a live process",
+    "recovers an ownerless directory and fails closed for an owner-file symlink",
+    "makes recovery refuse while a server layer owns the database",
+    "makes server startup refuse while recovery owns the database"
+  ],
+  "observerBlob": "e484cd5e71d42c7d17fc71fcce4d5a0d44a11f33",
+  "extractorBlob": "d55c4f64eaf0b030572ebe9f7934f73b1f67e79b",
+  "qualification": {
+    "native": "Real owned official OpenCode 2.0.25 process, production runtime/adapter/ProviderService, reactor admission, Git checkpoint store/coordinator and real in-memory SQLite durable deliveries. Prompt writes are deliberately refused at the adapter boundary; no account credentials or model inference are supplied.",
+    "comparison": "Before is exact current startup-grace feature e32. After is an isolated history-preserving union of that same feature with separately reviewed Windows preparation/readiness source879. This does not restack or modify the startup feature branch.",
+    "ownership": "All fourteen unchanged file-backed DatabaseLifecycleLock tests execute separately, including real SQLite server/recovery exclusion. The native harness uses in-memory SQLite; it is not a cross-process database ownership proof.",
+    "teardown": "No teardown or preparation option is injected. The signal observer delegates every real default signal once. Original fresh teardown proof remains 3000ms; existing readiness preparation occurs before provider spawn. Complete scope timing includes harness/provider cleanup and is not relabelled as a narrow teardown timing.",
+    "measurement": "A fixed local 512-file/2MiB repository with256 modified files. The checkpoint contention hold is explicitly controlled for the existing30000ms lease; it is not naturally slow Git or universal timeout-sufficiency evidence.",
+    "timing": "Real span/dispatch records and actual persisted delivery fields are retained. Dispatch-to-settlement-observation durations include polling/observation overhead.300000ms pool idle TTL is recorded, not waited or inferred as elapsed. No elapsed UI screenshot is fabricated.",
+    "exits": "Observer root exit, pipe close, deadline, cutoff and errors remain separate. Native success additionally requires the real production scope to finish and actual owned root terminal codes plus complete first pre-signal captures; root observer completion alone never proves descendant exit.",
+    "environment": "Native CLI and diagnostic cases receive only the documented system environment allowlist plus private homes/temp/cache and exact diagnostic pins. No real operator credentials, PSModulePath or unrelated environment values are injected.",
+    "prior": "Earlier75ddb Ubuntu3/3 and Windows0/3 observations remain historical exact-source evidence. #1848 isolated native After879 Windows3/3 is a separate accepted fixture; this combined production-reactor pair has not yet executed."
+  }
+}

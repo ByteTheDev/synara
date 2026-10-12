@@ -1,0 +1,75 @@
+name: PR1804 exact native startup budgets and owned cleanup
+on:
+  push:
+    branches: [codex/runtime-startup-budget-native-20261012]
+permissions:
+  contents: read
+concurrency:
+  group: pr1804-native-budget-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+  GIT_CONFIG_COUNT: "2"
+  GIT_CONFIG_KEY_0: core.autocrlf
+  GIT_CONFIG_VALUE_0: "false"
+  GIT_CONFIG_KEY_1: core.eol
+  GIT_CONFIG_VALUE_1: lf
+jobs:
+  native:
+    name: ${{ matrix.side }} native budget on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        side: [before, after]
+        include:
+          - side: before
+            source: e32a73c59ac4ffef6e8367406914f514610e0dbb
+          - side: after
+            source: a06d5b2bbf704e19aeeb027762f59a4a1dbad066
+        os: [ubuntu-24.04, windows-2022]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout exact native source with raw LF bytes
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout the isolated reviewed diagnostic
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .runtime-startup-budget-driver
+          persist-credentials: false
+      - name: Check actual Node syntax
+        run: |
+          node --check .runtime-startup-budget-driver/scripts/pr1804-native-budget/runner.mjs
+          node --check .runtime-startup-budget-driver/scripts/pr1804-native-budget/owned-command-observer.mjs
+      - name: Install frozen source dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+          turbo: "false"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Execute exact ownership and native phase controls
+        env:
+          PROBE_SIDE: ${{ matrix.side }}
+          PROBE_OS: ${{ matrix.os }}
+        run: |
+          platform=linux-x64
+          if [[ "$PROBE_OS" == windows-* ]]; then platform=windows-x64; fi
+          node .runtime-startup-budget-driver/scripts/pr1804-native-budget/runner.mjs "$PROBE_SIDE" "$platform"
+      - name: Retain immutable evidence and original failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1804-native-budget-${{ matrix.side }}-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1804-native-budget-${{ matrix.side }}-*/frozen
+          if-no-files-found: error
+          retention-days: 30
