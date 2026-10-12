@@ -1,18 +1,30 @@
-import {
-  ProviderKind,
-  type ModelSelection,
-  type OrchestrationThreadActivity,
-} from "@synara/contracts";
+import { ModelSelection, type OrchestrationThreadActivity } from "@synara/contracts";
 import { Schema } from "effect";
+import { resolveModelSelectionInstanceId } from "./providerInstances";
 
 export const PROVIDER_HANDOFF_REQUESTED_ACTIVITY_KIND = "provider.handoff.requested";
-export const PROVIDER_HANDOFF_COMPLETED_ACTIVITY_KIND = "provider.handoff.completed";
+export const PROVIDER_HANDOFF_COMPLETED_ACTIVITY_KIND = "provider.handoff";
 export const PROVIDER_HANDOFF_FAILED_ACTIVITY_KIND = "provider.handoff.failed";
 
 export interface PendingProviderHandoff {
   readonly handoffCommandId: string;
   readonly sourceModelSelection: ModelSelection;
   readonly targetModelSelection: ModelSelection;
+  readonly cancellationRequestedAt?: string;
+}
+
+const modelSelectionsEqual = Schema.toEquivalence(ModelSelection);
+
+export function providerHandoffModelSelectionsEqual(
+  left: ModelSelection,
+  right: ModelSelection,
+): boolean {
+  // Decoding a persisted selection materializes the default instance ID. An
+  // admission payload can still contain the equivalent legacy omission.
+  return modelSelectionsEqual(
+    { ...left, instanceId: resolveModelSelectionInstanceId(left) },
+    { ...right, instanceId: resolveModelSelectionInstanceId(right) },
+  );
 }
 
 export function toProviderHandoffActivityModelSelection(
@@ -21,81 +33,55 @@ export function toProviderHandoffActivityModelSelection(
   return JSON.parse(JSON.stringify(modelSelection)) as OrchestrationThreadActivity["payload"];
 }
 
-function readModelSelection(value: unknown): ModelSelection | null {
-  if (typeof value !== "object" || value === null) return null;
-  const candidate = value as { readonly provider?: unknown; readonly model?: unknown };
-  return Schema.is(ProviderKind)(candidate.provider) && typeof candidate.model === "string"
-    ? (value as ModelSelection)
-    : null;
-}
-
-function readHandoffPayload(activity: Pick<OrchestrationThreadActivity, "payload">): {
-  readonly handoffCommandId: string;
-  readonly sourceModelSelection: ModelSelection | null;
-  readonly targetModelSelection: ModelSelection | null;
-} | null {
-  if (typeof activity.payload !== "object" || activity.payload === null) return null;
-  const payload = activity.payload as {
-    readonly handoffCommandId?: unknown;
-    readonly sourceModelSelection?: unknown;
-    readonly targetModelSelection?: unknown;
-  };
-  if (typeof payload.handoffCommandId !== "string") return null;
-  return {
-    handoffCommandId: payload.handoffCommandId,
-    sourceModelSelection: readModelSelection(payload.sourceModelSelection),
-    targetModelSelection: readModelSelection(payload.targetModelSelection),
-  };
+/** Provider transitions are conversation metadata, outside the ordinary work-log cap. */
+export function isProviderHandoffActivity(activity: { readonly kind: string }): boolean {
+  return (
+    activity.kind === PROVIDER_HANDOFF_REQUESTED_ACTIVITY_KIND ||
+    activity.kind === PROVIDER_HANDOFF_COMPLETED_ACTIVITY_KIND ||
+    activity.kind === "provider.handoff.completed" ||
+    activity.kind === PROVIDER_HANDOFF_FAILED_ACTIVITY_KIND
+  );
 }
 
 /**
- * Resolves the latest durable provider-switch request that has no matching
- * completion or failure activity yet. Commands are serialized per thread, so
- * at most one unresolved request can be admitted at a time.
+ * Resolves the latest durable request that has no matching server outcome.
+ * Activities are in projection sequence order; serialized command admission
+ * allows at most one unresolved request. Public appends reserve both these
+ * activity kinds and their IDs, so they cannot forge or overwrite this state.
  */
 export function resolvePendingProviderHandoff(
   activities: ReadonlyArray<Pick<OrchestrationThreadActivity, "kind" | "payload">>,
 ): PendingProviderHandoff | null {
   let pending: PendingProviderHandoff | null = null;
-
   for (const activity of activities) {
-    if (
-      activity.kind !== PROVIDER_HANDOFF_REQUESTED_ACTIVITY_KIND &&
-      activity.kind !== PROVIDER_HANDOFF_COMPLETED_ACTIVITY_KIND &&
-      activity.kind !== PROVIDER_HANDOFF_FAILED_ACTIVITY_KIND
-    ) {
-      continue;
-    }
-
-    const payload = readHandoffPayload(activity);
-    if (!payload) continue;
-
+    if (!isProviderHandoffActivity(activity)) continue;
+    if (typeof activity.payload !== "object" || activity.payload === null) continue;
+    const payload = activity.payload as {
+      readonly handoffCommandId?: unknown;
+      readonly sourceModelSelection?: unknown;
+      readonly targetModelSelection?: unknown;
+      readonly cancellationRequestedAt?: unknown;
+    };
+    if (typeof payload.handoffCommandId !== "string") continue;
     if (activity.kind === PROVIDER_HANDOFF_REQUESTED_ACTIVITY_KIND) {
-      if (payload.sourceModelSelection && payload.targetModelSelection) {
+      if (
+        Schema.is(ModelSelection)(payload.sourceModelSelection) &&
+        Schema.is(ModelSelection)(payload.targetModelSelection)
+      ) {
         pending = {
           handoffCommandId: payload.handoffCommandId,
           sourceModelSelection: payload.sourceModelSelection,
           targetModelSelection: payload.targetModelSelection,
+          ...(typeof payload.cancellationRequestedAt === "string"
+            ? { cancellationRequestedAt: payload.cancellationRequestedAt }
+            : {}),
         };
       }
-      continue;
-    }
-
-    if (pending?.handoffCommandId === payload.handoffCommandId) {
+    } else if (pending?.handoffCommandId === payload.handoffCommandId) {
       pending = null;
     }
   }
-
   return pending;
-}
-
-/** Provider transitions are durable conversation metadata, outside the work-log cap. */
-export function isProviderHandoffActivity(activity: { readonly kind: string }): boolean {
-  return (
-    activity.kind === PROVIDER_HANDOFF_REQUESTED_ACTIVITY_KIND ||
-    activity.kind === PROVIDER_HANDOFF_COMPLETED_ACTIVITY_KIND ||
-    activity.kind === PROVIDER_HANDOFF_FAILED_ACTIVITY_KIND
-  );
 }
 
 export function retainProviderHandoffHistory<T extends { readonly kind: string }>(
