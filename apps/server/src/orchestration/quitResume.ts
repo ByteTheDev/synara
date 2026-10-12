@@ -246,6 +246,8 @@ function buildCrashResumeRecord(input: {
       !managedProjects.has(thread.projectId) &&
       thread.creationSource !== "automation_run" &&
       thread.creationSource !== "provider_native" &&
+      thread.creationSource !== "synara_mcp" &&
+      thread.creationSource !== "external_mcp" &&
       !isScheduledTurn &&
       !thread.hasPendingApprovals &&
       !thread.hasPendingUserInput &&
@@ -375,6 +377,20 @@ export type QuitResumeRecordRead =
   | { readonly kind: "absent" }
   | { readonly kind: "invalid" }
   | { readonly kind: "record"; readonly record: QuitResumeRecord };
+
+/** Persist before reconciliation; return any intent that must stay in memory. */
+export const persistCrashResumeRecord = (input: {
+  readonly path: string;
+  readonly record: QuitResumeRecord;
+}): Effect.Effect<QuitResumeRecordRead, never, FileSystem.FileSystem> =>
+  persistQuitResumeRecord(input).pipe(
+    Effect.as({ kind: "absent" } as const),
+    Effect.catchCause((cause) =>
+      Effect.logWarning("could not persist crash recovery; retaining startup intent in memory", {
+        cause,
+      }).pipe(Effect.as({ kind: "record", record: input.record } as const)),
+    ),
+  );
 
 /**
  * `absent` when there is no file, `invalid` when a file is there but cannot be

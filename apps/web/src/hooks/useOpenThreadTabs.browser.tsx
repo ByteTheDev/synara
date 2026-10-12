@@ -26,64 +26,11 @@ function createQueryClient() {
   return queryClient;
 }
 
-const makeTabSummary = (id: ThreadId, projectId: ProjectId): SidebarThreadSummary => ({
-  id,
-  projectId,
-  title: id,
-  modelSelection: { provider: "codex", model: "gpt-5.4" },
-  interactionMode: "default",
-  branch: null,
-  worktreePath: null,
-  createdAt: "2026-10-12T00:00:00.000Z",
-  latestUserMessageAt: null,
-  hasActionableProposedPlan: false,
-  hasLiveTailWork: false,
-  pendingBackgroundWorkCount: 0,
-  session: null,
-  latestTurn: null,
-  hasPendingApprovals: false,
-  hasPendingUserInput: false,
-});
-
 afterEach(() => {
   resetComposerDraftStore();
   useOpenThreadTabsStore.setState({ threadIds: [] });
   useStore.setState(initialState);
   localStorage.clear();
-});
-
-it("keeps each project's tabs when navigating between saved chats and drafts", async () => {
-  const first = ThreadId.makeUnsafe("first");
-  const second = ThreadId.makeUnsafe("second");
-  const draft = ThreadId.makeUnsafe("draft");
-  const projectA = ProjectId.makeUnsafe("a");
-  const projectB = ProjectId.makeUnsafe("b");
-
-  useStore.setState({
-    threadsHydrated: true,
-    sidebarThreadSummaryById: {
-      [first]: makeTabSummary(first, projectA),
-      [second]: makeTabSummary(second, projectB),
-    },
-  });
-  useOpenThreadTabsStore.setState({ threadIds: [first, second] });
-  useComposerDraftStore.getState().setProjectDraftThreadId(projectA, draft, {});
-  const hook = await renderHook(
-    (props) => useOpenThreadTabs({ activeThreadId: props?.activeThreadId ?? first }),
-    {
-      initialProps: { activeThreadId: first },
-    },
-  );
-  try {
-    expect(hook.result.current.map((tab) => tab.threadId)).toEqual([first]);
-    await hook.rerender({ activeThreadId: second });
-    expect(hook.result.current.map((tab) => tab.threadId)).toEqual([second]);
-    await hook.rerender({ activeThreadId: draft });
-    expect(hook.result.current.map((tab) => tab.threadId)).toEqual([first]);
-    expect(useOpenThreadTabsStore.getState().threadIds).toEqual([first, second]);
-  } finally {
-    await hook.unmount();
-  }
 });
 
 it("retains a background draft through hydration and reveals its tab after promotion", async () => {

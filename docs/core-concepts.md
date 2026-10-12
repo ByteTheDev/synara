@@ -31,9 +31,7 @@ composer; it is not sent twice.
 - **Sidebar** — projects, spaces, tasks, and activity requiring attention. The rail
   is a fixed column of icon tabs for Home, Spaces, Tasks, Code review, Automations, Hubs, and
   Settings, with the thread panel beside it and the route shown as a card inset from the window.
-  Open saved threads appear as tabs across the top of the chat, scoped to the current project.
-  Switching projects restores that project's open tabs, including while viewing an unsent draft.
-  Unsent drafts stay out of
+  Open saved threads appear as tabs across the top of the chat. Unsent drafts stay out of
   the tab strip until they become saved threads on the first send. Saved tabs remain
   available to return to while an unsent draft is on screen, including in the editor view.
   The command palette searches titles, project metadata, and settled user/assistant messages
@@ -106,8 +104,8 @@ asking.
 After an unexpected server shutdown, Synara automatically continues ordinary chats that
 were actively running, using their saved conversation and provider selection. The continuation
 asks the agent to verify existing operations before repeating them. Chats waiting for approval
-or an answer, chats still starting, archived chats, native subagents, goals, and managed Hub or
-automation work are excluded from this fallback; their existing recovery or manual controls
+or an answer, chats still starting, archived chats, native subagents, delegated tasks, goals,
+and managed Hub or automation work are excluded from this fallback; their existing recovery or manual controls
 still apply. This starts a guarded continuation, not a replay of an in-flight tool call.
 
 To keep working on another provider account, add and sign in to it under **Settings → Providers**,

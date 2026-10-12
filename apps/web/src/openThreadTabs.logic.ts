@@ -139,8 +139,8 @@ function resolveOpenThreadTab(source: OpenThreadTabSource): OpenThreadTab | null
 }
 
 /**
- * Tabs in open order. `projectId` scopes the list to that project's threads;
- * unsent drafts never render. An active saved thread renders even when it is
+ * Tabs in open order. `projectId` scopes the list (the editor view only shows its own
+ * project's threads); unsent drafts never render. An active saved thread renders even when it is
  * a thread that could not keep a tab in the background (archived, Side chat).
  */
 export function buildOpenThreadTabs(input: {

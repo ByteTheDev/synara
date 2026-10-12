@@ -41,7 +41,8 @@ import { ThreadSnoozeReactor } from "./orchestration/Services/ThreadSnoozeReacto
 import {
   claimQuitResumeRecordAtStartup,
   captureCrashResumeRecord,
-  persistQuitResumeRecord,
+  persistCrashResumeRecord,
+  type QuitResumeRecordRead,
   readQuitResumeRecord,
   resumeQuitInterruptedChats,
 } from "./orchestration/quitResume";
@@ -264,6 +265,7 @@ export const createEffectServer = Effect.fn(function* (
     }),
   );
   const previousResumeRecord = yield* readQuitResumeRecord(config.quitResumeStatePath);
+  let inMemoryCrashResume: QuitResumeRecordRead = { kind: "absent" };
   yield* startServerRuntimePipeline({
     orchestrationReactor,
     // Heal turns orphaned by the previous process exit (their in-memory runtimes
@@ -276,14 +278,10 @@ export const createEffectServer = Effect.fn(function* (
         const crashResumeRecord = yield* captureCrashResumeRecord;
         if (crashResumeRecord.kind === "record") {
           // Keep the captured intent if this startup dies during reconciliation.
-          yield* persistQuitResumeRecord({
+          inMemoryCrashResume = yield* persistCrashResumeRecord({
             path: config.quitResumeStatePath,
             record: crashResumeRecord.record,
-          }).pipe(
-            Effect.catchCause((cause) =>
-              Effect.logWarning("could not persist crash recovery", { cause }),
-            ),
-          );
+          });
         }
       }
       yield* reconcileRestartStuckTurns;
@@ -308,7 +306,10 @@ export const createEffectServer = Effect.fn(function* (
   );
   // Consume only after reconciliation, before admitting commands. If startup
   // fails earlier, both explicit quit and crash records remain available.
-  const quitResumeRecord = yield* claimQuitResumeRecordAtStartup;
+  const claimedResumeRecord = yield* claimQuitResumeRecordAtStartup;
+  // A disk claim wins. Only a failed write can supply this same-startup fallback.
+  const quitResumeRecord =
+    claimedResumeRecord.kind === "absent" ? inMemoryCrashResume : claimedResumeRecord;
   yield* runtimeStartup.markCommandReady;
   // The recorded chats get their continuation turn now that the orphaned turns
   // above are settled. Forked so the (rare) dispatch work never delays readiness.

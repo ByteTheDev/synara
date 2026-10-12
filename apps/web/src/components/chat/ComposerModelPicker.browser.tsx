@@ -673,7 +673,7 @@ describe("ComposerModelPicker with several accounts", () => {
       await expect
         .element(
           page.getByText(
-            "Codex · Work is unavailable in this thread. Use Hand off thread → Continue in a new thread to switch accounts with the conversation history. Add accounts in Settings → Providers.",
+            "Codex · Work is unavailable in this thread. Start a new thread to switch accounts.",
           ),
         )
         .toBeInTheDocument();

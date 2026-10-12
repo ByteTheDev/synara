@@ -11,6 +11,7 @@ import {
   claimQuitResumeRecord,
   clearQuitResumeRecord,
   persistQuitResumeRecord,
+  persistCrashResumeRecord,
   planQuitResumeTurns,
   prepareQuitResume,
   readQuitResumeRecord,
@@ -108,6 +109,8 @@ describe("crash recovery", () => {
       makeRunningThread("running"),
       makeRunningThread("resumed"),
       makeRunningThread("heartbeat"),
+      { ...makeRunningThread("delegated"), creationSource: "synara_mcp" },
+      { ...makeRunningThread("external-delegated"), creationSource: "external_mcp" },
       makeRunningThread("unknown-prompt"),
       { ...makeRunningThread("approval"), hasPendingApprovals: true },
       { ...makeRunningThread("question"), hasPendingUserInput: true },
@@ -412,6 +415,29 @@ describe("quit resume record file", () => {
   const testLayer = Layer.merge(NodeServices.layer, serverConfigLayer);
   const run = <A, E, R>(effect: Effect.Effect<A, E, R>) =>
     Effect.runPromise(effect.pipe(Effect.provide(testLayer)) as Effect.Effect<A, E, never>);
+
+  it("retains a continuation in memory when the atomic recovery write cannot succeed", async () => {
+    const record = makeRecord([{ threadId: "a", turnId: "a-turn" }]);
+    const fallback = await run(
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const root = yield* fs.makeTempDirectoryScoped({ prefix: "crash-resume-unwritable-" });
+        const blocker = `${root}/blocked`;
+        yield* fs.writeFileString(blocker, "a file, not a writable parent directory");
+        return yield* persistCrashResumeRecord({ path: `${blocker}/resume.json`, record });
+      }).pipe(Effect.scoped),
+    );
+    expect(fallback).toEqual({ kind: "record", record });
+    if (fallback.kind !== "record") throw new Error("lost crash recovery intent");
+    const plan = planQuitResumeTurns({
+      record: fallback.record,
+      threads: [makeThread("a")],
+      projects: liveProjects,
+      now: NOW,
+    });
+    expect(plan.commands).toHaveLength(1);
+    expect(plan.commands[0]?.threadId).toBe("a");
+  });
 
   it("persists, reads, and clears the record; missing reads as absent, corrupt as invalid", async () => {
     const record = makeRecord([{ threadId: "a", turnId: "a-turn" }]);
