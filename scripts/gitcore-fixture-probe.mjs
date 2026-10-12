@@ -12,7 +12,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, resolve, toNamespacedPath } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const source = {
@@ -220,15 +220,18 @@ try {
     return { content, index: successful(cwd, ["ls-files", "--stage"]) };
   });
   observe("exact trailing-space untracked filename", () => {
-    // A long owned working directory selects Git for Windows' extended-path
-    // implementation. Keep the exact relative filename and patch assertions.
+    // Keep the directory below MAX_PATH during Git's early -C, when config is
+    // not loaded yet. The unchanged relative filename crosses MAX_PATH later.
+    const segmentLength = 245 - join(owned, "trailing-space").length - 1;
+    assert(segmentLength > 0 && segmentLength < 200, "unexpected owned path length");
     const directory =
       phase === "candidate"
-        ? join(
-            "trailing-space",
-            ...Array.from({ length: 6 }, (_, i) => `segment-${i}-` + "x".repeat(40)),
-          )
+        ? join("trailing-space", "x".repeat(segmentLength))
         : "trailing-space";
+    if (phase === "candidate") {
+      assert.equal(join(owned, directory).length, 245);
+      assert(join(owned, directory, " spaced file.txt ").length >= 260);
+    }
     const cwd = repository(directory, phase === "candidate");
     if (phase === "candidate") {
       successful(cwd, ["config", "core.protectNTFS", "false"]);
@@ -263,6 +266,43 @@ try {
     assert(result.stdout.includes("+hello"));
     return { paths, patch: result.stdout };
   });
+  observe("short-directory explicit native-path argument", () => {
+    const cwd = repository("explicit-native-path");
+    const filename = " spaced file.txt ";
+    const physicalPath = join(cwd, filename);
+    writeFileSync(physicalPath, "hello\n");
+    const paths = readdirSync(cwd).filter((name) => name !== ".git");
+    assert(paths.includes(filename), "the filesystem did not preserve the exact filename");
+    assert.equal(readFileSync(physicalPath, "utf8"), "hello\n");
+    const argument = toNamespacedPath(physicalPath);
+    const result = git(cwd, [
+      "diff",
+      "--no-index",
+      "--patch",
+      "--no-color",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--src-prefix=a/",
+      "--dst-prefix=b/",
+      "--",
+      "/dev/null",
+      argument,
+    ]);
+    writeJSON("explicit-native-path.json", {
+      paths,
+      argument,
+      result,
+      qualification:
+        "Read-only owned synthetic absolute-path experiment. Its headers may contain the absolute namespace; this does not repair the original relative-path GitCore assertion.",
+    });
+    assert(
+      !result.error && result.status === 1 && result.signal === null,
+      "expected actual nonempty Git diff",
+    );
+    assert(result.stdout.includes(filename), "Git omitted the exact filename");
+    assert(result.stdout.includes("+hello"), "Git omitted the actual file content");
+    return { paths, argument, patch: result.stdout };
+  });
   observe("filesystem monitor command starts", () => {
     const cwd = repository("fsmonitor-launch");
     const hook = join(cwd, ".git", "hooks", "fsmonitor");
@@ -296,7 +336,7 @@ try {
   const failed =
     Boolean(fatal) ||
     !cleanup.removed ||
-    cases.length !== 5 ||
+    cases.length !== 6 ||
     cases.some((entry) => entry.status !== "passed");
   writeJSON("commands.json", commands);
   writeJSON("results.json", {
