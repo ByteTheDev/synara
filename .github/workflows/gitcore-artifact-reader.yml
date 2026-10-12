@@ -1,0 +1,27 @@
+name: Read retained GitCore diagnostic artifacts
+on:
+  push:
+    branches: [cleanup/20261012/gitcore-artifact-reader]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify and expose the already completed diagnostic receipts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/gitcore-artifact-reader.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: retained-gitcore-path-receipts
+          path: ${{ runner.temp }}/pr1847-artifact-reader/
+          if-no-files-found: error
+          retention-days: 14
