@@ -1,7 +1,7 @@
-name: Native owned runtime system module lookup Before and After
+name: Native owned runtime direct CIM import Before and After
 on:
   push:
-    branches: [codex/runtime-windows-system-modules-native-20261012]
+    branches: [codex/runtime-windows-cim-direct-native-20261012]
     paths:
       - .github/workflows/windows-prepared-native.yml
       - .github/scripts/windows-prepared-native/**
@@ -22,9 +22,9 @@ jobs:
         label: [before, after]
         include:
           - label: before
-            source: e0dc656efd9f6b4e45999f7925d9122eadba1c06
-          - label: after
             source: 783ee196b98a729a88b16e5e9906134503fa9a11
+          - label: after
+            source: 9b9dafc21bbdeb164a5596ed0443a3c73cc8db02
     env:
       GIT_CONFIG_COUNT: "2"
       GIT_CONFIG_KEY_0: core.autocrlf
