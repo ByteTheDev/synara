@@ -1,0 +1,49 @@
+name: GitCore descriptor refusal control
+on:
+  push:
+    branches: [cleanup/20261012/gitcore-status-scope-validation]
+permissions:
+  contents: read
+concurrency:
+  group: gitcore-snapshot-control-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  control:
+    name: Refusal control (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: before
+            source: 3a0375ae1dde80597002ec79d9ada39820815daa
+          - target: after
+            source: 1de9fa2de0db98ca7966e00fc45f53df0fdd1b6d
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - name: Run the three unchanged refusal assertions and retain actual exits
+        env:
+          DRIVER_SHA: ${{ github.sha }}
+          CONTROL_TARGET: ${{ matrix.target }}
+          CI: "true"
+        run: node .pr-driver/scripts/gitcore-native-evidence/snapshot-control.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gitcore-refusal-${{ matrix.target }}
+          path: gitcore-snapshot-control-evidence/
+          if-no-files-found: error
+          retention-days: 14

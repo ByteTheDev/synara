@@ -3,13 +3,13 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, appendFileSync } from "node:fs";
 import path from "node:path";
 
-const SOURCE = "c2ad55894c40d46f6685d332cc87cb6365c6d0a4";
-const TREE = "94a54e15174d904613abeae2380c04c30b00d448";
+const SOURCE = "1de9fa2de0db98ca7966e00fc45f53df0fdd1b6d";
+const TREE = "e3b9a5aa4b3b7bba9c77f8379f4768f13556d1d6";
 const TEST = "apps/server/src/git/Layers/GitCore.test.ts";
-const TEST_SHA256 = "ba6c5d913052f758c63f4838536090537737e7fc05c66cec1351c2b48853bb16";
+const TEST_SHA256 = "45e90c82ef22d8978483b194f363e1f17758523e3bd2a9d3b172171cdd4e6042";
 const EXPECTED = new Map([
-  ["apps/server/src/git/Layers/GitCore.ts", "0edcd0aa35825d1bd171b0ddb8d18dcf40553f59"],
-  [TEST, "e8c01bc51583886e4eb46998992bd86fa9593398"],
+  ["apps/server/src/git/Layers/GitCore.ts", "013c404ddb9c13620093d4ecf30a8ec773ec38c0"],
+  [TEST, "3c19fb6244d34ca5a4dc2b63efa585e337e4a970"],
   ["packages/shared/src/filesystemPlatform.ts", "8177805509291307814a721f0fc3fab9f69a037b"],
   ["apps/marketing/content/docs/workflows/worktrees.mdx", "4ce7108bdb099272b9037b309b4d4acefbf54109"],
   ["apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx", "c4a6cdef035ade671c26a63c6d03e03b4457dd5d"],
