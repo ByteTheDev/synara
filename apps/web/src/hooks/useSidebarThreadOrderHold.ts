@@ -43,8 +43,10 @@ export function useIsPointerWithin(element: HTMLElement | null): boolean {
       update(isInside(event.target));
     };
     const handlePointerOut = (event: PointerEvent) => {
-      // A null relatedTarget means the pointer left the window.
-      if (event.relatedTarget === null) update(false);
+      if (event.pointerType === "touch" || event.relatedTarget !== null) return;
+      // Detaching a hovered child also produces a null destination. Hit-test
+      // the pointer so that replacement rows cannot release the order hold.
+      update(isInside(document.elementFromPoint(event.clientX, event.clientY)));
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (isEditableEventTarget(event) && !isInside(event.target)) update(false);

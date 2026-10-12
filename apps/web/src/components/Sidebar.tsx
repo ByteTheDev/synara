@@ -2282,28 +2282,22 @@ export default function Sidebar() {
 
   const openOrCreateProjectThreadFromSnapshot = useCallback(
     async (projectId: ProjectId, snapshot: OrchestrationShellSnapshot): Promise<boolean> => {
-      // Visit state is client-owned; read it after the fresh shell snapshot is applied.
+      // The store may already contain events newer than this response. Rank
+      // each candidate from its coherent normalized summary, including visits.
       const summaries = useStore.getState().sidebarThreadSummaryById;
       const latestThread = sortThreadsForSidebar(
         snapshot.threads
+          .flatMap((thread) => {
+            const summary = summaries[thread.id];
+            return summary ? [summary] : [];
+          })
           .filter(
             (thread) =>
               thread.projectId === projectId &&
               (thread.archivedAt ?? null) === null &&
               thread.snoozedUntil == null &&
               !isSidechatThread(thread),
-          )
-          .map((thread) => ({
-            id: thread.id,
-            createdAt: thread.createdAt,
-            updatedAt: thread.updatedAt,
-            latestUserMessageAt: thread.latestUserMessageAt,
-            snoozeReminderAt: thread.snoozeReminderAt,
-            lastVisitedAt: summaries[thread.id]?.lastVisitedAt,
-            latestTurn: thread.latestTurn,
-            session: summaries[thread.id]?.session,
-            hasLiveTailWork: summaries[thread.id]?.hasLiveTailWork,
-          })),
+          ),
         appSettings.sidebarThreadSortOrder,
         { attentionFirst: appSettings.sidebarThreadAttentionFirst },
       )[0];
@@ -2333,27 +2327,21 @@ export default function Sidebar() {
         return false;
       }
 
-      // Visit state is client-owned; read it after the fresh shell snapshot is applied.
+      // The store may already contain events newer than this response. Rank
+      // each candidate from its coherent normalized summary, including visits.
       const summaries = useStore.getState().sidebarThreadSummaryById;
       const latestThread = sortThreadsForSidebar(
         snapshot.threads
+          .flatMap((thread) => {
+            const summary = summaries[thread.id];
+            return summary ? [summary] : [];
+          })
           .filter(
             (thread) =>
               thread.projectId === projectId &&
               (thread.archivedAt ?? null) === null &&
               thread.snoozedUntil == null,
-          )
-          .map((thread) => ({
-            id: thread.id,
-            createdAt: thread.createdAt,
-            updatedAt: thread.updatedAt,
-            latestUserMessageAt: thread.latestUserMessageAt,
-            snoozeReminderAt: thread.snoozeReminderAt,
-            lastVisitedAt: summaries[thread.id]?.lastVisitedAt,
-            latestTurn: thread.latestTurn,
-            session: summaries[thread.id]?.session,
-            hasLiveTailWork: summaries[thread.id]?.hasLiveTailWork,
-          })),
+          ),
         appSettings.sidebarThreadSortOrder,
         { attentionFirst: appSettings.sidebarThreadAttentionFirst },
       )[0];

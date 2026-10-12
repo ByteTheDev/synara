@@ -11132,12 +11132,13 @@ describe("ChatView transcript geometry (full app)", () => {
   });
 
   it.each([
-    { attentionFirst: false, reminderSeen: false },
-    { attentionFirst: true, reminderSeen: true },
-    { attentionFirst: true, reminderSeen: false },
+    { attentionFirst: false, reminderSeen: false, newerClientCompletion: false },
+    { attentionFirst: true, reminderSeen: true, newerClientCompletion: false },
+    { attentionFirst: true, reminderSeen: false, newerClientCompletion: false },
+    { attentionFirst: true, reminderSeen: true, newerClientCompletion: true },
   ])(
-    "reopens a snapshot project with attentionFirst=$attentionFirst and reminderSeen=$reminderSeen",
-    async ({ attentionFirst, reminderSeen }) => {
+    "reopens a snapshot project with attentionFirst=$attentionFirst and reminderSeen=$reminderSeen, newerClientCompletion=$newerClientCompletion",
+    async ({ attentionFirst, reminderSeen, newerClientCompletion }) => {
       const base = createSnapshotForTargetUser({
         targetMessageId: MessageId.makeUnsafe("snapshot-project-order"),
         targetText: "Open the existing project",
@@ -11184,10 +11185,34 @@ describe("ChatView transcript geometry (full app)", () => {
       try {
         if (reminderSeen)
           useStore.getState().markThreadVisited(reminderId, "2026-02-03T00:00:00.000Z");
+        if (newerClientCompletion) {
+          // This update arrives after the response snapshot was captured. The
+          // stale response must not overwrite the client's newer completed turn.
+          useStore.getState().syncServerReadModel({
+            ...base,
+            snapshotSequence: base.snapshotSequence + 1,
+            threads: [
+              neutral,
+              {
+                ...reminder,
+                latestTurn: {
+                  turnId: TurnId.makeUnsafe("new-client-completion"),
+                  state: "completed",
+                  requestedAt: "2026-02-04T00:00:00.000Z",
+                  startedAt: "2026-02-04T00:00:01.000Z",
+                  completedAt: "2026-02-04T00:01:00.000Z",
+                  assistantMessageId: null,
+                },
+              },
+              newest,
+            ],
+          });
+        }
         await page.getByRole("button", { name: "Add project", exact: true }).click();
         await page.getByLabelText("Project folder path").fill("/repo/project");
         await page.getByRole("button", { name: "Create project", exact: true }).click();
-        const expectedId = attentionFirst && !reminderSeen ? reminderId : newestId;
+        const expectedId =
+          attentionFirst && (!reminderSeen || newerClientCompletion) ? reminderId : newestId;
         await waitForURL(
           mounted.router,
           (path) => path === `/${expectedId}`,

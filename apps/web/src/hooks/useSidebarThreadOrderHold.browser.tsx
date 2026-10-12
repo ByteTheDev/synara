@@ -5,6 +5,7 @@
 import { ThreadId } from "@synara/contracts";
 import { afterEach, describe, expect, it } from "vitest";
 import { renderHook } from "vitest-browser-react";
+import { page } from "vitest/browser";
 
 import type { SidebarThreadSortOrder } from "../appSettings";
 import type { SidebarThreadSortInput } from "../components/Sidebar.logic";
@@ -28,6 +29,48 @@ function movePointer(target: Element, pointerType = "mouse") {
 }
 
 describe("useIsPointerWithin", () => {
+  it("keeps its hold when the stationary pointer target disappears", async () => {
+    const list = mount("div");
+    const row = list.appendChild(document.createElement("button"));
+    row.textContent = "Transient row status";
+    const outside = mount("div");
+    outside.setAttribute("data-testid", "pointer-outside");
+    const hook = await renderHook(() => useIsPointerWithin(list));
+    try {
+      await page.getByRole("button", { name: "Transient row status" }).hover();
+      await expect.poll(() => hook.result.current).toBe(true);
+      const { left, top } = list.getBoundingClientRect();
+      row.remove();
+      // Boundary events from a removed target have no destination node. The
+      // pointer's actual hit target is still the containing list.
+      document.dispatchEvent(
+        new PointerEvent("pointerout", {
+          bubbles: true,
+          relatedTarget: null,
+          clientX: left + 10,
+          clientY: top + 10,
+        }),
+      );
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      expect(hook.result.current).toBe(true);
+      await page.getByTestId("pointer-outside").hover();
+      await expect.poll(() => hook.result.current).toBe(false);
+      movePointer(list);
+      await expect.poll(() => hook.result.current).toBe(true);
+      document.dispatchEvent(
+        new PointerEvent("pointerout", {
+          bubbles: true,
+          relatedTarget: null,
+          clientX: window.innerWidth + 1,
+          clientY: 10,
+        }),
+      );
+      await expect.poll(() => hook.result.current).toBe(false);
+    } finally {
+      await hook.unmount();
+    }
+  });
+
   it("tracks mouse movement in and out, and releases when typing elsewhere", async () => {
     const list = mount("div");
     const row = list.appendChild(document.createElement("button"));
