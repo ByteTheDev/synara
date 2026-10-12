@@ -46,7 +46,11 @@ export function useIsPointerWithin(element: HTMLElement | null): boolean {
       if (event.pointerType === "touch" || event.relatedTarget !== null) return;
       // Detaching a hovered child also produces a null destination. Hit-test
       // the pointer so that replacement rows cannot release the order hold.
-      update(isInside(document.elementFromPoint(event.clientX, event.clientY)));
+      // Boundary changes may release a hold, but only pointer movement re-arms it.
+      if (!isInside(document.elementFromPoint(event.clientX, event.clientY))) update(false);
+    };
+    const handleViewportLeave = (event: PointerEvent) => {
+      if (event.pointerType !== "touch") update(false);
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (isEditableEventTarget(event) && !isInside(event.target)) update(false);
@@ -56,11 +60,16 @@ export function useIsPointerWithin(element: HTMLElement | null): boolean {
     document.addEventListener("pointermove", handlePointerMove, options);
     document.addEventListener("pointerout", handlePointerOut, options);
     document.addEventListener("keydown", handleKeyDown, options);
+    // Root pointerleave is an authoritative viewport exit, unlike null pointerout.
+    // Listen without capture: a child disappearing must not count as root exit.
+    const root = document.documentElement;
+    root.addEventListener("pointerleave", handleViewportLeave, { passive: true });
     window.addEventListener("blur", handleBlur);
     return () => {
       document.removeEventListener("pointermove", handlePointerMove, options);
       document.removeEventListener("pointerout", handlePointerOut, options);
       document.removeEventListener("keydown", handleKeyDown, options);
+      root.removeEventListener("pointerleave", handleViewportLeave);
       window.removeEventListener("blur", handleBlur);
       setWithin(false);
     };

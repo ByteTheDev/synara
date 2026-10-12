@@ -66,6 +66,18 @@ describe("useIsPointerWithin", () => {
         }),
       );
       await expect.poll(() => hook.result.current).toBe(false);
+      movePointer(list);
+      await expect.poll(() => hook.result.current).toBe(true);
+      // Chromium emits pointerleave on the document root for viewport exit.
+      // This authoritative boundary must win even with last-inside coordinates.
+      document.documentElement.dispatchEvent(
+        new PointerEvent("pointerleave", {
+          relatedTarget: null,
+          clientX: left + 10,
+          clientY: top + 10,
+        }),
+      );
+      await expect.poll(() => hook.result.current).toBe(false);
     } finally {
       await hook.unmount();
     }
@@ -90,6 +102,18 @@ describe("useIsPointerWithin", () => {
 
       composer.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "a" }));
       await expect.poll(() => hook.result.current).toBe(false);
+      const rect = list.getBoundingClientRect();
+      // A removed status node must not reactivate a hold released by typing.
+      document.dispatchEvent(
+        new PointerEvent("pointerout", {
+          bubbles: true,
+          relatedTarget: null,
+          clientX: rect.left + 10,
+          clientY: rect.top + 10,
+        }),
+      );
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      expect(hook.result.current).toBe(false);
 
       movePointer(row);
       await expect.poll(() => hook.result.current).toBe(true);
