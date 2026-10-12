@@ -1604,7 +1604,8 @@ export const makeAgentGateway = Effect.gen(function* () {
             tone: "info",
             kind: INLINE_VISUAL_ACTIVITY_KIND,
             summary: `Visual: ${payload.title}`,
-            payload,
+            // Spelled out: the activity payload is JSON, which has no optional fields.
+            payload: { ...payload, format: payload.format ?? "html" },
             turnId: TurnId.makeUnsafe(turnId),
             createdAt,
           },

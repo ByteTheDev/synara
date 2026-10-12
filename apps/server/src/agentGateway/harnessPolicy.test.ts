@@ -147,7 +147,7 @@ describe("Synara harness policy", () => {
   });
 
   it("points to synara_show_visual only when the session can call it", () => {
-    const visualLine = "call synara_show_visual before your final reply";
+    const visualLine = "call synara_show_visual and place its block in your reply";
     assert.include(
       renderSynaraHarnessPolicy({ gatewayControlAvailable: true, inlineVisuals: true }),
       visualLine,

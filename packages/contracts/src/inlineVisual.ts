@@ -3,11 +3,12 @@ import { Schema } from "effect";
 import { NonNegativeInt, ThreadId, TrimmedNonEmptyString } from "./baseSchemas";
 
 /**
- * Inline visuals: a self-contained HTML document (chart, table, diagram, small
- * interactive view) that an agent publishes into its own thread with the
- * `synara_show_visual` gateway tool. The server stores the document and records
- * a small `visual.shown` activity; clients fetch the document by id and run it
- * in a sandboxed, network-less frame inside the transcript.
+ * Inline visuals: what an agent publishes into its own thread with the
+ * `synara_show_visual` gateway tool. Usually a component spec (see
+ * inlineVisualSpec.ts) that clients draw with their own components; for a view
+ * the spec cannot express, a self-contained HTML document that clients run in a
+ * sandboxed, network-less frame. The server stores the source and records a
+ * small `visual.shown` activity; clients fetch the source by id.
  */
 export const INLINE_VISUAL_TOOL_NAME = "synara_show_visual";
 export const INLINE_VISUAL_ACTIVITY_KIND = "visual.shown";
@@ -22,9 +23,15 @@ export const INLINE_VISUAL_DEFAULT_HEIGHT = 320;
 export const InlineVisualId = Schema.String.check(Schema.isPattern(/^vis_[0-9a-f]{32}$/));
 export type InlineVisualId = typeof InlineVisualId.Type;
 
-/** What the `visual.shown` activity carries. The document itself is fetched separately. */
+/** How the stored source is read: a component spec as JSON, or an HTML document. */
+export const InlineVisualFormat = Schema.Literals(["components", "html"]);
+export type InlineVisualFormat = typeof InlineVisualFormat.Type;
+
+/** What the `visual.shown` activity carries. The source itself is fetched separately. */
 export const InlineVisualActivityPayload = Schema.Struct({
   visualId: InlineVisualId,
+  /** Absent on visuals recorded before component specs existed, which are all HTML. */
+  format: Schema.optional(InlineVisualFormat),
   title: TrimmedNonEmptyString.check(Schema.isMaxLength(INLINE_VISUAL_MAX_TITLE_LENGTH)),
   /** The agent's expected height, reserved until the page reports its own. */
   height: Schema.Int.check(
@@ -43,6 +50,13 @@ export type OrchestrationGetInlineVisualInput = typeof OrchestrationGetInlineVis
 
 export const OrchestrationGetInlineVisualResult = Schema.Struct({
   visualId: InlineVisualId,
+  /** The stored source: the spec JSON or the HTML document, per the activity's format. */
   html: Schema.String,
 });
 export type OrchestrationGetInlineVisualResult = typeof OrchestrationGetInlineVisualResult.Type;
+
+/**
+ * The fenced block an agent writes in its reply to place a visual there, with
+ * the visual id as its only line. Clients draw the visual in its place.
+ */
+export const INLINE_VISUAL_EMBED_FENCE = "synara-visual";

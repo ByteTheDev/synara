@@ -10,6 +10,7 @@ import {
   type OrchestrationThreadActivity,
   type TurnId,
 } from "@synara/contracts";
+import { readInlineVisualEmbedIds } from "@synara/shared/inlineVisual";
 import { type TimelineEntry, type WorkLogEntry, formatElapsed } from "../../session-logic";
 import type { WorkLogUserInputExchangeItem } from "../../workLog";
 import { normalizeCompactToolLabel as normalizeCompactToolLabelValue } from "../../lib/toolCallLabel";
@@ -1007,6 +1008,14 @@ export function deriveMessagesTimelineRows(input: {
   conversationOnly?: boolean;
 }): MessagesTimelineRow[] {
   const nextRows: MessagesTimelineRow[] = [];
+  const embeddedVisualIds = new Set(
+    input.timelineEntries.flatMap((entry) =>
+      (entry.kind === "message" || entry.kind === "message-segment") &&
+      entry.message.role === "assistant"
+        ? readInlineVisualEmbedIds(entry.message.text)
+        : [],
+    ),
+  );
   // A finished background task wakes the agent into a new response, so it ends
   // the previous response and starts the next one's clock like a user message.
   const responseMessages = input.timelineEntries.flatMap((entry): TimelineDurationMessage[] =>
@@ -1115,6 +1124,17 @@ export function deriveMessagesTimelineRows(input: {
         }
         const inlineVisual = runEntry.entry.inlineVisual;
         if (inlineVisual) {
+          // A visual the reply places renders inside that message. One the
+          // running turn has not placed yet waits for its reply instead of
+          // showing above it and then jumping into the text.
+          if (
+            embeddedVisualIds.has(inlineVisual.visualId) ||
+            (input.activeTurnInProgress === true &&
+              runEntry.entry.turnId != null &&
+              runEntry.entry.turnId === input.activeTurnId)
+          ) {
+            continue;
+          }
           flushPendingWorkGroup({ attachToPreviousAssistant: false });
           nextRows.push({
             kind: "inline-visual",
@@ -2133,4 +2153,17 @@ function isRowUnchanged(a: MessagesTimelineRow, b: MessagesTimelineRow): boolean
       return a.message === bm.message && a.segmentIndex === bm.segmentIndex;
     }
   }
+}
+
+/** Every visual the transcript holds, by id, for replies that place them in their text. */
+export function collectInlineVisuals(
+  timelineEntries: ReadonlyArray<TimelineEntry>,
+): ReadonlyMap<string, InlineVisualActivityPayload> {
+  const visuals = new Map<string, InlineVisualActivityPayload>();
+  for (const entry of timelineEntries) {
+    if (entry.kind === "work" && entry.entry.inlineVisual) {
+      visuals.set(entry.entry.inlineVisual.visualId, entry.entry.inlineVisual);
+    }
+  }
+  return visuals;
 }

@@ -15,6 +15,7 @@ import {
   collapsibleHiddenRowCount,
   computeMessageDurationStart,
   computeStableMessagesTimelineRows,
+  collectInlineVisuals,
   deriveMessagesTimelineRows,
   deriveTerminalAssistantMessageIds,
   deriveTurnTimingByTurnId,
@@ -2408,7 +2409,8 @@ describe("deriveMessagesTimelineRows", () => {
       collapsedNarrationMessageId: MessageId.makeUnsafe("a0"),
     });
 
-    // While a turn runs nothing moves: its visual has no header yet.
+    // While a turn runs, a visual its reply has not placed yet waits for that
+    // reply instead of showing above it and then moving into the text.
     const live = deriveMessagesTimelineRows({
       ...baseInput,
       isWorking: true,
@@ -2422,10 +2424,50 @@ describe("deriveMessagesTimelineRows", () => {
         assistantEntry("a4", "2026-01-01T00:03:02Z", { turnId: "t4", streaming: true }),
       ],
     });
-    const liveVisual = live.find((row) => row.id === "entry-live");
-    expect(liveVisual).toMatchObject({ kind: "inline-visual" });
-    expect(liveVisual).not.toHaveProperty("turnHeaderSource");
+    expect(live.find((row) => row.id === "entry-live")).toBeUndefined();
     expect(messageRow(live, "a4")!.turnHeaderRowId).toBeUndefined();
+  });
+
+  it("draws a visual inside the reply that places it, with no row of its own", () => {
+    const visualId = `vis_${"d".repeat(32)}`;
+    const placed: TimelineEntry = {
+      id: "entry-placed",
+      kind: "work",
+      createdAt: "2026-01-01T00:00:02Z",
+      entry: {
+        id: "placed",
+        createdAt: "2026-01-01T00:00:02Z",
+        label: "Visual: placed",
+        tone: "info",
+        activityKind: "visual.shown",
+        turnId: TurnId.makeUnsafe("t1"),
+        inlineVisual: {
+          visualId,
+          format: "components",
+          title: "placed",
+          height: 200,
+          byteLength: 100,
+          sha256: "b".repeat(64),
+        },
+      },
+    };
+    const entries = [
+      userEntry("u1", "2026-01-01T00:00:00Z", "t1"),
+      workEntry("w1", "2026-01-01T00:00:01Z", "tool 1"),
+      placed,
+      assistantEntry("a1", "2026-01-01T00:00:03Z", {
+        turnId: "t1",
+        text: `Before.\n\n\`\`\`synara-visual\n${visualId}\n\`\`\`\n\nAfter.`,
+        completedAt: "2026-01-01T00:00:04Z",
+      }),
+    ];
+    const rows = deriveMessagesTimelineRows({ ...baseInput, timelineEntries: entries });
+
+    expect(rows.find((row) => row.kind === "inline-visual")).toBeUndefined();
+    // The answer keeps its own turn header, as a text-only turn does.
+    expect(messageRow(rows, "a1")!.turnHeaderRowId).toBeUndefined();
+    expect(messageRow(rows, "a1")!.turnHeader?.elapsed).toBeTruthy();
+    expect(collectInlineVisuals(entries).get(visualId)?.title).toBe("placed");
   });
 
   it("keeps an answered question visible while the rest of the turn collapses", () => {

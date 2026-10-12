@@ -3019,16 +3019,17 @@ export default function ChatView({
     },
     onGuardWarning: warnVoiceGuard,
   });
-  // Bumped when Enter finishes a voice note under the "send" setting; the
-  // effect next to the late send handlers sends once the transcript commits.
-  const [voiceAutoSendRequest, setVoiceAutoSendRequest] = useState(0);
+  // Bumped when Enter finishes a voice note under the "send" setting, or a
+  // visual's follow-up choice fills the composer; the effect next to the late
+  // send handlers sends once the new prompt commits.
+  const [composerAutoSendRequest, setComposerAutoSendRequest] = useState(0);
   const finishComposerVoiceRecordingFromEnter = useCallback(() => {
     const autoSend = settings.voiceEnterBehavior === "send";
     const promptBeforeTranscript = promptRef.current;
     void submitComposerVoiceRecording().then((transcribed) => {
       // An empty transcript leaves the draft untouched; don't send it blind.
       if (autoSend && transcribed && promptRef.current !== promptBeforeTranscript) {
-        setVoiceAutoSendRequest((current) => current + 1);
+        setComposerAutoSendRequest((current) => current + 1);
       }
     });
   }, [promptRef, settings.voiceEnterBehavior, submitComposerVoiceRecording]);
@@ -4951,6 +4952,23 @@ export default function ChatView({
     scheduleComposerFocus,
   });
 
+  // A visual's follow-up choice is the reader's next message: sent as is on an
+  // empty composer, added under a draft (and left for the reader) otherwise.
+  const onSendVisualChoice = useCallback(
+    (message: string) => {
+      const draft = (
+        composerEditorRef.current?.readSnapshot()?.value ?? promptRef.current
+      ).trimEnd();
+      if (draft.length > 0) {
+        setComposerPromptValue(`${draft}\n\n${message}`);
+        return;
+      }
+      setComposerPromptValue(message);
+      setComposerAutoSendRequest((current) => current + 1);
+    },
+    [composerEditorRef, promptRef, setComposerPromptValue],
+  );
+
   // A denied task offers the same visible, one-request invocation as the slash menu.
   const handleEnableComputerControlFromDenial = useCallback(() => {
     const currentPrompt = composerEditorRef.current?.readSnapshot()?.value ?? promptRef.current;
@@ -5092,12 +5110,12 @@ export default function ChatView({
     };
   });
 
-  // Runs after the transcript and the cleared transcribing flag have committed,
-  // so the send guard and the live editor snapshot both see the dictated text.
+  // Runs after the transcript (or choice) and the cleared transcribing flag have
+  // committed, so the send guard and the live editor snapshot both see the text.
   useEffect(() => {
-    if (voiceAutoSendRequest === 0) return;
+    if (composerAutoSendRequest === 0) return;
     void lateComposerSendHandlersRef.current?.send();
-  }, [voiceAutoSendRequest]);
+  }, [composerAutoSendRequest]);
 
   const {
     onSelectComposerItem,
@@ -6844,6 +6862,7 @@ export default function ChatView({
                     onMessagesMouseUp={onMessagesMouseUp}
                     onMessagesWheel={onMessagesWheel}
                     onEmbeddedScrollIntent={onEmbeddedScrollIntent}
+                    onSendVisualChoice={onSendVisualChoice}
                     onMessagesPointerDown={onMessagesPointerDown}
                     onMessagesPointerUp={onMessagesPointerUp}
                     onMessagesPointerCancel={onMessagesPointerCancel}

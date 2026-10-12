@@ -4,9 +4,13 @@
 // Layer: Shared runtime (consumed by the web transcript; contracts own the payload schema)
 // Exports: INLINE_VISUAL_CONTENT_SECURITY_POLICY, buildInlineVisualDocument,
 //          readInlineVisualFrameMessage, inlineVisualThemeMessage, inlineVisualLinkResult,
-//          clampInlineVisualHeight, INLINE_VISUAL_SERIES_COLORS
+//          clampInlineVisualHeight, INLINE_VISUAL_SERIES_COLORS, readInlineVisualEmbedIds
 
-import { INLINE_VISUAL_MAX_HEIGHT, INLINE_VISUAL_MIN_HEIGHT } from "@synara/contracts";
+import {
+  INLINE_VISUAL_EMBED_FENCE,
+  INLINE_VISUAL_MAX_HEIGHT,
+  INLINE_VISUAL_MIN_HEIGHT,
+} from "@synara/contracts";
 
 /**
  * The agent's HTML only ever runs inside an opaque-origin frame (`sandbox`
@@ -215,4 +219,17 @@ export function buildInlineVisualDocument(html: string, theme: InlineVisualTheme
     `<script>${BOOTSTRAP_SCRIPT}</script>`,
     html.replace(LEADING_DOCTYPE, ""),
   ].join("");
+}
+
+const EMBED_PATTERN = new RegExp(
+  "^ {0,3}(`{3,}|~{3,})[ \\t]*" +
+    INLINE_VISUAL_EMBED_FENCE +
+    "[ \\t]*\\r?\\n\\s*(vis_[0-9a-f]{32})\\b",
+  "gm",
+);
+
+/** Visual ids a message places with embed fences, in order. */
+export function readInlineVisualEmbedIds(text: string): string[] {
+  if (!text.includes(INLINE_VISUAL_EMBED_FENCE)) return [];
+  return Array.from(text.matchAll(EMBED_PATTERN), (match) => match[2]!);
 }

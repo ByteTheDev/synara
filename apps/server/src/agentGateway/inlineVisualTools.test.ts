@@ -96,6 +96,7 @@ describe("synara_show_visual", () => {
           digest: visualId.slice(4),
           payload: {
             visualId,
+            format: "html",
             title: "Revenue by quarter",
             height: 320,
             byteLength: Buffer.byteLength(page, "utf8"),
@@ -121,6 +122,141 @@ describe("synara_show_visual", () => {
           [{ title: "t".repeat(121), html: html("x") }, "at most 120 characters"],
           [{ title: "Blank", html: "   " }, '"html" must be a non-empty HTML document'],
           [{ title: "Height", html: html("x"), height: "tall" }, '"height" must be a number'],
+        ] as const) {
+          const result = yield* call(args);
+          assert.isTrue(result.isError, JSON.stringify(args).slice(0, 80));
+          assert.include(text(result), message);
+        }
+        assert.lengthOf(appended, 0);
+        assert.deepEqual(yield* Effect.promise(storedFiles), []);
+      }),
+    ),
+  );
+
+  it.effect("stores a component spec as normalized JSON with an estimated height", () =>
+    withTools(({ attachmentsDir, appended, call }) =>
+      Effect.gen(function* () {
+        const result = yield* call({
+          title: "Latency",
+          blocks: [
+            { type: "stats", items: [{ label: "p95", value: " 120 ms ", trend: "down" }] },
+            {
+              type: "bar-chart",
+              unit: "ms",
+              items: [
+                { label: "api", value: 120, highlight: true },
+                { label: "db", value: 40 },
+              ],
+            },
+          ],
+        });
+        assert.isNotTrue(result.isError, text(result));
+        const { visualId } = JSON.parse(text(result)) as { visualId: string };
+        const stored = yield* Effect.promise(() =>
+          readInlineVisual({ attachmentsDir, threadId: THREAD_ID, visualId }),
+        );
+        assert.deepEqual(JSON.parse(stored ?? ""), {
+          blocks: [
+            { type: "stats", items: [{ label: "p95", value: "120 ms", trend: "down" }] },
+            {
+              type: "bar-chart",
+              unit: "ms",
+              items: [
+                { label: "api", value: 120, highlight: true },
+                { label: "db", value: 40 },
+              ],
+            },
+          ],
+        });
+        assert.equal(appended[0]?.payload.format, "components");
+        assert.equal(appended[0]?.payload.byteLength, Buffer.byteLength(stored ?? "", "utf8"));
+        // Stats tile plus two bars and the gap between them.
+        assert.equal(appended[0]?.payload.height, 88 + 16 + 56);
+      }),
+    ),
+  );
+
+  it.effect("refuses specs that would not render as meant, naming the block", () =>
+    withTools(({ appended, call, storedFiles }) =>
+      Effect.gen(function* () {
+        const calculator = (formula: string) => ({
+          type: "calculator",
+          inputs: [{ id: "total", label: "Total", value: 100 }],
+          outputs: [{ label: "Each", formula }],
+        });
+        for (const [args, message] of [
+          [{ title: "Both", html: html("x"), blocks: [] }, 'exactly one of "blocks" or "html"'],
+          [{ title: "None" }, 'exactly one of "blocks" or "html"'],
+          [{ title: "Empty", blocks: [] }, "at least 1"],
+          [{ title: "Unknown", blocks: [{ type: "pie" }] }, "Block types: markdown"],
+          [
+            {
+              title: "Ragged",
+              blocks: [{ type: "table", columns: [{ label: "A" }], rows: [[1, 2]] }],
+            },
+            "row 0 has 2 cells for 1 columns\n  at blocks[0]",
+          ],
+          [
+            {
+              title: "Series",
+              blocks: [
+                {
+                  type: "line-chart",
+                  labels: ["a", "b", "c"],
+                  series: [{ name: "s", values: [1, 2] }],
+                },
+              ],
+            },
+            'series 0 "s" has 2 values for 3 labels',
+          ],
+          [
+            { title: "Formula", blocks: [calculator("total / people")] },
+            'formula of "Each": unknown input "people"',
+          ],
+          [
+            {
+              title: "Order",
+              blocks: [
+                {
+                  type: "calculator",
+                  inputs: [{ id: "total", label: "Total", value: 100 }],
+                  outputs: [
+                    { label: "Twice", formula: "half * 4" },
+                    { id: "half", label: "Half", formula: "total / 2" },
+                  ],
+                },
+              ],
+            },
+            'formula of "Twice": unknown input "half"',
+          ],
+          [
+            {
+              title: "Clash",
+              blocks: [
+                {
+                  type: "calculator",
+                  inputs: [{ id: "total", label: "Total", value: 100 }],
+                  outputs: [{ id: "total", label: "Again", formula: "total" }],
+                },
+              ],
+            },
+            'id "total" is used twice',
+          ],
+          [
+            {
+              title: "Nested",
+              blocks: [
+                {
+                  type: "tabs",
+                  tabs: [
+                    { label: "A", blocks: [{ type: "markdown", text: "a" }] },
+                    { label: "B", blocks: [calculator("eval(total)")] },
+                  ],
+                },
+              ],
+            },
+            "at blocks[0].tabs[1].blocks[0]",
+          ],
         ] as const) {
           const result = yield* call(args);
           assert.isTrue(result.isError, JSON.stringify(args).slice(0, 80));

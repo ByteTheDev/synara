@@ -224,8 +224,14 @@ const TURN_PAGE = `<p style="height:160px">budget tool</p><script>
   parent.postMessage({ probe: "visual-ready" }, "*");
 </script>`;
 
-/** A turn that publishes a visual, live (answer streaming) or settled. */
-function turnEntries(settled: boolean): TimelineEntry[] {
+const ANSWER_LEAD = "Two dependencies are over budget.";
+const ANSWER_TAIL = "Trim them first.";
+
+/**
+ * A turn that publishes a visual, live (answer streaming) or settled. The
+ * answer places the visual between its two paragraphs unless `placed` is false.
+ */
+function turnEntries(settled: boolean, placed = true): TimelineEntry[] {
   return [
     {
       id: "entry-request",
@@ -273,7 +279,9 @@ function turnEntries(settled: boolean): TimelineEntry[] {
       message: {
         id: MessageId.makeUnsafe("answer"),
         role: "assistant",
-        text: "Two dependencies are over budget.",
+        text: placed
+          ? `${ANSWER_LEAD}\n\n\`\`\`synara-visual\n${TURN_VISUAL.visualId}\n\`\`\`\n\n${ANSWER_TAIL}`
+          : ANSWER_LEAD,
         createdAt: at(3),
         streaming: !settled,
         turnId: TURN_ID,
@@ -330,7 +338,7 @@ async function mountLiveTurn(earlier: TimelineEntry[] = []) {
   return { frame, list, probes, settle };
 }
 
-it("keeps a visual's page, under its turn header, when the turn settles", async () => {
+it("keeps a placed visual's page inside the answer when the turn settles", async () => {
   const { frame, probes, settle } = await mountLiveTurn();
   // The reader uses the visual while the answer still streams.
   frame.contentWindow!.postMessage({ set: 7 }, "*");
@@ -345,13 +353,60 @@ it("keeps a visual's page, under its turn header, when the turn settles", async 
   frame.contentWindow!.postMessage({ ask: true }, "*");
   await expect.poll(() => probes.find((entry) => entry.probe === "value")?.value).toBe(7);
   expect(probes.filter((entry) => entry.probe === "visual-ready")).toHaveLength(1);
-  // One reading block: Worked for, then the visual, then the answer.
-  const answer = [...document.querySelectorAll("p")].find(
-    (element) => element.textContent === "Two dependencies are over budget.",
-  )!;
+  // One reading block: Worked for, then the answer with the visual where it
+  // placed it, inside the answer's own row.
+  const paragraph = (text: string) =>
+    [...document.querySelectorAll("p")].find((element) => element.textContent === text)!;
   expect(header.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+    paragraph(ANSWER_LEAD).getBoundingClientRect().top,
+  );
+  expect(paragraph(ANSWER_LEAD).getBoundingClientRect().bottom).toBeLessThanOrEqual(
     frame.getBoundingClientRect().top,
   );
+  expect(frame.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+    paragraph(ANSWER_TAIL).getBoundingClientRect().top,
+  );
+  expect(frame.closest("[data-timeline-row-kind]")?.getAttribute("data-timeline-row-kind")).toBe(
+    "message",
+  );
+  expect(document.querySelector('[data-timeline-row-kind="inline-visual"]')).toBeNull();
+});
+
+it("shows a visual the answer never placed only once the turn settles, under its header", async () => {
+  vi.stubGlobal("nativeApi", {
+    orchestration: {
+      getInlineVisual: vi.fn(async () => ({ visualId: TURN_VISUAL.visualId, html: TURN_PAGE })),
+    },
+  } as unknown as NativeApi);
+  const client = new QueryClient();
+  const view = (turn: TurnState) => (
+    <QueryClientProvider client={client}>
+      <Transcript turn={turn} />
+    </QueryClientProvider>
+  );
+  const screen = await render(
+    view({
+      timelineEntries: turnEntries(false, false),
+      activeTurnId: TURN_ID,
+      activeTurnStartedAt: at(0),
+    }),
+  );
+  cleanup = async () => {
+    await screen.unmount();
+    client.clear();
+  };
+  await vi.waitUntil(() => document.body.textContent?.includes(ANSWER_LEAD));
+  // While the answer streams the visual waits rather than sitting above it.
+  expect(document.querySelector("iframe[data-inline-visual-frame]")).toBeNull();
+
+  await screen.rerender(view({ timelineEntries: turnEntries(true, false) }));
+
+  const frame = await vi.waitUntil(() =>
+    document.querySelector<HTMLIFrameElement>("iframe[data-inline-visual-frame]"),
+  );
+  const answer = [...document.querySelectorAll("p")].find(
+    (element) => element.textContent === ANSWER_LEAD,
+  )!;
   expect(frame.getBoundingClientRect().bottom).toBeLessThanOrEqual(
     answer.getBoundingClientRect().top,
   );

@@ -108,6 +108,7 @@ interface ChatTranscriptPaneProps {
   onMessagesTouchStart: TouchEventHandler<HTMLDivElement>;
   onMessagesWheel: WheelEventHandler<HTMLDivElement>;
   onEmbeddedScrollIntent?: ((upward: boolean) => void) | undefined;
+  onSendVisualChoice?: ComponentProps<typeof MessagesTimeline>["onSendVisualChoice"];
   onIsAtEndChange: (isAtEnd: boolean) => void;
   onNavigate?: () => void;
   onCloseAgentActivityDetail?: () => void;
@@ -212,6 +213,7 @@ export function ChatTranscriptPane({
   onMessagesTouchStart,
   onMessagesWheel,
   onEmbeddedScrollIntent,
+  onSendVisualChoice,
   onIsAtEndChange,
   onNavigate,
   onCloseAgentActivityDetail,
@@ -461,6 +463,7 @@ export function ChatTranscriptPane({
               onMessagesMouseUp={onMessagesMouseUp}
               onMessagesWheel={onMessagesWheel}
               onEmbeddedScrollIntent={onEmbeddedScrollIntent}
+              onSendVisualChoice={onSendVisualChoice}
               threadId={activeThreadId}
               onMessagesPointerDown={onMessagesPointerDown}
               onMessagesPointerUp={onMessagesPointerUp}

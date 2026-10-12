@@ -54,7 +54,7 @@ export function renderSynaraHarnessPolicy(capabilities: SynaraHarnessCapabilitie
           : [AUTOMATION_AUTHORING_GUIDANCE]),
         ...(capabilities.inlineVisuals === true
           ? [
-              "When a chart, table, diagram, or small interactive view says more than prose, call synara_show_visual before your final reply.",
+              "When a chart, table, or comparison says more than prose, call synara_show_visual and place its block in your reply.",
             ]
           : []),
         "Prefer synara_create_automation with suggested: true when the user has not explicitly asked to create an automation. Suggested automations remain disabled until the user accepts their proposal card.",

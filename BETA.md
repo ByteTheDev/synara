@@ -312,7 +312,7 @@ The list currently holds `inline-visuals`: the `synara_show_visual` agent tool,
 its transcript rows, and the `orchestration.getInlineVisual` read. A Stable server
 leaves the tool out of the gateway catalog and the harness policy, refuses the
 read, and the Stable web ignores `visual.shown` activities. Nothing is migrated;
-visual pages live under the attachments folder of the Beta data home.
+visual pages and component specs live under the attachments folder of the Beta data home.
 
 Hubs, Tasks, Inbox, Auto-fix CI, Oh My Pi, the rail sidebar layout, and message
 trail sound are available in both apps.

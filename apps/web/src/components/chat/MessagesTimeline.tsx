@@ -89,7 +89,8 @@ import { SynaraThreadCreationCard } from "./SynaraThreadCreationCard";
 import { WorkerMonitorNoticePill } from "./WorkerMonitorNoticePill";
 import { buildExpandedImagePreview, ExpandedImagePreview } from "./ExpandedImagePreview";
 import { ProposedPlanCard } from "./ProposedPlanCard";
-import { InlineVisualFrame } from "./InlineVisualFrame";
+import { InlineVisual } from "./InlineVisual";
+import { InlineVisualEmbedContext } from "./inlineVisualEmbedContext";
 import { DiffStatLabel } from "./DiffStatLabel";
 import { ReviewChangesButton } from "./ReviewChangesButton";
 import { FileEntryIcon } from "./FileEntryIcon";
@@ -118,6 +119,7 @@ import {
   type UserTurnMarkerKind,
 } from "./userTurnMarker";
 import {
+  collectInlineVisuals,
   canSubmitUserMessageEdit,
   capOpenWorkEntryRenderChunks,
   collapsibleHiddenRowCount,
@@ -544,6 +546,8 @@ interface MessagesTimelineProps {
    * list's own handlers, so the frame forwards them; they can only detach follow.
    */
   onEmbeddedScrollIntent?: ((upward: boolean) => void) | undefined;
+  /** Sends an inline visual's follow-up choice as the reader's next message. */
+  onSendVisualChoice?: ((message: string) => void) | undefined;
   /** The thread whose transcript this is; inline visual rows fetch their documents with it. */
   threadId?: string | null | undefined;
   markdownCwd: string | undefined;
@@ -643,6 +647,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
   onMessagesTouchStart,
   onMessagesWheel,
   onEmbeddedScrollIntent,
+  onSendVisualChoice,
   threadId,
   markdownCwd,
   resolvedTheme,
@@ -1401,6 +1406,28 @@ export const MessagesTimeline = memo(function MessagesTimeline({
       onEmbeddedScrollIntent?.(upward);
     },
     [onEmbeddedScrollIntent, suppressTailExpansionScroll],
+  );
+  const inlineVisualActions = useMemo(
+    () => ({ cwd: markdownCwd, onSendChoice: onSendVisualChoice }),
+    [markdownCwd, onSendVisualChoice],
+  );
+  const inlineVisualsById = useMemo(() => collectInlineVisuals(timelineEntries), [timelineEntries]);
+  // Replies place visuals in their text with an embed fence; the markdown asks
+  // for the visual by id and draws it right there, as part of the answer.
+  const renderInlineVisual = useCallback(
+    (visualId: string) => {
+      const visual = inlineVisualsById.get(visualId);
+      if (visual === undefined || !threadId) return null;
+      return (
+        <InlineVisual
+          threadId={ThreadId.makeUnsafe(threadId)}
+          visual={visual}
+          actions={inlineVisualActions}
+          onScrollIntent={handleEmbeddedScrollIntent}
+        />
+      );
+    },
+    [handleEmbeddedScrollIntent, inlineVisualActions, inlineVisualsById, threadId],
   );
   const handleViewableItemsChanged = useCallback<
     NonNullable<ComponentProps<typeof LegendList>["onViewableItemsChanged"]>
@@ -2955,9 +2982,10 @@ export const MessagesTimeline = memo(function MessagesTimeline({
               element stays where it is, so its page keeps its state. */}
           {row.turnHeaderSource ? renderSettledTurnHeader(row.turnHeaderSource) : null}
           <div className="min-w-0">
-            <InlineVisualFrame
+            <InlineVisual
               threadId={ThreadId.makeUnsafe(threadId)}
               visual={row.visual}
+              actions={inlineVisualActions}
               onScrollIntent={handleEmbeddedScrollIntent}
             />
           </div>
@@ -3049,69 +3077,71 @@ export const MessagesTimeline = memo(function MessagesTimeline({
 
   return (
     <BackgroundTaskStopContext.Provider value={onStopBackgroundTask ?? null}>
-      <div ref={timelineRootRef} className="contents" data-messages-timeline-root="true">
-        <LegendList<MessagesTimelineRow>
-          ref={resolvedListRef}
-          data={rows}
-          keyExtractor={(row) => row.id}
-          renderItem={({ item }) => renderRowContent(item)}
-          estimatedItemSize={90}
-          // LegendList caches rendered rows, so every local expansion map that changes row content
-          // has to be surfaced through extraData.
-          extraData={timelineExtraData}
-          // Deliberately keyed off the *inherited* anchor rather than
-          // `tailAnchorSlideInFlight`: LegendList re-targets the end on every data
-          // change while this is true, which would yank a live post-send anchor
-          // out of its hold. A remount that inherits an already-settled anchor has
-          // no slide to preserve, so bootstrapping at the end is what we want.
-          initialScrollAtEnd={tailAnchorMessageId === null || hasInheritedTailAnchor}
-          {...(anchoredEndSpace ? { anchoredEndSpace } : {})}
-          maintainScrollAtEnd={followLiveOutput && !tailAnchorSlideInFlight}
-          maintainScrollAtEndThreshold={
-            followLiveOutput && !tailAnchorSlideInFlight ? Number.POSITIVE_INFINITY : 0.1
-          }
-          {...(tailAnchorMessageId !== null
-            ? { maintainVisibleContentPosition: false }
-            : !followLiveOutput
-              ? { maintainVisibleContentPosition: true }
+      <InlineVisualEmbedContext.Provider value={renderInlineVisual}>
+        <div ref={timelineRootRef} className="contents" data-messages-timeline-root="true">
+          <LegendList<MessagesTimelineRow>
+            ref={resolvedListRef}
+            data={rows}
+            keyExtractor={(row) => row.id}
+            renderItem={({ item }) => renderRowContent(item)}
+            estimatedItemSize={90}
+            // LegendList caches rendered rows, so every local expansion map that changes row content
+            // has to be surfaced through extraData.
+            extraData={timelineExtraData}
+            // Deliberately keyed off the *inherited* anchor rather than
+            // `tailAnchorSlideInFlight`: LegendList re-targets the end on every data
+            // change while this is true, which would yank a live post-send anchor
+            // out of its hold. A remount that inherits an already-settled anchor has
+            // no slide to preserve, so bootstrapping at the end is what we want.
+            initialScrollAtEnd={tailAnchorMessageId === null || hasInheritedTailAnchor}
+            {...(anchoredEndSpace ? { anchoredEndSpace } : {})}
+            maintainScrollAtEnd={followLiveOutput && !tailAnchorSlideInFlight}
+            maintainScrollAtEndThreshold={
+              followLiveOutput && !tailAnchorSlideInFlight ? Number.POSITIVE_INFINITY : 0.1
+            }
+            {...(tailAnchorMessageId !== null
+              ? { maintainVisibleContentPosition: false }
+              : !followLiveOutput
+                ? { maintainVisibleContentPosition: true }
+                : {})}
+            onClickCapture={onMessagesClickCapture}
+            onMouseUp={onMessagesMouseUp}
+            onPointerCancel={handleMessagesPointerCancel}
+            onPointerDown={handleMessagesPointerDown}
+            onPointerUp={onMessagesPointerUp}
+            onScroll={handleListScroll}
+            {...(onTrailHighlightsChange
+              ? {
+                  onViewableItemsChanged: handleViewableItemsChanged,
+                  viewabilityConfig: TRAIL_VIEWABILITY_CONFIG,
+                }
               : {})}
-          onClickCapture={onMessagesClickCapture}
-          onMouseUp={onMessagesMouseUp}
-          onPointerCancel={handleMessagesPointerCancel}
-          onPointerDown={handleMessagesPointerDown}
-          onPointerUp={onMessagesPointerUp}
-          onScroll={handleListScroll}
-          {...(onTrailHighlightsChange
-            ? {
-                onViewableItemsChanged: handleViewableItemsChanged,
-                viewabilityConfig: TRAIL_VIEWABILITY_CONFIG,
-              }
-            : {})}
-          onTouchEnd={onMessagesTouchEnd}
-          onTouchMove={handleMessagesTouchMove}
-          onTouchStart={handleMessagesTouchStart}
-          onWheel={handleMessagesWheel}
-          data-chat-scroll-container="true"
-          // LegendList sets overflow inline, so a CSS class cannot keep this
-          // vertical transcript from gaining a horizontal scrollbar.
-          showsHorizontalScrollIndicator={false}
-          ListFooterComponent={listFooter}
-          ListHeaderComponent={historyHeader}
-          // `scroll-edge-fade` (index.css) dissolves rows under the chat header and toward
-          // the composer instead of cutting them. It is scroll-aware via
-          // `animation-timeline: scroll()` and paint-only, so each edge clears once nothing
-          // is scrolled past it (a pinned or non-scrollable transcript stays crisp) without
-          // feeding back into auto-follow or list measurement. With the floating composer,
-          // `listScrollStyle` moves the bottom fade up to the composer's top edge and
-          // intersects the footer-controls dissolve.
-          className={cn(
-            "scroll-edge-fade h-full overscroll-y-contain py-3 [scrollbar-gutter:stable] sm:py-4",
-            ENVIRONMENT_CONTENT_INSET_MOTION_CLASS,
-            CHAT_COLUMN_GUTTER_CLASS_NAME,
-          )}
-          {...(listScrollStyle ? { style: listScrollStyle } : {})}
-        />
-      </div>
+            onTouchEnd={onMessagesTouchEnd}
+            onTouchMove={handleMessagesTouchMove}
+            onTouchStart={handleMessagesTouchStart}
+            onWheel={handleMessagesWheel}
+            data-chat-scroll-container="true"
+            // LegendList sets overflow inline, so a CSS class cannot keep this
+            // vertical transcript from gaining a horizontal scrollbar.
+            showsHorizontalScrollIndicator={false}
+            ListFooterComponent={listFooter}
+            ListHeaderComponent={historyHeader}
+            // `scroll-edge-fade` (index.css) dissolves rows under the chat header and toward
+            // the composer instead of cutting them. It is scroll-aware via
+            // `animation-timeline: scroll()` and paint-only, so each edge clears once nothing
+            // is scrolled past it (a pinned or non-scrollable transcript stays crisp) without
+            // feeding back into auto-follow or list measurement. With the floating composer,
+            // `listScrollStyle` moves the bottom fade up to the composer's top edge and
+            // intersects the footer-controls dissolve.
+            className={cn(
+              "scroll-edge-fade h-full overscroll-y-contain py-3 [scrollbar-gutter:stable] sm:py-4",
+              ENVIRONMENT_CONTENT_INSET_MOTION_CLASS,
+              CHAT_COLUMN_GUTTER_CLASS_NAME,
+            )}
+            {...(listScrollStyle ? { style: listScrollStyle } : {})}
+          />
+        </div>
+      </InlineVisualEmbedContext.Provider>
     </BackgroundTaskStopContext.Provider>
   );
 });

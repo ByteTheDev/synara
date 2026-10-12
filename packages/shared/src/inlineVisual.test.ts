@@ -4,6 +4,7 @@ import {
   INLINE_VISUAL_CONTENT_SECURITY_POLICY,
   buildInlineVisualDocument,
   clampInlineVisualHeight,
+  readInlineVisualEmbedIds,
   readInlineVisualFrameMessage,
 } from "./inlineVisual";
 
@@ -109,5 +110,29 @@ describe("clampInlineVisualHeight", () => {
     [Number.NaN, 80],
   ])("clamps %d to %d", (height, expected) => {
     expect(clampInlineVisualHeight(height)).toBe(expected);
+  });
+});
+
+describe("readInlineVisualEmbedIds", () => {
+  const id = (char: string) => `vis_${char.repeat(32)}`;
+
+  it("finds the visuals a reply places, in order", () => {
+    const text = [
+      "Intro.",
+      "```synara-visual",
+      id("a"),
+      "```",
+      "Middle.",
+      "~~~ synara-visual",
+      `  ${id("b")}`,
+      "~~~",
+    ].join("\n");
+    expect(readInlineVisualEmbedIds(text)).toEqual([id("a"), id("b")]);
+  });
+
+  it("ignores other fences, inline mentions, and malformed ids", () => {
+    expect(readInlineVisualEmbedIds("```ts\n" + id("a") + "\n```")).toEqual([]);
+    expect(readInlineVisualEmbedIds("see synara-visual " + id("a"))).toEqual([]);
+    expect(readInlineVisualEmbedIds("```synara-visual\nvis_123\n```")).toEqual([]);
   });
 });
