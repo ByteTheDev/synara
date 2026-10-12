@@ -134,8 +134,13 @@ function AddDeviceDialogContent({
       <DialogHeader>
         <DialogTitle>Add a device</DialogTitle>
         <DialogDescription>
-          Scan with Synara on your iPhone or iPad. Sign in with the same account and it connects
-          automatically.
+          Scan with Synara on your iPhone or iPad. On that device, sign in with{" "}
+          {account.me?.email ? (
+            <span className="break-all font-medium text-foreground">{account.me.email}</span>
+          ) : (
+            "the same Synara account as this computer"
+          )}
+          . A different account cannot use this code.
         </DialogDescription>
       </DialogHeader>
       <DialogPanel className="space-y-4">

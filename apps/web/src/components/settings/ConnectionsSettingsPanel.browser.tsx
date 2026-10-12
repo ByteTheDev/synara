@@ -423,7 +423,7 @@ describe("Connections settings", () => {
         deviceJkt: "Exact-requesting-device-fingerprint-123456789",
       }),
     );
-    await page.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByText("Close", { exact: true }).click();
     await expect
       .element(page.getByRole("heading", { name: "Add a device" }))
       .not.toBeInTheDocument();

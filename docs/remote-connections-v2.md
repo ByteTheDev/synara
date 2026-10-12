@@ -16,6 +16,15 @@ The controller persists desired connections. Each renderer attachment gets a new
 
 ## Capacity and setup
 
+The pairing code belongs to the computer's signed-in account and workspace. The
+Add a device dialog shows that account's email; use it on the controller too.
+A different account cannot redeem the code even when both devices belong to the
+same person. The API deliberately gives the same rejection for an unavailable
+code and an ownership mismatch, without disclosing the owner's identity. Mobile
+pairing shows the signed-in account and offers an account switch; check the
+account first, then request a fresh code if it has expired. Switching accounts
+disconnects the previous account's runtimes without deleting saved pairings.
+
 Connections are directional: pairing a MacBook to a Mini does not automatically authorize the
 Mini to control the MacBook. Each execution host needs its own eligible Synara runtime, account
 registration, reachable endpoint and explicit device approval. The tested setup uses managed
