@@ -2855,7 +2855,10 @@ it.layer(NodeServices.layer)("ProviderHealth", (it) => {
 
     it.effect("keeps SDK-only Pi usable when only custom models are configured", () => {
       const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
-      writeFileSync(join(agentDir, "models.json"), '{"providers":{}}');
+      writeFileSync(
+        join(agentDir, "models.json"),
+        '{"providers":{"local":{"baseUrl":"http://localhost:11434/v1","models":[{"id":"local-model","name":"Local model","contextWindow":4096,"maxTokens":1024,"input":["text"],"reasoning":false,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0}}]}}}',
+      );
       return Effect.gen(function* () {
         try {
           const status = yield* checkPiProviderStatus(agentDir);
@@ -2888,6 +2891,81 @@ it.layer(NodeServices.layer)("ProviderHealth", (it) => {
         }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
       },
     );
+
+    it.effect("keeps SDK-only Pi usable with an inherited default-account API key", () => {
+      const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      vi.stubEnv("ANTHROPIC_API_KEY", "sk-test-default-account");
+      return Effect.gen(function* () {
+        try {
+          const status = yield* checkPiProviderStatus(agentDir);
+          assert.strictEqual(status.available, true);
+          // An isolated account must not borrow the default account's key.
+          const isolated = yield* checkPiProviderStatus(agentDir, undefined, {}, undefined, {
+            homeDir: agentDir,
+            isolationRootDir: agentDir,
+          });
+          assert.strictEqual(isolated.available, false);
+        } finally {
+          vi.unstubAllEnvs();
+          rmSync(agentDir, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+    });
+
+    it.effect("does not mistake SDK-created empty or invalid files for Pi setup", () => {
+      const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      return Effect.gen(function* () {
+        try {
+          // Pi itself creates auth.json with {} before any login exists.
+          for (const content of ["{}", "not-json", '{"anthropic":{}}']) {
+            writeFileSync(join(agentDir, "auth.json"), content);
+            writeFileSync(join(agentDir, "models.json"), '{"providers":{}}');
+            const status = yield* checkPiProviderStatus(agentDir, undefined, {}, undefined, {
+              homeDir: agentDir,
+              isolationRootDir: agentDir,
+            });
+            assert.strictEqual(status.message?.includes("Pi is not set up"), true);
+            assert.strictEqual(status.available, false);
+          }
+        } finally {
+          rmSync(agentDir, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+    });
+
+    it.effect("preserves SDK-only Pi accounts using cloud credentials rather than API keys", () => {
+      const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      const adcPath = join(agentDir, "adc.json");
+      writeFileSync(adcPath, "{}");
+      return Effect.gen(function* () {
+        try {
+          for (const environment of [
+            { AWS_PROFILE: "work" },
+            { AWS_ACCESS_KEY_ID: "test-key", AWS_SECRET_ACCESS_KEY: "test-secret" },
+            {
+              GOOGLE_APPLICATION_CREDENTIALS: adcPath,
+              GOOGLE_CLOUD_PROJECT: "test-project",
+              GOOGLE_CLOUD_LOCATION: "us-central1",
+            },
+          ]) {
+            const status = yield* checkPiProviderStatus(
+              agentDir,
+              undefined,
+              environment,
+              undefined,
+              {
+                homeDir: agentDir,
+                isolationRootDir: agentDir,
+              },
+            );
+            assert.strictEqual(status.available, true);
+            assert.strictEqual(status.authStatus, "unknown");
+          }
+        } finally {
+          rmSync(agentDir, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+    });
 
     it.effect("resolves an isolated Pi account's agent dir inside its private home", () => {
       const isolationRoot = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));

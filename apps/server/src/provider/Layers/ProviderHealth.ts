@@ -1911,16 +1911,58 @@ export const checkOpenCodeProviderStatus = makeCheckOpenCodeProviderStatus();
 // ── Pi health check ─────────────────────────────────────────────
 
 const PI_SDK_SETUP_FILE_NAMES = ["auth.json", "models.json"] as const;
+// Pi also supports cloud credentials that are not provider API keys.
+const PI_SDK_CLOUD_AUTH_ENV_KEYS = [
+  "AWS_PROFILE",
+  "AWS_BEARER_TOKEN_BEDROCK",
+  "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+  "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+  "AWS_WEB_IDENTITY_TOKEN_FILE",
+] as const;
+
+function hasPiSdkSetup(
+  content: string,
+  fileName: (typeof PI_SDK_SETUP_FILE_NAMES)[number],
+): boolean {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    return false;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return false;
+  const data = parsed as Record<string, unknown>;
+  const entries = fileName === "auth.json" ? data : data.providers;
+  if (!entries || typeof entries !== "object" || Array.isArray(entries)) return false;
+  return Object.values(entries).some((entry: unknown) => {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return false;
+    const value = entry as Record<string, unknown>;
+    if (fileName === "models.json") {
+      return (
+        typeof value.baseUrl === "string" ||
+        (Array.isArray(value.models) && value.models.length > 0)
+      );
+    }
+    return value.type === "oauth"
+      ? typeof value.refresh === "string" && value.refresh.trim().length > 0
+      : value.type === "api_key" &&
+          ((typeof value.key === "string" && value.key.trim().length > 0) ||
+            (value.env !== null &&
+              typeof value.env === "object" &&
+              Object.keys(value.env).length > 0));
+  });
+}
 
 /**
  * Looks for evidence that Pi is set up for the bundled SDK even though the Pi
  * CLI is unavailable: a provider API key set on this Pi instance, or a
- * non-empty credentials/models file in the agent dir Pi sessions will use.
- * Plain filesystem checks only, so health refreshes never import the Pi SDK.
+ * configured credentials/models file in the agent dir Pi sessions will use.
+ * Files are inspected without executing configuration commands or importing the SDK.
  */
 const inspectPiSdkSetup = (input: {
   readonly agentDir: string | undefined;
   readonly environment: Readonly<Record<string, string>> | undefined;
+  readonly runtimeEnvironment: Readonly<NodeJS.ProcessEnv>;
   readonly instanceId: string | undefined;
   readonly paths: { readonly homeDir: string; readonly isolationRootDir: string } | undefined;
 }): Effect.Effect<
@@ -1938,21 +1980,44 @@ const inspectPiSdkSetup = (input: {
       homeDir: input.paths?.homeDir ?? OS.homedir(),
       sdkAgentDir: defaultPiSdkAgentDir(),
     });
+    const runtimeEnv = input.runtimeEnvironment;
     if (
-      environment !== undefined &&
       MODEL_PROVIDER_API_KEY_ENV_MAPPINGS.some(({ envKeys }) =>
-        envKeys.some((key) => nonEmptyTrimmed(environment[key]) !== undefined),
-      )
+        envKeys.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined),
+      ) ||
+      PI_SDK_CLOUD_AUTH_ENV_KEYS.some((key) => nonEmptyTrimmed(runtimeEnv[key]) !== undefined) ||
+      (nonEmptyTrimmed(runtimeEnv.AWS_ACCESS_KEY_ID) !== undefined &&
+        nonEmptyTrimmed(runtimeEnv.AWS_SECRET_ACCESS_KEY) !== undefined)
     ) {
       return { found: true, agentDir };
     }
     const fileSystem = yield* FileSystem.FileSystem;
+    if (
+      nonEmptyTrimmed(runtimeEnv.GOOGLE_CLOUD_PROJECT ?? runtimeEnv.GCLOUD_PROJECT) &&
+      nonEmptyTrimmed(runtimeEnv.GOOGLE_CLOUD_LOCATION)
+    ) {
+      const adcPath =
+        nonEmptyTrimmed(runtimeEnv.GOOGLE_APPLICATION_CREDENTIALS) ??
+        (environment === undefined && (!input.instanceId || input.instanceId === PI_PROVIDER)
+          ? nodePath.join(
+              input.paths?.homeDir ?? OS.homedir(),
+              ".config/gcloud/application_default_credentials.json",
+            )
+          : undefined);
+      if (adcPath && (yield* fileSystem.exists(adcPath).pipe(Effect.orElseSucceed(() => false)))) {
+        return { found: true, agentDir };
+      }
+    }
     for (const fileName of PI_SDK_SETUP_FILE_NAMES) {
       const info = yield* fileSystem
         .stat(nodePath.join(agentDir, fileName))
         .pipe(Effect.orElseSucceed(() => undefined));
       if (info?.type === "File" && Number(info.size) > 0) {
-        return { found: true, agentDir };
+        // The SDK creates auth.json as {}, even before any account is configured.
+        const content = yield* fileSystem
+          .readFileString(nodePath.join(agentDir, fileName))
+          .pipe(Effect.orElseSucceed(() => ""));
+        if (hasPiSdkSetup(content, fileName)) return { found: true, agentDir };
       }
     }
     return { found: false, agentDir };
@@ -1993,7 +2058,13 @@ export const checkPiProviderStatus = (
       versionProbe.outcome === "failure" ||
       versionProbe.outcome === "nonzero"
     ) {
-      const sdkSetup = yield* inspectPiSdkSetup({ agentDir, environment, instanceId, paths });
+      const sdkSetup = yield* inspectPiSdkSetup({
+        agentDir,
+        environment,
+        runtimeEnvironment: probeEnv,
+        instanceId,
+        paths,
+      });
       if (!sdkSetup.found) {
         return {
           provider: PI_PROVIDER,
