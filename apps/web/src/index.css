@@ -3019,16 +3019,17 @@ diffs-container {
 }
 
 /* Resize affordance: hovering or dragging the content-seam rail (`data-resizing`, set by
-   SidebarRail for the whole drag) turns the panel seam accent, like the editor's chat-pane
-   handle. The inset stroke thickens the hairline to about 1px inside the border box, so
-   nothing shifts. Only while the panel is open: collapsed, that rail is a toggle, not a
+   SidebarRail for the whole drag) brightens the panel seam to the neutral foreground mix the
+   seam hover has always used. The inset stroke thickens the hairline to about 1px inside the
+   border box, so nothing shifts. Only while the panel is open: collapsed, that rail is a toggle, not a
    resize handle. The right dock's rail uses the sidebar-shell placement, so it never matches. */
 [data-sidebar-layout="rail"]:has([data-placement="content-seam"]:is(:hover, [data-resizing])):not(
     :has([data-slot="sidebar"][data-side="left"][data-state="collapsed"])
   )
   .chat-content-card::after {
-  border-left-color: var(--color-text-accent);
-  box-shadow: inset var(--app-rail-inset-border-width) 0 0 var(--color-text-accent);
+  --seam-hover-line: color-mix(in srgb, var(--foreground) 30%, transparent);
+  border-left-color: var(--seam-hover-line);
+  box-shadow: inset var(--app-rail-inset-border-width) 0 0 var(--seam-hover-line);
 }
 
 /* Panel collapsed: its zero-width box must not leave a border line next to the rail. The

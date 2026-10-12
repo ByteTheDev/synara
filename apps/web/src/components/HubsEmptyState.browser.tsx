@@ -1,7 +1,7 @@
 import "../index.css";
 
 import type { CSSProperties } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-react";
 
@@ -10,7 +10,6 @@ import { Sidebar, SidebarInstanceProvider, SidebarProvider, SidebarRail } from "
 
 vi.mock("~/env", () => ({ isElectron: true }));
 
-const ACCENT = "rgb(255, 0, 0)";
 const RESIZABLE = { minWidth: 200 };
 
 // The `_chat.tsx` shell around a route: the left panel, the detached content-seam rail, and
@@ -58,10 +57,6 @@ const mousePointer = (type: string, rail: HTMLElement) => {
 describe("Hubs empty state", () => {
   beforeEach(async () => {
     await page.viewport(1280, 800);
-    document.documentElement.style.setProperty("--color-text-accent", ACCENT);
-  });
-  afterEach(() => {
-    document.documentElement.style.removeProperty("--color-text-accent");
   });
 
   it("renders on the route card with the shared header, so the panel seam is drawn", async () => {
@@ -82,22 +77,22 @@ describe("Hubs empty state", () => {
     const screen = await renderRailShell();
     try {
       const rail = seamRail(screen.container);
-      expect(seamStyle(screen.container).borderLeftColor).not.toBe(ACCENT);
+      const resting = seamStyle(screen.container).borderLeftColor;
 
       await page.getByRole("button", { name: "Resize Sidebar" }).hover({ force: true });
       expect(rail.matches(":hover")).toBe(true);
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).toBe(ACCENT);
+      await expect.poll(() => seamStyle(screen.container).borderLeftColor).not.toBe(resting);
       await page.getByText("No hubs yet").hover();
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).not.toBe(ACCENT);
+      await expect.poll(() => seamStyle(screen.container).borderLeftColor).toBe(resting);
 
-      // A drag keeps the accent even when `:hover` is not on the rail.
+      // A drag keeps the highlight even when `:hover` is not on the rail.
       rail.dispatchEvent(mousePointer("pointerdown", rail));
       expect(rail.hasAttribute("data-resizing")).toBe(true);
       expect(rail.matches(":hover")).toBe(false);
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).toBe(ACCENT);
+      await expect.poll(() => seamStyle(screen.container).borderLeftColor).not.toBe(resting);
       rail.dispatchEvent(mousePointer("pointerup", rail));
       expect(rail.hasAttribute("data-resizing")).toBe(false);
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).not.toBe(ACCENT);
+      await expect.poll(() => seamStyle(screen.container).borderLeftColor).toBe(resting);
     } finally {
       await screen.unmount();
     }
@@ -106,9 +101,10 @@ describe("Hubs empty state", () => {
   it("leaves the seam alone when the collapsed rail is only a toggle", async () => {
     const screen = await renderRailShell(false);
     try {
+      const resting = seamStyle(screen.container).borderLeftColor;
       await page.getByRole("button", { name: "Toggle Sidebar" }).hover({ force: true });
       expect(seamRail(screen.container).matches(":hover")).toBe(true);
-      expect(seamStyle(screen.container).borderLeftColor).not.toBe(ACCENT);
+      expect(seamStyle(screen.container).borderLeftColor).toBe(resting);
     } finally {
       await screen.unmount();
     }

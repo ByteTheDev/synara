@@ -682,7 +682,7 @@ function SidebarRail({
           ? [
               /* Resize hit-area on the chat card seam. The visible divider is the card's
                  left border (follows the rounded corner); hovering or dragging this rail
-                 (`data-resizing`) turns that border accent via :has() in index.css — no
+                 (`data-resizing`) brightens that border via :has() in index.css — no
                  overlay line here.
                  This rail lives OUTSIDE <Sidebar>, so `in-data-[side]` cursor variants
                  never match (no [data-side] ancestor). Set the cursor directly:
