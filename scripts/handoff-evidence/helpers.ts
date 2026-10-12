@@ -40,7 +40,11 @@ async function observeDurableHandoff(
       );
       expect(editor.isConnected).toBe(true);
       expect(editor.textContent).toContain(draft);
-      const send = page.getByRole("button", { name: "Send message", exact: true }).element();
+      const submitButtons = editor.closest("form")?.querySelectorAll('button[type="submit"]');
+      expect(submitButtons).toHaveLength(1);
+      const send = submitButtons?.item(0);
+      if (!(send instanceof HTMLButtonElement))
+        throw new Error("The actual composer form must have one submit button.");
       const geometry = (element: Element) => {
         const box = element.getBoundingClientRect();
         return { x: box.x, y: box.y, width: box.width, height: box.height };
@@ -66,7 +70,11 @@ async function observeDurableHandoff(
           text: editor.textContent,
           box: geometry(editor),
         },
-        send: { disabled: (send as HTMLButtonElement).disabled, box: geometry(send) },
+        send: {
+          disabled: send.disabled,
+          label: send.getAttribute("aria-label"),
+          box: geometry(send),
+        },
         statuses: [...document.querySelectorAll('[role="status"]')].map((element) => ({
           text: element.textContent,
           visible: element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }),

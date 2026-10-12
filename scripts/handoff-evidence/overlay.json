@@ -9,16 +9,16 @@
     {
       "id": "pr1145-after",
       "variant": "after",
-      "source": "1b5ad7bd230a1422afd855017ab9e5766c904e49",
-      "tree": "44eb99c07d30c63950af7261990e00bf7cd56ddd"
+      "source": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "tree": "c22c3af445bd06fb427814cf5a7428eec25a2edd"
     }
   ],
   "expectedCases": 2,
   "fixture": {
     "path": "apps/web/src/components/ChatView.browser.tsx",
-    "blob": "d20d05055e5bfdb27ce27e8288df1572b70ea355",
-    "sha256": "0e36baeb6ce997d7aa41796b3146f1130398c9fc1d0ae3c7318d2ac907a500a2",
-    "bytes": 584016
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "bytes": 584014
   },
   "beforeFixture": {
     "path": "apps/web/src/components/ChatView.browser.tsx",
@@ -42,5 +42,5 @@
     }
   ],
   "testNamePattern": "holds the composer for a durable provider request until its matching .* outcome$",
-  "observedSha256": "19d4a81cc56bab86ead9c514954df7e317d3368d6d85f0c25015fecd4f4ae9d7"
+  "observedSha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc"
 }

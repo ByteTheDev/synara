@@ -4736,7 +4736,7 @@ describe("ChatView transcript geometry (full app)", () => {
           await expect.element(status).toBeVisible();
           await vi.waitFor(() => expect(editor.contentEditable).toBe("false"));
           await expect
-            .element(page.getByRole("button", { name: "Send message", exact: true }))
+            .element(page.getByRole("button", { name: "Connecting", exact: true }))
             .toBeDisabled();
           expect(mounted.commands).toHaveLength(0);
           // Durable handoff pending: the production composer is visible but unavailable.
