@@ -4,6 +4,7 @@
 // Exports: normalizeLegacyModelSelection, normalizePersistedModelSelection
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   MODEL_OPTIONS_BY_PROVIDER,
   ProviderInstanceId,
   type ServerSettings,
@@ -222,6 +223,7 @@ function migrateLegacyGeminiModel(model: string): string {
 export function normalizeLegacyModelSelection(input: {
   readonly provider: unknown;
   readonly instanceId?: unknown;
+  readonly profileId?: unknown;
   readonly model: string;
   readonly options: unknown;
 }): Record<string, unknown> {
@@ -254,9 +256,12 @@ export function normalizeLegacyModelSelection(input: {
     typeof input.instanceId === "string" && isProviderInstanceId(input.instanceId.trim())
       ? input.instanceId.trim()
       : undefined;
+  const profileId =
+    input.profileId === undefined ? DEFAULT_PROVIDER_PROFILE_ID : input.profileId;
   return {
     provider,
     ...(instanceId !== undefined ? { instanceId } : {}),
+    profileId,
     model: antigravityModel?.model ?? input.model,
     ...(options === undefined ? {} : { options }),
   };
@@ -302,6 +307,7 @@ export function normalizePersistedModelSelection(
   return normalizeLegacyModelSelection({
     provider: input.provider ?? providerFromSettings ?? instanceId,
     instanceId,
+    profileId: input.profileId,
     model,
     options: input.options,
   });

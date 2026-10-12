@@ -4,6 +4,7 @@
 // Exports: target-provider, title, transcript, and model-selection helpers.
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   MessageId,
   type OrchestrationThreadActivity,
@@ -339,6 +340,7 @@ export function resolveThreadHandoffModelSelection(input: {
   }
   return withTargetInstance({
     provider: input.targetProvider,
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model: defaultModel,
   });
 }

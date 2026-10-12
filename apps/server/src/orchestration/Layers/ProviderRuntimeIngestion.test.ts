@@ -14,6 +14,7 @@ import type {
   ProviderSession,
 } from "@synara/contracts";
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   ApprovalRequestId,
   CommandId,
   DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -482,6 +483,7 @@ describe("ProviderRuntimeIngestion", () => {
         workspaceRoot,
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         createdAt,
@@ -496,6 +498,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Thread",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -1883,6 +1886,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Late thread",
         modelSelection: {
           provider: "cursor",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "cursor-default",
         },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -4545,6 +4549,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Plan Source",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: "plan",
@@ -4580,6 +4585,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Plan Target",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -4732,6 +4738,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Plan Source",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: "plan",
@@ -4885,6 +4892,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Plan Source",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: "plan",
@@ -4920,6 +4928,7 @@ describe("ProviderRuntimeIngestion", () => {
         title: "Plan Target",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -5585,7 +5594,7 @@ describe("ProviderRuntimeIngestion", () => {
         threadId: secondThreadId,
         projectId: asProjectId("project-1"),
         title: "Buffered Thread",
-        modelSelection: { provider: "codex", model: "gpt-5-codex" },
+        modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
         runtimeMode: "approval-required",
         branch: null,
@@ -8366,7 +8375,7 @@ describe("ProviderRuntimeIngestion", () => {
           threadId: asThreadId("thread-1"),
           projectId: asProjectId("project-1"),
           title: "Duplicate",
-          modelSelection: { provider: "codex", model: "gpt-5-codex" },
+          modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
           interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
           runtimeMode: "approval-required",
           branch: null,

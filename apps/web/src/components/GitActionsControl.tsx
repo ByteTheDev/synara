@@ -3,7 +3,7 @@
 // Layer: Header action control
 // Depends on: git React Query hooks, native shell bridges, and shared picker/menu primitives.
 
-import { DEFAULT_GIT_TEXT_GENERATION_MODEL } from "@synara/contracts";
+import { DEFAULT_GIT_TEXT_GENERATION_MODEL, DEFAULT_PROVIDER_PROFILE_ID } from "@synara/contracts";
 import type {
   GitActionProgressEvent,
   GitActionProgressPhase,
@@ -274,12 +274,14 @@ export default function GitActionsControl({
   const gitTextGenerationModelSelection = useMemo(
     (): ModelSelection => ({
       provider: settings.textGenerationProvider ?? "codex",
+      profileId: settings.textGenerationProfileId ?? DEFAULT_PROVIDER_PROFILE_ID,
       instanceId:
         settings.textGenerationProviderInstanceId ?? settings.textGenerationProvider ?? "codex",
       model: settings.textGenerationModel ?? DEFAULT_GIT_TEXT_GENERATION_MODEL,
     }),
     [
       settings.textGenerationModel,
+      settings.textGenerationProfileId,
       settings.textGenerationProvider,
       settings.textGenerationProviderInstanceId,
     ],

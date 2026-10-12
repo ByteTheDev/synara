@@ -108,6 +108,7 @@ import {
   stripComposerTriggerText,
 } from "../composer-logic";
 import {
+  resolveProfileIdForProviderInstance,
   useComposerDraftStore,
   type ComposerImageAttachment,
   type DraftThreadEnvMode,
@@ -3864,13 +3865,25 @@ export default function ChatView({
         runtimeModels:
           runtimeModelsByProviderInstance[resolvedInstanceId] ?? runtimeModelsByProvider[provider],
       });
+      const draftState = useComposerDraftStore.getState();
+      const profileId = resolveProfileIdForProviderInstance(
+        provider,
+        resolvedInstanceId,
+        [
+          draftState.draftsByThreadId[activeThread.id]?.modelSelectionByProvider[resolvedInstanceId],
+          selectedModelSelection,
+          activeThread.modelSelection,
+          activeProject?.defaultModelSelection,
+          draftState.stickyModelSelectionByProvider[resolvedInstanceId],
+        ],
+      );
       const nextModelSelection = buildModelSelection(
         provider,
         resolvedModel,
         // A starred preset commits its provider options together with the model.
         selectionOptions?.modelOptions,
         provider === "claudeAgent" ? runtimeModel?.supportsAutoMode : undefined,
-        { instanceId: resolvedInstanceId },
+        { instanceId: resolvedInstanceId, profileId },
       );
       const providerStatus = findProviderStatus(providerStatuses, provider, resolvedInstanceId);
       const nextRuntimeMode =
@@ -3912,6 +3925,7 @@ export default function ChatView({
       scheduleComposerFocus();
     },
     [
+      activeProject?.defaultModelSelection,
       activeThread,
       boundProvider,
       customModelsByProvider,
@@ -3924,6 +3938,7 @@ export default function ChatView({
       runtimeModelsByProvider,
       runtimeModelsByProviderInstance,
       scheduleComposerFocus,
+      selectedModelSelection,
       selectedProviderInstanceId,
       settings,
       setComposerDraftModelSelectionAndSticky,

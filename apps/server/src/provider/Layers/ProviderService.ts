@@ -10,6 +10,7 @@
  * @module ProviderServiceLive
  */
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   defaultInstanceIdForDriver,
   EventId,
   ProviderCompactThreadInput,
@@ -726,6 +727,23 @@ function providerKindConstraint(provider: string): {
   return Schema.is(ProviderKind)(provider) ? { provider } : {};
 }
 
+function validateExecutableProviderProfile(
+  operation: string,
+  modelSelection: unknown,
+): ProviderValidationError | undefined {
+  const selection = runtimePayloadRecord(modelSelection);
+  if (
+    !Object.hasOwn(selection, "profileId") ||
+    selection.profileId === DEFAULT_PROVIDER_PROFILE_ID
+  ) {
+    return undefined;
+  }
+  return toValidationError(
+    operation,
+    "The requested provider profile is unavailable. Named profiles require the server profile registry.",
+  );
+}
+
 function validateModelSelectionMatchesRoute(input: {
   readonly operation: string;
   readonly modelSelection?: ModelSelection | undefined;
@@ -736,6 +754,8 @@ function validateModelSelectionMatchesRoute(input: {
   if (!selection) {
     return undefined;
   }
+  const profileError = validateExecutableProviderProfile(input.operation, selection);
+  if (profileError) return profileError;
   if (selection.instanceId !== undefined) {
     if (selection.instanceId !== input.providerInstanceId) {
       return toValidationError(
@@ -1243,6 +1263,8 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
       readonly allowDisabled?: boolean;
     }) =>
       Effect.gen(function* () {
+        const profileError = validateExecutableProviderProfile(input.operation, input.modelSelection);
+        if (profileError) return yield* profileError;
         const explicitProvider = input.provider !== undefined;
         const provider = input.provider ?? input.modelSelection?.provider ?? "codex";
         const requestedInstanceId =
@@ -2248,7 +2270,13 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                       `Cannot recover thread '${threadId}' because its provider binding was removed.`,
                     ),
                   ),
-                onSome: Effect.succeed,
+                onSome: (binding) => {
+                  const profileError = validateExecutableProviderProfile(
+                    input.operation,
+                    runtimePayloadRecord(binding.runtimePayload).modelSelection,
+                  );
+                  return profileError ? Effect.fail(profileError) : Effect.succeed(binding);
+                },
               }),
             ),
           );
@@ -2720,6 +2748,13 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
     }) =>
       Effect.gen(function* () {
         const binding = Option.getOrUndefined(yield* directory.getBinding(input.threadId));
+        if (binding && input.allowRecovery) {
+          const profileError = validateExecutableProviderProfile(
+            input.operation,
+            runtimePayloadRecord(binding.runtimePayload).modelSelection,
+          );
+          if (profileError) return yield* profileError;
+        }
         if (!binding) {
           // Startup extension prompts can fire before startSession has persisted
           // the provider binding, but the adapter already owns a live session.
@@ -2888,6 +2923,8 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
           schema: ProviderSessionStartInput,
           payload: rawInput,
         });
+        const profileError = validateExecutableProviderProfile("ProviderService.startSession", parsed.modelSelection);
+        if (profileError) return yield* profileError;
 
         const resolvedProvider = parsed.provider ?? parsed.modelSelection?.provider;
         if (resolvedProvider === undefined) {
@@ -2925,6 +2962,11 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
           binding.provider;
         const resolveStartInstance = (binding: ProviderRuntimeBinding | undefined) =>
           Effect.gen(function* () {
+            const profileError = validateExecutableProviderProfile(
+              "ProviderService.startSession",
+              runtimePayloadRecord(binding?.runtimePayload).modelSelection,
+            );
+            if (profileError) return yield* profileError;
             const persistedProviderInstanceId = binding
               ? readPersistedInstanceId(binding)
               : undefined;
@@ -3435,12 +3477,19 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
           schema: ProviderForkThreadInput,
           payload: rawInput,
         });
+        const profileError = validateExecutableProviderProfile("ProviderService.forkThread", input.modelSelection);
+        if (profileError) return yield* profileError;
 
         const existingTargetBinding = Option.getOrUndefined(
           yield* directory.getBinding(input.threadId),
         );
         if (existingTargetBinding) {
           const existingTargetPayload = runtimePayloadRecord(existingTargetBinding.runtimePayload);
+          const targetProfileError = validateExecutableProviderProfile(
+            "ProviderService.forkThread",
+            existingTargetPayload.modelSelection,
+          );
+          if (targetProfileError) return yield* targetProfileError;
           if (
             existingTargetPayload.lastRuntimeEvent === "provider.thread.forked" &&
             hasResumeCursor(existingTargetBinding.resumeCursor)
@@ -3459,6 +3508,11 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
         if (!sourceBinding) {
           return null;
         }
+        const sourceProfileError = validateExecutableProviderProfile(
+          "ProviderService.forkThread",
+          runtimePayloadRecord(sourceBinding.runtimePayload).modelSelection,
+        );
+        if (sourceProfileError) return yield* sourceProfileError;
 
         const sourcePayloadProviderInstanceId = readPersistedProviderInstanceId(
           sourceBinding.runtimePayload,
@@ -3938,6 +3992,8 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
           schema: ProviderSendTurnInput,
           payload: rawInput,
         });
+        const profileError = validateExecutableProviderProfile("ProviderService.sendTurn", parsed.modelSelection);
+        if (profileError) return yield* profileError;
 
         const input = {
           ...parsed,
@@ -4023,6 +4079,8 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
           schema: ProviderSteerTurnInput,
           payload: rawInput,
         });
+        const profileError = validateExecutableProviderProfile("ProviderService.steerTurn", parsed.modelSelection);
+        if (profileError) return yield* profileError;
 
         const input = {
           ...parsed,

@@ -1,4 +1,4 @@
-import { type ProjectId, type ProviderInstanceId, ThreadId } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, type ProjectId, type ProviderInstanceId, ThreadId } from "@synara/contracts";
 import { getDefaultModel } from "@synara/shared/model";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -145,6 +145,7 @@ export function useHandleNewThread() {
       setModelSelection(threadId, {
         provider: options.provider,
         instanceId: resolveSelectableProviderInstanceId(settings, options.provider),
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: defaultModel,
       });
     };

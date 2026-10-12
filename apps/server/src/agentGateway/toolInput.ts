@@ -1,5 +1,6 @@
 import {
   DEFAULT_MODEL_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
   SynaraCreateThreadsInput,
   SynaraWaitForThreadsInput,
   type ModelSelection,
@@ -201,6 +202,7 @@ export function buildModelSelection(
   return {
     ...inherited,
     provider,
+    profileId: inherited?.profileId ?? DEFAULT_PROVIDER_PROFILE_ID,
     model: effectiveModel,
     ...(model !== undefined && model !== inherited?.model ? { options: undefined } : {}),
   } as ModelSelection;

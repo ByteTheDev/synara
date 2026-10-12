@@ -12,6 +12,7 @@ import {
   DesktopAppIcon,
   DEFAULT_GIT_TEXT_GENERATION_MODEL,
   DEFAULT_CODEX_ACCOUNT_ID,
+  DEFAULT_PROVIDER_PROFILE_ID,
   DEFAULT_SERVER_SETTINGS,
   DEFAULT_SERVER_SETTINGS_VIEW,
   type ProviderInstanceConfig,
@@ -26,6 +27,7 @@ import {
   SidechatExpiry,
   SourceControlWritingStyle,
   SourceControlCustomInstructions,
+  ProviderProfileId,
   type ProviderStartOptions,
   type ServerSettingsView,
   type ServerSettingsPatch,
@@ -593,6 +595,9 @@ export const AppSettingsSchema = Schema.Struct({
   customOmpModels: Schema.Array(Schema.String).pipe(withDefaults(() => [])),
   textGenerationProvider: PersistedProviderKind.pipe(withDefaults(() => "codex" as const)),
   textGenerationProviderInstanceId: Schema.optional(ProviderInstanceId),
+  textGenerationProfileId: ProviderProfileId.pipe(
+    withDefaults(() => DEFAULT_PROVIDER_PROFILE_ID),
+  ),
   textGenerationModel: Schema.optional(TrimmedNonEmptyString),
   sourceControlWritingStyle: SourceControlWritingStyle.pipe(
     withDefaults(() => "repository" as const),
@@ -643,6 +648,7 @@ export function isGitTextGenerationSettingsDirty(
     (settings.textGenerationProvider ?? "codex") !== (defaults.textGenerationProvider ?? "codex") ||
     (settings.textGenerationProviderInstanceId ?? settings.textGenerationProvider ?? "codex") !==
       (defaults.textGenerationProviderInstanceId ?? defaults.textGenerationProvider ?? "codex") ||
+    settings.textGenerationProfileId !== defaults.textGenerationProfileId ||
     (settings.textGenerationModel ?? DEFAULT_GIT_TEXT_GENERATION_MODEL) !==
       (defaults.textGenerationModel ?? DEFAULT_GIT_TEXT_GENERATION_MODEL)
   );
@@ -1597,6 +1603,7 @@ export function serverSettingsToAppSettings(settings: ServerSettingsView): Parti
     providerInstances: settings.providerInstances,
     textGenerationProvider: settings.textGenerationModelSelection.provider,
     textGenerationProviderInstanceId: settings.textGenerationModelSelection.instanceId,
+    textGenerationProfileId: settings.textGenerationModelSelection.profileId,
     textGenerationModel: settings.textGenerationModelSelection.model,
     sourceControlWritingStyle: settings.sourceControlWritingStyle,
     sourceControlCustomInstructions: settings.sourceControlCustomInstructions,
@@ -1742,7 +1749,8 @@ export function appSettingsPatchToServerSettingsPatch(
   if (
     hasOwn(patch, "textGenerationModel") ||
     hasOwn(patch, "textGenerationProvider") ||
-    hasOwn(patch, "textGenerationProviderInstanceId")
+    hasOwn(patch, "textGenerationProviderInstanceId") ||
+    hasOwn(patch, "textGenerationProfileId")
   ) {
     const model = patch.textGenerationModel ?? DEFAULT_GIT_TEXT_GENERATION_MODEL;
     const provider = resolveTextGenerationProvider({
@@ -1753,9 +1761,14 @@ export function appSettingsPatchToServerSettingsPatch(
     });
     const instanceId = patch.textGenerationProviderInstanceId?.trim() || provider;
     serverPatch.textGenerationModelSelection = {
-      provider,
-      instanceId,
-      model,
+      ...(hasOwn(patch, "textGenerationModel") ||
+      hasOwn(patch, "textGenerationProvider") ||
+      hasOwn(patch, "textGenerationProviderInstanceId")
+        ? { provider, instanceId, model }
+        : {}),
+      ...(hasOwn(patch, "textGenerationProfileId")
+        ? { profileId: patch.textGenerationProfileId }
+        : {}),
     };
   }
   if (
@@ -1958,6 +1971,7 @@ export function buildInitialServerSettingsMigrationPatch(
     "ompAgentDir",
     "ompBinaryPath",
     "textGenerationModel",
+    "textGenerationProfileId",
     "textGenerationProvider",
     "textGenerationProviderInstanceId",
     "sourceControlWritingStyle",

@@ -1,4 +1,5 @@
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   CheckpointRef,
   DEFAULT_MODEL_BY_PROVIDER,
   EventId,
@@ -1436,6 +1437,7 @@ describe("shouldShowComposerModelBootstrapSkeleton", () => {
         selectedModel: "openai/gpt-5-codex",
         persistedModelSelection: {
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5.4",
         },
         draftModelSelection: null,
@@ -1451,6 +1453,7 @@ describe("shouldShowComposerModelBootstrapSkeleton", () => {
         selectedModel: "openai/gpt-5.4",
         persistedModelSelection: {
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5.4",
         },
         draftModelSelection: null,
@@ -1467,6 +1470,7 @@ describe("shouldShowComposerModelBootstrapSkeleton", () => {
         selectedModel: "auto",
         persistedModelSelection: {
           provider: "cursor",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "auto",
         },
         draftModelSelection: null,
@@ -1483,10 +1487,12 @@ describe("shouldShowComposerModelBootstrapSkeleton", () => {
         selectedModel: "opencode/minimax-m2.5-free",
         persistedModelSelection: {
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5.4",
         },
         draftModelSelection: {
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "opencode/minimax-m2.5-free",
         },
         providerModelsLoading: true,
@@ -1501,6 +1507,7 @@ describe("shouldShowComposerModelBootstrapSkeleton", () => {
         selectedModel: "gpt-5.4",
         persistedModelSelection: {
           provider: "opencode",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "openai/gpt-5.4",
         },
         draftModelSelection: null,
@@ -2589,10 +2596,12 @@ describe("createRuntimeModePersistenceQueue", () => {
 describe("persistModelSelectionBeforeRuntimeMode", () => {
   const previousModel = {
     provider: "droid",
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model: "claude-opus-4-8",
   } as const;
   const autoCapableModel = {
     provider: "codex",
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model: "gpt-5.6-sol",
   } as const;
 

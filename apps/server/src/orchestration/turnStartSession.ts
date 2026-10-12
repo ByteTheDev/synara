@@ -5,6 +5,7 @@ import type {
   RuntimeMode,
   ThreadId,
 } from "@synara/contracts";
+import { providerTargetFromModelSelection, providerTargetsEqual } from "@synara/shared/providerTarget";
 
 export function deriveTurnStartModelSelection(input: {
   readonly currentModelSelection: ModelSelection;
@@ -13,8 +14,10 @@ export function deriveTurnStartModelSelection(input: {
 }): ModelSelection {
   const requestedModelSelection = input.requestedModelSelection;
   return requestedModelSelection !== undefined &&
-    (requestedModelSelection.provider === input.currentModelSelection.provider ||
-      input.canAdoptRequestedProvider)
+    (providerTargetsEqual(
+      providerTargetFromModelSelection(requestedModelSelection),
+      providerTargetFromModelSelection(input.currentModelSelection),
+    ) || input.canAdoptRequestedProvider)
     ? requestedModelSelection
     : input.currentModelSelection;
 }

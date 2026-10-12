@@ -8,6 +8,7 @@ import {
   AUTOMATION_PROMPT_MAX_LENGTH,
   DEFAULT_AUTOMATION_FAST_INTERVAL_MAX_ITERATIONS,
   DEFAULT_AUTOMATION_MINIMUM_INTERVAL_SECONDS,
+  DEFAULT_PROVIDER_PROFILE_ID,
 } from "@synara/contracts";
 import type {
   AutomationCreateInput,
@@ -46,6 +47,7 @@ import {
 
 export const defaultModelSelection: ModelSelection = {
   provider: "codex",
+  profileId: DEFAULT_PROVIDER_PROFILE_ID,
   model: "gpt-5-codex",
 };
 
@@ -591,6 +593,7 @@ function modelSelectionsMatch(left: ModelSelection, right: ModelSelection): bool
   return (
     left.provider === right.provider &&
     (left.instanceId ?? left.provider) === (right.instanceId ?? right.provider) &&
+    left.profileId === right.profileId &&
     left.model === right.model &&
     JSON.stringify(leftOptions ?? null) === JSON.stringify(rightOptions ?? null)
   );
@@ -600,11 +603,12 @@ function modelIdentityMatches(left: ModelSelection, right: ModelSelection): bool
   return (
     left.provider === right.provider &&
     (left.instanceId ?? left.provider) === (right.instanceId ?? right.provider) &&
+    left.profileId === right.profileId &&
     left.model === right.model
   );
 }
 
-// Automation edits keep saved provider start options unless the provider/model identity changes.
+// Automation edits keep saved provider start options unless the complete target or model changes.
 export function providerOptionsForAutomationModelSelection(
   definition: Pick<AutomationDefinition, "modelSelection" | "providerOptions">,
   nextModelSelection: ModelSelection,

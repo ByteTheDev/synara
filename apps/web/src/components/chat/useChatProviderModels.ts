@@ -3,6 +3,7 @@ import {
   type ModelSelection,
   type ProviderInstanceId,
   type ProviderKind,
+  type ProviderTarget,
   type ServerProviderStatus,
 } from "@synara/contracts";
 import { normalizeModelSlug } from "@synara/shared/model";
@@ -24,6 +25,7 @@ import {
 } from "../../appSettings";
 import {
   providerInstanceModelSelectionKey,
+  resolveProfileIdForProviderInstance,
   useComposerThreadDraft,
   useEffectiveComposerModelState,
 } from "../../composerDraftStore";
@@ -249,19 +251,42 @@ export function useChatProviderModels({
       selectedProviderInstanceId,
     ],
   );
+  const draftModelSelectionForSelectedProvider =
+    composerDraft.modelSelectionByProvider[
+      providerInstanceModelSelectionKey(selectedProvider, selectedProviderInstanceId)
+    ] ?? null;
+  const selectedTarget = useMemo<ProviderTarget>(
+    () => ({
+      provider: selectedProvider,
+      instanceId: selectedProviderInstanceId,
+      profileId: resolveProfileIdForProviderInstance(
+        selectedProvider,
+        selectedProviderInstanceId,
+        [
+          draftModelSelectionForSelectedProvider,
+          activeThread?.modelSelection,
+          activeProject?.defaultModelSelection,
+        ],
+      ),
+    }),
+    [
+      activeProject?.defaultModelSelection,
+      activeThread?.modelSelection,
+      draftModelSelectionForSelectedProvider,
+      selectedProvider,
+      selectedProviderInstanceId,
+    ],
+  );
   const { modelOptions: composerModelOptions, selectedModel } = useEffectiveComposerModelState({
     threadId,
     selectedProvider,
     selectedProviderInstanceId,
     threadModelSelection: activeThread?.modelSelection,
     projectModelSelection: activeProject?.defaultModelSelection,
+    selectedTarget,
     customModelsByProvider,
     availableModelOptionsByProvider: selectedInstanceModelOptionsByProvider,
   });
-  const draftModelSelectionForSelectedProvider =
-    composerDraft.modelSelectionByProvider[
-      providerInstanceModelSelectionKey(selectedProvider, selectedProviderInstanceId)
-    ] ?? null;
   const persistedClaudeSupportsAutoMode =
     selectedProvider === "claudeAgent"
       ? draftModelSelectionForSelectedProvider?.provider === "claudeAgent" &&
@@ -312,7 +337,7 @@ export function useChatProviderModels({
         selectedProvider,
         draftModelSelectionForSelectedProvider.model,
         selectedModelOptionsForDispatch ?? draftModelSelectionForSelectedProvider.options,
-        { instanceId: selectedProviderInstanceId },
+        { instanceId: selectedProviderInstanceId, profileId: selectedTarget.profileId },
       );
     }
     return buildModelSelection(
@@ -320,7 +345,7 @@ export function useChatProviderModels({
       selectedModel,
       selectedModelOptionsForDispatch,
       selectedProvider === "claudeAgent" ? selectedRuntimeModel?.supportsAutoMode : undefined,
-      { instanceId: selectedProviderInstanceId },
+      { instanceId: selectedProviderInstanceId, profileId: selectedTarget.profileId },
     );
   }, [
     draftModelSelectionForSelectedProvider,
@@ -329,6 +354,7 @@ export function useChatProviderModels({
     selectedProvider,
     selectedProviderInstanceId,
     selectedRuntimeModel,
+    selectedTarget.profileId,
   ]);
   const providerOptionsForDispatch = useMemo(
     // A seeded overlay (group worker routing) sits on top of the user's own
@@ -435,6 +461,7 @@ export function useChatProviderModels({
     selectedProvider,
     providerInstances,
     selectedProviderInstanceId,
+    selectedProfileId: selectedTarget.profileId,
     providerModelDiscoveryCwd,
     customModelsByProvider,
     modelOptionsByProvider,

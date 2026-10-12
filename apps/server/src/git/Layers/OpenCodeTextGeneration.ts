@@ -7,11 +7,12 @@ import { Effect, Exit, Fiber, Layer, Schema, Scope } from "effect";
 import * as Semaphore from "effect/Semaphore";
 import { createHash } from "node:crypto";
 
-import type {
-  ChatAttachment,
-  OpenCodeModelSelection,
-  OpenCodeModelOptions,
-  ProviderStartOptions,
+import {
+  DEFAULT_PROVIDER_PROFILE_ID,
+  type ChatAttachment,
+  type OpenCodeModelSelection,
+  type OpenCodeModelOptions,
+  type ProviderStartOptions,
 } from "@synara/contracts";
 import { sanitizeGeneratedThreadTitle } from "@synara/shared/chatThreads";
 import { sanitizeBranchFragment, sanitizeFeatureBranchName } from "@synara/shared/git";
@@ -164,6 +165,7 @@ function resolveOpenCodeCompatibleModelSelection(
 
   return {
     provider: "opencode",
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model,
   };
 }
@@ -395,6 +397,15 @@ const makeOpenCodeCompatibleTextGeneration = (config: OpenCodeCompatibleTextGene
       readonly attachments?: ReadonlyArray<ChatAttachment> | undefined;
       readonly providerOptions?: ProviderStartOptions;
     }) {
+      if (
+        Object.hasOwn(input.modelSelection, "profileId") &&
+        input.modelSelection.profileId !== DEFAULT_PROVIDER_PROFILE_ID
+      ) {
+        return yield* new TextGenerationError({
+          operation: input.operation,
+          detail: "The requested provider profile is unavailable. Named profiles require the server profile registry.",
+        });
+      }
       const parsedModel = parseOpenCodeModelSlug(input.modelSelection.model);
       if (!parsedModel) {
         return yield* new TextGenerationError({

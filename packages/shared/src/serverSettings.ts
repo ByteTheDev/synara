@@ -1,6 +1,7 @@
 import {
   DEFAULT_CODEX_ACCOUNT_ID,
   DEFAULT_MODEL_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
   type ModelSelection,
   type ProviderStartOptions,
   type ProviderKind,
@@ -22,7 +23,7 @@ function shouldReplaceTextGenerationModelSelection(
 ): boolean {
   return Boolean(
     patch &&
-    (patch.provider !== undefined || patch.instanceId !== undefined || patch.model !== undefined),
+    (patch.provider !== undefined || patch.profileId !== undefined || patch.instanceId !== undefined || patch.model !== undefined),
   );
 }
 
@@ -55,6 +56,14 @@ export function applyServerSettingsPatch(
     current.textGenerationModelSelection.provider;
   const instanceId = patchedInstance?.instanceId ?? patchedInstanceId;
   const providerChanged = provider !== current.textGenerationModelSelection.provider;
+  const instanceChanged =
+    (instanceId ?? provider) !==
+    (current.textGenerationModelSelection.instanceId ?? current.textGenerationModelSelection.provider);
+  const profileId =
+    selectionPatch.profileId ??
+    (providerChanged || instanceChanged
+      ? DEFAULT_PROVIDER_PROFILE_ID
+      : current.textGenerationModelSelection.profileId);
   const model =
     selectionPatch.model ??
     (providerChanged ? defaultModelForProvider(provider) : undefined) ??
@@ -68,6 +77,7 @@ export function applyServerSettingsPatch(
     textGenerationModelSelection: {
       provider,
       ...(instanceId !== undefined ? { instanceId } : {}),
+      profileId,
       model,
       ...(options !== undefined ? { options } : {}),
     } as ModelSelection,

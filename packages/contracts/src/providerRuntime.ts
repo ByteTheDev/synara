@@ -15,6 +15,7 @@ import {
 } from "./baseSchemas";
 import { ClaudeCacheObservation } from "./claudeCache";
 import { ProviderDriverKind, ProviderInstanceId } from "./providerInstance";
+import { ProviderProfileId } from "./providerProfile";
 
 const TrimmedNonEmptyStringSchema = TrimmedNonEmptyString;
 const UnknownRecordSchema = Schema.Record(Schema.String, Schema.Unknown);
@@ -266,6 +267,7 @@ const ProviderRuntimeEventBase = Schema.Struct({
   eventId: EventId,
   provider: ProviderDriverKind,
   providerInstanceId: Schema.optional(ProviderInstanceId),
+  profileId: Schema.optional(ProviderProfileId),
   threadId: ThreadId,
   createdAt: IsoDateTime,
   turnId: Schema.optional(TurnId),

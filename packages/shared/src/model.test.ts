@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   CLAUDE_API_EFFORT_OPTIONS,
   CLAUDE_CODE_MODE_OPTIONS,
   CLAUDE_PROMPT_MODE_OPTIONS,
@@ -835,6 +836,7 @@ describe("resolveApiModelId", () => {
     expect(
       resolveApiModelId({
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-opus-4-6",
         options: { autoCompactWindow: "1m" },
       }),
@@ -842,6 +844,7 @@ describe("resolveApiModelId", () => {
     expect(
       resolveApiModelId({
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-sonnet-5",
         options: { autoCompactWindow: "1m" },
       }),
@@ -852,6 +855,7 @@ describe("resolveApiModelId", () => {
     expect(
       resolveApiModelId({
         provider: "claudeAgent",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "claude-opus-4-6",
         options: { contextWindow: "200k" },
       }),
@@ -872,6 +876,7 @@ describe("claudeSelectionRequiresRestart", () => {
   ) =>
     ({
       provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model,
       ...(options ? { options } : {}),
     }) as Parameters<typeof claudeSelectionRequiresRestart>[1];
@@ -879,8 +884,8 @@ describe("claudeSelectionRequiresRestart", () => {
   it("never restarts for non-Claude selections", () => {
     expect(
       claudeSelectionRequiresRestart(
-        { provider: "codex", model: "gpt-5.5" },
-        { provider: "codex", model: "gpt-5.4" },
+        { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.5" },
+        { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5.4" },
       ),
     ).toBe(false);
   });

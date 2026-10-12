@@ -4,6 +4,7 @@
 // Depends on: -automations.shared exported helper functions.
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   AutomationId,
   AutomationRunId,
   CommandId,
@@ -170,7 +171,7 @@ const baseRun: AutomationRun = {
   },
   permissionSnapshot: {
     provider: "codex",
-    modelSelection: { provider: "codex", model: "gpt-5-codex" },
+    modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
     runtimeMode: "approval-required",
     interactionMode: "default",
     worktreeMode: "auto",
@@ -190,7 +191,7 @@ const baseDefinition: AutomationDefinition = {
   schedule: { type: "interval", everySeconds: 3600 },
   enabled: true,
   nextRunAt: "2026-06-19T11:00:00.000Z",
-  modelSelection: { provider: "codex", model: "gpt-5-codex" },
+  modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
   runtimeMode: "approval-required",
   interactionMode: "default",
   worktreeMode: "auto",
@@ -377,40 +378,66 @@ describe("automation shared route helpers", () => {
     const projects = [
       {
         id: projectId("project-old"),
-        defaultModelSelection: { provider: "codex", model: "gpt-5-codex" },
+        defaultModelSelection: {
+          provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+          model: "gpt-5-codex",
+        },
       },
       {
         id: projectId("project-new"),
-        defaultModelSelection: { provider: "claudeAgent", model: "sonnet" },
+        defaultModelSelection: {
+          provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+          model: "sonnet",
+        },
       },
     ] as Parameters<typeof modelSelectionForProjectChange>[0];
 
     expect(
       modelSelectionForProjectChange(projects, "project-old", "project-new", {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
       }),
-    ).toEqual({ provider: "claudeAgent", model: "sonnet" });
+    ).toEqual({
+      provider: "claudeAgent",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+      model: "sonnet",
+    });
   });
 
   it("preserves an explicitly chosen model when switching projects", () => {
     const projects = [
       {
         id: projectId("project-old"),
-        defaultModelSelection: { provider: "codex", model: "gpt-5-codex" },
+        defaultModelSelection: {
+          provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+          model: "gpt-5-codex",
+        },
       },
       {
         id: projectId("project-new"),
-        defaultModelSelection: { provider: "claudeAgent", model: "sonnet" },
+        defaultModelSelection: {
+          provider: "claudeAgent",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
+          model: "sonnet",
+        },
       },
     ] as Parameters<typeof modelSelectionForProjectChange>[0];
 
     expect(
       modelSelectionForProjectChange(projects, "project-old", "project-new", {
         provider: "cursor",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "cursor-default",
       }),
-    ).toEqual({ provider: "cursor", model: "cursor-default" });
+    ).toEqual({
+      provider: "cursor",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+      model: "cursor-default",
+    });
   });
 
   it("preserves timezone when changing weekly day and time", () => {
@@ -518,7 +545,7 @@ describe("automation shared route helpers", () => {
       opencode: { binaryPath: "/new/opencode", serverUrl: "http://new.example" },
     };
     const definition = definitionWith({
-      modelSelection: { provider: "opencode", model: "openai/gpt-5" },
+      modelSelection: { provider: "opencode", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "openai/gpt-5" },
       providerOptions: savedProviderOptions,
     });
     const form = formFromDefinition(definition, "project-1");
@@ -540,10 +567,18 @@ describe("automation shared route helpers", () => {
       cursor: { binaryPath: "/current/cursor", apiEndpoint: "http://cursor.example" },
     };
     const definition = definitionWith({
-      modelSelection: { provider: "opencode", model: "openai/gpt-5" },
+      modelSelection: {
+        provider: "opencode",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
+        model: "openai/gpt-5",
+      },
       providerOptions: savedProviderOptions,
     });
-    const nextModelSelection = { provider: "cursor" as const, model: "composer-2" };
+    const nextModelSelection = {
+      provider: "cursor" as const,
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+      model: "composer-2",
+    };
 
     expect(
       providerOptionsForAutomationModelSelection(
@@ -564,6 +599,7 @@ describe("automation shared route helpers", () => {
     const definition = definitionWith({
       modelSelection: {
         provider: "codex",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "gpt-5-codex",
         options: { reasoningEffort: "medium" },
       },
@@ -575,6 +611,7 @@ describe("automation shared route helpers", () => {
         definition,
         {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
           options: { reasoningEffort: "high" },
         },
@@ -585,7 +622,11 @@ describe("automation shared route helpers", () => {
 
   it("clears stale provider options when an automation edit changes models without current options", () => {
     const definition = definitionWith({
-      modelSelection: { provider: "opencode", model: "openai/gpt-5" },
+      modelSelection: {
+        provider: "opencode",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
+        model: "openai/gpt-5",
+      },
       providerOptions: {
         opencode: { binaryPath: "/old/opencode", serverUrl: "http://old.example" },
       },
@@ -594,6 +635,7 @@ describe("automation shared route helpers", () => {
     expect(
       providerOptionsForAutomationModelSelection(definition, {
         provider: "cursor",
+        profileId: DEFAULT_PROVIDER_PROFILE_ID,
         model: "composer-2",
       }),
     ).toEqual({});

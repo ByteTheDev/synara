@@ -9,6 +9,7 @@ import {
   DEFAULT_DROID_GIT_TEXT_GENERATION_MODEL,
   DEFAULT_GIT_TEXT_GENERATION_MODEL,
   DEFAULT_MODEL_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
   DEFAULT_SERVER_SETTINGS,
   type ModelSelection,
   type GitTextGenerationProvider,
@@ -271,6 +272,7 @@ export function resolveTextGenerationProvider(settings: ServerSettings): ServerS
     ...settings,
     textGenerationModelSelection: {
       provider: fallback.driver,
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       instanceId: fallback.instanceId,
       model:
         fallback.driver === "droid"

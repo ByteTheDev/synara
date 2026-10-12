@@ -1,4 +1,5 @@
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   PROVIDER_DISPLAY_NAMES,
   type DroidModelSelection,
   type ModelSelection,
@@ -127,6 +128,16 @@ const makeProviderTextGeneration = Effect.gen(function* () {
     TextGenerationError
   > =>
     Effect.gen(function* () {
+      if (
+        input.modelSelection &&
+        Object.hasOwn(input.modelSelection, "profileId") &&
+        input.modelSelection.profileId !== DEFAULT_PROVIDER_PROFILE_ID
+      ) {
+        return yield* new TextGenerationError({
+          operation,
+          detail: "The requested provider profile is unavailable. Named profiles require the server profile registry.",
+        });
+      }
       const requestedProvider = resolveRequestedProvider(input);
       const settings = yield* serverSettings.getSettings.pipe(
         Effect.mapError(
@@ -155,11 +166,22 @@ const makeProviderTextGeneration = Effect.gen(function* () {
           ? ({
               provider: "droid",
               instanceId: "droid",
+              profileId: DEFAULT_PROVIDER_PROFILE_ID,
               model: parseDroidModelSlug(input.model)?.model ?? "droid",
             } satisfies DroidModelSelection)
           : undefined;
       const selectedModelSelection =
         fallbackModelSelection ?? input.modelSelection ?? modelSelectionOverride;
+      if (
+        selectedModelSelection &&
+        Object.hasOwn(selectedModelSelection, "profileId") &&
+        selectedModelSelection.profileId !== DEFAULT_PROVIDER_PROFILE_ID
+      ) {
+        return yield* new TextGenerationError({
+          operation,
+          detail: "The configured provider profile is unavailable. Named profiles require the server profile registry.",
+        });
+      }
       const selectedInstanceId = selectedModelSelection
         ? resolveModelSelectionInstanceId(selectedModelSelection)
         : selectedProvider;

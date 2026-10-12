@@ -1,4 +1,9 @@
-import { ThreadId, type ModelSelection, type ProviderModelOptions } from "@synara/contracts";
+import {
+  DEFAULT_PROVIDER_PROFILE_ID,
+  ThreadId,
+  type ModelSelection,
+  type ProviderModelOptions,
+} from "@synara/contracts";
 import {
   useComposerDraftStore,
   type ComposerFileAttachment,
@@ -116,6 +121,7 @@ export function makeQueuedTurn(id: string): QueuedComposerTurn {
     selectedPromptEffort: null,
     modelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5",
     },
     runtimeMode: "full-access",
@@ -147,6 +153,7 @@ export function makeQueuedChatTurn(
     selectedPromptEffort: null,
     modelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5",
     },
     sourceProposedPlan: {
@@ -178,6 +185,7 @@ export function modelSelection(
   return {
     provider,
     ...(instanceId ? { instanceId } : {}),
+    profileId: DEFAULT_PROVIDER_PROFILE_ID,
     model,
     ...(options ? { options } : {}),
   } as ModelSelection;

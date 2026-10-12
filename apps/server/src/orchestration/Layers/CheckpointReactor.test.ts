@@ -10,6 +10,7 @@ import type {
   ProviderSession,
 } from "@synara/contracts";
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   CheckpointRef,
   CommandId,
   DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -478,6 +479,7 @@ describe("CheckpointReactor", () => {
         workspaceRoot: options?.projectWorkspaceRoot ?? cwd,
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         createdAt,
@@ -492,6 +494,7 @@ describe("CheckpointReactor", () => {
         title: "Thread",
         modelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5-codex",
         },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
@@ -4767,7 +4770,7 @@ describe("CheckpointReactor", () => {
         threadId: childThreadId,
         projectId: asProjectId("project-1"),
         title: "Child revert",
-        modelSelection: { provider: "codex", model: "gpt-5-codex" },
+        modelSelection: { provider: "codex", profileId: DEFAULT_PROVIDER_PROFILE_ID, model: "gpt-5-codex" },
         interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
         runtimeMode: "approval-required",
         parentThreadId: ThreadId.makeUnsafe("thread-1"),

@@ -3,6 +3,7 @@
 // Exports: Minimal normalized-state and orchestration payload fixtures.
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   EventId,
   ProjectId,
   ThreadId,
@@ -26,6 +27,7 @@ export function makeThread(overrides: Partial<Thread> = {}): Thread {
     title: "Thread",
     modelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5-codex",
     },
     runtimeMode: DEFAULT_RUNTIME_MODE,
@@ -162,6 +164,7 @@ export function makeProject(
     cwd: "/tmp/project",
     defaultModelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5-codex",
     },
     expanded: true,
@@ -178,6 +181,7 @@ export function makeReadModelThread(overrides: Partial<OrchestrationReadModel["t
     title: "Thread",
     modelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.3-codex",
     },
     runtimeMode: DEFAULT_RUNTIME_MODE,
@@ -216,6 +220,7 @@ export function makeReadModel(
         workspaceRoot: "/tmp/project",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.3-codex",
         },
         createdAt: "2026-02-27T00:00:00.000Z",
@@ -241,6 +246,7 @@ export function makeShellSnapshot(thread: OrchestrationShellSnapshot["threads"][
         workspaceRoot: "/tmp/project",
         defaultModelSelection: {
           provider: "codex",
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model: "gpt-5.3-codex",
         },
         createdAt: "2026-02-27T00:00:00.000Z",
@@ -263,6 +269,7 @@ export function makeReadModelProject(
     workspaceRoot: "/tmp/project",
     defaultModelSelection: {
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: "gpt-5.3-codex",
     },
     createdAt: "2026-02-27T00:00:00.000Z",

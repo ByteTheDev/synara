@@ -6,6 +6,7 @@ import {
   type ModelSelection,
   type ProviderInstanceId,
   type ProviderKind,
+  type ProviderTarget,
   type ThreadId,
 } from "@synara/contracts";
 import { useMemo } from "react";
@@ -72,6 +73,7 @@ export type { BrowserAnnotationDraft } from "./lib/browserAnnotations";
 export {
   deriveEffectiveComposerModelState,
   providerInstanceModelSelectionKey,
+  resolveProfileIdForProviderInstance,
   resolvePreferredComposerModelSelection,
 } from "./composerDraftModels";
 export type { EffectiveComposerModelState } from "./composerDraftModels";
@@ -158,6 +160,7 @@ export function useEffectiveComposerModelState(input: {
   selectedProviderInstanceId?: ProviderInstanceId | null | undefined;
   threadModelSelection: ModelSelection | null | undefined;
   projectModelSelection: ModelSelection | null | undefined;
+  selectedTarget?: ProviderTarget;
   customModelsByProvider: Record<ProviderKind, readonly string[]>;
   availableModelOptionsByProvider?: Partial<
     Record<ProviderKind, ReadonlyArray<{ slug: string; name: string }>>
@@ -170,6 +173,7 @@ export function useEffectiveComposerModelState(input: {
     selectedProviderInstanceId: input.selectedProviderInstanceId,
     threadModelSelection: input.threadModelSelection,
     projectModelSelection: input.projectModelSelection,
+    ...(input.selectedTarget !== undefined ? { selectedTarget: input.selectedTarget } : {}),
     customModelsByProvider: input.customModelsByProvider,
     ...(input.availableModelOptionsByProvider !== undefined
       ? { availableModelOptionsByProvider: input.availableModelOptionsByProvider }

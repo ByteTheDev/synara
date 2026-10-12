@@ -6,7 +6,7 @@
 // Layer: Web UI hook
 // Exports: useScratchComposerDraft, ScratchComposerDraft, ScratchModelDraft
 
-import type { ModelSlug, ProviderInstanceId, ProviderKind, ThreadId } from "@synara/contracts";
+import { DEFAULT_PROVIDER_PROFILE_ID, type ModelSlug, type ProviderInstanceId, type ProviderKind, type ThreadId } from "@synara/contracts";
 import { getDefaultModel } from "@synara/shared/model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -78,6 +78,7 @@ export function useScratchComposerDraft(input: {
   const draftModelSelection =
     scratchDraft.modelSelectionByProvider[selectionKey] ??
     stickyModelSelectionByProvider[selectionKey];
+  const selectedProfileId = draftModelSelection?.profileId ?? DEFAULT_PROVIDER_PROFILE_ID;
   const selectedModel: ModelSlug | null =
     draftModelSelection?.model ?? getDefaultModel(selectedProvider);
 
@@ -96,11 +97,17 @@ export function useScratchComposerDraft(input: {
       supportsAutoMode?: boolean,
       options?: ProviderOptions,
     ) => {
-      // Mirrors the composer: update the scratch draft and persist the sticky selection.
-      useComposerDraftStore.getState().setModelSelectionAndSticky(
+      // Mirrors the composer: retain the profile for the selected executable instance.
+      const store = useComposerDraftStore.getState();
+      const key = providerInstanceModelSelectionKey(provider, instanceId);
+      const current =
+        store.draftsByThreadId[scratchThreadId]?.modelSelectionByProvider[key] ??
+        store.stickyModelSelectionByProvider[key];
+      store.setModelSelectionAndSticky(
         scratchThreadId,
         buildModelSelection(provider, model, options, supportsAutoMode, {
           instanceId: instanceId ?? provider,
+          profileId: current?.provider === provider ? current.profileId : DEFAULT_PROVIDER_PROFILE_ID,
         }),
       );
     },
@@ -114,6 +121,7 @@ export function useScratchComposerDraft(input: {
     setPrompt,
     selectedProvider,
     selectedProviderInstanceId,
+    selectedProfileId,
     selectedModel,
     selectedProviderModelOptions: draftModelSelection?.options,
     selectedModelSupportsAutoMode:

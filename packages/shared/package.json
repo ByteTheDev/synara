@@ -340,6 +340,10 @@
       "types": "./src/providerCliProfiles.ts",
       "import": "./src/providerCliProfiles.ts"
     },
+    "./providerTarget": {
+      "types": "./src/providerTarget.ts",
+      "import": "./src/providerTarget.ts"
+    },
     "./formatBytes": {
       "types": "./src/formatBytes.ts",
       "import": "./src/formatBytes.ts"

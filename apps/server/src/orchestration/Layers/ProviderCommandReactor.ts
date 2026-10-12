@@ -15,6 +15,7 @@ import { makeKeyedDrainableWorker } from "@synara/shared/KeyedDrainableWorker";
 import { makeKeyedLock } from "../../provider/keyedLock.ts";
 
 import {
+  DEFAULT_PROVIDER_PROFILE_ID,
   type ChatAttachment,
   type ClaudeCacheObservation,
   type PendingClaudeCacheReview,
@@ -2132,6 +2133,16 @@ const make = Effect.gen(function* () {
       : undefined;
     const requestedModelSelection = options?.modelSelection;
     const desiredModelSelection = requestedModelSelection ?? thread.modelSelection;
+    if (
+      Object.hasOwn(desiredModelSelection, "profileId") &&
+      desiredModelSelection.profileId !== DEFAULT_PROVIDER_PROFILE_ID
+    ) {
+      return yield* new ProviderAdapterValidationError({
+        provider: desiredModelSelection.provider,
+        operation: "thread.turn.start",
+        issue: "The requested provider profile is unavailable. Named profiles require the server profile registry.",
+      });
+    }
     const desiredProviderInstanceId =
       desiredModelSelection.instanceId ?? desiredModelSelection.provider;
     const settings = yield* serverSettings.getSettings;
@@ -2151,6 +2162,7 @@ const make = Effect.gen(function* () {
         ? ({
             provider: desiredProvider,
             instanceId: desiredProviderInstance.instanceId,
+            profileId: desiredModelSelection.profileId,
             model: desiredModelSelection.model,
           } as ModelSelection)
         : desiredProviderInstance

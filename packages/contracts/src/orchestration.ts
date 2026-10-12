@@ -23,6 +23,7 @@ import {
 import { ProviderInstanceId } from "./providerInstance";
 import { ProviderMentionReference, ProviderSkillReference } from "./providerDiscovery";
 import { AsyncUserInput, AsyncUserInputQuestions, AsyncUserInputResponse } from "./asyncUserInput";
+import { DEFAULT_PROVIDER_PROFILE_ID, ProviderProfileId } from "./providerProfile";
 import { ProjectKind } from "./project";
 import { ClaudeCacheObservation } from "./claudeCache";
 import {
@@ -87,6 +88,15 @@ export const ProviderKind = Schema.Literals([
   "omp",
 ]);
 export type ProviderKind = typeof ProviderKind.Type;
+const ProviderProfileIdWithDefault = ProviderProfileId.pipe(
+  Schema.withDecodingDefault(() => DEFAULT_PROVIDER_PROFILE_ID),
+);
+export const ProviderTarget = Schema.Struct({
+  provider: ProviderKind,
+  instanceId: Schema.optional(ProviderInstanceId),
+  profileId: ProviderProfileIdWithDefault,
+});
+export type ProviderTarget = typeof ProviderTarget.Type;
 
 /**
  * Providers that no longer exist as `ProviderKind` members but may survive in
@@ -242,6 +252,7 @@ function defaultModelForProvider(provider: ProviderKind): string {
 export const CodexModelSelection = Schema.Struct({
   provider: Schema.Literal("codex"),
   instanceId: ProviderInstanceIdForDriver("codex"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(CodexModelOptions),
 });
@@ -250,6 +261,7 @@ export type CodexModelSelection = typeof CodexModelSelection.Type;
 export const ClaudeModelSelection = Schema.Struct({
   provider: Schema.Literal("claudeAgent"),
   instanceId: ProviderInstanceIdForDriver("claudeAgent"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(ClaudeModelOptions),
   supportsAutoMode: Schema.optional(Schema.Boolean),
@@ -259,6 +271,7 @@ export type ClaudeModelSelection = typeof ClaudeModelSelection.Type;
 export const CursorModelSelection = Schema.Struct({
   provider: Schema.Literal("cursor"),
   instanceId: ProviderInstanceIdForDriver("cursor"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(CursorModelOptions),
 });
@@ -267,6 +280,7 @@ export type CursorModelSelection = typeof CursorModelSelection.Type;
 export const AntigravityModelSelection = Schema.Struct({
   provider: Schema.Literal("antigravity"),
   instanceId: ProviderInstanceIdForDriver("antigravity"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(AntigravityModelOptions),
 });
@@ -275,6 +289,7 @@ export type AntigravityModelSelection = typeof AntigravityModelSelection.Type;
 export const GrokModelSelection = Schema.Struct({
   provider: Schema.Literal("grok"),
   instanceId: ProviderInstanceIdForDriver("grok"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(GrokModelOptions),
 });
@@ -283,6 +298,7 @@ export type GrokModelSelection = typeof GrokModelSelection.Type;
 export const DroidModelSelection = Schema.Struct({
   provider: Schema.Literal("droid"),
   instanceId: ProviderInstanceIdForDriver("droid"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(DroidModelOptions),
 });
@@ -291,6 +307,7 @@ export type DroidModelSelection = typeof DroidModelSelection.Type;
 export const OpenCodeModelSelection = Schema.Struct({
   provider: Schema.Literal("opencode"),
   instanceId: ProviderInstanceIdForDriver("opencode"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(OpenCodeModelOptions),
 });
@@ -299,6 +316,7 @@ export type OpenCodeModelSelection = typeof OpenCodeModelSelection.Type;
 export const PiModelSelection = Schema.Struct({
   provider: Schema.Literal("pi"),
   instanceId: ProviderInstanceIdForDriver("pi"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(PiModelOptions),
 });
@@ -306,6 +324,7 @@ export type PiModelSelection = typeof PiModelSelection.Type;
 export const OmpModelSelection = Schema.Struct({
   provider: Schema.Literal("omp"),
   instanceId: ProviderInstanceIdForDriver("omp"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(OmpModelOptions),
 });
@@ -314,6 +333,7 @@ export type OmpModelSelection = typeof OmpModelSelection.Type;
 export const DevinModelSelection = Schema.Struct({
   provider: Schema.Literal("devin"),
   instanceId: ProviderInstanceIdForDriver("devin"),
+  profileId: ProviderProfileIdWithDefault,
   model: TrimmedNonEmptyString,
   options: Schema.optional(DevinModelOptions),
 });
@@ -347,6 +367,7 @@ const ModelSelectionJsonValue: Schema.Codec<unknown, unknown> = Schema.Json.pipe
 const ModelSelectionSource = Schema.Struct({
   provider: Schema.optional(ModelSelectionJsonValue),
   instanceId: Schema.optional(ModelSelectionJsonValue),
+  profileId: Schema.optional(ModelSelectionJsonValue),
   model: Schema.optional(ModelSelectionJsonValue),
   options: Schema.optional(ModelSelectionJsonValue),
   supportsAutoMode: Schema.optional(ModelSelectionJsonValue),
@@ -370,6 +391,7 @@ export const ModelSelection: Schema.Codec<typeof ModelSelectionByProvider.Type, 
           const base: Record<string, unknown> = {
             provider,
             instanceId,
+            ...(Object.hasOwn(raw, "profileId") ? { profileId: raw.profileId } : {}),
             model,
           };
           if (raw.options !== undefined) {

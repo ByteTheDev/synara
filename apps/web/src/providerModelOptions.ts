@@ -7,6 +7,7 @@ import {
 } from "@synara/shared/model";
 import {
   MODEL_OPTIONS_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
   PROVIDER_DISPLAY_NAMES,
   type AntigravityModelOptions,
   type AntigravityModelSelection,
@@ -30,8 +31,10 @@ import {
   type PiModelOptions,
   type PiModelSelection,
   type ProviderInstanceId,
+  type ProviderProfileId,
   type ProviderKind,
   type ProviderModelOptions,
+  type ProviderTarget,
 } from "@synara/contracts";
 import { normalizeCursorModelVariantBaseId } from "./cursorModelVariants";
 
@@ -39,6 +42,7 @@ export type ProviderOptions = ProviderModelOptions[ProviderKind];
 
 export interface ModelSelectionBuildMetadata {
   readonly instanceId?: ProviderInstanceId | null | undefined;
+  readonly profileId?: ProviderProfileId | undefined;
 }
 
 export interface ProviderModelOption {
@@ -557,19 +561,20 @@ export function buildModelSelection(
     case "antigravity":
       return attachModelSelectionMetadata(
         options
-          ? { provider, model, options: options as AntigravityModelOptions }
-          : { provider, model },
+          ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as AntigravityModelOptions }
+          : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "codex":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as CodexModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as CodexModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "claudeAgent":
       return attachModelSelectionMetadata(
         {
           provider,
+          profileId: DEFAULT_PROVIDER_PROFILE_ID,
           model,
           ...(options ? { options: options as ClaudeModelOptions } : {}),
           ...(typeof supportsAutoMode === "boolean" ? { supportsAutoMode } : {}),
@@ -578,39 +583,39 @@ export function buildModelSelection(
       );
     case "cursor":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as CursorModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as CursorModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "devin":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as DevinModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as DevinModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "grok":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as GrokModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as GrokModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "droid":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as DroidModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as DroidModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "opencode":
       return attachModelSelectionMetadata(
         options
-          ? { provider, model, options: options as OpenCodeModelOptions }
-          : { provider, model },
+          ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as OpenCodeModelOptions }
+          : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "pi":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as PiModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as PiModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
     case "omp":
       return attachModelSelectionMetadata(
-        options ? { provider, model, options: options as OmpModelOptions } : { provider, model },
+        options ? { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model, options: options as OmpModelOptions } : { provider, profileId: DEFAULT_PROVIDER_PROFILE_ID, model },
         metadata,
       );
   }
@@ -621,5 +626,28 @@ function attachModelSelectionMetadata<T extends ModelSelection>(
   metadata: ModelSelectionBuildMetadata | null | undefined,
 ): T {
   const instanceId = metadata?.instanceId?.trim();
-  return instanceId ? ({ ...selection, instanceId } as T) : selection;
+  return instanceId || metadata?.profileId !== undefined
+    ? ({
+        ...selection,
+        profileId: metadata?.profileId ?? selection.profileId,
+        ...(instanceId ? { instanceId } : {}),
+      } as T)
+    : selection;
+}
+export function buildModelSelectionForTarget(input: {
+  target: ProviderTarget;
+  model: string;
+  options?: ProviderOptions | null | undefined;
+  supportsAutoMode?: boolean | undefined;
+}): ModelSelection {
+  return buildModelSelection(
+    input.target.provider,
+    input.model,
+    input.options,
+    input.supportsAutoMode,
+    {
+      ...(input.target.instanceId !== undefined ? { instanceId: input.target.instanceId } : {}),
+      profileId: input.target.profileId,
+    },
+  );
 }

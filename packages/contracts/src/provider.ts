@@ -25,6 +25,7 @@ import {
 } from "./orchestration";
 import { ProviderDriverKind, ProviderInstanceId } from "./providerInstance";
 import { ProviderMentionReference, ProviderSkillReference } from "./providerDiscovery";
+import { ProviderProfileId } from "./providerProfile";
 
 const ProviderSessionStatus = Schema.Literals([
   "connecting",
@@ -37,6 +38,7 @@ const ProviderSessionStatus = Schema.Literals([
 export const ProviderSession = Schema.Struct({
   provider: ProviderDriverKind,
   providerInstanceId: Schema.optional(ProviderInstanceId),
+  profileId: Schema.optional(ProviderProfileId),
   status: ProviderSessionStatus,
   runtimeMode: RuntimeMode,
   cwd: Schema.optional(TrimmedNonEmptyString),
@@ -53,6 +55,7 @@ export type ProviderSession = typeof ProviderSession.Type;
 export const ProviderSessionStartInput = Schema.Struct({
   threadId: ThreadId,
   provider: Schema.optional(ProviderDriverKind),
+  profileId: Schema.optional(ProviderProfileId),
   lifecycleGeneration: Schema.optional(TrimmedNonEmptyString),
   providerInstanceId: Schema.optional(ProviderInstanceId),
   cwd: Schema.optional(TrimmedNonEmptyString),
@@ -112,6 +115,7 @@ export const ProviderForkThreadInput = Schema.Struct({
    */
   throughTurnId: Schema.optional(TurnId),
   providerInstanceId: Schema.optional(ProviderInstanceId),
+  profileId: Schema.optional(ProviderProfileId),
   sourceResumeCursor: Schema.optional(Schema.Unknown),
   sourceCwd: Schema.optional(TrimmedNonEmptyString),
   cwd: Schema.optional(TrimmedNonEmptyString),
@@ -220,6 +224,7 @@ export const ProviderEvent = Schema.Struct({
   kind: ProviderEventKind,
   provider: ProviderDriverKind,
   providerInstanceId: Schema.optional(ProviderInstanceId),
+  profileId: Schema.optional(ProviderProfileId),
   threadId: ThreadId,
   createdAt: IsoDateTime,
   method: TrimmedNonEmptyString,

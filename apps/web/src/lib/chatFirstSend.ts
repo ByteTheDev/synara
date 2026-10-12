@@ -1,4 +1,8 @@
-import { DEFAULT_MODEL_BY_PROVIDER, type ModelSelection } from "@synara/contracts";
+import {
+  DEFAULT_MODEL_BY_PROVIDER,
+  DEFAULT_PROVIDER_PROFILE_ID,
+  type ModelSelection,
+} from "@synara/contracts";
 import { workspaceRootsEqual } from "@synara/shared/threadWorkspace";
 
 import type { Project } from "../types";
@@ -56,6 +60,7 @@ export function resolveFirstSendTarget(input: {
     input.defaultModelSelection ??
     ({
       provider: "codex",
+      profileId: DEFAULT_PROVIDER_PROFILE_ID,
       model: DEFAULT_MODEL_BY_PROVIDER.codex,
     } satisfies ModelSelection);
   const {
