@@ -1,0 +1,183 @@
+{
+  "files": [
+    {
+      "path": "vitest.log",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.log",
+      "bytes": 41451,
+      "sha256": "6ea39a25830f7ce1a530d7f62b1b340794257ce3fecc0b426b76fb47f9e714f9",
+      "sourceBefore": {
+        "size": 41451,
+        "mtimeMs": 1791769847323.4307,
+        "ctimeMs": 1791769847323.4307,
+        "dev": 2049,
+        "ino": 9240307
+      },
+      "sourceAfter": {
+        "size": 41451,
+        "mtimeMs": 1791769847323.4307,
+        "ctimeMs": 1791769847323.4307,
+        "dev": 2049,
+        "ino": 9240307
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.587Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "exits.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/exits.json",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+      "sourceBefore": {
+        "size": 21,
+        "mtimeMs": 1791769856203.832,
+        "ctimeMs": 1791769856203.832,
+        "dev": 2049,
+        "ino": 9241338
+      },
+      "sourceAfter": {
+        "size": 21,
+        "mtimeMs": 1791769856203.832,
+        "ctimeMs": 1791769856203.832,
+        "dev": 2049,
+        "ino": 9241338
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.588Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "vitest.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.json",
+      "bytes": 84217,
+      "sha256": "09e6b81a613b3cc7162abb9d697880882fc21f18282f90b81a4f7b418494d3d3",
+      "sourceBefore": {
+        "size": 84217,
+        "mtimeMs": 1791769847323.4307,
+        "ctimeMs": 1791769847323.4307,
+        "dev": 2049,
+        "ino": 9241337
+      },
+      "sourceAfter": {
+        "size": 84217,
+        "mtimeMs": 1791769847323.4307,
+        "ctimeMs": 1791769847323.4307,
+        "dev": 2049,
+        "ino": 9241337
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.588Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-pending-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/completed-pending-desktop.png",
+      "bytes": 63893,
+      "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+      "sourceBefore": {
+        "size": 63893,
+        "mtimeMs": 1791769686105.32,
+        "ctimeMs": 1791769686105.32,
+        "dev": 2049,
+        "ino": 9241325
+      },
+      "sourceAfter": {
+        "size": 63893,
+        "mtimeMs": 1791769686105.32,
+        "ctimeMs": 1791769686105.32,
+        "dev": 2049,
+        "ino": 9241325
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.589Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-pending-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/completed-pending-narrow.png",
+      "bytes": 27083,
+      "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+      "sourceBefore": {
+        "size": 27083,
+        "mtimeMs": 1791769686654.3203,
+        "ctimeMs": 1791769686654.3203,
+        "dev": 2049,
+        "ino": 9241326
+      },
+      "sourceAfter": {
+        "size": 27083,
+        "mtimeMs": 1791769686654.3203,
+        "ctimeMs": 1791769686654.3203,
+        "dev": 2049,
+        "ino": 9241326
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.589Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-pending-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/failed-pending-desktop.png",
+      "bytes": 63893,
+      "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+      "sourceBefore": {
+        "size": 63893,
+        "mtimeMs": 1791769758664.3503,
+        "ctimeMs": 1791769758664.3503,
+        "dev": 2049,
+        "ino": 9241332
+      },
+      "sourceAfter": {
+        "size": 63893,
+        "mtimeMs": 1791769758664.3503,
+        "ctimeMs": 1791769758664.3503,
+        "dev": 2049,
+        "ino": 9241332
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.589Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-pending-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/failed-pending-narrow.png",
+      "bytes": 27083,
+      "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+      "sourceBefore": {
+        "size": 27083,
+        "mtimeMs": 1791769759162.3516,
+        "ctimeMs": 1791769759162.3516,
+        "dev": 2049,
+        "ino": 9241333
+      },
+      "sourceAfter": {
+        "size": 27083,
+        "mtimeMs": 1791769759162.3516,
+        "ctimeMs": 1791769759162.3516,
+        "dev": 2049,
+        "ino": 9241333
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.589Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "video/page@36273cd8f98f1709e4e27e9046441b0b.webm",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/video/page@36273cd8f98f1709e4e27e9046441b0b.webm",
+      "bytes": 3619654,
+      "sha256": "dae033fc037676807c7f4c580b567e7a7b94270ea640d9de365ab324b97b19f3",
+      "sourceBefore": {
+        "size": 3619654,
+        "mtimeMs": 1791769856030.4375,
+        "ctimeMs": 1791769856030.4375,
+        "dev": 2049,
+        "ino": 9240319
+      },
+      "sourceAfter": {
+        "size": 3619654,
+        "mtimeMs": 1791769856030.4375,
+        "ctimeMs": 1791769856030.4375,
+        "dev": 2049,
+        "ino": 9240319
+      },
+      "cutoffUtc": "2026-10-12T01:50:56.592Z",
+      "immutableCopy": true
+    }
+  ],
+  "browserOutcome": "failure",
+  "cutoffFinishedAt": "2026-10-12T01:50:56.596Z",
+  "qualification": "Only bounded stable regular-file copies enter the artifact. Missing, oversized, truncated, replaced or changing files fail verification. Later live writes cannot alter these frozen copies; this cutoff does not prove descendant cleanup or full writer lifetime completion."
+}

@@ -1,0 +1,35 @@
+{
+  "sha": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+  "node_id": "C_kwDORyuZ6doAKDUzMjQ4ZTdlZDkyYTFkMTQxNDdjZDY2ODIyY2ZhOTgyYjBkNmJhZWY",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/53248e7ed92a1d14147cd66822cfa982b0d6baef",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/53248e7ed92a1d14147cd66822cfa982b0d6baef",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:37:19Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:37:19Z"
+  },
+  "tree": {
+    "sha": "c22c3af445bd06fb427814cf5a7428eec25a2edd",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/c22c3af445bd06fb427814cf5a7428eec25a2edd"
+  },
+  "message": "test(web): assert the connecting handoff submit control\n\nUse the production footer's accessible Connecting label while a durable handoff is pending, retaining the disabled assertion and the settled Send message enabled assertion.",
+  "parents": [
+    {
+      "sha": "1b5ad7bd230a1422afd855017ab9e5766c904e49",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/1b5ad7bd230a1422afd855017ab9e5766c904e49",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/1b5ad7bd230a1422afd855017ab9e5766c904e49"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

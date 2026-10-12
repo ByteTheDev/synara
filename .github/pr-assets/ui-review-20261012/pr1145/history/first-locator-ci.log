@@ -1,0 +1,908 @@
+﻿2026-10-12T01:19:54.7088118Z Current runner version: '2.337.0'
+2026-10-12T01:19:54.7108716Z ##[group]Runner Image Provisioner
+2026-10-12T01:19:54.7109683Z Hosted Compute Agent
+2026-10-12T01:19:54.7110174Z Version: 20261002.596
+2026-10-12T01:19:54.7110738Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-12T01:19:54.7111356Z Build Date: 2026-10-02T22:28:27Z
+2026-10-12T01:19:54.7111916Z Worker ID: {50f62a83-0f57-45c2-8f69-d3a26101f187}
+2026-10-12T01:19:54.7112566Z Region: westus3
+2026-10-12T01:19:54.7113025Z Cloud: Azure
+2026-10-12T01:19:54.7113592Z ##[endgroup]
+2026-10-12T01:19:54.7114731Z ##[group]Operating System
+2026-10-12T01:19:54.7115286Z Ubuntu
+2026-10-12T01:19:54.7115803Z 24.04.5
+2026-10-12T01:19:54.7116232Z LTS
+2026-10-12T01:19:54.7116641Z ##[endgroup]
+2026-10-12T01:19:54.7117162Z ##[group]Runner Image
+2026-10-12T01:19:54.7117672Z Image: ubuntu-24.04
+2026-10-12T01:19:54.7118194Z Version: 20261004.327.1
+2026-10-12T01:19:54.7119233Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-12T01:19:54.7120518Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-12T01:19:54.7121363Z ##[endgroup]
+2026-10-12T01:19:54.7122355Z ##[group]GITHUB_TOKEN Permissions
+2026-10-12T01:19:54.7124323Z Contents: read
+2026-10-12T01:19:54.7124883Z Metadata: read
+2026-10-12T01:19:54.7125382Z ##[endgroup]
+2026-10-12T01:19:54.7127149Z Secret source: Actions
+2026-10-12T01:19:54.7127984Z Cache mode: write
+2026-10-12T01:19:54.7128549Z Prepare workflow directory
+2026-10-12T01:19:54.7467281Z Prepare all required actions
+2026-10-12T01:19:54.7507660Z Getting action download info
+2026-10-12T01:19:55.0420267Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+2026-10-12T01:19:55.5424875Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-12T01:19:55.9509077Z Complete job name: Browser Tests (chat-workflows 1/1)
+2026-10-12T01:19:56.0063748Z ##[group]Run actions/checkout@v6
+2026-10-12T01:19:56.0064486Z with:
+2026-10-12T01:19:56.0064931Z   repository: Emanuele-web04/synara
+2026-10-12T01:19:56.0068248Z   token: ***
+2026-10-12T01:19:56.0068608Z   ssh-strict: true
+2026-10-12T01:19:56.0068968Z   ssh-user: git
+2026-10-12T01:19:56.0069338Z   persist-credentials: true
+2026-10-12T01:19:56.0069745Z   clean: true
+2026-10-12T01:19:56.0070114Z   sparse-checkout-cone-mode: true
+2026-10-12T01:19:56.0070528Z   fetch-depth: 1
+2026-10-12T01:19:56.0070873Z   fetch-tags: false
+2026-10-12T01:19:56.0071235Z   show-progress: true
+2026-10-12T01:19:56.0071596Z   lfs: false
+2026-10-12T01:19:56.0071945Z   submodules: false
+2026-10-12T01:19:56.0072317Z   set-safe-directory: true
+2026-10-12T01:19:56.0072734Z   allow-unsafe-pr-checkout: false
+2026-10-12T01:19:56.0073301Z env:
+2026-10-12T01:19:56.0073807Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:19:56.0074267Z ##[endgroup]
+2026-10-12T01:19:56.0866744Z Syncing repository: Emanuele-web04/synara
+2026-10-12T01:19:56.0868898Z ##[group]Getting Git version info
+2026-10-12T01:19:56.0869790Z Working directory is '/home/runner/work/synara/synara'
+2026-10-12T01:19:56.0870995Z [command]/usr/bin/git version
+2026-10-12T01:19:56.1008630Z git version 2.55.0
+2026-10-12T01:19:56.1026262Z ##[endgroup]
+2026-10-12T01:19:56.1038176Z Temporarily overriding HOME='/home/runner/work/_temp/63ff4322-da9b-4c19-9e5e-56879eae2408' before making global git config changes
+2026-10-12T01:19:56.1040128Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T01:19:56.1041649Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-12T01:19:56.1089897Z Deleting the contents of '/home/runner/work/synara/synara'
+2026-10-12T01:19:56.1092859Z ##[group]Determining repository object format
+2026-10-12T01:19:56.1098593Z ##[endgroup]
+2026-10-12T01:19:56.1099528Z ##[group]Initializing the repository
+2026-10-12T01:19:56.1100390Z [command]/usr/bin/git init /home/runner/work/synara/synara
+2026-10-12T01:19:56.1171475Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T01:19:56.1172598Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T01:19:56.1173546Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T01:19:56.1174168Z hint: call:
+2026-10-12T01:19:56.1174563Z hint:
+2026-10-12T01:19:56.1174988Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T01:19:56.1175565Z hint:
+2026-10-12T01:19:56.1176141Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T01:19:56.1177282Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T01:19:56.1178189Z hint:
+2026-10-12T01:19:56.1178705Z hint: 	git branch -m <name>
+2026-10-12T01:19:56.1179344Z hint:
+2026-10-12T01:19:56.1180088Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T01:19:56.1181395Z Initialized empty Git repository in /home/runner/work/synara/synara/.git/
+2026-10-12T01:19:56.1190288Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-12T01:19:56.1232421Z ##[endgroup]
+2026-10-12T01:19:56.1233762Z ##[group]Disabling automatic garbage collection
+2026-10-12T01:19:56.1234912Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T01:19:56.1261492Z ##[endgroup]
+2026-10-12T01:19:56.1262446Z ##[group]Setting up auth
+2026-10-12T01:19:56.1263180Z Removing SSH command configuration
+2026-10-12T01:19:56.1269150Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T01:19:56.1298226Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T01:19:56.1576134Z Removing HTTP extra header
+2026-10-12T01:19:56.1582083Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T01:19:56.1613334Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T01:19:56.1796675Z Removing includeIf entries pointing to credentials config files
+2026-10-12T01:19:56.1801908Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T01:19:56.1831877Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T01:19:56.2022279Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T01:19:56.2055909Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:19:56.2085193Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:19:56.2139594Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:19:56.2167932Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:19:56.2193360Z ##[endgroup]
+2026-10-12T01:19:56.2194116Z ##[group]Fetching the repository
+2026-10-12T01:19:56.2199686Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7d86477930f561c8838a1413be8d6ffd4617a769:refs/remotes/pull/1145/merge
+2026-10-12T01:20:00.1028898Z From https://github.com/Emanuele-web04/synara
+2026-10-12T01:20:00.1030544Z  * [new ref]         7d86477930f561c8838a1413be8d6ffd4617a769 -> pull/1145/merge
+2026-10-12T01:20:00.1034029Z ##[endgroup]
+2026-10-12T01:20:00.1034622Z ##[group]Determining the checkout info
+2026-10-12T01:20:00.1035292Z ##[endgroup]
+2026-10-12T01:20:00.1039619Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T01:20:00.1084898Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T01:20:00.1112683Z ##[group]Checking out the ref
+2026-10-12T01:20:00.1115477Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/1145/merge
+2026-10-12T01:20:00.7135421Z Note: switching to 'refs/remotes/pull/1145/merge'.
+2026-10-12T01:20:00.7135905Z 
+2026-10-12T01:20:00.7136202Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-12T01:20:00.7136850Z changes and commit them, and you can discard any commits you make in this
+2026-10-12T01:20:00.7137609Z state without impacting any branches by switching back to a branch.
+2026-10-12T01:20:00.7138016Z 
+2026-10-12T01:20:00.7138303Z If you want to create a new branch to retain commits you create, you may
+2026-10-12T01:20:00.7138904Z do so (now or later) by using -c with the switch command. Example:
+2026-10-12T01:20:00.7139283Z 
+2026-10-12T01:20:00.7139442Z   git switch -c <new-branch-name>
+2026-10-12T01:20:00.7139672Z 
+2026-10-12T01:20:00.7139838Z Or undo this operation with:
+2026-10-12T01:20:00.7140059Z 
+2026-10-12T01:20:00.7140202Z   git switch -
+2026-10-12T01:20:00.7140400Z 
+2026-10-12T01:20:00.7140726Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-12T01:20:00.7144162Z 
+2026-10-12T01:20:00.7144736Z HEAD is now at 7d86477 Merge 1b5ad7bd230a1422afd855017ab9e5766c904e49 into 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94
+2026-10-12T01:20:00.7156418Z ##[endgroup]
+2026-10-12T01:20:00.7202102Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T01:20:00.7225663Z 7d86477930f561c8838a1413be8d6ffd4617a769
+2026-10-12T01:20:00.7521711Z Prepare all required actions
+2026-10-12T01:20:00.7522271Z Getting action download info
+2026-10-12T01:20:00.8942269Z Download action repository 'oven-sh/setup-bun@v2' (SHA:0c5077e51419868618aeaa5fe8019c62421857d6)
+2026-10-12T01:20:01.5125666Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-12T01:20:01.6624602Z ##[group]Run ./.github/actions/setup-workspace
+2026-10-12T01:20:01.6624859Z with:
+2026-10-12T01:20:01.6625028Z   electron: false
+2026-10-12T01:20:01.6625208Z   scope: full
+2026-10-12T01:20:01.6625368Z   turbo: false
+2026-10-12T01:20:01.6625526Z env:
+2026-10-12T01:20:01.6625709Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:01.6625933Z ##[endgroup]
+2026-10-12T01:20:01.6674525Z ##[start-action display=Validate install scope;id=__self.__run]
+2026-10-12T01:20:01.6709934Z ##[group]Run case "$WORKSPACE_SCOPE" in
+2026-10-12T01:20:01.6710267Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-12T01:20:01.6710542Z [36;1m  full|static|runtime) ;;[0m
+2026-10-12T01:20:01.6710855Z [36;1m  *) echo "::error::Unknown workspace scope: $WORKSPACE_SCOPE"; exit 1 ;;[0m
+2026-10-12T01:20:01.6711186Z [36;1mesac[0m
+2026-10-12T01:20:01.6711428Z [36;1mif [ "$ELECTRON" = "true" ] && [ "$WORKSPACE_SCOPE" = "static" ]; then[0m
+2026-10-12T01:20:01.6711783Z [36;1m  echo "::error::Electron requires a full or runtime install."[0m
+2026-10-12T01:20:01.6712065Z [36;1m  exit 1[0m
+2026-10-12T01:20:01.6712233Z [36;1mfi[0m
+2026-10-12T01:20:01.6908844Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T01:20:01.6909139Z env:
+2026-10-12T01:20:01.6909335Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:01.6909579Z   WORKSPACE_SCOPE: full
+2026-10-12T01:20:01.6909761Z   ELECTRON: false
+2026-10-12T01:20:01.6909933Z ##[endgroup]
+2026-10-12T01:20:01.7011284Z ##[end-action id=__self.__run;outcome=success;conclusion=success;duration_ms=33]
+2026-10-12T01:20:01.7013164Z ##[start-action display=Setup Bun;id=__self.__oven-sh_setup-bun]
+2026-10-12T01:20:01.7076036Z ##[group]Run oven-sh/setup-bun@v2
+2026-10-12T01:20:01.7076384Z with:
+2026-10-12T01:20:01.7076561Z   bun-version-file: package.json
+2026-10-12T01:20:01.7076765Z   no-cache: false
+2026-10-12T01:20:01.7078900Z   token: ***
+2026-10-12T01:20:01.7079066Z env:
+2026-10-12T01:20:01.7079248Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:01.7079474Z ##[endgroup]
+2026-10-12T01:20:01.8329803Z Obtained version 1.4.2 from package.json
+2026-10-12T01:20:02.0412280Z Cache hit for: bun-gmoqYqdUbaYsI0KujeXt7Zg/p0I=
+2026-10-12T01:20:03.2691607Z Received 31489830 of 35684134 (88.2%), 30.0 MBs/sec
+2026-10-12T01:20:03.4398713Z Received 35684134 of 35684134 (100.0%), 29.1 MBs/sec
+2026-10-12T01:20:03.4399300Z Cache Size: ~34 MB (35684134 B)
+2026-10-12T01:20:03.4424934Z [command]/usr/bin/tar -xf /home/runner/work/_temp/21c5d099-7a9a-4e82-9a5e-c062f242335d/cache.tzst -P -C /home/runner/work/synara/synara --use-compress-program unzstd
+2026-10-12T01:20:03.5431657Z Cache restored successfully
+2026-10-12T01:20:03.5452549Z [command]/home/runner/.bun/bin/bun --revision
+2026-10-12T01:20:03.5484660Z 1.4.2+744846f84
+2026-10-12T01:20:03.5490283Z Using a cached version of Bun: 1.4.2+744846f84
+2026-10-12T01:20:03.5564738Z ##[end-action id=__self.__oven-sh_setup-bun;outcome=success;conclusion=success;duration_ms=1855]
+2026-10-12T01:20:03.5567066Z ##[start-action display=Setup Node;id=__self.__actions_setup-node]
+2026-10-12T01:20:03.5627466Z ##[group]Run actions/setup-node@v6
+2026-10-12T01:20:03.5627694Z with:
+2026-10-12T01:20:03.5627880Z   node-version-file: package.json
+2026-10-12T01:20:03.5628097Z   check-latest: false
+2026-10-12T01:20:03.5630229Z   token: ***
+2026-10-12T01:20:03.5630420Z   package-manager-cache: true
+2026-10-12T01:20:03.5630627Z env:
+2026-10-12T01:20:03.5630813Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:03.5631050Z ##[endgroup]
+2026-10-12T01:20:03.6706017Z Resolved package.json as ^24.13.1
+2026-10-12T01:20:03.6890049Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-12T01:20:03.6892357Z ##[group]Environment details
+2026-10-12T01:20:03.9513103Z node: v24.21.0
+2026-10-12T01:20:03.9513385Z npm: 11.19.0
+2026-10-12T01:20:03.9513897Z yarn: 1.22.22
+2026-10-12T01:20:03.9514494Z ##[endgroup]
+2026-10-12T01:20:03.9599052Z ##[end-action id=__self.__actions_setup-node;outcome=success;conclusion=success;duration_ms=403]
+2026-10-12T01:20:03.9601096Z ##[start-action display=Cache node_modules;id=__self.modules]
+2026-10-12T01:20:04.0097495Z ##[group]Run actions/cache@v5
+2026-10-12T01:20:04.0097712Z with:
+2026-10-12T01:20:04.0097999Z   path: node_modules
+apps/*/node_modules
+packages/*/node_modules
+scripts/node_modules
+
+2026-10-12T01:20:04.0098576Z   key: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-12T01:20:04.0099027Z   enableCrossOsArchive: false
+2026-10-12T01:20:04.0099237Z   fail-on-cache-miss: false
+2026-10-12T01:20:04.0099441Z   lookup-only: false
+2026-10-12T01:20:04.0099618Z   save-always: false
+2026-10-12T01:20:04.0099803Z env:
+2026-10-12T01:20:04.0099984Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:04.0100219Z ##[endgroup]
+2026-10-12T01:20:04.3115531Z Cache not found for input keys: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-12T01:20:04.3164058Z ##[end-action id=__self.modules;outcome=success;conclusion=success;duration_ms=356]
+2026-10-12T01:20:04.3168692Z ##[start-action display=Cache Bun install;id=__self.__actions_cache]
+2026-10-12T01:20:04.3684939Z ##[group]Run actions/cache@v5
+2026-10-12T01:20:04.3685155Z with:
+2026-10-12T01:20:04.3685334Z   path: ~/.bun/install/cache
+2026-10-12T01:20:04.3685677Z   key: Linux-X64-bun-v2-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-12T01:20:04.3686048Z   enableCrossOsArchive: false
+2026-10-12T01:20:04.3686254Z   fail-on-cache-miss: false
+2026-10-12T01:20:04.3686455Z   lookup-only: false
+2026-10-12T01:20:04.3686629Z   save-always: false
+2026-10-12T01:20:04.3686813Z env:
+2026-10-12T01:20:04.3686995Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:04.3687385Z ##[endgroup]
+2026-10-12T01:20:04.6692330Z Cache not found for input keys: Linux-X64-bun-v2-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-12T01:20:04.6750126Z ##[end-action id=__self.__actions_cache;outcome=success;conclusion=success;duration_ms=358]
+2026-10-12T01:20:04.6753054Z ##[start-action display=Cache Turbo outputs;id=__self.__actions_cache_2]
+2026-10-12T01:20:04.6759440Z ##[end-action id=__self.__actions_cache_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:20:04.6761684Z ##[start-action display=Cache Electron runtime;id=__self.__actions_cache_3]
+2026-10-12T01:20:04.6766564Z ##[end-action id=__self.__actions_cache_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:20:04.6769527Z ##[start-action display=Install dependencies;id=__self.__run_2]
+2026-10-12T01:20:04.6786628Z ##[group]Run # Hosted Windows checks out on D:, while Bun's default home cache is on C:.
+2026-10-12T01:20:04.6787128Z [36;1m# Hosted Windows checks out on D:, while Bun's default home cache is on C:.[0m
+2026-10-12T01:20:04.6787552Z [36;1m# Match the measured setup so package hardlinks can stay on one volume.[0m
+2026-10-12T01:20:04.6787890Z [36;1mif [ "$RUNNER_OS" = "Windows" ]; then[0m
+2026-10-12T01:20:04.6788200Z [36;1m  export BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-install-cache"[0m
+2026-10-12T01:20:04.6788537Z [36;1m  echo "Bun install cache: $BUN_INSTALL_CACHE_DIR"[0m
+2026-10-12T01:20:04.6788803Z [36;1mfi[0m
+2026-10-12T01:20:04.6789073Z [36;1m# Bound dependency lifecycles. Root postinstall patches each installed[0m
+2026-10-12T01:20:04.6789469Z [36;1m# TypeScript compiler once, after workspace hooks have completed.[0m
+2026-10-12T01:20:04.6789781Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-12T01:20:04.6790086Z [36;1m  full) bun install --frozen-lockfile --concurrent-scripts=1 ;;[0m
+2026-10-12T01:20:04.6790737Z [36;1m  static) bun install --frozen-lockfile --filter './' --filter '@synara/scripts' --concurrent-scripts=1 ;;[0m
+2026-10-12T01:20:04.6791352Z [36;1m  runtime) bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1 ;;[0m
+2026-10-12T01:20:04.6791722Z [36;1mesac[0m
+2026-10-12T01:20:04.6850546Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T01:20:04.6850834Z env:
+2026-10-12T01:20:04.6851029Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:04.6851281Z   ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+2026-10-12T01:20:04.6851500Z   WORKSPACE_SCOPE: full
+2026-10-12T01:20:04.6851685Z ##[endgroup]
+2026-10-12T01:20:04.6939744Z bun install v1.4.2 (744846f84)
+2026-10-12T01:20:04.7082017Z Resolving dependencies
+2026-10-12T01:20:05.1998421Z Resolved, downloaded and extracted [64]
+2026-10-12T01:20:31.4092904Z 
+2026-10-12T01:20:31.4095639Z $ node scripts/patch-workspace-typescript.ts && effect-tsgo patch --typescript --typescript-package @typescript/native
+2026-10-12T01:20:32.8585210Z [01:20:32.857] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/typescript.js patched successfully.
+2026-10-12T01:20:36.2851771Z [01:20:36.284] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/_tsc.js patched successfully.
+2026-10-12T01:20:36.2854004Z [01:20:36.285] INFO (#22): If your project uses incremental builds, delete the .tsbuildinfo files and perform a full build.
+2026-10-12T01:20:36.2864218Z [01:20:36.286] INFO (#22): No prepare script found in package.json; to make the patch persistent across package installations and updates, add the following to your package.json scripts:
+2026-10-12T01:20:36.2865583Z   "scripts": {
+2026-10-12T01:20:36.2866281Z           "prepare": "effect-language-service patch"
+2026-10-12T01:20:36.2866582Z   }
+2026-10-12T01:20:36.7866735Z Patched typescript at /home/runner/work/synara/synara/node_modules/.bun/@typescript+typescript-linux-x64@7.0.2/node_modules/@typescript/typescript-linux-x64/lib/tsc
+2026-10-12T01:20:36.7965760Z 
+2026-10-12T01:20:36.7966362Z + @effect/tsgo@0.41.0
+2026-10-12T01:20:36.7966859Z + @types/node@24.12.0 (v26.6.5 available)
+2026-10-12T01:20:36.7967256Z + @typescript/native@7.0.2
+2026-10-12T01:20:36.7967571Z + @vitest/coverage-v8@4.1.10
+2026-10-12T01:20:36.7967877Z + oxfmt@0.40.0
+2026-10-12T01:20:36.7968132Z + oxlint@1.56.0
+2026-10-12T01:20:36.7968379Z + turbo@2.10.5
+2026-10-12T01:20:36.7968630Z + vitest@4.1.10
+2026-10-12T01:20:36.7968733Z 
+2026-10-12T01:20:36.7968860Z 1662 packages installed [32.10s]
+2026-10-12T01:20:36.8046250Z ##[end-action id=__self.__run_2;outcome=success;conclusion=success;duration_ms=32127]
+2026-10-12T01:20:36.8048390Z ##[start-action display=Install Electron test runtime;id=__self.__run_3]
+2026-10-12T01:20:36.8051970Z ##[end-action id=__self.__run_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:20:36.8606109Z ##[group]Run actions/cache@v5
+2026-10-12T01:20:36.8606329Z with:
+2026-10-12T01:20:36.8606503Z   path: ~/.cache/ms-playwright
+2026-10-12T01:20:36.8606852Z   key: Linux-playwright-7c2515579b10ea38a91744e8cb45bc33216144422bda464324c120a1535c1c78
+2026-10-12T01:20:36.8607250Z   enableCrossOsArchive: false
+2026-10-12T01:20:36.8607463Z   fail-on-cache-miss: false
+2026-10-12T01:20:36.8607658Z   lookup-only: false
+2026-10-12T01:20:36.8607834Z   save-always: false
+2026-10-12T01:20:36.8608003Z env:
+2026-10-12T01:20:36.8608183Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:36.8608407Z ##[endgroup]
+2026-10-12T01:20:37.1625681Z Cache not found for input keys: Linux-playwright-7c2515579b10ea38a91744e8cb45bc33216144422bda464324c120a1535c1c78
+2026-10-12T01:20:37.1699785Z ##[group]Run cd apps/web
+2026-10-12T01:20:37.1700033Z [36;1mcd apps/web[0m
+2026-10-12T01:20:37.1700273Z [36;1m./node_modules/.bin/playwright install chromium[0m
+2026-10-12T01:20:37.1757112Z shell: /usr/bin/bash -e {0}
+2026-10-12T01:20:37.1757331Z env:
+2026-10-12T01:20:37.1757521Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:37.1757784Z   DEBIAN_FRONTEND: noninteractive
+2026-10-12T01:20:37.1757996Z ##[endgroup]
+2026-10-12T01:20:37.5722214Z Downloading Chrome for Testing 151.0.7922.34 (playwright chromium v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-linux64.zip
+2026-10-12T01:20:38.5387181Z |                                                                                |   0% of 184.3 MiB
+2026-10-12T01:20:38.7319229Z |■■■■■■■■                                                                        |  10% of 184.3 MiB
+2026-10-12T01:20:38.8678878Z |■■■■■■■■■■■■■■■■                                                                |  20% of 184.3 MiB
+2026-10-12T01:20:38.9984445Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 184.3 MiB
+2026-10-12T01:20:39.0840236Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 184.3 MiB
+2026-10-12T01:20:39.1821502Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 184.3 MiB
+2026-10-12T01:20:39.2741777Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 184.3 MiB
+2026-10-12T01:20:39.3654110Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 184.3 MiB
+2026-10-12T01:20:39.4906357Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 184.3 MiB
+2026-10-12T01:20:39.5845050Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 184.3 MiB
+2026-10-12T01:20:39.7088627Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 184.3 MiB
+2026-10-12T01:20:42.0698817Z Chrome for Testing 151.0.7922.34 (playwright chromium v1234) downloaded to /home/runner/.cache/ms-playwright/chromium-1234
+2026-10-12T01:20:42.0701893Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-12T01:20:42.9641547Z |                                                                                |   0% of 2.3 MiB
+2026-10-12T01:20:42.9866590Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-12T01:20:42.9967328Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-12T01:20:43.0051852Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-12T01:20:43.0122721Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-12T01:20:43.0136515Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-12T01:20:43.0211553Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-12T01:20:43.0219301Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-12T01:20:43.0235586Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-12T01:20:43.0293822Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-12T01:20:43.0304850Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-12T01:20:43.0749129Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-12T01:20:43.0751985Z Downloading Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-headless-shell-linux64.zip
+2026-10-12T01:20:44.0155367Z |                                                                                |   0% of 114.7 MiB
+2026-10-12T01:20:44.1668164Z |■■■■■■■■                                                                        |  10% of 114.7 MiB
+2026-10-12T01:20:44.2385206Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.7 MiB
+2026-10-12T01:20:44.2731669Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.7 MiB
+2026-10-12T01:20:44.3142890Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.7 MiB
+2026-10-12T01:20:44.3635169Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.7 MiB
+2026-10-12T01:20:44.3907594Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.7 MiB
+2026-10-12T01:20:44.4289188Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.7 MiB
+2026-10-12T01:20:44.4733153Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.7 MiB
+2026-10-12T01:20:44.5050549Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.7 MiB
+2026-10-12T01:20:44.5419167Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.7 MiB
+2026-10-12T01:20:46.2891702Z Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1234
+2026-10-12T01:20:46.3109350Z ##[group]Run bun run --cwd apps/web test:browser:ci -- --project=chat-workflows --shard=1/1
+2026-10-12T01:20:46.3110226Z [36;1mbun run --cwd apps/web test:browser:ci -- --project=chat-workflows --shard=1/1[0m
+2026-10-12T01:20:46.3166900Z shell: /usr/bin/bash -e {0}
+2026-10-12T01:20:46.3167119Z env:
+2026-10-12T01:20:46.3167324Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T01:20:46.3167570Z ##[endgroup]
+2026-10-12T01:20:46.3259221Z $ vitest run --config vitest.browser.ci.config.ts "--project=chat-workflows" "--shard=1/1"
+2026-10-12T01:20:47.5820149Z 
+2026-10-12T01:20:47.5822858Z [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+2026-10-12T01:20:47.5823196Z 
+2026-10-12T01:20:48.8344569Z [2m1:20:48 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+2026-10-12T01:20:49.9997330Z [2m1:20:49 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+2026-10-12T01:20:50.6465147Z Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+2026-10-12T01:20:50.6465776Z   npx update-browserslist-db@latest
+2026-10-12T01:20:50.6466395Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-10-12T01:20:51.1413777Z [BABEL] Note: The code generator has deoptimised the styling of /home/runner/work/synara/synara/apps/web/src/components/ChatView.browser.tsx as it exceeds the max of 500KB.
+2026-10-12T01:22:15.2407004Z [90mstderr[2m | src/components/ChatView.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mkeeps persistent turn failure visible after reopening and admits one manual continuation
+2026-10-12T01:22:15.2408017Z [22m[39m[TypeError: Cannot read properties of undefined (reading '_nonReactive')]
+2026-10-12T01:29:24.1558889Z  [31m❯[39m [30m[43m chat-workflows (chromium) [49m[39m src/components/ChatView.browser.tsx [2m([22m[2m222 tests[22m[2m | [22m[31m2 failed[39m[2m | [22m[33m87 skipped[39m[2m)[22m[33m 444333[2mms[22m[39m
+2026-10-12T01:29:24.1565586Z      [33m[2m✓[22m[39m keeps the active chat explicitly unread until the next visit [33m 15371[2mms[22m[39m
+2026-10-12T01:29:24.1577867Z      [33m[2m✓[22m[39m keeps persistent turn failure visible after reopening and admits one manual continuation [33m 1692[2mms[22m[39m
+2026-10-12T01:29:24.1578899Z      [33m[2m✓[22m[39m keeps sidebar shortcut hints clear of row content (Activity: false, custom: false) [33m 7897[2mms[22m[39m
+2026-10-12T01:29:24.1579875Z      [33m[2m✓[22m[39m keeps sidebar shortcut hints clear of row content (Activity: true, custom: false) [33m 4981[2mms[22m[39m
+2026-10-12T01:29:24.1580952Z      [33m[2m✓[22m[39m keeps sidebar shortcut hints clear of row content (Activity: false, custom: true) [33m 7487[2mms[22m[39m
+2026-10-12T01:29:24.1582446Z      [33m[2m✓[22m[39m keeps sidebar shortcut hints clear of row content (Activity: true, custom: true) [33m 5143[2mms[22m[39m
+2026-10-12T01:29:24.1583578Z      [33m[2m✓[22m[39m opens the linked PR number from a user message when the repository path also contains pull [33m 1843[2mms[22m[39m
+2026-10-12T01:29:24.1584898Z      [33m[2m✓[22m[39m opens the linked PR number from a assistant message when the repository path also contains pull [33m 1074[2mms[22m[39m
+2026-10-12T01:29:24.1586242Z      [33m[2m✓[22m[39m opens a 'acme/widgets' pull request link from a 'forked' side chat in 'the host chat dock' [33m 1133[2mms[22m[39m
+2026-10-12T01:29:24.1587508Z      [33m[2m✓[22m[39m opens a 'other/repo' pull request link from a 'forked' side chat in 'the external browser' [33m 1022[2mms[22m[39m
+2026-10-12T01:29:24.1588767Z      [33m[2m✓[22m[39m opens a 'acme/widgets' pull request link from a 'standalone' side chat in 'Code review' [33m 1654[2mms[22m[39m
+2026-10-12T01:29:24.1590364Z      [33m[2m✓[22m[39m offers unseen startup highlights once on a configured installation and keeps chat usable after dismissal [33m 2566[2mms[22m[39m
+2026-10-12T01:29:24.1591354Z      [33m[2m✓[22m[39m previews split widths without persisting and restores the released ratio after remount [33m 2477[2mms[22m[39m
+2026-10-12T01:29:24.1592474Z      [2m[90m↓[39m[22m closes a source pane into a survivor that anchors its own split (surviving pane focused)
+2026-10-12T01:29:24.1593349Z      [2m[90m↓[39m[22m closes a source pane into a survivor that anchors its own split (closing pane focused)
+2026-10-12T01:29:24.1594594Z      [33m[2m✓[22m[39m keeps the surviving non-route chat mounted when a split collapses [33m 2259[2mms[22m[39m
+2026-10-12T01:29:24.1595737Z      [33m[2m✓[22m[39m closes only the inactive ordinary source pane and preserves the focused chat [33m 2320[2mms[22m[39m
+2026-10-12T01:29:24.1596835Z      [33m[2m✓[22m[39m closes only the inactive ordinary non-source pane and preserves the focused chat [33m 1917[2mms[22m[39m
+2026-10-12T01:29:24.1597785Z      [33m[2m✓[22m[39m closes a 'standalone' Side in 2 panes ('non-source') [33m 2049[2mms[22m[39m
+2026-10-12T01:29:24.1598705Z      [33m[2m✓[22m[39m closes a 'standalone' Side in 3 panes ('non-source') [33m 2447[2mms[22m[39m
+2026-10-12T01:29:24.1599462Z      [33m[2m✓[22m[39m closes a 'standalone' Side in 3 panes ('source') [33m 1969[2mms[22m[39m
+2026-10-12T01:29:24.1600194Z      [33m[2m✓[22m[39m closes a 'forked' Side in 2 panes ('non-source') [33m 1881[2mms[22m[39m
+2026-10-12T01:29:24.1600916Z      [33m[2m✓[22m[39m closes a 'forked' Side in 3 panes ('non-source') [33m 2300[2mms[22m[39m
+2026-10-12T01:29:24.1601862Z      [33m[2m✓[22m[39m opens one sidechat, preserves its draft on toggle, and restores composer focus [33m 3023[2mms[22m[39m
+2026-10-12T01:29:24.1602769Z      [2m[90m↓[39m[22m preserves the automatic project name when saving only its appearance
+2026-10-12T01:29:24.1603806Z      [33m[2m✓[22m[39m preserves the hidden board slot when Tasks replaces Kanban in the rail [33m 1550[2mms[22m[39m
+2026-10-12T01:29:24.1604804Z      [33m[2m✓[22m[39m carries the rail inside the sidebar sheet at phone width [33m 1262[2mms[22m[39m
+2026-10-12T01:29:24.1605638Z      [2m[90m↓[39m[22m preserves absent project pins when toggling a rail Space shortcut
+2026-10-12T01:29:24.1606398Z      [33m[2m✓[22m[39m keeps Activity=true when selecting rail 'Home' [33m 912[2mms[22m[39m
+2026-10-12T01:29:24.1607096Z      [2m[90m↓[39m[22m keeps Activity=false when selecting rail 'Spaces'
+2026-10-12T01:29:24.1607824Z      [33m[2m✓[22m[39m keeps Activity=false when selecting rail 'Project' [33m 1034[2mms[22m[39m
+2026-10-12T01:29:24.1608644Z      [33m[2m✓[22m[39m keeps Activity=false when selecting rail 'Void' [33m 1020[2mms[22m[39m
+2026-10-12T01:29:24.1609425Z      [2m[90m↓[39m[22m creates a project in the rail Space whose Add project button was clicked
+2026-10-12T01:29:24.1610517Z      [2m[90m↓[39m[22m refreshes the full conversation when an approval was already answered
+2026-10-12T01:29:24.1611486Z      [2m[90m↓[39m[22m preserves three answers (manual) on transient failure and restores expired questions without sending a message
+2026-10-12T01:29:24.1612634Z      [2m[90m↓[39m[22m preserves three answers (auto-advance) on transient failure and restores expired questions without sending a message
+2026-10-12T01:29:24.1613929Z      [2m[90m↓[39m[22m preserves three answers (custom) on transient failure and restores expired questions without sending a message
+2026-10-12T01:29:24.1615125Z      [33m[2m✓[22m[39m keeps near-cap composer work bounded while live activities arrive [33m 10117[2mms[22m[39m
+2026-10-12T01:29:24.1616042Z      [33m[2m✓[22m[39m cancels a multi-question (confirmed) [33m 1335[2mms[22m[39m
+2026-10-12T01:29:24.1616818Z      [33m[2m✓[22m[39m cancels a multi-question (stale) [33m 1427[2mms[22m[39m
+2026-10-12T01:29:24.1618202Z        [33m[2m✓[22m[39m shows a dismissible pre-send tip above the composer when leaving Claude for 'claudeAgent' ('ready') [33m 1852[2mms[22m[39m
+2026-10-12T01:29:24.1619338Z        [33m[2m✓[22m[39m shows a dismissible pre-send tip above the composer when leaving Claude for 'codex' ('ready') [33m 2054[2mms[22m[39m
+2026-10-12T01:29:24.1620512Z        [33m[2m✓[22m[39m shows a dismissible pre-send tip above the composer when leaving Claude for 'claudeAgent' ('running') [33m 2227[2mms[22m[39m
+2026-10-12T01:29:24.1621613Z        [33m[2m✓[22m[39m shows a dismissible pre-send tip above the composer when leaving Claude for 'codex' ('running') [33m 2176[2mms[22m[39m
+2026-10-12T01:29:24.1622516Z        [33m[2m✓[22m[39m continues in the same thread by rebinding its provider [33m 1109[2mms[22m[39m
+2026-10-12T01:29:24.1623363Z        [33m[2m✓[22m[39m still hands off to a new thread with the imported transcript [33m 1271[2mms[22m[39m
+2026-10-12T01:29:24.1624332Z [31m       [31m×[31m holds the composer for a durable provider request until its matching completed outcome[39m[33m 90465[2mms[22m[39m
+2026-10-12T01:29:24.1625177Z [31m       [31m×[31m holds the composer for a durable provider request until its matching failed outcome[39m[33m 90544[2mms[22m[39m
+2026-10-12T01:29:24.1625918Z        [33m[2m✓[22m[39m hands the thread off before sending when the composer picks another provider [33m 2953[2mms[22m[39m
+2026-10-12T01:29:24.1626584Z        [33m[2m✓[22m[39m never persists a provider switch before its explicit handoff [33m 1463[2mms[22m[39m
+2026-10-12T01:29:24.1627549Z        [33m[2m✓[22m[39m hands off the captured selection when the picker changes during attachment upload [33m 1806[2mms[22m[39m
+2026-10-12T01:29:24.1628486Z        [33m[2m✓[22m[39m keeps the message in the composer when the picked provider cannot start [33m 1654[2mms[22m[39m
+2026-10-12T01:29:24.1629280Z        [33m[2m✓[22m[39m shows the handoff event with its source, target, and transferred context [33m 802[2mms[22m[39m
+2026-10-12T01:29:24.1630079Z      [33m[2m✓[22m[39m uses the persisted thread access mode instead of a stale composer draft [33m 1014[2mms[22m[39m
+2026-10-12T01:29:24.1630922Z      [2m[90m↓[39m[22m dispatches a rapid access-mode reversal while the server projection is stale
+2026-10-12T01:29:24.1631783Z      [2m[90m↓[39m[22m [geometry:linux] clamps long user messages to twelve rendered lines at the 'desktop' viewport
+2026-10-12T01:29:24.1632561Z      [2m[90m↓[39m[22m [geometry:linux] tracks wrapping parity while resizing an existing ChatView across the viewport matrix
+2026-10-12T01:29:24.1633403Z      [2m[90m↓[39m[22m [geometry:linux] collapses header actions into overflow before they can overlap the thread title
+2026-10-12T01:29:24.1634608Z      [33m[2m✓[22m[39m shows transport recovery without auto-following a detached transcript [33m 2709[2mms[22m[39m
+2026-10-12T01:29:24.1635989Z      [2m[90m↓[39m[22m [geometry:linux] keeps the composer visible while a long assistant response forces a viewport relayout
+2026-10-12T01:29:24.1637194Z      [33m[2m✓[22m[39m stays pinned to the bottom after delayed attachment loads expand the timeline [33m 1016[2mms[22m[39m
+2026-10-12T01:29:24.1638230Z      [2m[90m↓[39m[22m does not let delayed tail-expansion retries override a user scroll takeover
+2026-10-12T01:29:24.1639297Z      [33m[2m✓[22m[39m does not snap to the end when reading down from a transcript moved off its end [33m 1436[2mms[22m[39m
+2026-10-12T01:29:24.1640487Z      [33m[2m✓[22m[39m flushes editor changes before sending and preserves the prompt on failure=false [33m 1198[2mms[22m[39m
+2026-10-12T01:29:24.1641719Z      [33m[2m✓[22m[39m flushes editor changes before sending and preserves the prompt on failure=true [33m 987[2mms[22m[39m
+2026-10-12T01:29:24.1642639Z      [2m[90m↓[39m[22m reopens a thread you sent in at its anchored end without replaying the slide
+2026-10-12T01:29:24.1643585Z      [2m[90m↓[39m[22m settles the scroll-to-bottom arrow at the measured transcript end
+2026-10-12T01:29:24.1644152Z      [2m[90m↓[39m[22m stops the arrow's smooth scroll when the user scrolls upward
+2026-10-12T01:29:24.1644968Z      [33m[2m✓[22m[39m re-sticks to the bottom after sending an optimistic user message [33m 1699[2mms[22m[39m
+2026-10-12T01:29:24.1645856Z      [2m[90m↓[39m[22m keeps sent messages at the bottom with anchoring disabled when using Enter, and follows streaming text
+2026-10-12T01:29:24.1646726Z      [2m[90m↓[39m[22m keeps sent messages at the bottom with anchoring disabled when using send button, and follows streaming text
+2026-10-12T01:29:24.1647634Z      [2m[90m↓[39m[22m keeps sent messages at the bottom with anchoring disabled when using plan follow-up, and follows streaming text
+2026-10-12T01:29:24.1648447Z      [2m[90m↓[39m[22m anchors a freshly sent user message at the top of the transcript viewport
+2026-10-12T01:29:24.1649353Z      [33m[2m✓[22m[39m shows uncertain delivery and blocks another send without a local dispatch marker [33m 1027[2mms[22m[39m
+2026-10-12T01:29:24.1650224Z      [33m[2m✓[22m[39m shows Loading until ack, then keeps Thinking through the post-ack gap [33m 1867[2mms[22m[39m
+2026-10-12T01:29:24.1650922Z      [2m[90m↓[39m[22m moves a sent message to its anchor and handles a long streamed response
+2026-10-12T01:29:24.1651654Z      [2m[90m↓[39m[22m restores streaming follow after wheel near end in the full ChatView
+2026-10-12T01:29:24.1652218Z      [2m[90m↓[39m[22m restores streaming follow after manual return in the full ChatView
+2026-10-12T01:29:24.1652957Z      [2m[90m↓[39m[22m restores streaming follow after arrow in the full ChatView
+2026-10-12T01:29:24.1653898Z      [2m[90m↓[39m[22m restores streaming follow after send in the full ChatView
+2026-10-12T01:29:24.1654613Z      [2m[90m↓[39m[22m restores streaming follow after wheel down in the full ChatView
+2026-10-12T01:29:24.1655436Z      [2m[90m↓[39m[22m restores streaming follow after wheel without movement in the full ChatView
+2026-10-12T01:29:24.1656231Z      [2m[90m↓[39m[22m restores streaming follow after nested wheel in the full ChatView
+2026-10-12T01:29:24.1657324Z      [2m[90m↓[39m[22m restores streaming follow after nested key in the full ChatView
+2026-10-12T01:29:24.1658151Z      [2m[90m↓[39m[22m restores streaming follow after layout leave in the full ChatView
+2026-10-12T01:29:24.1659008Z      [2m[90m↓[39m[22m restores streaming follow after keyboard ArrowUp in the full ChatView
+2026-10-12T01:29:24.1659736Z      [2m[90m↓[39m[22m restores streaming follow after find in the full ChatView
+2026-10-12T01:29:24.1660281Z      [2m[90m↓[39m[22m restores streaming follow after pointer click in the full ChatView
+2026-10-12T01:29:24.1661025Z      [2m[90m↓[39m[22m restores streaming follow after thread switch in the full ChatView
+2026-10-12T01:29:24.1661947Z      [2m[90m↓[39m[22m restores streaming follow after short transcript in the full ChatView
+2026-10-12T01:29:24.1662593Z      [33m[2m✓[22m[39m follows the final text batch when the assistant turn settles [33m 2043[2mms[22m[39m
+2026-10-12T01:29:24.1663583Z      [33m[2m✓[22m[39m keeps following work after assistant text finishes streaming [33m 2750[2mms[22m[39m
+2026-10-12T01:29:24.1664569Z      [33m[2m✓[22m[39m keeps the previous turn folded while a follow-up send awaits its new turn [33m 1519[2mms[22m[39m
+2026-10-12T01:29:24.1665462Z      [33m[2m✓[22m[39m does not rearm detached reading for non-message activity [33m 4289[2mms[22m[39m
+2026-10-12T01:29:24.1666161Z      [33m[2m✓[22m[39m creates composer automations as heartbeat runs on the current chat [33m 994[2mms[22m[39m
+2026-10-12T01:29:24.1667022Z      [33m[2m✓[22m[39m promotes draft chats before creating composer heartbeat automations [33m 865[2mms[22m[39m
+2026-10-12T01:29:24.1667956Z      [33m[2m✓[22m[39m does not promote draft chats until a reviewed automation is submitted [33m 688[2mms[22m[39m
+2026-10-12T01:29:24.1668999Z      [2m[90m↓[39m[22m [geometry:linux] keeps user attachments inside their rendered row at the 'narrow' viewport
+2026-10-12T01:29:24.1669583Z      [2m[90m↓[39m[22m opens the project cwd for draft threads without a worktree path
+2026-10-12T01:29:24.1670491Z      [33m[2m✓[22m[39m resets branch selector state when switching threads [33m 1146[2mms[22m[39m
+2026-10-12T01:29:24.1671472Z      [33m[2m✓[22m[39m warns before sending from a settled thread on another branch [33m 1413[2mms[22m[39m
+2026-10-12T01:29:24.1672440Z      [33m[2m✓[22m[39m restores a settled thread branch when turn start fails [33m 1438[2mms[22m[39m
+2026-10-12T01:29:24.1673656Z      [33m[2m✓[22m[39m retains the opened terminal identity when path navigation fails [33m 905[2mms[22m[39m
+2026-10-12T01:29:24.1674589Z      [2m[90m↓[39m[22m runs project scripts in the right dock at the worktree cwd via button
+2026-10-12T01:29:24.1675481Z      [2m[90m↓[39m[22m runs project scripts in the right dock at the worktree cwd via draft shortcut
+2026-10-12T01:29:24.1676418Z      [2m[90m↓[39m[22m runs project scripts in the right dock at the worktree cwd via split button
+2026-10-12T01:29:24.1677427Z      [33m[2m✓[22m[39m cycles model effort with Shift+Tab in the existing model picker [33m 1559[2mms[22m[39m
+2026-10-12T01:29:24.1678241Z      [33m[2m✓[22m[39m keeps the model picker open for 1500ms after the latest Shift+Tab press [33m 3599[2mms[22m[39m
+2026-10-12T01:29:24.1679103Z      [33m[2m✓[22m[39m keeps a manually opened model picker open after the effort shortcut timer expires [33m 2767[2mms[22m[39m
+2026-10-12T01:29:24.1680120Z      [33m[2m✓[22m[39m keeps the existing slider menu open when choosing another model after Shift+Tab [33m 2951[2mms[22m[39m
+2026-10-12T01:29:24.1681023Z      [33m[2m✓[22m[39m opens the existing model picker effort menu when its slider setting is disabled [33m 979[2mms[22m[39m
+2026-10-12T01:29:24.1681883Z      [33m[2m✓[22m[39m protects typed drafts while preserving history browsing from an empty composer [33m 11768[2mms[22m[39m
+2026-10-12T01:29:24.1682706Z      [33m[2m✓[22m[39m toggles composer focus with Cmd+L [33m 773[2mms[22m[39m
+2026-10-12T01:29:24.1683259Z      [33m[2m✓[22m[39m cycles the active provider model without opening the picker [33m 852[2mms[22m[39m
+2026-10-12T01:29:24.1684281Z      [33m[2m✓[22m[39m opens the composer model picker with configured keybinding labels loaded [33m 947[2mms[22m[39m
+2026-10-12T01:29:24.1684863Z      [33m[2m✓[22m[39m opens the composer effort picker surface [33m 963[2mms[22m[39m
+2026-10-12T01:29:24.1685710Z      [33m[2m✓[22m[39m keeps removed terminal context pills removed when a new one is added [33m 1017[2mms[22m[39m
+2026-10-12T01:29:24.1686356Z      [33m[2m✓[22m[39m warns when sending text while omitting expired terminal pills [33m 1113[2mms[22m[39m
+2026-10-12T01:29:24.1687211Z      [33m[2m✓[22m[39m sends every browser annotation as prompt context without upload attachments [33m 1169[2mms[22m[39m
+2026-10-12T01:29:24.1687874Z      [33m[2m✓[22m[39m steers a running turn when Follow-up behavior is set to Steer [33m 1440[2mms[22m[39m
+2026-10-12T01:29:24.1688405Z      [2m[90m↓[39m[22m keeps queued follow-ups when you switch threads and come back
+2026-10-12T01:29:24.1688943Z      [33m[2m✓[22m[39m marks a chat back from snooze as seen once it is opened [33m 1060[2mms[22m[39m
+2026-10-12T01:29:24.1689614Z      [2m[90m↓[39m[22m editing a queued follow-up with live file changes removes only that row and restores its images to the composer
+2026-10-12T01:29:24.1690242Z      [2m[90m↓[39m[22m auto-dispatches a queued turn without wiping the live composer draft
+2026-10-12T01:29:24.1709732Z        [2m[90m↓[39m[22m holds the queue with a notice and sends it after Resume
+2026-10-12T01:29:24.1710585Z        [2m[90m↓[39m[22m sends a chat typed by hand first and releases the stop pause
+2026-10-12T01:29:24.1711671Z        [2m[90m↓[39m[22m sends a plan-follow-up typed by hand first and releases the stop pause
+2026-10-12T01:29:24.1712588Z        [2m[90m↓[39m[22m preserves the last queued item and stop hold when Steer fails
+2026-10-12T01:29:24.1713568Z        [2m[90m↓[39m[22m releases the stop hold after a queued plan follow-up Steer succeeds
+2026-10-12T01:29:24.1714377Z        [2m[90m↓[39m[22m preserves a newer Stop and a replacement queued item while Steer completes
+2026-10-12T01:29:24.1716106Z      [2m[90m↓[39m[22m auto-dispatches a queued chat turn as a chat message even while a plan follow-up is pending
+2026-10-12T01:29:24.1717060Z      [2m[90m↓[39m[22m auto-dispatches only the queue head until the previous turn is live
+2026-10-12T01:29:24.1718036Z      [33m[2m✓[22m[39m moves a selected quote through the mini composer ('local', 'send') [33m 1653[2mms[22m[39m
+2026-10-12T01:29:24.1718977Z      [2m[90m↓[39m[22m moves a selected quote through the mini composer ('worktree', 'send')
+2026-10-12T01:29:24.1719804Z      [2m[90m↓[39m[22m moves a selected quote through the mini composer ('worktree', 'compose')
+2026-10-12T01:29:24.1720665Z      [2m[90m↓[39m[22m keeps a failed selection send queued without a stale optimistic message
+2026-10-12T01:29:24.1721647Z      [33m[2m✓[22m[39m keeps a new draft out of horizontal tabs until it becomes a saved thread [33m 1187[2mms[22m[39m
+2026-10-12T01:29:24.1722657Z      [2m[90m↓[39m[22m uses the latest ordinary project from Home when the global New thread button is clicked
+2026-10-12T01:29:24.1723752Z      [2m[90m↓[39m[22m opens Add project when the global New thread action has no usable project target
+2026-10-12T01:29:24.1724292Z      [2m[90m↓[39m[22m does not open Add project before project hydration completes
+2026-10-12T01:29:24.1724768Z      [2m[90m↓[39m[22m lets an empty project draft switch to another open project
+2026-10-12T01:29:24.1725263Z      [2m[90m↓[39m[22m focuses and keyboard-selects from the new-thread project picker
+2026-10-12T01:29:24.1726065Z      [33m[2m✓[22m[39m restores the saved hub draft from /hubs and coalesces repeated new-chat clicks [33m 1093[2mms[22m[39m
+2026-10-12T01:29:24.1727384Z      [33m[2m✓[22m[39m restores the saved hub draft from /groups and coalesces repeated new-chat clicks [33m 920[2mms[22m[39m
+2026-10-12T01:29:24.1728656Z      [33m[2m✓[22m[39m restores the saved hub draft from /studio and coalesces repeated new-chat clicks [33m 902[2mms[22m[39m
+2026-10-12T01:29:24.1729790Z      [33m[2m✓[22m[39m keeps hub suggestions above the composer as image attachments change [33m 2216[2mms[22m[39m
+2026-10-12T01:29:24.1730871Z      [33m[2m✓[22m[39m seeds a fresh hub chat draft from the hub's workerRouting [33m 739[2mms[22m[39m
+2026-10-12T01:29:24.1731895Z      [33m[2m✓[22m[39m keeps a hub thread open when the Hubs section is hidden [33m 1171[2mms[22m[39m
+2026-10-12T01:29:24.1733158Z      [2m[90m↓[39m[22m can detach an empty project draft back to a normal chat before first send
+2026-10-12T01:29:24.1734259Z      [2m[90m↓[39m[22m moves a home draft into an existing project from the home picker without carrying branch
+2026-10-12T01:29:24.1735271Z      [2m[90m↓[39m[22m creates and selects a new project from an empty project draft without navigating away
+2026-10-12T01:29:24.1736311Z      [2m[90m↓[39m[22m creates a project from the sidebar Create Project dialog and shows it in the sidebar
+2026-10-12T01:29:24.1737369Z      [2m[90m↓[39m[22m keeps the prior route and exposes an error when project draft navigation is superseded
+2026-10-12T01:29:24.1738403Z      [2m[90m↓[39m[22m creates a Space inline from the Create Project dialog and files the project into it
+2026-10-12T01:29:24.1739295Z      [2m[90m↓[39m[22m rolls back the provisional Space when project creation fails
+2026-10-12T01:29:24.1740122Z      [2m[90m↓[39m[22m remembers the Worktree checkbox choice for subsequent project chats
+2026-10-12T01:29:24.1741363Z      [33m[2m✓[22m[39m dispatches a draft once when board owns the send before the other surface [33m 3281[2mms[22m[39m
+2026-10-12T01:29:24.1742524Z      [33m[2m✓[22m[39m dispatches a draft once when chat owns the send before the other surface [33m 1856[2mms[22m[39m
+2026-10-12T01:29:24.1773910Z      [33m[2m✓[22m[39m keeps the first sent message visible throughout draft promotion [33m 1185[2mms[22m[39m
+2026-10-12T01:29:24.1774855Z      [33m[2m✓[22m[39m keeps a sent draft prompt out of the composer once the server recorded it [33m 1004[2mms[22m[39m
+2026-10-12T01:29:24.1775546Z      [33m[2m✓[22m[39m keeps composer edits made while New thread reopens a stored draft [33m 1063[2mms[22m[39m
+2026-10-12T01:29:24.1776217Z      [33m[2m✓[22m[39m explains a second send instead of ignoring it while the first is in flight [33m 940[2mms[22m[39m
+2026-10-12T01:29:24.1776968Z      [33m[2m✓[22m[39m keeps 'forked' sidechat composer free of workspace controls ('local', started=false) [33m 778[2mms[22m[39m
+2026-10-12T01:29:24.1777662Z      [2m[90m↓[39m[22m keeps 'forked' sidechat composer free of workspace controls ('worktree', started=false)
+2026-10-12T01:29:24.1778367Z      [33m[2m✓[22m[39m keeps 'forked' sidechat composer free of workspace controls ('local', started=true) [33m 788[2mms[22m[39m
+2026-10-12T01:29:24.1779032Z      [2m[90m↓[39m[22m keeps 'forked' sidechat composer free of workspace controls ('worktree', started=true)
+2026-10-12T01:29:24.1779735Z      [33m[2m✓[22m[39m keeps 'standalone' sidechat composer free of workspace controls ('local', started=false) [33m 729[2mms[22m[39m
+2026-10-12T01:29:24.1780486Z      [33m[2m✓[22m[39m keeps 'standalone' sidechat composer free of workspace controls ('local', started=true) [33m 764[2mms[22m[39m
+2026-10-12T01:29:24.1781222Z      [33m[2m✓[22m[39m keeps the transcript open while the first turn starts before its message arrives [33m 862[2mms[22m[39m
+2026-10-12T01:29:24.1781979Z      [33m[2m✓[22m[39m shows the empty landing for terminal state interrupted without a start timestamp [33m 599[2mms[22m[39m
+2026-10-12T01:29:24.1782646Z      [2m[90m↓[39m[22m opens another draft during worktree creation and preserves the original send on success
+2026-10-12T01:29:24.1783268Z      [2m[90m↓[39m[22m opens another draft during worktree creation and preserves the original send on failure
+2026-10-12T01:29:24.1783977Z      [2m[90m↓[39m[22m opens another draft during worktree creation and preserves the original send on revisit
+2026-10-12T01:29:24.1784593Z      [2m[90m↓[39m[22m opens another draft during worktree creation and preserves the original send on cancel
+2026-10-12T01:29:24.1785140Z      [2m[90m↓[39m[22m creates a detached worktree on first send in New worktree mode
+2026-10-12T01:29:24.1785636Z      [2m[90m↓[39m[22m keeps worktree setup resolvable while attachments upload
+2026-10-12T01:29:24.1786456Z      [2m[90m↓[39m[22m runs the setup action from the newly-created worktree before starting the turn
+2026-10-12T01:29:24.1787033Z      [33m[2m✓[22m[39m restores a usable sticky claude model on fresh chat [33m 1251[2mms[22m[39m
+2026-10-12T01:29:24.1787639Z      [33m[2m✓[22m[39m falls back from an unauthenticated sticky provider on fresh chat [33m 1196[2mms[22m[39m
+2026-10-12T01:29:24.1788239Z      [2m[90m↓[39m[22m leaves the project default implicit when no sticky composer settings exist
+2026-10-12T01:29:24.1788861Z      [33m[2m✓[22m[39m reuses the existing draft thread when the user clicks new thread again [33m 1308[2mms[22m[39m
+2026-10-12T01:29:24.1789584Z      [33m[2m✓[22m[39m preserves a new-chat draft when switching to another thread and back via New chat [33m 1931[2mms[22m[39m
+2026-10-12T01:29:24.1790234Z      [33m[2m✓[22m[39m applies the selected chat width to the transcript column [33m 765[2mms[22m[39m
+2026-10-12T01:29:24.1790813Z      [33m[2m✓[22m[39m creates a new thread from the global chat.new shortcut [33m 1259[2mms[22m[39m
+2026-10-12T01:29:24.1791479Z      [2m[90m↓[39m[22m closes a worktree handoff dialog when navigating to a draft thread
+2026-10-12T01:29:24.1792149Z      [33m[2m✓[22m[39m reorders a background horizontal tab across navigation and persists the order (saved) [33m 1222[2mms[22m[39m
+2026-10-12T01:29:24.1792944Z      [33m[2m✓[22m[39m reorders a background horizontal tab across navigation and persists the order (promoted-draft) [33m 1374[2mms[22m[39m
+2026-10-12T01:29:24.1804508Z      [33m[2m✓[22m[39m reorders a background horizontal tab across navigation and persists the order (terminal) [33m 1305[2mms[22m[39m
+2026-10-12T01:29:24.1805931Z      [33m[2m✓[22m[39m keeps close-button pointer travel from starting a horizontal tab drag [33m 1133[2mms[22m[39m
+2026-10-12T01:29:24.1807192Z      [33m[2m✓[22m[39m opens the thread menu on a tab right-click and closes the tabs its close row names [33m 1055[2mms[22m[39m
+2026-10-12T01:29:24.1808405Z      [33m[2m✓[22m[39m keeps the saved editor chat reachable while an unsent draft is on screen [33m 3773[2mms[22m[39m
+2026-10-12T01:29:24.1809534Z      [33m[2m✓[22m[39m cancels a pending editor chat tab switch after terminal [33m 2433[2mms[22m[39m
+2026-10-12T01:29:24.1810567Z      [33m[2m✓[22m[39m cancels a pending editor chat tab switch after close [33m 2361[2mms[22m[39m
+2026-10-12T01:29:24.1811531Z      [33m[2m✓[22m[39m cancels a pending editor chat tab switch after navigation [33m 2585[2mms[22m[39m
+2026-10-12T01:29:24.1812557Z      [33m[2m✓[22m[39m cancels a pending editor chat tab switch after navigation-back [33m 2723[2mms[22m[39m
+2026-10-12T01:29:24.1813733Z      [33m[2m✓[22m[39m cancels a pending editor chat tab switch after inflight [33m 2475[2mms[22m[39m
+2026-10-12T01:29:24.1814963Z      [33m[2m✓[22m[39m keeps the trailing sidebar PR state accessible and clear of hover actions (pinned: false) [33m 3244[2mms[22m[39m
+2026-10-12T01:29:24.1816340Z      [33m[2m✓[22m[39m keeps the trailing sidebar PR state accessible and clear of hover actions (pinned: true) [33m 3136[2mms[22m[39m
+2026-10-12T01:29:24.1817724Z      [33m[2m✓[22m[39m steps through horizontal tabs with the previous/next tab shortcuts, wrapping at the ends [33m 2870[2mms[22m[39m
+2026-10-12T01:29:24.1819027Z      [33m[2m✓[22m[39m switches horizontal tabs without blanking the header or composer (saved) [33m 2617[2mms[22m[39m
+2026-10-12T01:29:24.1820271Z      [33m[2m✓[22m[39m closing the last visible tab returns to an unsent draft hidden from the strip [33m 1060[2mms[22m[39m
+2026-10-12T01:29:24.1821232Z      [2m[90m↓[39m[22m closing the last home tab opens a fresh draft in the same project
+2026-10-12T01:29:24.1822110Z      [2m[90m↓[39m[22m closing the last project tab opens a fresh draft in the same project
+2026-10-12T01:29:24.1823225Z      [33m[2m✓[22m[39m waits for a completed click before switching tabs without remounting the strip [33m 1213[2mms[22m[39m
+2026-10-12T01:29:24.1824874Z      [2m[90m↓[39m[22m reveals an opened transcript once its end scroll lands, not after the list's fallback delay
+2026-10-12T01:29:24.1826177Z      [33m[2m✓[22m[39m preserves a home-chat draft when the chat.newChat shortcut is reused after a thread switch [33m 1712[2mms[22m[39m
+2026-10-12T01:29:24.1827438Z      [33m[2m✓[22m[39m promotes terminal-first shortcut threads so they render as terminal rows [33m 1264[2mms[22m[39m
+2026-10-12T01:29:24.1828681Z      [33m[2m✓[22m[39m promotes a stored terminal draft using its saved context and model selection [33m 1167[2mms[22m[39m
+2026-10-12T01:29:24.1829932Z      [33m[2m✓[22m[39m sets a literal control-word goal from the extras panel [33m 1323[2mms[22m[39m
+2026-10-12T01:29:24.1830951Z      [33m[2m✓[22m[39m sets a literal control-word goal from the edit button [33m 1084[2mms[22m[39m
+2026-10-12T01:29:24.1832122Z      [33m[2m✓[22m[39m activates Debug with /debug and returns to Default from the badge and /default [33m 1499[2mms[22m[39m
+2026-10-12T01:29:24.1833627Z      [33m[2m✓[22m[39m creates a fresh draft after the previous draft thread is promoted [33m 1619[2mms[22m[39m
+2026-10-12T01:29:24.1834761Z      [33m[2m✓[22m[39m keeps long proposed plans lightweight until the user expands them [33m 821[2mms[22m[39m
+2026-10-12T01:29:24.1835836Z      [33m[2m✓[22m[39m keeps the final transcript row clear of a tall composer panel stack [33m 2017[2mms[22m[39m
+2026-10-12T01:29:24.1836800Z      [2m[90m↓[39m[22m joins live file changes to the composer without queued messages
+2026-10-12T01:29:24.1837739Z      [33m[2m✓[22m[39m aligns the inline plan card with the composer input [33m 1316[2mms[22m[39m
+2026-10-12T01:29:24.1838765Z      [33m[2m✓[22m[39m hides an unfinished task list once the latest turn is settled [33m 842[2mms[22m[39m
+2026-10-12T01:29:24.1839812Z      [33m[2m✓[22m[39m hides the stop button once a completed turn is no longer live [33m 839[2mms[22m[39m
+2026-10-12T01:29:24.1840997Z      [2m[90m↓[39m[22m collapses a settled leading tool run mid-turn, then folds into the turn header after the grace delay
+2026-10-12T01:29:24.1842211Z      [33m[2m✓[22m[39m opens a finished thread already folded, without replaying the collapse [33m 1642[2mms[22m[39m
+2026-10-12T01:29:24.1843661Z      [33m[2m✓[22m[39m does not replay the collapse when the completed turn record hydrates after the transcript [33m 1631[2mms[22m[39m
+2026-10-12T01:29:24.1844808Z      [2m[90m↓[39m[22m does not animate historical tool hydration while a newer turn is working
+2026-10-12T01:29:24.1845390Z 
+2026-10-12T01:29:24.1845825Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 2 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-10-12T01:29:24.1846168Z 
+2026-10-12T01:29:24.1848062Z [41m[1m FAIL [22m[49m [30m[43m chat-workflows (chromium) [49m[39m src/components/ChatView.browser.tsx[2m > [22mChatView transcript geometry (full app)[2m > [22mprovider handoff destination[2m > [22mholds the composer for a durable provider request until its matching completed outcome
+2026-10-12T01:29:24.1850494Z [31m[1mVitestBrowserElementError[22m: Cannot find element with locator: getByRole('button', { name: 'Send message', exact: true })
+2026-10-12T01:29:24.1851155Z 
+2026-10-12T01:29:24.1851303Z [36m<body[31m
+2026-10-12T01:29:24.1851648Z   [33mstyle[31m=[32m""[31m
+2026-10-12T01:29:24.1851987Z [36m>[31m
+2026-10-12T01:29:24.1852254Z   [36m<div[31m
+2026-10-12T01:29:24.1853038Z     [33mstyle[31m=[32m"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;"[31m
+2026-10-12T01:29:24.1853856Z   [36m>[31m
+2026-10-12T01:29:24.1854136Z     [36m<div[31m
+2026-10-12T01:29:24.1855291Z       [33mclass[31m=[32m"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]"[31m
+2026-10-12T01:29:24.1856384Z       [33mdata-sidebar-layout[31m=[32m"rail"[31m
+2026-10-12T01:29:24.1856904Z       [33mdata-sidebar-side[31m=[32m"left"[31m
+2026-10-12T01:29:24.1857435Z       [33mdata-slot[31m=[32m"sidebar-wrapper"[31m
+2026-10-12T01:29:24.1858385Z       [33mstyle[31m=[32m"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;"[31m
+2026-10-12T01:29:24.1859077Z     [36m>[31m
+2026-10-12T01:29:24.1859427Z       [36m<div[31m …[36m />[31m
+2026-10-12T01:29:24.1859834Z       [36m<div[31m …[36m />[31m
+2026-10-12T01:29:24.1860221Z       [36m<div[31m …[36m />[31m
+2026-10-12T01:29:24.1860566Z     [36m</div>[31m
+2026-10-12T01:29:24.1860866Z   [36m</div>[31m
+2026-10-12T01:29:24.1861147Z   [36m<div[31m
+2026-10-12T01:29:24.1861533Z     [33mdata-base-ui-portal[31m=[32m""[31m
+2026-10-12T01:29:24.1862098Z     [33mdata-slot[31m=[32m"toast-portal-anchored"[31m
+2026-10-12T01:29:24.1862609Z     [33mid[31m=[32m"_r_d9b_"[31m
+2026-10-12T01:29:24.1862972Z   [36m>[31m
+2026-10-12T01:29:24.1863273Z     [36m<div[31m
+2026-10-12T01:29:24.1863791Z       [33maria-atomic[31m=[32m"false"[31m
+2026-10-12T01:29:24.1864482Z       [33maria-label[31m=[32m"Notifications"[31m
+2026-10-12T01:29:24.1864963Z       [33maria-live[31m=[32m"polite"[31m
+2026-10-12T01:29:24.1865467Z       [33maria-relevant[31m=[32m"additions text"[31m
+2026-10-12T01:29:24.1865963Z       [33mclass[31m=[32m"outline-none"[31m
+2026-10-12T01:29:24.1866503Z       [33mdata-slot[31m=[32m"toast-viewport-anchored"[31m
+2026-10-12T01:29:24.1867026Z       [33mrole[31m=[32m"region"[31m
+2026-10-12T01:29:24.1867433Z       [33mtabindex[31m=[32m"-1"[31m
+2026-10-12T01:29:24.1867701Z     [36m/>[31m
+2026-10-12T01:29:24.1867897Z   [36m</div>[31m
+2026-10-12T01:29:24.1868081Z   [36m<div[31m
+2026-10-12T01:29:24.1868320Z     [33mdata-base-ui-portal[31m=[32m""[31m
+2026-10-12T01:29:24.1868621Z     [33mdata-slot[31m=[32m"toast-portal"[31m
+2026-10-12T01:29:24.1868905Z     [33mid[31m=[32m"_r_d9c_"[31m
+2026-10-12T01:29:24.1869134Z   [36m>[31m
+2026-10-12T01:29:24.1869322Z     [36m<div[31m
+2026-10-12T01:29:24.1869555Z       [33maria-atomic[31m=[32m"false"[31m
+2026-10-12T01:29:24.1869863Z       [33maria-label[31m=[32m"Notifications"[31m
+2026-10-12T01:29:24.1870162Z       [33maria-live[31m=[32m"polite"[31m
+2026-10-12T01:29:24.1870476Z       [33maria-relevant[31m=[32m"additions text"[31m
+2026-10-12T01:29:24.1872373Z       [33mclass[31m=[32m"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2"[31m
+2026-10-12T01:29:24.1874241Z       [33mdata-position[31m=[32m"top-center"[31m
+2026-10-12T01:29:24.1874719Z       [33mdata-slot[31m=[32m"toast-viewport"[31m
+2026-10-12T01:29:24.1874997Z       [33mrole[31m=[32m"region"[31m
+2026-10-12T01:29:24.1875340Z       [33mstyle[31m=[32m"--toast-frontmost-height: 0px;"[31m
+2026-10-12T01:29:24.1875662Z       [33mtabindex[31m=[32m"-1"[31m
+2026-10-12T01:29:24.1875887Z     [36m/>[31m
+2026-10-12T01:29:24.1876074Z   [36m</div>[31m
+2026-10-12T01:29:24.1876286Z [36m</body>[31m...[39m
+2026-10-12T01:29:24.1876411Z 
+2026-10-12T01:29:24.1876504Z Failure screenshot:
+2026-10-12T01:29:24.1877625Z   - [2msrc/components/__screenshots__/ChatView.browser.tsx/ChatView-transcript-geometry--full-app--provider-handoff-destination-holds-the-composer-for-a-durable-provider-request-until-its-matching-completed-outcome-1.png[22m
+2026-10-12T01:29:24.1878472Z 
+2026-10-12T01:29:24.1878772Z [36m [2m❯[22m src/components/ChatView.browser.tsx:[2m4740:13[22m[39m
+2026-10-12T01:29:24.1879139Z     [90m4738|[39m           await expect
+2026-10-12T01:29:24.1879558Z     [90m4739|[39m             .element(page.getByRole("button", { name: "Send message", …
+2026-10-12T01:29:24.1879956Z     [90m4740|[39m             .toBeDisabled();
+2026-10-12T01:29:24.1880238Z     [90m   |[39m             [31m^[39m
+2026-10-12T01:29:24.1880578Z     [90m4741|[39m           expect(mounted.commands).toHaveLength(0);
+2026-10-12T01:29:24.1881038Z     [90m4742|[39m           // Durable handoff pending: the production composer is visib…
+2026-10-12T01:29:24.1881279Z 
+2026-10-12T01:29:24.1881528Z [31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+2026-10-12T01:29:24.1881992Z [36m [2m❯[22m src/components/ChatView.browser.tsx:[2m4738:10[22m[39m
+2026-10-12T01:29:24.1882208Z 
+2026-10-12T01:29:24.1882400Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+2026-10-12T01:29:24.1882558Z 
+2026-10-12T01:29:24.1883712Z [41m[1m FAIL [22m[49m [30m[43m chat-workflows (chromium) [49m[39m src/components/ChatView.browser.tsx[2m > [22mChatView transcript geometry (full app)[2m > [22mprovider handoff destination[2m > [22mholds the composer for a durable provider request until its matching failed outcome
+2026-10-12T01:29:24.1885050Z [31m[1mVitestBrowserElementError[22m: Cannot find element with locator: getByRole('button', { name: 'Send message', exact: true })
+2026-10-12T01:29:24.1885428Z 
+2026-10-12T01:29:24.1885529Z [36m<body[31m
+2026-10-12T01:29:24.1885750Z   [33mstyle[31m=[32m""[31m
+2026-10-12T01:29:24.1885966Z [36m>[31m
+2026-10-12T01:29:24.1886142Z   [36m<div[31m
+2026-10-12T01:29:24.1886611Z     [33mstyle[31m=[32m"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;"[31m
+2026-10-12T01:29:24.1887025Z   [36m>[31m
+2026-10-12T01:29:24.1887205Z     [36m<div[31m
+2026-10-12T01:29:24.1887868Z       [33mclass[31m=[32m"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]"[31m
+2026-10-12T01:29:24.1888495Z       [33mdata-sidebar-layout[31m=[32m"rail"[31m
+2026-10-12T01:29:24.1888813Z       [33mdata-sidebar-side[31m=[32m"left"[31m
+2026-10-12T01:29:24.1889140Z       [33mdata-slot[31m=[32m"sidebar-wrapper"[31m
+2026-10-12T01:29:24.1889668Z       [33mstyle[31m=[32m"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;"[31m
+2026-10-12T01:29:24.1890065Z     [36m>[31m
+2026-10-12T01:29:24.1890286Z       [36m<div[31m …[36m />[31m
+2026-10-12T01:29:24.1890538Z       [36m<div[31m …[36m />[31m
+2026-10-12T01:29:24.1890782Z       [36m<div[31m …[36m />[31m
+2026-10-12T01:29:24.1891008Z     [36m</div>[31m
+2026-10-12T01:29:24.1891214Z   [36m</div>[31m
+2026-10-12T01:29:24.1891417Z   [36m<div[31m
+2026-10-12T01:29:24.1891692Z     [33mdata-base-ui-portal[31m=[32m""[31m
+2026-10-12T01:29:24.1892044Z     [33mdata-slot[31m=[32m"toast-portal-anchored"[31m
+2026-10-12T01:29:24.1892339Z     [33mid[31m=[32m"_r_dh0_"[31m
+2026-10-12T01:29:24.1892562Z   [36m>[31m
+2026-10-12T01:29:24.1892866Z     [36m<div[31m
+2026-10-12T01:29:24.1893106Z       [33maria-atomic[31m=[32m"false"[31m
+2026-10-12T01:29:24.1893416Z       [33maria-label[31m=[32m"Notifications"[31m
+2026-10-12T01:29:24.1893819Z       [33maria-live[31m=[32m"polite"[31m
+2026-10-12T01:29:24.1894140Z       [33maria-relevant[31m=[32m"additions text"[31m
+2026-10-12T01:29:24.1894444Z       [33mclass[31m=[32m"outline-none"[31m
+2026-10-12T01:29:24.1894774Z       [33mdata-slot[31m=[32m"toast-viewport-anchored"[31m
+2026-10-12T01:29:24.1895085Z       [33mrole[31m=[32m"region"[31m
+2026-10-12T01:29:24.1895350Z       [33mtabindex[31m=[32m"-1"[31m
+2026-10-12T01:29:24.1895568Z     [36m/>[31m
+2026-10-12T01:29:24.1895753Z   [36m</div>[31m
+2026-10-12T01:29:24.1895932Z   [36m<div[31m
+2026-10-12T01:29:24.1896158Z     [33mdata-base-ui-portal[31m=[32m""[31m
+2026-10-12T01:29:24.1896455Z     [33mdata-slot[31m=[32m"toast-portal"[31m
+2026-10-12T01:29:24.1896735Z     [33mid[31m=[32m"_r_dh1_"[31m
+2026-10-12T01:29:24.1896966Z   [36m>[31m
+2026-10-12T01:29:24.1897150Z     [36m<div[31m
+2026-10-12T01:29:24.1897377Z       [33maria-atomic[31m=[32m"false"[31m
+2026-10-12T01:29:24.1897686Z       [33maria-label[31m=[32m"Notifications"[31m
+2026-10-12T01:29:24.1897987Z       [33maria-live[31m=[32m"polite"[31m
+2026-10-12T01:29:24.1898292Z       [33maria-relevant[31m=[32m"additions text"[31m
+2026-10-12T01:29:24.1900149Z       [33mclass[31m=[32m"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2"[31m
+2026-10-12T01:29:24.1901658Z       [33mdata-position[31m=[32m"top-center"[31m
+2026-10-12T01:29:24.1901982Z       [33mdata-slot[31m=[32m"toast-viewport"[31m
+2026-10-12T01:29:24.1902459Z       [33mrole[31m=[32m"region"[31m
+2026-10-12T01:29:24.1902825Z       [33mstyle[31m=[32m"--toast-frontmost-height: 0px;"[31m
+2026-10-12T01:29:24.1903147Z       [33mtabindex[31m=[32m"-1"[31m
+2026-10-12T01:29:24.1903379Z     [36m/>[31m
+2026-10-12T01:29:24.1903663Z   [36m</div>[31m
+2026-10-12T01:29:24.1903870Z [36m</body>[31m...[39m
+2026-10-12T01:29:24.1903990Z 
+2026-10-12T01:29:24.1904077Z Failure screenshot:
+2026-10-12T01:29:24.1905161Z   - [2msrc/components/__screenshots__/ChatView.browser.tsx/ChatView-transcript-geometry--full-app--provider-handoff-destination-holds-the-composer-for-a-durable-provider-request-until-its-matching-failed-outcome-1.png[22m
+2026-10-12T01:29:24.1905995Z 
+2026-10-12T01:29:24.1906280Z [36m [2m❯[22m src/components/ChatView.browser.tsx:[2m4740:13[22m[39m
+2026-10-12T01:29:24.1906677Z     [90m4738|[39m           await expect
+2026-10-12T01:29:24.1907092Z     [90m4739|[39m             .element(page.getByRole("button", { name: "Send message", …
+2026-10-12T01:29:24.1907482Z     [90m4740|[39m             .toBeDisabled();
+2026-10-12T01:29:24.1907764Z     [90m   |[39m             [31m^[39m
+2026-10-12T01:29:24.1908103Z     [90m4741|[39m           expect(mounted.commands).toHaveLength(0);
+2026-10-12T01:29:24.1908557Z     [90m4742|[39m           // Durable handoff pending: the production composer is visib…
+2026-10-12T01:29:24.1908794Z 
+2026-10-12T01:29:24.1953663Z [31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+2026-10-12T01:29:24.1954551Z [36m [2m❯[22m src/components/ChatView.browser.tsx:[2m4738:10[22m[39m
+2026-10-12T01:29:24.1954912Z 
+2026-10-12T01:29:24.1955218Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+2026-10-12T01:29:24.1955472Z 
+2026-10-12T01:29:24.1957104Z 
+2026-10-12T01:29:24.1959969Z [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+2026-10-12T01:29:24.1962224Z [2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m133 passed[39m[22m[2m | [22m[33m87 skipped[39m[90m (222)[39m
+2026-10-12T01:29:24.1962889Z [2m   Start at [22m 01:20:47
+2026-10-12T01:29:24.1964176Z [2m   Duration [22m 516.57s[2m (transform 0ms, setup 0ms, import 69.10s, tests 444.33s, environment 0ms)[22m
+2026-10-12T01:29:24.1964601Z 
+2026-10-12T01:29:24.1978942Z 
+2026-10-12T01:29:24.2007132Z ##[error]VitestBrowserElementError: Cannot find element with locator: getByRole('button', { name: 'Send message', exact: true })
+
+<body
+  style=""
+>
+  <div
+    style="position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;"
+  >
+    <div
+      class="group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]"
+      data-sidebar-layout="rail"
+      data-sidebar-side="left"
+      data-slot="sidebar-wrapper"
+      style="--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;"
+    >
+      <div … />
+      <div … />
+      <div … />
+    </div>
+  </div>
+  <div
+    data-base-ui-portal=""
+    data-slot="toast-portal-anchored"
+    id="_r_d9b_"
+  >
+    <div
+      aria-atomic="false"
+      aria-label="Notifications"
+      aria-live="polite"
+      aria-relevant="additions text"
+      class="outline-none"
+      data-slot="toast-viewport-anchored"
+      role="region"
+      tabindex="-1"
+    />
+  </div>
+  <div
+    data-base-ui-portal=""
+    data-slot="toast-portal"
+    id="_r_d9c_"
+  >
+    <div
+      aria-atomic="false"
+      aria-label="Notifications"
+      aria-live="polite"
+      aria-relevant="additions text"
+      class="fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2"
+      data-position="top-center"
+      data-slot="toast-viewport"
+      role="region"
+      style="--toast-frontmost-height: 0px;"
+      tabindex="-1"
+    />
+  </div>
+</body>...
+ ❯ src/components/ChatView.browser.tsx:4740:13
+
+Caused by: Caused by: Error: Matcher did not succeed in time.
+ ❯ src/components/ChatView.browser.tsx:4738:10
+
+
+2026-10-12T01:29:24.2019581Z 
+2026-10-12T01:29:24.2032616Z ##[error]VitestBrowserElementError: Cannot find element with locator: getByRole('button', { name: 'Send message', exact: true })
+
+<body
+  style=""
+>
+  <div
+    style="position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;"
+  >
+    <div
+      class="group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]"
+      data-sidebar-layout="rail"
+      data-sidebar-side="left"
+      data-slot="sidebar-wrapper"
+      style="--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;"
+    >
+      <div … />
+      <div … />
+      <div … />
+    </div>
+  </div>
+  <div
+    data-base-ui-portal=""
+    data-slot="toast-portal-anchored"
+    id="_r_dh0_"
+  >
+    <div
+      aria-atomic="false"
+      aria-label="Notifications"
+      aria-live="polite"
+      aria-relevant="additions text"
+      class="outline-none"
+      data-slot="toast-viewport-anchored"
+      role="region"
+      tabindex="-1"
+    />
+  </div>
+  <div
+    data-base-ui-portal=""
+    data-slot="toast-portal"
+    id="_r_dh1_"
+  >
+    <div
+      aria-atomic="false"
+      aria-label="Notifications"
+      aria-live="polite"
+      aria-relevant="additions text"
+      class="fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2"
+      data-position="top-center"
+      data-slot="toast-viewport"
+      role="region"
+      style="--toast-frontmost-height: 0px;"
+      tabindex="-1"
+    />
+  </div>
+</body>...
+ ❯ src/components/ChatView.browser.tsx:4740:13
+
+Caused by: Caused by: Error: Matcher did not succeed in time.
+ ❯ src/components/ChatView.browser.tsx:4738:10
+
+
+2026-10-12T01:29:24.6532863Z error: script "test:browser:ci" exited with code 1
+2026-10-12T01:29:24.6543767Z ##[error]Process completed with exit code 1.
+2026-10-12T01:29:24.6675595Z Post job cleanup.
+2026-10-12T01:29:24.6680419Z ##[start-action display=Cache Bun install;id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.__actions_cache]
+2026-10-12T01:29:24.6682466Z ##[end-action id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:29:24.6684269Z ##[start-action display=Cache node_modules;id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.modules]
+2026-10-12T01:29:24.6685919Z ##[end-action id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.modules;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:29:24.6687460Z ##[start-action display=Setup Node;id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.__actions_setup-node]
+2026-10-12T01:29:24.6688948Z ##[end-action id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.__actions_setup-node;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:29:24.6690396Z ##[start-action display=Setup Bun;id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.__oven-sh_setup-bun]
+2026-10-12T01:29:24.6691850Z ##[end-action id=__8bf017ea-b7f3-4eb7-a39e-41e5cd7a6f04.__oven-sh_setup-bun;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T01:29:24.6746632Z Post job cleanup.
+2026-10-12T01:29:24.7496590Z [command]/usr/bin/git version
+2026-10-12T01:29:24.7539744Z git version 2.55.0
+2026-10-12T01:29:24.7578467Z Temporarily overriding HOME='/home/runner/work/_temp/77d5c845-7df0-4fcb-883d-3aaa6b430424' before making global git config changes
+2026-10-12T01:29:24.7581393Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T01:29:24.7584119Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-12T01:29:24.7623746Z Removing SSH command configuration
+2026-10-12T01:29:24.7630387Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T01:29:24.7675575Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T01:29:24.8022290Z Removing HTTP extra header
+2026-10-12T01:29:24.8028236Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T01:29:24.8071489Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T01:29:24.8401582Z Removing includeIf entries pointing to credentials config files
+2026-10-12T01:29:24.8407085Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T01:29:24.8474598Z includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-12T01:29:24.8475558Z includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-12T01:29:24.8490811Z includeif.gitdir:/github/workspace/.git.path
+2026-10-12T01:29:24.8491535Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-12T01:29:24.8493260Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-12T01:29:24.8499998Z /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8517226Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8566649Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-12T01:29:24.8592813Z /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8602662Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8640261Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-12T01:29:24.8665893Z /github/runner_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8673204Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8709512Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-12T01:29:24.8734062Z /github/runner_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8743242Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config
+2026-10-12T01:29:24.8784595Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T01:29:24.9001505Z Removing credentials config '/home/runner/work/_temp/git-credentials-a3f64f8a-c31d-4c12-8fbc-8ee9b9717884.config'
+2026-10-12T01:29:24.9154958Z Cleaning up orphan processes
+

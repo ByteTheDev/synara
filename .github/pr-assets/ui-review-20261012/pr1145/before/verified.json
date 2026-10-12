@@ -1,0 +1,766 @@
+{
+  "target": {
+    "id": "pr1145-before",
+    "variant": "before",
+    "source": "1a9d70983750bc771e850d72a858c541bac52885",
+    "tree": "6479afa46f65f176445f51a8fe9a859f67c4ab17"
+  },
+  "source": "1a9d70983750bc771e850d72a858c541bac52885",
+  "sourceTree": "6479afa46f65f176445f51a8fe9a859f67c4ab17",
+  "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+  "driverTree": "78f26d6bb6a9f88ddb2e51e0d1c4d6f58c97dd8d",
+  "driverFiles": [
+    {
+      "path": ".github/workflows/handoff-evidence.yml",
+      "blob": "3bc4985706ab109f2e34de1357abf605aea7eb11",
+      "bytes": 6061,
+      "sha256": "c5eb3bcacb563643455e1cd379aa3121a0dbcf1dde6e58314741a88f9f316830"
+    },
+    {
+      "path": "scripts/handoff-evidence/runner.mjs",
+      "blob": "903d9253688ef4a7b0ea182d66fc966cd4218018",
+      "bytes": 18584,
+      "sha256": "c80a3d46f3ceab18c7e8bd6869d81e14c424f6654cff07f8ff41b00e4a56e5db"
+    },
+    {
+      "path": "scripts/handoff-evidence/snapshots.mjs",
+      "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+      "bytes": 5005,
+      "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1"
+    },
+    {
+      "path": "scripts/handoff-evidence/helpers.ts",
+      "blob": "669198d9c9028bcf655fa599b5b4483356bdcac9",
+      "bytes": 3867,
+      "sha256": "a1b99ea78b62d3c554c6fb1927fd596768c645a85828839089d493881e356687"
+    },
+    {
+      "path": "scripts/handoff-evidence/overlay.json",
+      "blob": "546537bf0356d8e057cbec3da70e2efda61208f7",
+      "bytes": 2074,
+      "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e"
+    },
+    {
+      "path": "scripts/handoff-evidence/footer-control.mjs",
+      "blob": "92f92f0e5fa058ac988686ec9fd3797cb3690853",
+      "bytes": 10869,
+      "sha256": "51528eec5ee00beffb256f91a8ce1b295dd0d43da6ca4b6d34e7f2d61fea91b4"
+    },
+    {
+      "path": "scripts/handoff-evidence/vitest.handoff-footer.config.ts",
+      "blob": "a73321ffe73087d749bde7e7dbaaff70e192530d",
+      "bytes": 348,
+      "sha256": "52afcd127a86b596bb3875956890292e36d60f20733371ee555e887d7c59a991"
+    },
+    {
+      "path": "scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+      "blob": "a1fb1e350a6355d3ff26905143ff9cc0e12b76a0",
+      "bytes": 1053,
+      "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91"
+    },
+    {
+      "path": "scripts/handoff-evidence/README.md",
+      "blob": "8755c2c46d3475023359118eada8d4e6f7608f7e",
+      "bytes": 6558,
+      "sha256": "a4f9ce39c7ea5562dbb255f772afd4829a7474892514c16468f19ff1e39d85f6"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+      "bytes": 577781,
+      "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "blob": "9f9c13fe67a2ac4a27f150661b555180abadf675",
+      "bytes": 283520,
+      "sha256": "48679c4cb8831a55f60079e8c2e51f4640d9f5a87ab6d265056048a782f59168"
+    },
+    {
+      "path": "apps/web/src/components/chat/ChatComposerFooter.tsx",
+      "blob": "e4c4d5b211a3c7d0c14444265a89e16040d19772",
+      "bytes": 13116,
+      "sha256": "f892244cdda4650b895a5bdc72f0a17f5222046b046e4570c270acd6c46f8cbc"
+    },
+    {
+      "path": "apps/web/src/components/chat/ChatComposerFooter.browser.tsx",
+      "blob": "d65f5bc2346b5d55eac165604cf5d279cb844917",
+      "bytes": 3370,
+      "sha256": "990f8aaff0fab19f65c7dc518022b3df8126323ea46cc69a2ca50a88afb00099"
+    },
+    {
+      "path": "apps/web/src/hooks/useThreadHandoff.ts",
+      "blob": "2db81f01bc90d73104c0b8e7f622af3f09048958",
+      "bytes": 8835,
+      "sha256": "3d1fff171049d27871c980174da1091cf07761bb0d06caf3dc108e65c1ad8fa3"
+    },
+    {
+      "path": "apps/web/src/lib/threadHandoff.ts",
+      "blob": "83d8f99d4a96cf574d2c7ec5248fe80fd9cdd0d4",
+      "bytes": 12960,
+      "sha256": "df637fcc4b96bfa556aa46976a359fe63432423b9758fa3c1963c9f5883cadf0"
+    },
+    {
+      "path": "apps/web/src/storeNormalization.ts",
+      "blob": "dc001d2f1b06c1ba616ebd30168c461de5d57224",
+      "bytes": 94624,
+      "sha256": "ec76580c08fc9e5baa669359e9c0af9120c3df48b6105fa4024ac4d655df7fac"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "bytes": 12796,
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "bytes": 124428,
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    },
+    {
+      "path": "apps/server/src/orchestration/decider.ts",
+      "blob": "1ad63df576ad8cc2ba13e232fd78fb4e5d66e796",
+      "bytes": 112743,
+      "sha256": "97b60937f7d4e7e03a766715cb900a23e8c313dd54944b459d1dcfeb5d05ef14"
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProviderCommandReactor.ts",
+      "blob": "7031484b03f3029a1dd95ee98ba5bb448e149234",
+      "bytes": 401946,
+      "sha256": "53ee7d692a3a898df1bfa69a269b362f1b9452ddbbbc2f9d098720251de66c17"
+    },
+    {
+      "path": "packages/contracts/src/orchestration.ts",
+      "blob": "0c455d4d38c4d068d43ce049dad7b6c0d6ab09b4",
+      "bytes": 121947,
+      "sha256": "8281bfe68ba24717477d39fe4a103653700d5bb2d0c144a6d1b3470428dd7f31"
+    },
+    {
+      "path": "packages/shared/package.json",
+      "blob": "ac5881289427b87a805e4206f8b528600042f0c0",
+      "bytes": 13676,
+      "sha256": "9325961d2ce4d1fdce2c6d326e2b5c32c3e93cf237b6069ca6b3e91f91757250"
+    },
+    {
+      "path": "bun.lock",
+      "blob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "bytes": 776515,
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrHandoffEvidence1145.browser.tsx",
+      "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc"
+    },
+    {
+      "path": "apps/web/vitest.handoff-evidence.config.ts",
+      "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91"
+    }
+  ],
+  "commonFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "bytes": 584014
+  },
+  "mainFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+    "bytes": 577781
+  },
+  "newCasesOnlyComparedWithMain": true,
+  "originalAssertionsPreserved": true,
+  "applicationCodeModified": false,
+  "liveReport": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.json",
+  "liveLog": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.log",
+  "liveExits": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/exits.json",
+  "liveMedia": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before",
+  "qualification": "Actual full production Router/ChatView/composer/theme under the same controlled orchestration snapshots and synthetic draft. Two complete canonical regression cases are selected; other cases are filtered and are not passing evidence. No authenticated provider, native CLI, desktop or OS behavior is exercised. Before failures remain failed steps; only observed media is retained.",
+  "run": "38195141054",
+  "status": "failed",
+  "browserOutcome": "failure",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "verificationErrors": [
+    "The actual browser step failed, timed out, was cancelled, or did not execute."
+  ],
+  "reportSnapshot": {
+    "path": "vitest.json",
+    "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.json",
+    "bytes": 84227,
+    "sha256": "57f61cbc10140479f0afe48667e9ba572c8a0d7cf9235aae089cf87f09ed05ef",
+    "sourceBefore": {
+      "size": 84227,
+      "mtimeMs": 1791771719729.4316,
+      "ctimeMs": 1791771719729.4316,
+      "dev": 2049,
+      "ino": 9481367
+    },
+    "sourceAfter": {
+      "size": 84227,
+      "mtimeMs": 1791771719729.4316,
+      "ctimeMs": 1791771719729.4316,
+      "dev": 2049,
+      "ino": 9481367
+    },
+    "cutoffUtc": "2026-10-12T02:22:08.905Z",
+    "immutableCopy": true
+  },
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) provider handoff destination holds the composer for a durable provider request until its matching completed outcome",
+      "status": "failed",
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByRole('status').filter({ hasText: 'Switching to Claude' })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mstyle\u001b[39m=\u001b[32m\"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]\"\u001b[39m\n      \u001b[33mdata-sidebar-layout\u001b[39m=\u001b[32m\"rail\"\u001b[39m\n      \u001b[33mdata-sidebar-side\u001b[39m=\u001b[32m\"left\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"sidebar-wrapper\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal-anchored\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_1f_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"outline-none\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport-anchored\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_1g_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2\"\u001b[39m\n      \u001b[33mdata-position\u001b[39m=\u001b[32m\"top-center\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--toast-frontmost-height: 0px;\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m...\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=61d31b69:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrHandoffEvidence1145.browser.tsx?import&browserv=1791771456509:4165:34\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=61d31b69:1903:20"
+      ]
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) provider handoff destination holds the composer for a durable provider request until its matching failed outcome",
+      "status": "failed",
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByRole('status').filter({ hasText: 'Switching to Claude' })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mstyle\u001b[39m=\u001b[32m\"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]\"\u001b[39m\n      \u001b[33mdata-sidebar-layout\u001b[39m=\u001b[32m\"rail\"\u001b[39m\n      \u001b[33mdata-sidebar-side\u001b[39m=\u001b[32m\"left\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"sidebar-wrapper\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal-anchored\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_ec_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"outline-none\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport-anchored\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_ed_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2\"\u001b[39m\n      \u001b[33mdata-position\u001b[39m=\u001b[32m\"top-center\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--toast-frontmost-height: 0px;\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m...\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=61d31b69:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrHandoffEvidence1145.browser.tsx?import&browserv=1791771456509:4165:34\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=61d31b69:1903:20"
+      ]
+    }
+  ],
+  "filteredTests": 220,
+  "observations": [
+    {
+      "phase": "completed-pending-desktop",
+      "stage": "pending",
+      "outcome": "completed",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "variant": "before",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "time": "2026-10-12T02:19:15.719Z",
+      "fonts": "loaded",
+      "theme": "light",
+      "backgroundToken": "#ffffff",
+      "reducedMotion": true,
+      "documentWidth": 960,
+      "editor": {
+        "editable": "true",
+        "text": "Keep this draft while the provider changes.",
+        "box": {
+          "x": 341,
+          "y": 995.75,
+          "width": 581,
+          "height": 42.25
+        }
+      },
+      "send": {
+        "disabled": false,
+        "label": "Send message",
+        "box": {
+          "x": 900,
+          "y": 1046,
+          "width": 28,
+          "height": 28
+        }
+      },
+      "statuses": [
+        {
+          "text": "",
+          "visible": true,
+          "box": {
+            "x": 51,
+            "y": 44,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "text": "",
+          "visible": true,
+          "box": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "text": "",
+          "visible": true,
+          "box": {
+            "x": 960,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ],
+      "transcript": [
+        {
+          "role": "user",
+          "text": "filler user message 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 21Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+        }
+      ],
+      "fixtureThreadId": "thread-browser-test",
+      "fixtureModel": {
+        "provider": "claudeAgent",
+        "model": "claude-sonnet-4-6"
+      }
+    },
+    {
+      "phase": "completed-pending-narrow",
+      "stage": "pending",
+      "outcome": "completed",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "variant": "before",
+      "viewport": {
+        "width": 480,
+        "height": 640
+      },
+      "time": "2026-10-12T02:19:18.501Z",
+      "fonts": "loaded",
+      "theme": "light",
+      "backgroundToken": "#ffffff",
+      "reducedMotion": true,
+      "documentWidth": 480,
+      "editor": {
+        "editable": "true",
+        "text": "Keep this draft while the provider changes.",
+        "box": {
+          "x": 25,
+          "y": 535.75,
+          "width": 425,
+          "height": 42.25
+        }
+      },
+      "send": {
+        "disabled": false,
+        "label": "Send message",
+        "box": {
+          "x": 428,
+          "y": 588,
+          "width": 28,
+          "height": 28
+        }
+      },
+      "statuses": [],
+      "transcript": [
+        {
+          "role": "user",
+          "text": "filler user message 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 21Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+        }
+      ],
+      "fixtureThreadId": "thread-browser-test",
+      "fixtureModel": {
+        "provider": "claudeAgent",
+        "model": "claude-sonnet-4-6"
+      }
+    },
+    {
+      "phase": "failed-pending-desktop",
+      "stage": "pending",
+      "outcome": "failed",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "variant": "before",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "time": "2026-10-12T02:20:30.998Z",
+      "fonts": "loaded",
+      "theme": "light",
+      "backgroundToken": "#ffffff",
+      "reducedMotion": true,
+      "documentWidth": 960,
+      "editor": {
+        "editable": "true",
+        "text": "Keep this draft while the provider changes.",
+        "box": {
+          "x": 341,
+          "y": 995.75,
+          "width": 581,
+          "height": 42.25
+        }
+      },
+      "send": {
+        "disabled": false,
+        "label": "Send message",
+        "box": {
+          "x": 900,
+          "y": 1046,
+          "width": 28,
+          "height": 28
+        }
+      },
+      "statuses": [
+        {
+          "text": "",
+          "visible": true,
+          "box": {
+            "x": 51,
+            "y": 44,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "text": "",
+          "visible": true,
+          "box": {
+            "x": -1,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          }
+        },
+        {
+          "text": "",
+          "visible": true,
+          "box": {
+            "x": 960,
+            "y": -1,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ],
+      "transcript": [
+        {
+          "role": "user",
+          "text": "filler user message 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 21Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+        }
+      ],
+      "fixtureThreadId": "thread-browser-test",
+      "fixtureModel": {
+        "provider": "claudeAgent",
+        "model": "claude-sonnet-4-6"
+      }
+    },
+    {
+      "phase": "failed-pending-narrow",
+      "stage": "pending",
+      "outcome": "failed",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "variant": "before",
+      "viewport": {
+        "width": 480,
+        "height": 640
+      },
+      "time": "2026-10-12T02:20:31.531Z",
+      "fonts": "loaded",
+      "theme": "light",
+      "backgroundToken": "#ffffff",
+      "reducedMotion": true,
+      "documentWidth": 480,
+      "editor": {
+        "editable": "true",
+        "text": "Keep this draft while the provider changes.",
+        "box": {
+          "x": 25,
+          "y": 535.75,
+          "width": 425,
+          "height": 42.25
+        }
+      },
+      "send": {
+        "disabled": false,
+        "label": "Send message",
+        "box": {
+          "x": 428,
+          "y": 588,
+          "width": 28,
+          "height": 28
+        }
+      },
+      "statuses": [],
+      "transcript": [
+        {
+          "role": "user",
+          "text": "filler user message 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 13Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 14Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 15Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 16Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 17Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 18Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 19Mar 4 12:01 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 20Mar 4 12:02 PM"
+        },
+        {
+          "role": "user",
+          "text": "filler user message 21Mar 4 12:02 PM"
+        },
+        {
+          "role": "assistant",
+          "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+        }
+      ],
+      "fixtureThreadId": "thread-browser-test",
+      "fixtureModel": {
+        "provider": "claudeAgent",
+        "model": "claude-sonnet-4-6"
+      }
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "verified": true,
+  "originalZips": 6,
+  "rawArchiveMembers": 85,
+  "retainedManifestEntries": 79,
+  "sourceIdentityReceipts": 60,
+  "driverIdentityReceipts": 50,
+  "sourceTreesIndependentlyRebuilt": 3,
+  "driverTreesIndependentlyRebuilt": 2,
+  "fullCanonicalChatViewReversals": 4,
+  "stableSnapshots": 41,
+  "originalChatViewPngs": 16,
+  "footerFailurePngs": 3,
+  "clips": 2,
+  "registeredFrames": 6,
+  "currentExactHeadChecks": 24,
+  "cases": [
+    {
+      "label": "before",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+      "passed": 0,
+      "failed": 2,
+      "filtered": 220,
+      "actualJob": 114636052932,
+      "jobConclusion": "failure"
+    },
+    {
+      "label": "after",
+      "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+      "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+      "passed": 2,
+      "failed": 0,
+      "filtered": 220,
+      "actualJob": 114636052854,
+      "jobConclusion": "success"
+    },
+    {
+      "label": "footer-before",
+      "source": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+      "passed": 3,
+      "failed": 3,
+      "filtered": 0,
+      "actualJob": 114636018306,
+      "jobConclusion": "failure"
+    },
+    {
+      "label": "footer-after",
+      "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+      "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+      "passed": 6,
+      "failed": 0,
+      "filtered": 0,
+      "actualJob": 114636018139,
+      "jobConclusion": "success"
+    },
+    {
+      "label": "previous/before",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "driver": "f9e18e56c90159c06ee7cce409c5933dface9807",
+      "passed": 0,
+      "failed": 2,
+      "filtered": 220,
+      "actualJob": 114629942019,
+      "jobConclusion": "failure"
+    },
+    {
+      "label": "previous/after",
+      "source": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "driver": "f9e18e56c90159c06ee7cce409c5933dface9807",
+      "passed": 0,
+      "failed": 2,
+      "filtered": 220,
+      "actualJob": 114629941969,
+      "jobConclusion": "failure"
+    }
+  ],
+  "qualification": "Packet integrity and actual browser controls only. Expected Before failures remain failed jobs. Source tree identity does not mean every source file was read at execution; the driver also checks clean tracked Git state and the declared raw source files. No live provider, native desktop or operating-system behavior is established."
+}

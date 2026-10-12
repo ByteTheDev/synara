@@ -1,0 +1,785 @@
+﻿2026-10-12T02:16:35.9537392Z Current runner version: '2.337.0'
+2026-10-12T02:16:35.9573308Z ##[group]Runner Image Provisioner
+2026-10-12T02:16:35.9574751Z Hosted Compute Agent
+2026-10-12T02:16:35.9575735Z Version: 20261002.596
+2026-10-12T02:16:35.9577092Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-12T02:16:35.9578480Z Build Date: 2026-10-02T22:28:27Z
+2026-10-12T02:16:35.9579733Z Worker ID: {3be65f7e-925c-4e87-bc7d-635bd8483d2b}
+2026-10-12T02:16:35.9581233Z Region: centralus
+2026-10-12T02:16:35.9582432Z Cloud: Azure
+2026-10-12T02:16:35.9583365Z ##[endgroup]
+2026-10-12T02:16:35.9585860Z ##[group]Operating System
+2026-10-12T02:16:35.9587251Z Ubuntu
+2026-10-12T02:16:35.9588358Z 24.04.5
+2026-10-12T02:16:35.9589321Z LTS
+2026-10-12T02:16:35.9590215Z ##[endgroup]
+2026-10-12T02:16:35.9591290Z ##[group]Runner Image
+2026-10-12T02:16:35.9592319Z Image: ubuntu-24.04
+2026-10-12T02:16:35.9593454Z Version: 20261004.327.1
+2026-10-12T02:16:35.9595616Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-12T02:16:35.9598823Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-12T02:16:35.9600721Z ##[endgroup]
+2026-10-12T02:16:35.9602793Z ##[group]GITHUB_TOKEN Permissions
+2026-10-12T02:16:35.9605480Z Contents: read
+2026-10-12T02:16:35.9607239Z Metadata: read
+2026-10-12T02:16:35.9608185Z ##[endgroup]
+2026-10-12T02:16:35.9610969Z Secret source: Actions
+2026-10-12T02:16:35.9612313Z Cache mode: write
+2026-10-12T02:16:35.9613605Z Prepare workflow directory
+2026-10-12T02:16:36.0151962Z Prepare all required actions
+2026-10-12T02:16:36.0200948Z Getting action download info
+2026-10-12T02:16:36.2790003Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+2026-10-12T02:16:36.3820088Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-12T02:16:36.4859006Z Download action repository 'actions/upload-artifact@v7' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-12T02:16:37.1690976Z Complete job name: Complete footer control before
+2026-10-12T02:16:37.2476120Z ##[group]Run actions/checkout@v6
+2026-10-12T02:16:37.2477415Z with:
+2026-10-12T02:16:37.2477958Z   ref: 53248e7ed92a1d14147cd66822cfa982b0d6baef
+2026-10-12T02:16:37.2478629Z   persist-credentials: false
+2026-10-12T02:16:37.2479228Z   repository: Emanuele-web04/synara
+2026-10-12T02:16:37.2483817Z   token: ***
+2026-10-12T02:16:37.2484290Z   ssh-strict: true
+2026-10-12T02:16:37.2484764Z   ssh-user: git
+2026-10-12T02:16:37.2485226Z   clean: true
+2026-10-12T02:16:37.2485705Z   sparse-checkout-cone-mode: true
+2026-10-12T02:16:37.2486275Z   fetch-depth: 1
+2026-10-12T02:16:37.2486932Z   fetch-tags: false
+2026-10-12T02:16:37.2487421Z   show-progress: true
+2026-10-12T02:16:37.2487915Z   lfs: false
+2026-10-12T02:16:37.2488379Z   submodules: false
+2026-10-12T02:16:37.2488868Z   set-safe-directory: true
+2026-10-12T02:16:37.2489420Z   allow-unsafe-pr-checkout: false
+2026-10-12T02:16:37.2490253Z env:
+2026-10-12T02:16:37.2490810Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:37.2491505Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:37.2492062Z ##[endgroup]
+2026-10-12T02:16:37.3542923Z Syncing repository: Emanuele-web04/synara
+2026-10-12T02:16:37.3545691Z ##[group]Getting Git version info
+2026-10-12T02:16:37.3547342Z Working directory is '/home/runner/work/synara/synara'
+2026-10-12T02:16:37.3549144Z [command]/usr/bin/git version
+2026-10-12T02:16:37.3601055Z git version 2.55.0
+2026-10-12T02:16:37.3625870Z ##[endgroup]
+2026-10-12T02:16:37.3641871Z Temporarily overriding HOME='/home/runner/work/_temp/8bc4a07e-4a95-4fd3-870b-4c0afeb3b12a' before making global git config changes
+2026-10-12T02:16:37.3644643Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T02:16:37.3648141Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-12T02:16:37.3707055Z Deleting the contents of '/home/runner/work/synara/synara'
+2026-10-12T02:16:37.3711009Z ##[group]Determining repository object format
+2026-10-12T02:16:37.3713182Z ##[endgroup]
+2026-10-12T02:16:37.3714919Z ##[group]Initializing the repository
+2026-10-12T02:16:37.3718345Z [command]/usr/bin/git init /home/runner/work/synara/synara
+2026-10-12T02:16:37.3815219Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T02:16:37.3817601Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T02:16:37.3819808Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T02:16:37.3821496Z hint: call:
+2026-10-12T02:16:37.3822532Z hint:
+2026-10-12T02:16:37.3824027Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T02:16:37.3825378Z hint:
+2026-10-12T02:16:37.3827043Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T02:16:37.3829124Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T02:16:37.3830656Z hint:
+2026-10-12T02:16:37.3831584Z hint: 	git branch -m <name>
+2026-10-12T02:16:37.3833197Z hint:
+2026-10-12T02:16:37.3834605Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T02:16:37.3836914Z Initialized empty Git repository in /home/runner/work/synara/synara/.git/
+2026-10-12T02:16:37.3840105Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-12T02:16:37.3887380Z ##[endgroup]
+2026-10-12T02:16:37.3888907Z ##[group]Disabling automatic garbage collection
+2026-10-12T02:16:37.3892353Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T02:16:37.3928334Z ##[endgroup]
+2026-10-12T02:16:37.3929985Z ##[group]Setting up auth
+2026-10-12T02:16:37.3931127Z Removing SSH command configuration
+2026-10-12T02:16:37.3937560Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T02:16:37.3975488Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T02:16:37.4352099Z Removing HTTP extra header
+2026-10-12T02:16:37.4360530Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T02:16:37.4412548Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T02:16:37.4638777Z Removing includeIf entries pointing to credentials config files
+2026-10-12T02:16:37.4645646Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T02:16:37.4683671Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T02:16:37.4914783Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T02:16:37.4957405Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:37.4992808Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:37.5030586Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:37.5074150Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:37.5104831Z ##[endgroup]
+2026-10-12T02:16:37.5105654Z ##[group]Fetching the repository
+2026-10-12T02:16:37.5113454Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 53248e7ed92a1d14147cd66822cfa982b0d6baef
+2026-10-12T02:16:41.2390279Z From https://github.com/Emanuele-web04/synara
+2026-10-12T02:16:41.2393173Z  * branch            53248e7ed92a1d14147cd66822cfa982b0d6baef -> FETCH_HEAD
+2026-10-12T02:16:41.2403309Z [command]/usr/bin/git rev-parse --verify --quiet 53248e7ed92a1d14147cd66822cfa982b0d6baef^{object}
+2026-10-12T02:16:41.2434530Z 53248e7ed92a1d14147cd66822cfa982b0d6baef
+2026-10-12T02:16:41.2441113Z ##[endgroup]
+2026-10-12T02:16:41.2442989Z ##[group]Determining the checkout info
+2026-10-12T02:16:41.2447658Z ##[endgroup]
+2026-10-12T02:16:41.2455559Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T02:16:41.2502301Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T02:16:41.2536541Z ##[group]Checking out the ref
+2026-10-12T02:16:41.2538979Z [command]/usr/bin/git checkout --progress --force 53248e7ed92a1d14147cd66822cfa982b0d6baef
+2026-10-12T02:16:42.0039865Z Note: switching to '53248e7ed92a1d14147cd66822cfa982b0d6baef'.
+2026-10-12T02:16:42.0040486Z 
+2026-10-12T02:16:42.0040749Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-12T02:16:42.0041324Z changes and commit them, and you can discard any commits you make in this
+2026-10-12T02:16:42.0041829Z state without impacting any branches by switching back to a branch.
+2026-10-12T02:16:42.0042129Z 
+2026-10-12T02:16:42.0042328Z If you want to create a new branch to retain commits you create, you may
+2026-10-12T02:16:42.0042782Z do so (now or later) by using -c with the switch command. Example:
+2026-10-12T02:16:42.0043086Z 
+2026-10-12T02:16:42.0043198Z   git switch -c <new-branch-name>
+2026-10-12T02:16:42.0043406Z 
+2026-10-12T02:16:42.0043526Z Or undo this operation with:
+2026-10-12T02:16:42.0043697Z 
+2026-10-12T02:16:42.0043797Z   git switch -
+2026-10-12T02:16:42.0043928Z 
+2026-10-12T02:16:42.0044149Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-12T02:16:42.0044490Z 
+2026-10-12T02:16:42.0112556Z HEAD is now at 53248e7 test(web): assert the connecting handoff submit control
+2026-10-12T02:16:42.0115852Z ##[endgroup]
+2026-10-12T02:16:42.0133703Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T02:16:42.0163291Z 53248e7ed92a1d14147cd66822cfa982b0d6baef
+2026-10-12T02:16:42.0174523Z ##[group]Removing auth
+2026-10-12T02:16:42.0174995Z Removing SSH command configuration
+2026-10-12T02:16:42.0179159Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T02:16:42.0212307Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T02:16:42.0446809Z Removing HTTP extra header
+2026-10-12T02:16:42.0451069Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T02:16:42.0491283Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T02:16:42.0723776Z Removing includeIf entries pointing to credentials config files
+2026-10-12T02:16:42.0728170Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T02:16:42.0759144Z includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-12T02:16:42.0760148Z includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-12T02:16:42.0761037Z includeif.gitdir:/github/workspace/.git.path
+2026-10-12T02:16:42.0761774Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-12T02:16:42.0769873Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-12T02:16:42.0795793Z /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.0807261Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.0844661Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-12T02:16:42.0870694Z /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.0880536Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.0921067Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-12T02:16:42.0946131Z /github/runner_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.0963430Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.1005442Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-12T02:16:42.1030090Z /github/runner_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.1038328Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config
+2026-10-12T02:16:42.1075388Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T02:16:42.1305065Z Removing credentials config '/home/runner/work/_temp/git-credentials-cd253ffc-9b52-4cc4-b00a-89097a84b906.config'
+2026-10-12T02:16:42.1315015Z ##[endgroup]
+2026-10-12T02:16:42.1571979Z ##[group]Run actions/checkout@v6
+2026-10-12T02:16:42.1572281Z with:
+2026-10-12T02:16:42.1572521Z   ref: a8e31e6a897ccdfa7babd66275798925fe904553
+2026-10-12T02:16:42.1572857Z   path: .pr-handoff-driver
+2026-10-12T02:16:42.1573115Z   persist-credentials: false
+2026-10-12T02:16:42.1573378Z   repository: Emanuele-web04/synara
+2026-10-12T02:16:42.1576010Z   token: ***
+2026-10-12T02:16:42.1576227Z   ssh-strict: true
+2026-10-12T02:16:42.1576770Z   ssh-user: git
+2026-10-12T02:16:42.1576987Z   clean: true
+2026-10-12T02:16:42.1577205Z   sparse-checkout-cone-mode: true
+2026-10-12T02:16:42.1577468Z   fetch-depth: 1
+2026-10-12T02:16:42.1577705Z   fetch-tags: false
+2026-10-12T02:16:42.1577926Z   show-progress: true
+2026-10-12T02:16:42.1578140Z   lfs: false
+2026-10-12T02:16:42.1578332Z   submodules: false
+2026-10-12T02:16:42.1578544Z   set-safe-directory: true
+2026-10-12T02:16:42.1578810Z   allow-unsafe-pr-checkout: false
+2026-10-12T02:16:42.1579065Z env:
+2026-10-12T02:16:42.1579323Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:42.1579640Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:42.1579880Z ##[endgroup]
+2026-10-12T02:16:42.2467785Z Syncing repository: Emanuele-web04/synara
+2026-10-12T02:16:42.2475856Z ##[group]Getting Git version info
+2026-10-12T02:16:42.2476670Z Working directory is '/home/runner/work/synara/synara/.pr-handoff-driver'
+2026-10-12T02:16:42.2506962Z [command]/usr/bin/git version
+2026-10-12T02:16:42.2551527Z git version 2.55.0
+2026-10-12T02:16:42.2574996Z ##[endgroup]
+2026-10-12T02:16:42.2590868Z Temporarily overriding HOME='/home/runner/work/_temp/84f51a55-5705-41af-9107-fd10bbb6871d' before making global git config changes
+2026-10-12T02:16:42.2592484Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T02:16:42.2597380Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara/.pr-handoff-driver
+2026-10-12T02:16:42.2632886Z ##[group]Determining repository object format
+2026-10-12T02:16:42.2635827Z ##[endgroup]
+2026-10-12T02:16:42.2636831Z ##[group]Initializing the repository
+2026-10-12T02:16:42.2642545Z [command]/usr/bin/git init /home/runner/work/synara/synara/.pr-handoff-driver
+2026-10-12T02:16:42.2689881Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T02:16:42.2691280Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T02:16:42.2692436Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T02:16:42.2693281Z hint: call:
+2026-10-12T02:16:42.2693770Z hint:
+2026-10-12T02:16:42.2694337Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T02:16:42.2695015Z hint:
+2026-10-12T02:16:42.2695660Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T02:16:42.2697035Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T02:16:42.2697888Z hint:
+2026-10-12T02:16:42.2698388Z hint: 	git branch -m <name>
+2026-10-12T02:16:42.2698973Z hint:
+2026-10-12T02:16:42.2699674Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T02:16:42.2700903Z Initialized empty Git repository in /home/runner/work/synara/synara/.pr-handoff-driver/.git/
+2026-10-12T02:16:42.2703068Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-12T02:16:42.2742999Z ##[endgroup]
+2026-10-12T02:16:42.2743698Z ##[group]Disabling automatic garbage collection
+2026-10-12T02:16:42.2748302Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T02:16:42.2780977Z ##[endgroup]
+2026-10-12T02:16:42.2781655Z ##[group]Setting up auth
+2026-10-12T02:16:42.2787561Z Removing SSH command configuration
+2026-10-12T02:16:42.2789226Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T02:16:42.2822844Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T02:16:42.3070949Z Removing HTTP extra header
+2026-10-12T02:16:42.3077639Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T02:16:42.3115690Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T02:16:42.3368020Z Removing includeIf entries pointing to credentials config files
+2026-10-12T02:16:42.3375164Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T02:16:42.3414828Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T02:16:42.3675626Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T02:16:42.3718949Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git.path /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:42.3754447Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:42.3791599Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.pr-handoff-driver/.git.path /github/runner_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:42.3828518Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.pr-handoff-driver/.git/worktrees/*.path /github/runner_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:42.3867608Z ##[endgroup]
+2026-10-12T02:16:42.3868112Z ##[group]Fetching the repository
+2026-10-12T02:16:42.3876915Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin a8e31e6a897ccdfa7babd66275798925fe904553
+2026-10-12T02:16:45.9629391Z From https://github.com/Emanuele-web04/synara
+2026-10-12T02:16:45.9630285Z  * branch            a8e31e6a897ccdfa7babd66275798925fe904553 -> FETCH_HEAD
+2026-10-12T02:16:45.9642383Z [command]/usr/bin/git rev-parse --verify --quiet a8e31e6a897ccdfa7babd66275798925fe904553^{object}
+2026-10-12T02:16:45.9671615Z a8e31e6a897ccdfa7babd66275798925fe904553
+2026-10-12T02:16:45.9676160Z ##[endgroup]
+2026-10-12T02:16:45.9677033Z ##[group]Determining the checkout info
+2026-10-12T02:16:45.9678173Z ##[endgroup]
+2026-10-12T02:16:45.9682872Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T02:16:45.9727820Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T02:16:45.9760392Z ##[group]Checking out the ref
+2026-10-12T02:16:45.9764344Z [command]/usr/bin/git checkout --progress --force a8e31e6a897ccdfa7babd66275798925fe904553
+2026-10-12T02:16:46.7259919Z Note: switching to 'a8e31e6a897ccdfa7babd66275798925fe904553'.
+2026-10-12T02:16:46.7260773Z 
+2026-10-12T02:16:46.7261316Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-12T02:16:46.7262416Z changes and commit them, and you can discard any commits you make in this
+2026-10-12T02:16:46.7263492Z state without impacting any branches by switching back to a branch.
+2026-10-12T02:16:46.7264139Z 
+2026-10-12T02:16:46.7264483Z If you want to create a new branch to retain commits you create, you may
+2026-10-12T02:16:46.7265128Z do so (now or later) by using -c with the switch command. Example:
+2026-10-12T02:16:46.7265514Z 
+2026-10-12T02:16:46.7265667Z   git switch -c <new-branch-name>
+2026-10-12T02:16:46.7265938Z 
+2026-10-12T02:16:46.7266080Z Or undo this operation with:
+2026-10-12T02:16:46.7268061Z 
+2026-10-12T02:16:46.7268201Z   git switch -
+2026-10-12T02:16:46.7268374Z 
+2026-10-12T02:16:46.7268922Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-12T02:16:46.7269378Z 
+2026-10-12T02:16:46.7269694Z HEAD is now at a8e31e6 test: preserve full handoff footer Before and After controls
+2026-10-12T02:16:46.7284838Z ##[endgroup]
+2026-10-12T02:16:46.7332471Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T02:16:46.7361474Z a8e31e6a897ccdfa7babd66275798925fe904553
+2026-10-12T02:16:46.7371858Z ##[group]Removing auth
+2026-10-12T02:16:46.7372285Z Removing SSH command configuration
+2026-10-12T02:16:46.7377611Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T02:16:46.7413856Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T02:16:46.7654045Z Removing HTTP extra header
+2026-10-12T02:16:46.7660420Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T02:16:46.7701406Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T02:16:46.7933960Z Removing includeIf entries pointing to credentials config files
+2026-10-12T02:16:46.7938682Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T02:16:46.7966489Z includeif.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git.path
+2026-10-12T02:16:46.7967831Z includeif.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git/worktrees/*.path
+2026-10-12T02:16:46.7968440Z includeif.gitdir:/github/workspace/.pr-handoff-driver/.git.path
+2026-10-12T02:16:46.7968976Z includeif.gitdir:/github/workspace/.pr-handoff-driver/.git/worktrees/*.path
+2026-10-12T02:16:46.7977639Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git.path
+2026-10-12T02:16:46.8016860Z /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8019896Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git.path /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8059948Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git/worktrees/*.path
+2026-10-12T02:16:46.8086753Z /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8096892Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.pr-handoff-driver/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8136921Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.pr-handoff-driver/.git.path
+2026-10-12T02:16:46.8162519Z /github/runner_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8171779Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.pr-handoff-driver/.git.path /github/runner_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8220024Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.pr-handoff-driver/.git/worktrees/*.path
+2026-10-12T02:16:46.8245697Z /github/runner_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8253349Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.pr-handoff-driver/.git/worktrees/*.path /github/runner_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config
+2026-10-12T02:16:46.8290259Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T02:16:46.8520516Z Removing credentials config '/home/runner/work/_temp/git-credentials-b062fcbd-e92a-4442-8749-b7af07abf9d8.config'
+2026-10-12T02:16:46.8530298Z ##[endgroup]
+2026-10-12T02:16:46.8833982Z Prepare all required actions
+2026-10-12T02:16:46.8834564Z Getting action download info
+2026-10-12T02:16:46.9939015Z Download action repository 'oven-sh/setup-bun@v2' (SHA:0c5077e51419868618aeaa5fe8019c62421857d6)
+2026-10-12T02:16:47.3968300Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-12T02:16:47.5157489Z ##[group]Run ./.github/actions/setup-workspace
+2026-10-12T02:16:47.5157804Z with:
+2026-10-12T02:16:47.5157994Z   scope: runtime
+2026-10-12T02:16:47.5158196Z   electron: false
+2026-10-12T02:16:47.5158395Z   turbo: false
+2026-10-12T02:16:47.5158583Z env:
+2026-10-12T02:16:47.5158789Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:47.5159077Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:47.5159316Z ##[endgroup]
+2026-10-12T02:16:47.5221497Z ##[start-action display=Validate install scope;id=__self.__run]
+2026-10-12T02:16:47.5259324Z ##[group]Run case "$WORKSPACE_SCOPE" in
+2026-10-12T02:16:47.5259759Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-12T02:16:47.5260054Z [36;1m  full|static|runtime) ;;[0m
+2026-10-12T02:16:47.5260442Z [36;1m  *) echo "::error::Unknown workspace scope: $WORKSPACE_SCOPE"; exit 1 ;;[0m
+2026-10-12T02:16:47.5260831Z [36;1mesac[0m
+2026-10-12T02:16:47.5261127Z [36;1mif [ "$ELECTRON" = "true" ] && [ "$WORKSPACE_SCOPE" = "static" ]; then[0m
+2026-10-12T02:16:47.5261592Z [36;1m  echo "::error::Electron requires a full or runtime install."[0m
+2026-10-12T02:16:47.5261942Z [36;1m  exit 1[0m
+2026-10-12T02:16:47.5262144Z [36;1mfi[0m
+2026-10-12T02:16:47.5537132Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T02:16:47.5537574Z env:
+2026-10-12T02:16:47.5537844Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:47.5538220Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:47.5538540Z   WORKSPACE_SCOPE: runtime
+2026-10-12T02:16:47.5538827Z   ELECTRON: false
+2026-10-12T02:16:47.5539072Z ##[endgroup]
+2026-10-12T02:16:47.5661539Z ##[end-action id=__self.__run;outcome=success;conclusion=success;duration_ms=43]
+2026-10-12T02:16:47.5663873Z ##[start-action display=Setup Bun;id=__self.__oven-sh_setup-bun]
+2026-10-12T02:16:47.5722092Z ##[group]Run oven-sh/setup-bun@v2
+2026-10-12T02:16:47.5722338Z with:
+2026-10-12T02:16:47.5722542Z   bun-version-file: package.json
+2026-10-12T02:16:47.5722793Z   no-cache: false
+2026-10-12T02:16:47.5725294Z   token: ***
+2026-10-12T02:16:47.5725480Z env:
+2026-10-12T02:16:47.5725688Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:47.5725974Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:47.5726208Z ##[endgroup]
+2026-10-12T02:16:47.7431353Z Obtained version 1.4.2 from package.json
+2026-10-12T02:16:47.9017886Z Cache hit for: bun-gmoqYqdUbaYsI0KujeXt7Zg/p0I=
+2026-10-12T02:16:48.6792842Z Received 35684134 of 35684134 (100.0%), 56.1 MBs/sec
+2026-10-12T02:16:48.6793598Z Cache Size: ~34 MB (35684134 B)
+2026-10-12T02:16:48.6829012Z [command]/usr/bin/tar -xf /home/runner/work/_temp/f384c528-8f97-4d20-b8da-caf2d9708cc4/cache.tzst -P -C /home/runner/work/synara/synara --use-compress-program unzstd
+2026-10-12T02:16:48.8159180Z Cache restored successfully
+2026-10-12T02:16:48.8182380Z [command]/home/runner/.bun/bin/bun --revision
+2026-10-12T02:16:48.8222371Z 1.4.2+744846f84
+2026-10-12T02:16:48.8229410Z Using a cached version of Bun: 1.4.2+744846f84
+2026-10-12T02:16:48.8319918Z ##[end-action id=__self.__oven-sh_setup-bun;outcome=success;conclusion=success;duration_ms=1265]
+2026-10-12T02:16:48.8322678Z ##[start-action display=Setup Node;id=__self.__actions_setup-node]
+2026-10-12T02:16:48.8369083Z ##[group]Run actions/setup-node@v6
+2026-10-12T02:16:48.8369342Z with:
+2026-10-12T02:16:48.8369557Z   node-version-file: package.json
+2026-10-12T02:16:48.8369813Z   check-latest: false
+2026-10-12T02:16:48.8372348Z   token: ***
+2026-10-12T02:16:48.8372573Z   package-manager-cache: true
+2026-10-12T02:16:48.8372818Z env:
+2026-10-12T02:16:48.8373032Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:48.8373323Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:48.8373779Z ##[endgroup]
+2026-10-12T02:16:48.9746143Z Resolved package.json as ^24.13.1
+2026-10-12T02:16:48.9831548Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-12T02:16:48.9835579Z ##[group]Environment details
+2026-10-12T02:16:49.3670657Z node: v24.21.0
+2026-10-12T02:16:49.3671191Z npm: 11.19.0
+2026-10-12T02:16:49.3671562Z yarn: 1.22.22
+2026-10-12T02:16:49.3672233Z ##[endgroup]
+2026-10-12T02:16:49.3773990Z ##[end-action id=__self.__actions_setup-node;outcome=success;conclusion=success;duration_ms=545]
+2026-10-12T02:16:49.3776259Z ##[start-action display=Cache node_modules;id=__self.modules]
+2026-10-12T02:16:49.3790356Z ##[end-action id=__self.modules;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:16:49.3792365Z ##[start-action display=Cache Bun install;id=__self.__actions_cache]
+2026-10-12T02:16:49.3798928Z ##[end-action id=__self.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:16:49.3800843Z ##[start-action display=Cache Turbo outputs;id=__self.__actions_cache_2]
+2026-10-12T02:16:49.3804252Z ##[end-action id=__self.__actions_cache_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:16:49.3806136Z ##[start-action display=Cache Electron runtime;id=__self.__actions_cache_3]
+2026-10-12T02:16:49.3809921Z ##[end-action id=__self.__actions_cache_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:16:49.3812236Z ##[start-action display=Install dependencies;id=__self.__run_2]
+2026-10-12T02:16:49.3852951Z ##[group]Run # Hosted Windows checks out on D:, while Bun's default home cache is on C:.
+2026-10-12T02:16:49.3853559Z [36;1m# Hosted Windows checks out on D:, while Bun's default home cache is on C:.[0m
+2026-10-12T02:16:49.3854096Z [36;1m# Match the measured setup so package hardlinks can stay on one volume.[0m
+2026-10-12T02:16:49.3854512Z [36;1mif [ "$RUNNER_OS" = "Windows" ]; then[0m
+2026-10-12T02:16:49.3854901Z [36;1m  export BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-install-cache"[0m
+2026-10-12T02:16:49.3855345Z [36;1m  echo "Bun install cache: $BUN_INSTALL_CACHE_DIR"[0m
+2026-10-12T02:16:49.3855816Z [36;1mfi[0m
+2026-10-12T02:16:49.3856143Z [36;1m# Bound dependency lifecycles. Root postinstall patches each installed[0m
+2026-10-12T02:16:49.3856977Z [36;1m# TypeScript compiler once, after workspace hooks have completed.[0m
+2026-10-12T02:16:49.3857377Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-12T02:16:49.3857748Z [36;1m  full) bun install --frozen-lockfile --concurrent-scripts=1 ;;[0m
+2026-10-12T02:16:49.3858366Z [36;1m  static) bun install --frozen-lockfile --filter './' --filter '@synara/scripts' --concurrent-scripts=1 ;;[0m
+2026-10-12T02:16:49.3859100Z [36;1m  runtime) bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1 ;;[0m
+2026-10-12T02:16:49.3859583Z [36;1mesac[0m
+2026-10-12T02:16:49.3924961Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T02:16:49.3925306Z env:
+2026-10-12T02:16:49.3925529Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:16:49.3925846Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:16:49.3926109Z   ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+2026-10-12T02:16:49.3926677Z   WORKSPACE_SCOPE: runtime
+2026-10-12T02:16:49.3926952Z ##[endgroup]
+2026-10-12T02:16:49.4039662Z bun install v1.4.2 (744846f84)
+2026-10-12T02:16:49.4230962Z Resolving dependencies
+2026-10-12T02:16:50.0137221Z Resolved, downloaded and extracted [64]
+2026-10-12T02:17:02.8118802Z 
+2026-10-12T02:17:02.8120206Z $ node scripts/patch-workspace-typescript.ts && effect-tsgo patch --typescript --typescript-package @typescript/native
+2026-10-12T02:17:04.9968254Z [02:17:04.995] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/typescript.js patched successfully.
+2026-10-12T02:17:09.2211335Z [02:17:09.220] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/_tsc.js patched successfully.
+2026-10-12T02:17:09.2214229Z [02:17:09.221] INFO (#22): If your project uses incremental builds, delete the .tsbuildinfo files and perform a full build.
+2026-10-12T02:17:09.2227336Z [02:17:09.222] INFO (#22): No prepare script found in package.json; to make the patch persistent across package installations and updates, add the following to your package.json scripts:
+2026-10-12T02:17:09.2228921Z   "scripts": {
+2026-10-12T02:17:09.2229727Z           "prepare": "effect-language-service patch"
+2026-10-12T02:17:09.2230326Z   }
+2026-10-12T02:17:09.7486291Z Patched typescript at /home/runner/work/synara/synara/node_modules/.bun/@typescript+typescript-linux-x64@7.0.2/node_modules/@typescript/typescript-linux-x64/lib/tsc
+2026-10-12T02:17:09.7616230Z 
+2026-10-12T02:17:09.7617200Z + @effect/tsgo@0.41.0
+2026-10-12T02:17:09.7618631Z + @types/node@24.12.0 (v26.6.5 available)
+2026-10-12T02:17:09.7619137Z + @typescript/native@7.0.2
+2026-10-12T02:17:09.7619570Z + @vitest/coverage-v8@4.1.10
+2026-10-12T02:17:09.7619833Z + oxfmt@0.40.0
+2026-10-12T02:17:09.7620051Z + oxlint@1.56.0
+2026-10-12T02:17:09.7620425Z + turbo@2.10.5
+2026-10-12T02:17:09.7620667Z + vitest@4.1.10
+2026-10-12T02:17:09.7620798Z 
+2026-10-12T02:17:09.7621062Z 1162 packages installed [20.36s]
+2026-10-12T02:17:09.7737049Z ##[end-action id=__self.__run_2;outcome=success;conclusion=success;duration_ms=20392]
+2026-10-12T02:17:09.7740111Z ##[start-action display=Install Electron test runtime;id=__self.__run_3]
+2026-10-12T02:17:09.7747042Z ##[end-action id=__self.__run_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:17:09.8422405Z ##[group]Run actions/cache@v5
+2026-10-12T02:17:09.8422818Z with:
+2026-10-12T02:17:09.8423128Z   path: ~/.cache/ms-playwright
+2026-10-12T02:17:09.8423849Z   key: Linux-playwright-7c2515579b10ea38a91744e8cb45bc33216144422bda464324c120a1535c1c78
+2026-10-12T02:17:09.8424626Z   enableCrossOsArchive: false
+2026-10-12T02:17:09.8425002Z   fail-on-cache-miss: false
+2026-10-12T02:17:09.8425286Z   lookup-only: false
+2026-10-12T02:17:09.8425541Z   save-always: false
+2026-10-12T02:17:09.8425780Z env:
+2026-10-12T02:17:09.8426024Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:17:09.8426939Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:17:09.8427226Z ##[endgroup]
+2026-10-12T02:17:10.1299971Z Cache not found for input keys: Linux-playwright-7c2515579b10ea38a91744e8cb45bc33216144422bda464324c120a1535c1c78
+2026-10-12T02:17:10.1390590Z ##[group]Run ./apps/web/node_modules/.bin/playwright install chromium
+2026-10-12T02:17:10.1391143Z [36;1m./apps/web/node_modules/.bin/playwright install chromium[0m
+2026-10-12T02:17:10.1454330Z shell: /usr/bin/bash -e {0}
+2026-10-12T02:17:10.1454626Z env:
+2026-10-12T02:17:10.1454883Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:17:10.1455237Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:17:10.1455530Z ##[endgroup]
+2026-10-12T02:17:10.6638416Z Downloading Chrome for Testing 151.0.7922.34 (playwright chromium v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-linux64.zip
+2026-10-12T02:17:11.7442227Z |                                                                                |   0% of 184.3 MiB
+2026-10-12T02:17:12.0521113Z |■■■■■■■■                                                                        |  10% of 184.3 MiB
+2026-10-12T02:17:12.1633008Z |■■■■■■■■■■■■■■■■                                                                |  20% of 184.3 MiB
+2026-10-12T02:17:12.3099470Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 184.3 MiB
+2026-10-12T02:17:12.4682699Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 184.3 MiB
+2026-10-12T02:17:12.6940869Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 184.3 MiB
+2026-10-12T02:17:12.9507030Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 184.3 MiB
+2026-10-12T02:17:13.1075479Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 184.3 MiB
+2026-10-12T02:17:13.2512904Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 184.3 MiB
+2026-10-12T02:17:13.4087877Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 184.3 MiB
+2026-10-12T02:17:13.5538191Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 184.3 MiB
+2026-10-12T02:17:16.6873227Z Chrome for Testing 151.0.7922.34 (playwright chromium v1234) downloaded to /home/runner/.cache/ms-playwright/chromium-1234
+2026-10-12T02:17:16.6896540Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-12T02:17:17.6930455Z |                                                                                |   0% of 2.3 MiB
+2026-10-12T02:17:17.7169903Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-12T02:17:17.7294822Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-12T02:17:17.7381406Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-12T02:17:17.7404254Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-12T02:17:17.7480030Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-12T02:17:17.7544247Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-12T02:17:17.7563558Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-12T02:17:17.7575745Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-12T02:17:17.7633610Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-12T02:17:17.7651893Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-12T02:17:17.8278407Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-12T02:17:17.8282101Z Downloading Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-headless-shell-linux64.zip
+2026-10-12T02:17:18.8555084Z |                                                                                |   0% of 114.7 MiB
+2026-10-12T02:17:19.0776606Z |■■■■■■■■                                                                        |  10% of 114.7 MiB
+2026-10-12T02:17:19.1492598Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.7 MiB
+2026-10-12T02:17:19.2188677Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.7 MiB
+2026-10-12T02:17:19.2783073Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.7 MiB
+2026-10-12T02:17:19.3516665Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.7 MiB
+2026-10-12T02:17:19.3942727Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.7 MiB
+2026-10-12T02:17:19.4393939Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.7 MiB
+2026-10-12T02:17:19.5042451Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.7 MiB
+2026-10-12T02:17:19.5624175Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.7 MiB
+2026-10-12T02:17:19.6033990Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.7 MiB
+2026-10-12T02:17:21.9154089Z Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1234
+2026-10-12T02:17:21.9384524Z ##[group]Run node .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs prepare
+2026-10-12T02:17:21.9385473Z [36;1mnode .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs prepare[0m
+2026-10-12T02:17:21.9447756Z shell: /usr/bin/bash -e {0}
+2026-10-12T02:17:21.9448018Z env:
+2026-10-12T02:17:21.9448250Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:17:21.9448565Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:17:21.9448826Z ##[endgroup]
+2026-10-12T02:17:22.4758692Z ##[group]Run set +e
+2026-10-12T02:17:22.4758979Z [36;1mset +e[0m
+2026-10-12T02:17:22.4759789Z [36;1mbun x --no-install vitest run --config vitest.handoff-footer.config.ts --reporter=default --reporter=json --outputFile="$HANDOFF_FOOTER_LIVE/vitest.json" 2>&1 | tee "$HANDOFF_FOOTER_LIVE/vitest.log"[0m
+2026-10-12T02:17:22.4760657Z [36;1mresult=("${PIPESTATUS[@]}")[0m
+2026-10-12T02:17:22.4760927Z [36;1mset -e[0m
+2026-10-12T02:17:22.4761327Z [36;1mprintf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$HANDOFF_FOOTER_LIVE/exits.json"[0m
+2026-10-12T02:17:22.4761856Z [36;1mif [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi[0m
+2026-10-12T02:17:22.4762209Z [36;1mexit "${result[1]}"[0m
+2026-10-12T02:17:22.4823968Z shell: /usr/bin/bash -e {0}
+2026-10-12T02:17:22.4824263Z env:
+2026-10-12T02:17:22.4824517Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:17:22.4824877Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:17:22.4825346Z   HANDOFF_FOOTER_LIVE: /home/runner/work/_temp/handoff-footer-live-before
+2026-10-12T02:17:22.4825815Z ##[endgroup]
+2026-10-12T02:17:23.8622564Z 
+2026-10-12T02:17:23.8626823Z [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+2026-10-12T02:17:23.8627546Z 
+2026-10-12T02:17:25.2246812Z [2m2:17:25 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+2026-10-12T02:17:26.2468768Z [2m2:17:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+2026-10-12T02:17:26.8982676Z Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+2026-10-12T02:17:26.8983665Z   npx update-browserslist-db@latest
+2026-10-12T02:17:26.8984677Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-10-12T02:22:00.7259312Z  [31m❯[39m [30m[43m chromium [49m[39m src/components/chat/PrHandoffFooterControl1145.browser.tsx [2m([22m[2m6 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 270274[2mms[22m[39m
+2026-10-12T02:22:00.7267166Z      [32m✓[39m shows Stop while connecting so a stuck start can be interrupted[32m 129[2mms[22m[39m
+2026-10-12T02:22:00.7268119Z      [32m✓[39m keeps the mic next to Stop so a follow-up can be dictated mid-turn[32m 66[2mms[22m[39m
+2026-10-12T02:22:00.7268895Z      [32m✓[39m shows only the recorder's stop while dictating mid-turn[32m 8[2mms[22m[39m
+2026-10-12T02:22:00.7269935Z [31m     [31m×[31m holds handoff admission separately from ready cancellation and restores Send when settled[39m[33m 90036[2mms[22m[39m
+2026-10-12T02:22:00.7271187Z [31m     [31m×[31m holds handoff admission separately from connecting cancellation and restores Send when settled[39m[33m 90011[2mms[22m[39m
+2026-10-12T02:22:00.7272599Z [31m     [31m×[31m holds handoff admission separately from running cancellation and restores Send when settled[39m[33m 90020[2mms[22m[39m
+2026-10-12T02:22:00.7306687Z 
+2026-10-12T02:22:00.7337323Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-10-12T02:22:00.7366545Z 
+2026-10-12T02:22:00.7398855Z [41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/chat/PrHandoffFooterControl1145.browser.tsx[2m > [22mChatComposerFooter stop control[2m > [22mholds handoff admission separately from ready cancellation and restores Send when settled
+2026-10-12T02:22:00.7427703Z [31m[1mVitestBrowserElementError[22m: Cannot find element with locator: getByRole('button', { name: 'Connecting', exact: true })
+2026-10-12T02:22:00.7428616Z 
+2026-10-12T02:22:00.7456783Z [36m<body>[31m
+2026-10-12T02:22:00.7486849Z   [36m<div>[31m
+2026-10-12T02:22:00.7487285Z     [36m<div[31m
+2026-10-12T02:22:00.7519253Z       [33mclass[31m=[32m"@container flex items-center justify-between pl-[var(--app-density-composer-footer-padding,0.375rem)] pr-[var(--app-density-composer-footer-padding-end,0.5rem)] pb-[var(--app-density-composer-footer-padding,0.375rem)] flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0"[31m
+2026-10-12T02:22:00.7546992Z       [33mdata-chat-composer-footer[31m=[32m"true"[31m
+2026-10-12T02:22:00.7576782Z     [36m>[31m
+2026-10-12T02:22:00.7577200Z       [36m<div[31m
+2026-10-12T02:22:00.7631121Z         [33mclass[31m=[32m"flex items-center min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible"[31m
+2026-10-12T02:22:00.7637620Z         [33mdata-chat-composer-leading[31m=[32m"true"[31m
+2026-10-12T02:22:00.7638429Z       [36m/>[31m
+2026-10-12T02:22:00.7638850Z       [36m<div[31m
+2026-10-12T02:22:00.7639539Z         [33mclass[31m=[32m"flex items-center gap-2 shrink-0"[31m
+2026-10-12T02:22:00.7640420Z         [33mdata-chat-composer-actions[31m=[32m"right"[31m
+2026-10-12T02:22:00.7640909Z       [36m>[31m
+2026-10-12T02:22:00.7641300Z         [36m<button[31m
+2026-10-12T02:22:00.7641987Z           [33maria-label[31m=[32m"Record voice note"[31m
+2026-10-12T02:22:00.7650913Z           [33mclass[31m=[32m"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-8 sm:size-7 border-transparent bg-transparent text-[var(--color-text-foreground-secondary)] focus-visible:ring-[color:var(--color-border-focus)]/60 focus-visible:ring-offset-0 [:hover,[data-pressed]]:bg-[var(--color-background-button-secondary-hover)] [:hover,[data-pressed]]:text-[var(--color-text-foreground)] data-pressed:bg-[var(--color-background-button-secondary)] data-pressed:text-[var(--color-text-foreground)] shrink-0 rounded-md"[31m
+2026-10-12T02:22:00.7656892Z           [33mdata-slot[31m=[32m"button"[31m
+2026-10-12T02:22:00.7657571Z           [33mtitle[31m=[32m"Record voice note"[31m
+2026-10-12T02:22:00.7658251Z           [33mtype[31m=[32m"button"[31m
+2026-10-12T02:22:00.7658737Z         [36m>[31m
+2026-10-12T02:22:00.7658989Z           [36m<span[31m
+2026-10-12T02:22:00.7659330Z             [33maria-hidden[31m=[32m"true"[31m
+2026-10-12T02:22:00.7660095Z             [33mclass[31m=[32m"inline-block shrink-0 bg-current size-4 text-primary"[31m
+2026-10-12T02:22:00.7661061Z             [33mdata-slot[31m=[32m"central-icon"[31m
+2026-10-12T02:22:00.7662539Z             [33mstyle[31m=[32m"mask: url("/central-icons-reversed/microphone.svg") center center / contain no-repeat;"[31m
+2026-10-12T02:22:00.7663652Z           [36m/>[31m
+2026-10-12T02:22:00.7664089Z         [36m</button>[31m
+2026-10-12T02:22:00.7664547Z         [36m<button[31m
+2026-10-12T02:22:00.7665072Z           [33maria-label[31m=[32m"Send message"[31m
+2026-10-12T02:22:00.7671962Z           [33mclass[31m=[32m"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-ring/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4 sm:not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-3.5 not-in-data-[slot=input-group]:[&_[data-slot=central-icon]:not([class*='size-'])]:size-3.5 border-transparent bg-[var(--color-text-foreground)] text-[var(--color-background-surface)] transition-[transform,opacity] duration-150 hover:scale-105 disabled:opacity-20 disabled:hover:scale-100 size-7 rounded-full sm:size-7"[31m
+2026-10-12T02:22:00.7677639Z           [33mdata-slot[31m=[32m"button"[31m
+2026-10-12T02:22:00.7678026Z           [33mtype[31m=[32m"submit"[31m
+2026-10-12T02:22:00.7678331Z         [36m>[31m
+2026-10-12T02:22:00.7678579Z           [36m<span[31m
+2026-10-12T02:22:00.7678920Z             [33maria-hidden[31m=[32m"true"[31m
+2026-10-12T02:22:00.7679674Z             [33mclass[31m=[32m"inline-block bg-current size-5 shrink-0 translate-y-px"[31m
+2026-10-12T02:22:00.7680227Z             [33mdata-slot[31m=[32m"central-icon"[31m
+2026-10-12T02:22:00.7680944Z             [33mstyle[31m=[32m"mask: url("/central-icons-reversed/arrow-up.svg") center center / contain no-repeat;"[31m
+2026-10-12T02:22:00.7681496Z           [36m/>[31m
+2026-10-12T02:22:00.7681748Z         [36m</button>[31m
+2026-10-12T02:22:00.7682012Z       [36m</div>[31m
+2026-10-12T02:22:00.7682256Z     [36m</div>[31m
+2026-10-12T02:22:00.7682675Z   [36m</div>[31m
+2026-10-12T02:22:00.7682937Z [36m</body>[31m[39m
+2026-10-12T02:22:00.7683077Z 
+2026-10-12T02:22:00.7683187Z Failure screenshot:
+2026-10-12T02:22:00.7684446Z   - [2msrc/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-ready-cancellation-and-restores-Send-when-settled-1.png[22m
+2026-10-12T02:22:00.7685409Z 
+2026-10-12T02:22:00.7685927Z [36m [2m❯[22m src/components/chat/PrHandoffFooterControl1145.browser.tsx:[2m137:37[22m[39m
+2026-10-12T02:22:00.7686726Z     [90m135|[39m       [35mtry[39m {
+2026-10-12T02:22:00.7687266Z     [90m136|[39m         const submit = page.getByRole("button", { name: "Connecting", …
+2026-10-12T02:22:00.7688073Z     [90m137|[39m         [35mawait[39m expect[33m.[39m[34melement[39m(submit)[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+2026-10-12T02:22:00.7688704Z     [90m   |[39m                                     [31m^[39m
+2026-10-12T02:22:00.7689408Z     [90m138|[39m         [35mawait[39m expect[33m.[39m[34melement[39m(submit)[33m.[39m[34mtoBeDisabled[39m()[33m;[39m
+2026-10-12T02:22:00.7690176Z     [90m139|[39m         expect(document.querySelectorAll('button[type="submit"]')).toH…
+2026-10-12T02:22:00.7690503Z 
+2026-10-12T02:22:00.7690834Z [31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+2026-10-12T02:22:00.7691922Z [36m [2m❯[22m src/components/chat/PrHandoffFooterControl1145.browser.tsx:[2m137:8[22m[39m
+2026-10-12T02:22:00.7692353Z 
+2026-10-12T02:22:00.7692615Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+2026-10-12T02:22:00.7692825Z 
+2026-10-12T02:22:00.7694083Z [41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/chat/PrHandoffFooterControl1145.browser.tsx[2m > [22mChatComposerFooter stop control[2m > [22mholds handoff admission separately from connecting cancellation and restores Send when settled
+2026-10-12T02:22:00.7695623Z [31m[1mVitestBrowserElementError[22m: Cannot find element with locator: getByRole('button', { name: 'Connecting', exact: true })
+2026-10-12T02:22:00.7696774Z 
+2026-10-12T02:22:00.7696928Z [36m<body>[31m
+2026-10-12T02:22:00.7697177Z   [36m<div>[31m
+2026-10-12T02:22:00.7697407Z     [36m<div[31m
+2026-10-12T02:22:00.7699290Z       [33mclass[31m=[32m"@container flex items-center justify-between pl-[var(--app-density-composer-footer-padding,0.375rem)] pr-[var(--app-density-composer-footer-padding-end,0.5rem)] pb-[var(--app-density-composer-footer-padding,0.375rem)] flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0"[31m
+2026-10-12T02:22:00.7700663Z       [33mdata-chat-composer-footer[31m=[32m"true"[31m
+2026-10-12T02:22:00.7701021Z     [36m>[31m
+2026-10-12T02:22:00.7701250Z       [36m<div[31m
+2026-10-12T02:22:00.7702234Z         [33mclass[31m=[32m"flex items-center min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible"[31m
+2026-10-12T02:22:00.7703094Z         [33mdata-chat-composer-leading[31m=[32m"true"[31m
+2026-10-12T02:22:00.7703453Z       [36m/>[31m
+2026-10-12T02:22:00.7703691Z       [36m<div[31m
+2026-10-12T02:22:00.7704275Z         [33mclass[31m=[32m"flex items-center gap-2 shrink-0"[31m
+2026-10-12T02:22:00.7704777Z         [33mdata-chat-composer-actions[31m=[32m"right"[31m
+2026-10-12T02:22:00.7705122Z       [36m>[31m
+2026-10-12T02:22:00.7705362Z         [36m<button[31m
+2026-10-12T02:22:00.7705717Z           [33maria-label[31m=[32m"Stop generation"[31m
+2026-10-12T02:22:00.7712351Z           [33mclass[31m=[32m"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-ring/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-7 not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4 sm:not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-3.5 not-in-data-[slot=input-group]:[&_[data-slot=central-icon]:not([class*='size-'])]:size-3.5 rounded-full border-transparent bg-[var(--color-text-foreground)] text-[var(--color-background-surface)] transition-[transform,opacity] duration-150 hover:scale-105 disabled:opacity-20 disabled:hover:scale-100 sm:size-[26px]"[31m
+2026-10-12T02:22:00.7717696Z           [33mdata-slot[31m=[32m"button"[31m
+2026-10-12T02:22:00.7718279Z           [33mtitle[31m=[32m"Stop the current response. On Mac, press Ctrl+C to interrupt."[31m
+2026-10-12T02:22:00.7718804Z           [33mtype[31m=[32m"button"[31m
+2026-10-12T02:22:00.7719099Z         [36m>[31m
+2026-10-12T02:22:00.7719339Z           [36m<span[31m
+2026-10-12T02:22:00.7719666Z             [33maria-hidden[31m=[32m"true"[31m
+2026-10-12T02:22:00.7720142Z             [33mclass[31m=[32m"block size-2 rounded-[1px] bg-current"[31m
+2026-10-12T02:22:00.7720528Z           [36m/>[31m
+2026-10-12T02:22:00.7720783Z         [36m</button>[31m
+2026-10-12T02:22:00.7721195Z       [36m</div>[31m
+2026-10-12T02:22:00.7721779Z     [36m</div>[31m
+2026-10-12T02:22:00.7722032Z   [36m</div>[31m
+2026-10-12T02:22:00.7722279Z [36m</body>[31m[39m
+2026-10-12T02:22:00.7722408Z 
+2026-10-12T02:22:00.7722517Z Failure screenshot:
+2026-10-12T02:22:00.7723796Z   - [2msrc/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-connecting-cancellation-and-restores-Send-when-settled-1.png[22m
+2026-10-12T02:22:00.7724775Z 
+2026-10-12T02:22:00.7725441Z [36m [2m❯[22m src/components/chat/PrHandoffFooterControl1145.browser.tsx:[2m137:37[22m[39m
+2026-10-12T02:22:00.7725988Z     [90m135|[39m       [35mtry[39m {
+2026-10-12T02:22:00.7726677Z     [90m136|[39m         const submit = page.getByRole("button", { name: "Connecting", …
+2026-10-12T02:22:00.7727609Z     [90m137|[39m         [35mawait[39m expect[33m.[39m[34melement[39m(submit)[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+2026-10-12T02:22:00.7728533Z     [90m   |[39m                                     [31m^[39m
+2026-10-12T02:22:00.7729266Z     [90m138|[39m         [35mawait[39m expect[33m.[39m[34melement[39m(submit)[33m.[39m[34mtoBeDisabled[39m()[33m;[39m
+2026-10-12T02:22:00.7730037Z     [90m139|[39m         expect(document.querySelectorAll('button[type="submit"]')).toH…
+2026-10-12T02:22:00.7730367Z 
+2026-10-12T02:22:00.8018077Z [31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+2026-10-12T02:22:00.8047869Z [36m [2m❯[22m src/components/chat/PrHandoffFooterControl1145.browser.tsx:[2m137:8[22m[39m
+2026-10-12T02:22:00.8051307Z 
+2026-10-12T02:22:00.8051818Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+2026-10-12T02:22:00.8052197Z 
+2026-10-12T02:22:00.8053846Z [41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/chat/PrHandoffFooterControl1145.browser.tsx[2m > [22mChatComposerFooter stop control[2m > [22mholds handoff admission separately from running cancellation and restores Send when settled
+2026-10-12T02:22:00.8055445Z [31m[1mVitestBrowserElementError[22m: Cannot find element with locator: getByRole('button', { name: 'Connecting', exact: true })
+2026-10-12T02:22:00.8055946Z 
+2026-10-12T02:22:00.8056063Z [36m<body>[31m
+2026-10-12T02:22:00.8056450Z   [36m<div>[31m
+2026-10-12T02:22:00.8056691Z     [36m<div[31m
+2026-10-12T02:22:00.8058130Z       [33mclass[31m=[32m"@container flex items-center justify-between pl-[var(--app-density-composer-footer-padding,0.375rem)] pr-[var(--app-density-composer-footer-padding-end,0.5rem)] pb-[var(--app-density-composer-footer-padding,0.375rem)] flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0"[31m
+2026-10-12T02:22:00.8059468Z       [33mdata-chat-composer-footer[31m=[32m"true"[31m
+2026-10-12T02:22:00.8059811Z     [36m>[31m
+2026-10-12T02:22:00.8060040Z       [36m<div[31m
+2026-10-12T02:22:00.8061086Z         [33mclass[31m=[32m"flex items-center min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible"[31m
+2026-10-12T02:22:00.8061952Z         [33mdata-chat-composer-leading[31m=[32m"true"[31m
+2026-10-12T02:22:00.8062312Z       [36m/>[31m
+2026-10-12T02:22:00.8062546Z       [36m<div[31m
+2026-10-12T02:22:00.8062945Z         [33mclass[31m=[32m"flex items-center gap-2 shrink-0"[31m
+2026-10-12T02:22:00.8063441Z         [33mdata-chat-composer-actions[31m=[32m"right"[31m
+2026-10-12T02:22:00.8063792Z       [36m>[31m
+2026-10-12T02:22:00.8064034Z         [36m<button[31m
+2026-10-12T02:22:00.8064397Z           [33maria-label[31m=[32m"Record voice note"[31m
+2026-10-12T02:22:00.8070450Z           [33mclass[31m=[32m"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-8 sm:size-7 border-transparent bg-transparent text-[var(--color-text-foreground-secondary)] focus-visible:ring-[color:var(--color-border-focus)]/60 focus-visible:ring-offset-0 [:hover,[data-pressed]]:bg-[var(--color-background-button-secondary-hover)] [:hover,[data-pressed]]:text-[var(--color-text-foreground)] data-pressed:bg-[var(--color-background-button-secondary)] data-pressed:text-[var(--color-text-foreground)] shrink-0 rounded-md"[31m
+2026-10-12T02:22:00.8075613Z           [33mdata-slot[31m=[32m"button"[31m
+2026-10-12T02:22:00.8076050Z           [33mtitle[31m=[32m"Record voice note"[31m
+2026-10-12T02:22:00.8076573Z           [33mtype[31m=[32m"button"[31m
+2026-10-12T02:22:00.8076876Z         [36m>[31m
+2026-10-12T02:22:00.8077117Z           [36m<span[31m
+2026-10-12T02:22:00.8077447Z             [33maria-hidden[31m=[32m"true"[31m
+2026-10-12T02:22:00.8077993Z             [33mclass[31m=[32m"inline-block shrink-0 bg-current size-4 text-primary"[31m
+2026-10-12T02:22:00.8078524Z             [33mdata-slot[31m=[32m"central-icon"[31m
+2026-10-12T02:22:00.8079245Z             [33mstyle[31m=[32m"mask: url("/central-icons-reversed/microphone.svg") center center / contain no-repeat;"[31m
+2026-10-12T02:22:00.8079804Z           [36m/>[31m
+2026-10-12T02:22:00.8080052Z         [36m</button>[31m
+2026-10-12T02:22:00.8080320Z         [36m<button[31m
+2026-10-12T02:22:00.8080671Z           [33maria-label[31m=[32m"Stop generation"[31m
+2026-10-12T02:22:00.8086901Z           [33mclass[31m=[32m"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-ring/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-7 not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4 sm:not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-3.5 not-in-data-[slot=input-group]:[&_[data-slot=central-icon]:not([class*='size-'])]:size-3.5 rounded-full border-transparent bg-[var(--color-text-foreground)] text-[var(--color-background-surface)] transition-[transform,opacity] duration-150 hover:scale-105 disabled:opacity-20 disabled:hover:scale-100 sm:size-[26px]"[31m
+2026-10-12T02:22:00.8091768Z           [33mdata-slot[31m=[32m"button"[31m
+2026-10-12T02:22:00.8092339Z           [33mtitle[31m=[32m"Stop the current response. On Mac, press Ctrl+C to interrupt."[31m
+2026-10-12T02:22:00.8092858Z           [33mtype[31m=[32m"button"[31m
+2026-10-12T02:22:00.8093156Z         [36m>[31m
+2026-10-12T02:22:00.8093389Z           [36m<span[31m
+2026-10-12T02:22:00.8093710Z             [33maria-hidden[31m=[32m"true"[31m
+2026-10-12T02:22:00.8094191Z             [33mclass[31m=[32m"block size-2 rounded-[1px] bg-current"[31m
+2026-10-12T02:22:00.8094576Z           [36m/>[31m
+2026-10-12T02:22:00.8094826Z         [36m</button>[31m
+2026-10-12T02:22:00.8095089Z       [36m</div>[31m
+2026-10-12T02:22:00.8095322Z     [36m</div>[31m
+2026-10-12T02:22:00.8095553Z   [36m</div>[31m
+2026-10-12T02:22:00.8095800Z [36m</body>[31m[39m
+2026-10-12T02:22:00.8095926Z 
+2026-10-12T02:22:00.8096031Z Failure screenshot:
+2026-10-12T02:22:00.8097452Z   - [2msrc/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-running-cancellation-and-restores-Send-when-settled-1.png[22m
+2026-10-12T02:22:00.8098435Z 
+2026-10-12T02:22:00.8098919Z [36m [2m❯[22m src/components/chat/PrHandoffFooterControl1145.browser.tsx:[2m137:37[22m[39m
+2026-10-12T02:22:00.8099640Z     [90m135|[39m       [35mtry[39m {
+2026-10-12T02:22:00.8100168Z     [90m136|[39m         const submit = page.getByRole("button", { name: "Connecting", …
+2026-10-12T02:22:00.8101095Z     [90m137|[39m         [35mawait[39m expect[33m.[39m[34melement[39m(submit)[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+2026-10-12T02:22:00.8101737Z     [90m   |[39m                                     [31m^[39m
+2026-10-12T02:22:00.8102436Z     [90m138|[39m         [35mawait[39m expect[33m.[39m[34melement[39m(submit)[33m.[39m[34mtoBeDisabled[39m()[33m;[39m
+2026-10-12T02:22:00.8103196Z     [90m139|[39m         expect(document.querySelectorAll('button[type="submit"]')).toH…
+2026-10-12T02:22:00.8103523Z 
+2026-10-12T02:22:00.8124901Z [31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+2026-10-12T02:22:00.8125965Z [36m [2m❯[22m src/components/chat/PrHandoffFooterControl1145.browser.tsx:[2m137:8[22m[39m
+2026-10-12T02:22:00.8126702Z 
+2026-10-12T02:22:00.8127024Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+2026-10-12T02:22:00.8127303Z 
+2026-10-12T02:22:00.8128960Z 
+2026-10-12T02:22:00.8133835Z [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+2026-10-12T02:22:00.8135238Z [2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (6)[39m
+2026-10-12T02:22:00.8136284Z [2m   Start at [22m 02:17:23
+2026-10-12T02:22:00.8137781Z [2m   Duration [22m 276.86s[2m (transform 0ms, setup 0ms, import 3.53s, tests 270.27s, environment 0ms)[22m
+2026-10-12T02:22:00.8139270Z 
+2026-10-12T02:22:00.8151574Z JSON report written to /home/runner/work/_temp/handoff-footer-live-before/vitest.json
+2026-10-12T02:22:00.9589507Z ##[error]Process completed with exit code 1.
+2026-10-12T02:22:00.9647968Z ##[group]Run node .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs verify
+2026-10-12T02:22:00.9648668Z [36;1mnode .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs verify[0m
+2026-10-12T02:22:00.9711104Z shell: /usr/bin/bash -e {0}
+2026-10-12T02:22:00.9711398Z env:
+2026-10-12T02:22:00.9711657Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:22:00.9712020Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:22:00.9712459Z   HANDOFF_FOOTER_LIVE: /home/runner/work/_temp/handoff-footer-live-before
+2026-10-12T02:22:00.9712943Z   HANDOFF_FOOTER_BROWSER_OUTCOME: failure
+2026-10-12T02:22:00.9713264Z ##[endgroup]
+2026-10-12T02:22:01.0577376Z {"variant":"before","source":"53248e7ed92a1d14147cd66822cfa982b0d6baef","actualExitCode":1,"errors":[],"passed":3,"failed":3}
+2026-10-12T02:22:01.0632622Z ##[error]Process completed with exit code 1.
+2026-10-12T02:22:01.0682759Z ##[group]Run actions/upload-artifact@v7
+2026-10-12T02:22:01.0683062Z with:
+2026-10-12T02:22:01.0683377Z   name: handoff-footer-before-53248e7ed92a1d14147cd66822cfa982b0d6baef
+2026-10-12T02:22:01.0683796Z   path: pr-handoff-footer-evidence/
+2026-10-12T02:22:01.0684100Z   if-no-files-found: error
+2026-10-12T02:22:01.0684344Z   include-hidden-files: true
+2026-10-12T02:22:01.0684597Z   retention-days: 30
+2026-10-12T02:22:01.0684847Z   compression-level: 6
+2026-10-12T02:22:01.0685070Z   overwrite: false
+2026-10-12T02:22:01.0685271Z   archive: true
+2026-10-12T02:22:01.0685461Z env:
+2026-10-12T02:22:01.0685667Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-12T02:22:01.0685952Z   HANDOFF_FOOTER_TARGET: before
+2026-10-12T02:22:01.0686609Z   HANDOFF_FOOTER_LIVE: /home/runner/work/_temp/handoff-footer-live-before
+2026-10-12T02:22:01.0687015Z ##[endgroup]
+2026-10-12T02:22:01.2232908Z With the provided path, there will be 12 files uploaded
+2026-10-12T02:22:01.2239194Z Artifact name is valid!
+2026-10-12T02:22:01.2239983Z Root directory input is valid!
+2026-10-12T02:22:01.4850995Z Uploading artifact: handoff-footer-before-53248e7ed92a1d14147cd66822cfa982b0d6baef.zip
+2026-10-12T02:22:01.4899084Z Beginning upload of artifact content to blob storage
+2026-10-12T02:22:01.7803348Z Uploaded bytes 19639
+2026-10-12T02:22:01.8347130Z Finished uploading artifact content to blob storage!
+2026-10-12T02:22:01.8348795Z SHA256 digest of uploaded artifact is e78673574647a5a2c72d506a67841d860e0128995e9addc162bd878fa2297054
+2026-10-12T02:22:01.8349851Z Finalizing artifact upload
+2026-10-12T02:22:02.1146674Z Artifact handoff-footer-before-53248e7ed92a1d14147cd66822cfa982b0d6baef successfully finalized. Artifact ID 11723172081
+2026-10-12T02:22:02.1149522Z Artifact handoff-footer-before-53248e7ed92a1d14147cd66822cfa982b0d6baef has been successfully uploaded! Final size is 19639 bytes. Artifact ID is 11723172081
+2026-10-12T02:22:02.1152159Z Artifact download URL: https://github.com/Emanuele-web04/synara/actions/runs/38195141054/artifacts/11723172081
+2026-10-12T02:22:02.1386550Z Post job cleanup.
+2026-10-12T02:22:02.1391600Z ##[start-action display=Setup Node;id=__c167bef9-b423-4588-9919-d4b80de0d88b.__actions_setup-node]
+2026-10-12T02:22:02.1393831Z ##[end-action id=__c167bef9-b423-4588-9919-d4b80de0d88b.__actions_setup-node;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:22:02.1395792Z ##[start-action display=Setup Bun;id=__c167bef9-b423-4588-9919-d4b80de0d88b.__oven-sh_setup-bun]
+2026-10-12T02:22:02.1398022Z ##[end-action id=__c167bef9-b423-4588-9919-d4b80de0d88b.__oven-sh_setup-bun;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-12T02:22:02.1469994Z Post job cleanup.
+2026-10-12T02:22:02.2351011Z [command]/usr/bin/git version
+2026-10-12T02:22:02.2397088Z git version 2.55.0
+2026-10-12T02:22:02.2437769Z Temporarily overriding HOME='/home/runner/work/_temp/f8d1e0b2-9cbe-4da4-9ddf-7a899bf58f94' before making global git config changes
+2026-10-12T02:22:02.2439397Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T02:22:02.2443943Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara/.pr-handoff-driver
+2026-10-12T02:22:02.2478093Z Removing SSH command configuration
+2026-10-12T02:22:02.2485257Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T02:22:02.2531360Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T02:22:02.2780370Z Removing HTTP extra header
+2026-10-12T02:22:02.2787549Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T02:22:02.2826970Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T02:22:02.3100854Z Removing includeIf entries pointing to credentials config files
+2026-10-12T02:22:02.3110136Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T02:22:02.3153030Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T02:22:02.3687996Z Post job cleanup.
+2026-10-12T02:22:02.4612127Z [command]/usr/bin/git version
+2026-10-12T02:22:02.4658635Z git version 2.55.0
+2026-10-12T02:22:02.4700282Z Temporarily overriding HOME='/home/runner/work/_temp/20af0036-11b6-47ce-9063-99cd0e84bef9' before making global git config changes
+2026-10-12T02:22:02.4701825Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T02:22:02.4706570Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-12T02:22:02.4743927Z Removing SSH command configuration
+2026-10-12T02:22:02.4751271Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T02:22:02.4799164Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T02:22:02.5069144Z Removing HTTP extra header
+2026-10-12T02:22:02.5074099Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T02:22:02.5112769Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T02:22:02.5398146Z Removing includeIf entries pointing to credentials config files
+2026-10-12T02:22:02.5399529Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T02:22:02.5490302Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T02:22:02.5890691Z Cleaning up orphan processes
+

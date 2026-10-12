@@ -1,0 +1,191 @@
+{
+  "variant": "after",
+  "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+  "tree": "4505c81b9128f56a758708c0581106490b3a5859",
+  "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+  "driverTree": "78f26d6bb6a9f88ddb2e51e0d1c4d6f58c97dd8d",
+  "driverFiles": [
+    {
+      "path": ".github/workflows/handoff-evidence.yml",
+      "bytes": 6061,
+      "blob": "3bc4985706ab109f2e34de1357abf605aea7eb11",
+      "sha256": "c5eb3bcacb563643455e1cd379aa3121a0dbcf1dde6e58314741a88f9f316830"
+    },
+    {
+      "path": "scripts/handoff-evidence/runner.mjs",
+      "bytes": 18584,
+      "blob": "903d9253688ef4a7b0ea182d66fc966cd4218018",
+      "sha256": "c80a3d46f3ceab18c7e8bd6869d81e14c424f6654cff07f8ff41b00e4a56e5db"
+    },
+    {
+      "path": "scripts/handoff-evidence/snapshots.mjs",
+      "bytes": 5005,
+      "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+      "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1"
+    },
+    {
+      "path": "scripts/handoff-evidence/helpers.ts",
+      "bytes": 3867,
+      "blob": "669198d9c9028bcf655fa599b5b4483356bdcac9",
+      "sha256": "a1b99ea78b62d3c554c6fb1927fd596768c645a85828839089d493881e356687"
+    },
+    {
+      "path": "scripts/handoff-evidence/overlay.json",
+      "bytes": 2074,
+      "blob": "546537bf0356d8e057cbec3da70e2efda61208f7",
+      "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e"
+    },
+    {
+      "path": "scripts/handoff-evidence/footer-control.mjs",
+      "bytes": 10869,
+      "blob": "92f92f0e5fa058ac988686ec9fd3797cb3690853",
+      "sha256": "51528eec5ee00beffb256f91a8ce1b295dd0d43da6ca4b6d34e7f2d61fea91b4"
+    },
+    {
+      "path": "scripts/handoff-evidence/vitest.handoff-footer.config.ts",
+      "bytes": 348,
+      "blob": "a73321ffe73087d749bde7e7dbaaff70e192530d",
+      "sha256": "52afcd127a86b596bb3875956890292e36d60f20733371ee555e887d7c59a991"
+    },
+    {
+      "path": "scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+      "bytes": 1053,
+      "blob": "a1fb1e350a6355d3ff26905143ff9cc0e12b76a0",
+      "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91"
+    },
+    {
+      "path": "scripts/handoff-evidence/README.md",
+      "bytes": 6558,
+      "blob": "8755c2c46d3475023359118eada8d4e6f7608f7e",
+      "sha256": "a4f9ce39c7ea5562dbb255f772afd4829a7474892514c16468f19ff1e39d85f6"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/chat/ChatComposerFooter.browser.tsx",
+      "bytes": 5451,
+      "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8",
+      "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7"
+    },
+    {
+      "path": "apps/web/src/components/chat/ChatComposerFooter.tsx",
+      "bytes": 13285,
+      "blob": "7615f50ce03825e5e1938d3b9e1747e90ef25c82",
+      "sha256": "dfec18f2a3623e36917afcb21467f9fba159cd2f335ccbf640fd8f45bd4d9f1a"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "bytes": 284344,
+      "blob": "0a8e92915a483d879f7b38369ecb85fbd8253890",
+      "sha256": "0b29a528ced14a2e58cfcfda479e4a24fcfda9cfc3bf1aefd9c72db76a1b27d7"
+    },
+    {
+      "path": "bun.lock",
+      "bytes": 776515,
+      "blob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7"
+    }
+  ],
+  "canonical": {
+    "path": "apps/web/src/components/chat/ChatComposerFooter.browser.tsx",
+    "bytes": 5451,
+    "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8",
+    "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7"
+  },
+  "overlays": [
+    {
+      "path": "apps/web/src/components/chat/PrHandoffFooterControl1145.browser.tsx",
+      "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7"
+    },
+    {
+      "path": "apps/web/vitest.handoff-footer.config.ts",
+      "sha256": "52afcd127a86b596bb3875956890292e36d60f20733371ee555e887d7c59a991"
+    }
+  ],
+  "live": "/home/runner/work/_temp/handoff-footer-live-after",
+  "liveScreenshots": "/home/runner/work/synara/synara/apps/web/src/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx",
+  "qualification": "The identical complete six-case footer fixture runs on both production implementations. Three existing Stop/voice cases and three explicit pending-to-settled cases execute without name filtering. Before receives the new handoffPending input that its unchanged component ignores. No provider, native desktop or OS behavior is exercised; original failed browser exits remain failures.",
+  "browserOutcome": "success",
+  "actualExitCode": 0,
+  "exits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "errors": [],
+  "assertions": [
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control shows Stop while connecting so a stuck start can be interrupted",
+      "status": "passed",
+      "title": "shows Stop while connecting so a stuck start can be interrupted",
+      "duration": 135.8000000000029,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control keeps the mic next to Stop so a follow-up can be dictated mid-turn",
+      "status": "passed",
+      "title": "keeps the mic next to Stop so a follow-up can be dictated mid-turn",
+      "duration": 65.19999999999709,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control shows only the recorder's stop while dictating mid-turn",
+      "status": "passed",
+      "title": "shows only the recorder's stop while dictating mid-turn",
+      "duration": 8,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control holds handoff admission separately from ready cancellation and restores Send when settled",
+      "status": "passed",
+      "title": "holds handoff admission separately from ready cancellation and restores Send when settled",
+      "duration": 8.60000000000582,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control holds handoff admission separately from connecting cancellation and restores Send when settled",
+      "status": "passed",
+      "title": "holds handoff admission separately from connecting cancellation and restores Send when settled",
+      "duration": 6.599999999991269,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control holds handoff admission separately from running cancellation and restores Send when settled",
+      "status": "passed",
+      "title": "holds handoff admission separately from running cancellation and restores Send when settled",
+      "duration": 3.8000000000029104,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    }
+  ],
+  "expectedControlMatched": true,
+  "status": "completed"
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "path": "common-canonical-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26"
+  },
+  {
+    "path": "completed-pending-desktop.png",
+    "bytes": 63090,
+    "sha256": "9685ca7d5e94b92e86795db82f9debcf0fbec921ff618c6455dcdbdce22b156e",
+    "blob": "885308d58b044dcd128258d499a8319a7b68d077"
+  },
+  {
+    "path": "completed-pending-narrow.png",
+    "bytes": 27221,
+    "sha256": "6e3b15c89572823848991680daa565efcc7503de3445063cd045f5dd0d8af840",
+    "blob": "331e1a81f3631ea12569d99000ae5e24f1bf7f49"
+  },
+  {
+    "path": "completed-settled-desktop.png",
+    "bytes": 68530,
+    "sha256": "cecb27c8a183e9f70cf67af2965e26410f4a8713a56d65b74f03d3eecabf2aa6",
+    "blob": "d86e335ddcb1de9ac3f723aa46a996d5a88f86eb"
+  },
+  {
+    "path": "completed-settled-narrow.png",
+    "bytes": 31698,
+    "sha256": "99645afaf671bdc95515c1e64a3932aea79678e5bc3b87105129f7239e5d2c22",
+    "blob": "133ef5c97d9e96a5bbeade7e1b2ea6937d1904d1"
+  },
+  {
+    "path": "exits.json",
+    "bytes": 21,
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+  },
+  {
+    "path": "failed-pending-desktop.png",
+    "bytes": 63119,
+    "sha256": "2bf46ae845dd115330be323df698209675919adea1d8d05441213091b77a7698",
+    "blob": "7756f7d45fb17fbce5ddcbacf2fd7b4a627a8b6c"
+  },
+  {
+    "path": "failed-pending-narrow.png",
+    "bytes": 27225,
+    "sha256": "ebed176cbf3883b05b78a8b4c374a3dafa7e816fb695ce15e0fe0107febc3b19",
+    "blob": "90cbbde1bc4d04d8d1a816e8648d0a198d4ecef6"
+  },
+  {
+    "path": "failed-settled-desktop.png",
+    "bytes": 68559,
+    "sha256": "7b986514fde213127696345a50e0a223119e47c2a3ac1357fc7939f708a262ac",
+    "blob": "a2a588e5f30a17c0b13a417aec40d714b4a6a9f0"
+  },
+  {
+    "path": "failed-settled-narrow.png",
+    "bytes": 31830,
+    "sha256": "a0982cf83aa03bff1fd706affe945cb26d77de78d976c3192af01bc1783888c0",
+    "blob": "4584385196450952b779ac95edd5d6269641098d"
+  },
+  {
+    "path": "observed-ChatView.browser.tsx",
+    "bytes": 588048,
+    "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc",
+    "blob": "1b7134fc13a191e469054a19983c1c528daaa7bc"
+  },
+  {
+    "path": "output-snapshots.json",
+    "bytes": 8819,
+    "sha256": "7b5e63336a9e1db189821d17c2f8bb105cae58a5a4080c36e338be79b629c439",
+    "blob": "4535fb4d9b6e7aa0cd542c37077c8e236c66dfd5"
+  },
+  {
+    "path": "overlay.json",
+    "bytes": 2074,
+    "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e",
+    "blob": "546537bf0356d8e057cbec3da70e2efda61208f7"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 7569,
+    "sha256": "5de5d28d36818469b0d2ad3fbef160888fb2edb2520b5b4d169f565013e4215c",
+    "blob": "86356a0e9de19ceaa034dcdb1b618364a0cc2ede"
+  },
+  {
+    "path": "source-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26"
+  },
+  {
+    "path": "verified.json",
+    "bytes": 36184,
+    "sha256": "a406c9529945a159a5c2eacaf8a9dde0c08973b430707c48f8044f731152242b",
+    "blob": "58d4ddd19bd8ff6da5e3419ac64dabc83bcfe6e8"
+  },
+  {
+    "path": "video/page@0a2eea0c37634c20b6eb19c5dc3d385c.webm",
+    "bytes": 944042,
+    "sha256": "cafaed408327454744456ead82a24118780f2182e513f702e609cea70ec155ae",
+    "blob": "0d1ad742db94fa74ed782155809c402d86dd21ab"
+  },
+  {
+    "path": "vitest.json",
+    "bytes": 75709,
+    "sha256": "f29bfcbc761b0de92e37e02bb4b8d78a6d1a422d98b654240a176d0879799950",
+    "blob": "e9c129f49283fbb99843857d2ee7be539e31cfb2"
+  },
+  {
+    "path": "vitest.log",
+    "bytes": 20066,
+    "sha256": "58b69a69caa59d34d3108700b4dc3e0835aed4bf0c7b07d908f6a44795a6a9ad",
+    "blob": "7da98302f7f569239ceb0c247051d686ab173b53"
+  }
+]

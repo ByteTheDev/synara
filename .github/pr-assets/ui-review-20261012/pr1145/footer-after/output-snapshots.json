@@ -1,0 +1,73 @@
+{
+  "snapshots": [
+    {
+      "path": "vitest.json",
+      "source": "/home/runner/work/_temp/handoff-footer-live-after/vitest.json",
+      "bytes": 2796,
+      "sha256": "6ab8a37da9b4aa0c0a004c4dad1bdb71cd4effb632849afec48efd1e1e1334ca",
+      "sourceBefore": {
+        "size": 2796,
+        "mtimeMs": 1791771450704.8074,
+        "ctimeMs": 1791771450704.8074,
+        "dev": 2049,
+        "ino": 9458103
+      },
+      "sourceAfter": {
+        "size": 2796,
+        "mtimeMs": 1791771450704.8074,
+        "ctimeMs": 1791771450704.8074,
+        "dev": 2049,
+        "ino": 9458103
+      },
+      "cutoffUtc": "2026-10-12T02:17:30.928Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "vitest.log",
+      "source": "/home/runner/work/_temp/handoff-footer-live-after/vitest.log",
+      "bytes": 929,
+      "sha256": "831602d1271c67f94dd501edce50b575cf2804e211723169c5d0fac0f8005f34",
+      "sourceBefore": {
+        "size": 929,
+        "mtimeMs": 1791771450705.8074,
+        "ctimeMs": 1791771450705.8074,
+        "dev": 2049,
+        "ino": 9457367
+      },
+      "sourceAfter": {
+        "size": 929,
+        "mtimeMs": 1791771450705.8074,
+        "ctimeMs": 1791771450705.8074,
+        "dev": 2049,
+        "ino": 9457367
+      },
+      "cutoffUtc": "2026-10-12T02:17:30.929Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "exits.json",
+      "source": "/home/runner/work/_temp/handoff-footer-live-after/exits.json",
+      "bytes": 21,
+      "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+      "sourceBefore": {
+        "size": 21,
+        "mtimeMs": 1791771450874.8723,
+        "ctimeMs": 1791771450874.8723,
+        "dev": 2049,
+        "ino": 9458104
+      },
+      "sourceAfter": {
+        "size": 21,
+        "mtimeMs": 1791771450874.8723,
+        "ctimeMs": 1791771450874.8723,
+        "dev": 2049,
+        "ino": 9458104
+      },
+      "cutoffUtc": "2026-10-12T02:17:30.929Z",
+      "immutableCopy": true
+    }
+  ],
+  "failureScreenshots": [],
+  "capturedAt": "2026-10-12T02:17:30.929Z",
+  "qualification": "One bounded stable copy precedes parsing and hashing. Later writer output cannot alter retained bytes; missing or changing files fail and no descendant-cleanup claim is made."
+}

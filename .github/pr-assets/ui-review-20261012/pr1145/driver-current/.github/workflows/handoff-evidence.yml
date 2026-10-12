@@ -1,0 +1,164 @@
+name: Durable provider handoff actual ChatView Before and After
+
+on:
+  push:
+    branches:
+      - cleanup/20261012/pr1145-handoff-evidence
+    paths:
+      - .github/workflows/handoff-evidence.yml
+      - scripts/handoff-evidence/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr1145-handoff-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  targets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: targets
+        run: node scripts/handoff-evidence/runner.mjs matrix
+
+  capture:
+    name: Handoff evidence ${{ matrix.id }}
+    needs: targets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout isolated reviewed observer
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-handoff-driver
+          persist-credentials: false
+      - name: Setup exact frozen runtime dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - name: Cache Playwright binaries
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+      - name: Install actual browser and recording runtime
+        timeout-minutes: 10
+        run: ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+      - name: Prepare common canonical regression and additive captures
+        env:
+          HANDOFF_EVIDENCE_TARGET: ${{ matrix.id }}
+          HANDOFF_EVIDENCE_SOURCE: ${{ matrix.source }}
+        run: node .pr-handoff-driver/scripts/handoff-evidence/runner.mjs prepare
+      - name: Execute both original cases and retain actual failing exits
+        id: browser
+        timeout-minutes: 12
+        working-directory: apps/web
+        run: |
+          set +e
+          bun x --no-install vitest run --config vitest.handoff-evidence.config.ts --reporter=default --reporter=json --outputFile="$HANDOFF_EVIDENCE_LIVE_REPORT" 2>&1 | tee "$HANDOFF_EVIDENCE_LIVE_LOG"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$HANDOFF_EVIDENCE_LIVE_EXITS"
+          if [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi
+          exit "${result[1]}"
+      - name: Verify exact source, immutable report and observed media
+        if: always()
+        timeout-minutes: 2
+        env:
+          HANDOFF_EVIDENCE_BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+        run: node .pr-handoff-driver/scripts/handoff-evidence/runner.mjs verify
+      - name: Retain actual Before or After evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: handoff-evidence-${{ matrix.id }}-${{ matrix.source }}
+          path: pr-handoff-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
+
+  footer-control:
+    name: Complete footer control ${{ matrix.variant }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: before
+            source: 53248e7ed92a1d14147cd66822cfa982b0d6baef
+          - variant: after
+            source: 2a53c3c7c20e6aec90f6eaf3067d292955d2686e
+    env:
+      HANDOFF_FOOTER_TARGET: ${{ matrix.variant }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-handoff-driver
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+      - name: Install actual Chromium
+        timeout-minutes: 10
+        run: ./apps/web/node_modules/.bin/playwright install chromium
+      - name: Prepare identical six-case canonical footer fixture
+        run: node .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs prepare
+      - name: Run every original and pending-to-settled footer assertion
+        id: footer
+        timeout-minutes: 8
+        working-directory: apps/web
+        run: |
+          set +e
+          bun x --no-install vitest run --config vitest.handoff-footer.config.ts --reporter=default --reporter=json --outputFile="$HANDOFF_FOOTER_LIVE/vitest.json" 2>&1 | tee "$HANDOFF_FOOTER_LIVE/vitest.log"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$HANDOFF_FOOTER_LIVE/exits.json"
+          if [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi
+          exit "${result[1]}"
+      - name: Freeze and verify original exits and complete canonical results
+        if: always()
+        timeout-minutes: 2
+        env:
+          HANDOFF_FOOTER_BROWSER_OUTCOME: ${{ steps.footer.outcome }}
+        run: node .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs verify
+      - name: Preserve both control outcomes including expected Before failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: handoff-footer-${{ matrix.variant }}-${{ matrix.source }}
+          path: pr-handoff-footer-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30

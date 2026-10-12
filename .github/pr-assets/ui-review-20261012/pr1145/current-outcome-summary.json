@@ -1,0 +1,1706 @@
+[
+  {
+    "label": "before",
+    "root": "campaign/packaging/pr1145/ui-run38195141054/before/pr1145-before",
+    "manifest": 15,
+    "status": "failed",
+    "source": "1a9d70983750bc771e850d72a858c541bac52885",
+    "sourceTree": "6479afa46f65f176445f51a8fe9a859f67c4ab17",
+    "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+    "actualExitCode": 1,
+    "browserOutcome": "failure",
+    "errors": [
+      "The actual browser step failed, timed out, was cancelled, or did not execute."
+    ],
+    "expectedControlMatched": null,
+    "passed": 0,
+    "failed": 2,
+    "filtered": 220,
+    "observations": [
+      {
+        "phase": "completed-pending-desktop",
+        "stage": "pending",
+        "outcome": "completed",
+        "source": "1a9d70983750bc771e850d72a858c541bac52885",
+        "variant": "before",
+        "viewport": {
+          "width": 960,
+          "height": 1100
+        },
+        "time": "2026-10-12T02:19:15.719Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 960,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 341,
+            "y": 995.75,
+            "width": 581,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 900,
+            "y": 1046,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 51,
+              "y": 44,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": -1,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 960,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "completed-pending-narrow",
+        "stage": "pending",
+        "outcome": "completed",
+        "source": "1a9d70983750bc771e850d72a858c541bac52885",
+        "variant": "before",
+        "viewport": {
+          "width": 480,
+          "height": 640
+        },
+        "time": "2026-10-12T02:19:18.501Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 480,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 25,
+            "y": 535.75,
+            "width": 425,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 428,
+            "y": 588,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "failed-pending-desktop",
+        "stage": "pending",
+        "outcome": "failed",
+        "source": "1a9d70983750bc771e850d72a858c541bac52885",
+        "variant": "before",
+        "viewport": {
+          "width": 960,
+          "height": 1100
+        },
+        "time": "2026-10-12T02:20:30.998Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 960,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 341,
+            "y": 995.75,
+            "width": 581,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 900,
+            "y": 1046,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 51,
+              "y": 44,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": -1,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 960,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "failed-pending-narrow",
+        "stage": "pending",
+        "outcome": "failed",
+        "source": "1a9d70983750bc771e850d72a858c541bac52885",
+        "variant": "before",
+        "viewport": {
+          "width": 480,
+          "height": 640
+        },
+        "time": "2026-10-12T02:20:31.531Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 480,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 25,
+            "y": 535.75,
+            "width": 425,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 428,
+            "y": 588,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      }
+    ]
+  },
+  {
+    "label": "after",
+    "root": "campaign/packaging/pr1145/ui-run38195141054/after/pr1145-after",
+    "manifest": 19,
+    "status": "completed",
+    "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+    "sourceTree": "4505c81b9128f56a758708c0581106490b3a5859",
+    "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+    "actualExitCode": 0,
+    "browserOutcome": "success",
+    "errors": [],
+    "expectedControlMatched": null,
+    "passed": 2,
+    "failed": 0,
+    "filtered": 220,
+    "observations": [
+      {
+        "phase": "completed-pending-desktop",
+        "stage": "pending",
+        "outcome": "completed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 960,
+          "height": 1100
+        },
+        "time": "2026-10-12T02:18:57.786Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 960,
+        "editor": {
+          "editable": "false",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 341,
+            "y": 995.75,
+            "width": 581,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": true,
+          "label": "Connecting",
+          "box": {
+            "x": 900,
+            "y": 1046,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 51,
+              "y": 44,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": -1,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "Switching to Claude\u2026",
+            "visible": true,
+            "box": {
+              "x": 328,
+              "y": 958.25,
+              "width": 609,
+              "height": 24.5
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 960,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "completed-pending-narrow",
+        "stage": "pending",
+        "outcome": "completed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 480,
+          "height": 640
+        },
+        "time": "2026-10-12T02:19:01.113Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 480,
+        "editor": {
+          "editable": "false",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 25,
+            "y": 535.75,
+            "width": 425,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": true,
+          "label": "Connecting",
+          "box": {
+            "x": 428,
+            "y": 588,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "Switching to Claude\u2026",
+            "visible": true,
+            "box": {
+              "x": 12,
+              "y": 498.25,
+              "width": 453,
+              "height": 24.5
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "completed-settled-desktop",
+        "stage": "settled",
+        "outcome": "completed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 960,
+          "height": 1100
+        },
+        "time": "2026-10-12T02:19:03.239Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 960,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 341,
+            "y": 995.75,
+            "width": 581,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 900,
+            "y": 1046,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 51,
+              "y": 44,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": -1,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 960,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "completed-settled-narrow",
+        "stage": "settled",
+        "outcome": "completed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 480,
+          "height": 640
+        },
+        "time": "2026-10-12T02:19:03.606Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 480,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 25,
+            "y": 535.75,
+            "width": 425,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 428,
+            "y": 588,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "failed-pending-desktop",
+        "stage": "pending",
+        "outcome": "failed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 960,
+          "height": 1100
+        },
+        "time": "2026-10-12T02:19:05.280Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 960,
+        "editor": {
+          "editable": "false",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 341,
+            "y": 995.75,
+            "width": 581,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": true,
+          "label": "Connecting",
+          "box": {
+            "x": 900,
+            "y": 1046,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 51,
+              "y": 44,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": -1,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "Switching to Claude\u2026",
+            "visible": true,
+            "box": {
+              "x": 328,
+              "y": 958.25,
+              "width": 609,
+              "height": 24.5
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 960,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "failed-pending-narrow",
+        "stage": "pending",
+        "outcome": "failed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 480,
+          "height": 640
+        },
+        "time": "2026-10-12T02:19:05.889Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 480,
+        "editor": {
+          "editable": "false",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 25,
+            "y": 535.75,
+            "width": 425,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": true,
+          "label": "Connecting",
+          "box": {
+            "x": 428,
+            "y": 588,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "Switching to Claude\u2026",
+            "visible": true,
+            "box": {
+              "x": 12,
+              "y": 498.25,
+              "width": 453,
+              "height": 24.5
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "claudeAgent",
+          "model": "claude-sonnet-4-6"
+        }
+      },
+      {
+        "phase": "failed-settled-desktop",
+        "stage": "settled",
+        "outcome": "failed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 960,
+          "height": 1100
+        },
+        "time": "2026-10-12T02:19:07.872Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 960,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 341,
+            "y": 995.75,
+            "width": 581,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 900,
+            "y": 1046,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 51,
+              "y": 44,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": -1,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          },
+          {
+            "text": "",
+            "visible": true,
+            "box": {
+              "x": 960,
+              "y": -1,
+              "width": 1,
+              "height": 1
+            }
+          }
+        ],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "codex",
+          "model": "gpt-5.5"
+        }
+      },
+      {
+        "phase": "failed-settled-narrow",
+        "stage": "settled",
+        "outcome": "failed",
+        "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+        "variant": "after",
+        "viewport": {
+          "width": 480,
+          "height": 640
+        },
+        "time": "2026-10-12T02:19:08.255Z",
+        "fonts": "loaded",
+        "theme": "light",
+        "backgroundToken": "#ffffff",
+        "reducedMotion": true,
+        "documentWidth": 480,
+        "editor": {
+          "editable": "true",
+          "text": "Keep this draft while the provider changes.",
+          "box": {
+            "x": 25,
+            "y": 535.75,
+            "width": 425,
+            "height": 42.25
+          }
+        },
+        "send": {
+          "disabled": false,
+          "label": "Send message",
+          "box": {
+            "x": 428,
+            "y": 588,
+            "width": 28,
+            "height": 28
+          }
+        },
+        "statuses": [],
+        "transcript": [
+          {
+            "role": "user",
+            "text": "filler user message 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 13Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 14Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 15Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 16Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 17Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 18Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 19Mar 4 12:01 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 20Mar 4 12:02 PM"
+          },
+          {
+            "role": "user",
+            "text": "filler user message 21Mar 4 12:02 PM"
+          },
+          {
+            "role": "assistant",
+            "text": "assistant filler 21Switching from Codex to ClaudeMar 4 12:02 PM"
+          }
+        ],
+        "fixtureThreadId": "thread-browser-test",
+        "fixtureModel": {
+          "provider": "codex",
+          "model": "gpt-5.5"
+        }
+      }
+    ]
+  },
+  {
+    "label": "footer-before",
+    "root": "campaign/packaging/pr1145/ui-run38195141054/footer-before/before",
+    "manifest": 11,
+    "status": "failed",
+    "source": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+    "sourceTree": "c22c3af445bd06fb427814cf5a7428eec25a2edd",
+    "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+    "actualExitCode": 1,
+    "browserOutcome": "failure",
+    "errors": [],
+    "expectedControlMatched": true,
+    "passed": 3,
+    "failed": 3,
+    "filtered": 0,
+    "observations": null
+  },
+  {
+    "label": "footer-after",
+    "root": "campaign/packaging/pr1145/ui-run38195141054/footer-after/after",
+    "manifest": 8,
+    "status": "completed",
+    "source": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+    "sourceTree": "4505c81b9128f56a758708c0581106490b3a5859",
+    "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+    "actualExitCode": 0,
+    "browserOutcome": "success",
+    "errors": [],
+    "expectedControlMatched": true,
+    "passed": 6,
+    "failed": 0,
+    "filtered": 0,
+    "observations": null
+  }
+]

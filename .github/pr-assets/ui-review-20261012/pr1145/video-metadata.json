@@ -1,0 +1,36 @@
+[
+  {
+    "side": "before",
+    "path": "before/pr1145-before/video/page@87696a081fdc78423960300832751940.webm",
+    "programs": [],
+    "streams": [
+      {
+        "width": 960,
+        "height": 1100,
+        "avg_frame_rate": "25/1",
+        "start_time": "0.000000",
+        "nb_read_frames": "6698"
+      }
+    ],
+    "format": {
+      "duration": "267.920000"
+    }
+  },
+  {
+    "side": "after",
+    "path": "after/pr1145-after/video/page@0a2eea0c37634c20b6eb19c5dc3d385c.webm",
+    "programs": [],
+    "streams": [
+      {
+        "width": 960,
+        "height": 1100,
+        "avg_frame_rate": "25/1",
+        "start_time": "0.000000",
+        "nb_read_frames": "2454"
+      }
+    ],
+    "format": {
+      "duration": "98.160000"
+    }
+  }
+]

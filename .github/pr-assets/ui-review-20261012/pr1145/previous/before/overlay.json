@@ -1,0 +1,46 @@
+{
+  "targets": [
+    {
+      "id": "pr1145-before",
+      "variant": "before",
+      "source": "1a9d70983750bc771e850d72a858c541bac52885",
+      "tree": "6479afa46f65f176445f51a8fe9a859f67c4ab17"
+    },
+    {
+      "id": "pr1145-after",
+      "variant": "after",
+      "source": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "tree": "c22c3af445bd06fb427814cf5a7428eec25a2edd"
+    }
+  ],
+  "expectedCases": 2,
+  "fixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "bytes": 584014
+  },
+  "beforeFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+    "bytes": 577781
+  },
+  "newCases": {
+    "start": "    it.each([\"completed\", \"failed\"] as const)(\n      \"holds the composer for a durable provider request until its matching %s outcome\",",
+    "end": "    async function pickClaudeAndSend(text: string)"
+  },
+  "helperAnchor": "async function nextFrame(): Promise<void> {",
+  "replacements": [
+    {
+      "before": "          // Durable request has hydrated; observe admission before asserting its UI state.",
+      "after": "          // Durable request has hydrated; observe admission before asserting its UI state.\n          await observeDurableHandoff(\"pending\", outcome, mounted, editor, draft);"
+    },
+    {
+      "before": "          // Matching durable outcome: editing resumes without submitting or discarding the draft.",
+      "after": "          // Matching durable outcome: editing resumes without submitting or discarding the draft.\n          await observeDurableHandoff(\"settled\", outcome, mounted, editor, draft);"
+    }
+  ],
+  "testNamePattern": "holds the composer for a durable provider request until its matching .* outcome$",
+  "observedSha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc"
+}

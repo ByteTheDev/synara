@@ -1,0 +1,15 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m2:17:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ [32m✓[39m [30m[43m chromium [49m[39m src/components/chat/PrHandoffFooterControl1145.browser.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 230[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 02:17:23
+[2m   Duration [22m 6.77s[2m (transform 0ms, setup 0ms, import 3.53s, tests 230ms, environment 0ms)[22m
+
+JSON report written to /home/runner/work/_temp/handoff-footer-live-after/vitest.json

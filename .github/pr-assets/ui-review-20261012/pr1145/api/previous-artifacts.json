@@ -1,0 +1,45 @@
+{
+  "total_count": 2,
+  "artifacts": [
+    {
+      "id": 11722382600,
+      "node_id": "MDg6QXJ0aWZhY3QxMTcyMjM4MjYwMA==",
+      "name": "handoff-evidence-pr1145-before-1a9d70983750bc771e850d72a858c541bac52885",
+      "size_in_bytes": 3099355,
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11722382600",
+      "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11722382600/zip",
+      "expired": false,
+      "digest": "sha256:ab7035b2d404a2323e40ae0e5b214bede5d35798635ad1bd1ee2f01e7d75498d",
+      "created_at": "2026-10-12T01:50:57Z",
+      "updated_at": "2026-10-12T01:50:57Z",
+      "expires_at": "2026-11-11T01:50:56Z",
+      "workflow_run": {
+        "id": 38193107887,
+        "repository_id": 1194039785,
+        "head_repository_id": 1194039785,
+        "head_branch": "cleanup/20261012/pr1145-handoff-evidence",
+        "head_sha": "f9e18e56c90159c06ee7cce409c5933dface9807"
+      }
+    },
+    {
+      "id": 11722062983,
+      "node_id": "MDg6QXJ0aWZhY3QxMTcyMjA2Mjk4Mw==",
+      "name": "handoff-evidence-pr1145-after-53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "size_in_bytes": 534726,
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11722062983",
+      "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11722062983/zip",
+      "expired": false,
+      "digest": "sha256:d0fa50ee6b74c7f97aa084fccc490cd4052733f7cf8ed49016f20e498a021c73",
+      "created_at": "2026-10-12T01:48:42Z",
+      "updated_at": "2026-10-12T01:48:42Z",
+      "expires_at": "2026-11-11T01:48:41Z",
+      "workflow_run": {
+        "id": 38193107887,
+        "repository_id": 1194039785,
+        "head_repository_id": 1194039785,
+        "head_branch": "cleanup/20261012/pr1145-handoff-evidence",
+        "head_sha": "f9e18e56c90159c06ee7cce409c5933dface9807"
+      }
+    }
+  ]
+}

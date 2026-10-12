@@ -1,0 +1,197 @@
+{
+  "variant": "before",
+  "source": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+  "tree": "c22c3af445bd06fb427814cf5a7428eec25a2edd",
+  "driver": "a8e31e6a897ccdfa7babd66275798925fe904553",
+  "driverTree": "78f26d6bb6a9f88ddb2e51e0d1c4d6f58c97dd8d",
+  "driverFiles": [
+    {
+      "path": ".github/workflows/handoff-evidence.yml",
+      "bytes": 6061,
+      "blob": "3bc4985706ab109f2e34de1357abf605aea7eb11",
+      "sha256": "c5eb3bcacb563643455e1cd379aa3121a0dbcf1dde6e58314741a88f9f316830"
+    },
+    {
+      "path": "scripts/handoff-evidence/runner.mjs",
+      "bytes": 18584,
+      "blob": "903d9253688ef4a7b0ea182d66fc966cd4218018",
+      "sha256": "c80a3d46f3ceab18c7e8bd6869d81e14c424f6654cff07f8ff41b00e4a56e5db"
+    },
+    {
+      "path": "scripts/handoff-evidence/snapshots.mjs",
+      "bytes": 5005,
+      "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+      "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1"
+    },
+    {
+      "path": "scripts/handoff-evidence/helpers.ts",
+      "bytes": 3867,
+      "blob": "669198d9c9028bcf655fa599b5b4483356bdcac9",
+      "sha256": "a1b99ea78b62d3c554c6fb1927fd596768c645a85828839089d493881e356687"
+    },
+    {
+      "path": "scripts/handoff-evidence/overlay.json",
+      "bytes": 2074,
+      "blob": "546537bf0356d8e057cbec3da70e2efda61208f7",
+      "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e"
+    },
+    {
+      "path": "scripts/handoff-evidence/footer-control.mjs",
+      "bytes": 10869,
+      "blob": "92f92f0e5fa058ac988686ec9fd3797cb3690853",
+      "sha256": "51528eec5ee00beffb256f91a8ce1b295dd0d43da6ca4b6d34e7f2d61fea91b4"
+    },
+    {
+      "path": "scripts/handoff-evidence/vitest.handoff-footer.config.ts",
+      "bytes": 348,
+      "blob": "a73321ffe73087d749bde7e7dbaaff70e192530d",
+      "sha256": "52afcd127a86b596bb3875956890292e36d60f20733371ee555e887d7c59a991"
+    },
+    {
+      "path": "scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+      "bytes": 1053,
+      "blob": "a1fb1e350a6355d3ff26905143ff9cc0e12b76a0",
+      "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91"
+    },
+    {
+      "path": "scripts/handoff-evidence/README.md",
+      "bytes": 6558,
+      "blob": "8755c2c46d3475023359118eada8d4e6f7608f7e",
+      "sha256": "a4f9ce39c7ea5562dbb255f772afd4829a7474892514c16468f19ff1e39d85f6"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/chat/ChatComposerFooter.browser.tsx",
+      "bytes": 3370,
+      "blob": "d65f5bc2346b5d55eac165604cf5d279cb844917",
+      "sha256": "990f8aaff0fab19f65c7dc518022b3df8126323ea46cc69a2ca50a88afb00099"
+    },
+    {
+      "path": "apps/web/src/components/chat/ChatComposerFooter.tsx",
+      "bytes": 13116,
+      "blob": "e4c4d5b211a3c7d0c14444265a89e16040d19772",
+      "sha256": "f892244cdda4650b895a5bdc72f0a17f5222046b046e4570c270acd6c46f8cbc"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "bytes": 284310,
+      "blob": "3a96ea7060bfcc33fe9ded2319fbfb2411614a47",
+      "sha256": "b7706150de68e247e62ef70a2851294aeae9d975b4adca023cd9cf53daa35f35"
+    },
+    {
+      "path": "bun.lock",
+      "bytes": 776515,
+      "blob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7"
+    }
+  ],
+  "canonical": {
+    "path": "apps/web/src/components/chat/ChatComposerFooter.browser.tsx",
+    "bytes": 5451,
+    "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8",
+    "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7"
+  },
+  "overlays": [
+    {
+      "path": "apps/web/src/components/chat/PrHandoffFooterControl1145.browser.tsx",
+      "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7"
+    },
+    {
+      "path": "apps/web/vitest.handoff-footer.config.ts",
+      "sha256": "52afcd127a86b596bb3875956890292e36d60f20733371ee555e887d7c59a991"
+    }
+  ],
+  "live": "/home/runner/work/_temp/handoff-footer-live-before",
+  "liveScreenshots": "/home/runner/work/synara/synara/apps/web/src/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx",
+  "qualification": "The identical complete six-case footer fixture runs on both production implementations. Three existing Stop/voice cases and three explicit pending-to-settled cases execute without name filtering. Before receives the new handoffPending input that its unchanged component ignores. No provider, native desktop or OS behavior is exercised; original failed browser exits remain failures.",
+  "browserOutcome": "failure",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "errors": [],
+  "assertions": [
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control shows Stop while connecting so a stuck start can be interrupted",
+      "status": "passed",
+      "title": "shows Stop while connecting so a stuck start can be interrupted",
+      "duration": 128.5,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control keeps the mic next to Stop so a follow-up can be dictated mid-turn",
+      "status": "passed",
+      "title": "keeps the mic next to Stop so a follow-up can be dictated mid-turn",
+      "duration": 65.60000000000582,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control shows only the recorder's stop while dictating mid-turn",
+      "status": "passed",
+      "title": "shows only the recorder's stop while dictating mid-turn",
+      "duration": 7.69999999999709,
+      "failureMessages": [],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control holds handoff admission separately from ready cancellation and restores Send when settled",
+      "status": "failed",
+      "title": "holds handoff admission separately from ready cancellation and restores Send when settled",
+      "duration": 90036.19999999998,
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByRole('button', { name: 'Connecting', exact: true })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"@container flex items-center justify-between pl-[var(--app-density-composer-footer-padding,0.375rem)] pr-[var(--app-density-composer-footer-padding-end,0.5rem)] pb-[var(--app-density-composer-footer-padding,0.375rem)] flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0\"\u001b[39m\n      \u001b[33mdata-chat-composer-footer\u001b[39m=\u001b[32m\"true\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex items-center min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible\"\u001b[39m\n        \u001b[33mdata-chat-composer-leading\u001b[39m=\u001b[32m\"true\"\u001b[39m\n      \u001b[36m/>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex items-center gap-2 shrink-0\"\u001b[39m\n        \u001b[33mdata-chat-composer-actions\u001b[39m=\u001b[32m\"right\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<button\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Record voice note\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-8 sm:size-7 border-transparent bg-transparent text-[var(--color-text-foreground-secondary)] focus-visible:ring-[color:var(--color-border-focus)]/60 focus-visible:ring-offset-0 [:hover,[data-pressed]]:bg-[var(--color-background-button-secondary-hover)] [:hover,[data-pressed]]:text-[var(--color-text-foreground)] data-pressed:bg-[var(--color-background-button-secondary)] data-pressed:text-[var(--color-text-foreground)] shrink-0 rounded-md\"\u001b[39m\n          \u001b[33mdata-slot\u001b[39m=\u001b[32m\"button\"\u001b[39m\n          \u001b[33mtitle\u001b[39m=\u001b[32m\"Record voice note\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<span\u001b[39m\n            \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"inline-block shrink-0 bg-current size-4 text-primary\"\u001b[39m\n            \u001b[33mdata-slot\u001b[39m=\u001b[32m\"central-icon\"\u001b[39m\n            \u001b[33mstyle\u001b[39m=\u001b[32m\"mask: url(\"/central-icons-reversed/microphone.svg\") center center / contain no-repeat;\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n        \u001b[36m</button>\u001b[39m\n        \u001b[36m<button\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Send message\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-ring/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4 sm:not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-3.5 not-in-data-[slot=input-group]:[&_[data-slot=central-icon]:not([class*='size-'])]:size-3.5 border-transparent bg-[var(--color-text-foreground)] text-[var(--color-background-surface)] transition-[transform,opacity] duration-150 hover:scale-105 disabled:opacity-20 disabled:hover:scale-100 size-7 rounded-full sm:size-7\"\u001b[39m\n          \u001b[33mdata-slot\u001b[39m=\u001b[32m\"button\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"submit\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<span\u001b[39m\n            \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"inline-block bg-current size-5 shrink-0 translate-y-px\"\u001b[39m\n            \u001b[33mdata-slot\u001b[39m=\u001b[32m\"central-icon\"\u001b[39m\n            \u001b[33mstyle\u001b[39m=\u001b[32m\"mask: url(\"/central-icons-reversed/arrow-up.svg\") center center / contain no-repeat;\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n        \u001b[36m</button>\u001b[39m\n      \u001b[36m</div>\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=afe2debc:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/chat/PrHandoffFooterControl1145.browser.tsx?import&browserv=1791771446886:128:33\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=afe2debc:1903:20"
+      ],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control holds handoff admission separately from connecting cancellation and restores Send when settled",
+      "status": "failed",
+      "title": "holds handoff admission separately from connecting cancellation and restores Send when settled",
+      "duration": 90010.89999999998,
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByRole('button', { name: 'Connecting', exact: true })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"@container flex items-center justify-between pl-[var(--app-density-composer-footer-padding,0.375rem)] pr-[var(--app-density-composer-footer-padding-end,0.5rem)] pb-[var(--app-density-composer-footer-padding,0.375rem)] flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0\"\u001b[39m\n      \u001b[33mdata-chat-composer-footer\u001b[39m=\u001b[32m\"true\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex items-center min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible\"\u001b[39m\n        \u001b[33mdata-chat-composer-leading\u001b[39m=\u001b[32m\"true\"\u001b[39m\n      \u001b[36m/>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex items-center gap-2 shrink-0\"\u001b[39m\n        \u001b[33mdata-chat-composer-actions\u001b[39m=\u001b[32m\"right\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<button\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Stop generation\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-ring/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-7 not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4 sm:not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-3.5 not-in-data-[slot=input-group]:[&_[data-slot=central-icon]:not([class*='size-'])]:size-3.5 rounded-full border-transparent bg-[var(--color-text-foreground)] text-[var(--color-background-surface)] transition-[transform,opacity] duration-150 hover:scale-105 disabled:opacity-20 disabled:hover:scale-100 sm:size-[26px]\"\u001b[39m\n          \u001b[33mdata-slot\u001b[39m=\u001b[32m\"button\"\u001b[39m\n          \u001b[33mtitle\u001b[39m=\u001b[32m\"Stop the current response. On Mac, press Ctrl+C to interrupt.\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<span\u001b[39m\n            \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"block size-2 rounded-[1px] bg-current\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n        \u001b[36m</button>\u001b[39m\n      \u001b[36m</div>\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=afe2debc:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/chat/PrHandoffFooterControl1145.browser.tsx?import&browserv=1791771446886:128:33\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=afe2debc:1903:20"
+      ],
+      "meta": {},
+      "tags": []
+    },
+    {
+      "ancestorTitles": [
+        "ChatComposerFooter stop control"
+      ],
+      "fullName": "ChatComposerFooter stop control holds handoff admission separately from running cancellation and restores Send when settled",
+      "status": "failed",
+      "title": "holds handoff admission separately from running cancellation and restores Send when settled",
+      "duration": 90019.90000000002,
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByRole('button', { name: 'Connecting', exact: true })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"@container flex items-center justify-between pl-[var(--app-density-composer-footer-padding,0.375rem)] pr-[var(--app-density-composer-footer-padding-end,0.5rem)] pb-[var(--app-density-composer-footer-padding,0.375rem)] flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0\"\u001b[39m\n      \u001b[33mdata-chat-composer-footer\u001b[39m=\u001b[32m\"true\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex items-center min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible\"\u001b[39m\n        \u001b[33mdata-chat-composer-leading\u001b[39m=\u001b[32m\"true\"\u001b[39m\n      \u001b[36m/>\u001b[39m\n      \u001b[36m<div\u001b[39m\n        \u001b[33mclass\u001b[39m=\u001b[32m\"flex items-center gap-2 shrink-0\"\u001b[39m\n        \u001b[33mdata-chat-composer-actions\u001b[39m=\u001b[32m\"right\"\u001b[39m\n      \u001b[36m>\u001b[39m\n        \u001b[36m<button\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Record voice note\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-8 sm:size-7 border-transparent bg-transparent text-[var(--color-text-foreground-secondary)] focus-visible:ring-[color:var(--color-border-focus)]/60 focus-visible:ring-offset-0 [:hover,[data-pressed]]:bg-[var(--color-background-button-secondary-hover)] [:hover,[data-pressed]]:text-[var(--color-text-foreground)] data-pressed:bg-[var(--color-background-button-secondary)] data-pressed:text-[var(--color-text-foreground)] shrink-0 rounded-md\"\u001b[39m\n          \u001b[33mdata-slot\u001b[39m=\u001b[32m\"button\"\u001b[39m\n          \u001b[33mtitle\u001b[39m=\u001b[32m\"Record voice note\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<span\u001b[39m\n            \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"inline-block shrink-0 bg-current size-4 text-primary\"\u001b[39m\n            \u001b[33mdata-slot\u001b[39m=\u001b[32m\"central-icon\"\u001b[39m\n            \u001b[33mstyle\u001b[39m=\u001b[32m\"mask: url(\"/central-icons-reversed/microphone.svg\") center center / contain no-repeat;\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n        \u001b[36m</button>\u001b[39m\n        \u001b[36m<button\u001b[39m\n          \u001b[33maria-label\u001b[39m=\u001b[32m\"Stop generation\"\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"[&_svg,&_[data-slot=central-icon]]:-mx-0.5 relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border font-medium text-ui outline-none pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-1 focus-visible:ring-ring/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none sm:text-ui [&_svg:not([class*='opacity-'])]:opacity-80 [&_[data-slot=central-icon]:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 [&_[data-slot=central-icon]:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 sm:[&_[data-slot=central-icon]:not([class*='size-'])]:size-4 [&_svg,&_[data-slot=central-icon]]:pointer-events-none [&_svg,&_[data-slot=central-icon]]:shrink-0 size-7 not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-4 sm:not-in-data-[slot=input-group]:[&_svg:not([class*='size-'])]:size-3.5 not-in-data-[slot=input-group]:[&_[data-slot=central-icon]:not([class*='size-'])]:size-3.5 rounded-full border-transparent bg-[var(--color-text-foreground)] text-[var(--color-background-surface)] transition-[transform,opacity] duration-150 hover:scale-105 disabled:opacity-20 disabled:hover:scale-100 sm:size-[26px]\"\u001b[39m\n          \u001b[33mdata-slot\u001b[39m=\u001b[32m\"button\"\u001b[39m\n          \u001b[33mtitle\u001b[39m=\u001b[32m\"Stop the current response. On Mac, press Ctrl+C to interrupt.\"\u001b[39m\n          \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<span\u001b[39m\n            \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"block size-2 rounded-[1px] bg-current\"\u001b[39m\n          \u001b[36m/>\u001b[39m\n        \u001b[36m</button>\u001b[39m\n      \u001b[36m</div>\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=afe2debc:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/chat/PrHandoffFooterControl1145.browser.tsx?import&browserv=1791771446886:128:33\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=afe2debc:1903:20"
+      ],
+      "meta": {},
+      "tags": []
+    }
+  ],
+  "expectedControlMatched": true,
+  "status": "failed"
+}

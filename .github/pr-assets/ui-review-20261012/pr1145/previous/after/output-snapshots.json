@@ -1,0 +1,95 @@
+{
+  "files": [
+    {
+      "path": "vitest.log",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-after/vitest.log",
+      "bytes": 26011,
+      "sha256": "799ad6b052036601121c722520d5a58d5c504f9e35fedc8ce88b216cf3b73d0f",
+      "sourceBefore": {
+        "size": 26011,
+        "mtimeMs": 1791769705651.589,
+        "ctimeMs": 1791769705651.589,
+        "dev": 2049,
+        "ino": 9248887
+      },
+      "sourceAfter": {
+        "size": 26011,
+        "mtimeMs": 1791769705651.589,
+        "ctimeMs": 1791769705651.589,
+        "dev": 2049,
+        "ino": 9248887
+      },
+      "cutoffUtc": "2026-10-12T01:48:41.247Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "exits.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-after/exits.json",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+      "sourceBefore": {
+        "size": 21,
+        "mtimeMs": 1791769720902.48,
+        "ctimeMs": 1791769720902.48,
+        "dev": 2049,
+        "ino": 9248889
+      },
+      "sourceAfter": {
+        "size": 21,
+        "mtimeMs": 1791769720902.48,
+        "ctimeMs": 1791769720902.48,
+        "dev": 2049,
+        "ino": 9248889
+      },
+      "cutoffUtc": "2026-10-12T01:48:41.248Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "vitest.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-after/vitest.json",
+      "bytes": 77977,
+      "sha256": "8454beba2a38937b7bb29afc638936de6dbb7788ff28cbedd687a57c10ab992a",
+      "sourceBefore": {
+        "size": 77977,
+        "mtimeMs": 1791769705651.589,
+        "ctimeMs": 1791769705651.589,
+        "dev": 2049,
+        "ino": 9249955
+      },
+      "sourceAfter": {
+        "size": 77977,
+        "mtimeMs": 1791769705651.589,
+        "ctimeMs": 1791769705651.589,
+        "dev": 2049,
+        "ino": 9249955
+      },
+      "cutoffUtc": "2026-10-12T01:48:41.248Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "video/page@dcbceaa80f330a88d7e6130771f9e02b.webm",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/video/page@dcbceaa80f330a88d7e6130771f9e02b.webm",
+      "bytes": 423953,
+      "sha256": "5e645efb79c93920ee49d00aefc57ab7c01b3d908b67e225881255542e1e91e0",
+      "sourceBefore": {
+        "size": 423953,
+        "mtimeMs": 1791769720715.9583,
+        "ctimeMs": 1791769720715.9583,
+        "dev": 2049,
+        "ino": 9248953
+      },
+      "sourceAfter": {
+        "size": 423953,
+        "mtimeMs": 1791769720715.9583,
+        "ctimeMs": 1791769720715.9583,
+        "dev": 2049,
+        "ino": 9248953
+      },
+      "cutoffUtc": "2026-10-12T01:48:41.248Z",
+      "immutableCopy": true
+    }
+  ],
+  "browserOutcome": "failure",
+  "cutoffFinishedAt": "2026-10-12T01:48:41.249Z",
+  "qualification": "Only bounded stable regular-file copies enter the artifact. Missing, oversized, truncated, replaced or changing files fail verification. Later live writes cannot alter these frozen copies; this cutoff does not prove descendant cleanup or full writer lifetime completion."
+}

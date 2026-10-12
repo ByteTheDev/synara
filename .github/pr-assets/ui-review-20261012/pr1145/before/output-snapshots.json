@@ -1,0 +1,183 @@
+{
+  "files": [
+    {
+      "path": "vitest.log",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.log",
+      "bytes": 41451,
+      "sha256": "37ae3f300434dfdf3208ec18ef39f67bb3e2d11e30d4e37a0d410e9e5492ed02",
+      "sourceBefore": {
+        "size": 41451,
+        "mtimeMs": 1791771719729.4316,
+        "ctimeMs": 1791771719729.4316,
+        "dev": 2049,
+        "ino": 9480243
+      },
+      "sourceAfter": {
+        "size": 41451,
+        "mtimeMs": 1791771719729.4316,
+        "ctimeMs": 1791771719729.4316,
+        "dev": 2049,
+        "ino": 9480243
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.902Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "exits.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/exits.json",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+      "sourceBefore": {
+        "size": 21,
+        "mtimeMs": 1791771728594.4976,
+        "ctimeMs": 1791771728594.4976,
+        "dev": 2049,
+        "ino": 9480245
+      },
+      "sourceAfter": {
+        "size": 21,
+        "mtimeMs": 1791771728594.4976,
+        "ctimeMs": 1791771728594.4976,
+        "dev": 2049,
+        "ino": 9480245
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.902Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "vitest.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-before/vitest.json",
+      "bytes": 84227,
+      "sha256": "57f61cbc10140479f0afe48667e9ba572c8a0d7cf9235aae089cf87f09ed05ef",
+      "sourceBefore": {
+        "size": 84227,
+        "mtimeMs": 1791771719729.4316,
+        "ctimeMs": 1791771719729.4316,
+        "dev": 2049,
+        "ino": 9481367
+      },
+      "sourceAfter": {
+        "size": 84227,
+        "mtimeMs": 1791771719729.4316,
+        "ctimeMs": 1791771719729.4316,
+        "dev": 2049,
+        "ino": 9481367
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.905Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-pending-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/completed-pending-desktop.png",
+      "bytes": 63893,
+      "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+      "sourceBefore": {
+        "size": 63893,
+        "mtimeMs": 1791771558091.9976,
+        "ctimeMs": 1791771558091.9976,
+        "dev": 2049,
+        "ino": 9481350
+      },
+      "sourceAfter": {
+        "size": 63893,
+        "mtimeMs": 1791771558091.9976,
+        "ctimeMs": 1791771558091.9976,
+        "dev": 2049,
+        "ino": 9481350
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.906Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-pending-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/completed-pending-narrow.png",
+      "bytes": 27083,
+      "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+      "sourceBefore": {
+        "size": 27083,
+        "mtimeMs": 1791771558604.0056,
+        "ctimeMs": 1791771558604.0056,
+        "dev": 2049,
+        "ino": 9481351
+      },
+      "sourceAfter": {
+        "size": 27083,
+        "mtimeMs": 1791771558604.0056,
+        "ctimeMs": 1791771558604.0056,
+        "dev": 2049,
+        "ino": 9481351
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.906Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-pending-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/failed-pending-desktop.png",
+      "bytes": 63893,
+      "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+      "sourceBefore": {
+        "size": 63893,
+        "mtimeMs": 1791771631117.0808,
+        "ctimeMs": 1791771631117.0808,
+        "dev": 2049,
+        "ino": 9481359
+      },
+      "sourceAfter": {
+        "size": 63893,
+        "mtimeMs": 1791771631117.0808,
+        "ctimeMs": 1791771631117.0808,
+        "dev": 2049,
+        "ino": 9481359
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.907Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-pending-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/failed-pending-narrow.png",
+      "bytes": 27083,
+      "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+      "sourceBefore": {
+        "size": 27083,
+        "mtimeMs": 1791771631627.0884,
+        "ctimeMs": 1791771631627.0884,
+        "dev": 2049,
+        "ino": 9481360
+      },
+      "sourceAfter": {
+        "size": 27083,
+        "mtimeMs": 1791771631627.0884,
+        "ctimeMs": 1791771631627.0884,
+        "dev": 2049,
+        "ino": 9481360
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.907Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "video/page@87696a081fdc78423960300832751940.webm",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-before/video/page@87696a081fdc78423960300832751940.webm",
+      "bytes": 3639781,
+      "sha256": "6dfa5215d88ff0d16e6375ed558556f8827d4e2a27838d1f6f210e9bfc5561ab",
+      "sourceBefore": {
+        "size": 3639781,
+        "mtimeMs": 1791771728412.563,
+        "ctimeMs": 1791771728412.563,
+        "dev": 2049,
+        "ino": 9480335
+      },
+      "sourceAfter": {
+        "size": 3639781,
+        "mtimeMs": 1791771728412.563,
+        "ctimeMs": 1791771728412.563,
+        "dev": 2049,
+        "ino": 9480335
+      },
+      "cutoffUtc": "2026-10-12T02:22:08.909Z",
+      "immutableCopy": true
+    }
+  ],
+  "browserOutcome": "failure",
+  "cutoffFinishedAt": "2026-10-12T02:22:08.913Z",
+  "qualification": "Only bounded stable regular-file copies enter the artifact. Missing, oversized, truncated, replaced or changing files fail verification. Later live writes cannot alter these frozen copies; this cutoff does not prove descendant cleanup or full writer lifetime completion."
+}

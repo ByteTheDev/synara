@@ -1,0 +1,58 @@
+[
+  {
+    "path": ".github/workflows/handoff-evidence.yml",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/.github/workflows/handoff-evidence.yml",
+    "bytes": 3453,
+    "sha256": "b6c74e7b8e7bac9ef4ac06250e4ea6a677129338b14daa233500786f6b852acf",
+    "blob": "6053f914c2e22862f0cd14de6d931a7a5f2f2749",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/handoff-evidence/runner.mjs",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/scripts/handoff-evidence/runner.mjs",
+    "bytes": 18288,
+    "sha256": "e6ce15045a04b3e8ab98d356fee0e5069f1164450ef4c71a3d6375048a1daa62",
+    "blob": "9e5f2ee481e77b2cd122de5e5c00546807b7d4e1",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/handoff-evidence/helpers.ts",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/scripts/handoff-evidence/helpers.ts",
+    "bytes": 3867,
+    "sha256": "a1b99ea78b62d3c554c6fb1927fd596768c645a85828839089d493881e356687",
+    "blob": "669198d9c9028bcf655fa599b5b4483356bdcac9",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/handoff-evidence/overlay.json",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/scripts/handoff-evidence/overlay.json",
+    "bytes": 2074,
+    "sha256": "fc8c24881a5b22e96b1bf34846d70fe11e476bf07ded4966c4ec44956a8d2614",
+    "blob": "49ac1e0b5101a1a97321b4680ebd544a3021ce62",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+    "bytes": 1053,
+    "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91",
+    "blob": "a1fb1e350a6355d3ff26905143ff9cc0e12b76a0",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/handoff-evidence/README.md",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/scripts/handoff-evidence/README.md",
+    "bytes": 4477,
+    "sha256": "7b9134bbb5ad20f0287a417100465f8acab713003bb1636ba20747d4536d1ef8",
+    "blob": "c8328a2147a7532c20fe228acb09295f185001df",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/handoff-evidence/snapshots.mjs",
+    "local": "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/browser-driver/scripts/handoff-evidence/snapshots.mjs",
+    "bytes": 5005,
+    "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1",
+    "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+    "mode": "100644"
+  }
+]

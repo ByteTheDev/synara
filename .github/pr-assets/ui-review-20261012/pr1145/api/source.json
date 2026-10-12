@@ -1,0 +1,35 @@
+{
+  "sha": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+  "node_id": "C_kwDORyuZ6doAKDJhNTNjM2M3YzIwZTZhZWM5MGY2ZWFmMzA2N2QyOTI5NTVkMjY4NmU",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:57:48Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:57:48Z"
+  },
+  "tree": {
+    "sha": "4505c81b9128f56a758708c0581106490b3a5859",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/4505c81b9128f56a758708c0581106490b3a5859"
+  },
+  "message": "fix(web): keep handoff admission separate from connection cancellation\n\nHold the composer submit and voice controls while a durable provider handoff is pending, preserving ordinary Stop behavior for active turns and connection startup. Exercise pending and settled footer states without removing the existing cancellation cases.",
+  "parents": [
+    {
+      "sha": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/53248e7ed92a1d14147cd66822cfa982b0d6baef"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

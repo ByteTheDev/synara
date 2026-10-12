@@ -1,0 +1,50 @@
+[
+  {
+    "path": "common-canonical-ChatComposerFooter.browser.tsx",
+    "bytes": 5451,
+    "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7",
+    "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8"
+  },
+  {
+    "path": "exits.json",
+    "bytes": 21,
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+  },
+  {
+    "path": "output-snapshots.json",
+    "bytes": 2248,
+    "sha256": "410393de16614fe53eceac9f6477dc73d882f42330574d440f299258e4d5c3ed",
+    "blob": "0f2242d2d847e67284a936bea24740418db6acd4"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 4556,
+    "sha256": "b9ad4e3ba2f2e0699f1ab7b747803d13c06453612574af629ce6ce9a073e1994",
+    "blob": "040c740dee7d04872aee5835a7be943db8c1fd63"
+  },
+  {
+    "path": "source-ChatComposerFooter.tsx",
+    "bytes": 13285,
+    "sha256": "dfec18f2a3623e36917afcb21467f9fba159cd2f335ccbf640fd8f45bd4d9f1a",
+    "blob": "7615f50ce03825e5e1938d3b9e1747e90ef25c82"
+  },
+  {
+    "path": "verified.json",
+    "bytes": 7395,
+    "sha256": "fbf236518fb393f399bb8d7f3e6bed00b2d68a0f7c205827746e7ae52cd49535",
+    "blob": "557b0fb947c285e176b28acbbe7b74b405ab920a"
+  },
+  {
+    "path": "vitest.json",
+    "bytes": 2796,
+    "sha256": "6ab8a37da9b4aa0c0a004c4dad1bdb71cd4effb632849afec48efd1e1e1334ca",
+    "blob": "25ff7235f3a1f4f7631c905e1ae5baa357ab8ddc"
+  },
+  {
+    "path": "vitest.log",
+    "bytes": 929,
+    "sha256": "831602d1271c67f94dd501edce50b575cf2804e211723169c5d0fac0f8005f34",
+    "blob": "2d2e98a5a36913fe1f098e68e8dcf6ffbfb05f16"
+  }
+]

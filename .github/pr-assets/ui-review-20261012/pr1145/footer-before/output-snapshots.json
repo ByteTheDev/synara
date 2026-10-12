@@ -1,0 +1,140 @@
+{
+  "snapshots": [
+    {
+      "path": "vitest.json",
+      "source": "/home/runner/work/_temp/handoff-footer-live-before/vitest.json",
+      "bytes": 19281,
+      "sha256": "dc1ac0d52f3c65b6a9e9d2178d1f3a4db11c44342a7dc4953fdf811ea0503b96",
+      "sourceBefore": {
+        "size": 19281,
+        "mtimeMs": 1791771720813.8435,
+        "ctimeMs": 1791771720813.8435,
+        "dev": 2049,
+        "ino": 9440994
+      },
+      "sourceAfter": {
+        "size": 19281,
+        "mtimeMs": 1791771720813.8435,
+        "ctimeMs": 1791771720813.8435,
+        "dev": 2049,
+        "ino": 9440994
+      },
+      "cutoffUtc": "2026-10-12T02:22:01.014Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "vitest.log",
+      "source": "/home/runner/work/_temp/handoff-footer-live-before/vitest.log",
+      "bytes": 19159,
+      "sha256": "52e269031fcd90b558cf26644d59ba4575bb9ab9794b98730f553ec69edd9150",
+      "sourceBefore": {
+        "size": 19159,
+        "mtimeMs": 1791771720813.8435,
+        "ctimeMs": 1791771720813.8435,
+        "dev": 2049,
+        "ino": 9440194
+      },
+      "sourceAfter": {
+        "size": 19159,
+        "mtimeMs": 1791771720813.8435,
+        "ctimeMs": 1791771720813.8435,
+        "dev": 2049,
+        "ino": 9440194
+      },
+      "cutoffUtc": "2026-10-12T02:22:01.015Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "exits.json",
+      "source": "/home/runner/work/_temp/handoff-footer-live-before/exits.json",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+      "sourceBefore": {
+        "size": 21,
+        "mtimeMs": 1791771720956.3118,
+        "ctimeMs": 1791771720956.3118,
+        "dev": 2049,
+        "ino": 9440196
+      },
+      "sourceAfter": {
+        "size": 21,
+        "mtimeMs": 1791771720956.3118,
+        "ctimeMs": 1791771720956.3118,
+        "dev": 2049,
+        "ino": 9440196
+      },
+      "cutoffUtc": "2026-10-12T02:22:01.015Z",
+      "immutableCopy": true
+    }
+  ],
+  "failureScreenshots": [
+    {
+      "path": "ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-connecting-cancellation-and-restores-Send-when-settled-1.png",
+      "source": "/home/runner/work/synara/synara/apps/web/src/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-connecting-cancellation-and-restores-Send-when-settled-1.png",
+      "bytes": 2082,
+      "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+      "sourceBefore": {
+        "size": 2082,
+        "mtimeMs": 1791771630669.2502,
+        "ctimeMs": 1791771630669.2502,
+        "dev": 2049,
+        "ino": 9440985
+      },
+      "sourceAfter": {
+        "size": 2082,
+        "mtimeMs": 1791771630669.2502,
+        "ctimeMs": 1791771630669.2502,
+        "dev": 2049,
+        "ino": 9440985
+      },
+      "cutoffUtc": "2026-10-12T02:22:01.016Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-ready-cancellation-and-restores-Send-when-settled-1.png",
+      "source": "/home/runner/work/synara/synara/apps/web/src/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-ready-cancellation-and-restores-Send-when-settled-1.png",
+      "bytes": 2082,
+      "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+      "sourceBefore": {
+        "size": 2082,
+        "mtimeMs": 1791771540654.6138,
+        "ctimeMs": 1791771540654.6138,
+        "dev": 2049,
+        "ino": 9440980
+      },
+      "sourceAfter": {
+        "size": 2082,
+        "mtimeMs": 1791771540654.6138,
+        "ctimeMs": 1791771540654.6138,
+        "dev": 2049,
+        "ino": 9440980
+      },
+      "cutoffUtc": "2026-10-12T02:22:01.016Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-running-cancellation-and-restores-Send-when-settled-1.png",
+      "source": "/home/runner/work/synara/synara/apps/web/src/components/chat/__screenshots__/PrHandoffFooterControl1145.browser.tsx/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-running-cancellation-and-restores-Send-when-settled-1.png",
+      "bytes": 2082,
+      "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+      "sourceBefore": {
+        "size": 2082,
+        "mtimeMs": 1791771720646.8442,
+        "ctimeMs": 1791771720646.8442,
+        "dev": 2049,
+        "ino": 9440991
+      },
+      "sourceAfter": {
+        "size": 2082,
+        "mtimeMs": 1791771720646.8442,
+        "ctimeMs": 1791771720646.8442,
+        "dev": 2049,
+        "ino": 9440991
+      },
+      "cutoffUtc": "2026-10-12T02:22:01.016Z",
+      "immutableCopy": true
+    }
+  ],
+  "capturedAt": "2026-10-12T02:22:01.016Z",
+  "qualification": "One bounded stable copy precedes parsing and hashing. Later writer output cannot alter retained bytes; missing or changing files fail and no descendant-cleanup claim is made."
+}

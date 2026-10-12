@@ -1,0 +1,271 @@
+{
+  "files": [
+    {
+      "path": "vitest.log",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-after/vitest.log",
+      "bytes": 20066,
+      "sha256": "58b69a69caa59d34d3108700b4dc3e0835aed4bf0c7b07d908f6a44795a6a9ad",
+      "sourceBefore": {
+        "size": 20066,
+        "mtimeMs": 1791771548434.105,
+        "ctimeMs": 1791771548434.105,
+        "dev": 66305,
+        "ino": 9720924
+      },
+      "sourceAfter": {
+        "size": 20066,
+        "mtimeMs": 1791771548434.105,
+        "ctimeMs": 1791771548434.105,
+        "dev": 66305,
+        "ino": 9720924
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.250Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "exits.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-after/exits.json",
+      "bytes": 21,
+      "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+      "sourceBefore": {
+        "size": 21,
+        "mtimeMs": 1791771553803.0776,
+        "ctimeMs": 1791771553803.0776,
+        "dev": 66305,
+        "ino": 9721962
+      },
+      "sourceAfter": {
+        "size": 21,
+        "mtimeMs": 1791771553803.0776,
+        "ctimeMs": 1791771553803.0776,
+        "dev": 66305,
+        "ino": 9721962
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.251Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "vitest.json",
+      "source": "/home/runner/work/_temp/handoff-evidence-live-pr1145-after/vitest.json",
+      "bytes": 75709,
+      "sha256": "f29bfcbc761b0de92e37e02bb4b8d78a6d1a422d98b654240a176d0879799950",
+      "sourceBefore": {
+        "size": 75709,
+        "mtimeMs": 1791771548433.105,
+        "ctimeMs": 1791771548433.105,
+        "dev": 66305,
+        "ino": 9721961
+      },
+      "sourceAfter": {
+        "size": 75709,
+        "mtimeMs": 1791771548433.105,
+        "ctimeMs": 1791771548433.105,
+        "dev": 66305,
+        "ino": 9721961
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.251Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-pending-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/completed-pending-desktop.png",
+      "bytes": 63090,
+      "sha256": "9685ca7d5e94b92e86795db82f9debcf0fbec921ff618c6455dcdbdce22b156e",
+      "sourceBefore": {
+        "size": 63090,
+        "mtimeMs": 1791771540669.1448,
+        "ctimeMs": 1791771540669.1448,
+        "dev": 66305,
+        "ino": 9721952
+      },
+      "sourceAfter": {
+        "size": 63090,
+        "mtimeMs": 1791771540669.1448,
+        "ctimeMs": 1791771540669.1448,
+        "dev": 66305,
+        "ino": 9721952
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.251Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-pending-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/completed-pending-narrow.png",
+      "bytes": 27221,
+      "sha256": "6e3b15c89572823848991680daa565efcc7503de3445063cd045f5dd0d8af840",
+      "sourceBefore": {
+        "size": 27221,
+        "mtimeMs": 1791771541219.142,
+        "ctimeMs": 1791771541219.142,
+        "dev": 66305,
+        "ino": 9721953
+      },
+      "sourceAfter": {
+        "size": 27221,
+        "mtimeMs": 1791771541219.142,
+        "ctimeMs": 1791771541219.142,
+        "dev": 66305,
+        "ino": 9721953
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.252Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-settled-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/completed-settled-desktop.png",
+      "bytes": 68530,
+      "sha256": "cecb27c8a183e9f70cf67af2965e26410f4a8713a56d65b74f03d3eecabf2aa6",
+      "sourceBefore": {
+        "size": 68530,
+        "mtimeMs": 1791771543335.1313,
+        "ctimeMs": 1791771543335.1313,
+        "dev": 66305,
+        "ino": 9721954
+      },
+      "sourceAfter": {
+        "size": 68530,
+        "mtimeMs": 1791771543335.1313,
+        "ctimeMs": 1791771543335.1313,
+        "dev": 66305,
+        "ino": 9721954
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.252Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "completed-settled-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/completed-settled-narrow.png",
+      "bytes": 31698,
+      "sha256": "99645afaf671bdc95515c1e64a3932aea79678e5bc3b87105129f7239e5d2c22",
+      "sourceBefore": {
+        "size": 31698,
+        "mtimeMs": 1791771543699.1294,
+        "ctimeMs": 1791771543699.1294,
+        "dev": 66305,
+        "ino": 9721955
+      },
+      "sourceAfter": {
+        "size": 31698,
+        "mtimeMs": 1791771543699.1294,
+        "ctimeMs": 1791771543699.1294,
+        "dev": 66305,
+        "ino": 9721955
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.252Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-pending-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/failed-pending-desktop.png",
+      "bytes": 63119,
+      "sha256": "2bf46ae845dd115330be323df698209675919adea1d8d05441213091b77a7698",
+      "sourceBefore": {
+        "size": 63119,
+        "mtimeMs": 1791771545418.1204,
+        "ctimeMs": 1791771545418.1204,
+        "dev": 66305,
+        "ino": 9721956
+      },
+      "sourceAfter": {
+        "size": 63119,
+        "mtimeMs": 1791771545418.1204,
+        "ctimeMs": 1791771545418.1204,
+        "dev": 66305,
+        "ino": 9721956
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.252Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-pending-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/failed-pending-narrow.png",
+      "bytes": 27225,
+      "sha256": "ebed176cbf3883b05b78a8b4c374a3dafa7e816fb695ce15e0fe0107febc3b19",
+      "sourceBefore": {
+        "size": 27225,
+        "mtimeMs": 1791771545979.1177,
+        "ctimeMs": 1791771545979.1177,
+        "dev": 66305,
+        "ino": 9721957
+      },
+      "sourceAfter": {
+        "size": 27225,
+        "mtimeMs": 1791771545979.1177,
+        "ctimeMs": 1791771545979.1177,
+        "dev": 66305,
+        "ino": 9721957
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.252Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-settled-desktop.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/failed-settled-desktop.png",
+      "bytes": 68559,
+      "sha256": "7b986514fde213127696345a50e0a223119e47c2a3ac1357fc7939f708a262ac",
+      "sourceBefore": {
+        "size": 68559,
+        "mtimeMs": 1791771547973.1072,
+        "ctimeMs": 1791771547973.1072,
+        "dev": 66305,
+        "ino": 9721958
+      },
+      "sourceAfter": {
+        "size": 68559,
+        "mtimeMs": 1791771547973.1072,
+        "ctimeMs": 1791771547973.1072,
+        "dev": 66305,
+        "ino": 9721958
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.253Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "failed-settled-narrow.png",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/failed-settled-narrow.png",
+      "bytes": 31830,
+      "sha256": "a0982cf83aa03bff1fd706affe945cb26d77de78d976c3192af01bc1783888c0",
+      "sourceBefore": {
+        "size": 31830,
+        "mtimeMs": 1791771548346.1052,
+        "ctimeMs": 1791771548346.1052,
+        "dev": 66305,
+        "ino": 9721959
+      },
+      "sourceAfter": {
+        "size": 31830,
+        "mtimeMs": 1791771548346.1052,
+        "ctimeMs": 1791771548346.1052,
+        "dev": 66305,
+        "ino": 9721959
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.253Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "video/page@0a2eea0c37634c20b6eb19c5dc3d385c.webm",
+      "source": "/home/runner/work/synara/synara/.pr-handoff-live-media/pr1145-after/video/page@0a2eea0c37634c20b6eb19c5dc3d385c.webm",
+      "bytes": 944042,
+      "sha256": "cafaed408327454744456ead82a24118780f2182e513f702e609cea70ec155ae",
+      "sourceBefore": {
+        "size": 944042,
+        "mtimeMs": 1791771553513.079,
+        "ctimeMs": 1791771553513.079,
+        "dev": 66305,
+        "ino": 9720941
+      },
+      "sourceAfter": {
+        "size": 944042,
+        "mtimeMs": 1791771553513.079,
+        "ctimeMs": 1791771553513.079,
+        "dev": 66305,
+        "ino": 9720941
+      },
+      "cutoffUtc": "2026-10-12T02:19:14.253Z",
+      "immutableCopy": true
+    }
+  ],
+  "browserOutcome": "success",
+  "cutoffFinishedAt": "2026-10-12T02:19:14.255Z",
+  "qualification": "Only bounded stable regular-file copies enter the artifact. Missing, oversized, truncated, replaced or changing files fail verification. Later live writes cannot alter these frozen copies; this cutoff does not prove descendant cleanup or full writer lifetime completion."
+}

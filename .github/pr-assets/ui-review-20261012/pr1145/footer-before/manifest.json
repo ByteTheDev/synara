@@ -1,0 +1,68 @@
+[
+  {
+    "path": "common-canonical-ChatComposerFooter.browser.tsx",
+    "bytes": 5451,
+    "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7",
+    "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8"
+  },
+  {
+    "path": "exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": "failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-connecting-cancellation-and-restores-Send-when-settled-1.png",
+    "bytes": 2082,
+    "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+    "blob": "47767d2f3db3e57c7b5cb7d5e6f5d4e0ed04e8ff"
+  },
+  {
+    "path": "failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-ready-cancellation-and-restores-Send-when-settled-1.png",
+    "bytes": 2082,
+    "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+    "blob": "47767d2f3db3e57c7b5cb7d5e6f5d4e0ed04e8ff"
+  },
+  {
+    "path": "failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-running-cancellation-and-restores-Send-when-settled-1.png",
+    "bytes": 2082,
+    "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+    "blob": "47767d2f3db3e57c7b5cb7d5e6f5d4e0ed04e8ff"
+  },
+  {
+    "path": "output-snapshots.json",
+    "bytes": 5138,
+    "sha256": "8d785ccdec3e6f09376c273f3661df8414c3150a62cf7a8c9c60f143511fde38",
+    "blob": "85cc4051dd9beecdeea279a8d23d5f6bd343362e"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 4558,
+    "sha256": "fd05261ec5448b6e018c75710867a0ce1f3ea99a2a593e693e287b8d89c900a3",
+    "blob": "7f7aa4d244ef4b86ab798233c65fdc28d1b40b73"
+  },
+  {
+    "path": "source-ChatComposerFooter.tsx",
+    "bytes": 13116,
+    "sha256": "f892244cdda4650b895a5bdc72f0a17f5222046b046e4570c270acd6c46f8cbc",
+    "blob": "e4c4d5b211a3c7d0c14444265a89e16040d19772"
+  },
+  {
+    "path": "verified.json",
+    "bytes": 23926,
+    "sha256": "101f1d72ac4e4ee0171242a7c11a8eaac56a664fca4abffb7d09708f730ef8ce",
+    "blob": "ec288d7e0106dcb5f98807215f181ccd49873d0e"
+  },
+  {
+    "path": "vitest.json",
+    "bytes": 19281,
+    "sha256": "dc1ac0d52f3c65b6a9e9d2178d1f3a4db11c44342a7dc4953fdf811ea0503b96",
+    "blob": "bfdfe8a4b4e028e7804e378ccf22f5d7677e28ba"
+  },
+  {
+    "path": "vitest.log",
+    "bytes": 19159,
+    "sha256": "52e269031fcd90b558cf26644d59ba4575bb9ab9794b98730f553ec69edd9150",
+    "blob": "651f46bc612d75759b9e52724a71ec2cb1196cce"
+  }
+]

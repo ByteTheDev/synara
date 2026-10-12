@@ -1,0 +1,40 @@
+{
+  "sha": "a8e31e6a897ccdfa7babd66275798925fe904553",
+  "node_id": "C_kwDORyuZ6doAKGE4ZTMxZTZhODk3Y2NkZmE3YmFiZDY2Mjc1Nzk4OTI1ZmU5MDQ1NTM",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/a8e31e6a897ccdfa7babd66275798925fe904553",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/a8e31e6a897ccdfa7babd66275798925fe904553",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T02:12:28Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T02:12:28Z"
+  },
+  "tree": {
+    "sha": "78f26d6bb6a9f88ddb2e51e0d1c4d6f58c97dd8d",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/78f26d6bb6a9f88ddb2e51e0d1c4d6f58c97dd8d"
+  },
+  "message": "test: preserve full handoff footer Before and After controls",
+  "parents": [
+    {
+      "sha": "f9e18e56c90159c06ee7cce409c5933dface9807",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/f9e18e56c90159c06ee7cce409c5933dface9807",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/f9e18e56c90159c06ee7cce409c5933dface9807"
+    },
+    {
+      "sha": "2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/2a53c3c7c20e6aec90f6eaf3067d292955d2686e",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/2a53c3c7c20e6aec90f6eaf3067d292955d2686e"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

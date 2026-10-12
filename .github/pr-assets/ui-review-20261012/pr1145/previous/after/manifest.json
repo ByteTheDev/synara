@@ -1,0 +1,68 @@
+[
+  {
+    "path": "common-canonical-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26"
+  },
+  {
+    "path": "exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": "observed-ChatView.browser.tsx",
+    "bytes": 588048,
+    "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc",
+    "blob": "1b7134fc13a191e469054a19983c1c528daaa7bc"
+  },
+  {
+    "path": "output-snapshots.json",
+    "bytes": 3123,
+    "sha256": "fa44f0563982eafd9f08db2f251ea1d502f4b755d180aa931570ab9b9d6577ce",
+    "blob": "3ab6d22d159ee2747d4fedc1b41cd386798f989a"
+  },
+  {
+    "path": "overlay.json",
+    "bytes": 2074,
+    "sha256": "fc8c24881a5b22e96b1bf34846d70fe11e476bf07ded4966c4ec44956a8d2614",
+    "blob": "49ac1e0b5101a1a97321b4680ebd544a3021ce62"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 6587,
+    "sha256": "3914a154e8574bb3c61a2d099c8771689dc30aca9e6e3534f7b789fcae8279c5",
+    "blob": "c6124d40339003ff0fa59a2d8278d1081ae5cf8c"
+  },
+  {
+    "path": "source-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26"
+  },
+  {
+    "path": "verified.json",
+    "bytes": 10505,
+    "sha256": "323f548999a17eeffe649b69552f31b80148561142b3867181120cbb44ec7aaa",
+    "blob": "edbe5a4e82ab04558425e693c7922925d8d3eeb4"
+  },
+  {
+    "path": "video/page@dcbceaa80f330a88d7e6130771f9e02b.webm",
+    "bytes": 423953,
+    "sha256": "5e645efb79c93920ee49d00aefc57ab7c01b3d908b67e225881255542e1e91e0",
+    "blob": "159a31830ff310d3b9f42b2fd5ad39df987c9b11"
+  },
+  {
+    "path": "vitest.json",
+    "bytes": 77977,
+    "sha256": "8454beba2a38937b7bb29afc638936de6dbb7788ff28cbedd687a57c10ab992a",
+    "blob": "e27ba05e1edc4bf7b2cd7f0fa64aed3260af4524"
+  },
+  {
+    "path": "vitest.log",
+    "bytes": 26011,
+    "sha256": "799ad6b052036601121c722520d5a58d5c504f9e35fedc8ce88b216cf3b73d0f",
+    "blob": "a2cb64ebc134b68bbc5f7f8ecd898f07edac52b8"
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "side": "before",
+  "video": "before/pr1145-before/video/page@87696a081fdc78423960300832751940.webm",
+  "actualCommand": [
+    "ffmpeg",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-nostdin",
+    "-threads",
+    "1",
+    "-i",
+    "/workspace/scratch/f228243a1314/campaign/packaging/pr1145/ui-run38195141054/before/pr1145-before/video/page@87696a081fdc78423960300832751940.webm",
+    "-vf",
+    "signalstats,metadata=print:file=/workspace/scratch/f228243a1314/campaign/packaging/pr1145/ui-run38195141054/before-signalstats.txt",
+    "-f",
+    "null",
+    "-"
+  ],
+  "exit": 0,
+  "decodedFrames": 6698,
+  "criterion": "minimum luma below 230; identifies content intervals for visual inspection, not semantic UI proof",
+  "ranges": [
+    {
+      "startSecond": 99.36,
+      "endSecond": 175.36,
+      "firstFrame": 2484,
+      "lastFrame": 4384,
+      "frames": 1901
+    },
+    {
+      "startSecond": 175.68,
+      "endSecond": 265.84,
+      "firstFrame": 4392,
+      "lastFrame": 6646,
+      "frames": 2255
+    }
+  ]
+}

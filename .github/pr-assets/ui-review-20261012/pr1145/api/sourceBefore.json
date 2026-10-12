@@ -1,0 +1,35 @@
+{
+  "sha": "1a9d70983750bc771e850d72a858c541bac52885",
+  "node_id": "C_kwDORyuZ6doAKDFhOWQ3MDk4Mzc1MGJjNzcxZTg1MGQ3MmE4NThjNTQxYmFjNTI4ODU",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/1a9d70983750bc771e850d72a858c541bac52885",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/1a9d70983750bc771e850d72a858c541bac52885",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-11T22:04:26Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-11T22:04:26Z"
+  },
+  "tree": {
+    "sha": "6479afa46f65f176445f51a8fe9a859f67c4ab17",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/6479afa46f65f176445f51a8fe9a859f67c4ab17"
+  },
+  "message": "style: normalize 1.0.3 changelog spacing\n\nRemove the extra blank line introduced in the 1.0.3 release notes so current-main PR merge checks pass the existing formatter. Preserve all release text and verification qualifications.",
+  "parents": [
+    {
+      "sha": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

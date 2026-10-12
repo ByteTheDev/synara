@@ -1,0 +1,1063 @@
+[
+  {
+    "path": "archives/38195141054-before.zip",
+    "bytes": 3070954,
+    "sha256": "d719bb98096e9ad429637f924f76d4db8a317ce5e5a739a8ef816b6ff06ecd6e",
+    "blob": "db900b210fd1e583f65d931ecf9556b5eec23e91",
+    "origin": "ui-run38195141054/before.zip",
+    "kind": "original GitHub artifact ZIP"
+  },
+  {
+    "path": "before/common-canonical-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/common-canonical-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/completed-pending-desktop.png",
+    "bytes": 63893,
+    "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+    "blob": "72ab2b164bd3986ee7311be945f0dd1a4bbe81f0",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/completed-pending-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/completed-pending-narrow.png",
+    "bytes": 27083,
+    "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+    "blob": "042f2feac466771ce174c0bc1f30cea48bfbfe22",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/completed-pending-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/exits.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/failed-pending-desktop.png",
+    "bytes": 63893,
+    "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+    "blob": "72ab2b164bd3986ee7311be945f0dd1a4bbe81f0",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/failed-pending-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/failed-pending-narrow.png",
+    "bytes": 27083,
+    "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+    "blob": "042f2feac466771ce174c0bc1f30cea48bfbfe22",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/failed-pending-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/manifest.json",
+    "bytes": 3073,
+    "sha256": "4fbbd150c3b4dcaf478a0a9119563716947ff9b239330a50c939122aade743b7",
+    "blob": "0a90fc0f9e5f3e2ffdfae8fef8482c732da6d7d0",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/manifest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/observed-ChatView.browser.tsx",
+    "bytes": 588048,
+    "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc",
+    "blob": "1b7134fc13a191e469054a19983c1c528daaa7bc",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/observed-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/output-snapshots.json",
+    "bytes": 5982,
+    "sha256": "fef50c31e88e774728e590105d6b5fb8ba4af3e14a4dc9aaf93fb579ab744e4d",
+    "blob": "9e974b3e6abffbe7c3ebdebb3c531a9ccdd13376",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/output-snapshots.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/overlay.json",
+    "bytes": 2074,
+    "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e",
+    "blob": "546537bf0356d8e057cbec3da70e2efda61208f7",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/overlay.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/provenance.json",
+    "bytes": 7574,
+    "sha256": "8647974aa430f9b2132996057bba2d56df5ed4b238b38886129da8f14732a519",
+    "blob": "dbfe169eb0216f458e143dcc540b793d89213ce2",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/provenance.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/source-ChatView.browser.tsx",
+    "bytes": 577781,
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+    "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/source-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/verified.json",
+    "bytes": 30756,
+    "sha256": "62e9c56c37eb136c23cb2fd19c81e25653475feeee6bd0d140fd77c9db44b17f",
+    "blob": "5300e01b1092a47820cfea00ce3beb9f2639afa7",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/verified.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/video/page@87696a081fdc78423960300832751940.webm",
+    "bytes": 3639781,
+    "sha256": "6dfa5215d88ff0d16e6375ed558556f8827d4e2a27838d1f6f210e9bfc5561ab",
+    "blob": "f2c09e0bbd03deb9648dd8ca1472409d52640ce5",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/video/page@87696a081fdc78423960300832751940.webm",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/vitest.json",
+    "bytes": 84227,
+    "sha256": "57f61cbc10140479f0afe48667e9ba572c8a0d7cf9235aae089cf87f09ed05ef",
+    "blob": "c94549dad4b71b08cbab1c55cd0bcc5254958aa9",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/vitest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "before/vitest.log",
+    "bytes": 41451,
+    "sha256": "37ae3f300434dfdf3208ec18ef39f67bb3e2d11e30d4e37a0d410e9e5492ed02",
+    "blob": "61289843bdf32a87f7163455d9fd3880409ccebf",
+    "archive": "archives/38195141054-before.zip",
+    "member": "pr1145-before/vitest.log",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "archives/38195141054-after.zip",
+    "bytes": 1401083,
+    "sha256": "e44ec83dc313b8babb7186409dd131471fb02244a5564b8e3f6c0aa769d37070",
+    "blob": "41417a7b1b31c37b6fc7ae23e74ba332fd21fac0",
+    "origin": "ui-run38195141054/after.zip",
+    "kind": "original GitHub artifact ZIP"
+  },
+  {
+    "path": "after/common-canonical-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/common-canonical-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/completed-pending-desktop.png",
+    "bytes": 63090,
+    "sha256": "9685ca7d5e94b92e86795db82f9debcf0fbec921ff618c6455dcdbdce22b156e",
+    "blob": "885308d58b044dcd128258d499a8319a7b68d077",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/completed-pending-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/completed-pending-narrow.png",
+    "bytes": 27221,
+    "sha256": "6e3b15c89572823848991680daa565efcc7503de3445063cd045f5dd0d8af840",
+    "blob": "331e1a81f3631ea12569d99000ae5e24f1bf7f49",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/completed-pending-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/completed-settled-desktop.png",
+    "bytes": 68530,
+    "sha256": "cecb27c8a183e9f70cf67af2965e26410f4a8713a56d65b74f03d3eecabf2aa6",
+    "blob": "d86e335ddcb1de9ac3f723aa46a996d5a88f86eb",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/completed-settled-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/completed-settled-narrow.png",
+    "bytes": 31698,
+    "sha256": "99645afaf671bdc95515c1e64a3932aea79678e5bc3b87105129f7239e5d2c22",
+    "blob": "133ef5c97d9e96a5bbeade7e1b2ea6937d1904d1",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/completed-settled-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/exits.json",
+    "bytes": 21,
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/exits.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/failed-pending-desktop.png",
+    "bytes": 63119,
+    "sha256": "2bf46ae845dd115330be323df698209675919adea1d8d05441213091b77a7698",
+    "blob": "7756f7d45fb17fbce5ddcbacf2fd7b4a627a8b6c",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/failed-pending-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/failed-pending-narrow.png",
+    "bytes": 27225,
+    "sha256": "ebed176cbf3883b05b78a8b4c374a3dafa7e816fb695ce15e0fe0107febc3b19",
+    "blob": "90cbbde1bc4d04d8d1a816e8648d0a198d4ecef6",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/failed-pending-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/failed-settled-desktop.png",
+    "bytes": 68559,
+    "sha256": "7b986514fde213127696345a50e0a223119e47c2a3ac1357fc7939f708a262ac",
+    "blob": "a2a588e5f30a17c0b13a417aec40d714b4a6a9f0",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/failed-settled-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/failed-settled-narrow.png",
+    "bytes": 31830,
+    "sha256": "a0982cf83aa03bff1fd706affe945cb26d77de78d976c3192af01bc1783888c0",
+    "blob": "4584385196450952b779ac95edd5d6269641098d",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/failed-settled-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/manifest.json",
+    "bytes": 3908,
+    "sha256": "9d8c5554bc81ce5a7ce02cb8c0d2b014064ccade308360cb6c7e1a3f903df016",
+    "blob": "e9c803c3efada143d12d701c6b2b6eaf84c912c1",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/manifest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/observed-ChatView.browser.tsx",
+    "bytes": 588048,
+    "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc",
+    "blob": "1b7134fc13a191e469054a19983c1c528daaa7bc",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/observed-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/output-snapshots.json",
+    "bytes": 8819,
+    "sha256": "7b5e63336a9e1db189821d17c2f8bb105cae58a5a4080c36e338be79b629c439",
+    "blob": "4535fb4d9b6e7aa0cd542c37077c8e236c66dfd5",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/output-snapshots.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/overlay.json",
+    "bytes": 2074,
+    "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e",
+    "blob": "546537bf0356d8e057cbec3da70e2efda61208f7",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/overlay.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/provenance.json",
+    "bytes": 7569,
+    "sha256": "5de5d28d36818469b0d2ad3fbef160888fb2edb2520b5b4d169f565013e4215c",
+    "blob": "86356a0e9de19ceaa034dcdb1b618364a0cc2ede",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/provenance.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/source-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/source-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/verified.json",
+    "bytes": 36184,
+    "sha256": "a406c9529945a159a5c2eacaf8a9dde0c08973b430707c48f8044f731152242b",
+    "blob": "58d4ddd19bd8ff6da5e3419ac64dabc83bcfe6e8",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/verified.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/video/page@0a2eea0c37634c20b6eb19c5dc3d385c.webm",
+    "bytes": 944042,
+    "sha256": "cafaed408327454744456ead82a24118780f2182e513f702e609cea70ec155ae",
+    "blob": "0d1ad742db94fa74ed782155809c402d86dd21ab",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/video/page@0a2eea0c37634c20b6eb19c5dc3d385c.webm",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/vitest.json",
+    "bytes": 75709,
+    "sha256": "f29bfcbc761b0de92e37e02bb4b8d78a6d1a422d98b654240a176d0879799950",
+    "blob": "e9c129f49283fbb99843857d2ee7be539e31cfb2",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/vitest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "after/vitest.log",
+    "bytes": 20066,
+    "sha256": "58b69a69caa59d34d3108700b4dc3e0835aed4bf0c7b07d908f6a44795a6a9ad",
+    "blob": "7da98302f7f569239ceb0c247051d686ab173b53",
+    "archive": "archives/38195141054-after.zip",
+    "member": "pr1145-after/vitest.log",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "archives/38195141054-footer-before.zip",
+    "bytes": 19639,
+    "sha256": "e78673574647a5a2c72d506a67841d860e0128995e9addc162bd878fa2297054",
+    "blob": "0c5e780cc359e6c31cc712e90788711b72be813b",
+    "origin": "ui-run38195141054/footer-before.zip",
+    "kind": "original GitHub artifact ZIP"
+  },
+  {
+    "path": "footer-before/common-canonical-ChatComposerFooter.browser.tsx",
+    "bytes": 5451,
+    "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7",
+    "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/common-canonical-ChatComposerFooter.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/exits.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-connecting-cancellation-and-restores-Send-when-settled-1.png",
+    "bytes": 2082,
+    "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+    "blob": "47767d2f3db3e57c7b5cb7d5e6f5d4e0ed04e8ff",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-connecting-cancellation-and-restores-Send-when-settled-1.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-ready-cancellation-and-restores-Send-when-settled-1.png",
+    "bytes": 2082,
+    "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+    "blob": "47767d2f3db3e57c7b5cb7d5e6f5d4e0ed04e8ff",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-ready-cancellation-and-restores-Send-when-settled-1.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-running-cancellation-and-restores-Send-when-settled-1.png",
+    "bytes": 2082,
+    "sha256": "0a157c250dcc942cb0f7ff7b76b82b83ead2517b136b5e9ec2ca4f08242cf3dd",
+    "blob": "47767d2f3db3e57c7b5cb7d5e6f5d4e0ed04e8ff",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/failure-screenshots/ChatComposerFooter-stop-control-holds-handoff-admission-separately-from-running-cancellation-and-restores-Send-when-settled-1.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/manifest.json",
+    "bytes": 2600,
+    "sha256": "3360b85b25efa367b02a2acd8d51e28d9bfd313dc60017f494fca47a657956ee",
+    "blob": "f8a4f507fe9d10aee680221b30d16fdbffec9129",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/manifest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/output-snapshots.json",
+    "bytes": 5138,
+    "sha256": "8d785ccdec3e6f09376c273f3661df8414c3150a62cf7a8c9c60f143511fde38",
+    "blob": "85cc4051dd9beecdeea279a8d23d5f6bd343362e",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/output-snapshots.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/provenance.json",
+    "bytes": 4558,
+    "sha256": "fd05261ec5448b6e018c75710867a0ce1f3ea99a2a593e693e287b8d89c900a3",
+    "blob": "7f7aa4d244ef4b86ab798233c65fdc28d1b40b73",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/provenance.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/source-ChatComposerFooter.tsx",
+    "bytes": 13116,
+    "sha256": "f892244cdda4650b895a5bdc72f0a17f5222046b046e4570c270acd6c46f8cbc",
+    "blob": "e4c4d5b211a3c7d0c14444265a89e16040d19772",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/source-ChatComposerFooter.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/verified.json",
+    "bytes": 23926,
+    "sha256": "101f1d72ac4e4ee0171242a7c11a8eaac56a664fca4abffb7d09708f730ef8ce",
+    "blob": "ec288d7e0106dcb5f98807215f181ccd49873d0e",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/verified.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/vitest.json",
+    "bytes": 19281,
+    "sha256": "dc1ac0d52f3c65b6a9e9d2178d1f3a4db11c44342a7dc4953fdf811ea0503b96",
+    "blob": "bfdfe8a4b4e028e7804e378ccf22f5d7677e28ba",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/vitest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-before/vitest.log",
+    "bytes": 19159,
+    "sha256": "52e269031fcd90b558cf26644d59ba4575bb9ab9794b98730f553ec69edd9150",
+    "blob": "651f46bc612d75759b9e52724a71ec2cb1196cce",
+    "archive": "archives/38195141054-footer-before.zip",
+    "member": "before/vitest.log",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "archives/38195141054-footer-after.zip",
+    "bytes": 12230,
+    "sha256": "a6c18f2748a35d8338a4f696409dcc959fb30f603d59d7b4edafabbe1f11a1eb",
+    "blob": "bcdce67301993ca8dd5e808398331da0cf61a0fd",
+    "origin": "ui-run38195141054/footer-after.zip",
+    "kind": "original GitHub artifact ZIP"
+  },
+  {
+    "path": "footer-after/common-canonical-ChatComposerFooter.browser.tsx",
+    "bytes": 5451,
+    "sha256": "89b6daa1ab3cf1dac8d836613f01f56e292ec6360a3fbd63120717bddd2207a7",
+    "blob": "51fe0dac36f1a7458b922c734b5704114eabf6f8",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/common-canonical-ChatComposerFooter.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/exits.json",
+    "bytes": 21,
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/exits.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/manifest.json",
+    "bytes": 1605,
+    "sha256": "e8216185595c4be5b5cf6728fc26f8f41b109952a63f876af6ae2a154df777b2",
+    "blob": "e6132b26a3d1b0b623f739372beba132de4352e4",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/manifest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/output-snapshots.json",
+    "bytes": 2248,
+    "sha256": "410393de16614fe53eceac9f6477dc73d882f42330574d440f299258e4d5c3ed",
+    "blob": "0f2242d2d847e67284a936bea24740418db6acd4",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/output-snapshots.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/provenance.json",
+    "bytes": 4556,
+    "sha256": "b9ad4e3ba2f2e0699f1ab7b747803d13c06453612574af629ce6ce9a073e1994",
+    "blob": "040c740dee7d04872aee5835a7be943db8c1fd63",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/provenance.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/source-ChatComposerFooter.tsx",
+    "bytes": 13285,
+    "sha256": "dfec18f2a3623e36917afcb21467f9fba159cd2f335ccbf640fd8f45bd4d9f1a",
+    "blob": "7615f50ce03825e5e1938d3b9e1747e90ef25c82",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/source-ChatComposerFooter.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/verified.json",
+    "bytes": 7395,
+    "sha256": "fbf236518fb393f399bb8d7f3e6bed00b2d68a0f7c205827746e7ae52cd49535",
+    "blob": "557b0fb947c285e176b28acbbe7b74b405ab920a",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/verified.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/vitest.json",
+    "bytes": 2796,
+    "sha256": "6ab8a37da9b4aa0c0a004c4dad1bdb71cd4effb632849afec48efd1e1e1334ca",
+    "blob": "25ff7235f3a1f4f7631c905e1ae5baa357ab8ddc",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/vitest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "footer-after/vitest.log",
+    "bytes": 929,
+    "sha256": "831602d1271c67f94dd501edce50b575cf2804e211723169c5d0fac0f8005f34",
+    "blob": "2d2e98a5a36913fe1f098e68e8dcf6ffbfb05f16",
+    "archive": "archives/38195141054-footer-after.zip",
+    "member": "after/vitest.log",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "archives/38193107887-before.zip",
+    "bytes": 3099355,
+    "sha256": "ab7035b2d404a2323e40ae0e5b214bede5d35798635ad1bd1ee2f01e7d75498d",
+    "blob": "e4cc67ddd445f95266bb6cff375cad595b312ec0",
+    "origin": "ui-first-run38193107887/before.zip",
+    "kind": "original GitHub artifact ZIP"
+  },
+  {
+    "path": "previous/before/common-canonical-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/common-canonical-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/completed-pending-desktop.png",
+    "bytes": 63893,
+    "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+    "blob": "72ab2b164bd3986ee7311be945f0dd1a4bbe81f0",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/completed-pending-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/completed-pending-narrow.png",
+    "bytes": 27083,
+    "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+    "blob": "042f2feac466771ce174c0bc1f30cea48bfbfe22",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/completed-pending-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/exits.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/failed-pending-desktop.png",
+    "bytes": 63893,
+    "sha256": "69b58c2c8d14927444569f4e437ebc745cab3bac14e7bab4c86030e303aed574",
+    "blob": "72ab2b164bd3986ee7311be945f0dd1a4bbe81f0",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/failed-pending-desktop.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/failed-pending-narrow.png",
+    "bytes": 27083,
+    "sha256": "28871c1ed4a26735a3fc875328fec4dc1c82d5567d0d3d7643bc153cfda01e00",
+    "blob": "042f2feac466771ce174c0bc1f30cea48bfbfe22",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/failed-pending-narrow.png",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/manifest.json",
+    "bytes": 3073,
+    "sha256": "f38feb79c2534a0205d153894b13526679d716d8c2acb35b1ac16da707ac75ce",
+    "blob": "6b48f2476d9e1076eb35fbf3e51ad671c6fc1543",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/manifest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/observed-ChatView.browser.tsx",
+    "bytes": 588048,
+    "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc",
+    "blob": "1b7134fc13a191e469054a19983c1c528daaa7bc",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/observed-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/output-snapshots.json",
+    "bytes": 5974,
+    "sha256": "c4cd85039b8b6044fcf5af620276f6f15649007fcbbfabb8efc6b23517146e55",
+    "blob": "3ac135c8a38187a383d4c350acc488f073cc4a94",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/output-snapshots.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/overlay.json",
+    "bytes": 2074,
+    "sha256": "fc8c24881a5b22e96b1bf34846d70fe11e476bf07ded4966c4ec44956a8d2614",
+    "blob": "49ac1e0b5101a1a97321b4680ebd544a3021ce62",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/overlay.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/provenance.json",
+    "bytes": 6592,
+    "sha256": "d31c5bf9f99230a076b11ef18d62cb3fbba20ceae940515bf96c20fdd1a38f28",
+    "blob": "b3d17e6360ea51b325d3fd755ce3900fe7aa283b",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/provenance.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/source-ChatView.browser.tsx",
+    "bytes": 577781,
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+    "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/source-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/verified.json",
+    "bytes": 29860,
+    "sha256": "9daac67f9b8d091688c793b1339c2d7734a1664b531165af2ef03f2322f828d8",
+    "blob": "191fe66090588d2bac48544dcb44c06f42ebba25",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/verified.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/video/page@36273cd8f98f1709e4e27e9046441b0b.webm",
+    "bytes": 3619654,
+    "sha256": "dae033fc037676807c7f4c580b567e7a7b94270ea640d9de365ab324b97b19f3",
+    "blob": "ff2a30a6dcd258ab4968f1a48d8fdddf2aa0c486",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/video/page@36273cd8f98f1709e4e27e9046441b0b.webm",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/vitest.json",
+    "bytes": 84217,
+    "sha256": "09e6b81a613b3cc7162abb9d697880882fc21f18282f90b81a4f7b418494d3d3",
+    "blob": "4d3dd0a2a7f1216aa7c3f543188f5bfe23b5d67b",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/vitest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/before/vitest.log",
+    "bytes": 41451,
+    "sha256": "6ea39a25830f7ce1a530d7f62b1b340794257ce3fecc0b426b76fb47f9e714f9",
+    "blob": "633a85add35e328537992f3ea82b7bbbdba4d213",
+    "archive": "archives/38193107887-before.zip",
+    "member": "pr1145-before/vitest.log",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "archives/38193107887-after.zip",
+    "bytes": 534726,
+    "sha256": "d0fa50ee6b74c7f97aa084fccc490cd4052733f7cf8ed49016f20e498a021c73",
+    "blob": "de8a21e8c34b26b591002dce0a6e87f98ed0e4f0",
+    "origin": "ui-first-run38193107887/after.zip",
+    "kind": "original GitHub artifact ZIP"
+  },
+  {
+    "path": "previous/after/exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/exits.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/common-canonical-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/common-canonical-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/manifest.json",
+    "bytes": 2236,
+    "sha256": "48bda2cf39d4fad426cea241167bcb1e1f4bb7fbd1ba063f9b74a0fcf9bcd12c",
+    "blob": "cee5be32bcda66219d8031e0a85799cbb69c4ab1",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/manifest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/observed-ChatView.browser.tsx",
+    "bytes": 588048,
+    "sha256": "7883b36adb98f845b2b8f50c499e1a6a852d6da9aa7573823936f94e93d822dc",
+    "blob": "1b7134fc13a191e469054a19983c1c528daaa7bc",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/observed-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/output-snapshots.json",
+    "bytes": 3123,
+    "sha256": "fa44f0563982eafd9f08db2f251ea1d502f4b755d180aa931570ab9b9d6577ce",
+    "blob": "3ab6d22d159ee2747d4fedc1b41cd386798f989a",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/output-snapshots.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/overlay.json",
+    "bytes": 2074,
+    "sha256": "fc8c24881a5b22e96b1bf34846d70fe11e476bf07ded4966c4ec44956a8d2614",
+    "blob": "49ac1e0b5101a1a97321b4680ebd544a3021ce62",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/overlay.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/provenance.json",
+    "bytes": 6587,
+    "sha256": "3914a154e8574bb3c61a2d099c8771689dc30aca9e6e3534f7b789fcae8279c5",
+    "blob": "c6124d40339003ff0fa59a2d8278d1081ae5cf8c",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/provenance.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/source-ChatView.browser.tsx",
+    "bytes": 584014,
+    "sha256": "bb7136bb2372fee743f99aa810707448e1db35e6e08c9787c19ffe6e101efee4",
+    "blob": "50f33c9ffe6d6b4611ebbf2d262b34870d0e8a26",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/source-ChatView.browser.tsx",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/verified.json",
+    "bytes": 10505,
+    "sha256": "323f548999a17eeffe649b69552f31b80148561142b3867181120cbb44ec7aaa",
+    "blob": "edbe5a4e82ab04558425e693c7922925d8d3eeb4",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/verified.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/video/page@dcbceaa80f330a88d7e6130771f9e02b.webm",
+    "bytes": 423953,
+    "sha256": "5e645efb79c93920ee49d00aefc57ab7c01b3d908b67e225881255542e1e91e0",
+    "blob": "159a31830ff310d3b9f42b2fd5ad39df987c9b11",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/video/page@dcbceaa80f330a88d7e6130771f9e02b.webm",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/vitest.json",
+    "bytes": 77977,
+    "sha256": "8454beba2a38937b7bb29afc638936de6dbb7788ff28cbedd687a57c10ab992a",
+    "blob": "e27ba05e1edc4bf7b2cd7f0fa64aed3260af4524",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/vitest.json",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "previous/after/vitest.log",
+    "bytes": 26011,
+    "sha256": "799ad6b052036601121c722520d5a58d5c504f9e35fedc8ce88b216cf3b73d0f",
+    "blob": "a2cb64ebc134b68bbc5f7f8ecd898f07edac52b8",
+    "archive": "archives/38193107887-after.zip",
+    "member": "pr1145-after/vitest.log",
+    "kind": "unchanged raw archive member"
+  },
+  {
+    "path": "driver-current/.github/workflows/handoff-evidence.yml",
+    "bytes": 6061,
+    "sha256": "c5eb3bcacb563643455e1cd379aa3121a0dbcf1dde6e58314741a88f9f316830",
+    "blob": "3bc4985706ab109f2e34de1357abf605aea7eb11",
+    "origin": "browser-driver/.github/workflows/handoff-evidence.yml",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/README.md",
+    "bytes": 6558,
+    "sha256": "a4f9ce39c7ea5562dbb255f772afd4829a7474892514c16468f19ff1e39d85f6",
+    "blob": "8755c2c46d3475023359118eada8d4e6f7608f7e",
+    "origin": "browser-driver/scripts/handoff-evidence/README.md",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/footer-control.mjs",
+    "bytes": 10869,
+    "sha256": "51528eec5ee00beffb256f91a8ce1b295dd0d43da6ca4b6d34e7f2d61fea91b4",
+    "blob": "92f92f0e5fa058ac988686ec9fd3797cb3690853",
+    "origin": "browser-driver/scripts/handoff-evidence/footer-control.mjs",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/helpers.ts",
+    "bytes": 3867,
+    "sha256": "a1b99ea78b62d3c554c6fb1927fd596768c645a85828839089d493881e356687",
+    "blob": "669198d9c9028bcf655fa599b5b4483356bdcac9",
+    "origin": "browser-driver/scripts/handoff-evidence/helpers.ts",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/overlay.json",
+    "bytes": 2074,
+    "sha256": "c0133157957e94e19bd28b0b6694378e1cc4a975e3f09b4ce72781a41f4efe3e",
+    "blob": "546537bf0356d8e057cbec3da70e2efda61208f7",
+    "origin": "browser-driver/scripts/handoff-evidence/overlay.json",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/runner.mjs",
+    "bytes": 18584,
+    "sha256": "c80a3d46f3ceab18c7e8bd6869d81e14c424f6654cff07f8ff41b00e4a56e5db",
+    "blob": "903d9253688ef4a7b0ea182d66fc966cd4218018",
+    "origin": "browser-driver/scripts/handoff-evidence/runner.mjs",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/snapshots.mjs",
+    "bytes": 5005,
+    "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1",
+    "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+    "origin": "browser-driver/scripts/handoff-evidence/snapshots.mjs",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+    "bytes": 1053,
+    "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91",
+    "blob": "a1fb1e350a6355d3ff26905143ff9cc0e12b76a0",
+    "origin": "browser-driver/scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-current/scripts/handoff-evidence/vitest.handoff-footer.config.ts",
+    "bytes": 348,
+    "sha256": "52afcd127a86b596bb3875956890292e36d60f20733371ee555e887d7c59a991",
+    "blob": "a73321ffe73087d749bde7e7dbaaff70e192530d",
+    "origin": "browser-driver/scripts/handoff-evidence/vitest.handoff-footer.config.ts",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/.github/workflows/handoff-evidence.yml",
+    "bytes": 3453,
+    "sha256": "b6c74e7b8e7bac9ef4ac06250e4ea6a677129338b14daa233500786f6b852acf",
+    "blob": "6053f914c2e22862f0cd14de6d931a7a5f2f2749",
+    "origin": "browser-driver/before-footer-fix/.github/workflows/handoff-evidence.yml",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/scripts/handoff-evidence/runner.mjs",
+    "bytes": 18288,
+    "sha256": "e6ce15045a04b3e8ab98d356fee0e5069f1164450ef4c71a3d6375048a1daa62",
+    "blob": "9e5f2ee481e77b2cd122de5e5c00546807b7d4e1",
+    "origin": "browser-driver/before-footer-fix/scripts/handoff-evidence/runner.mjs",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/scripts/handoff-evidence/helpers.ts",
+    "bytes": 3867,
+    "sha256": "a1b99ea78b62d3c554c6fb1927fd596768c645a85828839089d493881e356687",
+    "blob": "669198d9c9028bcf655fa599b5b4483356bdcac9",
+    "origin": "browser-driver/before-footer-fix/scripts/handoff-evidence/helpers.ts",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/scripts/handoff-evidence/overlay.json",
+    "bytes": 2074,
+    "sha256": "fc8c24881a5b22e96b1bf34846d70fe11e476bf07ded4966c4ec44956a8d2614",
+    "blob": "49ac1e0b5101a1a97321b4680ebd544a3021ce62",
+    "origin": "browser-driver/before-footer-fix/scripts/handoff-evidence/overlay.json",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+    "bytes": 1053,
+    "sha256": "e463c33cb2b414dfe42b48f054682d99bafcf27a6c2e482ec0ec6f5667e31e91",
+    "blob": "a1fb1e350a6355d3ff26905143ff9cc0e12b76a0",
+    "origin": "browser-driver/before-footer-fix/scripts/handoff-evidence/vitest.handoff-evidence.config.ts",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/scripts/handoff-evidence/README.md",
+    "bytes": 4477,
+    "sha256": "7b9134bbb5ad20f0287a417100465f8acab713003bb1636ba20747d4536d1ef8",
+    "blob": "c8328a2147a7532c20fe228acb09295f185001df",
+    "origin": "browser-driver/before-footer-fix/scripts/handoff-evidence/README.md",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "driver-previous/scripts/handoff-evidence/snapshots.mjs",
+    "bytes": 5005,
+    "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1",
+    "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+    "origin": "browser-driver/before-footer-fix/scripts/handoff-evidence/snapshots.mjs",
+    "kind": "immutable reviewed diagnostic source"
+  },
+  {
+    "path": "history/first-locator-ci.log",
+    "bytes": 88187,
+    "sha256": "d8c90fd2fbdd2750c33cca53de42af740542ad64470e28a86b4dea8966fd72a4",
+    "blob": "f2a8a671250c5603eb536dc9fc4c690fc10a556c",
+    "origin": "ci-38191448841-chat-workflows.log",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "history/connecting-locator-ci.log",
+    "bytes": 80431,
+    "sha256": "cf41fd407f1ea7a7d6033f5210c8573aed240327a341214d3bfd69983b2a04b7",
+    "blob": "5b2e3da7ab9ba31f6745f7d0e26a716edd9a2f93",
+    "origin": "ci-38192727438-chat-workflows.log",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "history/first-ui-before-job.log",
+    "bytes": 118236,
+    "sha256": "c8c911234c7f47c99b26b86547c3f709795eafe8e845fb4237421e9f7f633de3",
+    "blob": "229d515156a052623ca491a0920dfe418198d18e",
+    "origin": "ci-ui-38193107887-before.log",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "history/first-ui-after-job.log",
+    "bytes": 92925,
+    "sha256": "f7635d48cd4593bb07da58539a826b805d0139541d38189a75010100cfcc71cb",
+    "blob": "1f6f9eb29b9989a42e2ba41154085275bb0fe51e",
+    "origin": "ci-ui-38193107887-after.log",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "current-outcome-summary.json",
+    "bytes": 45989,
+    "sha256": "919986d2ebfc1c90024e1d8beca74c93fd045b4f319fe76daa8ea6f5c367e0ca",
+    "blob": "2ee5d7d5f8936722de19ad585bd5f596ff018ddd",
+    "origin": "ui-run38195141054/outcome-summary.json",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "video-metadata.json",
+    "bytes": 751,
+    "sha256": "63f8ec43fe5f0cec4faf3472816f012f2087bcbfdeb350ec97252cf1236d78ef",
+    "blob": "381d9532041ab5c5e577a603d47b3b027832743d",
+    "origin": "ui-run38195141054/video-metadata.json",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "analysis/current-before-content-scan.json",
+    "bytes": 1033,
+    "sha256": "fab201498f842fc55cd588689c307f6b0e66e022345241eb884bfb7116d4d4df",
+    "blob": "c869416266283d45556ef3ca572da1be0c5086ea",
+    "origin": "ui-run38195141054/before-content-scan.json",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "analysis/current-after-content-scan.json",
+    "bytes": 1022,
+    "sha256": "bf033eef5d965f1fe06c0e06fb6f92143654261aaffcaa6e028f4196db0a05b4",
+    "blob": "e747356b5b2f607c3cc2be5e77a637c23dbff7e1",
+    "origin": "ui-run38195141054/after-content-scan.json",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "analysis/previous-after-content-ranges.json",
+    "bytes": 136,
+    "sha256": "dd44242962ae6220f0c0a1d9ac84b00dfba4211ccc4868a417c61496bce43e81",
+    "blob": "f249d854b63f8ca26fd68ac714d34bd8248acea2",
+    "origin": "ui-first-run38193107887/after-video-nonblank-ranges.json",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "analysis/previous-after-frame-107.18.png",
+    "bytes": 118024,
+    "sha256": "0f56e6a2491eb5967c90d727b4e5a9405a913c3509726f3673d7ea0e4ccc9b9b",
+    "blob": "3b2b629e71bdf53239417ea4ab114fa953e83fcc",
+    "origin": "ui-first-run38193107887/after-content-frame-0.png",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "analysis/previous-after-frame-110.8.png",
+    "bytes": 58707,
+    "sha256": "cc35bb53242c9be5ea279c8ef83ebcf65457afa16e18be0486b14668774d0526",
+    "blob": "b9087ce37b53eb8eb5ae136278b56efbcb6c0d4d",
+    "origin": "ui-first-run38193107887/after-content-frame-1.png",
+    "kind": "retained observation or previous failure; no new source execution"
+  },
+  {
+    "path": "history/current-job-114636052854.log",
+    "bytes": 78314,
+    "sha256": "9e6c2dbabb173af426bf7d45fef3ec854dd96394af5ab0f856aba495f3706d5b",
+    "blob": "694854aba3d11847365baaa4b604732cf03f798c",
+    "origin": "ui-run38195141054/job-114636052854.log",
+    "kind": "connector job-log text; line endings normalized on storage"
+  },
+  {
+    "path": "history/current-job-114636052932.log",
+    "bytes": 118153,
+    "sha256": "945f287be44147a85bbd691dbe138203d1b19b072624be22dc4e71b866f03268",
+    "blob": "8b7b89fd0de9e6eac16809c139b748c32ed0c397",
+    "origin": "ui-run38195141054/job-114636052932.log",
+    "kind": "connector job-log text; line endings normalized on storage"
+  },
+  {
+    "path": "history/current-job-114636018139.log",
+    "bytes": 56248,
+    "sha256": "2d26ee0f5ca03c6c003a76189f9ea54b20b61539c9419add4a088e820fdb77e8",
+    "blob": "a3ea868d5ed0df40f5ecd56caaf4a7c7b609544d",
+    "origin": "ui-run38195141054/job-114636018139.log",
+    "kind": "connector job-log text; line endings normalized on storage"
+  },
+  {
+    "path": "history/current-job-114636018306.log",
+    "bytes": 79487,
+    "sha256": "8cecb9f3eca5a07417d2dbb48ac6ab11feb2722a61c00c8f59a07647cc9ef732",
+    "blob": "ed4923c59c7150ec1e75cbccc3fe169530793820",
+    "origin": "ui-run38195141054/job-114636018306.log",
+    "kind": "connector job-log text; line endings normalized on storage"
+  }
+]

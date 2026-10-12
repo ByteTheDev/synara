@@ -1,0 +1,40 @@
+{
+  "sha": "f9e18e56c90159c06ee7cce409c5933dface9807",
+  "node_id": "C_kwDORyuZ6doAKGY5ZTE4ZTU2YzkwMTU5YzA2ZWU3Y2NlNDA5YzU5MzNkZmFjZTk4MDc",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/f9e18e56c90159c06ee7cce409c5933dface9807",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/f9e18e56c90159c06ee7cce409c5933dface9807",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:40:30Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:40:30Z"
+  },
+  "tree": {
+    "sha": "9bc296d2688aef3750bfb67237633cdcb28e6402",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/9bc296d2688aef3750bfb67237633cdcb28e6402"
+  },
+  "message": "test(web): capture the corrected handoff submit-control state\n\nPin the independently reviewed canonical locator correction, observe the actual unique composer submit control and its accessible label, and retain the original failing browser run.",
+  "parents": [
+    {
+      "sha": "b2ee5a67d1f6d1c704aa914afa3334c7e7c764f8",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/b2ee5a67d1f6d1c704aa914afa3334c7e7c764f8",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/b2ee5a67d1f6d1c704aa914afa3334c7e7c764f8"
+    },
+    {
+      "sha": "53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/53248e7ed92a1d14147cd66822cfa982b0d6baef",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/53248e7ed92a1d14147cd66822cfa982b0d6baef"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}
