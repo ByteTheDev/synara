@@ -66,12 +66,25 @@ describe("deriveTurnStartSession", () => {
     });
   });
 
-  it.each(["starting", "ready", "running"] as const)(
+  it.each(["starting", "running"] as const)(
     "does not replace an established %s session with a false Starting state",
     (status) => {
       expect(derive(makeSession(status))).toBeNull();
     },
   );
+
+  it("keeps an authoritative pending-start fence for an established ready session", () => {
+    expect(derive(makeSession("ready"))).toMatchObject({
+      status: "starting",
+      providerName: "codex",
+      runtimeMode: "approval-required",
+    });
+  });
+
+  it("fences accepted ready-session work despite a client timestamp behind the server", () => {
+    const session = { ...makeSession("ready"), updatedAt: "2026-07-22T00:00:00.000Z" };
+    expect(derive(session)).toMatchObject({ status: "starting", updatedAt: session.updatedAt });
+  });
 
   it("does not overwrite newer terminal state with a delayed start request", () => {
     const recentError = {

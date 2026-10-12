@@ -23,7 +23,7 @@ export const DEFAULT_RUNTIME_RECONCILIATION_STALE_AFTER_MS = 15_000;
 
 /**
  * Maximum age before recovering a stale projection with no identifiable live
- * turn. A provider session that still reports a concrete running turn always
+ * turn. A bound provider session that still reports a concrete running turn always
  * wins, regardless of age; this bound is for abandoned starts and missing or
  * otherwise unidentifiable runtime turns.
  */
@@ -252,11 +252,11 @@ export function planProviderRuntimeReconciliation(input: {
     const projectedTurnId = projectedInFlightTurnId(thread);
     const liveTurnId = turnIdOrNull(liveSession?.activeTurnId);
 
-    // A live provider turn is the strongest evidence available, even when the
+    // A bound live provider turn is the strongest evidence available, even when the
     // event stream has been silent for hours. Never abandon work the runtime
     // still reports as active; the age fuse is only for sessions with no
     // identifiable live turn.
-    if (liveSession?.status === "running" && liveTurnId !== null) {
+    if (binding && liveSession?.status === "running" && liveTurnId !== null) {
       if (liveTurnId === projectedTurnId) continue;
       plans.push({
         action: "align-running-turn",

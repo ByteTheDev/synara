@@ -63,20 +63,15 @@ export function deriveTurnStartSession(input: {
    */
   readonly sessionProviderEstablished?: boolean;
 }): OrchestrationSession | null {
-  // Starting is only a provisional pre-bind projection. Never regress a live,
-  // established session on a follow-up or a queued steer: the provider's real
-  // start/bind result will publish authoritative state if a restart is needed.
-  if (
-    input.currentSession?.status === "starting" ||
-    input.currentSession?.status === "running" ||
-    input.currentSession?.status === "ready"
-  ) {
+  // A ready session needs a pending-start fence until provider dispatch takes over.
+  // Already-starting and running sessions retain their authoritative state.
+  if (input.currentSession?.status === "starting" || input.currentSession?.status === "running") {
     return null;
   }
 
   // A queued intent can be delivered after a newer state change (or replayed
   // during recovery). Its timestamp is not permission to roll the session back.
-  if (input.currentSession !== null) {
+  if (input.currentSession !== null && input.currentSession.status !== "ready") {
     const previousAt = Date.parse(input.currentSession.updatedAt);
     const requestedAt = Date.parse(input.requestedAt);
     if (Number.isFinite(previousAt) && Number.isFinite(requestedAt) && previousAt > requestedAt) {
@@ -103,6 +98,10 @@ export function deriveTurnStartSession(input: {
     runtimeMode: input.currentSession?.runtimeMode ?? input.requestedRuntimeMode,
     activeTurnId: null,
     lastError: null,
-    updatedAt: input.requestedAt,
+    updatedAt:
+      input.currentSession?.status === "ready" &&
+      Date.parse(input.currentSession.updatedAt) > Date.parse(input.requestedAt)
+        ? input.currentSession.updatedAt
+        : input.requestedAt,
   };
 }

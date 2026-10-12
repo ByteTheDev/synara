@@ -184,6 +184,19 @@ describe("planProviderRuntimeReconciliation", () => {
     expect(plans).toEqual([]);
   });
 
+  it("does not preserve an abandoned live runtime with no durable routing binding", () => {
+    expect(
+      planProviderRuntimeReconciliation({
+        threads: [threadShell()],
+        bindings: [],
+        liveSessions: [liveSession({ status: "running", activeTurnId: OLD_TURN_ID })],
+        pumpHealth: [],
+        nowMs: NOW + 60 * 60_000,
+        staleAfterMs: 10_000,
+      }),
+    ).toEqual([expect.objectContaining({ action: "settle-interrupted", threadId: THREAD_ID })]);
+  });
+
   it("does not second-guess matching, fresh, or shared child runtime state", () => {
     const matching = planProviderRuntimeReconciliation({
       threads: [threadShell()],

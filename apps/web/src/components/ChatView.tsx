@@ -1816,7 +1816,7 @@ export default function ChatView({
   // Keep Thinking through the post-ack gap where the server has the message /
   // turn request but the provider session is not live yet (common on first send).
   const isWorking =
-    hasLiveTurn || isSendBusy || isConnectingForUi || isRevertingCheckpoint || isAwaitingTurnStart;
+    hasLiveTurn || isSendBusy || isConnecting || isRevertingCheckpoint || isAwaitingTurnStart;
   const hasStreamingAssistantText =
     activeThread?.messages.some((message) => message.role === "assistant" && message.streaming) ??
     false;
