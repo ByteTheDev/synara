@@ -1,0 +1,29 @@
+name: Inspect retained PR 1147 validation artifacts
+on:
+  push:
+    branches: [codex/runtime-reconciliation-1147-artifact-reader-20261012]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          # Reader -> a757 driver -> 277 source -> d400 integration.
+          fetch-depth: 4
+          persist-credentials: false
+      - name: Verify prior failed-job ZIP bytes and expose fixed assertions and formatting
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/pr1147-reconciliation-artifact-reader.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pr1147-reconciliation-artifact-reader
+          path: ${{ runner.temp }}/pr1147-reconciliation-artifact-reader/
+          if-no-files-found: error
+          retention-days: 30
