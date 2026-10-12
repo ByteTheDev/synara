@@ -4588,6 +4588,7 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
         } else if (!isExpectedIdleStopCurrent()) {
           return;
         }
+        const runtimeCursorWriteBaseline = runtimeCursorWriteVersion;
         let stoppedState:
           | { readonly binding: ProviderRuntimeBinding; readonly resumeCursor: unknown }
           | undefined;
@@ -4604,30 +4605,45 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                 clearLiveRuntimeTasks(input.threadId);
                 yield* withBindingWriteLock(
                   input.threadId,
-                  directory.upsert({
-                    threadId: input.threadId,
-                    provider: binding.provider,
-                    providerInstanceId: binding.providerInstanceId,
-                    ...(binding.adapterKey !== undefined ? { adapterKey: binding.adapterKey } : {}),
-                    ...(binding.runtimeMode !== undefined
-                      ? { runtimeMode: binding.runtimeMode }
-                      : {}),
-                    status: "stopped",
-                    lifecycleGeneration: lease.generation,
-                    resumeCursor,
-                    runtimePayload: {
-                      ...runtimePayloadRecord(binding.runtimePayload),
-                      activeTurnId: null,
-                      lastRuntimeEvent:
-                        options?.requireAgentGatewayCredentialRotation === true
-                          ? "provider.interruptRuntimeFenced"
-                          : "provider.stopRuntimeSession",
-                      lastRuntimeEventAt: new Date().toISOString(),
-                      lifecycleGeneration: lease.generation,
-                      ...(options?.requireAgentGatewayCredentialRotation === true
-                        ? { [AGENT_GATEWAY_CREDENTIAL_ROTATION_REQUIRED]: true }
+                  Effect.gen(function* () {
+                    // Teardown can drain a newer native cursor through the event
+                    // consumer. Prefer that completed write under its same lock.
+                    const latest = Option.getOrUndefined(
+                      yield* directory.getBinding(input.threadId),
+                    );
+                    const queuedCursorWrite = latestRuntimeCursorWriteByThread.get(input.threadId);
+                    const retiredCursor =
+                      queuedCursorWrite !== undefined &&
+                      queuedCursorWrite.version > runtimeCursorWriteBaseline
+                        ? queuedCursorWrite.resumeCursor
+                        : resumeCursor;
+                    yield* directory.upsert({
+                      threadId: input.threadId,
+                      provider: binding.provider,
+                      providerInstanceId: binding.providerInstanceId,
+                      ...(binding.adapterKey !== undefined
+                        ? { adapterKey: binding.adapterKey }
                         : {}),
-                    },
+                      ...(binding.runtimeMode !== undefined
+                        ? { runtimeMode: binding.runtimeMode }
+                        : {}),
+                      status: "stopped",
+                      lifecycleGeneration: lease.generation,
+                      resumeCursor: retiredCursor,
+                      runtimePayload: {
+                        ...runtimePayloadRecord(latest?.runtimePayload ?? binding.runtimePayload),
+                        activeTurnId: null,
+                        lastRuntimeEvent:
+                          options?.requireAgentGatewayCredentialRotation === true
+                            ? "provider.interruptRuntimeFenced"
+                            : "provider.stopRuntimeSession",
+                        lastRuntimeEventAt: new Date().toISOString(),
+                        lifecycleGeneration: lease.generation,
+                        ...(options?.requireAgentGatewayCredentialRotation === true
+                          ? { [AGENT_GATEWAY_CREDENTIAL_ROTATION_REQUIRED]: true }
+                          : {}),
+                      },
+                    });
                   }),
                 );
                 lease.commit();

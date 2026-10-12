@@ -6841,6 +6841,34 @@ idleCleanup.layer("ProviderServiceLive idle cleanup", (it) => {
           onlyIfIdleSince: new Date(Date.now() + 60_000).toISOString(),
         }).pipe(Effect.forkChild);
         yield* Deferred.await(entered);
+        const drainedCursor = { resume: "cursor-drained-during-stop" };
+        idleCleanup.codex.updateSession(threadId, (session) => ({
+          ...session,
+          resumeCursor: drainedCursor,
+        }));
+        idleCleanup.codex.emit({
+          type: "turn.tasks.updated",
+          eventId: asEventId("reaper-drained-cursor"),
+          provider: "codex",
+          createdAt: new Date().toISOString(),
+          threadId,
+          payload: { tasks: [] },
+        });
+        yield* waitUntilEffect(
+          () =>
+            directory
+              .getBinding(threadId)
+              .pipe(
+                Effect.map(
+                  (binding) =>
+                    Option.isSome(binding) &&
+                    JSON.stringify(binding.value.resumeCursor) === JSON.stringify(drainedCursor),
+                ),
+              ),
+          500,
+          10,
+          "drained cursor persisted before teardown completes",
+        );
         idleCleanup.codex.emit({
           type: "task.started",
           eventId: asEventId("reaper-late-task"),
@@ -6862,7 +6890,9 @@ idleCleanup.layer("ProviderServiceLive idle cleanup", (it) => {
         yield* Deferred.succeed(release, undefined);
         yield* Fiber.join(stopping);
         assert.isFalse(yield* idleCleanup.codex.adapter.hasSession(threadId));
-        assert.equal(Option.getOrThrow(yield* directory.getBinding(threadId)).status, "stopped");
+        const retired = Option.getOrThrow(yield* directory.getBinding(threadId));
+        assert.equal(retired.status, "stopped");
+        assert.deepEqual(retired.resumeCursor, drainedCursor);
       }),
   );
 
