@@ -1,0 +1,40 @@
+name: Inspect the PR 619 merge with current main
+on:
+  push:
+    branches: [cleanup/20261012/pr619-merge-inspection]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: driver
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: 2a032f8d523eedbd94def6ac4f61fbce1c275d8c
+          path: base
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: 1800df5c771557795acf4e1eae2312ff37359e84
+          path: author
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: d4509644c8b7c2ba419680f7da8c2441f230d67e
+          path: current
+          persist-credentials: false
+      - name: Inspect all 124 exact three-way inputs
+        run: python3 driver/scripts/pr619-merge-inspection/runner.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pr619-merge-inspection
+          path: pr619-merge-evidence/
+          if-no-files-found: error
+          retention-days: 14
