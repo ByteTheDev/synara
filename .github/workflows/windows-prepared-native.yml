@@ -1,7 +1,7 @@
-name: Native owned runtime direct CIM import Before and After
+name: Native owned runtime initial readiness Before and After
 on:
   push:
-    branches: [codex/runtime-windows-cim-direct-native-20261012]
+    branches: [codex/runtime-windows-ready-native-20261012]
     paths:
       - .github/workflows/windows-prepared-native.yml
       - .github/scripts/windows-prepared-native/**
@@ -22,9 +22,9 @@ jobs:
         label: [before, after]
         include:
           - label: before
-            source: 783ee196b98a729a88b16e5e9906134503fa9a11
-          - label: after
             source: 9b9dafc21bbdeb164a5596ed0443a3c73cc8db02
+          - label: after
+            source: 879dc7b2c727d781995a012c509bccd2cf7af505
     env:
       GIT_CONFIG_COUNT: "2"
       GIT_CONFIG_KEY_0: core.autocrlf
