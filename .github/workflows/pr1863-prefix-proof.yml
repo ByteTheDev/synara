@@ -1,0 +1,62 @@
+name: PR 1863 native diff-prefix proof
+on:
+  push:
+    branches: [cleanup/20261012/pr1863-prefix-proof]
+permissions:
+  contents: read
+concurrency:
+  group: pr1863-prefix-proof-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+jobs:
+  native:
+    name: Prefix proof (${{ matrix.os }}, ${{ matrix.variant }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+        variant: [before, after]
+    steps:
+      - name: Check out immutable source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.variant == 'before' && 'd4509644c8b7c2ba419680f7da8c2441f230d67e' || '04f25e61fe8e6ff68b9a72218741300cee732cff' }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Check out immutable isolated driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-driver
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Materialize exact committed bytes before installation
+        shell: bash
+        run: |
+          for checkout in . .pr-driver; do
+            git -C "$checkout" read-tree HEAD
+            git -C "$checkout" -c core.autocrlf=false checkout-index --force --all --index
+          done
+      - name: Install exact frozen runtime dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+          turbo: "false"
+      - name: Parse the isolated JavaScript observers
+        run: |
+          node --check .pr-driver/scripts/pr1863-prefix-proof/owned-command-observer.mjs
+          node --check .pr-driver/scripts/pr1863-prefix-proof/runner.mjs
+      - name: Run unchanged authored assertions and real native Git operations
+        run: node .pr-driver/scripts/pr1863-prefix-proof/runner.mjs '${{ matrix.variant }}'
+      - name: Preserve fixed original outcomes even after failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1863-prefix-${{ matrix.os }}-${{ matrix.variant }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1863-prefix-${{ matrix.variant }}/frozen
+          if-no-files-found: error
+          retention-days: 30

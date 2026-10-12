@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "pr": 1863,
+  "before": {
+    "sha": "d4509644c8b7c2ba419680f7da8c2441f230d67e",
+    "tree": "877444c1badcb38871bd6ac38ebe401e81022212",
+    "files": 9025
+  },
+  "after": {
+    "sha": "04f25e61fe8e6ff68b9a72218741300cee732cff",
+    "tree": "1fcd621c75e1b7ff6b97c45299d8e642f0b82f2e",
+    "files": 9025
+  },
+  "feature": [
+    {
+      "path": "apps/server/src/checkpointing/Layers/CheckpointStore.test.ts",
+      "before": "b1403775ecb10a29ebccde4ca2a772402002d238",
+      "after": "82cd5c385298a658db11e31874d997921af3d02b",
+      "bytes": 19271
+    },
+    {
+      "path": "apps/server/src/checkpointing/Layers/CheckpointStore.ts",
+      "before": "42b258b16c9d915d7703092238251d9ce07a9b42",
+      "after": "7d7fe615ae9323e6a80e7e62a841867e759357cd",
+      "bytes": 25188
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitCore.test.ts",
+      "before": "a4faf489db071d3b8227d59e15154227df012897",
+      "after": "8aeab4284647f11dc715515376c6c163dc69aa1d",
+      "bytes": 157430
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitCore.ts",
+      "before": "49009cef250b346f0cacf39c8a9b1f2af4bf0ad0",
+      "after": "3154f2a5609ec7b670ca2a6249f78e0ce4d892f3",
+      "bytes": 161420
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitHubCli.test.ts",
+      "before": "4f0c63dd98206a17945618af6abf0ac84f7b7c7f",
+      "after": "a8e3c6d438896687347caaec2fa9b80c49b7a2d1",
+      "bytes": 80822
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitHubCli.ts",
+      "before": "009eb700ead304c1a864acc52a3c2f60812fe76a",
+      "after": "047b93a2a280c36ee70da787fc0baa240bfcad58",
+      "bytes": 100706
+    }
+  ],
+  "testPaths": [
+    "apps/server/src/checkpointing/Layers/CheckpointStore.test.ts",
+    "apps/server/src/git/Layers/GitCore.test.ts",
+    "apps/server/src/git/Layers/GitHubCli.test.ts"
+  ],
+  "suites": [
+    "src/checkpointing/Layers/CheckpointStore.test.ts",
+    "src/git/Layers/GitCore.test.ts",
+    "src/git/Layers/GitHubCli.test.ts"
+  ],
+  "names": [
+    "keeps a/ and b/ prefixes on parsed, applied and stored patches",
+    "keeps a/ and b/ prefixes on turn diffs and file undo under diff.noprefix",
+    "falls back to a local merge-base git diff when GitHub rejects oversized diffs"
+  ],
+  "expectedTotal": 190,
+  "probeDestination": "apps/server/src/pr1863-prefix-probe.ts",
+  "sourceGuards": [
+    {
+      "path": "apps/server/src/checkpointing/Layers/CheckpointStore.test.ts",
+      "before": "b1403775ecb10a29ebccde4ca2a772402002d238",
+      "after": "82cd5c385298a658db11e31874d997921af3d02b"
+    },
+    {
+      "path": "apps/server/src/checkpointing/Layers/CheckpointStore.ts",
+      "before": "42b258b16c9d915d7703092238251d9ce07a9b42",
+      "after": "7d7fe615ae9323e6a80e7e62a841867e759357cd"
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitCore.test.ts",
+      "before": "a4faf489db071d3b8227d59e15154227df012897",
+      "after": "8aeab4284647f11dc715515376c6c163dc69aa1d"
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitCore.ts",
+      "before": "49009cef250b346f0cacf39c8a9b1f2af4bf0ad0",
+      "after": "3154f2a5609ec7b670ca2a6249f78e0ce4d892f3"
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitHubCli.test.ts",
+      "before": "4f0c63dd98206a17945618af6abf0ac84f7b7c7f",
+      "after": "a8e3c6d438896687347caaec2fa9b80c49b7a2d1"
+    },
+    {
+      "path": "apps/server/src/git/Layers/GitHubCli.ts",
+      "before": "009eb700ead304c1a864acc52a3c2f60812fe76a",
+      "after": "047b93a2a280c36ee70da787fc0baa240bfcad58"
+    },
+    {
+      "path": "apps/server/src/checkpointing/Diffs.ts",
+      "before": "b3e1a6013113f1c5e4f106280b705372755eab6b",
+      "after": "b3e1a6013113f1c5e4f106280b705372755eab6b"
+    },
+    {
+      "path": "apps/server/src/config.ts",
+      "before": "3178ced1d955b9e1d445b21889ee2bb22c24f29b",
+      "after": "3178ced1d955b9e1d445b21889ee2bb22c24f29b"
+    },
+    {
+      "path": "apps/server/src/git/Services/GitCore.ts",
+      "before": "85a78c196e20976f8ac3c4c77cbcfe398db6f342",
+      "after": "85a78c196e20976f8ac3c4c77cbcfe398db6f342"
+    },
+    {
+      "path": "apps/server/src/checkpointing/Services/CheckpointStore.ts",
+      "before": "da43394ee19acfff7cc23c2dbbe48df38b0ae03a",
+      "after": "da43394ee19acfff7cc23c2dbbe48df38b0ae03a"
+    },
+    {
+      "path": ".github/actions/setup-workspace/action.yml",
+      "before": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+      "after": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2"
+    },
+    {
+      "path": "package.json",
+      "before": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea",
+      "after": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea"
+    },
+    {
+      "path": "bun.lock",
+      "before": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "after": "967fc9b407419dafb2e867d18c3f2ccf472745c9"
+    }
+  ],
+  "qualification": "Before uses the exact three complete authored test blobs on unchanged main production. Ubuntu runs all190 cases; Windows selects only the three prefix regressions and explicitly reports187 unselected. Real Git probes use isolated repositories and local core.autocrlf=false; canonical authored fixtures retain their original setup. No live GitHub or provider calls.",
+  "probeBlob": "2d69ed1257146f95e325ee76c0d9cb27afeaddbe"
+}
