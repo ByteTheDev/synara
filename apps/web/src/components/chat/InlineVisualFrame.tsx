@@ -56,17 +56,25 @@ export function InlineVisualFrame({
   };
   const html = visualDocument.data;
 
+  // No caption row: the page is part of the reply and lines up with its text.
+  // The title names the figure and frame for assistive technology instead.
   return (
     <figure className="group/inline-visual relative m-0 min-w-0" aria-label={visual.title}>
-      <div className="flex min-h-6 items-center gap-1">
-        <figcaption className="min-w-0 flex-1 truncate text-muted-foreground text-ui-xs">
-          {visual.title}
-        </figcaption>
-        {html !== undefined && !stopped ? (
+      {html !== undefined && !stopped ? (
+        <>
+          <InlineVisualDocument
+            key={`${visual.visualId}:${generation}`}
+            html={html}
+            title={visual.title}
+            reservedHeight={visual.height}
+            theme={theme}
+            onStopped={() => setStopped(true)}
+            onScrollIntent={onScrollIntent}
+          />
           <div
             className={cn(
               DISCLOSURE_FADE_MOTION_CLASS,
-              "flex items-center gap-0.5 opacity-0 focus-within:opacity-100 group-hover/inline-visual:opacity-100 pointer-coarse:opacity-100",
+              "absolute end-1 top-1 flex items-center gap-0.5 rounded-md border border-border/60 bg-popover/90 p-0.5 opacity-0 shadow-xs backdrop-blur-sm focus-within:opacity-100 group-hover/inline-visual:opacity-100 pointer-coarse:opacity-100",
             )}
           >
             <CopyTextButton text={html} label="source" className="text-ui-xs" />
@@ -74,26 +82,17 @@ export function InlineVisualFrame({
               <RotateCcwIcon className="size-3.5" />
             </IconButton>
           </div>
-        ) : null}
-      </div>
-      {html !== undefined && !stopped ? (
-        <InlineVisualDocument
-          key={`${visual.visualId}:${generation}`}
-          html={html}
-          title={visual.title}
-          reservedHeight={visual.height}
-          theme={theme}
-          onStopped={() => setStopped(true)}
-          onScrollIntent={onScrollIntent}
-        />
+        </>
       ) : stopped ? (
         <InlineVisualNotice
+          title={visual.title}
           message="This visual stopped because it tried to leave the page."
           action="Reload"
           onAction={reload}
         />
       ) : visualDocument.isError ? (
         <InlineVisualNotice
+          title={visual.title}
           message="Visual unavailable."
           {...(isRetryable(visualDocument.error)
             ? { action: "Retry", onAction: () => void visualDocument.refetch() }
@@ -117,6 +116,7 @@ function isRetryable(error: unknown): boolean {
 }
 
 function InlineVisualNotice(props: {
+  readonly title: string;
   readonly message: string;
   readonly action?: string;
   readonly onAction?: () => void;
@@ -126,6 +126,7 @@ function InlineVisualNotice(props: {
       className="flex items-center gap-2 rounded-lg border border-border/60 px-3 py-2 text-muted-foreground text-ui-sm"
       role="status"
     >
+      <span className="max-w-[40%] truncate text-foreground">{props.title}</span>
       <span className="min-w-0 flex-1">{props.message}</span>
       {props.action && props.onAction ? (
         <Button size="xs" variant="outline" onClick={props.onAction}>
@@ -223,7 +224,7 @@ function InlineVisualDocument({
       sandbox="allow-scripts allow-forms"
       referrerPolicy="no-referrer"
       onLoad={onLoad}
-      className="block w-full rounded-lg border-0 bg-transparent"
+      className="block w-full border-0 bg-transparent"
       // A frame whose color scheme differs from its document's paints an
       // opaque canvas, so the blank document would flash until the page is in.
       style={{ height, colorScheme }}

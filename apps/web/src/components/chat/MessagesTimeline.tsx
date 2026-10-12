@@ -1489,7 +1489,8 @@ export const MessagesTimeline = memo(function MessagesTimeline({
           : row.kind === "work" ||
               row.kind === "working-header" ||
               (row.kind === "message" && row.message.role === "assistant") ||
-              row.kind === "message-segment"
+              row.kind === "message-segment" ||
+              row.kind === "inline-visual"
             ? "pb-2"
             : "pb-4",
         row.kind === "message" && row.message.role === "assistant" ? "group/assistant" : null,
@@ -2923,7 +2924,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
       )}
 
       {row.kind === "inline-visual" && threadId ? (
-        <div className="min-w-0 py-0.5">
+        <div className="min-w-0">
           <InlineVisualFrame
             threadId={ThreadId.makeUnsafe(threadId)}
             visual={row.visual}

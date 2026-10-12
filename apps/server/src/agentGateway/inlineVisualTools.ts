@@ -35,7 +35,11 @@ const DESCRIPTION = [
   "The page has no network: remote URLs, fetch, external scripts, fonts, and images do not load. Draw with inline SVG, canvas, or HTML, and embed images as data: URIs.",
   "Link clicks open http(s) URLs in the reader's browser; the page cannot navigate, open windows, or show dialogs, and storage is in-memory only.",
   "Theme variables on :root follow the app's light/dark theme: --background --foreground --muted --muted-foreground --card --card-foreground --border --primary --primary-foreground --accent --accent-foreground --destructive --warning --success --info --ring --series-1 to --series-6 (categorical chart colors) --radius --font-sans --font-mono --font-size.",
-  "The title is shown above the visual, so do not repeat it as a heading in the page. Leave html and body without a background so the page sits on the chat background. Use fluid widths, fixed pixel heights for charts, and no 100vh. Respect prefers-reduced-motion.",
+  "The frame is borderless on the chat background, as wide as the reply column (728px on desktop, wider if the reader widens chat, about 360px on phones), and lines up with your reply text. The title is not shown; it names the visual for screen readers, so put a short heading in the page when the visual needs one.",
+  "The page is part of your reply: no outer card, border, padding, or banner title, and leave html and body without a background. A box that needs its own background gets at least 16px of padding and var(--radius) corners.",
+  'Draw at natural size rather than stretching to the frame: keep text at the inherited font size, never scaled with the width. Give inline SVG width and height attributes equal to its viewBox plus max-width:100%;height:auto, and never use preserveAspectRatio="none".',
+  "Size charts to their data: bars 14-20px thick with each value right after its bar, a plot area no wider than about 480px, and a handful of points kept compact instead of spread across the column. Use fixed pixel heights and no 100vh; the frame fits the page's height.",
+  "Style controls with the theme variables (for example accent-color: var(--primary)). Respect prefers-reduced-motion.",
 ].join(" ");
 
 interface InlineVisualDraft {
@@ -142,7 +146,7 @@ export function makeAgentGatewayInlineVisualTools(
             type: "integer",
             minimum: INLINE_VISUAL_MIN_HEIGHT,
             maximum: INLINE_VISUAL_MAX_HEIGHT,
-            description: `Expected height in CSS pixels at a ~720px wide column. Space is reserved at this height until the page reports its own. Defaults to ${INLINE_VISUAL_DEFAULT_HEIGHT}.`,
+            description: `Expected height in CSS pixels at the 728px column. Space is reserved at this height until the page reports its own. Defaults to ${INLINE_VISUAL_DEFAULT_HEIGHT}.`,
           },
         },
         required: ["title", "html"],

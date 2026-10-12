@@ -178,9 +178,14 @@ the `synara_show_visual` tool. The page appears in the conversation where the ag
 usually above its final reply, and stays visible when the turn folds into **Worked for**. This
 works with every provider that has Synara's thread tools (see [Providers](providers.md)).
 
-Visuals use the current light or dark theme, custom theme colors, and the chat font size, and
-follow changes without reloading. Scripts in a visual run in an isolated, sandboxed frame. It
-cannot reach Synara, your session, files, or the network, open windows or dialogs, or navigate
+A visual has no border, caption, or card of its own. It sits on the chat background, spans the
+reply column, and lines up with the reply text; its title is the name screen readers announce.
+The tool tells agents to draw at natural size: text that never scales with the column, SVG at its
+own size, and compact charts sized to their data. That guidance shapes the page; Synara does not
+rewrite it. Visuals use the current light or dark theme, custom theme colors, and the chat font
+size, and follow changes without reloading.
+
+Scripts in a visual run in an isolated, sandboxed frame. It cannot reach Synara, your session, files, or the network, open windows or dialogs, or navigate
 away. A visual that tries to navigate stops and offers **Reload**. Clicking an `http(s)` link
 opens it in your browser. Hover a visual to copy its source or reload it. Each page is limited
 to 256 KiB, and a turn can show at most six visuals.
