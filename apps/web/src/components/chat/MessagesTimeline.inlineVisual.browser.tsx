@@ -196,11 +196,8 @@ it("releases follow when the reader scrolls up over a visual", async () => {
   await expect.poll(distanceFromEnd).toBeLessThanOrEqual(4);
   expect(followState()).toBe("following");
 
-  // A wheel over the page reaches only the frame's document (proven with real
-  // input in InlineVisualFrame.browser.tsx); the browser chains the scroll to
-  // the list. Reproduce both halves: the page's own wheel event and the scroll.
-  frame.contentWindow!.postMessage({ wheel: -120 }, "*");
-  list.scrollTop -= 120;
+  // Trusted wheel input over the iframe exercises actual browser ancestor scroll chaining.
+  await userEvent.wheel(frame, { delta: { y: -120 } });
   await expect.poll(distanceFromEnd).toBeGreaterThan(60);
   // Detached exactly as a wheel on the transcript would leave it, so the
   // next message cannot snap the reader back.
