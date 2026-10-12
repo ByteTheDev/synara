@@ -8,6 +8,7 @@ import {
   SpaceId,
   ThreadId,
   TurnId,
+  type ModelSelection,
   type PendingClaudeCacheReview,
 } from "@synara/contracts";
 import { assert, it } from "@effect/vitest";
@@ -43,8 +44,12 @@ projectionSnapshotLayer("ProjectionSnapshotQuery", (it) => {
       const sql = yield* SqlClient.SqlClient;
       const threadId = asThreadId("durable-provider-handoff");
       const now = "2026-10-11T10:00:00.000Z";
-      const source = { provider: "codex", model: "gpt-5.4" };
-      const target = { provider: "pi", instanceId: "pi-work", model: "vendor/model" };
+      const source = { provider: "codex", model: "gpt-5.4" } satisfies ModelSelection;
+      const target = {
+        provider: "pi",
+        instanceId: "pi-work",
+        model: "vendor/model",
+      } satisfies ModelSelection;
       yield* sql`INSERT INTO projection_projects
         (project_id, title, workspace_root, scripts_json, created_at, updated_at)
         VALUES ('handoff-project', 'Handoff', '/tmp/handoff-project', '[]', ${now}, ${now})`;

@@ -137,7 +137,7 @@ describe("decider same-thread provider handoff", () => {
     }
     return readModel;
   }
-  const begin = () =>
+  const begin = (readModel = makeReadModel()) =>
     apply(
       {
         type: "thread.meta.update",
@@ -146,7 +146,7 @@ describe("decider same-thread provider handoff", () => {
         modelSelection: TARGET,
         providerHandoff: true,
       },
-      makeReadModel(),
+      readModel,
     );
   const common = {
     commandId: CommandId.makeUnsafe("competing"),
@@ -202,6 +202,69 @@ describe("decider same-thread provider handoff", () => {
       "pending",
     );
     expect(model.threads[0]?.messages).toEqual([]);
+  });
+  const workspace = {
+    envMode: "worktree",
+    branch: "feature/handoff",
+    worktreePath: "/tmp/worktrees/handoff",
+    workingDirectory: "/tmp/worktrees/handoff/nested",
+    associatedWorktreePath: "/tmp/worktrees/handoff",
+    associatedWorktreeBranch: "feature/handoff",
+    associatedWorktreeRef: "refs/heads/feature/handoff",
+  } as const;
+  const beginInWorkspace = () => {
+    const model = makeReadModel();
+    return begin({
+      ...model,
+      threads: model.threads.map((thread) => ({ ...thread, ...workspace })),
+    });
+  };
+  const workspaceMutations = [
+    { field: "envMode", patch: { envMode: "local" } },
+    { field: "branch", patch: { branch: "feature/other" } },
+    { field: "worktreePath", patch: { worktreePath: "/tmp/other-worktree" } },
+    { field: "workingDirectory", patch: { workingDirectory: "/tmp/other-directory" } },
+    { field: "associatedWorktreePath", patch: { associatedWorktreePath: "/tmp/other-worktree" } },
+    { field: "associatedWorktreeBranch", patch: { associatedWorktreeBranch: "feature/other" } },
+    { field: "associatedWorktreeRef", patch: { associatedWorktreeRef: "refs/heads/other" } },
+    { field: "branch cleared", patch: { branch: null } },
+    { field: "worktreePath cleared", patch: { worktreePath: null } },
+    { field: "workingDirectory cleared", patch: { workingDirectory: null } },
+    { field: "associatedWorktreePath cleared", patch: { associatedWorktreePath: null } },
+    { field: "associatedWorktreeBranch cleared", patch: { associatedWorktreeBranch: null } },
+    { field: "associatedWorktreeRef cleared", patch: { associatedWorktreeRef: null } },
+  ] satisfies ReadonlyArray<{
+    field: string;
+    patch: Partial<Extract<OrchestrationCommand, { type: "thread.meta.update" }>>;
+  }>;
+  it.each(workspaceMutations)(
+    "refuses $field changes while a handoff is pending",
+    async ({ patch }) => {
+      const model = await beginInWorkspace();
+      await expect(
+        apply({ ...common, type: "thread.meta.update", ...patch }, model),
+      ).rejects.toThrow(/still switching/);
+      expect(model.threads[0]).toMatchObject(workspace);
+      expect(resolvePendingProviderHandoff(model.threads[0]!.activities)?.handoffCommandId).toBe(
+        "pending",
+      );
+    },
+  );
+  it("permits exact workspace reaffirmation with rename, pin, and notes while pending", async () => {
+    const model = await beginInWorkspace();
+    const metadata = {
+      title: "Renamed while switching",
+      isPinned: true,
+      notes: "Keep these notes",
+    };
+    const after = await apply(
+      { ...common, type: "thread.meta.update", ...workspace, ...metadata },
+      model,
+    );
+    expect(after.threads[0]).toMatchObject({ ...workspace, ...metadata });
+    expect(resolvePendingProviderHandoff(after.threads[0]!.activities)?.handoffCommandId).toBe(
+      "pending",
+    );
   });
   const settlement = (outcome: "completed" | "failed"): OrchestrationCommand => ({
     type: "thread.provider.handoff.settle",

@@ -18679,6 +18679,100 @@ describe("ProviderCommandReactor", () => {
       },
     );
 
+    it("holds workspace identity during blocked target startup while allowing task metadata", async () => {
+      const harness = await createHarness({
+        threadModelSelection: { provider: "grok", model: "grok-code-fast-1" },
+      });
+      await runFirstGrokTurn(harness);
+      const before = (await readHarnessThread(harness))!;
+      const workspace = {
+        envMode: before.envMode ?? "local",
+        branch: before.branch,
+        worktreePath: before.worktreePath,
+        workingDirectory: before.workingDirectory ?? null,
+        associatedWorktreePath: before.associatedWorktreePath ?? null,
+        associatedWorktreeBranch: before.associatedWorktreeBranch ?? null,
+        associatedWorktreeRef: before.associatedWorktreeRef ?? null,
+      };
+      let release!: () => void;
+      const starting = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      const originalStart = harness.startSession.getMockImplementation()!;
+      harness.startSession.mockImplementationOnce((...args) =>
+        Effect.promise(() => starting).pipe(Effect.flatMap(() => originalStart(...args))),
+      );
+      try {
+        await dispatchHandoff(harness);
+        await waitFor(() => harness.startSession.mock.calls.length === 2);
+        expect(harness.startSession.mock.calls[1]?.[1].cwd).toBe("/tmp/provider-project");
+        const mutations = [
+          ["envMode", { envMode: "worktree" }],
+          ["branch", { branch: "feature/other" }],
+          ["worktreePath", { worktreePath: "/tmp/other-worktree" }],
+          ["workingDirectory", { workingDirectory: "/tmp/other-directory" }],
+          ["associatedWorktreePath", { associatedWorktreePath: "/tmp/other-worktree" }],
+          ["associatedWorktreeBranch", { associatedWorktreeBranch: "feature/other" }],
+          ["associatedWorktreeRef", { associatedWorktreeRef: "refs/heads/other" }],
+        ] as const;
+        for (const [field, patch] of mutations) {
+          await expect(
+            Effect.runPromise(
+              harness.engine.dispatch({
+                type: "thread.meta.update",
+                commandId: CommandId.makeUnsafe(`move-workspace-during-handoff-${field}`),
+                threadId,
+                ...patch,
+              }),
+            ),
+          ).rejects.toThrow(/still switching/);
+        }
+        await Effect.runPromise(
+          harness.engine.dispatch({
+            type: "thread.meta.update",
+            commandId: CommandId.makeUnsafe("reaffirm-workspace-during-handoff"),
+            threadId,
+            ...workspace,
+            title: "Renamed while switching",
+            isPinned: true,
+            notes: "Keep these notes",
+          }),
+        );
+        expect(await readHarnessThread(harness)).toMatchObject(workspace);
+        expect((await readHarnessThread(harness))?.activities).not.toContainEqual(
+          expect.objectContaining({ kind: "provider.handoff" }),
+        );
+      } finally {
+        release();
+      }
+      await waitFor(
+        async () =>
+          (await readHarnessThread(harness))?.activities.some(
+            (row) => row.kind === "provider.handoff",
+          ) === true,
+      );
+      await harness.drain();
+      const thread = await readHarnessThread(harness);
+      expect(thread).toMatchObject({
+        ...workspace,
+        id: before.id,
+        projectId: before.projectId,
+        messages: before.messages,
+        title: "Renamed while switching",
+        isPinned: true,
+        notes: "Keep these notes",
+        modelSelection: { provider: "claudeAgent" },
+      });
+      expect(await Effect.runPromise(harness.listSessions())).toEqual([
+        expect.objectContaining({
+          threadId,
+          provider: "claudeAgent",
+          cwd: "/tmp/provider-project",
+        }),
+      ]);
+      expect(harness.startSession).toHaveBeenCalledTimes(2);
+    });
+
     it.each(["archive", "stop"] as const)(
       "stops a target that returns after %s during native startup",
       async (action) => {

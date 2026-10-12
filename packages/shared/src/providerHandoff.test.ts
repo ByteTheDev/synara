@@ -8,8 +8,16 @@ import {
   providerHandoffModelSelectionsEqual,
 } from "./providerHandoff";
 
-const source: ModelSelection = { provider: "codex", instanceId: "codex-work", model: "gpt-5.4" };
-const target: ModelSelection = { provider: "pi", instanceId: "pi-work", model: "vendor/model" };
+const source = {
+  provider: "codex",
+  instanceId: "codex-work",
+  model: "gpt-5.4",
+} satisfies ModelSelection;
+const target = {
+  provider: "pi",
+  instanceId: "pi-work",
+  model: "vendor/model",
+} satisfies ModelSelection;
 const request = (id: string) => ({
   kind: "provider.handoff.requested",
   payload: {

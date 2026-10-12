@@ -1687,7 +1687,30 @@ export const decideOrchestrationCommand = Effect.fn("decideOrchestrationCommand"
         command,
         threadId: command.threadId,
       });
-      if (command.modelSelection !== undefined || command.providerHandoff === true) {
+      const project = readModel.projects.find((candidate) => candidate.id === thread.projectId);
+      const workspacePatch = resolveThreadWorkspaceMetadataPatch(project?.kind, command, thread);
+      const workspaceChanged = (
+        [
+          "envMode",
+          "branch",
+          "worktreePath",
+          "workingDirectory",
+          "associatedWorktreePath",
+          "associatedWorktreeBranch",
+          "associatedWorktreeRef",
+        ] as const
+      ).some(
+        (key) =>
+          workspacePatch[key] !== undefined &&
+          workspacePatch[key] !== (thread[key] ?? (key === "envMode" ? "local" : null)),
+      );
+      // Async target startup has already captured this workspace. Matching
+      // metadata writes are safe; moving it must wait for the same handoff gate.
+      if (
+        command.modelSelection !== undefined ||
+        command.providerHandoff === true ||
+        workspaceChanged
+      ) {
         yield* validateNoPendingProviderHandoff(command, thread);
       }
       if (command.providerHandoff === true) {
@@ -1718,7 +1741,6 @@ export const decideOrchestrationCommand = Effect.fn("decideOrchestrationCommand"
           });
         }
       }
-      const project = readModel.projects.find((candidate) => candidate.id === thread.projectId);
       // Provider-native threads: see thread.create — the selection mirrors the
       // provider's own subagent, so the Auto-mode capability check doesn't apply.
       if (command.modelSelection !== undefined && thread.creationSource !== "provider_native") {
@@ -1742,7 +1764,7 @@ export const decideOrchestrationCommand = Effect.fn("decideOrchestrationCommand"
           ...(command.modelSelection !== undefined
             ? { modelSelection: command.modelSelection }
             : {}),
-          ...resolveThreadWorkspaceMetadataPatch(project?.kind, command, thread),
+          ...workspacePatch,
           ...(command.isPinned !== undefined ? { isPinned: command.isPinned } : {}),
           ...(command.isSettled !== undefined
             ? { settledAt: command.isSettled ? occurredAt : null }
