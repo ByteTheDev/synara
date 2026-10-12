@@ -2715,7 +2715,10 @@ it.layer(NodeServices.layer)("ProviderHealth", (it) => {
 
     it.effect("keeps the first Pi CLI probe bounded when it never finishes", () =>
       Effect.gen(function* () {
-        const probe = yield* checkPiProviderStatus().pipe(
+        // A timeout stays advisory even without Pi credentials: a slow CLI must not flip Pi off.
+        const probe = yield* checkPiProviderStatus(
+          join(OS.tmpdir(), "synara-pi-health-no-credentials"),
+        ).pipe(
           Effect.provide(hangingSpawnerLayer({ shouldHang: () => true, onKill: () => {} })),
           Effect.forkChild,
         );
@@ -2789,19 +2792,139 @@ it.layer(NodeServices.layer)("ProviderHealth", (it) => {
       ),
     );
 
-    it.effect("keeps Pi usable when the advisory CLI probe is missing", () =>
-      Effect.gen(function* () {
-        const status = yield* checkPiProviderStatus();
-        assert.strictEqual(status.provider, "pi");
-        assert.strictEqual(status.status, "warning");
-        assert.strictEqual(status.available, true);
-        assert.strictEqual(status.authStatus, "unknown");
-        assert.strictEqual(
-          status.message,
-          "Pi SDK is bundled, but the Pi CLI (`pi`) is not on PATH, so Synara could not verify the installed CLI version.",
+    it.effect("reports Pi as not set up when the CLI is missing and no credentials exist", () => {
+      const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      // An empty credentials file is not evidence of an SDK-only setup.
+      writeFileSync(join(agentDir, "auth.json"), "");
+      return Effect.gen(function* () {
+        try {
+          const status = yield* checkPiProviderStatus(agentDir);
+          assert.strictEqual(status.provider, "pi");
+          assert.strictEqual(status.status, "error");
+          assert.strictEqual(status.available, false);
+          assert.strictEqual(status.authStatus, "unknown");
+          assert.strictEqual(
+            status.message,
+            `Pi is not set up. Install the Pi CLI (\`pi\`) or add Pi credentials to ${agentDir} to use the Pi provider.`,
+          );
+        } finally {
+          rmSync(agentDir, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+    });
+
+    it.effect(
+      "reports Pi as not set up when another `pi` exits nonzero without credentials",
+      () => {
+        const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+        return Effect.gen(function* () {
+          try {
+            const status = yield* checkPiProviderStatus(agentDir);
+            assert.strictEqual(status.status, "error");
+            assert.strictEqual(status.available, false);
+          } finally {
+            rmSync(agentDir, { recursive: true, force: true });
+          }
+        }).pipe(
+          Effect.provide(
+            mockSpawnerLayer(() => ({ stdout: "", stderr: "unknown option --version", code: 2 })),
+          ),
         );
-      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT"))),
+      },
     );
+
+    it.effect("keeps SDK-only Pi usable when the CLI is missing but credentials exist", () => {
+      const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      writeFileSync(join(agentDir, "auth.json"), '{"anthropic":{"type":"api_key","key":"x"}}');
+      return Effect.gen(function* () {
+        try {
+          const status = yield* checkPiProviderStatus(agentDir);
+          assert.strictEqual(status.provider, "pi");
+          assert.strictEqual(status.status, "warning");
+          assert.strictEqual(status.available, true);
+          assert.strictEqual(status.authStatus, "unknown");
+          assert.strictEqual(
+            status.message,
+            "Pi SDK is bundled, but the Pi CLI (`pi`) is not on PATH, so Synara could not verify the installed CLI version.",
+          );
+        } finally {
+          rmSync(agentDir, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+    });
+
+    it.effect("keeps SDK-only Pi usable when only custom models are configured", () => {
+      const agentDir = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      writeFileSync(join(agentDir, "models.json"), '{"providers":{}}');
+      return Effect.gen(function* () {
+        try {
+          const status = yield* checkPiProviderStatus(agentDir);
+          assert.strictEqual(status.status, "warning");
+          assert.strictEqual(status.available, true);
+        } finally {
+          rmSync(agentDir, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(mockSpawnerLayer(() => ({ stdout: "", stderr: "boom", code: 1 }))));
+    });
+
+    it.effect(
+      "keeps an isolated Pi account usable when its instance environment has an API key",
+      () => {
+        const isolationRoot = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+        return Effect.gen(function* () {
+          try {
+            const status = yield* checkPiProviderStatus(
+              undefined,
+              undefined,
+              { ANTHROPIC_API_KEY: "sk-test" },
+              "pi_work",
+              { homeDir: OS.homedir(), isolationRootDir: isolationRoot },
+            );
+            assert.strictEqual(status.status, "warning");
+            assert.strictEqual(status.available, true);
+          } finally {
+            rmSync(isolationRoot, { recursive: true, force: true });
+          }
+        }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+      },
+    );
+
+    it.effect("resolves an isolated Pi account's agent dir inside its private home", () => {
+      const isolationRoot = mkdtempSync(join(OS.tmpdir(), "synara-pi-health-"));
+      const agentDir = join(
+        providerIsolatedHomePath({
+          driver: "pi",
+          instanceId: "pi_work",
+          homeDir: OS.homedir(),
+          isolationRootDir: isolationRoot,
+        }),
+        ".pi",
+        "agent",
+      );
+      const checkIsolatedPi = () =>
+        checkPiProviderStatus(
+          undefined,
+          undefined,
+          { PROVIDER_TEST_INSTANCE: "pi-work" },
+          "pi_work",
+          { homeDir: OS.homedir(), isolationRootDir: isolationRoot },
+        );
+      return Effect.gen(function* () {
+        try {
+          const missing = yield* checkIsolatedPi();
+          assert.strictEqual(missing.available, false);
+          assert.include(missing.message ?? "", agentDir);
+
+          mkdirSync(agentDir, { recursive: true });
+          writeFileSync(join(agentDir, "auth.json"), '{"openai":{"type":"api_key","key":"x"}}');
+          const present = yield* checkIsolatedPi();
+          assert.strictEqual(present.status, "warning");
+          assert.strictEqual(present.available, true);
+        } finally {
+          rmSync(isolationRoot, { recursive: true, force: true });
+        }
+      }).pipe(Effect.provide(failingSpawnerLayer("spawn pi ENOENT")));
+    });
   });
 
   describe("checkOmpProviderStatus", () => {

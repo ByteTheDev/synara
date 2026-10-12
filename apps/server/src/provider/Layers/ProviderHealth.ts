@@ -124,7 +124,12 @@ import { isClaudeAutoModeCliVersionSupported } from "../claudeCliVersion.ts";
 import { collectUint8StreamText } from "../../stream/collectUint8StreamText";
 import { buildCodexProcessEnv } from "../../codexProcessEnv.ts";
 import { readGrokCachedLogin } from "../../providerUsage/providers/grok";
-import { buildProviderProcessEnv, type ProviderProcessEnvDriver } from "../providerProcessEnv.ts";
+import {
+  buildProviderProcessEnv,
+  MODEL_PROVIDER_API_KEY_ENV_MAPPINGS,
+  type ProviderProcessEnvDriver,
+} from "../providerProcessEnv.ts";
+import { defaultPiSdkAgentDir, makePiStoragePaths } from "../piStoragePaths.ts";
 
 export { parseClaudeAuthStatusFromOutput } from "../claudeAuthStatus";
 export type { CommandResult } from "../providerCliOutput";
@@ -1905,13 +1910,65 @@ export const checkOpenCodeProviderStatus = makeCheckOpenCodeProviderStatus();
 
 // ── Pi health check ─────────────────────────────────────────────
 
+const PI_SDK_SETUP_FILE_NAMES = ["auth.json", "models.json"] as const;
+
+/**
+ * Looks for evidence that Pi is set up for the bundled SDK even though the Pi
+ * CLI is unavailable: a provider API key set on this Pi instance, or a
+ * non-empty credentials/models file in the agent dir Pi sessions will use.
+ * Plain filesystem checks only, so health refreshes never import the Pi SDK.
+ */
+const inspectPiSdkSetup = (input: {
+  readonly agentDir: string | undefined;
+  readonly environment: Readonly<Record<string, string>> | undefined;
+  readonly instanceId: string | undefined;
+  readonly paths: { readonly homeDir: string; readonly isolationRootDir: string } | undefined;
+}): Effect.Effect<
+  { readonly found: boolean; readonly agentDir: string },
+  never,
+  FileSystem.FileSystem
+> =>
+  Effect.gen(function* () {
+    const environment = input.environment;
+    const { agentDir } = makePiStoragePaths({
+      agentDir: input.agentDir,
+      environment,
+      instanceId: input.instanceId,
+      stateDir: input.paths?.isolationRootDir,
+      homeDir: input.paths?.homeDir ?? OS.homedir(),
+      sdkAgentDir: defaultPiSdkAgentDir(),
+    });
+    if (
+      environment !== undefined &&
+      MODEL_PROVIDER_API_KEY_ENV_MAPPINGS.some(({ envKeys }) =>
+        envKeys.some((key) => nonEmptyTrimmed(environment[key]) !== undefined),
+      )
+    ) {
+      return { found: true, agentDir };
+    }
+    const fileSystem = yield* FileSystem.FileSystem;
+    for (const fileName of PI_SDK_SETUP_FILE_NAMES) {
+      const info = yield* fileSystem
+        .stat(nodePath.join(agentDir, fileName))
+        .pipe(Effect.orElseSucceed(() => undefined));
+      if (info?.type === "File" && Number(info.size) > 0) {
+        return { found: true, agentDir };
+      }
+    }
+    return { found: false, agentDir };
+  });
+
 export const checkPiProviderStatus = (
   agentDir?: string,
   binaryPath?: string,
   environment?: Readonly<Record<string, string>>,
   instanceId?: string,
   paths?: { readonly homeDir: string; readonly isolationRootDir: string },
-): Effect.Effect<ServerProviderStatus, never, ChildProcessSpawner.ChildProcessSpawner> =>
+): Effect.Effect<
+  ServerProviderStatus,
+  never,
+  ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem
+> =>
   Effect.gen(function* () {
     const checkedAt = new Date().toISOString();
     const executable = nonEmptyTrimmed(binaryPath) ?? "pi";
@@ -1926,8 +1983,31 @@ export const checkPiProviderStatus = (
       PI_HEALTH_TIMEOUT_MS,
     );
 
-    // Pi itself is SDK-backed in Synara. Keep this CLI probe advisory so health
-    // refreshes do not import the SDK and initialize its native clipboard module.
+    // Pi itself is SDK-backed in Synara, and health refreshes must not import the
+    // SDK (it initializes a native clipboard module). A CLI that is absent or
+    // fails only makes Pi unavailable when nothing shows an SDK-only setup;
+    // otherwise the probe stays advisory. A timeout stays advisory regardless so a
+    // slow CLI cannot flip Pi off.
+    if (
+      versionProbe.outcome === "missing" ||
+      versionProbe.outcome === "failure" ||
+      versionProbe.outcome === "nonzero"
+    ) {
+      const sdkSetup = yield* inspectPiSdkSetup({ agentDir, environment, instanceId, paths });
+      if (!sdkSetup.found) {
+        return {
+          provider: PI_PROVIDER,
+          instanceId: PI_PROVIDER,
+          driver: PI_PROVIDER,
+          status: "error" as const,
+          available: false,
+          authStatus: "unknown" as const,
+          checkedAt,
+          message: `Pi is not set up. Install the Pi CLI (\`pi\`) or add Pi credentials to ${sdkSetup.agentDir} to use the Pi provider.`,
+        } satisfies ServerProviderStatus;
+      }
+    }
+
     if (versionProbe.outcome === "missing" || versionProbe.outcome === "failure") {
       const error = versionProbe.cause;
       return {
