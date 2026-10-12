@@ -173,13 +173,15 @@ function makeEventAcpRuntime(prompt: AcpSessionRuntimeShape["prompt"]) {
         toolCall: { toolCallId, status, data: {}, ...extra },
         rawPayload: { toolCallId, status },
       }),
-    emitProgress: (text = "progress", metadata?: Record<string, unknown>) =>
+    emitProgress: (text = "progress", metadata?: Record<string, unknown>, itemId?: string) =>
       emit({
         _tag: "ContentDelta",
+        ...(itemId ? { itemId } : {}),
         text,
         ...(metadata ? { metadata } : {}),
         rawPayload: { text },
       }),
+    emitAssistantCompleted: (itemId: string) => emit({ _tag: "AssistantItemCompleted", itemId }),
     completeProcessedEvent: () => {
       const processed = pendingCompletions.shift();
       if (processed !== undefined) {
@@ -1596,6 +1598,12 @@ describe("Devin adapter lifecycle", () => {
         yield* Fiber.join(replayShellCompletion);
         yield* Fiber.join(replaySubagentCompletion);
         yield* Fiber.join(replayOrdinaryCompletion);
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "task.updated",
+            payload: expect.objectContaining({ taskId: "replayed-shell", status: "running" }),
+          }),
+        );
         yield* adapter.stopTask(threadId, "replayed-shell");
         expect(acpRequests).toContainEqual({
           method: "_cognition.ai/terminal/killBackgroundShell",
@@ -3932,6 +3940,76 @@ it("preserves an originally unscoped root task when it completes during a newer 
       expect(correction?.providerRefs).toBeUndefined();
       expect(events).toContainEqual(
         expect.objectContaining({ type: "item.completed", itemId: "original-unscoped-call" }),
+      );
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(runtime.runtime, runtime.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
+  );
+});
+
+it("routes late child tools, text and completion to the launch turn after a new turn starts", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const firstPrompt = Effect.runSync(Deferred.make<Acp.PromptResponse>());
+  let calls = 0;
+  const runtime = makeEventAcpRuntime(() =>
+    ++calls === 1 ? Deferred.await(firstPrompt) : Effect.never,
+  );
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("late-child-stream");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      yield* adapter.startSession({ provider: "devin", threadId, runtimeMode: "full-access" });
+      const first = yield* adapter.sendTurn({ threadId, input: "launch", attachments: [] });
+      yield* runtime.emitToolCall("launch-tool", "inProgress", {
+        metadata: {
+          "cognition.ai/subagent_started": { agentId: "outer", task: "Work", isBackground: true },
+        },
+      });
+      yield* Deferred.succeed(firstPrompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+      yield* advanceTimers(100);
+      const refs = { providerThreadId: "outer", providerParentThreadId: "devin-test-session" };
+      const context = { "cognition.ai/subagent_context": { parentAgentId: "outer" } };
+      const start = events.length;
+      yield* runtime.emitToolCall("late-nested-tool", "inProgress", {
+        metadata: context,
+        title: "Late tool",
+      });
+      yield* runtime.emitProgress("Late child text", context, "child-message");
+      yield* adapter.sendTurn({ threadId, input: "new foreground", attachments: [] });
+      yield* runtime.emitAssistantCompleted("child-message");
+      yield* flushTimers();
+      const late = events.slice(start);
+      expect(late).toContainEqual(
+        expect.objectContaining({ type: "item.updated", turnId: first.turnId, providerRefs: refs }),
+      );
+      expect(late).toContainEqual(
+        expect.objectContaining({
+          type: "content.delta",
+          turnId: first.turnId,
+          providerRefs: refs,
+          payload: expect.objectContaining({ delta: "Late child text" }),
+        }),
+      );
+      expect(late).toContainEqual(
+        expect.objectContaining({
+          type: "item.completed",
+          turnId: first.turnId,
+          providerRefs: refs,
+          itemId: scopeDevinRuntimeItemIdForTurn(first.turnId, "child-message"),
+        }),
       );
       yield* adapter.stopSession(threadId);
     }).pipe(

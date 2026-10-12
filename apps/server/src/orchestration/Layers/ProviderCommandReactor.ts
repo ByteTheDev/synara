@@ -1773,7 +1773,12 @@ const make = Effect.gen(function* () {
     const pending = new Map<string, ProviderTaskReconciliation>();
     for (const owner of owned.values()) {
       for (const activity of owner.activities) {
-        if (activity.kind !== "task.completed") continue;
+        if (
+          activity.kind !== "task.started" &&
+          activity.kind !== "task.updated" &&
+          activity.kind !== "task.completed"
+        )
+          continue;
         const payload = activity.payload;
         if (
           typeof payload !== "object" ||
@@ -1784,10 +1789,13 @@ const make = Effect.gen(function* () {
         )
           continue;
         if (
-          "status" in payload &&
-          payload.status === "stopped" &&
-          "awaitingProviderConfirmation" in payload &&
-          payload.awaitingProviderConfirmation === true
+          activity.kind === "task.started" ||
+          (activity.kind === "task.updated" &&
+            (!("status" in payload) || payload.status === "running")) ||
+          ("status" in payload &&
+            payload.status === "stopped" &&
+            "awaitingProviderConfirmation" in payload &&
+            payload.awaitingProviderConfirmation === true)
         ) {
           const correlation = Schema.decodeUnknownOption(ProviderTaskReconciliation)({
             taskId: payload.taskId,
@@ -1797,7 +1805,8 @@ const make = Effect.gen(function* () {
               : {}),
             ...(owner.subagentAgentId ? { parentAgentId: owner.subagentAgentId } : {}),
           });
-          if (Option.isSome(correlation)) pending.set(payload.taskId, correlation.value);
+          if (Option.isSome(correlation) && !pending.has(payload.taskId))
+            pending.set(payload.taskId, correlation.value);
         } else {
           pending.delete(payload.taskId);
         }

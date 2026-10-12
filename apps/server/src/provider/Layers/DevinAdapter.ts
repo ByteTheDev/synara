@@ -432,6 +432,11 @@ interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
   activeTurnId: TurnId | undefined;
   activeTurnHadAssistantContent: boolean;
   readonly activeAssistantItemsWithContent: Set<string>;
+  readonly replayRegisteredTaskIds: Set<string>;
+  readonly assistantItemOwners: Map<
+    string,
+    { turnId: TurnId | undefined; parentAgentId: string | undefined }
+  >;
   activeTurnFailedToolDetail: string | undefined;
   activePromptFiber: Fiber.Fiber<void, never> | undefined;
   // True once ctx.acp.prompt has returned for the current turn (success or
@@ -2310,6 +2315,32 @@ export function makeDevinAdapter(
         }
       });
 
+    const registerReplayedDevinTasks = (ctx: DevinSessionContext) =>
+      Effect.gen(function* () {
+        for (const task of [
+          ...ctx.devinSubagents.values(),
+          ...ctx.devinBackgroundShells.values(),
+        ]) {
+          if (task.status !== "running") continue;
+          const taskId = "agentId" in task ? task.agentId : task.shellId;
+          if (ctx.replayRegisteredTaskIds.has(taskId)) continue;
+          ctx.replayRegisteredTaskIds.add(taskId);
+          yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+            type: "task.updated",
+            ...(yield* makeEventStamp()),
+            provider: PROVIDER,
+            threadId: ctx.threadId,
+            turnId: task.turnId,
+            providerRefs: devinProviderRefsForAgent(ctx, task.parentAgentId),
+            payload: {
+              taskId: RuntimeTaskId.makeUnsafe(taskId),
+              status: "running",
+              toolUseId: task.toolCallId,
+            },
+          });
+        }
+      });
+
     // On session/load, Devin can replay old ACP updates after the session is "ready".
     // Keep suppression active until that stream actually goes quiet — clearing it
     // on a fixed timeout lets late historical deltas leak into the first turn as
@@ -2332,6 +2363,7 @@ export function makeDevinAdapter(
             elapsedMs >= DEVIN_RESUME_REPLAY_HARD_TIMEOUT_MS
           ) {
             const timedOut = elapsedMs >= DEVIN_RESUME_REPLAY_HARD_TIMEOUT_MS;
+            yield* registerReplayedDevinTasks(ctx);
             ctx.resumeReplayReady = undefined;
             ctx.resumeReplayLastSuppressedAt = undefined;
             if (timedOut) {
@@ -2837,6 +2869,8 @@ export function makeDevinAdapter(
             activeTurnId: undefined,
             activeTurnHadAssistantContent: false,
             activeAssistantItemsWithContent: new Set(),
+            assistantItemOwners: new Map(),
+            replayRegisteredTaskIds: new Set(),
             activeTurnFailedToolDetail: undefined,
             activePromptFiber: undefined,
             activePromptResolved: false,
@@ -2909,14 +2943,16 @@ export function makeDevinAdapter(
 
                   case "AssistantItemCompleted":
                     {
-                      const activeTurnId = yield* activeTurnIdForDevinRuntimeEvent(ctx, event._tag);
-                      if (activeTurnId === undefined) {
+                      const owner = ctx.assistantItemOwners.get(event.itemId);
+                      const activeTurnId = owner
+                        ? owner.turnId
+                        : yield* activeTurnIdForDevinRuntimeEvent(ctx, event._tag);
+                      if (activeTurnId === undefined && !owner) {
                         return;
                       }
-                      const scopedItemId = scopeDevinRuntimeItemIdForTurn(
-                        activeTurnId,
-                        event.itemId,
-                      );
+                      const scopedItemId = activeTurnId
+                        ? scopeDevinRuntimeItemIdForTurn(activeTurnId, event.itemId)
+                        : event.itemId;
                       if (!ctx.activeAssistantItemsWithContent.has(scopedItemId)) {
                         if (isDevinAcpDebugEnabled()) {
                           yield* Effect.logInfo("devin.acp.empty_assistant_item_suppressed", {
@@ -2928,6 +2964,7 @@ export function makeDevinAdapter(
                         return;
                       }
                       ctx.activeAssistantItemsWithContent.delete(scopedItemId);
+                      ctx.assistantItemOwners.delete(event.itemId);
                       yield* offerRuntimeEvent(
                         input.lifecycleGeneration,
                         makeAcpAssistantItemEvent({
@@ -2937,6 +2974,7 @@ export function makeDevinAdapter(
                           turnId: activeTurnId,
                           itemId: scopedItemId,
                           lifecycle: "item.completed",
+                          providerRefs: devinProviderRefsForAgent(ctx, owner?.parentAgentId),
                         }),
                       );
                     }
@@ -3091,13 +3129,20 @@ export function makeDevinAdapter(
                         yield* noteSuppressedDevinRuntimeEvent(ctx, event._tag, "resume-replay");
                         return;
                       }
-                      const toolCallTurnId = resolveDevinToolCallUpdatedTurnId({
-                        toolCallId: event.toolCall.toolCallId,
-                        activeTurnId: ctx.activeTurnId,
-                        resumeReplayReady: false,
-                        toolCallTurnIds: ctx.turnToolCallIds,
-                      });
                       const subagentContext = readDevinSubagentContext(toolCall.metadata);
+                      const parent = subagentContext?.parentAgentId
+                        ? ctx.devinSubagents.get(subagentContext.parentAgentId)
+                        : undefined;
+                      const toolCallTurnId = ctx.turnToolCallIds.has(event.toolCall.toolCallId)
+                        ? ctx.turnToolCallIds.get(event.toolCall.toolCallId)
+                        : parent
+                          ? parent.turnId
+                          : resolveDevinToolCallUpdatedTurnId({
+                              toolCallId: event.toolCall.toolCallId,
+                              activeTurnId: ctx.activeTurnId,
+                              resumeReplayReady: false,
+                              toolCallTurnIds: ctx.turnToolCallIds,
+                            });
                       const startedSubagent = readDevinSubagentStart(
                         toolCall,
                         subagentContext?.parentAgentId,
@@ -3258,13 +3303,20 @@ export function makeDevinAdapter(
                       // Native task records outlive the one-turn tool-call
                       // map. A sparse late update still belongs to that task's
                       // original turn and parent, including nested tasks.
-                      const recordedTurnId =
-                        trackedSubagent?.turnId ?? shell?.turnId ?? toolCallTurnId;
-                      const providerParentAgentId =
-                        subagentContext?.parentAgentId ??
-                        trackedSubagent?.parentAgentId ??
-                        shell?.parentAgentId;
-                      if (recordedTurnId !== undefined && recordedTurnId !== ctx.activeTurnId) {
+                      const recordedTurnId = trackedSubagent
+                        ? trackedSubagent.turnId
+                        : shell
+                          ? shell.turnId
+                          : toolCallTurnId;
+                      const providerParentAgentId = trackedSubagent
+                        ? trackedSubagent.parentAgentId
+                        : shell
+                          ? shell.parentAgentId
+                          : subagentContext?.parentAgentId;
+                      if (
+                        (parent || trackedSubagent || shell || recordedTurnId !== undefined) &&
+                        recordedTurnId !== ctx.activeTurnId
+                      ) {
                         yield* logNative(ctx.threadId, "session/update", event.rawPayload);
                         yield* offerRuntimeEvent(
                           input.lifecycleGeneration,
@@ -3273,7 +3325,9 @@ export function makeDevinAdapter(
                             provider: PROVIDER,
                             threadId: ctx.threadId,
                             turnId: recordedTurnId,
-                            toolCall: scopeDevinToolCallStateForTurn(recordedTurnId, toolCall),
+                            toolCall: recordedTurnId
+                              ? scopeDevinToolCallStateForTurn(recordedTurnId, toolCall)
+                              : toolCall,
                             providerRefs: devinProviderRefsForAgent(ctx, providerParentAgentId),
                             rawPayload: event.rawPayload,
                           }),
@@ -3312,18 +3366,29 @@ export function makeDevinAdapter(
                   case "ContentDelta":
                     {
                       const subagentContext = readDevinSubagentContext(event.metadata);
-                      const activeTurnId = yield* activeTurnIdForDevinRuntimeEvent(ctx, event._tag);
-                      if (activeTurnId === undefined) {
+                      const parent = subagentContext?.parentAgentId
+                        ? ctx.devinSubagents.get(subagentContext.parentAgentId)
+                        : undefined;
+                      const activeTurnId = parent
+                        ? parent.turnId
+                        : yield* activeTurnIdForDevinRuntimeEvent(ctx, event._tag);
+                      if (activeTurnId === undefined && !parent) {
                         return;
                       }
                       yield* logNative(ctx.threadId, "session/update", event.rawPayload);
                       const scopedItemId = event.itemId
-                        ? scopeDevinRuntimeItemIdForTurn(activeTurnId, event.itemId)
+                        ? activeTurnId
+                          ? scopeDevinRuntimeItemIdForTurn(activeTurnId, event.itemId)
+                          : event.itemId
                         : undefined;
                       if (isRenderableDevinAssistantDelta(event)) {
-                        ctx.activeTurnHadAssistantContent = true;
+                        if (!parent) ctx.activeTurnHadAssistantContent = true;
                         if (scopedItemId !== undefined) {
                           ctx.activeAssistantItemsWithContent.add(scopedItemId);
+                          ctx.assistantItemOwners.set(event.itemId ?? scopedItemId, {
+                            turnId: activeTurnId,
+                            parentAgentId: subagentContext?.parentAgentId,
+                          });
                         }
                       }
                       yield* offerRuntimeEvent(
@@ -3418,6 +3483,7 @@ export function makeDevinAdapter(
               );
             }
 
+            yield* registerReplayedDevinTasks(ctx);
             yield* offerRuntimeEvent(input.lifecycleGeneration, {
               type: "session.started",
               ...(yield* makeEventStamp()),
@@ -3825,7 +3891,13 @@ export function makeDevinAdapter(
         ctx.activeTurnId = turnId;
         clearDevinActiveToolCallIdleState(ctx);
         ctx.activeTurnHadAssistantContent = false;
-        ctx.activeAssistantItemsWithContent.clear();
+        for (const [itemId, owner] of ctx.assistantItemOwners) {
+          if (owner.parentAgentId) continue;
+          ctx.assistantItemOwners.delete(itemId);
+          ctx.activeAssistantItemsWithContent.delete(
+            owner.turnId ? scopeDevinRuntimeItemIdForTurn(owner.turnId, itemId) : itemId,
+          );
+        }
         ctx.activeTurnFailedToolDetail = undefined;
         // A new turn starts with an unresolved prompt; a late interrupt must be
         // free to cancel it until ctx.acp.prompt actually returns.

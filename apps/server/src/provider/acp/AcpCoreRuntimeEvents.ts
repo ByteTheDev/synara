@@ -218,6 +218,7 @@ export function makeAcpAssistantItemEvent(input: {
   readonly turnId: TurnId | undefined;
   readonly itemId: string;
   readonly lifecycle: "item.started" | "item.completed";
+  readonly providerRefs?: ProviderRuntimeEvent["providerRefs"];
 }): ProviderRuntimeEvent {
   return {
     type: input.lifecycle,
@@ -226,6 +227,7 @@ export function makeAcpAssistantItemEvent(input: {
     threadId: input.threadId,
     turnId: input.turnId,
     itemId: RuntimeItemId.makeUnsafe(input.itemId),
+    ...(input.providerRefs ? { providerRefs: input.providerRefs } : {}),
     payload: {
       itemType: "assistant_message",
       status: input.lifecycle === "item.completed" ? "completed" : "inProgress",

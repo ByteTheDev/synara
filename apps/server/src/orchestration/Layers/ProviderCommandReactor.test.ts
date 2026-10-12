@@ -18039,7 +18039,7 @@ describe("ProviderCommandReactor", () => {
     expect(thread?.session?.providerName).toBe("claudeAgent");
   });
 
-  it("passes only unresolved Devin stop outcomes into provider session startup", async () => {
+  it("passes unresolved Devin stop outcomes and live tasks into provider session startup", async () => {
     const harness = await createHarness({
       threadModelSelection: { provider: "devin", model: "swe-1.7" },
     });
@@ -18052,6 +18052,7 @@ describe("ProviderCommandReactor", () => {
       extra: Record<string, unknown> = {},
       ownerId = threadId,
       turnId: TurnId | null = null,
+      kind = "task.completed",
     ) =>
       harness.engine.dispatch({
         type: "thread.activity.append",
@@ -18059,7 +18060,7 @@ describe("ProviderCommandReactor", () => {
         threadId: ownerId,
         activity: {
           id: EventId.makeUnsafe(id),
-          kind: "task.completed",
+          kind,
           tone: "info",
           summary: `Task ${status}`,
           payload: { taskId, status, ...extra },
@@ -18133,6 +18134,18 @@ describe("ProviderCommandReactor", () => {
       ),
     );
 
+    await Effect.runPromise(
+      appendActivity(
+        "still-running",
+        "live-agent",
+        "running",
+        "2026-10-11T00:00:06.000Z",
+        { toolUseId: "live-tool" },
+        threadId,
+        asTurnId("live-launch-turn"),
+        "task.started",
+      ),
+    );
     await dispatchHarnessUserTurn(harness, {
       messageId: "message-devin-pending-stop",
       text: "resume Devin",
@@ -18144,6 +18157,7 @@ describe("ProviderCommandReactor", () => {
       provider: "devin",
       pendingTaskReconciliations: [
         { taskId: "shell-pending" },
+        { taskId: "live-agent", toolUseId: "live-tool", turnId: "live-launch-turn" },
         {
           taskId: "nested-task",
           turnId: "original-nested-turn",

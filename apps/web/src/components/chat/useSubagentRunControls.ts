@@ -9,6 +9,8 @@ import { useCallback } from "react";
 
 import { newCommandId } from "~/lib/utils";
 import { readNativeApi } from "~/nativeApi";
+import { useStore } from "../../store";
+import { getThreadFromState } from "../../threadDerivation";
 
 import { toastManager } from "../ui/toast";
 
@@ -44,8 +46,8 @@ export function useSubagentRunControls(stripSourceThreadId: ThreadId | null) {
     [stripSourceThreadId],
   );
 
-  // Stop goes through the interrupt seam: on a subagent thread the reactor
-  // resolves the tool_use_id and stops that task instead of the whole turn.
+  // Devin tasks can outlive the parent turn and use the existing task-stop command.
+  // Other providers resolve the child through their targeted interrupt seam.
   // Target the canonical child id derived from the strip source thread —
   // item.threadId can still be the raw tool_use_id while client-side thread
   // resolution lags, which the server would reject as an unknown thread.
@@ -54,6 +56,18 @@ export function useSubagentRunControls(stripSourceThreadId: ThreadId | null) {
       const api = readNativeApi();
       if (!api || !stripSourceThreadId) return;
       try {
+        const provider = getThreadFromState(useStore.getState(), stripSourceThreadId)?.session
+          ?.provider;
+        if (provider === "devin") {
+          await api.orchestration.dispatchCommand({
+            type: "thread.task.stop",
+            commandId: newCommandId(),
+            threadId: stripSourceThreadId,
+            taskId: item.providerThreadId,
+            createdAt: new Date().toISOString(),
+          });
+          return;
+        }
         await api.orchestration.dispatchCommand({
           type: "thread.turn.interrupt",
           requestedBy: "user",
