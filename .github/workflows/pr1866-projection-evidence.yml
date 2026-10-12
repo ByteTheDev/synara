@@ -1,0 +1,74 @@
+name: PR1866 actual projection and ChatView evidence
+
+on:
+  push:
+    branches:
+      - codex/runtime-reconciliation-ui-evidence-20261012
+    paths:
+      - .github/workflows/pr1866-projection-evidence.yml
+      - scripts/pr1866-projection-evidence/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr1866-projection-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  capture:
+    name: Actual projection and ChatView (${{ matrix.side }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - side: before
+            source: d4509644c8b7c2ba419680f7da8c2441f230d67e
+          - side: after
+            source: 4c31e23b888e40d21868fa8325a8641b0424c517
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .runtime-reconciliation-ui-driver
+          persist-credentials: false
+      - name: Parse the exact driver modules
+        run: |
+          node --check .runtime-reconciliation-ui-driver/scripts/pr1866-projection-evidence/runner.mjs
+          node --check .runtime-reconciliation-ui-driver/scripts/pr1866-projection-evidence/owned-command-observer.mjs
+      - name: Setup frozen workspace
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+          turbo: "false"
+      - name: Install actual Chromium and video runtime
+        timeout-minutes: 10
+        run: |
+          if ! command -v ffprobe >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install --yes --no-install-recommends ffmpeg
+          fi
+          ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+      - name: Observe actual backend projections and render their exact browser state
+        run: node .runtime-reconciliation-ui-driver/scripts/pr1866-projection-evidence/runner.mjs '${{ matrix.side }}'
+      - name: Retain original source-pinned snapshots, images, video and failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1866-projection-evidence-${{ matrix.side }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1866-projection-${{ matrix.side }}/frozen
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
