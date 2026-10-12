@@ -973,6 +973,16 @@ describe("Devin adapter lifecycle", () => {
         });
         yield* adapter.backgroundTask(threadId, "agent-1");
         yield* eventRuntime.emitToolCall("agent-launch-call", "inProgress");
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: "task.updated",
+            payload: expect.objectContaining({
+              taskId: "agent-1",
+              isBackgrounded: true,
+              toolUseId: "agent-launch-call",
+            }),
+          }),
+        );
         yield* eventRuntime.emitProgress("Child agent output", {
           "cognition.ai/subagent_context": { parentAgentId: "agent-1" },
         });
@@ -3869,5 +3879,69 @@ describe("Devin retained background task ownership", () => {
         }).pipe(Effect.scoped, Effect.provide(layer)),
       );
     },
+  );
+});
+
+it("preserves an originally unscoped root task when it completes during a newer turn", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const runtime = makeEventAcpRuntime(() => Effect.never);
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("unscoped-task-recovery");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      const starting = yield* adapter
+        .startSession({
+          provider: "devin",
+          threadId,
+          runtimeMode: "full-access",
+          resumeCursor: { schemaVersion: 1, sessionId: "previous-session" },
+          pendingTaskReconciliations: [
+            {
+              taskId: RuntimeTaskId.makeUnsafe("unscoped-agent"),
+              toolUseId: "original-unscoped-call",
+            },
+          ],
+        })
+        .pipe(Effect.forkScoped);
+      yield* flushTimers();
+      yield* advanceTimers(250);
+      yield* Fiber.join(starting);
+      yield* adapter.sendTurn({ threadId, input: "new foreground turn", attachments: [] });
+      yield* runtime.emitToolCall("replayed-call", "completed", {
+        metadata: {
+          "cognition.ai/subagent_started": {
+            agentId: "unscoped-agent",
+            parentAgentId: "new-parent",
+            task: "Inspect",
+          },
+          "cognition.ai/subagent_completed": { agentId: "unscoped-agent", success: true },
+        },
+      });
+      yield* flushTimers();
+      const correction = events.find(
+        (event) => event.type === "task.completed" && event.payload.taskId === "unscoped-agent",
+      );
+      expect(correction).toBeDefined();
+      expect(correction?.turnId).toBeUndefined();
+      expect(correction?.providerRefs).toBeUndefined();
+      expect(events).toContainEqual(
+        expect.objectContaining({ type: "item.completed", itemId: "original-unscoped-call" }),
+      );
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(runtime.runtime, runtime.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }),
+      ),
+    ),
   );
 });

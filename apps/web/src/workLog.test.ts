@@ -888,6 +888,61 @@ describe("deriveWorkLogEntries", () => {
       ]);
     });
 
+    it.each(["original turn", "unscoped"] as const)(
+      "updates an older task during a newer working turn without waking a response (%s)",
+      (scope) => {
+        const originalTurnId = scope === "unscoped" ? null : TurnId.makeUnsafe("turn-bg");
+        const priorWork = [
+          launchCall("old-launch", "old-tool", "bun run build", "2026-10-10T00:15:00.000Z"),
+          notice("old-moved", [["old-task", "Build"]], "2026-10-10T00:15:00.100Z"),
+          taskStarted("old-task", "old-tool", "2026-10-10T00:15:00.200Z"),
+          turnCompleted("2026-10-10T00:15:10.000Z"),
+        ].map((activity) => ({ ...activity, turnId: originalTurnId }));
+        const entries = deriveWorkLogEntries(
+          [
+            ...priorWork,
+            {
+              ...launchCall("new-work", "new-tool", "Read code", "2026-10-10T00:16:00.000Z"),
+              turnId: TurnId.makeUnsafe("turn-current"),
+            },
+            {
+              ...taskCompleted(
+                "old-task",
+                "completed",
+                "Build finished",
+                "2026-10-10T00:16:01.000Z",
+              ),
+              turnId: originalTurnId,
+            },
+            {
+              ...turnCompleted("2026-10-10T00:16:02.000Z"),
+              turnId: TurnId.makeUnsafe("turn-current"),
+            },
+            {
+              ...monitorEvent("idle-notification", "2026-10-10T00:17:00.000Z"),
+              turnId: originalTurnId,
+            },
+          ],
+          undefined,
+          scope === "unscoped"
+            ? {}
+            : {
+                visibleTurnIds: new Set([
+                  TurnId.makeUnsafe("turn-bg"),
+                  TurnId.makeUnsafe("turn-current"),
+                ]),
+              },
+        );
+        expect(entries.filter((entry) => entry.backgroundTaskCompletion)).toEqual([]);
+        expect(entries.find((entry) => entry.backgroundTask)?.backgroundTask?.status).toBe(
+          "finished",
+        );
+        expect(
+          entries.find((entry) => entry.id === "idle-notification")?.monitorNotification?.midTurn,
+        ).toBeUndefined();
+      },
+    );
+
     it("anchors the row at the notice when the launching call is not visible", () => {
       const entries = deriveWorkLogEntries(
         [

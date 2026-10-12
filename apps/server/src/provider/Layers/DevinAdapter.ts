@@ -395,7 +395,7 @@ interface DevinSubagentState {
   readonly agentId: string;
   readonly toolCallId: string;
   readonly turnId: TurnId | undefined;
-  readonly parentAgentId?: string;
+  readonly parentAgentId?: string | undefined;
   readonly title?: string;
   readonly profile?: string;
   readonly task?: string;
@@ -409,7 +409,7 @@ interface DevinSubagentState {
 interface DevinBackgroundShellState {
   readonly shellId: string;
   readonly toolCallId: string;
-  readonly parentAgentId?: string;
+  readonly parentAgentId?: string | undefined;
   readonly command?: string;
   readonly turnId: TurnId | undefined;
   /** Kill RPC succeeded before the matching provider terminal update arrived. */
@@ -562,16 +562,17 @@ function restoreTaskCorrelation<T extends DevinSubagentState | DevinBackgroundSh
 ): T {
   const correlation = ctx.pendingTaskReconciliations.get(taskId);
   if (!correlation) return task;
-  const parentAgentId = correlation.parentAgentId ?? task.parentAgentId;
+  // Absence is the original unscoped/root identity, not permission to use a newer context.
+  const parentAgentId = correlation.parentAgentId;
   return {
     ...task,
-    turnId: correlation.turnId ?? task.turnId,
+    turnId: correlation.turnId,
     // Older stop activities used the agent ID here; replay supplies the real tool ID.
     toolCallId:
       correlation.toolUseId && correlation.toolUseId !== taskId
         ? correlation.toolUseId
         : task.toolCallId,
-    ...(parentAgentId ? { parentAgentId } : {}),
+    parentAgentId,
   };
 }
 
@@ -1996,7 +1997,7 @@ export function makeDevinAdapter(
             kind: ACP_SUBAGENT_TOOL_KIND,
             data: {},
           } satisfies AcpToolCallState);
-        const turnId = subagent.turnId ?? ctx.activeTurnId;
+        const turnId = subagent.turnId;
         yield* offerRuntimeEvent(
           ctx.lifecycleGeneration,
           makeAcpToolCallEvent({
@@ -2121,7 +2122,7 @@ export function makeDevinAdapter(
             ctx,
             subagent,
             "stopped",
-            subagent.turnId ?? ctx.activeTurnId,
+            subagent.turnId,
             undefined,
             false,
             preserveTasksForResume,
@@ -3108,13 +3109,9 @@ export function makeDevinAdapter(
                           ? {
                               ...previous,
                               ...startedSubagent,
-                              turnId: previous.turnId ?? startedSubagent.turnId,
-                              ...((previous.parentAgentId ?? startedSubagent.parentAgentId)
-                                ? {
-                                    parentAgentId:
-                                      previous.parentAgentId ?? startedSubagent.parentAgentId,
-                                  }
-                                : {}),
+                              turnId: previous.turnId,
+                              toolCallId: previous.toolCallId,
+                              parentAgentId: previous.parentAgentId,
                               // Devin's background transition is one-way for a
                               // running agent. Sparse/replayed start metadata
                               // must not undo the user's background action.
@@ -3177,7 +3174,7 @@ export function makeDevinAdapter(
                             ctx,
                             subagent,
                             subagent.status,
-                            subagent.turnId ?? ctx.activeTurnId,
+                            subagent.turnId,
                             completion.summary,
                             reconcilesStop,
                           );
@@ -4193,7 +4190,7 @@ export function makeDevinAdapter(
         yield* stopDevinSubagentInternal(
           ctx,
           subagent.agentId,
-          subagent.turnId ?? ctx.activeTurnId,
+          subagent.turnId,
           options?.beforeGatewayCredentialRevocation,
         );
       });
@@ -4256,7 +4253,7 @@ export function makeDevinAdapter(
           ...(yield* makeEventStamp()),
           provider: PROVIDER,
           threadId: ctx.threadId,
-          turnId: current.turnId ?? ctx.activeTurnId,
+          turnId: current.turnId,
           ...(devinProviderRefsForAgent(ctx, current.parentAgentId)
             ? { providerRefs: devinProviderRefsForAgent(ctx, current.parentAgentId) }
             : {}),
@@ -4264,7 +4261,7 @@ export function makeDevinAdapter(
             taskId: RuntimeTaskId.makeUnsafe(current.agentId),
             status: "running",
             isBackgrounded: true,
-            toolUseId: current.agentId,
+            toolUseId: current.toolCallId,
           },
         });
       });

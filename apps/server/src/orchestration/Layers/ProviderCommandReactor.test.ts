@@ -13779,6 +13779,8 @@ describe("ProviderCommandReactor", () => {
       .fn<CheckpointStoreShape["captureCheckpoint"]>(() => Effect.void)
       .mockImplementationOnce(() => Effect.promise(() => captureGate));
     const harness = await createHarness({
+      // Keep the held checkpoint pending while the fixture writes its 600-event backlog.
+      preTurnBaselineTimeout: Duration.minutes(1),
       checkpointStore: {
         isGitRepository: () => Effect.succeed(true),
         captureCheckpoint,
@@ -15979,7 +15981,8 @@ describe("ProviderCommandReactor", () => {
 
   it("releases a timed-out promoted turn when its live provider turn settles", async () => {
     const harness = await createHarness({
-      commandEventTimeout: Duration.millis(25),
+      // Admission must finish before the deliberately non-returning provider call times out.
+      commandEventTimeout: Duration.seconds(1),
     });
     await seedQueuedTurnBehindLiveTurn(harness, {
       liveTurnId: asTurnId("turn-running-timeout"),
