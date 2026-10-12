@@ -1,0 +1,392 @@
+[
+  {
+    "target": "before-desktop",
+    "video": "campaign/browser/pr1856-run38186606080/before-desktop/raw/pr1856-before-desktop/video/page@f27e1c9e326d079930768e05952aec52.webm",
+    "bytes": 12322801,
+    "format": {
+      "filename": "campaign/browser/pr1856-run38186606080/before-desktop/raw/pr1856-before-desktop/video/page@f27e1c9e326d079930768e05952aec52.webm",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "format_name": "matroska,webm",
+      "format_long_name": "Matroska / WebM",
+      "start_time": "0.000000",
+      "duration": "551.720000",
+      "size": "12322801",
+      "bit_rate": "178681",
+      "probe_score": 100,
+      "tags": {
+        "ENCODER": "Lavf61.1.100"
+      }
+    },
+    "stream": {
+      "index": 0,
+      "codec_name": "vp8",
+      "codec_long_name": "On2 VP8",
+      "profile": "0",
+      "codec_type": "video",
+      "codec_tag_string": "[0][0][0][0]",
+      "codec_tag": "0x0000",
+      "width": 760,
+      "height": 1000,
+      "coded_width": 760,
+      "coded_height": 1000,
+      "closed_captions": 0,
+      "film_grain": 0,
+      "has_b_frames": 0,
+      "sample_aspect_ratio": "1:1",
+      "display_aspect_ratio": "19:25",
+      "pix_fmt": "yuv420p",
+      "level": -99,
+      "chroma_location": "center",
+      "field_order": "progressive",
+      "refs": 1,
+      "r_frame_rate": "25/1",
+      "avg_frame_rate": "25/1",
+      "time_base": "1/1000",
+      "start_pts": 0,
+      "start_time": "0.000000",
+      "disposition": {
+        "default": 1,
+        "dub": 0,
+        "original": 0,
+        "comment": 0,
+        "lyrics": 0,
+        "karaoke": 0,
+        "forced": 0,
+        "hearing_impaired": 0,
+        "visual_impaired": 0,
+        "clean_effects": 0,
+        "attached_pic": 0,
+        "timed_thumbnails": 0,
+        "non_diegetic": 0,
+        "captions": 0,
+        "descriptions": 0,
+        "metadata": 0,
+        "dependent": 0,
+        "still_image": 0
+      },
+      "tags": {
+        "language": "eng",
+        "ENCODER": "Lavc61.3.100 libvpx",
+        "DURATION": "00:09:11.720000000"
+      }
+    },
+    "observations": [
+      {
+        "phase": "helium-picker",
+        "time": "2026-10-12T00:05:27.458Z",
+        "performanceNow": 5002.899999999994
+      },
+      {
+        "phase": "helium-site-result",
+        "time": "2026-10-12T00:05:27.624Z",
+        "performanceNow": 5169.300000000003
+      },
+      {
+        "phase": "startup-intro",
+        "time": "2026-10-12T00:05:32.141Z",
+        "performanceNow": 1631.2999999999884
+      }
+    ]
+  },
+  {
+    "target": "after-desktop",
+    "video": "campaign/browser/pr1856-run38186606080/after-desktop/raw/pr1856-after-desktop/video/page@d7076ada94fc9ea2f6cd6bb00a467a49.webm",
+    "bytes": 1306170,
+    "format": {
+      "filename": "campaign/browser/pr1856-run38186606080/after-desktop/raw/pr1856-after-desktop/video/page@d7076ada94fc9ea2f6cd6bb00a467a49.webm",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "format_name": "matroska,webm",
+      "format_long_name": "Matroska / WebM",
+      "start_time": "0.000000",
+      "duration": "12.760000",
+      "size": "1306170",
+      "bit_rate": "818915",
+      "probe_score": 100,
+      "tags": {
+        "ENCODER": "Lavf61.1.100"
+      }
+    },
+    "stream": {
+      "index": 0,
+      "codec_name": "vp8",
+      "codec_long_name": "On2 VP8",
+      "profile": "0",
+      "codec_type": "video",
+      "codec_tag_string": "[0][0][0][0]",
+      "codec_tag": "0x0000",
+      "width": 760,
+      "height": 1000,
+      "coded_width": 760,
+      "coded_height": 1000,
+      "closed_captions": 0,
+      "film_grain": 0,
+      "has_b_frames": 0,
+      "sample_aspect_ratio": "1:1",
+      "display_aspect_ratio": "19:25",
+      "pix_fmt": "yuv420p",
+      "level": -99,
+      "chroma_location": "center",
+      "field_order": "progressive",
+      "refs": 1,
+      "r_frame_rate": "25/1",
+      "avg_frame_rate": "25/1",
+      "time_base": "1/1000",
+      "start_pts": 0,
+      "start_time": "0.000000",
+      "disposition": {
+        "default": 1,
+        "dub": 0,
+        "original": 0,
+        "comment": 0,
+        "lyrics": 0,
+        "karaoke": 0,
+        "forced": 0,
+        "hearing_impaired": 0,
+        "visual_impaired": 0,
+        "clean_effects": 0,
+        "attached_pic": 0,
+        "timed_thumbnails": 0,
+        "non_diegetic": 0,
+        "captions": 0,
+        "descriptions": 0,
+        "metadata": 0,
+        "dependent": 0,
+        "still_image": 0
+      },
+      "tags": {
+        "language": "eng",
+        "ENCODER": "Lavc61.3.100 libvpx",
+        "DURATION": "00:00:12.760000000"
+      }
+    },
+    "observations": [
+      {
+        "phase": "helium-picker",
+        "time": "2026-10-12T00:05:37.807Z",
+        "performanceNow": 4561.400000000009
+      },
+      {
+        "phase": "helium-site-result",
+        "time": "2026-10-12T00:05:37.973Z",
+        "performanceNow": 4727.800000000003
+      },
+      {
+        "phase": "helium-profile-needs-consent",
+        "time": "2026-10-12T00:05:38.074Z",
+        "performanceNow": 4827.800000000003
+      },
+      {
+        "phase": "helium-profile-renewed",
+        "time": "2026-10-12T00:05:38.273Z",
+        "performanceNow": 5027.700000000012
+      },
+      {
+        "phase": "startup-intro",
+        "time": "2026-10-12T00:05:42.574Z",
+        "performanceNow": 1418.5
+      },
+      {
+        "phase": "manual-safari-setup",
+        "time": "2026-10-12T00:05:42.723Z",
+        "performanceNow": 1567.5
+      }
+    ]
+  },
+  {
+    "target": "before-mobile",
+    "video": "campaign/browser/pr1856-run38186606080/before-mobile/raw/pr1856-before-mobile/video/page@bc3c403e2b3ca5eb007ebcc279e4fffa.webm",
+    "bytes": 9636672,
+    "format": {
+      "filename": "campaign/browser/pr1856-run38186606080/before-mobile/raw/pr1856-before-mobile/video/page@bc3c403e2b3ca5eb007ebcc279e4fffa.webm",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "format_name": "matroska,webm",
+      "format_long_name": "Matroska / WebM",
+      "start_time": "0.000000",
+      "duration": "554.680000",
+      "size": "9636672",
+      "bit_rate": "138987",
+      "probe_score": 100,
+      "tags": {
+        "ENCODER": "Lavf61.1.100"
+      }
+    },
+    "stream": {
+      "index": 0,
+      "codec_name": "vp8",
+      "codec_long_name": "On2 VP8",
+      "profile": "0",
+      "codec_type": "video",
+      "codec_tag_string": "[0][0][0][0]",
+      "codec_tag": "0x0000",
+      "width": 360,
+      "height": 1000,
+      "coded_width": 360,
+      "coded_height": 1000,
+      "closed_captions": 0,
+      "film_grain": 0,
+      "has_b_frames": 0,
+      "sample_aspect_ratio": "1:1",
+      "display_aspect_ratio": "9:25",
+      "pix_fmt": "yuv420p",
+      "level": -99,
+      "chroma_location": "center",
+      "field_order": "progressive",
+      "refs": 1,
+      "r_frame_rate": "25/1",
+      "avg_frame_rate": "25/1",
+      "time_base": "1/1000",
+      "start_pts": 0,
+      "start_time": "0.000000",
+      "disposition": {
+        "default": 1,
+        "dub": 0,
+        "original": 0,
+        "comment": 0,
+        "lyrics": 0,
+        "karaoke": 0,
+        "forced": 0,
+        "hearing_impaired": 0,
+        "visual_impaired": 0,
+        "clean_effects": 0,
+        "attached_pic": 0,
+        "timed_thumbnails": 0,
+        "non_diegetic": 0,
+        "captions": 0,
+        "descriptions": 0,
+        "metadata": 0,
+        "dependent": 0,
+        "still_image": 0
+      },
+      "tags": {
+        "language": "eng",
+        "ENCODER": "Lavc61.3.100 libvpx",
+        "DURATION": "00:09:14.680000000"
+      }
+    },
+    "observations": [
+      {
+        "phase": "helium-picker",
+        "time": "2026-10-12T00:05:24.374Z",
+        "performanceNow": 7236.599999999977
+      },
+      {
+        "phase": "helium-site-result",
+        "time": "2026-10-12T00:05:24.540Z",
+        "performanceNow": 7402.899999999994
+      },
+      {
+        "phase": "startup-intro",
+        "time": "2026-10-12T00:05:29.274Z",
+        "performanceNow": 1744.6000000000058
+      }
+    ]
+  },
+  {
+    "target": "after-mobile",
+    "video": "campaign/browser/pr1856-run38186606080/after-mobile/raw/pr1856-after-mobile/video/page@ef83d2472e14cada5927ab7246919a31.webm",
+    "bytes": 1396927,
+    "format": {
+      "filename": "campaign/browser/pr1856-run38186606080/after-mobile/raw/pr1856-after-mobile/video/page@ef83d2472e14cada5927ab7246919a31.webm",
+      "nb_streams": 1,
+      "nb_programs": 0,
+      "format_name": "matroska,webm",
+      "format_long_name": "Matroska / WebM",
+      "start_time": "0.000000",
+      "duration": "15.760000",
+      "size": "1396927",
+      "bit_rate": "709100",
+      "probe_score": 100,
+      "tags": {
+        "ENCODER": "Lavf61.1.100"
+      }
+    },
+    "stream": {
+      "index": 0,
+      "codec_name": "vp8",
+      "codec_long_name": "On2 VP8",
+      "profile": "0",
+      "codec_type": "video",
+      "codec_tag_string": "[0][0][0][0]",
+      "codec_tag": "0x0000",
+      "width": 360,
+      "height": 1000,
+      "coded_width": 360,
+      "coded_height": 1000,
+      "closed_captions": 0,
+      "film_grain": 0,
+      "has_b_frames": 0,
+      "sample_aspect_ratio": "1:1",
+      "display_aspect_ratio": "9:25",
+      "pix_fmt": "yuv420p",
+      "level": -99,
+      "chroma_location": "center",
+      "field_order": "progressive",
+      "refs": 1,
+      "r_frame_rate": "25/1",
+      "avg_frame_rate": "25/1",
+      "time_base": "1/1000",
+      "start_pts": 0,
+      "start_time": "0.000000",
+      "disposition": {
+        "default": 1,
+        "dub": 0,
+        "original": 0,
+        "comment": 0,
+        "lyrics": 0,
+        "karaoke": 0,
+        "forced": 0,
+        "hearing_impaired": 0,
+        "visual_impaired": 0,
+        "clean_effects": 0,
+        "attached_pic": 0,
+        "timed_thumbnails": 0,
+        "non_diegetic": 0,
+        "captions": 0,
+        "descriptions": 0,
+        "metadata": 0,
+        "dependent": 0,
+        "still_image": 0
+      },
+      "tags": {
+        "language": "eng",
+        "ENCODER": "Lavc61.3.100 libvpx",
+        "DURATION": "00:00:15.760000000"
+      }
+    },
+    "observations": [
+      {
+        "phase": "helium-picker",
+        "time": "2026-10-12T00:05:30.128Z",
+        "performanceNow": 6684.5
+      },
+      {
+        "phase": "helium-site-result",
+        "time": "2026-10-12T00:05:30.294Z",
+        "performanceNow": 6850.800000000003
+      },
+      {
+        "phase": "helium-profile-needs-consent",
+        "time": "2026-10-12T00:05:30.394Z",
+        "performanceNow": 6950.699999999997
+      },
+      {
+        "phase": "helium-profile-renewed",
+        "time": "2026-10-12T00:05:30.594Z",
+        "performanceNow": 7150.600000000006
+      },
+      {
+        "phase": "startup-intro",
+        "time": "2026-10-12T00:05:35.395Z",
+        "performanceNow": 1748.800000000003
+      },
+      {
+        "phase": "manual-safari-setup",
+        "time": "2026-10-12T00:05:35.544Z",
+        "performanceNow": 1897.800000000003
+      }
+    ]
+  }
+]

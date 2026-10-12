@@ -1,0 +1,62 @@
+[
+  {
+    "path": "exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": "observed-BrowserVault.browser.tsx",
+    "bytes": 20645,
+    "sha256": "0aee0815cfaac8a5c7351e48f0ad9bccb967f3ca52eb7df9d960c2740bf769f5",
+    "blob": "2a881e8c8129d51a3ced9669b65a26fb8101dd05"
+  },
+  {
+    "path": "observed-SafariAccessOnboarding.browser.tsx",
+    "bytes": 14479,
+    "sha256": "a6807abba008fdea036bd2b2b10d4ce592470d1041d6a30ae187b7490a3d2213",
+    "blob": "4947b5336f9345c0c419be1a0c7f81f508bce5a5"
+  },
+  {
+    "path": "original-BrowserVault.browser.tsx",
+    "bytes": 15876,
+    "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5",
+    "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef"
+  },
+  {
+    "path": "original-SafariAccessOnboarding.browser.tsx",
+    "bytes": 9911,
+    "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21",
+    "blob": "03658ef075d7d7886531dab576b8fad7713119f8"
+  },
+  {
+    "path": "overlay.json",
+    "bytes": 5291,
+    "sha256": "9f8a9921ede9ba1f95a03f74448fe8588b6a607c0af7c2b2fe4019ea3db7408b",
+    "blob": "f7fcc596a67bf17643812d5eb5652625e0521307"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 10726,
+    "sha256": "6cf28623501042e4cc81a46eb649f2e2c0ce84ecd779f79f9c22e80ee0af0706",
+    "blob": "69d972a05dde41b2c5c38e406983e5b2e522b188"
+  },
+  {
+    "path": "report-snapshot.json",
+    "bytes": 158,
+    "sha256": "60a06ae0d87473f3f67d5879f28c80bcacfb4fa776822f257a9ff99975f5e03b",
+    "blob": "329e3c6dbc62d0450f8970399d560d61eb7a8f81"
+  },
+  {
+    "path": "verified.json",
+    "bytes": 11105,
+    "sha256": "b3065268557e31a08d4581a885a5f09cfbdb38b85050d7f1340ba709c991eeb0",
+    "blob": "2d31f6b0e3ca1e60d5f7918b044ab1eb1ea78f90"
+  },
+  {
+    "path": "vitest.log",
+    "bytes": 1664,
+    "sha256": "b02ef2b81bdef11284aa27ac2bb39c3af773d4511dffd87c3899f523930edd9f",
+    "blob": "627eaa8965f094aee38d22902ee95e96c7037c0f"
+  }
+]

@@ -1,0 +1,179 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m11:31:34 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[90mstdout[2m | src/components/PrCookieEvidence1856Vault.browser.tsx[2m > [22m[2mbrowser saved logins[2m > [22m[2mimports helium through the existing picker and renews whole-profile consent
+[22m[39mCOOKIE_EVIDENCE_OBSERVATION {"phase":"helium-picker","target":"pr1856-before-mobile","source":"1a9d70983750bc771e850d72a858c541bac52885","variant":"before","viewport":{"width":360,"height":1000},"time":"2026-10-11T23:31:39.183Z","performanceNow":4683.599999999991,"theme":"light","reducedMotion":true,"documentWidth":360,"dialog":[],"selects":[{"label":"Cookie import scope","value":"site","options":[{"value":"site","text":"This site: https://example.test","disabled":false},{"value":"profile","text":"All sites in this profile","disabled":false}],"box":{"x":0,"y":95,"width":360,"height":32}},{"label":"Cookie source browser","value":"helium","options":[{"value":"helium","text":"helium","disabled":false}],"box":{"x":0,"y":261,"width":174,"height":32}},{"label":"Cookie source profile","value":"Default","options":[{"value":"Default","text":"Default","disabled":false}],"box":{"x":186,"y":261,"width":174,"height":32}}],"buttons":[{"text":"Import browser cookies","label":null,"disabled":false},{"text":"Import for this site","label":null,"disabled":false}],"checkboxes":[{"checked":false,"disabled":false}],"status":[],"details":{"imports":[]}}
+[90mstdout[2m | src/components/PrCookieEvidence1856Vault.browser.tsx[2m > [22m[2mbrowser saved logins[2m > [22m[2mimports helium through the existing picker and renews whole-profile consent
+[22m[39mCOOKIE_EVIDENCE_OBSERVATION {"phase":"helium-site-result","target":"pr1856-before-mobile","source":"1a9d70983750bc771e850d72a858c541bac52885","variant":"before","viewport":{"width":360,"height":1000},"time":"2026-10-11T23:31:39.349Z","performanceNow":4850.099999999991,"theme":"light","reducedMotion":true,"documentWidth":360,"dialog":[],"selects":[{"label":"Cookie import scope","value":"site","options":[{"value":"site","text":"This site: https://example.test","disabled":false},{"value":"profile","text":"All sites in this profile","disabled":false}],"box":{"x":0,"y":95,"width":360,"height":32}},{"label":"Cookie source browser","value":"helium","options":[{"value":"helium","text":"helium","disabled":false}],"box":{"x":0,"y":261,"width":174,"height":32}},{"label":"Cookie source profile","value":"Default","options":[{"value":"Default","text":"Default","disabled":false}],"box":{"x":186,"y":261,"width":174,"height":32}}],"buttons":[{"text":"Import browser cookies","label":null,"disabled":false},{"text":"Import for this site","label":null,"disabled":false}],"checkboxes":[{"checked":false,"disabled":false}],"status":[],"details":{"imports":[]}}
+ [31m❯[39m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Vault.browser.tsx [2m([22m[2m15 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 4204[2mms[22m[39m
+     [33m[2m✓[22m[39m still reports actual permission denial after continuing past Safari setup [33m 687[2mms[22m[39m
+     [32m✓[39m requires fresh explicit all-profile consent and shows Safari-specific native denial[32m 150[2mms[22m[39m
+     [32m✓[39m offers confirmed whole-profile import without a current website[32m 149[2mms[22m[39m
+     [32m✓[39m distinguishes reader stages and persistence failure[32m 100[2mms[22m[39m
+     [32m✓[39m distinguishes reader stages and persistence failure[32m 99[2mms[22m[39m
+[31m     [31m×[31m imports helium through the existing picker and renews whole-profile consent[39m[33m 381[2mms[22m[39m
+[31m     [31m×[31m imports aside through the existing picker and renews whole-profile consent[39m[32m 164[2mms[22m[39m
+[31m     [31m×[31m imports arc through the existing picker and renews whole-profile consent[39m[32m 167[2mms[22m[39m
+[31m     [31m×[31m imports dia through the existing picker and renews whole-profile consent[39m[32m 169[2mms[22m[39m
+     [33m[2m✓[22m[39m requires the master password for reveal and hides the secret on blur [33m 409[2mms[22m[39m
+     [33m[2m✓[22m[39m does not display a late reveal after the authentication panel is cancelled [33m 428[2mms[22m[39m
+     [33m[2m✓[22m[39m requires saving consent before enabling autosave [33m 324[2mms[22m[39m
+     [33m[2m✓[22m[39m limits agent consent to account discovery and states that autofill is unavailable [33m 326[2mms[22m[39m
+     [32m✓[39m shows a metadata-only save prompt and never a credential-entry form[32m 283[2mms[22m[39m
+     [33m[2m✓[22m[39m requires confirmation before deleting a saved login [33m 367[2mms[22m[39m
+[90mstdout[2m | src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22m[2mSafari access onboarding[2m > [22m[2mshows optional first-launch guidance and serializes other welcome dialogs
+[22m[39mCOOKIE_EVIDENCE_OBSERVATION {"phase":"startup-intro","target":"pr1856-before-mobile","source":"1a9d70983750bc771e850d72a858c541bac52885","variant":"before","viewport":{"width":360,"height":1000},"time":"2026-10-11T23:31:43.349Z","performanceNow":1220.8999999999942,"theme":"light","reducedMotion":true,"documentWidth":360,"dialog":[{"text":"Bring your Safari logins along?Synara's browser can pick up sites you're already signed into in Safari, so you don't have to log in twice. It's optional, and nothing is copied until you ask.1Open System Settings › Privacy & Security › Full Disk Access.2Switch on Synara (Dev). Not listed? Show app in Finder and drag it in.3Quit and reopen Synara.Full Disk Access is a broad macOS permission that reaches beyond Safari. If you'd rather not, that's fine. You can find this again under Settings › General.Not nowOpen System Settings","box":{"x":3.5380859375,"y":253.29244995117188,"width":352.923828125,"height":754.86474609375}}],"selects":[],"buttons":[{"text":"Safari import setup","label":null,"disabled":false},{"text":"Show app in Finder","label":null,"disabled":false},{"text":"Not now","label":null,"disabled":false},{"text":"Open System Settings","label":null,"disabled":false}],"checkboxes":[],"status":[],"details":{"openSettingsCalls":0,"acknowledgment":null}}
+ [31m❯[39m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx [2m([22m[2m12 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 540499[2mms[22m[39m
+     [33m[2m✓[22m[39m opens manual setup despite a pending startup gate and an occupied slot [33m 645[2mms[22m[39m
+     [32m✓[39m keeps follow-on surfaces mounted after handoff and allows a manual Safari revisit[32m 61[2mms[22m[39m
+     [32m✓[39m waits for the shared slot without acknowledging the Safari intro[32m 10[2mms[22m[39m
+[31m     [31m×[31m shows optional first-launch guidance and serializes other welcome dialogs[39m[33m 89983[2mms[22m[39m
+[31m     [31m×[31m persists browser guidance acknowledgment across remounts and allows Safari revisits[39m[33m 89951[2mms[22m[39m
+     [32m✓[39m still honors the legacy continued decision[32m 9[2mms[22m[39m
+[31m     [31m×[31m opening Settings is not permission approval or an acknowledged intro[39m[33m 89953[2mms[22m[39m
+[31m     [31m×[31m leaves manual settings and skip available after open failure false[39m[33m 89963[2mms[22m[39m
+[31m     [31m×[31m leaves manual settings and skip available after open failure reject[39m[33m 89960[2mms[22m[39m
+     [32m✓[39m does not show macOS onboarding on web[32m 7[2mms[22m[39m
+     [32m✓[39m does not show macOS onboarding on unavailable[32m 3[2mms[22m[39m
+[31m     [31m×[31m does not reopen for a late Settings response after skipping[39m[33m 89954[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 10 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22mSafari access onboarding[2m > [22mshows optional first-launch guidance and serializes other welcome dialogs
+[31m[1mError[22m: [2mexpect([22m[31melement[31m[2m).toHaveTextContent()[22m
+
+Expected element to have text content:
+[32m  Chrome[31m
+Received:
+[31m  Bring your Safari logins along?Synara's browser can pick up sites you're already signed into in Safari, so you don't have to log in twice. It's optional, and nothing is copied until you ask.1Open System Settings › Privacy & Security › Full Disk Access.2Switch on Synara (Dev). Not listed? Show app in Finder and drag it in.3Quit and reopen Synara.Full Disk Access is a broad macOS permission that reaches beyond Safari. If you'd rather not, that's fine. You can find this again under Settings › General.Not nowOpen System Settings[31m[39m
+
+Failure screenshot:
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Onboarding.browser.tsx/Safari-access-onboarding-shows-optional-first-launch-guidance-and-serializes-other-welcome-dialogs-2.png[22m
+
+[36m [2m❯[22m src/components/PrCookieEvidence1856Onboarding.browser.tsx:[2m214:53[22m[39m
+    [90m212|[39m     })[33m;[39m
+    [90m213|[39m     for (const browser of ["Chrome", "Safari", "Edge", "Helium", "Asid…
+    [90m214|[39m       await expect.element(page.getByRole("dialog")).toHaveTextContent…
+    [90m   |[39m                                                     [31m^[39m
+    [90m215|[39m     await expect.element(page.getByRole("dialog")).toHaveTextContent("…
+    [90m216|[39m     [35mawait[39m expect
+
+[31m[1mCaused by: Error[22m: Matcher did not succeed in time.[39m
+[36m [2m❯[22m src/components/PrCookieEvidence1856Onboarding.browser.tsx:[2m214:6[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22mSafari access onboarding[2m > [22mpersists browser guidance acknowledgment across remounts and allows Safari revisits
+[31m[1mTimeoutError[22m: locator.click: Timeout 89894ms exceeded.
+Call log:
+  - waiting for locator('[data-vitest="true"]').contentFrame().getByRole('button', { name: 'Got it', exact: true })
+[39m
+
+Failure screenshot:
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Onboarding.browser.tsx/Safari-access-onboarding-persists-browser-guidance-acknowledgment-across-remounts-and-allows-Safari-revisits-1.png[22m
+
+[36m [2m❯[22m src/components/PrCookieEvidence1856Onboarding.browser.tsx:[2m237:68[22m[39m
+    [90m235|[39m   it("persists browser guidance acknowledgment across remounts and all…
+    [90m236|[39m     [35mconst[39m mounted [33m=[39m [35mawait[39m [34mrender[39m([33m<[39m[33mHarness[39m [33m/[39m[33m>[39m)[33m;[39m
+    [90m237|[39m     await page.getByRole("button", { name: "Got it", exact: true }).cl…
+    [90m   |[39m                                                                    [31m^[39m
+    [90m238|[39m     [35mawait[39m expect[33m.[39m[34melement[39m(page[33m.[39m[34mgetByText[39m([32m"Next welcome"[39m))[33m.[39m[34mtoBeVisible[39m()[33m;[39m
+    [90m239|[39m     expect(JSON.parse(localStorage.getItem(SAFARI_ACCESS_STORAGE_KEY)!…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22mSafari access onboarding[2m > [22mopening Settings is not permission approval or an acknowledged intro
+[31m[1mTimeoutError[22m: locator.click: Timeout 89891ms exceeded.
+Call log:
+  - waiting for locator('[data-vitest="true"]').contentFrame().getByRole('button', { name: 'Safari access setup' })
+[39m
+
+Failure screenshot:
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Onboarding.browser.tsx/Safari-access-onboarding-opening-Settings-is-not-permission-approval-or-an-acknowledged-intro-1.png[22m
+
+[36m [2m❯[22m src/components/PrCookieEvidence1856Onboarding.browser.tsx:[2m257:68[22m[39m
+    [90m255|[39m   it("opening Settings is not permission approval or an acknowledged i…
+    [90m256|[39m     [35mawait[39m [34mrender[39m([33m<[39m[33mHarness[39m [33m/[39m[33m>[39m)[33m;[39m
+    [90m257|[39m     await page.getByRole("button", { name: "Safari access setup" }).cl…
+    [90m   |[39m                                                                    [31m^[39m
+    [90m258|[39m     await page.getByRole("button", { name: "Open System Settings" }).c…
+    [90m259|[39m     await expect.element(page.getByRole("status")).toHaveTextContent("…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22mSafari access onboarding[2m > [22mleaves manual settings and skip available after open failure false
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22mSafari access onboarding[2m > [22mleaves manual settings and skip available after open failure reject
+[31m[1mTimeoutError[22m: locator.click: Timeout 89893ms exceeded.
+Call log:
+  - waiting for locator('[data-vitest="true"]').contentFrame().getByRole('button', { name: 'Safari access setup' })
+[39m
+
+Failure screenshots:
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Onboarding.browser.tsx/Safari-access-onboarding-leaves-manual-settings-and-skip-available-after-open-failure-false-1.png[22m
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Onboarding.browser.tsx/Safari-access-onboarding-leaves-manual-settings-and-skip-available-after-open-failure-reject-1.png[22m
+
+[36m [2m❯[22m src/components/PrCookieEvidence1856Onboarding.browser.tsx:[2m272:70[22m[39m
+    [90m270|[39m       else api.openSettings.mockRejectedValueOnce(new Error("private f…
+    [90m271|[39m       [35mawait[39m [34mrender[39m([33m<[39m[33mHarness[39m [33m/[39m[33m>[39m)[33m;[39m
+    [90m272|[39m       await page.getByRole("button", { name: "Safari access setup" }).…
+    [90m   |[39m                                                                      [31m^[39m
+    [90m273|[39m       await page.getByRole("button", { name: "Open System Settings" })…
+    [90m274|[39m       await expect.element(page.getByRole("status")).toHaveTextContent…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Onboarding.browser.tsx[2m > [22mSafari access onboarding[2m > [22mdoes not reopen for a late Settings response after skipping
+[31m[1mTimeoutError[22m: locator.click: Timeout 89895ms exceeded.
+Call log:
+  - waiting for locator('[data-vitest="true"]').contentFrame().getByRole('button', { name: 'Safari access setup' })
+[39m
+
+Failure screenshot:
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Onboarding.browser.tsx/Safari-access-onboarding-does-not-reopen-for-a-late-Settings-response-after-skipping-1.png[22m
+
+[36m [2m❯[22m src/components/PrCookieEvidence1856Onboarding.browser.tsx:[2m313:68[22m[39m
+    [90m311|[39m     )[33m;[39m
+    [90m312|[39m     [35mawait[39m [34mrender[39m([33m<[39m[33mHarness[39m [33m/[39m[33m>[39m)[33m;[39m
+    [90m313|[39m     await page.getByRole("button", { name: "Safari access setup" }).cl…
+    [90m   |[39m                                                                    [31m^[39m
+    [90m314|[39m     await page.getByRole("button", { name: "Open System Settings" }).c…
+    [90m315|[39m     [35mawait[39m page[33m.[39m[34mgetByRole[39m([32m"button"[39m[33m,[39m { name[33m:[39m [32m"Not now"[39m })[33m.[39m[34mclick[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Vault.browser.tsx[2m > [22mbrowser saved logins[2m > [22mimports helium through the existing picker and renews whole-profile consent
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Vault.browser.tsx[2m > [22mbrowser saved logins[2m > [22mimports aside through the existing picker and renews whole-profile consent
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Vault.browser.tsx[2m > [22mbrowser saved logins[2m > [22mimports arc through the existing picker and renews whole-profile consent
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/PrCookieEvidence1856Vault.browser.tsx[2m > [22mbrowser saved logins[2m > [22mimports dia through the existing picker and renews whole-profile consent
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called once with arguments: [ { threadId: 'cookie-test', …(5) } ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+
+Failure screenshots:
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Vault.browser.tsx/browser-saved-logins-imports-helium-through-the-existing-picker-and-renews-whole-profile-consent-3.png[22m
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Vault.browser.tsx/browser-saved-logins-imports-aside-through-the-existing-picker-and-renews-whole-profile-consent-1.png[22m
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Vault.browser.tsx/browser-saved-logins-imports-arc-through-the-existing-picker-and-renews-whole-profile-consent-1.png[22m
+  - [2msrc/components/__screenshots__/PrCookieEvidence1856Vault.browser.tsx/browser-saved-logins-imports-dia-through-the-existing-picker-and-renews-whole-profile-consent-1.png[22m
+
+[36m [2m❯[22m src/components/PrCookieEvidence1856Vault.browser.tsx:[2m320:32[22m[39m
+    [90m318|[39m       [35mif[39m (browser [33m===[39m [32m"helium"[39m)
+    [90m319|[39m         await observeCookieEvidence("helium-site-result", { imports: v…
+    [90m320|[39m       [34mexpect[39m(api[33m.[39mimportCookies)[33m.[39m[34mtoHaveBeenCalledExactlyOnceWith[39m({
+    [90m   |[39m                                [31m^[39m
+    [90m321|[39m         [33m...[39mdestination[33m,[39m
+    [90m322|[39m         browser[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m10 failed[39m[22m[2m | [22m[1m[32m17 passed[39m[22m[90m (27)[39m
+[2m   Start at [22m 23:31:33
+[2m   Duration [22m 549.99s[2m (transform 0ms, setup 0ms, import 3.20s, tests 544.70s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/_temp/cookie-evidence-live-pr1856-before-mobile/vitest.json

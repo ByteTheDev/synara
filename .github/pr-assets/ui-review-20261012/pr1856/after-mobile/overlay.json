@@ -1,0 +1,59 @@
+{
+  "fixtures": [
+    {
+      "path": "apps/web/src/components/BrowserVault.browser.tsx",
+      "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+      "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5",
+      "bytes": 15876,
+      "outputPath": "apps/web/src/components/PrCookieEvidence1856Vault.browser.tsx",
+      "helperAnchor": "describe(\"browser saved logins\", () => {",
+      "imports": "import { beforeEach as evidenceBeforeEach, afterEach as evidenceAfterEach } from \"vitest\";\nimport { useEffect as useEvidenceEffect } from \"react\";\nimport { useTheme as useEvidenceTheme } from \"../hooks/useTheme\";\n",
+      "replacements": [
+        {
+          "before": "      await render(<BrowserCookieImport api={api} destination={destination} />);\n      await page.getByRole(\"button\", { name: \"Import browser cookies\" }).click();\n      await page.getByRole(\"button\", { name: \"Import for this site\" }).click();\n      expect(api.importCookies).toHaveBeenCalledExactlyOnceWith({",
+          "after": "      await render(<BrowserCookieImport api={api} destination={destination} />);\n      await page.getByRole(\"button\", { name: \"Import browser cookies\" }).click();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-picker\", { imports: vi.mocked(api.importCookies).mock.calls });\n      await page.getByRole(\"button\", { name: \"Import for this site\" }).click();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-site-result\", { imports: vi.mocked(api.importCookies).mock.calls });\n      expect(api.importCookies).toHaveBeenCalledExactlyOnceWith({"
+        },
+        {
+          "before": "      scope.dispatchEvent(new Event(\"change\", { bubbles: true }));\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n      await page.getByRole(\"checkbox\").click();",
+          "after": "      scope.dispatchEvent(new Event(\"change\", { bubbles: true }));\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-profile-needs-consent\", { imports: vi.mocked(api.importCookies).mock.calls });\n      await page.getByRole(\"checkbox\").click();"
+        },
+        {
+          "before": "        confirmed: true,\n      });\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n    },\n  );",
+          "after": "        confirmed: true,\n      });\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-profile-renewed\", { imports: vi.mocked(api.importCookies).mock.calls });\n    },\n  );"
+        }
+      ],
+      "expectedCases": 15,
+      "observedSha256": "3b743a7d6c73234ccb64f1f1dd576ef01afceb88c18af6c754f77982aa93122d"
+    },
+    {
+      "path": "apps/web/src/components/SafariAccessOnboarding.browser.tsx",
+      "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+      "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21",
+      "bytes": 9911,
+      "outputPath": "apps/web/src/components/PrCookieEvidence1856Onboarding.browser.tsx",
+      "helperAnchor": "function Harness() {",
+      "imports": "import { beforeEach as evidenceBeforeEach, afterEach as evidenceAfterEach } from \"vitest\";\nimport { useEffect as useEvidenceEffect } from \"react\";\nimport { useTheme as useEvidenceTheme } from \"../hooks/useTheme\";\n",
+      "replacements": [
+        {
+          "before": "    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"It's optional\");\n    for (const browser of [\"Chrome\", \"Safari\", \"Edge\", \"Helium\", \"Aside\", \"Arc\", \"Dia\"])",
+          "after": "    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"It's optional\");\n    await observeCookieEvidence(\"startup-intro\", {\n      openSettingsCalls: api.openSettings.mock.calls.length,\n      acknowledgment: localStorage.getItem(SAFARI_ACCESS_STORAGE_KEY),\n    });\n    for (const browser of [\"Chrome\", \"Safari\", \"Edge\", \"Helium\", \"Aside\", \"Arc\", \"Dia\"])"
+        },
+        {
+          "before": "    await page.getByRole(\"button\", { name: \"Safari access setup\" }).click();\n    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"broad macOS permission\");",
+          "after": "    await page.getByRole(\"button\", { name: \"Safari access setup\" }).click();\n    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"broad macOS permission\");\n    await observeCookieEvidence(\"manual-safari-setup\", {\n      openSettingsCalls: api.openSettings.mock.calls.length,\n      acknowledgment: localStorage.getItem(SAFARI_ACCESS_STORAGE_KEY),\n    });"
+        }
+      ],
+      "expectedCases": 12,
+      "observedSha256": "6bca7865f863f6ae15be61f2470d976accde56ca707b2f93adb67575f12e6649"
+    }
+  ],
+  "expectedCases": 27,
+  "expectedPhases": [
+    "helium-picker",
+    "helium-site-result",
+    "helium-profile-needs-consent",
+    "helium-profile-renewed",
+    "startup-intro",
+    "manual-safari-setup"
+  ]
+}

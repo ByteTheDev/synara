@@ -1,0 +1,42 @@
+{
+  "after-desktop": {
+    "files": 18,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "source": "be4186e34d1e0437ee9b3c671a9fb3652ab599de",
+    "driver": "4d6bb4dc34283605037d1cc64a2874fca435276b",
+    "pngs": [
+      "helium-picker.png",
+      "helium-profile-needs-consent.png",
+      "helium-profile-renewed.png",
+      "helium-site-result.png",
+      "manual-safari-setup.png",
+      "startup-intro.png"
+    ],
+    "video": [
+      "video/page@d7076ada94fc9ea2f6cd6bb00a467a49.webm"
+    ],
+    "errors": []
+  },
+  "after-mobile": {
+    "files": 18,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "source": "be4186e34d1e0437ee9b3c671a9fb3652ab599de",
+    "driver": "4d6bb4dc34283605037d1cc64a2874fca435276b",
+    "pngs": [
+      "helium-picker.png",
+      "helium-profile-needs-consent.png",
+      "helium-profile-renewed.png",
+      "helium-site-result.png",
+      "manual-safari-setup.png",
+      "startup-intro.png"
+    ],
+    "video": [
+      "video/page@ef83d2472e14cada5927ab7246919a31.webm"
+    ],
+    "errors": []
+  }
+}

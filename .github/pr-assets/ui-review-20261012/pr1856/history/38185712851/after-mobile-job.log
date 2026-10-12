@@ -1,0 +1,535 @@
+﻿2026-10-11T23:49:41.0699976Z Current runner version: '2.337.0'
+2026-10-11T23:49:41.0725848Z ##[group]Runner Image Provisioner
+2026-10-11T23:49:41.0726689Z Hosted Compute Agent
+2026-10-11T23:49:41.0727321Z Version: 20261002.596
+2026-10-11T23:49:41.0727963Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-11T23:49:41.0728668Z Build Date: 2026-10-02T22:28:27Z
+2026-10-11T23:49:41.0729379Z Worker ID: {c8e984f4-158d-4aef-8987-9cb8ec7186c6}
+2026-10-11T23:49:41.0730068Z Region: centralus
+2026-10-11T23:49:41.0730982Z Cloud: Azure
+2026-10-11T23:49:41.0731497Z ##[endgroup]
+2026-10-11T23:49:41.0732772Z ##[group]Operating System
+2026-10-11T23:49:41.0733632Z Ubuntu
+2026-10-11T23:49:41.0734239Z 24.04.5
+2026-10-11T23:49:41.0734746Z LTS
+2026-10-11T23:49:41.0735228Z ##[endgroup]
+2026-10-11T23:49:41.0735815Z ##[group]Runner Image
+2026-10-11T23:49:41.0736444Z Image: ubuntu-24.04
+2026-10-11T23:49:41.0736978Z Version: 20261004.327.1
+2026-10-11T23:49:41.0738177Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-11T23:49:41.0739650Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-11T23:49:41.0740586Z ##[endgroup]
+2026-10-11T23:49:41.0741635Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T23:49:41.0743987Z Contents: read
+2026-10-11T23:49:41.0744599Z Metadata: read
+2026-10-11T23:49:41.0745174Z ##[endgroup]
+2026-10-11T23:49:41.0747132Z Secret source: Actions
+2026-10-11T23:49:41.0748019Z Cache mode: write
+2026-10-11T23:49:41.0748964Z Prepare workflow directory
+2026-10-11T23:49:41.1869052Z Prepare all required actions
+2026-10-11T23:49:41.1939559Z Getting action download info
+2026-10-11T23:49:41.4152594Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+2026-10-11T23:49:41.5258132Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-11T23:49:41.7676969Z Complete job name: pr1856-after-mobile
+2026-10-11T23:49:41.8310215Z ##[group]Run actions/checkout@v6
+2026-10-11T23:49:41.8311160Z with:
+2026-10-11T23:49:41.8311693Z   ref: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:41.8312324Z   persist-credentials: false
+2026-10-11T23:49:41.8312949Z   repository: Emanuele-web04/synara
+2026-10-11T23:49:41.8316843Z   token: ***
+2026-10-11T23:49:41.8317365Z   ssh-strict: true
+2026-10-11T23:49:41.8317845Z   ssh-user: git
+2026-10-11T23:49:41.8318303Z   clean: true
+2026-10-11T23:49:41.8318828Z   sparse-checkout-cone-mode: true
+2026-10-11T23:49:41.8319392Z   fetch-depth: 1
+2026-10-11T23:49:41.8319862Z   fetch-tags: false
+2026-10-11T23:49:41.8320376Z   show-progress: true
+2026-10-11T23:49:41.8320859Z   lfs: false
+2026-10-11T23:49:41.8321358Z   submodules: false
+2026-10-11T23:49:41.8321854Z   set-safe-directory: true
+2026-10-11T23:49:41.8322423Z   allow-unsafe-pr-checkout: false
+2026-10-11T23:49:41.8323141Z env:
+2026-10-11T23:49:41.8323971Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:41.8324771Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:41.8325432Z ##[endgroup]
+2026-10-11T23:49:41.9301480Z Syncing repository: Emanuele-web04/synara
+2026-10-11T23:49:41.9303748Z ##[group]Getting Git version info
+2026-10-11T23:49:41.9304501Z Working directory is '/home/runner/work/synara/synara'
+2026-10-11T23:49:41.9305601Z [command]/usr/bin/git version
+2026-10-11T23:49:41.9356242Z git version 2.55.0
+2026-10-11T23:49:41.9384725Z ##[endgroup]
+2026-10-11T23:49:41.9392180Z Temporarily overriding HOME='/home/runner/work/_temp/e9ea704b-57e9-46c3-8e25-e7f79f04ac6b' before making global git config changes
+2026-10-11T23:49:41.9395001Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:49:41.9397666Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-11T23:49:41.9448518Z Deleting the contents of '/home/runner/work/synara/synara'
+2026-10-11T23:49:41.9475642Z ##[group]Determining repository object format
+2026-10-11T23:49:41.9479615Z ##[endgroup]
+2026-10-11T23:49:41.9481292Z ##[group]Initializing the repository
+2026-10-11T23:49:41.9482412Z [command]/usr/bin/git init /home/runner/work/synara/synara
+2026-10-11T23:49:41.9561242Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T23:49:41.9562947Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T23:49:41.9564625Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T23:49:41.9565709Z hint: call:
+2026-10-11T23:49:41.9566470Z hint:
+2026-10-11T23:49:41.9567263Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T23:49:41.9568225Z hint:
+2026-10-11T23:49:41.9569096Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T23:49:41.9570476Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T23:49:41.9571699Z hint:
+2026-10-11T23:49:41.9572406Z hint: 	git branch -m <name>
+2026-10-11T23:49:41.9573331Z hint:
+2026-10-11T23:49:41.9574371Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T23:49:41.9575813Z Initialized empty Git repository in /home/runner/work/synara/synara/.git/
+2026-10-11T23:49:41.9590403Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-11T23:49:41.9639246Z ##[endgroup]
+2026-10-11T23:49:41.9640732Z ##[group]Disabling automatic garbage collection
+2026-10-11T23:49:41.9642470Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T23:49:41.9674016Z ##[endgroup]
+2026-10-11T23:49:41.9675201Z ##[group]Setting up auth
+2026-10-11T23:49:41.9676238Z Removing SSH command configuration
+2026-10-11T23:49:41.9681853Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:49:41.9711156Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:49:42.0044469Z Removing HTTP extra header
+2026-10-11T23:49:42.0051284Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:49:42.0076183Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:49:42.0267350Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:49:42.0275450Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:49:42.0305759Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:49:42.0498269Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T23:49:42.0532839Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:42.0564094Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:42.0599773Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:42.0634201Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:42.0667987Z ##[endgroup]
+2026-10-11T23:49:42.0668914Z ##[group]Fetching the repository
+2026-10-11T23:49:42.0675858Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:46.3370066Z From https://github.com/Emanuele-web04/synara
+2026-10-11T23:49:46.3371792Z  * branch            be4186e34d1e0437ee9b3c671a9fb3652ab599de -> FETCH_HEAD
+2026-10-11T23:49:46.3396108Z [command]/usr/bin/git rev-parse --verify --quiet be4186e34d1e0437ee9b3c671a9fb3652ab599de^{object}
+2026-10-11T23:49:46.3406446Z be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:46.3410786Z ##[endgroup]
+2026-10-11T23:49:46.3412482Z ##[group]Determining the checkout info
+2026-10-11T23:49:46.3414282Z ##[endgroup]
+2026-10-11T23:49:46.3416953Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T23:49:46.3468865Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T23:49:46.3499933Z ##[group]Checking out the ref
+2026-10-11T23:49:46.3502066Z [command]/usr/bin/git checkout --progress --force be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:47.0255392Z Note: switching to 'be4186e34d1e0437ee9b3c671a9fb3652ab599de'.
+2026-10-11T23:49:47.0256323Z 
+2026-10-11T23:49:47.0256807Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T23:49:47.0257647Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T23:49:47.0258448Z state without impacting any branches by switching back to a branch.
+2026-10-11T23:49:47.0258838Z 
+2026-10-11T23:49:47.0259206Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T23:49:47.0259955Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T23:49:47.0260446Z 
+2026-10-11T23:49:47.0260679Z   git switch -c <new-branch-name>
+2026-10-11T23:49:47.0261027Z 
+2026-10-11T23:49:47.0261209Z Or undo this operation with:
+2026-10-11T23:49:47.0261486Z 
+2026-10-11T23:49:47.0261731Z   git switch -
+2026-10-11T23:49:47.0261928Z 
+2026-10-11T23:49:47.0262266Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T23:49:47.0262628Z 
+2026-10-11T23:49:47.0263308Z HEAD is now at be4186e Merge current main into the browser cookie import work
+2026-10-11T23:49:47.0271201Z ##[endgroup]
+2026-10-11T23:49:47.0500369Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T23:49:47.0525137Z be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:47.0533996Z ##[group]Removing auth
+2026-10-11T23:49:47.0534822Z Removing SSH command configuration
+2026-10-11T23:49:47.0538031Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:49:47.0566002Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:49:47.0762478Z Removing HTTP extra header
+2026-10-11T23:49:47.0766463Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:49:47.0798626Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:49:47.0989663Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:49:47.0994008Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:49:47.1018730Z includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-11T23:49:47.1020003Z includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-11T23:49:47.1020830Z includeif.gitdir:/github/workspace/.git.path
+2026-10-11T23:49:47.1021675Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-11T23:49:47.1029037Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-11T23:49:47.1049577Z /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1058785Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1090965Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-11T23:49:47.1111171Z /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1118653Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1154742Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-11T23:49:47.1174362Z /github/runner_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1181819Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1251732Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-11T23:49:47.1269801Z /github/runner_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1275286Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config
+2026-10-11T23:49:47.1307043Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:49:47.1495275Z Removing credentials config '/home/runner/work/_temp/git-credentials-a7c82faf-a0cb-4323-9ec1-dec6938ab8e4.config'
+2026-10-11T23:49:47.1505983Z ##[endgroup]
+2026-10-11T23:49:47.1753149Z ##[group]Run actions/checkout@v6
+2026-10-11T23:49:47.1753855Z with:
+2026-10-11T23:49:47.1754315Z   ref: 6e7184e96e593ceb1cbe0fedaa82989fa469bb32
+2026-10-11T23:49:47.1754803Z   path: .pr-driver
+2026-10-11T23:49:47.1755216Z   persist-credentials: false
+2026-10-11T23:49:47.1755676Z   repository: Emanuele-web04/synara
+2026-10-11T23:49:47.1758531Z   token: ***
+2026-10-11T23:49:47.1758957Z   ssh-strict: true
+2026-10-11T23:49:47.1759360Z   ssh-user: git
+2026-10-11T23:49:47.1759843Z   clean: true
+2026-10-11T23:49:47.1760256Z   sparse-checkout-cone-mode: true
+2026-10-11T23:49:47.1760723Z   fetch-depth: 1
+2026-10-11T23:49:47.1761145Z   fetch-tags: false
+2026-10-11T23:49:47.1761525Z   show-progress: true
+2026-10-11T23:49:47.1761959Z   lfs: false
+2026-10-11T23:49:47.1762396Z   submodules: false
+2026-10-11T23:49:47.1762813Z   set-safe-directory: true
+2026-10-11T23:49:47.1763499Z   allow-unsafe-pr-checkout: false
+2026-10-11T23:49:47.1763957Z env:
+2026-10-11T23:49:47.1764501Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:47.1764983Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:47.1765522Z ##[endgroup]
+2026-10-11T23:49:47.2575059Z Syncing repository: Emanuele-web04/synara
+2026-10-11T23:49:47.2578698Z ##[group]Getting Git version info
+2026-10-11T23:49:47.2604651Z Working directory is '/home/runner/work/synara/synara/.pr-driver'
+2026-10-11T23:49:47.2650676Z [command]/usr/bin/git version
+2026-10-11T23:49:47.2691935Z git version 2.55.0
+2026-10-11T23:49:47.2714571Z ##[endgroup]
+2026-10-11T23:49:47.2727394Z Temporarily overriding HOME='/home/runner/work/_temp/71ddc9a1-381b-4dd6-82a5-22c1cd7f6370' before making global git config changes
+2026-10-11T23:49:47.2728474Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:49:47.2732424Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara/.pr-driver
+2026-10-11T23:49:47.2765024Z ##[group]Determining repository object format
+2026-10-11T23:49:47.2767015Z ##[endgroup]
+2026-10-11T23:49:47.2767784Z ##[group]Initializing the repository
+2026-10-11T23:49:47.2772126Z [command]/usr/bin/git init /home/runner/work/synara/synara/.pr-driver
+2026-10-11T23:49:47.2978438Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T23:49:47.2982115Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T23:49:47.2984022Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T23:49:47.2985818Z hint: call:
+2026-10-11T23:49:47.2986683Z hint:
+2026-10-11T23:49:47.2987551Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T23:49:47.2989186Z hint:
+2026-10-11T23:49:47.2990733Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T23:49:47.2992164Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T23:49:47.2993405Z hint:
+2026-10-11T23:49:47.2993920Z hint: 	git branch -m <name>
+2026-10-11T23:49:47.2995136Z hint:
+2026-10-11T23:49:47.2996047Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T23:49:47.2997718Z Initialized empty Git repository in /home/runner/work/synara/synara/.pr-driver/.git/
+2026-10-11T23:49:47.3000270Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-11T23:49:47.3028324Z ##[endgroup]
+2026-10-11T23:49:47.3029539Z ##[group]Disabling automatic garbage collection
+2026-10-11T23:49:47.3032314Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T23:49:47.3062679Z ##[endgroup]
+2026-10-11T23:49:47.3064600Z ##[group]Setting up auth
+2026-10-11T23:49:47.3065490Z Removing SSH command configuration
+2026-10-11T23:49:47.3073184Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:49:47.3107446Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:49:47.3314786Z Removing HTTP extra header
+2026-10-11T23:49:47.3317974Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:49:47.3350146Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:49:47.3555898Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:49:47.3557352Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:49:47.3590525Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:49:47.3791697Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T23:49:47.3826149Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.pr-driver/.git.path /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:47.3858457Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.pr-driver/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:47.3890931Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.pr-driver/.git.path /github/runner_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:47.3922271Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.pr-driver/.git/worktrees/*.path /github/runner_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:47.3957350Z ##[endgroup]
+2026-10-11T23:49:47.3958030Z ##[group]Fetching the repository
+2026-10-11T23:49:47.3964989Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 6e7184e96e593ceb1cbe0fedaa82989fa469bb32
+2026-10-11T23:49:51.5645008Z From https://github.com/Emanuele-web04/synara
+2026-10-11T23:49:51.5645978Z  * branch            6e7184e96e593ceb1cbe0fedaa82989fa469bb32 -> FETCH_HEAD
+2026-10-11T23:49:51.5655439Z [command]/usr/bin/git rev-parse --verify --quiet 6e7184e96e593ceb1cbe0fedaa82989fa469bb32^{object}
+2026-10-11T23:49:51.5679664Z 6e7184e96e593ceb1cbe0fedaa82989fa469bb32
+2026-10-11T23:49:51.5682405Z ##[endgroup]
+2026-10-11T23:49:51.5683332Z ##[group]Determining the checkout info
+2026-10-11T23:49:51.5685832Z ##[endgroup]
+2026-10-11T23:49:51.5689503Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T23:49:51.7204553Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T23:49:51.7346590Z ##[group]Checking out the ref
+2026-10-11T23:49:51.7350891Z [command]/usr/bin/git checkout --progress --force 6e7184e96e593ceb1cbe0fedaa82989fa469bb32
+2026-10-11T23:49:52.4104806Z Note: switching to '6e7184e96e593ceb1cbe0fedaa82989fa469bb32'.
+2026-10-11T23:49:52.4105742Z 
+2026-10-11T23:49:52.4106108Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T23:49:52.4106756Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T23:49:52.4107835Z state without impacting any branches by switching back to a branch.
+2026-10-11T23:49:52.4108326Z 
+2026-10-11T23:49:52.4108687Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T23:49:52.4109477Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T23:49:52.4110031Z 
+2026-10-11T23:49:52.4110289Z   git switch -c <new-branch-name>
+2026-10-11T23:49:52.4110717Z 
+2026-10-11T23:49:52.4110920Z Or undo this operation with:
+2026-10-11T23:49:52.4111308Z 
+2026-10-11T23:49:52.4111471Z   git switch -
+2026-10-11T23:49:52.4111869Z 
+2026-10-11T23:49:52.4112620Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T23:49:52.4114475Z 
+2026-10-11T23:49:52.4114987Z HEAD is now at 6e7184e ci: observe cookie dialogs after their finite CSS transition
+2026-10-11T23:49:52.4119566Z ##[endgroup]
+2026-10-11T23:49:52.4159101Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T23:49:52.4183426Z 6e7184e96e593ceb1cbe0fedaa82989fa469bb32
+2026-10-11T23:49:52.4204768Z ##[group]Removing auth
+2026-10-11T23:49:52.4205410Z Removing SSH command configuration
+2026-10-11T23:49:52.4206474Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:49:52.4225190Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:49:52.4430691Z Removing HTTP extra header
+2026-10-11T23:49:52.4442043Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:49:52.4474071Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:49:52.4676189Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:49:52.4679932Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:49:52.4700323Z includeif.gitdir:/home/runner/work/synara/synara/.pr-driver/.git.path
+2026-10-11T23:49:52.4701271Z includeif.gitdir:/home/runner/work/synara/synara/.pr-driver/.git/worktrees/*.path
+2026-10-11T23:49:52.4702223Z includeif.gitdir:/github/workspace/.pr-driver/.git.path
+2026-10-11T23:49:52.4702876Z includeif.gitdir:/github/workspace/.pr-driver/.git/worktrees/*.path
+2026-10-11T23:49:52.4713180Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.pr-driver/.git.path
+2026-10-11T23:49:52.4734328Z /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4744630Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.pr-driver/.git.path /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4777282Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.pr-driver/.git/worktrees/*.path
+2026-10-11T23:49:52.4799020Z /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4810573Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.pr-driver/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4845664Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.pr-driver/.git.path
+2026-10-11T23:49:52.4865054Z /github/runner_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4874081Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.pr-driver/.git.path /github/runner_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4911463Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.pr-driver/.git/worktrees/*.path
+2026-10-11T23:49:52.4931633Z /github/runner_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4936138Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.pr-driver/.git/worktrees/*.path /github/runner_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config
+2026-10-11T23:49:52.4966121Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:49:52.5152681Z Removing credentials config '/home/runner/work/_temp/git-credentials-c2adb63f-78c9-41e2-8854-25e11a2d5e5d.config'
+2026-10-11T23:49:52.5193625Z ##[endgroup]
+2026-10-11T23:49:52.5491805Z Prepare all required actions
+2026-10-11T23:49:52.5492536Z Getting action download info
+2026-10-11T23:49:52.6484448Z Download action repository 'oven-sh/setup-bun@v2' (SHA:0c5077e51419868618aeaa5fe8019c62421857d6)
+2026-10-11T23:49:53.0406810Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-11T23:49:53.2547820Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-11T23:49:53.5478509Z ##[group]Run ./.github/actions/setup-workspace
+2026-10-11T23:49:53.5478872Z with:
+2026-10-11T23:49:53.5479206Z   scope: full
+2026-10-11T23:49:53.5479488Z   electron: false
+2026-10-11T23:49:53.5479775Z   turbo: false
+2026-10-11T23:49:53.5480059Z env:
+2026-10-11T23:49:53.5480346Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:53.5480812Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:53.5481185Z ##[endgroup]
+2026-10-11T23:49:53.5550052Z ##[start-action display=Validate install scope;id=__self.__run]
+2026-10-11T23:49:53.5591791Z ##[group]Run case "$WORKSPACE_SCOPE" in
+2026-10-11T23:49:53.5592254Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-11T23:49:53.5592691Z [36;1m  full|static|runtime) ;;[0m
+2026-10-11T23:49:53.5593145Z [36;1m  *) echo "::error::Unknown workspace scope: $WORKSPACE_SCOPE"; exit 1 ;;[0m
+2026-10-11T23:49:53.5593771Z [36;1mesac[0m
+2026-10-11T23:49:53.5594542Z [36;1mif [ "$ELECTRON" = "true" ] && [ "$WORKSPACE_SCOPE" = "static" ]; then[0m
+2026-10-11T23:49:53.5595047Z [36;1m  echo "::error::Electron requires a full or runtime install."[0m
+2026-10-11T23:49:53.5595494Z [36;1m  exit 1[0m
+2026-10-11T23:49:53.5595778Z [36;1mfi[0m
+2026-10-11T23:49:53.5786484Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T23:49:53.5786947Z env:
+2026-10-11T23:49:53.5787262Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:53.5787663Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:53.5788125Z   WORKSPACE_SCOPE: full
+2026-10-11T23:49:53.5788424Z   ELECTRON: false
+2026-10-11T23:49:53.5788739Z ##[endgroup]
+2026-10-11T23:49:53.5887694Z ##[end-action id=__self.__run;outcome=success;conclusion=success;duration_ms=33]
+2026-10-11T23:49:53.5890805Z ##[start-action display=Setup Bun;id=__self.__oven-sh_setup-bun]
+2026-10-11T23:49:53.5954483Z ##[group]Run oven-sh/setup-bun@v2
+2026-10-11T23:49:53.5954824Z with:
+2026-10-11T23:49:53.5955132Z   bun-version-file: package.json
+2026-10-11T23:49:53.5955484Z   no-cache: false
+2026-10-11T23:49:53.5957772Z   token: ***
+2026-10-11T23:49:53.5958071Z env:
+2026-10-11T23:49:53.5958428Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:53.5958855Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:53.5959246Z ##[endgroup]
+2026-10-11T23:49:53.7494685Z Obtained version 1.4.2 from package.json
+2026-10-11T23:49:53.8840233Z Cache hit for: bun-gmoqYqdUbaYsI0KujeXt7Zg/p0I=
+2026-10-11T23:49:54.6784094Z Received 35684134 of 35684134 (100.0%), 54.9 MBs/sec
+2026-10-11T23:49:54.6784775Z Cache Size: ~34 MB (35684134 B)
+2026-10-11T23:49:54.6812369Z [command]/usr/bin/tar -xf /home/runner/work/_temp/4223f3a8-c954-45c5-b1a2-cb7e0cfdb58e/cache.tzst -P -C /home/runner/work/synara/synara --use-compress-program unzstd
+2026-10-11T23:49:54.8098212Z Cache restored successfully
+2026-10-11T23:49:54.8117625Z [command]/home/runner/.bun/bin/bun --revision
+2026-10-11T23:49:54.8152871Z 1.4.2+744846f84
+2026-10-11T23:49:54.8158708Z Using a cached version of Bun: 1.4.2+744846f84
+2026-10-11T23:49:54.8222972Z ##[end-action id=__self.__oven-sh_setup-bun;outcome=success;conclusion=success;duration_ms=1233]
+2026-10-11T23:49:54.8226688Z ##[start-action display=Setup Node;id=__self.__actions_setup-node]
+2026-10-11T23:49:54.8278541Z ##[group]Run actions/setup-node@v6
+2026-10-11T23:49:54.8278869Z with:
+2026-10-11T23:49:54.8279207Z   node-version-file: package.json
+2026-10-11T23:49:54.8279582Z   check-latest: false
+2026-10-11T23:49:54.8281885Z   token: ***
+2026-10-11T23:49:54.8282376Z   package-manager-cache: true
+2026-10-11T23:49:54.8282711Z env:
+2026-10-11T23:49:54.8283014Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:54.8283798Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:54.8284300Z ##[endgroup]
+2026-10-11T23:49:54.9587500Z Resolved package.json as ^24.13.1
+2026-10-11T23:49:54.9659181Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-11T23:49:54.9662915Z ##[group]Environment details
+2026-10-11T23:49:55.3575178Z node: v24.21.0
+2026-10-11T23:49:55.3575560Z npm: 11.19.0
+2026-10-11T23:49:55.3575829Z yarn: 1.22.22
+2026-10-11T23:49:55.3576552Z ##[endgroup]
+2026-10-11T23:49:55.3661230Z ##[end-action id=__self.__actions_setup-node;outcome=success;conclusion=success;duration_ms=543]
+2026-10-11T23:49:55.3664352Z ##[start-action display=Cache node_modules;id=__self.modules]
+2026-10-11T23:49:55.4302605Z ##[group]Run actions/cache@v5
+2026-10-11T23:49:55.4302988Z with:
+2026-10-11T23:49:55.4303610Z   path: node_modules
+apps/*/node_modules
+packages/*/node_modules
+scripts/node_modules
+
+2026-10-11T23:49:55.4304383Z   key: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:49:55.4305030Z   enableCrossOsArchive: false
+2026-10-11T23:49:55.4305404Z   fail-on-cache-miss: false
+2026-10-11T23:49:55.4305760Z   lookup-only: false
+2026-10-11T23:49:55.4306048Z   save-always: false
+2026-10-11T23:49:55.4306366Z env:
+2026-10-11T23:49:55.4306635Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:49:55.4307055Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:49:55.4307450Z ##[endgroup]
+2026-10-11T23:49:55.7026987Z Cache hit for: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:49:56.8489199Z Received 134217728 of 837651328 (16.0%), 128.0 MBs/sec
+2026-10-11T23:49:57.8781645Z Received 402653184 of 837651328 (48.1%), 189.2 MBs/sec
+2026-10-11T23:49:58.8793098Z Received 671088640 of 837651328 (80.1%), 211.2 MBs/sec
+2026-10-11T23:49:59.6183334Z Received 837651328 of 837651328 (100.0%), 211.9 MBs/sec
+2026-10-11T23:49:59.6184660Z Cache Size: ~799 MB (837651328 B)
+2026-10-11T23:49:59.6331144Z [command]/usr/bin/tar -xf /home/runner/work/_temp/6493bdec-ed0f-43e7-b89f-e919bb174941/cache.tzst -P -C /home/runner/work/synara/synara --use-compress-program unzstd
+2026-10-11T23:50:17.2492177Z Cache restored successfully
+2026-10-11T23:50:17.2869344Z Cache restored from key: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:50:17.2967831Z ##[end-action id=__self.modules;outcome=success;conclusion=success;duration_ms=21930]
+2026-10-11T23:50:17.2973952Z ##[start-action display=Cache Bun install;id=__self.__actions_cache]
+2026-10-11T23:50:17.2986003Z ##[end-action id=__self.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:17.2988624Z ##[start-action display=Cache Turbo outputs;id=__self.__actions_cache_2]
+2026-10-11T23:50:17.2993782Z ##[end-action id=__self.__actions_cache_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:17.2996207Z ##[start-action display=Cache Electron runtime;id=__self.__actions_cache_3]
+2026-10-11T23:50:17.3001000Z ##[end-action id=__self.__actions_cache_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:17.3004145Z ##[start-action display=Install dependencies;id=__self.__run_2]
+2026-10-11T23:50:17.3811858Z ##[group]Run # Hosted Windows checks out on D:, while Bun's default home cache is on C:.
+2026-10-11T23:50:17.3813458Z [36;1m# Hosted Windows checks out on D:, while Bun's default home cache is on C:.[0m
+2026-10-11T23:50:17.3814523Z [36;1m# Match the measured setup so package hardlinks can stay on one volume.[0m
+2026-10-11T23:50:17.3815165Z [36;1mif [ "$RUNNER_OS" = "Windows" ]; then[0m
+2026-10-11T23:50:17.3815664Z [36;1m  export BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-install-cache"[0m
+2026-10-11T23:50:17.3816271Z [36;1m  echo "Bun install cache: $BUN_INSTALL_CACHE_DIR"[0m
+2026-10-11T23:50:17.3816940Z [36;1mfi[0m
+2026-10-11T23:50:17.3817415Z [36;1m# Bound dependency lifecycles. Root postinstall patches each installed[0m
+2026-10-11T23:50:17.3818120Z [36;1m# TypeScript compiler once, after workspace hooks have completed.[0m
+2026-10-11T23:50:17.3818631Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-11T23:50:17.3819189Z [36;1m  full) bun install --frozen-lockfile --concurrent-scripts=1 ;;[0m
+2026-10-11T23:50:17.3819876Z [36;1m  static) bun install --frozen-lockfile --filter './' --filter '@synara/scripts' --concurrent-scripts=1 ;;[0m
+2026-10-11T23:50:17.3820750Z [36;1m  runtime) bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1 ;;[0m
+2026-10-11T23:50:17.3822755Z [36;1mesac[0m
+2026-10-11T23:50:17.3941314Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T23:50:17.3941729Z env:
+2026-10-11T23:50:17.3942212Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:50:17.3942633Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:50:17.3943097Z   ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+2026-10-11T23:50:17.3943667Z   WORKSPACE_SCOPE: full
+2026-10-11T23:50:17.3943985Z ##[endgroup]
+2026-10-11T23:50:17.4033803Z bun install v1.4.2 (744846f84)
+2026-10-11T23:50:17.4195436Z Resolving dependencies
+2026-10-11T23:50:17.9980082Z Resolved, downloaded and extracted [64]
+2026-10-11T23:50:18.5022888Z 
+2026-10-11T23:50:18.5024722Z $ node scripts/patch-workspace-typescript.ts && effect-tsgo patch --typescript --typescript-package @typescript/native
+2026-10-11T23:50:18.8817029Z [23:50:18.880] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/typescript.js is already patched with version 0.75.1, skipped.
+2026-10-11T23:50:18.8942269Z [23:50:18.893] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/_tsc.js is already patched with version 0.75.1, skipped.
+2026-10-11T23:50:18.8944118Z [23:50:18.894] INFO (#22): If your project uses incremental builds, delete the .tsbuildinfo files and perform a full build.
+2026-10-11T23:50:18.8955509Z [23:50:18.895] INFO (#22): No prepare script found in package.json; to make the patch persistent across package installations and updates, add the following to your package.json scripts:
+2026-10-11T23:50:18.8956634Z   "scripts": {
+2026-10-11T23:50:18.8957161Z           "prepare": "effect-language-service patch"
+2026-10-11T23:50:18.8957546Z   }
+2026-10-11T23:50:19.2704920Z typescript skipped because its hash matches the replacement.
+2026-10-11T23:50:19.2783804Z 
+2026-10-11T23:50:19.2794888Z Checked 1686 installs across 2042 packages (no changes) [1.88s]
+2026-10-11T23:50:19.2823725Z ##[end-action id=__self.__run_2;outcome=success;conclusion=success;duration_ms=1981]
+2026-10-11T23:50:19.2826664Z ##[start-action display=Install Electron test runtime;id=__self.__run_3]
+2026-10-11T23:50:19.2831931Z ##[end-action id=__self.__run_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:19.2893991Z ##[group]Run node .pr-driver/scripts/browser-cookie-evidence/runner.mjs prepare
+2026-10-11T23:50:19.2895047Z [36;1mnode .pr-driver/scripts/browser-cookie-evidence/runner.mjs prepare[0m
+2026-10-11T23:50:19.2945120Z shell: /usr/bin/bash -e {0}
+2026-10-11T23:50:19.2945625Z env:
+2026-10-11T23:50:19.2946307Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:50:19.2946979Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:50:19.2947434Z ##[endgroup]
+2026-10-11T23:50:19.6408853Z file:///home/runner/work/synara/synara/.pr-driver/scripts/browser-cookie-evidence/runner.mjs:121
+2026-10-11T23:50:19.6410006Z     throw new Error("The complete original canonical fixture was modified.");
+2026-10-11T23:50:19.6410686Z           ^
+2026-10-11T23:50:19.6410968Z 
+2026-10-11T23:50:19.6411326Z Error: The complete original canonical fixture was modified.
+2026-10-11T23:50:19.6412592Z     at observedFixture (file:///home/runner/work/synara/synara/.pr-driver/scripts/browser-cookie-evidence/runner.mjs:121:11)
+2026-10-11T23:50:19.6413993Z     at file:///home/runner/work/synara/synara/.pr-driver/scripts/browser-cookie-evidence/runner.mjs:163:36
+2026-10-11T23:50:19.6414951Z     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+2026-10-11T23:50:19.6415625Z     at async node:internal/modules/esm/loader:647:26
+2026-10-11T23:50:19.6416583Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-10-11T23:50:19.6417150Z 
+2026-10-11T23:50:19.6417307Z Node.js v24.21.0
+2026-10-11T23:50:19.6445068Z ##[error]Process completed with exit code 1.
+2026-10-11T23:50:19.7143762Z ##[group]Run node .pr-driver/scripts/browser-cookie-evidence/runner.mjs verify
+2026-10-11T23:50:19.7144435Z [36;1mnode .pr-driver/scripts/browser-cookie-evidence/runner.mjs verify[0m
+2026-10-11T23:50:19.7187344Z shell: /usr/bin/bash -e {0}
+2026-10-11T23:50:19.7187816Z env:
+2026-10-11T23:50:19.7188223Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:50:19.7188702Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:50:19.7189131Z ##[endgroup]
+2026-10-11T23:50:19.7627154Z file:///home/runner/work/synara/synara/.pr-driver/scripts/browser-cookie-evidence/runner.mjs:229
+2026-10-11T23:50:19.7628146Z     throw new Error("Unexpected evidence output directory.");
+2026-10-11T23:50:19.7628695Z           ^
+2026-10-11T23:50:19.7628927Z 
+2026-10-11T23:50:19.7629233Z Error: Unexpected evidence output directory.
+2026-10-11T23:50:19.7630016Z     at file:///home/runner/work/synara/synara/.pr-driver/scripts/browser-cookie-evidence/runner.mjs:229:11
+2026-10-11T23:50:19.7630801Z     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+2026-10-11T23:50:19.7631298Z     at async node:internal/modules/esm/loader:647:26
+2026-10-11T23:50:19.7631914Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-10-11T23:50:19.7632289Z 
+2026-10-11T23:50:19.7632446Z Node.js v24.21.0
+2026-10-11T23:50:19.7656143Z ##[error]Process completed with exit code 1.
+2026-10-11T23:50:19.7927725Z ##[group]Run actions/upload-artifact@v4
+2026-10-11T23:50:19.7928106Z with:
+2026-10-11T23:50:19.7928513Z   name: cookie-import-pr1856-after-mobile
+2026-10-11T23:50:19.7928947Z   path: pr-cookie-evidence/
+2026-10-11T23:50:19.7929347Z   if-no-files-found: error
+2026-10-11T23:50:19.7929756Z   include-hidden-files: true
+2026-10-11T23:50:19.7930263Z   retention-days: 14
+2026-10-11T23:50:19.7930604Z   compression-level: 6
+2026-10-11T23:50:19.7930921Z   overwrite: false
+2026-10-11T23:50:19.7931597Z env:
+2026-10-11T23:50:19.7931915Z   COOKIE_TARGET: pr1856-after-mobile
+2026-10-11T23:50:19.7932389Z   COOKIE_SOURCE: be4186e34d1e0437ee9b3c671a9fb3652ab599de
+2026-10-11T23:50:19.7932781Z ##[endgroup]
+2026-10-11T23:50:19.9552904Z (node:2814) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T23:50:19.9554746Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T23:50:19.9630602Z ##[error]No files were found with the provided path: pr-cookie-evidence/. No artifacts will be uploaded.
+2026-10-11T23:50:20.0180871Z Post job cleanup.
+2026-10-11T23:50:20.0188238Z ##[start-action display=Cache node_modules;id=__f5022380-b800-4b1a-b492-064fdf8988e0.modules]
+2026-10-11T23:50:20.0318636Z ##[end-action id=__f5022380-b800-4b1a-b492-064fdf8988e0.modules;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:20.0321639Z ##[start-action display=Setup Node;id=__f5022380-b800-4b1a-b492-064fdf8988e0.__actions_setup-node]
+2026-10-11T23:50:20.0324741Z ##[end-action id=__f5022380-b800-4b1a-b492-064fdf8988e0.__actions_setup-node;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:20.0327094Z ##[start-action display=Setup Bun;id=__f5022380-b800-4b1a-b492-064fdf8988e0.__oven-sh_setup-bun]
+2026-10-11T23:50:20.0329705Z ##[end-action id=__f5022380-b800-4b1a-b492-064fdf8988e0.__oven-sh_setup-bun;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:50:20.0394215Z Post job cleanup.
+2026-10-11T23:50:20.1229669Z [command]/usr/bin/git version
+2026-10-11T23:50:20.1271126Z git version 2.55.0
+2026-10-11T23:50:20.1314336Z Temporarily overriding HOME='/home/runner/work/_temp/57f6a2d4-bd13-4c28-a040-d10af4d701a8' before making global git config changes
+2026-10-11T23:50:20.1315449Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:50:20.1321059Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara/.pr-driver
+2026-10-11T23:50:20.1595680Z Removing SSH command configuration
+2026-10-11T23:50:20.1596808Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:50:20.1645127Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:50:20.1954812Z Removing HTTP extra header
+2026-10-11T23:50:20.1956113Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:50:20.2007774Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:50:20.2284832Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:50:20.2285947Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:50:20.2326672Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:50:20.3644054Z Post job cleanup.
+2026-10-11T23:50:20.4452004Z [command]/usr/bin/git version
+2026-10-11T23:50:20.4487617Z git version 2.55.0
+2026-10-11T23:50:20.4521408Z Temporarily overriding HOME='/home/runner/work/_temp/2f4db0b2-86bb-46a7-9aae-3cc4061a2109' before making global git config changes
+2026-10-11T23:50:20.4522732Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:50:20.4526268Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-11T23:50:20.5413083Z Removing SSH command configuration
+2026-10-11T23:50:20.5421047Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:50:20.5457822Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:50:20.5661465Z Removing HTTP extra header
+2026-10-11T23:50:20.5666241Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:50:20.5695400Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:50:20.5889994Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:50:20.5897581Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:50:20.5924034Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:50:20.7076469Z Cleaning up orphan processes
+2026-10-11T23:50:20.7330125Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

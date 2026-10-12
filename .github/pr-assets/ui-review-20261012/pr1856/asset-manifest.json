@@ -1,0 +1,1290 @@
+[
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/README.md",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 8637,
+    "blob": "1ce10f0dbe554846bd5048a46b3a11700cdf43e8",
+    "sha256": "66d9aed85cbd9d674f3cc1c815d54a64bcb76252fe4b7841bd32489e1955ec1c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1",
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/helium-picker.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 31908,
+    "blob": "3f3309b90fe809322d4e1b98019b2814a276739f",
+    "sha256": "4c6b8c24e31c56bfae72ae4893da2adb124ca4a175dc437eba4223537a222dee"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/helium-profile-needs-consent.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 37938,
+    "blob": "0d2965355c463ff299319eaccb1e88921b2e4801",
+    "sha256": "d214041de00a9ab9710f162498fe6cbaaa65afd91453afd2207644c18f251de9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/helium-profile-renewed.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 40783,
+    "blob": "dd825b6b3e7c20e527fbf3d628724acc8093f9cd",
+    "sha256": "b814e95cb263ccee073a5d8da39168bd6f0336fa53d1b0e2bd8de2d10acf58d5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/helium-site-result.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 33911,
+    "blob": "ea7675002d25eda170e7a291e0a7af37e205cb75",
+    "sha256": "9cc4f9bdd502930c7d495eb5c282b42bcb407bad0de8161638d55102583ca8bb"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3701,
+    "blob": "0d6c31e78b1d959879ea91f600c004bd14c6f96e",
+    "sha256": "1fbb7ee3763c79ddcd78173276290509d19d8c1cbbb3ec6574c95bb77e1310e6"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/manual-safari-setup.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 70395,
+    "blob": "df87fdd39e18dd4eb7382f2d6693279720e8363f",
+    "sha256": "22f132ab86f8b9f42fe03bd3a9cd52cac7c9d22a9e6a9709d0e16ec61e918631"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/observed-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21221,
+    "blob": "632fe7045a72b5f0a4580c3489c918be206f2f63",
+    "sha256": "3b743a7d6c73234ccb64f1f1dd576ef01afceb88c18af6c754f77982aa93122d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/observed-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15055,
+    "blob": "5a8d3730358716bf5299e382204e3470ba91fa92",
+    "sha256": "6bca7865f863f6ae15be61f2470d976accde56ca707b2f93adb67575f12e6649"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/original-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15876,
+    "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+    "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/original-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9911,
+    "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+    "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/overlay.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 5291,
+    "blob": "3551d12798407e30097325e5cf2ef33834f4f4c7",
+    "sha256": "5c329c6120ba5759d066b391896f941c7bf712db346eed40d9caf35ab01afb58"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/provenance.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 10729,
+    "blob": "33164f9c7e5e5ad56acf3d0f00bc2bd32d9e67fd",
+    "sha256": "4251f1cc3d8b8f0b9e24cb4bbea007d5da8aa8ea94a0cb93df3db6b1374d4b9e"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 255,
+    "blob": "c1dfca2cf06535916c1c753f039da37ad0f44de9",
+    "sha256": "49d6e80c75d40413f9a3521bc318158d9a64d13b694e9924fe78cd07a96aa4e9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/startup-intro.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 65109,
+    "blob": "d32488348d919d8bd463b7ec7bbc7dcec4bb3e42",
+    "sha256": "6493c89cbb16c58936c23d1a81c9e689bce57fd9c9ac76c2973783ad97b50005"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 29613,
+    "blob": "d2f7cb35b24e4f8ea53693f47433363478a34cf3",
+    "sha256": "cb1363356293c77225e82bf087c375e56e451e6910f92a001a9ef229cf91e071"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/video/page@d7076ada94fc9ea2f6cd6bb00a467a49.webm",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1306170,
+    "blob": "a21721135a5356e961deafed21a962236711e5f2",
+    "sha256": "a74a1051234c5f3236af87b3e9e69cffea9d1a4e94f278b552431924f29a2082"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9248,
+    "blob": "398e9e011d3402a5da14c6adb18fb448aacf8b5b",
+    "sha256": "55635cadf4bd5083eca92c22b0f2b161fe3ce8b5d6086cf4f9cf9be02abb40ce"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-desktop/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11842,
+    "blob": "9956a3ea54ad01f2605f2ee2e33c303932f5a16a",
+    "sha256": "41d791dbca4660d07508f2b295c04171a1532486d90325f66ab400d61ff8efb5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1",
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/helium-picker.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 28537,
+    "blob": "e428cad0de5e3d26207e3412aa491cfdaa54536c",
+    "sha256": "b57905addc2d60c6c59ba39e121de3996c47bccc621540d2fc004d1ea6207198"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/helium-profile-needs-consent.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 34580,
+    "blob": "e02d9a70a7d37bc2fa712f0e97d4f1f122f3b1f3",
+    "sha256": "f0603dd292f46f6f8f2b60b92a7413797306a661e0a7927a5331b1aa25730707"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/helium-profile-renewed.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 37552,
+    "blob": "6b5f2a275c3c1d9ed1441b7fa17e56dec80386fc",
+    "sha256": "7f7d452182e4910756d2692d43fb1e4a899baff100974b4a9bf9e1f46fdfae97"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/helium-site-result.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 30544,
+    "blob": "c18bd09408616e5a53290518f3a0d385f5254cf3",
+    "sha256": "a37d0add222b5bc43b470df22cbfc11a3c866aba5fc7ecaea425bb501fac6173"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3701,
+    "blob": "9ac8410861d056e745c34716c920669704767370",
+    "sha256": "bdc00b711ba1d4447e1edcafb7c0bfa79d06bfc99dad821be6553f7347ff7fbc"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/manual-safari-setup.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 56558,
+    "blob": "49fcbc31fb2cd56f3bd192f2f604aea82056c6af",
+    "sha256": "4295014b0dd37b67431b2fb4aa8b3cefd239774fa3320702f1f427aa1729a1d9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/observed-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21221,
+    "blob": "632fe7045a72b5f0a4580c3489c918be206f2f63",
+    "sha256": "3b743a7d6c73234ccb64f1f1dd576ef01afceb88c18af6c754f77982aa93122d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/observed-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15055,
+    "blob": "5a8d3730358716bf5299e382204e3470ba91fa92",
+    "sha256": "6bca7865f863f6ae15be61f2470d976accde56ca707b2f93adb67575f12e6649"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/original-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15876,
+    "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+    "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/original-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9911,
+    "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+    "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/overlay.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 5291,
+    "blob": "3551d12798407e30097325e5cf2ef33834f4f4c7",
+    "sha256": "5c329c6120ba5759d066b391896f941c7bf712db346eed40d9caf35ab01afb58"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/provenance.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 10726,
+    "blob": "e3527dadca143ff99a482eefe0abbc04f98e68ad",
+    "sha256": "8fdc389a265889fc1a9e72327cdf3fc900fc421fd464bf42ac6b60204e9e2209"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 254,
+    "blob": "3b170fdac3e429b3143e708cff40fff713cdcd6e",
+    "sha256": "287d7b63035ca2f1541dfa7334aeed43c304b6f89ae6a4c491a884a8bbc666d8"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/startup-intro.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 50143,
+    "blob": "e008ce55b9a9e410d8b6d057f92d0299c7b785f4",
+    "sha256": "1b8841d95026b566e40b2ac5b7dbedf7b68f05019a1fa3373b878ffd72a7b636"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 29600,
+    "blob": "a56ae763a84279cec992edd0edc34b3105cfce5a",
+    "sha256": "1b966fd4e0eab0e03d7d2aca7585d6e6e56648d5ff0137a70422dbbf0ce1c8f1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/video/page@ef83d2472e14cada5927ab7246919a31.webm",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1396927,
+    "blob": "cc9bc233ca65339b1ce9d8dda83cad257a9db0c6",
+    "sha256": "b59c445229153a5cad4e4dc1c4c525ff51328664654a5c8cbbbfd1f327657149"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9253,
+    "blob": "f1f67a6d17ba4908b8b8ba408758ca2cab62aa1b",
+    "sha256": "2f6024cc3607972bb66d45a6f7f69bf024da40178aa2d750f44c10e88aaa54a8"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-mobile/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 12066,
+    "blob": "6856852103d561c992fbaa9a8e51f74cb61f5cf5",
+    "sha256": "2e88331cb3a7978d77c4b91bdd1eab5c34457bfd5d3551148876aff06a2d1ad1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/after-verification.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1052,
+    "blob": "f7fdef486849a58da682bd4b14f6cd7309e761f2",
+    "sha256": "0f036d194d9860884af738628bd8d1bbbf276e32784c2209ee7d1e854a8a74a3"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/archive-verification.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 38211,
+    "blob": "8bce9f52c7263246670fbc180966e849dfdb005c",
+    "sha256": "10bf1b7efffe085dd33f731815faa4170c530ebf0475004044a239c1998331d0"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/helium-picker.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 31908,
+    "blob": "3f3309b90fe809322d4e1b98019b2814a276739f",
+    "sha256": "4c6b8c24e31c56bfae72ae4893da2adb124ca4a175dc437eba4223537a222dee"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/helium-site-result.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 31365,
+    "blob": "bdf0d7a78d65f1263f188298d74ce9402a4263a3",
+    "sha256": "4e562ce69b0007706b2ffa44d7b45b4ac21d660f42b723b7cdf7b8ba7a1e30e3"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3076,
+    "blob": "e2c6776d99e5d0c1767884a1c6cdf5d99718d597",
+    "sha256": "98cecc8a3d88b7be5f3aed3d639669d8fe233584b307df99ed4f57d71cb7d347"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/observed-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21221,
+    "blob": "632fe7045a72b5f0a4580c3489c918be206f2f63",
+    "sha256": "3b743a7d6c73234ccb64f1f1dd576ef01afceb88c18af6c754f77982aa93122d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/observed-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15055,
+    "blob": "5a8d3730358716bf5299e382204e3470ba91fa92",
+    "sha256": "6bca7865f863f6ae15be61f2470d976accde56ca707b2f93adb67575f12e6649"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/original-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15876,
+    "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+    "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/original-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9911,
+    "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+    "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/overlay.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 5291,
+    "blob": "3551d12798407e30097325e5cf2ef33834f4f4c7",
+    "sha256": "5c329c6120ba5759d066b391896f941c7bf712db346eed40d9caf35ab01afb58"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/provenance.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 10732,
+    "blob": "2a98d75f476c5d395decb49231596e07d3b2c45e",
+    "sha256": "bebe6f7fd1a4fee24c628367d8da6e6c2ced3c45346e530740e770a250f8e0c8"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 257,
+    "blob": "869679e6513bfb97e02e9da40e128cf158b61abe",
+    "sha256": "bcbcc4c48411337de51550e359bd1460aa157023fddcfe030eb09d5f3f54c9b9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/startup-intro.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 70395,
+    "blob": "df87fdd39e18dd4eb7382f2d6693279720e8363f",
+    "sha256": "22f132ab86f8b9f42fe03bd3a9cd52cac7c9d22a9e6a9709d0e16ec61e918631"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 34255,
+    "blob": "ab3291a288f7b90ffd0cff3da8fc662765c36e81",
+    "sha256": "f137b75f215a65a4eccc06cfb62898890eb1a1fe6d2fd420b9156ffd16a0593b"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/video/page@f27e1c9e326d079930768e05952aec52.webm",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 12322801,
+    "blob": "7978fea26ee42f2f7152a48be7e9a6a9066656ef",
+    "sha256": "2c4ad06b630f5e3fb8e3acaa23ec605e3652508b6a9a9283c7376247b98f8292"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21116,
+    "blob": "08b0f019d75cbe0536bfcd682886f6fe7df878d5",
+    "sha256": "89853f50295dea3549269598493f1951d2fae0e45081eb59c148f7520b31788e"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-desktop/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 19591,
+    "blob": "c29bfc6fa81f8c22b1066fa8f646724da531c045",
+    "sha256": "7c89112901832028d70e071f0db826fcdd8bb8f5e62fddae16a7f6d2341a9e30"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/helium-picker.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 28537,
+    "blob": "e428cad0de5e3d26207e3412aa491cfdaa54536c",
+    "sha256": "b57905addc2d60c6c59ba39e121de3996c47bccc621540d2fc004d1ea6207198"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/helium-site-result.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 28044,
+    "blob": "5018d20497de4aa9898df79f138f56f7cac163ea",
+    "sha256": "ea1d2e7d3c50754161f616804f4c803119250ef49c1470735042f310cc1c19f9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3075,
+    "blob": "18f06c014489389e13569247c5c6b8606bdeddff",
+    "sha256": "3d141b53ea833afa8cddb6205dd6380d081b9c729cff0cd594bbeaa92b9a1958"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/observed-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21221,
+    "blob": "632fe7045a72b5f0a4580c3489c918be206f2f63",
+    "sha256": "3b743a7d6c73234ccb64f1f1dd576ef01afceb88c18af6c754f77982aa93122d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/observed-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15055,
+    "blob": "5a8d3730358716bf5299e382204e3470ba91fa92",
+    "sha256": "6bca7865f863f6ae15be61f2470d976accde56ca707b2f93adb67575f12e6649"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/original-BrowserVault.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 15876,
+    "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+    "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/original-SafariAccessOnboarding.browser.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9911,
+    "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+    "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/overlay.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 5291,
+    "blob": "3551d12798407e30097325e5cf2ef33834f4f4c7",
+    "sha256": "5c329c6120ba5759d066b391896f941c7bf712db346eed40d9caf35ab01afb58"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/provenance.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 10729,
+    "blob": "f4967c4e4cfea3d5ee12955efb346e2ac06107c0",
+    "sha256": "32256f61a561347527819352c81895f405143ac7e5045390807bb29aaf6b432a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 256,
+    "blob": "e91e77ef4967c5bb5ecae66de29b7d7268bd085b",
+    "sha256": "57b849e514f54070b4444c89ba7101044939f963af007fe1cd4ca7ca09558023"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/startup-intro.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 56558,
+    "blob": "49fcbc31fb2cd56f3bd192f2f604aea82056c6af",
+    "sha256": "4295014b0dd37b67431b2fb4aa8b3cefd239774fa3320702f1f427aa1729a1d9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 34241,
+    "blob": "91a90b06bb44105f1c0fde808ef4792544351711",
+    "sha256": "da4f1378eff6bb24fb5e9c058d527432ef1fe5dad6bc36f4f28dcc41be8122ea"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/video/page@bc3c403e2b3ca5eb007ebcc279e4fffa.webm",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9636672,
+    "blob": "1a92c5367c4fc5872018b8c6fccb2a9ceec4a723",
+    "sha256": "0d45fcab3c66cc19743fa6b77d84369bed50429a5dfb1d7597e00fb9c361b3d7"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21098,
+    "blob": "85f725df38541b593291504b3cb02d40a64ce876",
+    "sha256": "12a5d61e14987956bbf6e9e7f89b18d2aa40dae7d61bc07f1dc757e41da5082c"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/before-mobile/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 19582,
+    "blob": "e7f4c363a2ce261b7c4be5604a8bc750e679af4c",
+    "sha256": "864f848a0f944e8098f0bf4ff0b01843b59b665028f4382a626960c553129cfb"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-desktop-0.28.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 127470,
+    "blob": "2d2a63bbf75c8ed1cbf4eb9244ebff37c0799666",
+    "sha256": "1fad489bd7e3e73c8af8185b14c0dbf5f8b3a6e07ad509bc5549761e88f7d78d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-desktop-0.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 123738,
+    "blob": "fa43cd6c3ba7f73e351c83a6ef9189d03d1817f3",
+    "sha256": "52be3a3de025854307166407fe262c5f45ca70d0cd4893b8185a7311fd712d80"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-desktop-1.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 148603,
+    "blob": "0bebe2c44faff210b5494363786113b3fb5a0ffd",
+    "sha256": "01ae68454bd766e36953a810e49a31c92a458741705e06e1007bc7f1eafccf82"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-desktop.mp4",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 472360,
+    "blob": "35c55390e191b261efc462d80c27483d2b67af6c",
+    "sha256": "5e14e347914a3968ac86dddafff354ecbd40ba5705246fd51ed7404a0ad929f0"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-mobile-0.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3487,
+    "blob": "480e95849339859f4f9065ef7d82e8d9475555a5",
+    "sha256": "a7aef757897e3be98b2427b0d17140a60e7dc109f40c7eec6a75a7c56d979267"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-mobile-1.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 115972,
+    "blob": "c5bb124500c32b1c5d34eaca949983b077e34790",
+    "sha256": "e26a98f01f99ef68e58886e7a1e8fe35c296a96abc69a8d91831e0df9435aa12"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/after-mobile.mp4",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 442752,
+    "blob": "52abc502705a3ed7b3420a0649783719d3b950ff",
+    "sha256": "1cb6775f0f1bd841df8dd299e6035e07a590f5fc47a9c81676dd5a47b2fee787"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/before-desktop-0.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 137046,
+    "blob": "ac1ea077b3fc42ebedb494846d9beff17432664e",
+    "sha256": "11970c4405c864fab05f23a131e30ebaab4104951dc35b603b4eef8db6c8017b"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/before-desktop-1.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 144443,
+    "blob": "2fdc3db0a7e768ea22367fa67740ffb669b76b8e",
+    "sha256": "c302bfad953b6ea0eb1ea899cbc10d87561992c4c970bf380692dbbc841d04e2"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/before-desktop.mp4",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 187113,
+    "blob": "7323ecbb97d94f82cd663a237a526f8096a13559",
+    "sha256": "a1526b184ab14d06918ca9925c91a1fde4aecc5537c4b5cf8661398449f54c9a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/before-mobile-0.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 121293,
+    "blob": "89f631d35b3b5184aa994368b26c1127b729562b",
+    "sha256": "f00a9a0a6427348bf2844a147df27ee419483c5eaf34487b7e6c2699540bfa62"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/before-mobile-1.4.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 122425,
+    "blob": "258e14160978e0c15a3c49aa9c5929859f5b9adc",
+    "sha256": "3deaeccb09130779b26b8ae9a38437a15c28835e9226d5ad464c691773106090"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips/before-mobile.mp4",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 155701,
+    "blob": "1e6b5a8e42d0c87970fbc645c39c614e706557d2",
+    "sha256": "4ed471de1785cf197032e0ebf3004cbe280d7ae5abf7690c628a8d774b4fec32"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/clips.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 5378,
+    "blob": "39aa37228b6cbce50539e5743af97bfc3c1273a1",
+    "sha256": "ae315920c93ef5cc1b640d1df3b07cec5d231ff06f26fb1577bdf5df639ae367"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-desktop/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-desktop/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 2047,
+    "blob": "9576f72206ffb4cc881e9966066bf9fbddcb681c",
+    "sha256": "28fd7ec60e53e6e44d7bf49ecc8356f51fd59ae7f0639c322e9e0b8e2f3b8fd1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-desktop/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 159,
+    "blob": "0a7ff110c238b7240b37a7fad693ba7ca7a75441",
+    "sha256": "2f2fb34ff17d1b38dcbb286b1b81231d6d7b88327dc7cd38032173a9084fce06"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-desktop/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11109,
+    "blob": "39b8973c22e536cd7ca359eaf4467e92f9a9c56c",
+    "sha256": "d052032eccb623975d1cdb7fc03634b281e0062c93901081f4f76f117080a2d7"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-desktop/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1665,
+    "blob": "fcfe4dfbfc1e4941b74e14fba4d7b30500dcc51e",
+    "sha256": "21ef51cc393e2672d2987cf64404ed2cda667734926dea9da5a920e52cf2b7fd"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-mobile/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-mobile/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 2047,
+    "blob": "a4800e425af7e8b1b2091ce23cad2e649141fd28",
+    "sha256": "6c02679af787802d5cf46b092e3c0e16d83a5355b3c4dec7126cb80f8496ff34"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-mobile/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 158,
+    "blob": "329e3c6dbc62d0450f8970399d560d61eb7a8f81",
+    "sha256": "60a06ae0d87473f3f67d5879f28c80bcacfb4fa776822f257a9ff99975f5e03b"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-mobile/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11105,
+    "blob": "2d31f6b0e3ca1e60d5f7918b044ab1eb1ea78f90",
+    "sha256": "b3065268557e31a08d4581a885a5f09cfbdb38b85050d7f1340ba709c991eeb0"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/after-mobile/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1664,
+    "blob": "627eaa8965f094aee38d22902ee95e96c7037c0f",
+    "sha256": "b02ef2b81bdef11284aa27ac2bb39c3af773d4511dffd87c3899f523930edd9f"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-desktop/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-desktop/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 2047,
+    "blob": "5ba93987ddd62a92aacf9a10de7937f9bd9e6420",
+    "sha256": "74ac435ce650ac84a975df75f608771a72723ac5a8370b3cddf985b44d18cce3"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-desktop/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 160,
+    "blob": "e6517f3a7031278722a0008ed912254f52f5196e",
+    "sha256": "cc85acd25d0aff092d2a096d609d796995fceafb8eaff8c4fc67a3d81d78d657"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-desktop/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11113,
+    "blob": "c9119768b56919814bd91dd8851e0a1117b5525c",
+    "sha256": "0d122b214ce7cc557059ad98d205b37733d34b7de173cfd6670c89fd3c0c92e0"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-desktop/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1666,
+    "blob": "e0c1de85b4baca24c9974b17a2b4908d4276afec",
+    "sha256": "d8015a1ee12f6decebd656bb50072f325fae7772798e3f49fbb45ac45d58f1ce"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-mobile/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-mobile/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 2047,
+    "blob": "f19fddfa7637aaeac4f0ac38fa4bda59e3031a3f",
+    "sha256": "f344b2a586efe2391e08765eac074868297477cc65067df227edec5fcb69def7"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-mobile/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 159,
+    "blob": "5a1e9b80a0ae219055efaac252d2b2dddd1d2574",
+    "sha256": "96948dcf473754063486329669e7b903fd9e1ed2a371e509921b0f32063199f0"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-mobile/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11109,
+    "blob": "b1d7d180c562aecf041aed500de9be0fe8b911b8",
+    "sha256": "21e30b06fdb834d2214bf60566896c1e2e3389993968eb29d5d1d93662f8934f"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/before-mobile/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1665,
+    "blob": "e8073184f4e9131648a7d66c4f2d37f05570452a",
+    "sha256": "f63e499d59af4ccceadf4dcdd471b2668dd1ced823b2d232a76fe74398945f45"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38183778847/verified-summary.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1411,
+    "blob": "1c2509d81a3a3388b4179110f1221f0dee878468",
+    "sha256": "6c1a3d546d6b99f3d19e2a3a81a265249f11649d4895b2f534a096d83ef47879"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1",
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3701,
+    "blob": "673ff7a267623ba551f940938cc44a482d4a3dce",
+    "sha256": "6fa5bbe8b2c903c053613619d368f70e4af6b43e401756d41bea5113cf7c36aa"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 255,
+    "blob": "73b1013f7c3b1320ecb5e02ca960a30d41ea2743",
+    "sha256": "a569baeaf049499f37352e4653a6892acdcda825b2f7be617eefd93cd8d1f2b3"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/startup-intro.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 68517,
+    "blob": "fd20ed9b50d1d840910dbaf5c0b447493b2d6242",
+    "sha256": "006f7c27f606967e08b5013ddf89b10624c58dfd8d0a9ce9c43da9fe34cb9743"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 29608,
+    "blob": "7181c26f3e0294e5a11e3197c2cbfcc0179d5478",
+    "sha256": "2046c6663fb54bbf6196665c5da83a0d822b6b6e2712a1bacdf1e2e3e0a0ddb4"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9291,
+    "blob": "82fc1cd786debf017ec36a5c6b166ca2617c2088",
+    "sha256": "1c6dabc7f9825347b8ad61f8066b4fcd26b5d9be92df717ddfa994df61732097"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-desktop/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 12076,
+    "blob": "893bf5d825d1a9f84ae6cefdbcfe3c13bbe3d63d",
+    "sha256": "e4a71dba8363f7ebe7dad0c82e2cd18d1846e0207062ad39b4cd6254b446b0e9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1",
+    "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3701,
+    "blob": "14d25e6943c1bbfc1d8a14a0affd3a4fc233dffa",
+    "sha256": "bb876f5160ca8fde191f89a473c807e330c3fc407e2eaf1cf0b95cfc177fc016"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 254,
+    "blob": "ecb2ee4842fb7311cc8024da3cec12c08e2d4189",
+    "sha256": "bc3b53a9bdb90d03a3a9c9dbf32400180aa9eb93eb6d608b762cb76c295c83f7"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/startup-intro.png",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 59716,
+    "blob": "1fd368900b7875a1471cc61f5efcd114f81e02bf",
+    "sha256": "ca8363eed9a11ac14ff3129f0196a17cb1f960ce41fa8f57d56fe4df4f209230"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 29620,
+    "blob": "0640be22c3f61cbcb9ebf21ff094ba88db9bed53",
+    "sha256": "75d376dde4af4f617081e844c1e4c4e3a40bc625a4fad61fba66aa284d6c5de4"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9267,
+    "blob": "bc60a830271b15620608f6a8470ac1472de405a0",
+    "sha256": "22e950b347f9c041d328d7fddf645df8f6351e7918a96c3dc948a16125ccce33"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-mobile/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11979,
+    "blob": "8ad3a5215f15982c887442ef8efd7126d51a3ee3",
+    "sha256": "0f6e3dda78773e8b0848cfb857a599dfa8548a2015b519c3571cc01b55a325ae"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/after-verification.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 2167,
+    "blob": "c50e82da75d06b2716ac0f71c7eb95c05ddd796d",
+    "sha256": "e566281b9e6df26869d6f106940608e412e1a5744cf93e700b8a760dd8741620"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-desktop/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-desktop/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3076,
+    "blob": "0d60db7cff9cc0012bf542f73f1252642ed7b403",
+    "sha256": "6ff55d91d029e0756a182a1afe3124dcfa37c1ba2405d06487ebbc7ae5d2f3fb"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-desktop/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 257,
+    "blob": "c41dbdf73127fc5af2006c9d90fe7931b98561c9",
+    "sha256": "267002183d5e046e6a8b67dcea946ad9a0d6235bacb34633ba4aaee29f35d95a"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-desktop/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 34253,
+    "blob": "3c51c23b8cf5269e461df14208592c103308b5f9",
+    "sha256": "49ca024c8574bb424f102d9eaa0e4f63a87d97f9b1efb9e142b0ad3c40bee41e"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-desktop/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21121,
+    "blob": "bddbd3468812e6f3b7e13ee15a95cf7b0d90da91",
+    "sha256": "5e7bf8dc445bbf38ed4750628fcb183e31b486fb72f66de87536040d2a353550"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-desktop/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 19461,
+    "blob": "eb6dcb7f90109d4fa58b5b33d2aeb3726ad510ea",
+    "sha256": "0bfbd4e9ff09a164a7c7c60aa47314ad227388422437c082eae1e02de1bbbcee"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-mobile/exits.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21,
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a",
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-mobile/manifest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3075,
+    "blob": "13e2fd7707a32d3072b8c9644bfed6a6d6d86865",
+    "sha256": "123aee4e123b925669ee2d9c743711aabf6ad497c033897690651d52daf46dff"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-mobile/report-snapshot.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 256,
+    "blob": "d2ed1e4e880d824b2698794c9528c1a0d6c06c01",
+    "sha256": "f6bc951fb7984c45459e15df2b191ae443cbb694a4dd4e4540ca17b9b2f7c140"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-mobile/verified.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 34263,
+    "blob": "aba4b0c750da1136b8cbba2cda0222bdfa434c93",
+    "sha256": "0d214a41e6cde055afd1ec514c2e79f06baf276bd322ff786d26536f6deb8ad8"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-mobile/vitest.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 21128,
+    "blob": "1124dfe8b2ee1eb513d22bded73aad732edfec7f",
+    "sha256": "5a6e004053823572dacc33077ddc8b41f5568ca99f5e92faaef7103f571f34bf"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/before-mobile/vitest.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 19472,
+    "blob": "0a7c5ac18fddfdecf7e7e7b8d92d757d8a81a663",
+    "sha256": "7f094ccec19c2209f7e3f5b22b68733781c45c4c973ab00741a29750451f5e95"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38184528360/verified-summary.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 4789,
+    "blob": "650538a57113519e87bdd7b8026fbcfebc467fd9",
+    "sha256": "5c749d3f69beceb5e4910f749365f8bdeee32f909ca63ccc944e76c67c29c684"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38185712851/after-desktop-job.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 46582,
+    "blob": "7e425df67ae13d505032ca132281b3c084ecd0a4",
+    "sha256": "cd5d6b767b13e5e1343e7cb193bfda7a89ca652cec35f04dec1e9d9c5b28ee26"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38185712851/after-mobile-job.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 46485,
+    "blob": "e73727174a148d566a795f6259e290638ff501a8",
+    "sha256": "7c537f4f974d28328064b82790831569c28bd6c29433817b3f2d44bbd6eb3566"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38185712851/before-desktop-job.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 46378,
+    "blob": "ec32ef6f4dce1c1e574ac96c7634a8ecf0cecaa3",
+    "sha256": "e69acd35871a5715014d41b59e014ff2586854867ff1d646c20b98f14c7067df"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38185712851/before-mobile-job.log",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 46758,
+    "blob": "a260e5fa0527b27b808bf58425d5b52f8ad77380",
+    "sha256": "a2c5218c1a4819d51049592b85a6b99a459b0243f4c0615a04de46d96f6c9625"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38186606080/after-verification.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1052,
+    "blob": "f7fdef486849a58da682bd4b14f6cd7309e761f2",
+    "sha256": "0f036d194d9860884af738628bd8d1bbbf276e32784c2209ee7d1e854a8a74a3"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/history/38186606080/verified-summary.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1883,
+    "blob": "7acbeef0c00a1b8d55bdaed153976e88bf8bb79e",
+    "sha256": "cd724e2b5272eba62ff9ed6078dae1f3c39e72c079a15ef95e8ab3c0bc5e30a9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38183778847-11717879218.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 24881,
+    "blob": "e2c470d28ff8929ad6bc041b080e653784c1feb9",
+    "sha256": "240adc503ae0fa446f5684524f39f6c0fde9fa6b318a2046d7f407a58f90c909"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38183778847-11718019057.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 24890,
+    "blob": "e49b92583f2b399c9c22f43873bd143d27381750",
+    "sha256": "b77c03ac90f607a372e491cb67600f79a195e6c241f333299cc999aa780258e9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38183778847-11718677319.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 24607,
+    "blob": "fa84b2e7133f0cd7edc0fb7770f6404120076812",
+    "sha256": "6ad7cabce579bc64506cf5ea039de8b261b87c0a6e9d94dfbecf6f5244a28475"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38183778847-11719255314.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 24592,
+    "blob": "3dcee804fa9f8f7a4f685067057e4396035906a9",
+    "sha256": "c8a98bf7432edfb38fdf014976149454887a534f521fb33cbacf1422914decd9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38184528360-11718119837.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1636657,
+    "blob": "4e5dba9fe973b2355a3b8f49c869537b1de2bf27",
+    "sha256": "2496b3779e0c2ee4ccbab0d2dfddc17339b3628565cbc89762d8e6c4b8ec918f"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38184528360-11718689496.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9860061,
+    "blob": "de39cc71a4198d482e96fa345f78ed98df80a153",
+    "sha256": "ba91332ab5a5a115bc298d3a1208ad586a788af46e984f4303961c6278d73b84"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38184528360-11718703358.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1579737,
+    "blob": "05dbf09b103f85e07f41f8c22903332294cb0bd2",
+    "sha256": "becdf225012458225641e488069b5ac23cf73a3d72a3d1b097f88a7d343b7fa2"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38184528360-11718933451.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 8426713,
+    "blob": "ec4ed4031923fc3d6e9f7b695c8ffb56ec133c78",
+    "sha256": "674501786c4d6d32cbd3b471814a2794d6ab8016648bf4b00881fc6f61d4b27f"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38186606080-11719568474.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 9789236,
+    "blob": "9bf291a650a0e7ac9306cfa45a3b946bb1e2f025",
+    "sha256": "954530d14bb5b00ff4934864d09ff9d76c2290e16d5c87249b42981beaf8988d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38186606080-11719572736.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1630082,
+    "blob": "3a8f78c49d1d78d4347e624a7d5c96e309363624",
+    "sha256": "19b176bc9d87dee9ba9ef86612950c6ba2fb4973b7b7a85b30630511f5908c98"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38186606080-11720171981.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 8470970,
+    "blob": "302fd97fae0d89ba90afdeeab4d7a260d72dc15e",
+    "sha256": "4b6efc02c7f0a46f0160de6f4827ee8a837db35b460c1f10ff5a5fd059d019fa"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/original-artifacts/38186606080-11720430347.zip",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1533077,
+    "blob": "0d81d0bd89c1308f7f05b270905e12e76f57b3d5",
+    "sha256": "4f162d0b65690dbc1b89083339f5fdea26480ebc45398b010d0da7dac05ec421"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/packet-verification.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 2230,
+    "blob": "723a77b8b80611653eb0259ec3406061f76cc4d4",
+    "sha256": "0524317057cd396db89f9270f130bd93c4e761d5e5772b77071752cd035bb97d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/remote/38183778847.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 30963,
+    "blob": "d18a1f2da5b43e0e41c9abdc7f4addfc1c5cca62",
+    "sha256": "c19f7bc9f3568ad17446338cd4ef7824d7beab3d2dda04533c7df073c37ab06b"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/remote/38184528360.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 30930,
+    "blob": "0292e20387613dd48748748ed46102d2303016a9",
+    "sha256": "b414112314cd5a989d3f96638f62bacd792a682faf105023c25a3f92fb5dc13d"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/remote/38185712851.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 27991,
+    "blob": "6c619e39dc8cf874606ef5962c0fe7681fcac46a",
+    "sha256": "f592f7e029650df814e3a6f524b9fc322534c0434dd2705363198bbe93f60a35"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/remote/38186606080.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 30712,
+    "blob": "0cc3d93d498b27c9fc06d3c30129a42fe3e93598",
+    "sha256": "dd033a23e842c41cb0803c4d7aa083aae54177d24a92a24bee95db32bba54cf6"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/verified-summary.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 1883,
+    "blob": "7acbeef0c00a1b8d55bdaed153976e88bf8bb79e",
+    "sha256": "cd724e2b5272eba62ff9ed6078dae1f3c39e72c079a15ef95e8ab3c0bc5e30a9"
+  },
+  {
+    "path": ".github/pr-assets/ui-review-20261012/pr1856/video-probes.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 10948,
+    "blob": "3c84154360b1198b1f552f8bfd16c88af40042e2",
+    "sha256": "18ec4858b7e0970e311d89609f877ebd855dbd4d1ad60b0d29ecdb90c7e67415"
+  }
+]

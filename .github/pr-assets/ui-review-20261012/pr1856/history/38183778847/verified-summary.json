@@ -1,0 +1,42 @@
+[
+  {
+    "target": "after-desktop",
+    "driver": "737354bb58a72b15618ff5abac1971b0f7ce72d8",
+    "source": "be4186e34d1e0437ee9b3c671a9fb3652ab599de",
+    "actualExit": 1,
+    "tests": null,
+    "observations": 0,
+    "allRawManifestEntriesVerified": 10,
+    "failure": "Duplicate --config rejected by actual Vitest parser before test execution."
+  },
+  {
+    "target": "after-mobile",
+    "driver": "737354bb58a72b15618ff5abac1971b0f7ce72d8",
+    "source": "be4186e34d1e0437ee9b3c671a9fb3652ab599de",
+    "actualExit": 1,
+    "tests": null,
+    "observations": 0,
+    "allRawManifestEntriesVerified": 10,
+    "failure": "Duplicate --config rejected by actual Vitest parser before test execution."
+  },
+  {
+    "target": "before-desktop",
+    "driver": "737354bb58a72b15618ff5abac1971b0f7ce72d8",
+    "source": "1a9d70983750bc771e850d72a858c541bac52885",
+    "actualExit": 1,
+    "tests": null,
+    "observations": 0,
+    "allRawManifestEntriesVerified": 10,
+    "failure": "Duplicate --config rejected by actual Vitest parser before test execution."
+  },
+  {
+    "target": "before-mobile",
+    "driver": "737354bb58a72b15618ff5abac1971b0f7ce72d8",
+    "source": "1a9d70983750bc771e850d72a858c541bac52885",
+    "actualExit": 1,
+    "tests": null,
+    "observations": 0,
+    "allRawManifestEntriesVerified": 10,
+    "failure": "Duplicate --config rejected by actual Vitest parser before test execution."
+  }
+]

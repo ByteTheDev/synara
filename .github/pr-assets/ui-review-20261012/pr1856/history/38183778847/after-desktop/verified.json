@@ -1,0 +1,199 @@
+{
+  "target": {
+    "id": "pr1856-after-desktop",
+    "variant": "after",
+    "source": "be4186e34d1e0437ee9b3c671a9fb3652ab599de",
+    "tree": "79b50df78f7514303a692cf65cbf04f5d68bb875",
+    "viewport": "desktop",
+    "width": 760,
+    "height": 1000
+  },
+  "source": "be4186e34d1e0437ee9b3c671a9fb3652ab599de",
+  "sourceTree": "79b50df78f7514303a692cf65cbf04f5d68bb875",
+  "driver": "737354bb58a72b15618ff5abac1971b0f7ce72d8",
+  "driverTree": "ea832ec2b4c5f341669db10fcbe67fe28cf28c79",
+  "driverFiles": [
+    {
+      "path": ".github/workflows/browser-cookie-evidence.yml",
+      "bytes": 2635,
+      "blob": "b36a1ecd478880be7928682e5a98bba2e36b6c2c",
+      "sha256": "db5e3a9b108b923c5a7b5d4a37c757408cc7e3cd8e3df71d8fd81c4e0640c79c"
+    },
+    {
+      "path": "scripts/browser-cookie-evidence/runner.mjs",
+      "bytes": 15632,
+      "blob": "5b2a5b822080bc3f8e5a79f9288235d01c7cda53",
+      "sha256": "8419c9c65aa9552c72209337826543e3d4928a79e1b13e06bf43b31257f87c8e"
+    },
+    {
+      "path": "scripts/browser-cookie-evidence/targets.json",
+      "bytes": 983,
+      "blob": "be0436c76491d4cbedf8cea2f36f26ef60aac7cd",
+      "sha256": "c46a12389075d3df8b83f02927f3da8a7d552085f17a358ef0603530d5111c1d"
+    },
+    {
+      "path": "scripts/browser-cookie-evidence/overlay.json",
+      "bytes": 5291,
+      "blob": "f7fcc596a67bf17643812d5eb5652625e0521307",
+      "sha256": "9f8a9921ede9ba1f95a03f74448fe8588b6a607c0af7c2b2fe4019ea3db7408b"
+    },
+    {
+      "path": "scripts/browser-cookie-evidence/helpers.tsx",
+      "bytes": 3966,
+      "blob": "013cde386589c88e34033ed6acaba44e3aadf592",
+      "sha256": "955e73ff8126e97c8bc2136d56dabd4c13eeb8aa7f374d564b06880a0b9c68aa"
+    },
+    {
+      "path": "scripts/browser-cookie-evidence/vitest.cookie-evidence.config.ts",
+      "bytes": 1093,
+      "blob": "b96f364c6ca3ff408928381ce58dca648ccf9784",
+      "sha256": "e19ea4e95d7827dcc596897ea94dd02c3f12c24ff67df1d51210dc575432831c"
+    },
+    {
+      "path": "scripts/browser-cookie-evidence/README.md",
+      "bytes": 3579,
+      "blob": "03050eb7c7c06bc4c7d635028dd5767c26d1b415",
+      "sha256": "2a2838c64a395f59c47b17749000ffbc4f551fb3dfa133dd8eb9f4be21784349"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/components/BrowserVault.browser.tsx",
+      "bytes": 15876,
+      "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+      "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5"
+    },
+    {
+      "path": "apps/web/src/components/SafariAccessOnboarding.browser.tsx",
+      "bytes": 9911,
+      "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+      "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21"
+    },
+    {
+      "path": "apps/web/src/components/BrowserCookieImport.tsx",
+      "bytes": 10827,
+      "blob": "804add5e538e02eba011d54a7b26f6d2191e3729",
+      "sha256": "8485404d45e69dc374610b22c5f65d00639c1808a42660f58195daf124447612"
+    },
+    {
+      "path": "apps/web/src/components/BrowserVault.tsx",
+      "bytes": 16081,
+      "blob": "c36bdb734cff3a4fa8e2577dd99ca8d25af4d3fc",
+      "sha256": "73841b768b3ad54b04dbf3a1a5795fbfb091d0a3fa1d4fdbb9154d9a819601e0"
+    },
+    {
+      "path": "apps/web/src/components/SafariAccessOnboarding.tsx",
+      "bytes": 9751,
+      "blob": "d1849490edcaf8becabd1b94b41583f69e85a723",
+      "sha256": "fbd306bfa591bc1a0187b8731397a6c2b30c69c6830609ffc58b7841a1414b89"
+    },
+    {
+      "path": "packages/contracts/src/browserVault.ts",
+      "bytes": 3445,
+      "blob": "391c961fa8f81c703302c78de69dd089894e5432",
+      "sha256": "9d82bbfc2583b40f78fb34b75115f70b5fded335525875b787467f49c663312d"
+    },
+    {
+      "path": "apps/web/src/hooks/useTheme.ts",
+      "bytes": 12796,
+      "blob": "5091e45195987ef0142b58837fc2fd06881aac99",
+      "sha256": "7e610f2d7488ee245a4f97d4015e43f1f1e995ad06a080b2b6b202ca673fc121"
+    },
+    {
+      "path": "apps/web/src/index.css",
+      "bytes": 124428,
+      "blob": "4535eab558b16595382af27974050c5157f07649",
+      "sha256": "4492c4fc1a6c468fc1ed0268ebb9e69467f4c69ac5280bd2399aab9569ce5592"
+    },
+    {
+      "path": "bun.lock",
+      "bytes": 776515,
+      "blob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7"
+    }
+  ],
+  "overlays": [
+    {
+      "path": "apps/web/src/components/PrCookieEvidence1856Vault.browser.tsx",
+      "sha256": "0aee0815cfaac8a5c7351e48f0ad9bccb967f3ca52eb7df9d960c2740bf769f5"
+    },
+    {
+      "path": "apps/web/src/components/PrCookieEvidence1856Onboarding.browser.tsx",
+      "sha256": "a6807abba008fdea036bd2b2b10d4ce592470d1041d6a30ae187b7490a3d2213"
+    },
+    {
+      "path": "apps/web/vitest.cookie-evidence.config.ts",
+      "sha256": "e19ea4e95d7827dcc596897ea94dd02c3f12c24ff67df1d51210dc575432831c"
+    }
+  ],
+  "commonFixtures": [
+    {
+      "path": "apps/web/src/components/BrowserVault.browser.tsx",
+      "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef",
+      "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5",
+      "bytes": 15876,
+      "outputPath": "apps/web/src/components/PrCookieEvidence1856Vault.browser.tsx",
+      "helperAnchor": "describe(\"browser saved logins\", () => {",
+      "imports": "import { beforeEach as evidenceBeforeEach, afterEach as evidenceAfterEach } from \"vitest\";\nimport { useEffect as useEvidenceEffect } from \"react\";\nimport { useTheme as useEvidenceTheme } from \"../hooks/useTheme\";\n",
+      "replacements": [
+        {
+          "before": "      await render(<BrowserCookieImport api={api} destination={destination} />);\n      await page.getByRole(\"button\", { name: \"Import browser cookies\" }).click();\n      await page.getByRole(\"button\", { name: \"Import for this site\" }).click();\n      expect(api.importCookies).toHaveBeenCalledExactlyOnceWith({",
+          "after": "      await render(<BrowserCookieImport api={api} destination={destination} />);\n      await page.getByRole(\"button\", { name: \"Import browser cookies\" }).click();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-picker\", { imports: vi.mocked(api.importCookies).mock.calls });\n      await page.getByRole(\"button\", { name: \"Import for this site\" }).click();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-site-result\", { imports: vi.mocked(api.importCookies).mock.calls });\n      expect(api.importCookies).toHaveBeenCalledExactlyOnceWith({"
+        },
+        {
+          "before": "      scope.dispatchEvent(new Event(\"change\", { bubbles: true }));\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n      await page.getByRole(\"checkbox\").click();",
+          "after": "      scope.dispatchEvent(new Event(\"change\", { bubbles: true }));\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-profile-needs-consent\", { imports: vi.mocked(api.importCookies).mock.calls });\n      await page.getByRole(\"checkbox\").click();"
+        },
+        {
+          "before": "        confirmed: true,\n      });\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n    },\n  );",
+          "after": "        confirmed: true,\n      });\n      await expect.element(page.getByRole(\"button\", { name: \"Import all sites\" })).toBeDisabled();\n      if (browser === \"helium\")\n        await observeCookieEvidence(\"helium-profile-renewed\", { imports: vi.mocked(api.importCookies).mock.calls });\n    },\n  );"
+        }
+      ],
+      "expectedCases": 15,
+      "observedSha256": "0aee0815cfaac8a5c7351e48f0ad9bccb967f3ca52eb7df9d960c2740bf769f5"
+    },
+    {
+      "path": "apps/web/src/components/SafariAccessOnboarding.browser.tsx",
+      "blob": "03658ef075d7d7886531dab576b8fad7713119f8",
+      "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21",
+      "bytes": 9911,
+      "outputPath": "apps/web/src/components/PrCookieEvidence1856Onboarding.browser.tsx",
+      "helperAnchor": "function Harness() {",
+      "imports": "import { beforeEach as evidenceBeforeEach, afterEach as evidenceAfterEach } from \"vitest\";\nimport { useEffect as useEvidenceEffect } from \"react\";\nimport { useTheme as useEvidenceTheme } from \"../hooks/useTheme\";\n",
+      "replacements": [
+        {
+          "before": "    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"It's optional\");\n    for (const browser of [\"Chrome\", \"Safari\", \"Edge\", \"Helium\", \"Aside\", \"Arc\", \"Dia\"])",
+          "after": "    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"It's optional\");\n    await observeCookieEvidence(\"startup-intro\", {\n      openSettingsCalls: api.openSettings.mock.calls.length,\n      acknowledgment: localStorage.getItem(SAFARI_ACCESS_STORAGE_KEY),\n    });\n    for (const browser of [\"Chrome\", \"Safari\", \"Edge\", \"Helium\", \"Aside\", \"Arc\", \"Dia\"])"
+        },
+        {
+          "before": "    await page.getByRole(\"button\", { name: \"Safari access setup\" }).click();\n    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"broad macOS permission\");",
+          "after": "    await page.getByRole(\"button\", { name: \"Safari access setup\" }).click();\n    await expect.element(page.getByRole(\"dialog\")).toHaveTextContent(\"broad macOS permission\");\n    await observeCookieEvidence(\"manual-safari-setup\", {\n      openSettingsCalls: api.openSettings.mock.calls.length,\n      acknowledgment: localStorage.getItem(SAFARI_ACCESS_STORAGE_KEY),\n    });"
+        }
+      ],
+      "expectedCases": 12,
+      "observedSha256": "a6807abba008fdea036bd2b2b10d4ce592470d1041d6a30ae187b7490a3d2213"
+    }
+  ],
+  "applicationCodeModified": false,
+  "originalCommonFixturesPreserved": true,
+  "liveReport": "/home/runner/work/_temp/cookie-evidence-live-pr1856-after-desktop/vitest.json",
+  "qualification": "Actual production BrowserCookieImport, BrowserVault and SafariAccessOnboarding with production CSS/theme. Both complete author canonical browser files run unchanged except additive read-only observations and the real useTheme setup with a controlled desktop theme acknowledgement. Original native API/Safari replies and synthetic credentials remain fixtures; no installed-browser detection, Keychain, native cookie transfer or durable Electron session is exercised. The first-run information sheet remains an interim feature, not the unfinished direct onboarding importer.",
+  "run": "38183778847",
+  "status": "failed",
+  "actualExitCode": 1,
+  "exits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "errors": [
+    "The original Vitest report is missing."
+  ],
+  "reportSnapshot": {
+    "source": "/home/runner/work/_temp/cookie-evidence-live-pr1856-after-desktop/vitest.json",
+    "capturedAt": "2026-10-11T23:19:36.603Z",
+    "exists": false
+  },
+  "tests": [],
+  "testCounts": null,
+  "observations": []
+}

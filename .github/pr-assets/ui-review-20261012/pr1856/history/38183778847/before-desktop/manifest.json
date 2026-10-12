@@ -1,0 +1,62 @@
+[
+  {
+    "path": "exits.json",
+    "bytes": 21,
+    "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+    "blob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+  },
+  {
+    "path": "observed-BrowserVault.browser.tsx",
+    "bytes": 20645,
+    "sha256": "0aee0815cfaac8a5c7351e48f0ad9bccb967f3ca52eb7df9d960c2740bf769f5",
+    "blob": "2a881e8c8129d51a3ced9669b65a26fb8101dd05"
+  },
+  {
+    "path": "observed-SafariAccessOnboarding.browser.tsx",
+    "bytes": 14479,
+    "sha256": "a6807abba008fdea036bd2b2b10d4ce592470d1041d6a30ae187b7490a3d2213",
+    "blob": "4947b5336f9345c0c419be1a0c7f81f508bce5a5"
+  },
+  {
+    "path": "original-BrowserVault.browser.tsx",
+    "bytes": 15876,
+    "sha256": "88092b6b5f0ea6b3268f868aaac67f78177932c957ceb0b3e207ba3fa67d3ae5",
+    "blob": "c3dded6adfcb75adcf879e4b90323d2ded9b1bef"
+  },
+  {
+    "path": "original-SafariAccessOnboarding.browser.tsx",
+    "bytes": 9911,
+    "sha256": "4700f7933fd0c291a26dae100467329870b99b6cf455581fae12a05b5c104a21",
+    "blob": "03658ef075d7d7886531dab576b8fad7713119f8"
+  },
+  {
+    "path": "overlay.json",
+    "bytes": 5291,
+    "sha256": "9f8a9921ede9ba1f95a03f74448fe8588b6a607c0af7c2b2fe4019ea3db7408b",
+    "blob": "f7fcc596a67bf17643812d5eb5652625e0521307"
+  },
+  {
+    "path": "provenance.json",
+    "bytes": 10732,
+    "sha256": "b77f701ac54840f5f9e470ec27e0cfb740edddedf34362225c2bf79e3d30bc3b",
+    "blob": "66dfa2af9e5b24ac7c86899018a7687ca15dfb19"
+  },
+  {
+    "path": "report-snapshot.json",
+    "bytes": 160,
+    "sha256": "cc85acd25d0aff092d2a096d609d796995fceafb8eaff8c4fc67a3d81d78d657",
+    "blob": "e6517f3a7031278722a0008ed912254f52f5196e"
+  },
+  {
+    "path": "verified.json",
+    "bytes": 11113,
+    "sha256": "0d122b214ce7cc557059ad98d205b37733d34b7de173cfd6670c89fd3c0c92e0",
+    "blob": "c9119768b56919814bd91dd8851e0a1117b5525c"
+  },
+  {
+    "path": "vitest.log",
+    "bytes": 1666,
+    "sha256": "d8015a1ee12f6decebd656bb50072f325fae7772798e3f49fbb45ac45d58f1ce",
+    "blob": "e0c1de85b4baca24c9974b17a2b4908d4276afec"
+  }
+]
