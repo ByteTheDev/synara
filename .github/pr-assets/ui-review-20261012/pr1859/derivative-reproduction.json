@@ -1,0 +1,14 @@
+{
+  "verified": true,
+  "clips": 2,
+  "frames": 6,
+  "exactRegisteredInventory": true,
+  "allOutputsByteIdentical": true,
+  "command": [
+    "python",
+    "/workspace/scratch/f228243a1314/campaign/browser/pr1859-evidence/.github/pr-assets/ui-review-20261012/pr1859/reproduce-clips.py",
+    "--verify"
+  ],
+  "actualExitCode": 0,
+  "completedExecutionSession": 93323
+}

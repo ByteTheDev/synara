@@ -1,0 +1,34 @@
+{
+  "verified": true,
+  "rawArchiveMembers": 40,
+  "driverFiles": 7,
+  "sources": [
+    {
+      "side": "before",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+      "passed": 2,
+      "failed": 1,
+      "filtered": 219,
+      "canonicalByteReversal": true,
+      "sourceLeavesVerified": 9025,
+      "snapshots": 9,
+      "originalPngs": 5
+    },
+    {
+      "side": "after",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "tree": "7757705a5437174d5150c1810aaaaa3d6c4b2885",
+      "passed": 3,
+      "failed": 0,
+      "filtered": 219,
+      "canonicalByteReversal": true,
+      "sourceLeavesVerified": 9025,
+      "snapshots": 9,
+      "originalPngs": 5
+    }
+  ],
+  "clips": 2,
+  "registeredFrames": 6,
+  "qualification": "This verifies packet integrity and preserves the actual failed Before job; it does not convert that execution to a pass or prove a live provider lifecycle."
+}

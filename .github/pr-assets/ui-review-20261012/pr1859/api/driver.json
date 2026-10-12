@@ -1,0 +1,35 @@
+{
+  "sha": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+  "node_id": "C_kwDORyuZ6doAKDE5YTVjZmRhZWFiODBlOGVjMmE3ZDQ0YmZhMTBjMmFjNzdjMTk5Yjk",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:06:53Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T01:06:53Z"
+  },
+  "tree": {
+    "sha": "9c753258efdf0a7efd28ce1d51cfe8ff70141dbf",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/9c753258efdf0a7efd28ce1d51cfe8ff70141dbf"
+  },
+  "message": "ci: capture Devin startup and active-task status at exact source pins\n\nKeep the full canonical Loading-to-Thinking control and append identical\nproduction ChatView inputs. Preserve actual Before failures, task-stop\nrequest observations, full source guards and immutable media snapshots.",
+  "parents": [
+    {
+      "sha": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/86caa8ca8c25c06809a20abd058473b41de7b630",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/86caa8ca8c25c06809a20abd058473b41de7b630"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-12T01:17:07.036Z",
+  "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+  "tree": "7757705a5437174d5150c1810aaaaa3d6c4b2885",
+  "side": "after",
+  "driverHead": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+  "actualExits": {
+    "vitest": 0,
+    "tee": 0
+  },
+  "browserStepOutcome": "success",
+  "immutableSnapshotBoundary": "All subprocess-written outputs were copied once before parsing. No live path is uploaded.",
+  "snapshots": [
+    {
+      "path": "devin-active.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/devin-active.png",
+      "captureStartedAt": "2026-10-12T01:17:06.559Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.559Z",
+      "observedInitialBytes": 41830,
+      "observedEndBytes": 41830,
+      "capBytes": 16777216,
+      "capturedBytes": 41830,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 41830,
+      "sha256": "e24d1488957e66b00c30a2088c6090b2ef540b83a5a3be60f6882ac4bf3f01bc",
+      "gitBlob": "04b8a939160426b447782fd55a8edc2ee570041a"
+    },
+    {
+      "path": "devin-starting.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/devin-starting.png",
+      "captureStartedAt": "2026-10-12T01:17:06.560Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.560Z",
+      "observedInitialBytes": 38466,
+      "observedEndBytes": 38466,
+      "capBytes": 16777216,
+      "capturedBytes": 38466,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 38466,
+      "sha256": "42b38fb570b2e6b2c042e91a844e09f805e1a607fe707f3fbcc05a53d33bc9db",
+      "gitBlob": "166217fdd5b77684043882eec78d6d485206bdd3"
+    },
+    {
+      "path": "devin-stop-request.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/devin-stop-request.png",
+      "captureStartedAt": "2026-10-12T01:17:06.560Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.560Z",
+      "observedInitialBytes": 42047,
+      "observedEndBytes": 42047,
+      "capBytes": 16777216,
+      "capturedBytes": 42047,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 42047,
+      "sha256": "3d5eccdbfa751c7b1ee0d975ad83742d777dc291a9392cf45d06dc8a4c4dc214",
+      "gitBlob": "e303a371ea5a80beb84588bf15b1693e5f65cd8c"
+    },
+    {
+      "path": "exits.json",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/exits.json",
+      "captureStartedAt": "2026-10-12T01:17:06.560Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.560Z",
+      "observedInitialBytes": 21,
+      "observedEndBytes": 21,
+      "capBytes": 16777216,
+      "capturedBytes": 21,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 21,
+      "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+      "gitBlob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+    },
+    {
+      "path": "loading-before-ack.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/loading-before-ack.png",
+      "captureStartedAt": "2026-10-12T01:17:06.560Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.560Z",
+      "observedInitialBytes": 35860,
+      "observedEndBytes": 35860,
+      "capBytes": 16777216,
+      "capturedBytes": 35860,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 35860,
+      "sha256": "2c059b08b6c383dc000185c79902659a8ee26b11193f3a478393fcaf3ed89821",
+      "gitBlob": "462ad2b3dda33d73952f596d37d74ca272f6014d"
+    },
+    {
+      "path": "thinking-after-ack.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/thinking-after-ack.png",
+      "captureStartedAt": "2026-10-12T01:17:06.560Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.560Z",
+      "observedInitialBytes": 35879,
+      "observedEndBytes": 35879,
+      "capBytes": 16777216,
+      "capturedBytes": 35879,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 35879,
+      "sha256": "7096317072e858525c0c6e1ab544963bdf06218e755b9ef480d8b152f63317b4",
+      "gitBlob": "2cf3e9219b4364e51d50d092d60a7d656e8380c8"
+    },
+    {
+      "path": "video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+      "captureStartedAt": "2026-10-12T01:17:06.561Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.561Z",
+      "observedInitialBytes": 352084,
+      "observedEndBytes": 352084,
+      "capBytes": 134217728,
+      "capturedBytes": 352084,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 352084,
+      "sha256": "b2dfa62ae0baecf08a916668639b603e3208b4f049dcdf05be4538891a82a03e",
+      "gitBlob": "bfd84dbe0d74262ee79ea3c5f42dfb20c8674ee2"
+    },
+    {
+      "path": "vitest.log",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/after/vitest.log",
+      "captureStartedAt": "2026-10-12T01:17:06.561Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.561Z",
+      "observedInitialBytes": 4916,
+      "observedEndBytes": 4916,
+      "capBytes": 16777216,
+      "capturedBytes": 4916,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 4916,
+      "sha256": "02f671f08df3d795803935eb122250f0e8569ef3c3433a1f26d719987d046c6a",
+      "gitBlob": "b74c336fc44eff26fd5604266f613c91ab0fac5e"
+    },
+    {
+      "path": "vitest.json",
+      "capturedFrom": "/home/runner/work/_temp/pr1859-devin-after/vitest.json",
+      "captureStartedAt": "2026-10-12T01:17:06.562Z",
+      "captureCompletedAt": "2026-10-12T01:17:06.562Z",
+      "observedInitialBytes": 75541,
+      "observedEndBytes": 75541,
+      "capBytes": 16777216,
+      "capturedBytes": 75541,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 75541,
+      "sha256": "aeab3c3a8e5337b4c1c4e916be792f1f841a9e7359e3d42389e46fd9c7259d73",
+      "gitBlob": "c1799cf66cefda2fcadf42c7980f097611dcfcde"
+    }
+  ],
+  "verificationErrors": [],
+  "passed": true,
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) shows Loading until ack, then keeps Thinking through the post-ack gap",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) PR1859 review evidence preserves startup before provider activity",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) PR1859 review evidence reports active Devin work and sends the exact task stop",
+      "status": "passed",
+      "failureMessages": []
+    }
+  ],
+  "unselectedTests": 219,
+  "observations": [
+    {
+      "phase": "loading-before-ack",
+      "side": "after",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Loading"
+      ],
+      "provider": "codex",
+      "sessionStatus": "ready",
+      "latestTurnState": null,
+      "backgroundTask": null,
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "thinking-after-ack",
+      "side": "after",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Thinking"
+      ],
+      "provider": "codex",
+      "sessionStatus": "running",
+      "latestTurnState": "running",
+      "backgroundTask": null,
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "devin-starting",
+      "side": "after",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Starting Devin…"
+      ],
+      "provider": "devin",
+      "sessionStatus": "starting",
+      "latestTurnState": null,
+      "backgroundTask": null,
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "devin-active",
+      "side": "after",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Thinking"
+      ],
+      "provider": "devin",
+      "sessionStatus": "starting",
+      "latestTurnState": "running",
+      "backgroundTask": "Validate the fixture repositoryrunning221d 13hStop",
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "devin-stop-request",
+      "side": "after",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Thinking"
+      ],
+      "provider": "devin",
+      "sessionStatus": "starting",
+      "latestTurnState": "running",
+      "backgroundTask": "Validate the fixture repositoryrunning221d 13hStop",
+      "stops": [
+        {
+          "type": "thread.task.stop",
+          "threadId": "thread-browser-test",
+          "taskId": "pr1859-check-task"
+        }
+      ],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    }
+  ],
+  "sourceProof": {
+    "stage": "after-browser-and-overlay-removal",
+    "capturedAt": "2026-10-12T01:17:06.932Z",
+    "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+    "tree": "7757705a5437174d5150c1810aaaaa3d6c4b2885",
+    "trackedFiles": 9025,
+    "gitTreeListingSha256": "b3844652fb93360878754d20ab6893f012a82d0bc19eef15e7be1d9e89506f08",
+    "rawTrackedBlobsAndModesVerified": true,
+    "status": [
+      "?? .pr1859-driver/",
+      "?? browser-devin-evidence-live/after/devin-active.png",
+      "?? browser-devin-evidence-live/after/devin-starting.png",
+      "?? browser-devin-evidence-live/after/devin-stop-request.png",
+      "?? browser-devin-evidence-live/after/exits.json",
+      "?? browser-devin-evidence-live/after/loading-before-ack.png",
+      "?? browser-devin-evidence-live/after/thinking-after-ack.png",
+      "?? browser-devin-evidence-live/after/video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+      "?? browser-devin-evidence/after/append-fixture.tsx",
+      "?? browser-devin-evidence/after/canonical-fixture.tsx",
+      "?? browser-devin-evidence/after/devin-active.png",
+      "?? browser-devin-evidence/after/devin-starting.png",
+      "?? browser-devin-evidence/after/devin-stop-request.png",
+      "?? browser-devin-evidence/after/exits.json",
+      "?? browser-devin-evidence/after/loading-before-ack.png",
+      "?? browser-devin-evidence/after/observed-fixture.tsx",
+      "?? browser-devin-evidence/after/overlay.json",
+      "?? browser-devin-evidence/after/provenance.json",
+      "?? browser-devin-evidence/after/snapshot-captures.json",
+      "?? browser-devin-evidence/after/source-before.json",
+      "?? browser-devin-evidence/after/thinking-after-ack.png",
+      "?? browser-devin-evidence/after/video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+      "?? browser-devin-evidence/after/vitest.config.ts",
+      "?? browser-devin-evidence/after/vitest.json"
+    ],
+    "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+    "mismatches": []
+  },
+  "files": [
+    {
+      "path": "append-fixture.tsx",
+      "bytes": 7283,
+      "sha256": "892fed9f82d1ad37893a8302b3379851cf68514e66f269c6243132d8af189650",
+      "gitBlob": "672c302fb27a016229caf4f9b7240ecd13df9dd4"
+    },
+    {
+      "path": "canonical-fixture.tsx",
+      "bytes": 577781,
+      "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+      "gitBlob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+    },
+    {
+      "path": "devin-active.png",
+      "bytes": 41830,
+      "sha256": "e24d1488957e66b00c30a2088c6090b2ef540b83a5a3be60f6882ac4bf3f01bc",
+      "gitBlob": "04b8a939160426b447782fd55a8edc2ee570041a"
+    },
+    {
+      "path": "devin-starting.png",
+      "bytes": 38466,
+      "sha256": "42b38fb570b2e6b2c042e91a844e09f805e1a607fe707f3fbcc05a53d33bc9db",
+      "gitBlob": "166217fdd5b77684043882eec78d6d485206bdd3"
+    },
+    {
+      "path": "devin-stop-request.png",
+      "bytes": 42047,
+      "sha256": "3d5eccdbfa751c7b1ee0d975ad83742d777dc291a9392cf45d06dc8a4c4dc214",
+      "gitBlob": "e303a371ea5a80beb84588bf15b1693e5f65cd8c"
+    },
+    {
+      "path": "exits.json",
+      "bytes": 21,
+      "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d",
+      "gitBlob": "3473f6ea9f98ddf04f33c797c8f6c72f74ae82c1"
+    },
+    {
+      "path": "loading-before-ack.png",
+      "bytes": 35860,
+      "sha256": "2c059b08b6c383dc000185c79902659a8ee26b11193f3a478393fcaf3ed89821",
+      "gitBlob": "462ad2b3dda33d73952f596d37d74ca272f6014d"
+    },
+    {
+      "path": "observed-fixture.tsx",
+      "bytes": 585163,
+      "sha256": "d85b8f761f368a0d88fbd0f496ea7e68c82caef58bfc89451420225a9a0c73a8",
+      "gitBlob": "65812e7c00514a51ca25ad9c76ac8d260f7d059a"
+    },
+    {
+      "path": "overlay.json",
+      "bytes": 11159,
+      "sha256": "79c75ca41f7c383e9abb8c2a668ba8b2c8ffefe84d7e2086f7e0113223dc9071",
+      "gitBlob": "ad9b1b7de7e59170e51eb135201756e54375be79"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 3856,
+      "sha256": "f4a5e69d598e100576bd69219cc81a04e6be39fc393345397bec0b0b0d6aee83",
+      "gitBlob": "d24d79c2e65e3fc5f1a2d2473719d4b48b60c804"
+    },
+    {
+      "path": "snapshot-captures.json",
+      "bytes": 7320,
+      "sha256": "b8c77d7268f5cb1f01da76267c34a0ea28a3d721e8df167d5c83ce1955d93b9f",
+      "gitBlob": "7273c2f03b9d7d0cdb4f41ae8d11c1f52a4822ef"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 1997,
+      "sha256": "583114c23238376f9b0d08680f120b59dba2a7a48b82b7bdbb5cc40492bbfa79",
+      "gitBlob": "5e619774a3ec18bdf264a51363ed31dbb014213b"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 554,
+      "sha256": "1cbcf83f53f80e3a454ea4453bb448e2662be3a91c5606f25bfb4494c43115ac",
+      "gitBlob": "cfd1de7f48058289486fa9d7664d6a522e7e5b0b"
+    },
+    {
+      "path": "thinking-after-ack.png",
+      "bytes": 35879,
+      "sha256": "7096317072e858525c0c6e1ab544963bdf06218e755b9ef480d8b152f63317b4",
+      "gitBlob": "2cf3e9219b4364e51d50d092d60a7d656e8380c8"
+    },
+    {
+      "path": "video-probe.json",
+      "bytes": 396,
+      "sha256": "9784e1d097c838ccea2b12a0382545d9ad8899c3e5654278510a346b5989722c",
+      "gitBlob": "ec5e482a135d94ae25dac1440773e5a8a15156df"
+    },
+    {
+      "path": "video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+      "bytes": 352084,
+      "sha256": "b2dfa62ae0baecf08a916668639b603e3208b4f049dcdf05be4538891a82a03e",
+      "gitBlob": "bfd84dbe0d74262ee79ea3c5f42dfb20c8674ee2"
+    },
+    {
+      "path": "vitest.config.ts",
+      "bytes": 986,
+      "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880",
+      "gitBlob": "3d3b6f560682eb6b4f9c3aadfcdc00ecca89050a"
+    },
+    {
+      "path": "vitest.json",
+      "bytes": 75541,
+      "sha256": "aeab3c3a8e5337b4c1c4e916be792f1f841a9e7359e3d42389e46fd9c7259d73",
+      "gitBlob": "c1799cf66cefda2fcadf42c7980f097611dcfcde"
+    },
+    {
+      "path": "vitest.log",
+      "bytes": 4916,
+      "sha256": "02f671f08df3d795803935eb122250f0e8569ef3c3433a1f26d719987d046c6a",
+      "gitBlob": "b74c336fc44eff26fd5604266f613c91ab0fac5e"
+    }
+  ]
+}

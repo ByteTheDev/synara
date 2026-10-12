@@ -1,0 +1,96 @@
+name: PR1859 exact-source Devin status UI evidence
+
+on:
+  push:
+    branches:
+      - cleanup/20261012/devin-status-1859-evidence
+    paths:
+      - .github/workflows/pr1859-devin-evidence.yml
+      - scripts/pr1859-devin-evidence/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr1859-devin-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  targets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: targets
+        run: node scripts/pr1859-devin-evidence/runner.mjs matrix
+
+  capture:
+    name: Devin status UI evidence ${{ matrix.id }}
+    needs: targets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    env:
+      PR1859_SIDE: ${{ matrix.id }}
+      PR1859_SOURCE: ${{ matrix.source }}
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Checkout isolated evidence driver
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr1859-driver
+          persist-credentials: false
+      - name: Setup frozen workspace
+        uses: ./.github/actions/setup-workspace
+        with:
+          electron: "false"
+      - name: Install actual Chromium and video runtime
+        timeout-minutes: 10
+        run: |
+          if ! command -v ffprobe >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install --yes --no-install-recommends ffmpeg
+          fi
+          ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+      - name: Prepare exact canonical fixture copy and identical capture append
+        run: node .pr1859-driver/scripts/pr1859-devin-evidence/runner.mjs prepare
+      - name: Run actual ChatView assertions and capture browser interaction
+        id: browser
+        timeout-minutes: 12
+        working-directory: apps/web
+        run: |
+          set +e
+          bunx --no-install vitest run --config vitest.pr1859-devin-evidence.config.ts --reporter=default --reporter=json --outputFile="$PR1859_REPORT" 2>&1 | tee "$VITE_PR1859_OUTPUT/vitest.log"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$VITE_PR1859_OUTPUT/exits.json"
+          if [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi
+          exit "${result[1]}"
+      - name: Verify complete source and retain actual failures
+        if: always()
+        env:
+          PR1859_BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+        run: node .pr1859-driver/scripts/pr1859-devin-evidence/runner.mjs verify
+      - name: Upload original source-pinned images, video and actual results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1859-devin-evidence-${{ matrix.id }}-${{ matrix.source }}
+          path: browser-devin-evidence/
+          if-no-files-found: error
+          retention-days: 30

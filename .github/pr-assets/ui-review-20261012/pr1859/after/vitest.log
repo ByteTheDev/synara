@@ -1,0 +1,29 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m1:15:47 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[BABEL] Note: The code generator has deoptimised the styling of /home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1859Devin.browser.tsx as it exceeds the max of 500KB.
+[90mstdout[2m | src/components/PrUiEvidence1859Devin.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mshows Loading until ack, then keeps Thinking through the post-ack gap
+[22m[39mPR1859_OBSERVATION {"phase":"loading-before-ack","side":"after","source":"86caa8ca8c25c06809a20abd058473b41de7b630","viewport":{"width":960,"height":1100},"workingLabels":["Loading"],"provider":"codex","sessionStatus":"ready","latestTurnState":null,"backgroundTask":null,"stops":[],"fixtureBoundary":"Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."}
+[90mstdout[2m | src/components/PrUiEvidence1859Devin.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mshows Loading until ack, then keeps Thinking through the post-ack gap
+[22m[39mPR1859_OBSERVATION {"phase":"thinking-after-ack","side":"after","source":"86caa8ca8c25c06809a20abd058473b41de7b630","viewport":{"width":960,"height":1100},"workingLabels":["Thinking"],"provider":"codex","sessionStatus":"running","latestTurnState":"running","backgroundTask":null,"stops":[],"fixtureBoundary":"Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."}
+[90mstdout[2m | src/components/PrUiEvidence1859Devin.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mPR1859 review evidence preserves startup before provider activity
+[22m[39mPR1859_OBSERVATION {"phase":"devin-starting","side":"after","source":"86caa8ca8c25c06809a20abd058473b41de7b630","viewport":{"width":960,"height":1100},"workingLabels":["Starting Devin…"],"provider":"devin","sessionStatus":"starting","latestTurnState":null,"backgroundTask":null,"stops":[],"fixtureBoundary":"Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."}
+[90mstdout[2m | src/components/PrUiEvidence1859Devin.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mPR1859 review evidence reports active Devin work and sends the exact task stop
+[22m[39mPR1859_OBSERVATION {"phase":"devin-active","side":"after","source":"86caa8ca8c25c06809a20abd058473b41de7b630","viewport":{"width":960,"height":1100},"workingLabels":["Thinking"],"provider":"devin","sessionStatus":"starting","latestTurnState":"running","backgroundTask":"Validate the fixture repositoryrunning221d 13hStop","stops":[],"fixtureBoundary":"Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."}
+[90mstdout[2m | src/components/PrUiEvidence1859Devin.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2mPR1859 review evidence reports active Devin work and sends the exact task stop
+[22m[39mPR1859_OBSERVATION {"phase":"devin-stop-request","side":"after","source":"86caa8ca8c25c06809a20abd058473b41de7b630","viewport":{"width":960,"height":1100},"workingLabels":["Thinking"],"provider":"devin","sessionStatus":"starting","latestTurnState":"running","backgroundTask":"Validate the fixture repositoryrunning221d 13hStop","stops":[{"type":"thread.task.stop","threadId":"thread-browser-test","taskId":"pr1859-check-task"}],"fixtureBoundary":"Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."}
+ [32m✓[39m [30m[43m chromium [49m[39m src/components/PrUiEvidence1859Devin.browser.tsx [2m([22m[2m222 tests[22m[2m | [22m[33m219 skipped[39m[2m)[22m[33m 17111[2mms[22m[39m
+     [33m[2m✓[22m[39m shows Loading until ack, then keeps Thinking through the post-ack gap [33m 15000[2mms[22m[39m
+     [33m[2m✓[22m[39m PR1859 review evidence preserves startup before provider activity [33m 865[2mms[22m[39m
+     [33m[2m✓[22m[39m PR1859 review evidence reports active Devin work and sends the exact task stop [33m 1209[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[2m | [22m[33m219 skipped[39m[90m (222)[39m
+[2m   Start at [22m 01:15:45
+[2m   Duration [22m 78.22s[2m (transform 0ms, setup 0ms, import 58.47s, tests 17.11s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/_temp/pr1859-devin-after/vitest.json

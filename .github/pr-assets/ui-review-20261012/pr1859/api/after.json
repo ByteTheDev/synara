@@ -1,0 +1,35 @@
+{
+  "sha": "86caa8ca8c25c06809a20abd058473b41de7b630",
+  "node_id": "C_kwDORyuZ6doAKDg2Y2FhOGNhOGMyNWMwNjgwOWEyMGFiZDA1ODQ3M2I0MWRlN2I2MzA",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/86caa8ca8c25c06809a20abd058473b41de7b630",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/86caa8ca8c25c06809a20abd058473b41de7b630",
+  "author": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T00:26:34Z"
+  },
+  "committer": {
+    "name": "Commander Chara",
+    "email": "249489759+cmdr-chara@users.noreply.github.com",
+    "date": "2026-10-12T00:26:34Z"
+  },
+  "tree": {
+    "sha": "7757705a5437174d5150c1810aaaaa3d6c4b2885",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/7757705a5437174d5150c1810aaaaa3d6c4b2885"
+  },
+  "message": "fix(devin): fence task credential revocation and retain event ownership\n\nPersist credential rotation before a task stop can revoke the shared gateway lease, and recheck task identity after persistence. Preserve late background task turn and parent routing.\n\nKeep the author history and all existing tests; add durable recovery and sparse-event regressions.",
+  "parents": [
+    {
+      "sha": "6ec8dfb0a81be9ea5c6b41225405c08300386436",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/6ec8dfb0a81be9ea5c6b41225405c08300386436",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/6ec8dfb0a81be9ea5c6b41225405c08300386436"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

@@ -1,0 +1,332 @@
+[
+  {
+    "side": "before",
+    "artifactId": 11720858691,
+    "size": 2496835,
+    "sha256": "2110b1036796e2bb0550aed324e131b501bda24291b4be3cd1563826129695c9",
+    "members": [
+      {
+        "path": "before/append-fixture.tsx",
+        "bytes": 7283,
+        "sha256": "892fed9f82d1ad37893a8302b3379851cf68514e66f269c6243132d8af189650"
+      },
+      {
+        "path": "before/canonical-fixture.tsx",
+        "bytes": 577781,
+        "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb"
+      },
+      {
+        "path": "before/devin-active.png",
+        "bytes": 42245,
+        "sha256": "678c31ea8114bb4cab1302f5ca66f65e67220af6d2191118994ad32d6637ab97"
+      },
+      {
+        "path": "before/devin-starting.png",
+        "bytes": 38504,
+        "sha256": "de23c0d6f13bb524a01de5396f1be1e809ad5775198f154f4f8038b572ca2407"
+      },
+      {
+        "path": "before/devin-stop-request.png",
+        "bytes": 42207,
+        "sha256": "ffec98c5ca743f0dcf221ee877a14acff4ea4256dd575647ae43495c6948b94c"
+      },
+      {
+        "path": "before/exits.json",
+        "bytes": 21,
+        "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1"
+      },
+      {
+        "path": "before/loading-before-ack.png",
+        "bytes": 35851,
+        "sha256": "16e7a5252b4a0ac955fa086d20288895ba9777ebe9db441438492a719f773494"
+      },
+      {
+        "path": "before/observed-fixture.tsx",
+        "bytes": 585163,
+        "sha256": "d85b8f761f368a0d88fbd0f496ea7e68c82caef58bfc89451420225a9a0c73a8"
+      },
+      {
+        "path": "before/overlay.json",
+        "bytes": 11159,
+        "sha256": "79c75ca41f7c383e9abb8c2a668ba8b2c8ffefe84d7e2086f7e0113223dc9071"
+      },
+      {
+        "path": "before/provenance.json",
+        "bytes": 3859,
+        "sha256": "e5b94a6a08a368cadf181a75e75716bbf4a241d26fdd0d23c4971bf88e771c6d"
+      },
+      {
+        "path": "before/snapshot-captures.json",
+        "bytes": 7337,
+        "sha256": "030d4540e02af4804f3c285c38261bcb9a6b38451c7c1e07c8db77d266b51410"
+      },
+      {
+        "path": "before/source-after.json",
+        "bytes": 2020,
+        "sha256": "712ee9598f1625f4b549f9c523dde3122a9a7374f04e9de2b8ed7d6790566166"
+      },
+      {
+        "path": "before/source-before.json",
+        "bytes": 554,
+        "sha256": "6ab584786d4b5a65ec19c813cc34621e6a9da7e7ebee25dfa1d164ad9ad0142b"
+      },
+      {
+        "path": "before/thinking-after-ack.png",
+        "bytes": 35772,
+        "sha256": "1febf934be647111d9dd9b7edf26b533228a952e379e345100105f35f13ad34c"
+      },
+      {
+        "path": "before/verified.json",
+        "bytes": 22430,
+        "sha256": "f3bdd02dd7d6be5b21a1fa64d059dbd1a5808cfc6172b64495c34211b0b74223"
+      },
+      {
+        "path": "before/video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+        "bytes": 2562931,
+        "sha256": "f0c7a7cf79899e114322adcd988aa0250f43f953b9013963ab4d446d5434ddd2"
+      },
+      {
+        "path": "before/video-probe.json",
+        "bytes": 397,
+        "sha256": "336769e0494ba8b0cc423c361ca330e6d4a22ae4db9297a89f163e67b6e8186a"
+      },
+      {
+        "path": "before/vitest.config.ts",
+        "bytes": 986,
+        "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880"
+      },
+      {
+        "path": "before/vitest.json",
+        "bytes": 79802,
+        "sha256": "67edc75a2bfde93a4bf9e029b75ba596069a250b3a38bfb8912b3b3805451be5"
+      },
+      {
+        "path": "before/vitest.log",
+        "bytes": 31525,
+        "sha256": "aed2de3e4cd41a7e0131d15bd043acb7d2ca5f41252f3196034546df576314f8"
+      }
+    ],
+    "allOriginalMembersRetainedByteIdentically": true,
+    "selected": [
+      {
+        "fullName": "ChatView transcript geometry (full app) shows Loading until ack, then keeps Thinking through the post-ack gap",
+        "status": "passed"
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1859 review evidence preserves startup before provider activity",
+        "status": "passed"
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1859 review evidence reports active Devin work and sends the exact task stop",
+        "status": "failed"
+      }
+    ],
+    "actualExits": {
+      "vitest": 1,
+      "tee": 0
+    },
+    "unselected": 219,
+    "sourceGuard": {
+      "stage": "after-browser-and-overlay-removal",
+      "capturedAt": "2026-10-12T01:19:26.505Z",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+      "trackedFiles": 9025,
+      "gitTreeListingSha256": "da96dc668a4bbe8b64bfc5a1695d34a9b3bd7bac78d9acd83ffc480ec1759790",
+      "rawTrackedBlobsAndModesVerified": true,
+      "status": [
+        "?? .pr1859-driver/",
+        "?? browser-devin-evidence-live/before/devin-active.png",
+        "?? browser-devin-evidence-live/before/devin-starting.png",
+        "?? browser-devin-evidence-live/before/devin-stop-request.png",
+        "?? browser-devin-evidence-live/before/exits.json",
+        "?? browser-devin-evidence-live/before/loading-before-ack.png",
+        "?? browser-devin-evidence-live/before/thinking-after-ack.png",
+        "?? browser-devin-evidence-live/before/video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+        "?? browser-devin-evidence/before/append-fixture.tsx",
+        "?? browser-devin-evidence/before/canonical-fixture.tsx",
+        "?? browser-devin-evidence/before/devin-active.png",
+        "?? browser-devin-evidence/before/devin-starting.png",
+        "?? browser-devin-evidence/before/devin-stop-request.png",
+        "?? browser-devin-evidence/before/exits.json",
+        "?? browser-devin-evidence/before/loading-before-ack.png",
+        "?? browser-devin-evidence/before/observed-fixture.tsx",
+        "?? browser-devin-evidence/before/overlay.json",
+        "?? browser-devin-evidence/before/provenance.json",
+        "?? browser-devin-evidence/before/snapshot-captures.json",
+        "?? browser-devin-evidence/before/source-before.json",
+        "?? browser-devin-evidence/before/thinking-after-ack.png",
+        "?? browser-devin-evidence/before/video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+        "?? browser-devin-evidence/before/vitest.config.ts",
+        "?? browser-devin-evidence/before/vitest.json"
+      ],
+      "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+      "mismatches": []
+    }
+  },
+  {
+    "side": "after",
+    "artifactId": 11721787654,
+    "size": 604191,
+    "sha256": "7450b52ffe992ba0dd496f6d522e25a9911eeec49f61e9e63b47093d58dad6b7",
+    "members": [
+      {
+        "path": "after/append-fixture.tsx",
+        "bytes": 7283,
+        "sha256": "892fed9f82d1ad37893a8302b3379851cf68514e66f269c6243132d8af189650"
+      },
+      {
+        "path": "after/devin-active.png",
+        "bytes": 41830,
+        "sha256": "e24d1488957e66b00c30a2088c6090b2ef540b83a5a3be60f6882ac4bf3f01bc"
+      },
+      {
+        "path": "after/canonical-fixture.tsx",
+        "bytes": 577781,
+        "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb"
+      },
+      {
+        "path": "after/devin-starting.png",
+        "bytes": 38466,
+        "sha256": "42b38fb570b2e6b2c042e91a844e09f805e1a607fe707f3fbcc05a53d33bc9db"
+      },
+      {
+        "path": "after/devin-stop-request.png",
+        "bytes": 42047,
+        "sha256": "3d5eccdbfa751c7b1ee0d975ad83742d777dc291a9392cf45d06dc8a4c4dc214"
+      },
+      {
+        "path": "after/exits.json",
+        "bytes": 21,
+        "sha256": "fd2bbf4ae4ce24b9efb613b97b11541648c899942393b06a4c64ea50be30618d"
+      },
+      {
+        "path": "after/loading-before-ack.png",
+        "bytes": 35860,
+        "sha256": "2c059b08b6c383dc000185c79902659a8ee26b11193f3a478393fcaf3ed89821"
+      },
+      {
+        "path": "after/observed-fixture.tsx",
+        "bytes": 585163,
+        "sha256": "d85b8f761f368a0d88fbd0f496ea7e68c82caef58bfc89451420225a9a0c73a8"
+      },
+      {
+        "path": "after/overlay.json",
+        "bytes": 11159,
+        "sha256": "79c75ca41f7c383e9abb8c2a668ba8b2c8ffefe84d7e2086f7e0113223dc9071"
+      },
+      {
+        "path": "after/provenance.json",
+        "bytes": 3856,
+        "sha256": "f4a5e69d598e100576bd69219cc81a04e6be39fc393345397bec0b0b0d6aee83"
+      },
+      {
+        "path": "after/snapshot-captures.json",
+        "bytes": 7320,
+        "sha256": "b8c77d7268f5cb1f01da76267c34a0ea28a3d721e8df167d5c83ce1955d93b9f"
+      },
+      {
+        "path": "after/source-after.json",
+        "bytes": 1997,
+        "sha256": "583114c23238376f9b0d08680f120b59dba2a7a48b82b7bdbb5cc40492bbfa79"
+      },
+      {
+        "path": "after/source-before.json",
+        "bytes": 554,
+        "sha256": "1cbcf83f53f80e3a454ea4453bb448e2662be3a91c5606f25bfb4494c43115ac"
+      },
+      {
+        "path": "after/thinking-after-ack.png",
+        "bytes": 35879,
+        "sha256": "7096317072e858525c0c6e1ab544963bdf06218e755b9ef480d8b152f63317b4"
+      },
+      {
+        "path": "after/verified.json",
+        "bytes": 17960,
+        "sha256": "01af7ef9998559887804918af7c0814b6f4b4b20449dd25d1745d7c80e737328"
+      },
+      {
+        "path": "after/video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+        "bytes": 352084,
+        "sha256": "b2dfa62ae0baecf08a916668639b603e3208b4f049dcdf05be4538891a82a03e"
+      },
+      {
+        "path": "after/video-probe.json",
+        "bytes": 396,
+        "sha256": "9784e1d097c838ccea2b12a0382545d9ad8899c3e5654278510a346b5989722c"
+      },
+      {
+        "path": "after/vitest.config.ts",
+        "bytes": 986,
+        "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880"
+      },
+      {
+        "path": "after/vitest.json",
+        "bytes": 75541,
+        "sha256": "aeab3c3a8e5337b4c1c4e916be792f1f841a9e7359e3d42389e46fd9c7259d73"
+      },
+      {
+        "path": "after/vitest.log",
+        "bytes": 4916,
+        "sha256": "02f671f08df3d795803935eb122250f0e8569ef3c3433a1f26d719987d046c6a"
+      }
+    ],
+    "allOriginalMembersRetainedByteIdentically": true,
+    "selected": [
+      {
+        "fullName": "ChatView transcript geometry (full app) shows Loading until ack, then keeps Thinking through the post-ack gap",
+        "status": "passed"
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1859 review evidence preserves startup before provider activity",
+        "status": "passed"
+      },
+      {
+        "fullName": "ChatView transcript geometry (full app) PR1859 review evidence reports active Devin work and sends the exact task stop",
+        "status": "passed"
+      }
+    ],
+    "actualExits": {
+      "vitest": 0,
+      "tee": 0
+    },
+    "unselected": 219,
+    "sourceGuard": {
+      "stage": "after-browser-and-overlay-removal",
+      "capturedAt": "2026-10-12T01:17:06.932Z",
+      "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+      "tree": "7757705a5437174d5150c1810aaaaa3d6c4b2885",
+      "trackedFiles": 9025,
+      "gitTreeListingSha256": "b3844652fb93360878754d20ab6893f012a82d0bc19eef15e7be1d9e89506f08",
+      "rawTrackedBlobsAndModesVerified": true,
+      "status": [
+        "?? .pr1859-driver/",
+        "?? browser-devin-evidence-live/after/devin-active.png",
+        "?? browser-devin-evidence-live/after/devin-starting.png",
+        "?? browser-devin-evidence-live/after/devin-stop-request.png",
+        "?? browser-devin-evidence-live/after/exits.json",
+        "?? browser-devin-evidence-live/after/loading-before-ack.png",
+        "?? browser-devin-evidence-live/after/thinking-after-ack.png",
+        "?? browser-devin-evidence-live/after/video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+        "?? browser-devin-evidence/after/append-fixture.tsx",
+        "?? browser-devin-evidence/after/canonical-fixture.tsx",
+        "?? browser-devin-evidence/after/devin-active.png",
+        "?? browser-devin-evidence/after/devin-starting.png",
+        "?? browser-devin-evidence/after/devin-stop-request.png",
+        "?? browser-devin-evidence/after/exits.json",
+        "?? browser-devin-evidence/after/loading-before-ack.png",
+        "?? browser-devin-evidence/after/observed-fixture.tsx",
+        "?? browser-devin-evidence/after/overlay.json",
+        "?? browser-devin-evidence/after/provenance.json",
+        "?? browser-devin-evidence/after/snapshot-captures.json",
+        "?? browser-devin-evidence/after/source-before.json",
+        "?? browser-devin-evidence/after/thinking-after-ack.png",
+        "?? browser-devin-evidence/after/video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+        "?? browser-devin-evidence/after/vitest.config.ts",
+        "?? browser-devin-evidence/after/vitest.json"
+      ],
+      "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+      "mismatches": []
+    }
+  }
+]

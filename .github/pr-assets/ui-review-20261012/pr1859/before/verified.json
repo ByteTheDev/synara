@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-12T01:19:26.919Z",
+  "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+  "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+  "side": "before",
+  "driverHead": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+  "actualExits": {
+    "vitest": 1,
+    "tee": 0
+  },
+  "browserStepOutcome": "failure",
+  "immutableSnapshotBoundary": "All subprocess-written outputs were copied once before parsing. No live path is uploaded.",
+  "snapshots": [
+    {
+      "path": "devin-active.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/devin-active.png",
+      "captureStartedAt": "2026-10-12T01:19:25.921Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.921Z",
+      "observedInitialBytes": 42245,
+      "observedEndBytes": 42245,
+      "capBytes": 16777216,
+      "capturedBytes": 42245,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 42245,
+      "sha256": "678c31ea8114bb4cab1302f5ca66f65e67220af6d2191118994ad32d6637ab97",
+      "gitBlob": "7e0c67c5fb824294ee31ac42fbe9ffdf9c584ed0"
+    },
+    {
+      "path": "devin-starting.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/devin-starting.png",
+      "captureStartedAt": "2026-10-12T01:19:25.922Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.922Z",
+      "observedInitialBytes": 38504,
+      "observedEndBytes": 38504,
+      "capBytes": 16777216,
+      "capturedBytes": 38504,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 38504,
+      "sha256": "de23c0d6f13bb524a01de5396f1be1e809ad5775198f154f4f8038b572ca2407",
+      "gitBlob": "74b800477de7cf4be313be378293ab36b64bbe82"
+    },
+    {
+      "path": "devin-stop-request.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/devin-stop-request.png",
+      "captureStartedAt": "2026-10-12T01:19:25.923Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.923Z",
+      "observedInitialBytes": 42207,
+      "observedEndBytes": 42207,
+      "capBytes": 16777216,
+      "capturedBytes": 42207,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 42207,
+      "sha256": "ffec98c5ca743f0dcf221ee877a14acff4ea4256dd575647ae43495c6948b94c",
+      "gitBlob": "8a7b83b99c0e13171569aee4e2ecde5e676b931f"
+    },
+    {
+      "path": "exits.json",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/exits.json",
+      "captureStartedAt": "2026-10-12T01:19:25.923Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.923Z",
+      "observedInitialBytes": 21,
+      "observedEndBytes": 21,
+      "capBytes": 16777216,
+      "capturedBytes": 21,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+      "gitBlob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+    },
+    {
+      "path": "loading-before-ack.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/loading-before-ack.png",
+      "captureStartedAt": "2026-10-12T01:19:25.923Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.923Z",
+      "observedInitialBytes": 35851,
+      "observedEndBytes": 35851,
+      "capBytes": 16777216,
+      "capturedBytes": 35851,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 35851,
+      "sha256": "16e7a5252b4a0ac955fa086d20288895ba9777ebe9db441438492a719f773494",
+      "gitBlob": "bfbadd58bc2b970d9ee1e1814ec0375a14b8ae96"
+    },
+    {
+      "path": "thinking-after-ack.png",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/thinking-after-ack.png",
+      "captureStartedAt": "2026-10-12T01:19:25.924Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.924Z",
+      "observedInitialBytes": 35772,
+      "observedEndBytes": 35772,
+      "capBytes": 16777216,
+      "capturedBytes": 35772,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 35772,
+      "sha256": "1febf934be647111d9dd9b7edf26b533228a952e379e345100105f35f13ad34c",
+      "gitBlob": "5db4d250aaf7f215aa7e03bd1c0d1e6b37c6cb75"
+    },
+    {
+      "path": "video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+      "captureStartedAt": "2026-10-12T01:19:25.924Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.927Z",
+      "observedInitialBytes": 2562931,
+      "observedEndBytes": 2562931,
+      "capBytes": 134217728,
+      "capturedBytes": 2562931,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 2562931,
+      "sha256": "f0c7a7cf79899e114322adcd988aa0250f43f953b9013963ab4d446d5434ddd2",
+      "gitBlob": "384785c9cbcfc28cd2ec989ddfc7677ab9338aae"
+    },
+    {
+      "path": "vitest.log",
+      "capturedFrom": "/home/runner/work/synara/synara/browser-devin-evidence-live/before/vitest.log",
+      "captureStartedAt": "2026-10-12T01:19:25.932Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.933Z",
+      "observedInitialBytes": 31525,
+      "observedEndBytes": 31525,
+      "capBytes": 16777216,
+      "capturedBytes": 31525,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 31525,
+      "sha256": "aed2de3e4cd41a7e0131d15bd043acb7d2ca5f41252f3196034546df576314f8",
+      "gitBlob": "2ec5b0019ddaf941cf4d893df9d5d54b71430054"
+    },
+    {
+      "path": "vitest.json",
+      "capturedFrom": "/home/runner/work/_temp/pr1859-devin-before/vitest.json",
+      "captureStartedAt": "2026-10-12T01:19:25.933Z",
+      "captureCompletedAt": "2026-10-12T01:19:25.933Z",
+      "observedInitialBytes": 79802,
+      "observedEndBytes": 79802,
+      "capBytes": 16777216,
+      "capturedBytes": 79802,
+      "capped": false,
+      "changedDuringCapture": false,
+      "possibleTail": false,
+      "qualification": "One immutable observed byte prefix. Later descendant writes are not silently incorporated; actual root exits and successful format parsing remain separate requirements.",
+      "bytes": 79802,
+      "sha256": "67edc75a2bfde93a4bf9e029b75ba596069a250b3a38bfb8912b3b3805451be5",
+      "gitBlob": "ae1e9f2470735b9c8a222c0a5fc99d5465a16f91"
+    }
+  ],
+  "verificationErrors": [
+    "Actual browser step outcome was failure",
+    "Actual Vitest exit was 1",
+    "AssertionError [ERR_ASSERTION]: Every selected case must pass."
+  ],
+  "passed": false,
+  "selectedTests": [
+    {
+      "fullName": "ChatView transcript geometry (full app) shows Loading until ack, then keeps Thinking through the post-ack gap",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) PR1859 review evidence preserves startup before provider activity",
+      "status": "passed",
+      "failureMessages": []
+    },
+    {
+      "fullName": "ChatView transcript geometry (full app) PR1859 review evidence reports active Devin work and sends the exact task stop",
+      "status": "failed",
+      "failureMessages": [
+        "Error: Cannot find element with locator: getByText('Thinking', { exact: true })\n\n\u001b[36m<body>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mstyle\u001b[39m=\u001b[32m\"position: fixed; inset: 0px; width: 100vw; height: 100vh; display: grid; overflow: hidden;\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar h-svh overflow-hidden bg-[var(--app-rail-shell-background)]\"\u001b[39m\n      \u001b[33mdata-sidebar-layout\u001b[39m=\u001b[32m\"rail\"\u001b[39m\n      \u001b[33mdata-sidebar-side\u001b[39m=\u001b[32m\"left\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"sidebar-wrapper\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--sidebar-width: 16rem; --sidebar-width-icon: 3rem; --app-top-strip-height: 44px;\"\u001b[39m\n    \u001b[36m>\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n      \u001b[36m<div\u001b[39m …\u001b[36m />\u001b[39m\n    \u001b[36m</div>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal-anchored\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_ec_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"outline-none\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport-anchored\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n  \u001b[36m<div\u001b[39m\n    \u001b[33mdata-base-ui-portal\u001b[39m=\u001b[32m\"\"\u001b[39m\n    \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-portal\"\u001b[39m\n    \u001b[33mid\u001b[39m=\u001b[32m\"_r_ed_\"\u001b[39m\n  \u001b[36m>\u001b[39m\n    \u001b[36m<div\u001b[39m\n      \u001b[33maria-atomic\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Notifications\"\u001b[39m\n      \u001b[33maria-live\u001b[39m=\u001b[32m\"polite\"\u001b[39m\n      \u001b[33maria-relevant\u001b[39m=\u001b[32m\"additions text\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"fixed z-[200] mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-sm [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)] data-[position=top-center]:top-4 data-[position=top-left]:top-[calc(var(--toast-inset)+44px)] data-[position=top-right]:top-[calc(var(--toast-inset)+44px)] data-[position*=bottom]:bottom-(--toast-inset) data-[position*=left]:left-(--toast-inset) data-[position*=right]:right-(--toast-inset) data-[position*=center]:-translate-x-1/2 data-[position*=center]:left-1/2\"\u001b[39m\n      \u001b[33mdata-position\u001b[39m=\u001b[32m\"top-center\"\u001b[39m\n      \u001b[33mdata-slot\u001b[39m=\u001b[32m\"toast-viewport\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"region\"\u001b[39m\n      \u001b[33mstyle\u001b[39m=\u001b[32m\"--toast-frontmost-height: 0px;\"\u001b[39m\n      \u001b[33mtabindex\u001b[39m=\u001b[32m\"-1\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n  \u001b[36m</div>\u001b[39m\n\u001b[36m</body>\u001b[39m...\n    at Proxy.__VITEST_POLL_CHAIN__ (http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/vitest@4.1.10+d610da17a2f750ab/node_modules/vitest/dist/chunks/test.DNmyFkvJ.js?v=85b081af:3748:47)\n    at http://127.0.0.1:51100/home/runner/work/synara/synara/apps/web/src/components/PrUiEvidence1859Devin.browser.tsx?import&browserv=1791767761156:12434:70\n    at async http://127.0.0.1:51100/@fs/home/runner/work/synara/synara/node_modules/.bun/@vitest+runner@4.1.10/node_modules/@vitest/runner/dist/chunk-artifact.js?v=85b081af:1903:20"
+      ]
+    }
+  ],
+  "unselectedTests": 219,
+  "observations": [
+    {
+      "phase": "loading-before-ack",
+      "side": "before",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Loading"
+      ],
+      "provider": "codex",
+      "sessionStatus": "ready",
+      "latestTurnState": null,
+      "backgroundTask": null,
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "thinking-after-ack",
+      "side": "before",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Thinking"
+      ],
+      "provider": "codex",
+      "sessionStatus": "running",
+      "latestTurnState": "running",
+      "backgroundTask": null,
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "devin-starting",
+      "side": "before",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Starting Devin…"
+      ],
+      "provider": "devin",
+      "sessionStatus": "starting",
+      "latestTurnState": null,
+      "backgroundTask": null,
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "devin-active",
+      "side": "before",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Starting Devin…"
+      ],
+      "provider": "devin",
+      "sessionStatus": "starting",
+      "latestTurnState": "running",
+      "backgroundTask": "Validate the fixture repositoryrunning221d 13hStop",
+      "stops": [],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    },
+    {
+      "phase": "devin-stop-request",
+      "side": "before",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "workingLabels": [
+        "Starting Devin…"
+      ],
+      "provider": "devin",
+      "sessionStatus": "starting",
+      "latestTurnState": "running",
+      "backgroundTask": "Validate the fixture repositoryrunning221d 13hStop",
+      "stops": [
+        {
+          "type": "thread.task.stop",
+          "threadId": "thread-browser-test",
+          "taskId": "pr1859-check-task"
+        }
+      ],
+      "fixtureBoundary": "Controlled read-model and RPC replies; actual production ChatView, task row, CSS and real pointer actions."
+    }
+  ],
+  "sourceProof": {
+    "stage": "after-browser-and-overlay-removal",
+    "capturedAt": "2026-10-12T01:19:26.505Z",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "trackedFiles": 9025,
+    "gitTreeListingSha256": "da96dc668a4bbe8b64bfc5a1695d34a9b3bd7bac78d9acd83ffc480ec1759790",
+    "rawTrackedBlobsAndModesVerified": true,
+    "status": [
+      "?? .pr1859-driver/",
+      "?? browser-devin-evidence-live/before/devin-active.png",
+      "?? browser-devin-evidence-live/before/devin-starting.png",
+      "?? browser-devin-evidence-live/before/devin-stop-request.png",
+      "?? browser-devin-evidence-live/before/exits.json",
+      "?? browser-devin-evidence-live/before/loading-before-ack.png",
+      "?? browser-devin-evidence-live/before/thinking-after-ack.png",
+      "?? browser-devin-evidence-live/before/video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+      "?? browser-devin-evidence/before/append-fixture.tsx",
+      "?? browser-devin-evidence/before/canonical-fixture.tsx",
+      "?? browser-devin-evidence/before/devin-active.png",
+      "?? browser-devin-evidence/before/devin-starting.png",
+      "?? browser-devin-evidence/before/devin-stop-request.png",
+      "?? browser-devin-evidence/before/exits.json",
+      "?? browser-devin-evidence/before/loading-before-ack.png",
+      "?? browser-devin-evidence/before/observed-fixture.tsx",
+      "?? browser-devin-evidence/before/overlay.json",
+      "?? browser-devin-evidence/before/provenance.json",
+      "?? browser-devin-evidence/before/snapshot-captures.json",
+      "?? browser-devin-evidence/before/source-before.json",
+      "?? browser-devin-evidence/before/thinking-after-ack.png",
+      "?? browser-devin-evidence/before/video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+      "?? browser-devin-evidence/before/vitest.config.ts",
+      "?? browser-devin-evidence/before/vitest.json"
+    ],
+    "allowedUntrackedBoundary": "Only this job's explicit frozen evidence/live-output directories and separately Git-verified driver checkout.",
+    "mismatches": []
+  },
+  "files": [
+    {
+      "path": "append-fixture.tsx",
+      "bytes": 7283,
+      "sha256": "892fed9f82d1ad37893a8302b3379851cf68514e66f269c6243132d8af189650",
+      "gitBlob": "672c302fb27a016229caf4f9b7240ecd13df9dd4"
+    },
+    {
+      "path": "canonical-fixture.tsx",
+      "bytes": 577781,
+      "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+      "gitBlob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+    },
+    {
+      "path": "devin-active.png",
+      "bytes": 42245,
+      "sha256": "678c31ea8114bb4cab1302f5ca66f65e67220af6d2191118994ad32d6637ab97",
+      "gitBlob": "7e0c67c5fb824294ee31ac42fbe9ffdf9c584ed0"
+    },
+    {
+      "path": "devin-starting.png",
+      "bytes": 38504,
+      "sha256": "de23c0d6f13bb524a01de5396f1be1e809ad5775198f154f4f8038b572ca2407",
+      "gitBlob": "74b800477de7cf4be313be378293ab36b64bbe82"
+    },
+    {
+      "path": "devin-stop-request.png",
+      "bytes": 42207,
+      "sha256": "ffec98c5ca743f0dcf221ee877a14acff4ea4256dd575647ae43495c6948b94c",
+      "gitBlob": "8a7b83b99c0e13171569aee4e2ecde5e676b931f"
+    },
+    {
+      "path": "exits.json",
+      "bytes": 21,
+      "sha256": "760ba5d3be8fd42ee8472fa6eecfcc4945e36e41ba272dbc1b79b2f3f0e253d1",
+      "gitBlob": "058bbfec741bd3e7ccaacbd55e256ea550ebad9a"
+    },
+    {
+      "path": "loading-before-ack.png",
+      "bytes": 35851,
+      "sha256": "16e7a5252b4a0ac955fa086d20288895ba9777ebe9db441438492a719f773494",
+      "gitBlob": "bfbadd58bc2b970d9ee1e1814ec0375a14b8ae96"
+    },
+    {
+      "path": "observed-fixture.tsx",
+      "bytes": 585163,
+      "sha256": "d85b8f761f368a0d88fbd0f496ea7e68c82caef58bfc89451420225a9a0c73a8",
+      "gitBlob": "65812e7c00514a51ca25ad9c76ac8d260f7d059a"
+    },
+    {
+      "path": "overlay.json",
+      "bytes": 11159,
+      "sha256": "79c75ca41f7c383e9abb8c2a668ba8b2c8ffefe84d7e2086f7e0113223dc9071",
+      "gitBlob": "ad9b1b7de7e59170e51eb135201756e54375be79"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 3859,
+      "sha256": "e5b94a6a08a368cadf181a75e75716bbf4a241d26fdd0d23c4971bf88e771c6d",
+      "gitBlob": "4f721273e05a00cfd9bd3aaaff6cdc05fe624ae8"
+    },
+    {
+      "path": "snapshot-captures.json",
+      "bytes": 7337,
+      "sha256": "030d4540e02af4804f3c285c38261bcb9a6b38451c7c1e07c8db77d266b51410",
+      "gitBlob": "55c419716159d3e219ad8ea1d58711461e3dfb5b"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 2020,
+      "sha256": "712ee9598f1625f4b549f9c523dde3122a9a7374f04e9de2b8ed7d6790566166",
+      "gitBlob": "ee6e725a2360eb2bbae230e571e1225e383246d1"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 554,
+      "sha256": "6ab584786d4b5a65ec19c813cc34621e6a9da7e7ebee25dfa1d164ad9ad0142b",
+      "gitBlob": "ed96804b568c7b5509d4305f2aa7fe806f580178"
+    },
+    {
+      "path": "thinking-after-ack.png",
+      "bytes": 35772,
+      "sha256": "1febf934be647111d9dd9b7edf26b533228a952e379e345100105f35f13ad34c",
+      "gitBlob": "5db4d250aaf7f215aa7e03bd1c0d1e6b37c6cb75"
+    },
+    {
+      "path": "video-probe.json",
+      "bytes": 397,
+      "sha256": "336769e0494ba8b0cc423c361ca330e6d4a22ae4db9297a89f163e67b6e8186a",
+      "gitBlob": "176811ba5e2759ae3a19938780be7afcee860b1c"
+    },
+    {
+      "path": "video/page@34fe129622ad8c3fea3656dd7c26897d.webm",
+      "bytes": 2562931,
+      "sha256": "f0c7a7cf79899e114322adcd988aa0250f43f953b9013963ab4d446d5434ddd2",
+      "gitBlob": "384785c9cbcfc28cd2ec989ddfc7677ab9338aae"
+    },
+    {
+      "path": "vitest.config.ts",
+      "bytes": 986,
+      "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880",
+      "gitBlob": "3d3b6f560682eb6b4f9c3aadfcdc00ecca89050a"
+    },
+    {
+      "path": "vitest.json",
+      "bytes": 79802,
+      "sha256": "67edc75a2bfde93a4bf9e029b75ba596069a250b3a38bfb8912b3b3805451be5",
+      "gitBlob": "ae1e9f2470735b9c8a222c0a5fc99d5465a16f91"
+    },
+    {
+      "path": "vitest.log",
+      "bytes": 31525,
+      "sha256": "aed2de3e4cd41a7e0131d15bd043acb7d2ca5f41252f3196034546df576314f8",
+      "gitBlob": "2ec5b0019ddaf941cf4d893df9d5d54b71430054"
+    }
+  ]
+}

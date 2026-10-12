@@ -1,0 +1,35 @@
+{
+  "sha": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+  "node_id": "C_kwDORyuZ6doAKDllMDE5NjJlMGIxZThmZWM5ZmIwZTE3ZjE3YTY0MDE3YmM0ZWFmOTQ",
+  "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+  "html_url": "https://github.com/Emanuele-web04/synara/commit/9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+  "author": {
+    "name": "Emanuele Di Pietro",
+    "email": "127427797+Emanuele-web04@users.noreply.github.com",
+    "date": "2026-10-11T21:46:00Z"
+  },
+  "committer": {
+    "name": "Emanuele Di Pietro",
+    "email": "127427797+Emanuele-web04@users.noreply.github.com",
+    "date": "2026-10-11T21:46:00Z"
+  },
+  "tree": {
+    "sha": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "url": "https://api.github.com/repos/Emanuele-web04/synara/git/trees/81b2ce105b3362e1266bb15916e0b16633f3843d"
+  },
+  "message": "release: 1.0.3 Stable with safer recovery and Hub navigation",
+  "parents": [
+    {
+      "sha": "fc6fd90c1f3854719ef83fcdb3ee7e57a8437986",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/git/commits/fc6fd90c1f3854719ef83fcdb3ee7e57a8437986",
+      "html_url": "https://github.com/Emanuele-web04/synara/commit/fc6fd90c1f3854719ef83fcdb3ee7e57a8437986"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "path": ".github/workflows/pr1859-devin-evidence.yml",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3301,
+    "sha256": "ec518f222eec04cca5f9ca84c8c903c3b6a110494dc5518f986db76a25fcc2e3",
+    "blob": "e72ba4c19755b243fb8c5ab2b5963e78ddaae2b6"
+  },
+  {
+    "path": "scripts/pr1859-devin-evidence/README.md",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 3820,
+    "sha256": "ba844f3db9ed77dd2a2d7a86f0baf92eb8216f8df37f9e0f2d800771d96471a4",
+    "blob": "fdc0232c3829c5f3d89534b7389b757c0230ebef"
+  },
+  {
+    "path": "scripts/pr1859-devin-evidence/append-fixture.tsx",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 7283,
+    "sha256": "892fed9f82d1ad37893a8302b3379851cf68514e66f269c6243132d8af189650",
+    "blob": "672c302fb27a016229caf4f9b7240ecd13df9dd4"
+  },
+  {
+    "path": "scripts/pr1859-devin-evidence/overlay.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 11159,
+    "sha256": "79c75ca41f7c383e9abb8c2a668ba8b2c8ffefe84d7e2086f7e0113223dc9071",
+    "blob": "ad9b1b7de7e59170e51eb135201756e54375be79"
+  },
+  {
+    "path": "scripts/pr1859-devin-evidence/runner.mjs",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 24328,
+    "sha256": "b851547f3bc5330a3f89221e0433214f19db3cfaab8fb41833a71504ca74d6bc",
+    "blob": "2f0e3691bd2f7e60eda6b1e0e7807311cdfb90fb"
+  },
+  {
+    "path": "scripts/pr1859-devin-evidence/targets.json",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 840,
+    "sha256": "1abc7c7fe52e0e502422f83645b29d8ac1c0a905cd3cba084892c0817da316a8",
+    "blob": "4fec0d4cee072c1f8e3270c5bd25fcf3f172d43f"
+  },
+  {
+    "path": "scripts/pr1859-devin-evidence/vitest.pr1859-devin-evidence.config.ts",
+    "mode": "100644",
+    "type": "blob",
+    "bytes": 986,
+    "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880",
+    "blob": "3d3b6f560682eb6b4f9c3aadfcdc00ecca89050a"
+  }
+]

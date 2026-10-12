@@ -1,0 +1,45 @@
+{
+  "total_count": 2,
+  "artifacts": [
+    {
+      "id": 11721787654,
+      "node_id": "MDg6QXJ0aWZhY3QxMTcyMTc4NzY1NA==",
+      "name": "pr1859-devin-evidence-after-86caa8ca8c25c06809a20abd058473b41de7b630",
+      "size_in_bytes": 604191,
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11721787654",
+      "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11721787654/zip",
+      "expired": false,
+      "digest": "sha256:7450b52ffe992ba0dd496f6d522e25a9911eeec49f61e9e63b47093d58dad6b7",
+      "created_at": "2026-10-12T01:17:08Z",
+      "updated_at": "2026-10-12T01:17:08Z",
+      "expires_at": "2026-11-11T01:17:07Z",
+      "workflow_run": {
+        "id": 38191112310,
+        "repository_id": 1194039785,
+        "head_repository_id": 1194039785,
+        "head_branch": "cleanup/20261012/devin-status-1859-evidence",
+        "head_sha": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9"
+      }
+    },
+    {
+      "id": 11720858691,
+      "node_id": "MDg6QXJ0aWZhY3QxMTcyMDg1ODY5MQ==",
+      "name": "pr1859-devin-evidence-before-9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "size_in_bytes": 2496835,
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11720858691",
+      "archive_download_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/artifacts/11720858691/zip",
+      "expired": false,
+      "digest": "sha256:2110b1036796e2bb0550aed324e131b501bda24291b4be3cd1563826129695c9",
+      "created_at": "2026-10-12T01:19:27Z",
+      "updated_at": "2026-10-12T01:19:27Z",
+      "expires_at": "2026-11-11T01:19:27Z",
+      "workflow_run": {
+        "id": 38191112310,
+        "repository_id": 1194039785,
+        "head_repository_id": 1194039785,
+        "head_branch": "cleanup/20261012/devin-status-1859-evidence",
+        "head_sha": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9"
+      }
+    }
+  ]
+}

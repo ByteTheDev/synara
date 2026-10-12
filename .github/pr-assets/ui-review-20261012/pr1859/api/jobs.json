@@ -1,0 +1,337 @@
+{
+  "total_count": 3,
+  "jobs": [
+    {
+      "id": 114623872418,
+      "run_id": 38191112310,
+      "workflow_name": "PR1859 exact-source Devin status UI evidence",
+      "head_branch": "cleanup/20261012/devin-status-1859-evidence",
+      "run_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/runs/38191112310",
+      "run_attempt": 1,
+      "node_id": "CR_kwDORyuZ6c8AAAAasB19og",
+      "head_sha": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/jobs/114623872418",
+      "html_url": "https://github.com/Emanuele-web04/synara/actions/runs/38191112310/job/114623872418",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-12T01:14:23Z",
+      "started_at": "2026-10-12T01:14:25Z",
+      "completed_at": "2026-10-12T01:14:35Z",
+      "name": "targets",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-12T01:14:26Z",
+          "completed_at": "2026-10-12T01:14:27Z"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-12T01:14:27Z",
+          "completed_at": "2026-10-12T01:14:32Z"
+        },
+        {
+          "name": "Run node scripts/pr1859-devin-evidence/runner.mjs matrix",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-12T01:14:32Z",
+          "completed_at": "2026-10-12T01:14:33Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-12T01:14:33Z",
+          "completed_at": "2026-10-12T01:14:33Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-12T01:14:33Z",
+          "completed_at": "2026-10-12T01:14:33Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/Emanuele-web04/synara/check-runs/114623872418",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000089180,
+      "runner_name": "GitHub Actions 1000089180",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114623913279,
+      "run_id": 38191112310,
+      "workflow_name": "PR1859 exact-source Devin status UI evidence",
+      "head_branch": "cleanup/20261012/devin-status-1859-evidence",
+      "run_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/runs/38191112310",
+      "run_attempt": 1,
+      "node_id": "CR_kwDORyuZ6c8AAAAasB4dPw",
+      "head_sha": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/jobs/114623913279",
+      "html_url": "https://github.com/Emanuele-web04/synara/actions/runs/38191112310/job/114623913279",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-12T01:14:35Z",
+      "started_at": "2026-10-12T01:14:37Z",
+      "completed_at": "2026-10-12T01:17:28Z",
+      "name": "Devin status UI evidence after",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-12T01:14:38Z",
+          "completed_at": "2026-10-12T01:14:39Z"
+        },
+        {
+          "name": "Checkout immutable application source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-12T01:14:39Z",
+          "completed_at": "2026-10-12T01:14:44Z"
+        },
+        {
+          "name": "Checkout isolated evidence driver",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-12T01:14:44Z",
+          "completed_at": "2026-10-12T01:14:49Z"
+        },
+        {
+          "name": "Setup frozen workspace",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-12T01:14:49Z",
+          "completed_at": "2026-10-12T01:15:18Z"
+        },
+        {
+          "name": "Install actual Chromium and video runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-12T01:15:18Z",
+          "completed_at": "2026-10-12T01:15:43Z"
+        },
+        {
+          "name": "Prepare exact canonical fixture copy and identical capture append",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-12T01:15:43Z",
+          "completed_at": "2026-10-12T01:15:44Z"
+        },
+        {
+          "name": "Run actual ChatView assertions and capture browser interaction",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-12T01:15:44Z",
+          "completed_at": "2026-10-12T01:17:06Z"
+        },
+        {
+          "name": "Verify complete source and retain actual failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-12T01:17:06Z",
+          "completed_at": "2026-10-12T01:17:07Z"
+        },
+        {
+          "name": "Upload original source-pinned images, video and actual results",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-12T01:17:07Z",
+          "completed_at": "2026-10-12T01:17:08Z"
+        },
+        {
+          "name": "Post Setup frozen workspace",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-12T01:17:08Z",
+          "completed_at": "2026-10-12T01:17:26Z"
+        },
+        {
+          "name": "Post Checkout isolated evidence driver",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-12T01:17:26Z",
+          "completed_at": "2026-10-12T01:17:26Z"
+        },
+        {
+          "name": "Post Checkout immutable application source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-12T01:17:26Z",
+          "completed_at": "2026-10-12T01:17:26Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-12T01:17:26Z",
+          "completed_at": "2026-10-12T01:17:26Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/Emanuele-web04/synara/check-runs/114623913279",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000089197,
+      "runner_name": "GitHub Actions 1000089197",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114623913291,
+      "run_id": 38191112310,
+      "workflow_name": "PR1859 exact-source Devin status UI evidence",
+      "head_branch": "cleanup/20261012/devin-status-1859-evidence",
+      "run_url": "https://api.github.com/repos/Emanuele-web04/synara/actions/runs/38191112310",
+      "run_attempt": 1,
+      "node_id": "CR_kwDORyuZ6c8AAAAasB4dSw",
+      "head_sha": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+      "url": "https://api.github.com/repos/Emanuele-web04/synara/actions/jobs/114623913291",
+      "html_url": "https://github.com/Emanuele-web04/synara/actions/runs/38191112310/job/114623913291",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-12T01:14:35Z",
+      "started_at": "2026-10-12T01:14:37Z",
+      "completed_at": "2026-10-12T01:19:30Z",
+      "name": "Devin status UI evidence before",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-12T01:14:38Z",
+          "completed_at": "2026-10-12T01:14:38Z"
+        },
+        {
+          "name": "Checkout immutable application source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-12T01:14:38Z",
+          "completed_at": "2026-10-12T01:14:43Z"
+        },
+        {
+          "name": "Checkout isolated evidence driver",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-12T01:14:43Z",
+          "completed_at": "2026-10-12T01:14:48Z"
+        },
+        {
+          "name": "Setup frozen workspace",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-12T01:14:48Z",
+          "completed_at": "2026-10-12T01:15:16Z"
+        },
+        {
+          "name": "Install actual Chromium and video runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-12T01:15:16Z",
+          "completed_at": "2026-10-12T01:15:54Z"
+        },
+        {
+          "name": "Prepare exact canonical fixture copy and identical capture append",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-12T01:15:54Z",
+          "completed_at": "2026-10-12T01:15:55Z"
+        },
+        {
+          "name": "Run actual ChatView assertions and capture browser interaction",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-10-12T01:15:55Z",
+          "completed_at": "2026-10-12T01:19:25Z"
+        },
+        {
+          "name": "Verify complete source and retain actual failures",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8,
+          "started_at": "2026-10-12T01:19:25Z",
+          "completed_at": "2026-10-12T01:19:26Z"
+        },
+        {
+          "name": "Upload original source-pinned images, video and actual results",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-12T01:19:26Z",
+          "completed_at": "2026-10-12T01:19:27Z"
+        },
+        {
+          "name": "Post Setup frozen workspace",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-12T01:19:27Z",
+          "completed_at": "2026-10-12T01:19:27Z"
+        },
+        {
+          "name": "Post Checkout isolated evidence driver",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-12T01:19:27Z",
+          "completed_at": "2026-10-12T01:19:28Z"
+        },
+        {
+          "name": "Post Checkout immutable application source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-12T01:19:28Z",
+          "completed_at": "2026-10-12T01:19:28Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-12T01:19:28Z",
+          "completed_at": "2026-10-12T01:19:28Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/Emanuele-web04/synara/check-runs/114623913291",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000089198,
+      "runner_name": "GitHub Actions 1000089198",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

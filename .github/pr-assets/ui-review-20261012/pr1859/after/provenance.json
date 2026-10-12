@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-10-12T01:15:44.692Z",
+  "source": "86caa8ca8c25c06809a20abd058473b41de7b630",
+  "tree": "7757705a5437174d5150c1810aaaaa3d6c4b2885",
+  "side": "after",
+  "expectedSelected": 3,
+  "expectedPhases": [
+    "loading-before-ack",
+    "thinking-after-ack",
+    "devin-starting",
+    "devin-active",
+    "devin-stop-request"
+  ],
+  "viewport": {
+    "width": 960,
+    "height": 1100
+  },
+  "liveOutput": "/home/runner/work/synara/synara/browser-devin-evidence-live/after",
+  "liveReportPath": "/home/runner/work/_temp/pr1859-devin-after/vitest.json",
+  "originalFixture": {
+    "path": "apps/web/src/components/ChatView.browser.tsx",
+    "bytes": 577781,
+    "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+    "gitBlob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+  },
+  "overlay": {
+    "path": "apps/web/src/components/PrUiEvidence1859Devin.browser.tsx",
+    "bytes": 585163,
+    "sha256": "d85b8f761f368a0d88fbd0f496ea7e68c82caef58bfc89451420225a9a0c73a8",
+    "gitBlob": "65812e7c00514a51ca25ad9c76ac8d260f7d059a"
+  },
+  "config": {
+    "path": "apps/web/vitest.pr1859-devin-evidence.config.ts",
+    "bytes": 986,
+    "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880",
+    "gitBlob": "3d3b6f560682eb6b4f9c3aadfcdc00ecca89050a"
+  },
+  "driver": {
+    "head": "19a5cfdaeab80e8ec2a7d44bfa10c2ac77c199b9",
+    "files": [
+      {
+        "path": ".github/workflows/pr1859-devin-evidence.yml",
+        "bytes": 3301,
+        "sha256": "ec518f222eec04cca5f9ca84c8c903c3b6a110494dc5518f986db76a25fcc2e3",
+        "gitBlob": "e72ba4c19755b243fb8c5ab2b5963e78ddaae2b6"
+      },
+      {
+        "path": "scripts/pr1859-devin-evidence/runner.mjs",
+        "bytes": 24328,
+        "sha256": "b851547f3bc5330a3f89221e0433214f19db3cfaab8fb41833a71504ca74d6bc",
+        "gitBlob": "2f0e3691bd2f7e60eda6b1e0e7807311cdfb90fb"
+      },
+      {
+        "path": "scripts/pr1859-devin-evidence/append-fixture.tsx",
+        "bytes": 7283,
+        "sha256": "892fed9f82d1ad37893a8302b3379851cf68514e66f269c6243132d8af189650",
+        "gitBlob": "672c302fb27a016229caf4f9b7240ecd13df9dd4"
+      },
+      {
+        "path": "scripts/pr1859-devin-evidence/vitest.pr1859-devin-evidence.config.ts",
+        "bytes": 986,
+        "sha256": "38a1f91d934e55a045cc4a88d06c5ca4a036f9a2bbb2f4f88b1bc3690d08c880",
+        "gitBlob": "3d3b6f560682eb6b4f9c3aadfcdc00ecca89050a"
+      },
+      {
+        "path": "scripts/pr1859-devin-evidence/targets.json",
+        "bytes": 840,
+        "sha256": "1abc7c7fe52e0e502422f83645b29d8ac1c0a905cd3cba084892c0817da316a8",
+        "gitBlob": "4fec0d4cee072c1f8e3270c5bd25fcf3f172d43f"
+      },
+      {
+        "path": "scripts/pr1859-devin-evidence/README.md",
+        "bytes": 3820,
+        "sha256": "ba844f3db9ed77dd2a2d7a86f0baf92eb8216f8df37f9e0f2d800771d96471a4",
+        "gitBlob": "fdc0232c3829c5f3d89534b7389b757c0230ebef"
+      },
+      {
+        "path": "scripts/pr1859-devin-evidence/overlay.json",
+        "bytes": 11159,
+        "sha256": "79c75ca41f7c383e9abb8c2a668ba8b2c8ffefe84d7e2086f7e0113223dc9071",
+        "gitBlob": "ad9b1b7de7e59170e51eb135201756e54375be79"
+      }
+    ]
+  },
+  "interpretation": "Identical controlled Devin read models on both source pins, plus the entire unchanged canonical Loading-to-Thinking send case. A failed Before label assertion remains a failed test/job; no backend lifecycle result follows from pixels.",
+  "backendBoundary": "Real production ChatView, CSS, router, task row and pointer clicks; controlled read-model/RPC replies. The exact task-stop request is observed, but no live Devin task, native ingestion, process stop or durable provider execution is claimed.",
+  "fixtureTime": "Fixed fixture timestamps define settled turn durations. They do not measure test runtime or model latency."
+}

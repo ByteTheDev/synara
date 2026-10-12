@@ -1,0 +1,8 @@
+{
+  "file": "video/page@f68e32c1c0682ebe0e20da2843d185cb.webm",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "stdout": "{\n    \"programs\": [\n\n    ],\n    \"streams\": [\n        {\n            \"codec_type\": \"video\",\n            \"width\": 960,\n            \"height\": 1100\n        }\n    ],\n    \"format\": {\n        \"duration\": \"78.320000\"\n    }\n}\n",
+  "stderr": ""
+}
