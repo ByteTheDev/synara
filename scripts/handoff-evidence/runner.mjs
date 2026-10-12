@@ -35,6 +35,8 @@ const driverPaths = [
     "snapshots.mjs",
     "helpers.ts",
     "overlay.json",
+    "footer-control.mjs",
+    "vitest.handoff-footer.config.ts",
     "vitest.handoff-evidence.config.ts",
     "README.md",
   ].map((name) => "scripts/handoff-evidence/" + name),
@@ -42,6 +44,8 @@ const driverPaths = [
 const sourcePaths = [
   spec.fixture.path,
   "apps/web/src/components/ChatView.tsx",
+  "apps/web/src/components/chat/ChatComposerFooter.tsx",
+  "apps/web/src/components/chat/ChatComposerFooter.browser.tsx",
   "apps/web/src/hooks/useThreadHandoff.ts",
   "apps/web/src/lib/threadHandoff.ts",
   "apps/web/src/storeNormalization.ts",
@@ -378,7 +382,11 @@ if (command === "matrix") {
   if (
     selected.length !== 2 ||
     selected.some((test) => !["passed", "failed"].includes(test.status)) ||
-    assertions.some((test) => !selected.includes(test) && test.status !== "pending")
+    assertions.some(
+      (test) => !selected.includes(test) && !["pending", "skipped"].includes(test.status),
+    ) ||
+    report?.numTotalTests !== 222 ||
+    report?.numPendingTests !== 220
   )
     errors.push("Exactly the two original cases must execute; other cases must remain filtered.");
   if (

@@ -6450,7 +6450,8 @@ export default function ChatView({
                   submission={{
                     phase,
                     busy: isSendBusy,
-                    connecting: isConnecting || pendingProviderHandoff !== null,
+                    connecting: isConnecting,
+                    handoffPending: pendingProviderHandoff !== null,
                     expired: isSidechatExpired,
                     hasPendingCacheReview: activeThread?.claudeCacheReview != null,
                     preparingImages: isPreparingComposerImages,

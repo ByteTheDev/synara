@@ -97,3 +97,68 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 30
+
+  footer-control:
+    name: Complete footer control ${{ matrix.variant }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: before
+            source: 53248e7ed92a1d14147cd66822cfa982b0d6baef
+          - variant: after
+            source: 2a53c3c7c20e6aec90f6eaf3067d292955d2686e
+    env:
+      HANDOFF_FOOTER_TARGET: ${{ matrix.variant }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr-handoff-driver
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: "false"
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('bun.lock') }}
+      - name: Install actual Chromium
+        timeout-minutes: 10
+        run: ./apps/web/node_modules/.bin/playwright install chromium
+      - name: Prepare identical six-case canonical footer fixture
+        run: node .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs prepare
+      - name: Run every original and pending-to-settled footer assertion
+        id: footer
+        timeout-minutes: 8
+        working-directory: apps/web
+        run: |
+          set +e
+          bun x --no-install vitest run --config vitest.handoff-footer.config.ts --reporter=default --reporter=json --outputFile="$HANDOFF_FOOTER_LIVE/vitest.json" 2>&1 | tee "$HANDOFF_FOOTER_LIVE/vitest.log"
+          result=("${PIPESTATUS[@]}")
+          set -e
+          printf '{"vitest":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$HANDOFF_FOOTER_LIVE/exits.json"
+          if [ "${result[0]}" -ne 0 ]; then exit "${result[0]}"; fi
+          exit "${result[1]}"
+      - name: Freeze and verify original exits and complete canonical results
+        if: always()
+        timeout-minutes: 2
+        env:
+          HANDOFF_FOOTER_BROWSER_OUTCOME: ${{ steps.footer.outcome }}
+        run: node .pr-handoff-driver/scripts/handoff-evidence/footer-control.mjs verify
+      - name: Preserve both control outcomes including expected Before failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: handoff-footer-${{ matrix.variant }}-${{ matrix.source }}
+          path: pr-handoff-footer-evidence/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 30
