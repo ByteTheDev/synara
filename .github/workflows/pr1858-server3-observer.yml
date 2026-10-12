@@ -1,0 +1,48 @@
+name: PR1858 retained server shard diagnostic
+
+on:
+  push:
+    branches:
+      - codex/runtime-pr1858-server3-observer-20261012
+    paths:
+      - .github/workflows/pr1858-server3-observer.yml
+      - scripts/pr1858-server3-observer/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr1858-server3-observer-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  server:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout immutable application source
+        uses: actions/checkout@v6
+        with:
+          ref: b7fd69812cb169c60a5b9fac17b05b6ff81b5322
+          persist-credentials: false
+      - name: Checkout isolated log observer
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .pr1858-server3-driver
+          persist-credentials: false
+      - name: Setup workspace with the canonical action and defaults
+        uses: ./.github/actions/setup-workspace
+      - name: Run unchanged server 3 of 3 command and retain actual failure
+        run: node .pr1858-server3-driver/scripts/pr1858-server3-observer/runner.mjs
+      - name: Upload frozen raw log, actual process result, and source guards
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1858-server3-observer-b7fd69812cb169c60a5b9fac17b05b6ff81b5322
+          path: ${{ runner.temp }}/pr1858-server3-observer/frozen/
+          if-no-files-found: error
+          retention-days: 30
