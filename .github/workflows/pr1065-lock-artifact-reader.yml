@@ -1,0 +1,27 @@
+name: Read the verified PR 1065 lock artifact
+on:
+  push:
+    branches: [cleanup/20261012/pr1065-lock-artifact-reader]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify the original ZIP and expose immutable lock bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/pr1065-lock-artifact-reader.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pr1065-lock-artifact-reader
+          path: ${{ runner.temp }}/pr1065-lock-artifact-reader/
+          if-no-files-found: error
+          retention-days: 14
