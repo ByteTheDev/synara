@@ -142,14 +142,50 @@ function walkFiles(root, prefix = "") {
 }
 function snapshotFile(source, destination, relative, capBytes) {
   const captureStartedAt = now();
-  if (!existsSync(source))
-    return { path: relative, missing: true, captureStartedAt, captureCompletedAt: now() };
-  const fd = openSync(source, constants.O_RDONLY | constants.O_NOFOLLOW);
+  const failedAdmission = (error, extra = {}) => ({
+    path: relative, captureStartedAt, captureCompletedAt: now(),
+    missing: false, possibleTail: true, snapshotAdmissionFailed: true,
+    error: recordError(error), ...extra,
+  });
+  const sameFileState = (left, right) => left.isFile() && right.isFile() &&
+    left.dev === right.dev && left.ino === right.ino && left.mode === right.mode &&
+    left.size === right.size && left.mtimeNs === right.mtimeNs && left.ctimeNs === right.ctimeNs;
+  const identity = (stat) => ({
+    device: String(stat.dev), inode: String(stat.ino), mode: String(stat.mode),
+    bytes: String(stat.size), mtimeNs: String(stat.mtimeNs), ctimeNs: String(stat.ctimeNs),
+  });
+  let admitted;
+  try {
+    assert(Number.isSafeInteger(capBytes) && capBytes > 0);
+    admitted = lstatSync(source, { bigint: true });
+    assert(admitted.isFile(), "Only a regular diagnostic output path can be admitted.");
+  } catch (error) {
+    if (error.code === "ENOENT")
+      return { path: relative, missing: true, captureStartedAt, captureCompletedAt: now() };
+    return failedAdmission(error);
+  }
+  let fd;
+  try {
+    // The nonblocking flag also bounds a regular-file-to-FIFO replacement before open.
+    fd = openSync(source, constants.O_RDONLY | constants.O_NONBLOCK | constants.O_NOFOLLOW);
+  } catch (error) {
+    return failedAdmission(error, { admittedPath: identity(admitted) });
+  }
   let receipt;
   let bytes;
   try {
     const before = fstatSync(fd, { bigint: true });
-    assert(before.isFile(), "Only regular diagnostic output can be retained.");
+    let openedPath;
+    try {
+      openedPath = lstatSync(source, { bigint: true });
+      assert(sameFileState(admitted, before) && sameFileState(openedPath, before),
+        "Diagnostic output path or descriptor changed during admission.");
+    } catch (error) {
+      return failedAdmission(error, {
+        admittedPath: identity(admitted), openedDescriptor: identity(before),
+        openedPath: openedPath ? identity(openedPath) : null,
+      });
+    }
     const length = Number(before.size < BigInt(capBytes) ? before.size : BigInt(capBytes));
     bytes = Buffer.alloc(length);
     let used = 0;
@@ -160,15 +196,21 @@ function snapshotFile(source, destination, relative, capBytes) {
     }
     bytes = bytes.subarray(0, used);
     const after = fstatSync(fd, { bigint: true });
+    let endPath = null;
+    let endPathError = null;
+    try { endPath = lstatSync(source, { bigint: true }); }
+    catch (error) { endPathError = recordError(error); }
     const capped = before.size > BigInt(capBytes) || after.size > BigInt(capBytes);
-    const changedDuringCapture = before.size !== after.size ||
-      before.mtimeNs !== after.mtimeNs || before.ino !== after.ino || before.dev !== after.dev;
+    const changedDuringCapture = !sameFileState(before, after) ||
+      endPath === null || !sameFileState(after, endPath) || !sameFileState(admitted, endPath);
     receipt = {
       ...metadata(relative, bytes), captureStartedAt, captureCompletedAt: now(),
       observedInitialBytes: Number(before.size), observedEndBytes: Number(after.size),
-      capBytes, capped, changedDuringCapture, shortRead: bytes.length !== length,
+      admittedPath: identity(admitted), openedPath: identity(openedPath),
+      capturedDescriptor: identity(after), endPath: endPath ? identity(endPath) : null,
+      endPathError, capBytes, capped, changedDuringCapture, shortRead: bytes.length !== length,
       possibleTail: capped || changedDuringCapture || bytes.length !== length,
-      qualification: "One fixed byte prefix from an owned regular-file descriptor. Later live writes are not uploaded or included in the manifest; root exit and pipe close do not prove all descendants have exited.",
+      qualification: "One fixed byte prefix from an admitted regular-file descriptor, with nonblocking no-follow open and matching pathname/descriptor identity, size and timestamps checked before and after capture. Later live writes are not uploaded or included in the manifest; root exit and pipe close do not prove all descendants have exited.",
     };
   } finally {
     closeSync(fd);
