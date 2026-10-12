@@ -31,6 +31,7 @@ const output = join(temporary, `gitcore-fixture-${phase}`);
 assert(!existsSync(output), "refuse an existing evidence directory");
 mkdirSync(output);
 const owned = mkdtempSync(join(temporary, `gitcore-fixture-input-${phase}-`));
+const longPathRepositories = new Set();
 const commands = [];
 const cases = [];
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -41,8 +42,12 @@ const writeJSON = (name, value) =>
 
 function git(cwd, args) {
   const startedAt = new Date().toISOString();
-  const result = spawnSync("git", args, {
-    cwd,
+  const useShortProcessDirectory = longPathRepositories.has(cwd);
+  const processArgs = useShortProcessDirectory
+    ? ["-c", "core.longpaths=true", "-C", cwd, ...args]
+    : args;
+  const result = spawnSync("git", processArgs, {
+    cwd: useShortProcessDirectory ? owned : cwd,
     encoding: "utf8",
     timeout: 15_000,
     killSignal: "SIGKILL",
@@ -51,6 +56,9 @@ function git(cwd, args) {
   const entry = {
     cwd: cwd === workspace ? "source" : cwd === driver ? "driver" : cwd.slice(owned.length + 1),
     args,
+    ...(useShortProcessDirectory
+      ? { processDirectory: "owned temporary parent", processArgs }
+      : {}),
     startedAt,
     finishedAt: new Date().toISOString(),
     status: result.status,
@@ -93,6 +101,7 @@ function sourceGuard() {
 function repository(name, longPaths = false) {
   const cwd = join(owned, name);
   mkdirSync(cwd, { recursive: true });
+  if (longPaths) longPathRepositories.add(cwd);
   successful(cwd, longPaths ? ["-c", "core.longpaths=true", "init"] : ["init"]);
   if (longPaths) successful(cwd, ["-c", "core.longpaths=true", "config", "core.longpaths", "true"]);
   successful(cwd, ["config", "user.email", "fixture@example.test"]);

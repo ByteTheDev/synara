@@ -16,4 +16,10 @@ The next bounded candidate-only run keeps all five original correctness assertio
 
 The prior original phase is retained unchanged in source and prior artifacts; it is not rerun because its five concrete failures are already recorded. The new native run remains diagnostic, with unchanged failure propagation and owned-tree cleanup.
 
-These experiments follow the exact runner-version primary sources: [index format](https://github.com/git-for-windows/git/blob/v2.55.0.windows.5/Documentation/gitformat-index.adoc), [index path validation](https://github.com/git-for-windows/git/blob/v2.55.0.windows.5/read-cache.c), and [Windows path adapter](https://github.com/git-for-windows/git/blob/v2.55.0.windows.5/compat/mingw.c). Command-local long-path selection is used only to initialize the owned long-path repository before its repository-local setting exists.
+These experiments follow the exact runner-version primary sources: [index format](https://github.com/git-for-windows/git/blob/v2.55.0.windows.5/Documentation/gitformat-index.adoc), [index path validation](https://github.com/git-for-windows/git/blob/v2.55.0.windows.5/read-cache.c), and [Windows path adapter](https://github.com/git-for-windows/git/blob/v2.55.0.windows.5/compat/mingw.c). Long-path selection is restricted to the owned experiment; the follow-up below also makes process-startup directory handling explicit.
+
+## Long-directory process startup follow-up
+
+Run 38186931787 retained all five original assertions. Ubuntu passed all five; Windows passed four, including the literal numeric-colon index entry. The trailing-space experiment failed before Git started: `spawnSync git` returned `ENOENT` when its process current directory exceeded 300 characters. It did not reach the filename assertion.
+
+Only the owned extended-path experiment now launches Git from its short owned temporary parent, then passes the real long repository directory through `git -c core.longpaths=true -C`. The receipt records both the logical repository and actual process arguments/directory. This preserves the exact filename, content and header assertions and all source guards. A fresh Windows result is still required; the earlier startup failure and the original short-path filename failure remain separate retained observations.
