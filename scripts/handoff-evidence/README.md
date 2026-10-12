@@ -1,0 +1,15 @@
+# Durable provider handoff: actual ChatView Before and After
+
+This isolated diagnostic runs the same two complete new canonical handoff-admission cases on the cleaned current-main source and the repaired #1145 source. Before is 1a9d70983750bc771e850d72a858c541bac52885 (tree 6479afa46f65f176445f51a8fe9a859f67c4ab17). After is 1b5ad7bd230a1422afd855017ab9e5766c904e49 (tree 44eb99c07d30c63950af7261990e00bf7cd56ddd), including the independently found workspace-admission repair. Both are declared in overlay.json. The diagnostic branch does not alter production files.
+
+The common test file comes byte-for-byte from the repaired source. Removing only the two new cases reconstructs the original main test file exactly. The observer adds only named capture calls and a read-only helper; removing those additions reconstructs the common canonical fixture exactly. All original assertions, fixture replies and cleanup remain.
+
+The full production router, ChatView, composer, CSS and theme run in Chromium. The existing fixture supplies controlled orchestration snapshots and provider readiness; no authenticated provider, actual CLI startup, native desktop session or native OS behavior is claimed. The draft and transcript contain synthetic review text.
+
+Each case captures a pending request at desktop 960×1100 and narrow 480×640 before asserting the new admission UI. A matching completed or failed outcome then resumes editing, and passing cases capture both layouts again. The helper waits for real fonts and finite animations, without seeking animations or substituting geometry, DOM, CSS or components. It restores the original viewport after each capture pair.
+
+Before is expected to retain two actual failed assertions because current main does not hydrate the durable pending gate. These remain failed job steps and failed verifier results; they are never converted into passing checks. A valid counterexample should retain four pending screenshots. After must pass both original cases and retain eight pending/settled screenshots. The rest of the canonical test file is explicitly filtered by this diagnostic and is not reported as passing; ordinary PR CI remains separate.
+
+The original command and tee exit codes, report snapshot, stdout, production/driver source hashes, exact overlay/reversal receipts, PNGs and full context video are retained. The live Vitest JSON is written outside the uploaded evidence tree, then its observed bytes are copied once before parsing and hashing. Missing/partial reports, source drift, unexpected cases, missing images or nonzero exits remain failures. GitHub step/job timeouts bound execution; no descendant-cleanup guarantee is inferred from them.
+
+No browser execution or visual success has occurred at the time this driver is proposed. The eventual evidence report must retain all failed attempts and label exact capture source identities separately from any later feature changes.
