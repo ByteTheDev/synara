@@ -15655,6 +15655,53 @@ describe("ProviderCommandReactor", () => {
     });
   });
 
+  it("generates the first title when a follow-up is already persisted before replay", async () => {
+    const harness = await createHarness({ startReactor: false });
+    const threadId = ThreadId.makeUnsafe("thread-1");
+    const firstPrompt = "Investigate why the server stops responding";
+    const now = new Date().toISOString();
+    harness.generateThreadTitle.mockImplementation(() =>
+      Effect.succeed({ title: "Server recovery" }),
+    );
+    await Effect.runPromise(
+      harness.engine.dispatch({
+        type: "thread.meta.update",
+        commandId: CommandId.makeUnsafe("title-backlog-placeholder"),
+        threadId,
+        title: "Investigate why the server stops responding",
+      }),
+    );
+    // A restart can replay the first send after later user messages are durable.
+    // Eligibility belongs to the first message, not the current message count.
+    for (const [index, text] of [firstPrompt, "Please preserve the current UI"].entries()) {
+      await Effect.runPromise(
+        harness.engine.dispatch({
+          type: "thread.turn.start",
+          commandId: CommandId.makeUnsafe(`title-backlog-send-${index}`),
+          threadId,
+          message: {
+            messageId: asMessageId(`title-backlog-message-${index}`),
+            role: "user",
+            text,
+            attachments: [],
+          },
+          interactionMode: DEFAULT_PROVIDER_INTERACTION_MODE,
+          runtimeMode: "approval-required",
+          createdAt: now,
+        }),
+      );
+    }
+    expect(
+      (await readHarnessThread(harness))?.messages.filter((message) => message.role === "user"),
+    ).toHaveLength(2);
+    await harness.startReactor();
+    await harness.drain();
+    expect(harness.sendTurn).toHaveBeenCalled();
+    await waitFor(async () => (await readHarnessThread(harness))?.title === "Server recovery");
+    expect(harness.generateThreadTitle).toHaveBeenCalledTimes(1);
+    expect(harness.generateThreadTitle.mock.calls[0]?.[0].message).toBe(firstPrompt);
+  });
+
   it("renames generic OpenCode first-turn thread titles using text generation", async () => {
     const harness = await createHarness({
       threadModelSelection: {

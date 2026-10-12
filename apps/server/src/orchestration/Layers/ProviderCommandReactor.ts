@@ -4237,7 +4237,8 @@ const make = Effect.gen(function* () {
         message.role === "user" &&
         (message.source === "native" || message.source === "async-user-input"),
     );
-    return userMessages.length === 1 && userMessages[0]?.id === messageId ? thread : null;
+    // Replay can see later durable sends already projected; only the first message owns naming.
+    return userMessages[0]?.id === messageId ? thread : null;
   });
 
   const dispatchTurnForThread = Effect.fnUntraced(function* (
