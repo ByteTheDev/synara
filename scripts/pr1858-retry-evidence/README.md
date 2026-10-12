@@ -1,6 +1,6 @@
 # Source-pinned retry UI evidence for PR #1858
 
-This isolated workflow compares main 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94 with repaired feature head 21fe82fd87581515e975a75325ea6e791536ed23. The Before head predates the retry feature. Both jobs use exactly the same appended capture fixture, initial thread, viewport, production CSS, router and ChatView.
+This isolated workflow compares main 9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94 with repaired feature head b7fd69812cb169c60a5b9fac17b05b6ff81b5322. The Before head predates the retry feature. Both jobs use exactly the same appended capture fixture, initial thread, viewport, production CSS, router and ChatView.
 
 Before checks that the retry action is absent and captures the settled answer and hovered actions. After performs real pointer interactions through the effort menu and confirmation dialog, asserts the precise edit-and-resend command, then exercises the real answer pager after an explicitly controlled server read-model update. It captures seven phases, including the current effort, confirmation, latest answer, previous answer and return to latest.
 
@@ -23,3 +23,9 @@ Run 38184609411 retained a real failure in the first unchanged After canonical c
 This follow-up adds observer-only parent hooks around each selected case. It records window focus/blur, focus targets, menu-count changes and transparently delegated native focus/animation-frame calls. Animation-frame origins are retained only when the caller includes ChatView.tsx. Caller records contain filenames and line/column coordinates; no URLs, input text or environment values are collected. Native calls preserve their receiver, arguments, returned frame ID, callback execution and exceptions. All wrappers and listeners are removed with exact identity/ownership checks. No test click, assertion, source pin, viewport, timeout or production behavior is changed.
 
 Each selected case emits one bounded trace with a 512-event cap, monotonic timestamps, native restoration status and any observed frames still pending at the end of the test. Truncation, observer errors, missing traces or failed restoration remain verifier failures. A pending frame is disclosed, never cancelled by the observer; observations cover the case until its completion hook, so later callbacks are outside that recorded interval. Instrumentation itself can affect timing. The trace can identify an actual focus transition if reproduced; a passing observed run alone does not prove the original race repaired.
+
+## Source repair after the observed focus transition
+
+Run 38186101796 reproduced the first After case failure with the observer installed. Its retained trace shows window activation scheduling a ChatView frame, the actual Retry button taking focus and opening its menu, then that same frame calling ComposerPromptEditor.focus and closing the menu. This time the unchanged Medium (current) lookup failed; the earlier run reached the High lookup. Both failed runs and their actual exits remain independent evidence.
+
+The new After pin integrates the separately reviewed pending-window-focus fix from PR #1841 and its two unchanged first-activation regression cases. The driver still selects the original five retry cases plus the same capture; the additional picker cases remain present and unselected here, and run in canonical CI. Every interaction, assertion, observer, source guard and failure rule is unchanged. Execution of this pin, rather than the source review, determines whether the retry flow now passes.
