@@ -3514,256 +3514,6 @@ describe("Devin permission requests", () => {
   });
 });
 
-describe("Devin task-stop gateway admission", () => {
-  afterEach(() => vi.useRealTimers());
-
-  function makeGatewayStopFixture(withCredentials = true) {
-    const events = makeEventAcpRuntime(() => Effect.never);
-    const order: string[] = [];
-    const credentials = {
-      ...makeFakeAgentGatewayCredentials(),
-      cancelSessionTurnRequests: (_token: string, turnId: string) => {
-        order.push(`cancel:${turnId}`);
-        return Promise.resolve();
-      },
-      revokeSessionToken: () => {
-        order.push("revoke");
-      },
-    };
-    const runtime = {
-      ...events.runtime,
-      request: (method: string) =>
-        Effect.sync(() => {
-          order.push(method);
-          return {};
-        }),
-    } as AcpSessionRuntimeShape;
-    const baseLayer = makeDevinAdapterTestLayer(runtime, events.completeProcessedEvent, {
-      turnIdleMs: 3_600_000,
-      toolIdleMs: 3_600_000,
-    });
-    const layer = withCredentials
-      ? baseLayer.pipe(Layer.provide(Layer.succeed(AgentGatewayCredentials, credentials)))
-      : baseLayer;
-    return { events, order, layer };
-  }
-
-  it.each(["interruptTurn", "stopTask"] as const)(
-    "preserves the exact gateway/native cancellation order for %s",
-    async (mode) => {
-      vi.useFakeTimers();
-      vi.setSystemTime(1_000);
-      const fixture = makeGatewayStopFixture();
-      await Effect.runPromise(
-        Effect.gen(function* () {
-          const adapter = yield* DevinAdapter;
-          const threadId = ThreadId.makeUnsafe(`devin-gateway-order-${mode}`);
-          yield* adapter.startSession({
-            provider: "devin",
-            threadId,
-            runtimeMode: "full-access",
-            cwd: process.cwd(),
-          });
-          const turn = yield* adapter.sendTurn({ threadId, input: "delegate", attachments: [] });
-          yield* fixture.events.emitToolCall("agent-1", "inProgress", {
-            metadata: {
-              "cognition.ai/subagent_started": { agentId: "agent-1", title: "Inspect API" },
-            },
-          });
-          if (mode === "interruptTurn") {
-            yield* adapter.interruptTurn(threadId, turn.turnId, "agent-1");
-          } else {
-            yield* adapter.stopTask(threadId, "agent-1", {
-              beforeGatewayCredentialRevocation: Effect.sync(() => {
-                fixture.order.push("gate");
-              }),
-            });
-          }
-          expect(fixture.order).toEqual([
-            ...(mode === "stopTask" ? ["gate"] : []),
-            `cancel:${turn.turnId}`,
-            "revoke",
-            "_cognition.ai/subagent/cancel",
-          ]);
-          yield* adapter.stopSession(threadId);
-        }).pipe(Effect.scoped, Effect.provide(fixture.layer)),
-      );
-    },
-  );
-
-  it("preserves a failed persistence gate without revoking or stopping the child", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(1_000);
-    const fixture = makeGatewayStopFixture();
-    const gateFailure = {
-      _tag: "TestGatewayPersistenceFailure",
-      message: "Persistence unavailable",
-    };
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const adapter = yield* DevinAdapter;
-        const threadId = ThreadId.makeUnsafe("devin-gateway-gate-failure");
-        const emitted: ProviderRuntimeEvent[] = [];
-        yield* adapter.streamEvents.pipe(
-          Stream.runForEach((event) => Effect.sync(() => emitted.push(event))),
-          Effect.forkScoped,
-        );
-        yield* adapter.startSession({
-          provider: "devin",
-          threadId,
-          runtimeMode: "full-access",
-          cwd: process.cwd(),
-        });
-        const turn = yield* adapter.sendTurn({ threadId, input: "delegate", attachments: [] });
-        yield* fixture.events.emitToolCall("agent-1", "inProgress", {
-          metadata: { "cognition.ai/subagent_started": { agentId: "agent-1" } },
-        });
-        const result = yield* adapter
-          .stopTask(threadId, "agent-1", {
-            beforeGatewayCredentialRevocation: Effect.fail(gateFailure),
-          })
-          .pipe(Effect.result);
-        expect(result._tag).toBe("Failure");
-        if (result._tag === "Failure") expect(result.failure).toBe(gateFailure);
-        expect(fixture.order).toEqual([]);
-        expect(emitted.filter((event) => event.type === "task.completed")).toEqual([]);
-        yield* adapter.stopTask(threadId, "agent-1", {
-          beforeGatewayCredentialRevocation: Effect.sync(() => {
-            fixture.order.push("retry-gate");
-          }),
-        });
-        expect(fixture.order).toEqual([
-          "retry-gate",
-          `cancel:${turn.turnId}`,
-          "revoke",
-          "_cognition.ai/subagent/cancel",
-        ]);
-        yield* adapter.stopSession(threadId);
-      }).pipe(Effect.scoped, Effect.provide(fixture.layer)),
-    );
-  });
-
-  it("does not revoke or cancel a child that completes while the persistence gate waits", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(1_000);
-    const fixture = makeGatewayStopFixture();
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const adapter = yield* DevinAdapter;
-        const threadId = ThreadId.makeUnsafe("devin-gateway-completion-during-gate");
-        const gateEntered = yield* Deferred.make<void>();
-        const releaseGate = yield* Deferred.make<void>();
-        const emitted: ProviderRuntimeEvent[] = [];
-        yield* adapter.streamEvents.pipe(
-          Stream.runForEach((event) => Effect.sync(() => emitted.push(event))),
-          Effect.forkScoped,
-        );
-        yield* adapter.startSession({
-          provider: "devin",
-          threadId,
-          runtimeMode: "full-access",
-          cwd: process.cwd(),
-        });
-        yield* adapter.sendTurn({ threadId, input: "delegate", attachments: [] });
-        yield* fixture.events.emitToolCall("agent-1", "inProgress", {
-          metadata: { "cognition.ai/subagent_started": { agentId: "agent-1" } },
-        });
-        const stop = yield* adapter
-          .stopTask(threadId, "agent-1", {
-            beforeGatewayCredentialRevocation: Deferred.succeed(gateEntered, undefined).pipe(
-              Effect.andThen(Deferred.await(releaseGate)),
-            ),
-          })
-          .pipe(Effect.forkScoped);
-        yield* flushTimers();
-        expect(yield* Deferred.isDone(gateEntered)).toBe(true);
-        yield* Deferred.await(gateEntered);
-        yield* fixture.events.emitToolCall("agent-1", "completed", {
-          metadata: { "cognition.ai/subagent_completed": { agentId: "agent-1", success: true } },
-        });
-        yield* Deferred.succeed(releaseGate, undefined);
-        yield* Fiber.join(stop);
-        expect(fixture.order).toEqual([]);
-        expect(
-          emitted
-            .filter((event) => event.type === "task.completed")
-            .map((event) => event.payload.status),
-        ).toEqual(["completed"]);
-        yield* adapter.stopSession(threadId);
-      }).pipe(Effect.scoped, Effect.provide(fixture.layer)),
-    );
-  });
-
-  it("does not invoke the revocation gate for a shell stop or an already-completed child", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(1_000);
-    const fixture = makeGatewayStopFixture();
-    const shouldNotRun = Effect.die(
-      new Error("An unaffected task must not enter the revocation gate"),
-    );
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const adapter = yield* DevinAdapter;
-        const threadId = ThreadId.makeUnsafe("devin-gateway-unaffected-tasks");
-        yield* adapter.startSession({
-          provider: "devin",
-          threadId,
-          runtimeMode: "full-access",
-          cwd: process.cwd(),
-        });
-        yield* adapter.sendTurn({ threadId, input: "background work", attachments: [] });
-        yield* fixture.events.emitToolCall("shell-call", "inProgress", {
-          metadata: {
-            "cognition.ai/background": true,
-            "cognition.ai/backgroundShellId": "shell-1",
-          },
-        });
-        yield* adapter.stopTask(threadId, "shell-1", {
-          beforeGatewayCredentialRevocation: shouldNotRun,
-        });
-        yield* fixture.events.emitToolCall("agent-1", "inProgress", {
-          metadata: { "cognition.ai/subagent_started": { agentId: "agent-1" } },
-        });
-        yield* fixture.events.emitToolCall("agent-1", "completed", {
-          metadata: { "cognition.ai/subagent_completed": { agentId: "agent-1", success: true } },
-        });
-        yield* adapter.stopTask(threadId, "agent-1", {
-          beforeGatewayCredentialRevocation: shouldNotRun,
-        });
-        expect(fixture.order).toEqual(["_cognition.ai/terminal/killBackgroundShell"]);
-        yield* adapter.stopSession(threadId);
-      }).pipe(Effect.scoped, Effect.provide(fixture.layer)),
-    );
-  });
-
-  it("does not invoke the revocation gate when the runtime has no gateway lease", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(1_000);
-    const fixture = makeGatewayStopFixture(false);
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const adapter = yield* DevinAdapter;
-        const threadId = ThreadId.makeUnsafe("devin-task-without-gateway");
-        yield* adapter.startSession({
-          provider: "devin",
-          threadId,
-          runtimeMode: "full-access",
-          cwd: process.cwd(),
-        });
-        yield* adapter.sendTurn({ threadId, input: "delegate", attachments: [] });
-        yield* fixture.events.emitToolCall("agent-1", "inProgress", {
-          metadata: { "cognition.ai/subagent_started": { agentId: "agent-1" } },
-        });
-        yield* adapter.stopTask(threadId, "agent-1", {
-          beforeGatewayCredentialRevocation: Effect.die(new Error("There is no lease to revoke")),
-        });
-        expect(fixture.order).toEqual(["_cognition.ai/subagent/cancel"]);
-        yield* adapter.stopSession(threadId);
-      }).pipe(Effect.scoped, Effect.provide(fixture.layer)),
-    );
-  });
-});
-
 describe("Devin retained background task ownership", () => {
   afterEach(() => vi.useRealTimers());
   it.each([
@@ -4228,3 +3978,183 @@ it("does not mark the root prompt failed when a child tool fails in the same tur
     ),
   );
 });
+
+it.each(["default", "plan"] as const)(
+  "restores recovered child permission mode %s",
+  async (interactionMode) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1000);
+    const handles = makePermissionRuntime();
+    const runtime = {
+      ...handles.runtime,
+      start: () =>
+        handles.runtime
+          .start()
+          .pipe(Effect.map((started) => ({ ...started, resumeSessionId: "devin-test-session" }))),
+    };
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe(`recovered-child-policy-${interactionMode}`);
+        const started = yield* adapter
+          .startSession({
+            provider: "devin",
+            threadId,
+            runtimeMode: "full-access",
+            resumeCursor: { schemaVersion: 1, sessionId: "devin-test-session" },
+            pendingTaskReconciliations: [
+              {
+                taskId: RuntimeTaskId.makeUnsafe("child"),
+                turnId: TurnId.makeUnsafe("launch"),
+                toolUseId: "replayed-call",
+                interactionMode,
+              },
+            ],
+          })
+          .pipe(Effect.forkScoped);
+        for (let attempt = 0; attempt < 200 && !(yield* adapter.hasSession(threadId)); attempt++)
+          yield* advanceTimers(10);
+        expect(yield* adapter.hasSession(threadId)).toBe(true);
+        yield* advanceTimers(2100);
+        yield* Fiber.join(started);
+        yield* handles.emitToolCall("replayed-call", "inProgress", {
+          metadata: { "cognition.ai/subagent_started": { agentId: "child", isBackground: true } },
+        });
+        const response = yield* handles.requestPermission(
+          makePermissionParams("child-tool", {
+            _meta: { "cognition.ai/subagent_context": { parentAgentId: "child" } },
+          }),
+        );
+        expect(response).toEqual({
+          outcome: {
+            outcome: "selected",
+            optionId: interactionMode === "plan" ? "reject-once" : "allow-once",
+          },
+        });
+        yield* adapter.stopSession(threadId);
+      }).pipe(
+        Effect.scoped,
+        Effect.provide(
+          makeDevinAdapterTestLayer(runtime, handles.completeProcessedEvent, {
+            turnIdleMs: 3600000,
+            toolIdleMs: 3600000,
+          }),
+        ),
+      ),
+    );
+  },
+);
+it("targeted child Stop keeps a sibling's shared gateway lease usable", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(1000);
+  const handles = makePermissionRuntime();
+  const revoked = vi.fn();
+  const cancelled = vi.fn(async () => undefined);
+  const credentialsLayer = Layer.succeed(AgentGatewayCredentials, {
+    ...makeFakeAgentGatewayCredentials(),
+    revokeSessionToken: revoked,
+    cancelSessionTurnRequests: cancelled,
+  });
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const adapter = yield* DevinAdapter;
+      const threadId = ThreadId.makeUnsafe("sibling-lease");
+      const events: ProviderRuntimeEvent[] = [];
+      yield* adapter.streamEvents.pipe(
+        Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+        Effect.forkScoped,
+      );
+      yield* adapter.startSession({ provider: "devin", threadId, runtimeMode: "full-access" });
+      yield* adapter.sendTurn({ threadId, input: "launch siblings", attachments: [] });
+      for (const id of ["first", "second"])
+        yield* handles.emitToolCall(`launch-${id}`, "inProgress", {
+          metadata: { "cognition.ai/subagent_started": { agentId: id, isBackground: true } },
+        });
+      yield* adapter.stopTask!(threadId, "first");
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "task.started",
+          payload: expect.objectContaining({ taskId: "first", interactionMode: "default" }),
+        }),
+      );
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "task.completed",
+          payload: expect.objectContaining({ taskId: "first", interactionMode: "default" }),
+        }),
+      );
+      expect(revoked).not.toHaveBeenCalled();
+      expect(cancelled).not.toHaveBeenCalled();
+      expect(
+        yield* handles.requestPermission(
+          makePermissionParams("sibling-tool", {
+            _meta: { "cognition.ai/subagent_context": { parentAgentId: "second" } },
+          }),
+        ),
+      ).toEqual({ outcome: { outcome: "selected", optionId: "allow-once" } });
+      yield* adapter.stopSession(threadId);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        makeDevinAdapterTestLayer(handles.runtime, handles.completeProcessedEvent, {
+          turnIdleMs: 3600000,
+          toolIdleMs: 3600000,
+        }).pipe(Layer.provideMerge(credentialsLayer)),
+      ),
+    ),
+  );
+});
+it.each(["stop", "exit"] as const)(
+  "closes child assistant items on session %s after parent settlement",
+  async (kind) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(1000);
+    const prompt = Effect.runSync(Deferred.make<Acp.PromptResponse>());
+    const exited = Effect.runSync(Deferred.make<void>());
+    const handles = makeEventAcpRuntime(() => Deferred.await(prompt));
+    const runtime = { ...handles.runtime, awaitExit: Deferred.await(exited) };
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const adapter = yield* DevinAdapter;
+        const threadId = ThreadId.makeUnsafe(`child-terminal-${kind}`);
+        const events: ProviderRuntimeEvent[] = [];
+        yield* adapter.streamEvents.pipe(
+          Stream.runForEach((event) => Effect.sync(() => events.push(event))),
+          Effect.forkScoped,
+        );
+        yield* adapter.startSession({ provider: "devin", threadId, runtimeMode: "full-access" });
+        const turn = yield* adapter.sendTurn({ threadId, input: "launch", attachments: [] });
+        yield* handles.emitToolCall("launch", "inProgress", {
+          metadata: { "cognition.ai/subagent_started": { agentId: "child", isBackground: true } },
+        });
+        yield* Deferred.succeed(prompt, { stopReason: "end_turn" } as Acp.PromptResponse);
+        yield* advanceTimers(100);
+        yield* handles.emitProgress(
+          "child still streaming",
+          { "cognition.ai/subagent_context": { parentAgentId: "child" } },
+          "child-message",
+        );
+        if (kind === "exit") yield* Deferred.succeed(exited, undefined);
+        else yield* adapter.stopSession(threadId);
+        yield* advanceTimers(100);
+        const completion = events.findIndex(
+          (event) =>
+            event.type === "item.completed" &&
+            event.itemId === scopeDevinRuntimeItemIdForTurn(turn.turnId, "child-message"),
+        );
+        const terminal = events.findIndex((event) => event.type === "session.exited");
+        expect(completion).toBeGreaterThanOrEqual(0);
+        expect(terminal).toBeGreaterThan(completion);
+        expect(yield* adapter.hasSession(threadId)).toBe(false);
+      }).pipe(
+        Effect.scoped,
+        Effect.provide(
+          makeDevinAdapterTestLayer(runtime, handles.completeProcessedEvent, {
+            turnIdleMs: 3600000,
+            toolIdleMs: 3600000,
+          }),
+        ),
+      ),
+    );
+  },
+);

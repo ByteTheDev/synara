@@ -70,7 +70,6 @@ import type {
   ProviderAdapterForkThreadInput,
   ProviderAdapterSessionStartInput,
   ProviderAdapterShape,
-  ProviderTaskStopOptions,
 } from "../Services/ProviderAdapter.ts";
 import { ProviderAdapterRegistry } from "../Services/ProviderAdapterRegistry.ts";
 import { ProviderService } from "../Services/ProviderService.ts";
@@ -93,10 +92,7 @@ import {
   makeSqlitePersistenceLive,
   SqlitePersistenceMemory,
 } from "../../persistence/Layers/Sqlite.ts";
-import {
-  AGENT_GATEWAY_TURN_AUTHORITY_RETIRED,
-  withAgentGatewayTurnCancellation,
-} from "../../agentGateway/sessionLease.ts";
+import { AGENT_GATEWAY_TURN_AUTHORITY_RETIRED } from "../../agentGateway/sessionLease.ts";
 import { ServerSettingsService } from "../../serverSettings.ts";
 
 // The fake adapter never prepares Codex storage. Give lifecycle tests real
@@ -9173,162 +9169,30 @@ liveFallback.layer("ProviderServiceLive live-fallback settled turns", (it) => {
   );
 });
 
-it.effect.each(["interrupt", "task", "native-error", "persistence-error"] as const)(
-  "fences Devin child gateway revocation before another turn (%s)",
-  (scenario) => {
-    const fake = makeFakeCodexAdapter("devin");
-    const childTurn = asTurnId(`devin-child-gateway-${scenario}`);
-    const nativeError = new ProviderAdapterRequestError({
-      provider: "devin",
-      method: "_cognition.ai/subagent/cancel",
-      detail: "Native child cancellation failed",
-    });
-    const persistenceError = new ProviderSessionDirectoryPersistenceError({
-      operation: "upsert",
-      detail: "Could not persist the credential rotation fence",
-    });
-    let rejectRotationWrite = false;
-    let released = false;
-    let nativeCalls = 0;
-    let flagBeforeRevocation: unknown;
-    let observeFence: Effect.Effect<void> = Effect.void;
-    const order: string[] = [];
-    const lease = {
-      connection: { url: "http://127.0.0.1:9/mcp", bearerToken: "devin-test-token" },
-      cancelTurn: (turnId: string) => {
-        order.push(`cancel:${turnId}`);
-        return Promise.resolve();
-      },
-      retireTurn: () => Promise.resolve(),
-      release: () => {
-        released = true;
-        order.push("revoke");
-      },
-    };
-    const cancelChild = <E = never>(options?: ProviderTaskStopOptions<E>) =>
-      Effect.gen(function* () {
-        if (options?.beforeGatewayCredentialRevocation) {
-          order.push("gate");
-          yield* options.beforeGatewayCredentialRevocation;
-        }
-        yield* observeFence;
-        yield* withAgentGatewayTurnCancellation(
-          lease,
-          childTurn,
-          Effect.sync(() => {
-            nativeCalls += 1;
-            order.push("native");
-          }).pipe(
-            Effect.andThen(scenario === "native-error" ? Effect.fail(nativeError) : Effect.void),
-          ),
-        );
-      });
-    const adapter: ProviderAdapterShape<ProviderAdapterError> = {
-      ...fake.adapter,
-      interruptTurn: () => cancelChild(),
-      stopTask: <E>(_threadId: ThreadId, _taskId: string, options?: ProviderTaskStopOptions<E>) =>
-        cancelChild(options),
-    };
-    const runtimeRepositoryLayer = ProviderSessionRuntimeRepositoryLive.pipe(
-      Layer.provide(SqlitePersistenceMemory),
-    );
-    const directoryLayer = ProviderSessionDirectoryLive.pipe(Layer.provide(runtimeRepositoryLayer));
-    const guardedDirectoryLayer = Layer.effect(
-      ProviderSessionDirectory,
-      Effect.gen(function* () {
-        const directory = yield* ProviderSessionDirectory;
-        return {
-          ...directory,
-          upsert: (binding: Parameters<ProviderSessionDirectoryShape["upsert"]>[0]) =>
-            rejectRotationWrite &&
-            asRuntimePayloadRecord(binding.runtimePayload)
-              .agentGatewayCredentialRotationRequired === true
-              ? Effect.fail(persistenceError)
-              : directory.upsert(binding),
-        };
-      }),
-    ).pipe(Layer.provide(directoryLayer));
-    const rawLayer = Layer.mergeAll(
-      makeProviderServiceLive().pipe(
-        Layer.provide(
-          Layer.succeed(ProviderAdapterRegistry, {
-            getByProvider: () => Effect.succeed(adapter),
-            listProviders: () => Effect.succeed(["devin"] as const),
-          }),
-        ),
-        Layer.provide(guardedDirectoryLayer),
-        Layer.provide(ServerSettingsService.layerTest()),
-      ),
-      directoryLayer,
-      NodeServices.layer,
-    );
-    return Effect.gen(function* () {
+const targetedChildStop = makeProviderServiceLayer();
+targetedChildStop.layer("targeted child transport ownership", (it) => {
+  it.effect("stopping a task preserves the shared runtime binding", () =>
+    Effect.gen(function* () {
       const provider = yield* ProviderService;
       const directory = yield* ProviderSessionDirectory;
-      const threadId = asThreadId(`devin-gateway-fence-${scenario}`);
-      observeFence = directory.getBinding(threadId).pipe(
-        Effect.map((binding) => {
-          flagBeforeRevocation = asRuntimePayloadRecord(
-            Option.getOrUndefined(binding)?.runtimePayload,
-          ).agentGatewayCredentialRotationRequired;
-        }),
-        Effect.orDie,
-      );
+      const threadId = asThreadId("targeted-stop-preserves-runtime");
+      Object.assign(targetedChildStop.codex.adapter, { stopTask: () => Effect.void });
       yield* provider.startSession(threadId, {
-        provider: "devin",
         threadId,
+        provider: "codex",
         runtimeMode: "full-access",
-        cwd: process.cwd(),
       });
-      yield* provider.sendTurn({ threadId, input: "turn A", attachments: [] });
-      const startsBefore = fake.startSession.mock.calls.length;
-      const stopsBefore = fake.stopSession.mock.calls.length;
-      rejectRotationWrite = scenario === "persistence-error";
-      const result = yield* (
-        scenario === "interrupt"
-          ? provider.interruptTurn({ threadId, turnId: childTurn, providerThreadId: "agent-1" })
-          : provider.stopTask({ threadId, taskId: "agent-1" })
-      ).pipe(Effect.result);
-      if (scenario === "persistence-error") {
-        assert.equal(result._tag, "Failure");
-        if (result._tag === "Failure") assert.strictEqual(result.failure, persistenceError);
-        assert.equal(released, false);
-        assert.equal(nativeCalls, 0);
-        assert.deepEqual(order, ["gate"]);
-        assert.equal(fake.startSession.mock.calls.length, startsBefore);
-        assert.equal(fake.stopSession.mock.calls.length, stopsBefore);
-        rejectRotationWrite = false;
-        order.length = 0;
-        yield* provider.stopTask({ threadId, taskId: "agent-1" });
-      } else if (scenario === "native-error") {
-        assert.equal(result._tag, "Failure");
-        if (result._tag === "Failure") assert.strictEqual(result.failure, nativeError);
-      } else {
-        assert.equal(result._tag, "Success");
-      }
-      assert.equal(flagBeforeRevocation, true);
-      assert.equal(released, true);
-      assert.equal(nativeCalls, 1);
-      assert.deepEqual(order, [
-        ...(scenario === "interrupt" ? [] : ["gate"]),
-        `cancel:${childTurn}`,
-        "revoke",
-        "native",
-      ]);
-      const flagged = Option.getOrUndefined(yield* directory.getBinding(threadId));
-      assert.equal(
-        asRuntimePayloadRecord(flagged?.runtimePayload).agentGatewayCredentialRotationRequired,
+      const before = Option.getOrThrow(yield* directory.getBinding(threadId));
+      yield* provider.stopTask({ threadId, taskId: "child" });
+      const after = Option.getOrThrow(yield* directory.getBinding(threadId));
+      assert.equal(after.lifecycleGeneration, before.lifecycleGeneration);
+      assert.notEqual(
+        asRuntimePayloadRecord(after.runtimePayload).agentGatewayCredentialRotationRequired,
         true,
       );
-      yield* provider.sendTurn({ threadId, input: "turn B", attachments: [] });
-      assert.equal(fake.stopSession.mock.calls.length, stopsBefore + 1);
-      assert.equal(fake.startSession.mock.calls.length, startsBefore + 1);
-      const recovered = Option.getOrUndefined(yield* directory.getBinding(threadId));
-      assert.equal(
-        asRuntimePayloadRecord(recovered?.runtimePayload).agentGatewayCredentialRotationRequired,
-        false,
-      );
-      yield* provider.stopSession({ threadId });
-    }).pipe(Effect.provide(rawLayer), Effect.scoped);
-  },
-);
+      const stops = targetedChildStop.codex.stopSession.mock.calls.length;
+      yield* provider.sendTurn({ threadId, input: "continue", attachments: [] });
+      assert.equal(targetedChildStop.codex.stopSession.mock.calls.length, stops);
+    }),
+  );
+});

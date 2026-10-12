@@ -79,10 +79,6 @@ export interface ProviderTurnDispatchOptions {
   readonly claudeCompactionCancellation?: Deferred.Deferred<void>;
 }
 
-/** Internal admission gate; never serialized into a provider task request. */
-export interface ProviderTaskStopOptions<TError = never> {
-  readonly beforeGatewayCredentialRevocation?: Effect.Effect<void, TError>;
-}
 export type ProviderConversationRollbackMode = "native" | "restart-session";
 
 export interface ProviderAdapterCapabilities {
@@ -208,11 +204,7 @@ export interface ProviderAdapterShape<TError> {
   /**
    * Stop one provider-native background task when the adapter supports it.
    */
-  readonly stopTask?: <TGateError = never>(
-    threadId: ThreadId,
-    taskId: string,
-    options?: ProviderTaskStopOptions<TGateError>,
-  ) => Effect.Effect<void, TError | TGateError>;
+  readonly stopTask?: (threadId: ThreadId, taskId: string) => Effect.Effect<void, TError>;
 
   /**
    * Move one in-flight foreground task to the background when the adapter supports it.

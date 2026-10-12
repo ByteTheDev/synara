@@ -1799,6 +1799,7 @@ const make = Effect.gen(function* () {
         ) {
           const correlation = Schema.decodeUnknownOption(ProviderTaskReconciliation)({
             taskId: payload.taskId,
+            ...("interactionMode" in payload ? { interactionMode: payload.interactionMode } : {}),
             ...(activity.turnId ? { turnId: activity.turnId } : {}),
             ...("toolUseId" in payload && typeof payload.toolUseId === "string"
               ? { toolUseId: payload.toolUseId }

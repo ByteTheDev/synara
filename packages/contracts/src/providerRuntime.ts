@@ -1,4 +1,5 @@
 import { Option, Schema } from "effect";
+import { ProviderInteractionMode } from "./orchestration";
 import { AsyncUserInputQuestions } from "./asyncUserInput";
 import {
   EventId,
@@ -569,6 +570,7 @@ const WorkflowAgentPlan = Schema.Struct({
 export type WorkflowAgentPlan = typeof WorkflowAgentPlan.Type;
 
 const TaskStartedPayload = Schema.Struct({
+  interactionMode: Schema.optional(ProviderInteractionMode),
   taskId: RuntimeTaskId,
   description: Schema.optional(TrimmedNonEmptyStringSchema),
   taskType: Schema.optional(TrimmedNonEmptyStringSchema),
@@ -606,6 +608,7 @@ const TaskProgressPayload = Schema.Struct({
 export type TaskProgressPayload = typeof TaskProgressPayload.Type;
 
 const TaskUpdatedPayload = Schema.Struct({
+  interactionMode: Schema.optional(ProviderInteractionMode),
   taskId: RuntimeTaskId,
   status: Schema.optional(
     Schema.Literals(["pending", "running", "completed", "failed", "killed", "paused"]),
@@ -623,6 +626,7 @@ const TaskUpdatedPayload = Schema.Struct({
 export type TaskUpdatedPayload = typeof TaskUpdatedPayload.Type;
 
 const TaskCompletedPayload = Schema.Struct({
+  interactionMode: Schema.optional(ProviderInteractionMode),
   taskId: RuntimeTaskId,
   status: Schema.Literals(["completed", "failed", "stopped"]),
   summary: Schema.optional(TrimmedNonEmptyStringSchema),

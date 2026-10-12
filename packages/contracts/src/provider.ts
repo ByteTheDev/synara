@@ -52,6 +52,7 @@ export const ProviderSession = Schema.Struct({
 export type ProviderSession = typeof ProviderSession.Type;
 
 export const ProviderTaskReconciliation = Schema.Struct({
+  interactionMode: Schema.optional(ProviderInteractionMode),
   taskId: RuntimeTaskId,
   turnId: Schema.optional(TurnId),
   toolUseId: Schema.optional(TrimmedNonEmptyString),

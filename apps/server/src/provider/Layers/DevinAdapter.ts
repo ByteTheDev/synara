@@ -466,6 +466,7 @@ interface DevinSessionContext extends SynaraHarnessPolicyDeliveryState {
   // turn. Pruned to the just-settled turn on each dispatch (a straggler can
   // lag by at most one turn on the FIFO session/update stream).
   readonly turnToolCallIds: Map<string, TurnId>;
+  readonly turnInteractionModes: Map<TurnId, ProviderInteractionMode>;
   // Latest ACP tool-call state per provider tool-call id, merged across
   // ToolCallUpdated events. Devin's request_permission toolCall arrives sparse
   // (usually only {toolCallId, kind}), so the permission handler looks up this
@@ -559,6 +560,7 @@ function taskReconciliation(
     taskId: RuntimeTaskId.makeUnsafe(taskId),
     ...(task.turnId ? { turnId: task.turnId } : {}),
     toolUseId: task.toolCallId,
+    ...("agentId" in task && task.interactionMode ? { interactionMode: task.interactionMode } : {}),
     ...(task.parentAgentId ? { parentAgentId: task.parentAgentId } : {}),
   };
 }
@@ -581,6 +583,7 @@ function restoreTaskCorrelation<T extends DevinSubagentState | DevinBackgroundSh
         ? correlation.toolUseId
         : task.toolCallId,
     parentAgentId,
+    ...(correlation.interactionMode ? { interactionMode: correlation.interactionMode } : {}),
   };
 }
 
@@ -1950,6 +1953,7 @@ export function makeDevinAdapter(
           ...(providerRefs ? { providerRefs } : {}),
           payload: {
             taskId,
+            ...(subagent.interactionMode ? { interactionMode: subagent.interactionMode } : {}),
             ...((subagent.task ?? subagent.title)
               ? { description: subagent.task ?? subagent.title }
               : {}),
@@ -1967,6 +1971,7 @@ export function makeDevinAdapter(
           ...(providerRefs ? { providerRefs } : {}),
           payload: {
             taskId,
+            ...(subagent.interactionMode ? { interactionMode: subagent.interactionMode } : {}),
             status: "running",
             isBackgrounded: subagent.isBackground,
             toolUseId: subagent.toolCallId,
@@ -1994,6 +1999,7 @@ export function makeDevinAdapter(
           ...(providerRefs ? { providerRefs } : {}),
           payload: {
             taskId: RuntimeTaskId.makeUnsafe(subagent.agentId),
+            ...(subagent.interactionMode ? { interactionMode: subagent.interactionMode } : {}),
             status,
             toolUseId: subagent.toolCallId,
             ...(summary ? { summary } : {}),
@@ -2116,6 +2122,34 @@ export function makeDevinAdapter(
       return Effect.succeed(ctx);
     };
 
+    const closeOwnedChildAssistantItems = (
+      ctx: DevinSessionContext,
+      owners?: ReadonlySet<string>,
+    ) =>
+      Effect.gen(function* () {
+        for (const [itemId, owner] of ctx.assistantItemOwners) {
+          if (!owner.parentAgentId || (owners && !owners.has(owner.parentAgentId))) continue;
+          const scopedItemId = owner.turnId
+            ? scopeDevinRuntimeItemIdForTurn(owner.turnId, itemId)
+            : itemId;
+          if (!ctx.activeAssistantItemsWithContent.has(scopedItemId)) continue;
+          yield* offerRuntimeEvent(
+            ctx.lifecycleGeneration,
+            makeAcpAssistantItemEvent({
+              stamp: yield* makeEventStamp(),
+              provider: PROVIDER,
+              threadId: ctx.threadId,
+              turnId: owner.turnId,
+              itemId: scopedItemId,
+              lifecycle: "item.completed",
+              providerRefs: devinProviderRefsForAgent(ctx, owner.parentAgentId),
+            }),
+          );
+          ctx.activeAssistantItemsWithContent.delete(scopedItemId);
+          ctx.assistantItemOwners.delete(itemId);
+        }
+      });
+
     const stopSessionInternal = (ctx: DevinSessionContext, preserveTasksForResume = false) =>
       Effect.gen(function* () {
         if (ctx.stopped) return;
@@ -2176,6 +2210,7 @@ export function makeDevinAdapter(
           ctx.resumeReplayReady = undefined;
           ctx.resumeReplayLastSuppressedAt = undefined;
         }
+        yield* closeOwnedChildAssistantItems(ctx);
         if (ctx.notificationFiber) {
           yield* Fiber.interrupt(ctx.notificationFiber);
         }
@@ -2917,6 +2952,7 @@ export function makeDevinAdapter(
             lastPlanFingerprint: undefined,
             lastTurnActivityAt: undefined,
             turnToolCallIds: new Map(),
+            turnInteractionModes: new Map(),
             devinToolCallStateById: new Map(),
             devinToolCallLifecycleById: new Map(),
             devinSubagents: new Map(),
@@ -3075,7 +3111,9 @@ export function makeDevinAdapter(
                               }
                             : replayStart;
                           subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
-                          subagent.interactionMode ??= ctx.activeInteractionMode;
+                          subagent.interactionMode ??= subagent.turnId
+                            ? ctx.turnInteractionModes.get(subagent.turnId)
+                            : undefined;
                           ctx.devinSubagents.set(subagent.agentId, subagent);
                           ctx.devinSubagentIdByToolCallId.set(
                             subagent.toolCallId,
@@ -3120,7 +3158,9 @@ export function makeDevinAdapter(
                               yield* emitDevinSubagentItemUpdate(ctx, subagent);
                             }
                           }
-                          subagent.interactionMode ??= ctx.activeInteractionMode;
+                          subagent.interactionMode ??= subagent.turnId
+                            ? ctx.turnInteractionModes.get(subagent.turnId)
+                            : undefined;
                           ctx.devinSubagents.set(subagent.agentId, subagent);
                           ctx.devinSubagentIdByToolCallId.set(
                             subagent.toolCallId,
@@ -3209,7 +3249,9 @@ export function makeDevinAdapter(
                             }
                           : startedSubagent;
                         subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
-                        subagent.interactionMode ??= ctx.activeInteractionMode;
+                        subagent.interactionMode ??= subagent.turnId
+                          ? ctx.turnInteractionModes.get(subagent.turnId)
+                          : undefined;
                         ctx.devinSubagents.set(subagent.agentId, subagent);
                         ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
                         if (previous === undefined) {
@@ -3236,7 +3278,9 @@ export function makeDevinAdapter(
                           status: "running" as const,
                         };
                         subagent = restoreTaskCorrelation(ctx, subagent.agentId, subagent);
-                        subagent.interactionMode ??= ctx.activeInteractionMode;
+                        subagent.interactionMode ??= subagent.turnId
+                          ? ctx.turnInteractionModes.get(subagent.turnId)
+                          : undefined;
                         ctx.devinSubagents.set(subagent.agentId, subagent);
                         ctx.devinSubagentIdByToolCallId.set(subagent.toolCallId, subagent.agentId);
                         if (
@@ -3576,6 +3620,12 @@ export function makeDevinAdapter(
             ),
           );
 
+          yield* acp.awaitExit.pipe(
+            Effect.andThen(
+              Effect.suspend(() => (ctx.stopped ? Effect.void : stopSessionInternal(ctx))),
+            ),
+            Effect.forkIn(wedgeRecoveryScope),
+          );
           return session;
         }).pipe(Effect.scoped),
       );
@@ -3997,6 +4047,16 @@ export function makeDevinAdapter(
             ctx.devinBackgroundShells.delete(shellId);
           }
         }
+        const retainedPolicyTurns = new Set(
+          [...ctx.devinSubagents.values()]
+            .filter((task) => task.status === "running")
+            .map((task) => task.turnId),
+        );
+        retainedPolicyTurns.add(keptTurnId);
+        retainedPolicyTurns.add(turnId);
+        for (const id of ctx.turnInteractionModes.keys())
+          if (!retainedPolicyTurns.has(id)) ctx.turnInteractionModes.delete(id);
+        ctx.turnInteractionModes.set(turnId, interactionMode);
         ctx.activeInteractionMode = interactionMode;
         ctx.lastPlanFingerprint = undefined;
         ctx.lastTurnActivityAt = Date.now();
@@ -4192,11 +4252,10 @@ export function makeDevinAdapter(
         };
       });
 
-    const stopDevinSubagentInternal = <TGateError = never>(
+    const stopDevinSubagentInternal = (
       ctx: DevinSessionContext,
       agentId: string,
       turnId: TurnId | undefined,
-      beforeGatewayCredentialRevocation?: Effect.Effect<void, TGateError>,
     ) =>
       Effect.gen(function* () {
         const state = ctx.devinSubagents.get(agentId);
@@ -4206,24 +4265,6 @@ export function makeDevinAdapter(
           state?.status === "stopped"
         ) {
           return;
-        }
-        if (ctx.gatewaySessionLease !== undefined && beforeGatewayCredentialRevocation) {
-          if (state === undefined) return;
-          const expectedToolCallId = state.toolCallId;
-          const expectedTurnId = state.turnId;
-          yield* beforeGatewayCredentialRevocation;
-          // Persistence can yield while ACP delivers completion or the runtime
-          // is replaced. Never stop a completed task or a different owner after
-          // the durable gate; its conservative rotation flag remains valid.
-          const current = ctx.devinSubagents.get(agentId);
-          if (
-            sessions.get(ctx.threadId) !== ctx ||
-            current?.status !== "running" ||
-            current.toolCallId !== expectedToolCallId ||
-            current.turnId !== expectedTurnId
-          ) {
-            return;
-          }
         }
         const stoppedOwners = new Set([agentId]);
         for (let changed = true; changed; ) {
@@ -4247,17 +4288,11 @@ export function makeDevinAdapter(
           if (pending.ownerAgentId && stoppedOwners.has(pending.ownerAgentId))
             yield* Deferred.succeed(pending.answers, {});
         }
-        yield* withAgentGatewayTurnCancellation(
-          ctx.gatewaySessionLease,
-          turnId,
-          ctx.acp
-            .request("_cognition.ai/subagent/cancel", {
-              sessionId: ctx.acpSessionId,
-              agentId,
-            })
-            .pipe(Effect.mapError(acpToAdapterError(ctx.threadId)), Effect.asVoid),
-        );
+        yield* ctx.acp
+          .request("_cognition.ai/subagent/cancel", { sessionId: ctx.acpSessionId, agentId })
+          .pipe(Effect.mapError(acpToAdapterError(ctx.threadId)), Effect.asVoid);
         yield* waitForDevinQueuedTurnEventsDrained(ctx);
+        yield* closeOwnedChildAssistantItems(ctx, stoppedOwners);
         const current = ctx.devinSubagents.get(agentId);
         if (current?.status === "running") {
           current.status = "stopped";
@@ -4298,7 +4333,7 @@ export function makeDevinAdapter(
         yield* interruptDevinTurn(threadId, turnId);
       });
 
-    const stopTask: DevinAdapterShape["stopTask"] = (threadId, taskId, options) =>
+    const stopTask: DevinAdapterShape["stopTask"] = (threadId, taskId) =>
       Effect.gen(function* () {
         const ctx = yield* requireSession(threadId);
         const shell = ctx.devinBackgroundShells.get(taskId);
@@ -4346,12 +4381,7 @@ export function makeDevinAdapter(
             issue: `Devin task '${taskId}' is not tracked in this session.`,
           });
         }
-        yield* stopDevinSubagentInternal(
-          ctx,
-          subagent.agentId,
-          subagent.turnId,
-          options?.beforeGatewayCredentialRevocation,
-        );
+        yield* stopDevinSubagentInternal(ctx, subagent.agentId, subagent.turnId);
       });
 
     const backgroundTask: DevinAdapterShape["backgroundTask"] = (threadId, toolUseId) =>

@@ -1,9 +1,10 @@
-import type { OrchestrationThreadActivity, ProviderRuntimeEvent } from "@synara/contracts";
+import type { OrchestrationThreadActivity } from "@synara/contracts";
 import {
   ApprovalRequestId,
   CommandId,
   EventId,
   OrchestrationCommand,
+  ProviderRuntimeEvent,
   RuntimeItemId,
   ThreadId,
   TurnId,
@@ -1543,3 +1544,25 @@ describe("provider runtime activity projection", () => {
     expect(() => decodeActivityAppendCommand(blocked!)).not.toThrow();
   });
 });
+
+it.each(["task.started", "task.updated", "task.completed"] as const)(
+  "persists the child launch mode from %s",
+  (type) => {
+    const event = Schema.decodeUnknownSync(ProviderRuntimeEvent)(
+      runtimeEvent({
+        type,
+        eventId: `policy-${type}`,
+        provider: "devin",
+        turnId: TURN_ID,
+        payload: {
+          taskId: "child-policy",
+          interactionMode: "plan",
+          ...(type === "task.started" ? {} : { status: "completed" }),
+        },
+      }),
+    );
+    const activities = projectProviderRuntimeActivities(event);
+    expect(activities[0]?.payload).toMatchObject({ interactionMode: "plan" });
+    decodeActivityAppendCommand(activities[0]!);
+  },
+);
