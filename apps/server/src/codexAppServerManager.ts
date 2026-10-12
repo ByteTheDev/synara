@@ -4431,7 +4431,13 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
 
     // Keep late outcomes in history without releasing a newer native turn.
     // The legacy completion fallback can finish before stalled stdout catches up.
-    if (isTerminalParentTurn && !appliesToActiveTurn) return;
+    if (isTerminalParentTurn && !appliesToActiveTurn) {
+      // Clean the old review membership without touching the current owner.
+      // Otherwise a later exitedReviewMode can mistake that finished review
+      // for an active chain and settle an unrelated newer turn.
+      if (rawRoute.turnId) context.reviewTurnIds.delete(rawRoute.turnId);
+      return;
+    }
 
     if (notification.method === "thread/started") {
       const startedThreadId = normalizeProviderThreadId(

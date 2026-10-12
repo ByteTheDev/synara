@@ -6224,6 +6224,65 @@ describe("handleServerNotification error normalization", () => {
     },
   );
 
+  it.each(["turn/completed", "turn/aborted", "error"] as const)(
+    "preserves a newer turn after %s cleans an older review chain",
+    (method) => {
+      vi.useFakeTimers();
+      try {
+        const { manager, context, updateSession } = createCollabNotificationHarness();
+        updateSession.mockRestore();
+        // Codex can extend one native review across multiple turn IDs.
+        context.reviewTurnIds.add("turn_parent");
+        handleServerNotificationForTest(manager, context, {
+          method: "turn/started",
+          params: { threadId: "provider_parent", turn: { id: "turn_review_continuation" } },
+        });
+        handleServerNotificationForTest(manager, context, {
+          method: "codex/event/task_complete",
+          params: {
+            id: "turn_review_continuation",
+            msg: { type: "task_complete", turn_id: "turn_review_continuation" },
+          },
+        });
+        vi.advanceTimersByTime(750);
+        expect(context.session).toMatchObject({ status: "ready", activeTurnId: undefined });
+        handleServerNotificationForTest(manager, context, {
+          method: "turn/started",
+          params: { threadId: "provider_parent", turn: { id: "turn_next" } },
+        });
+        const retireTurn = vi.fn().mockResolvedValue(undefined);
+        const liveContext = Object.assign(context, {
+          gatewaySessionLease: { retireTurn },
+          gatewayCredentialRetired: false,
+          gatewayCredentialRenewable: true,
+        });
+        handleServerNotificationForTest(manager, context, {
+          method,
+          params: {
+            threadId: "provider_parent",
+            turnId: "turn_parent",
+            turn: { id: "turn_parent", status: "completed" },
+            error: { message: "Previous review failed" },
+            willRetry: false,
+          },
+        });
+        handleServerNotificationForTest(manager, context, {
+          method: "item/completed",
+          params: {
+            threadId: "provider_parent",
+            item: { id: "turn_parent", type: "exitedReviewMode", review: "Old review complete." },
+          },
+        });
+        expect(context.session).toMatchObject({ status: "running", activeTurnId: "turn_next" });
+        expect(retireTurn).not.toHaveBeenCalled();
+        expect(liveContext.gatewayCredentialRetired).toBe(false);
+        expect(liveContext.gatewayCredentialRenewable).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
+
   it("recovers a missing turn/completed after legacy task_complete", () => {
     vi.useFakeTimers();
     try {
