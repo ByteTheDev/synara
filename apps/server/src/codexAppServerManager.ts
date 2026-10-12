@@ -94,6 +94,7 @@ import {
 import type { ProviderAdapterForkThreadInput } from "./provider/Services/ProviderAdapter.ts";
 import { withoutProviderCredentialEnvironment } from "./providerChildEnvironment.ts";
 import { resolveCodexServiceTier } from "./codexServiceTier.ts";
+import { classifyTerminalTurnApplicability } from "./provider/terminalTurnApplicability.ts";
 import { assertCodexWorkingDirectoryExists } from "./codexWorkingDirectory.ts";
 import { executableIdentity, resolveExecutable } from "./executableLookup.ts";
 import {
@@ -4381,9 +4382,16 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       (notification.method === "turn/completed" ||
         notification.method === "turn/aborted" ||
         isTerminalError);
-    const terminalGatewayTurnId = isTerminalParentTurn
-      ? (rawRoute.turnId ?? context.session.activeTurnId)
-      : undefined;
+    const appliesToActiveTurn =
+      !isTerminalParentTurn ||
+      classifyTerminalTurnApplicability({
+        activeTurnId: context.session.activeTurnId,
+        eventTurnId: rawRoute.turnId,
+      }).applicable;
+    const terminalGatewayTurnId =
+      isTerminalParentTurn && appliesToActiveTurn
+        ? (rawRoute.turnId ?? context.session.activeTurnId)
+        : undefined;
     const gatewayTurnAuthorityRetired =
       terminalGatewayTurnId !== undefined && context.gatewaySessionLease !== undefined;
     if (gatewayTurnAuthorityRetired) {
@@ -4420,6 +4428,10 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       textDelta,
       payload: eventPayload,
     });
+
+    // Keep late outcomes in history without releasing a newer native turn.
+    // The legacy completion fallback can finish before stalled stdout catches up.
+    if (isTerminalParentTurn && !appliesToActiveTurn) return;
 
     if (notification.method === "thread/started") {
       const startedThreadId = normalizeProviderThreadId(
