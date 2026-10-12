@@ -1,5 +1,32 @@
 # Remote connections — punto di ripartenza
 
+## Rebase main — 12 ottobre 2026
+
+Aggiornato a main `d450964` preservando la struttura dei merge e verificando il
+tree completo contro il merge a tre vie del backup
+`codex/backup-remote-before-rebase-20261012` (`c0f6c4a`).
+
+- Integrati recupero dei transcript semplificato, protezione dal replay dei
+  comandi provider orfani, autorizzazioni Hub e compatibilità Claude Auto.
+- Hub e Library seguono la promozione Stable di main. Connessioni remote,
+  sincronizzazione profilo e Inbox account mantengono i rispettivi gate Beta.
+  Il principal remoto e il blocco del controllo nativo da remoto restano invariati.
+- iPhone/iPad: rimosso il rifiuto locale degli Hub basato sul canale Stable;
+  disponibilità e autorizzazioni restano verificate dal computer proprietario.
+  Il client già richiede snapshot completi, sostituisce le righe confermate e
+  richiede un nuovo snapshot sui rollback. Non usa le finestre di cronologia
+  eliminate da main e non attiva i replay batch.
+- Nessuna modifica a database delle app, configurazioni di produzione o credenziali.
+
+Verifica: 17.426 test passati nei sei pacchetti interessati, 38 già saltati.
+Nei 261 test browser selezionati, 258 passano al primo giro; due fallimenti non
+si riproducono senza le build concorrenti, e il test delle dodici righe viene
+corretto per misurare il paragrafo anziché il wrapper. Tutti e tre passano nella
+verifica isolata finale, mantenendo le soglie originali. Typecheck, lint,
+formatting, Windows boundary e migration-lineage verificati. Mobile: 254 test core,
+19 test e build passati su ciascun simulatore, con un test a due desktop saltato
+per assenza delle fixture. Nessun test su telefono fisico o pacchetto Windows.
+
 ## Claude e recupero runtime — 11 ottobre 2026, aggiornamento successivo
 
 Integrato main `7003742` dopo il rebase precedente. Il runtime desktop usa Claude
