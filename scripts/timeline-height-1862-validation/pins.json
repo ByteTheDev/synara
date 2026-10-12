@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "pr": 1862,
+  "before": {
+    "sha": "9b5e6efcd2c580312bafbb5b7ad708ee2fa3e5f8",
+    "tree": "01df816bb51bfd68bf8446a4e0f5ca82d8d21d90",
+    "files": 9031
+  },
+  "after": {
+    "sha": "3f9919cc2220ff79e96d6f1ecd0e72034a49baf7",
+    "tree": "52973d90178abdde583bc697145e4cb5dbadf398",
+    "files": 9032
+  },
+  "setupBlob": "37d1f4325a3dc5eec69a4af4a6da293b49514fd2",
+  "features": [
+    {
+      "path": "apps/server/perf/threadDetailStages.perf.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 4097,
+      "sha": "225c91be714b95e5550a6ed3d32571c9fa1b98b5",
+      "sha256": "e246d12f427d60fd588ebcee13add1a4eee676c77b7ddd56a0b5bbce1a0cf803"
+    },
+    {
+      "path": "apps/server/src/platform/processTreeController.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 17218,
+      "sha": "140aa7a1a7e66b5790e38aae2cb25e2f1e770271",
+      "sha256": "169b37f97d64792a5dc826dd510087cba1690f7611e3ac3b384362462e26bb54"
+    },
+    {
+      "path": "apps/web/src/components/chat/timelineRowHeight.logic.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 10730,
+      "sha": "0afa946ce166d02f1006adcbcfb316ef8e1b12e9",
+      "sha256": "a24486a7b45fc9b6f4320e9824192f86515e52f19df50ceff6ba4712b2e04fe1"
+    },
+    {
+      "path": "apps/web/src/components/chat/timelineRowHeight.logic.test.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 10314,
+      "sha": "53002984f11a7d7fd4ed55f01e132a3fa8e9304b",
+      "sha256": "3ef351c2eea36c645b3704dac970d89bd9905f3bba0de9114601800ba6cda1a3"
+    },
+    {
+      "path": "apps/web/src/components/chat/useTimelineRowHeightHints.ts",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 3261,
+      "sha": "cd5b11dc6484dc2d901474c04e55d886e0387075",
+      "sha256": "3726cec8f1113f1fabb123642ac72b554007ab0e206f729e829fc5bb695ee58b"
+    },
+    {
+      "path": "apps/web/src/components/chat/MessagesTimeline.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 168286,
+      "sha": "a8bffc1b3aea5811f8e5924313591e981bd9573a",
+      "sha256": "a66bd95f1007c110995704a08b12074dcfa1ae7a15bbb7cdce8f3f8ffd0c40d7"
+    },
+    {
+      "path": "apps/web/src/components/chat/useTimelineRowHeightHints.browser.tsx",
+      "mode": "100644",
+      "type": "blob",
+      "bytes": 5725,
+      "sha": "ca769dbea08c9590b784582e749a147f4ce33e0d",
+      "sha256": "02853ce27b4b2c354875225eed0b0a6a2745fd7ff8712d35cb9129a6aa7e5834"
+    }
+  ],
+  "unit": {
+    "source": "apps/web/src/components/chat/timelineRowHeight.logic.test.ts",
+    "blob": "53002984f11a7d7fd4ed55f01e132a3fa8e9304b",
+    "bytes": 10314,
+    "target": "apps/web/src/components/chat/timelineRowHeight.pr1862-control.test.ts",
+    "cases": 16,
+    "originalTitles": [
+      "grows with wrapped prose, blank lines and code fences",
+      "scales with the chat font size",
+      "prefers a height measured in an earlier mount for the same layout",
+      "re-estimates when the layout changes"
+    ]
+  },
+  "hook": {
+    "source": "apps/web/src/components/chat/useTimelineRowHeightHints.browser.tsx",
+    "blob": "ca769dbea08c9590b784582e749a147f4ce33e0d",
+    "bytes": 5725,
+    "target": "apps/web/src/components/chat/PrRowHeightOwnership1862.browser.tsx",
+    "cases": 3
+  },
+  "scroll": {
+    "source": "apps/web/src/components/chat/MessagesTimeline.scroll.browser.tsx",
+    "blob": "5dff1766de1dd4adc9d030bc6f56e72a5224f7a6",
+    "cases": 4
+  },
+  "unitPreservation": [
+    "src/components/chat/MessagesTimeline.logic.test.ts",
+    "src/components/chatHotPath.compiler.test.ts",
+    "src/hasSelectorVariants.test.ts"
+  ],
+  "qualification": "Identical complete fixtures exercise bounded estimation and persistent geometry ownership. Hook item sizes are explicit callback inputs; Chromium DOM widths are real. The original four scroll/reveal cases remain unchanged on both sources. No native Electron or performance timing claim is inferred from these controls.",
+  "ownedCommandObserver": {
+    "sourceCommit": "23aeaa0ce948a06c33bc2c459d2f3c734ef89e2d",
+    "path": "scripts/pr1866-projection-evidence/owned-command-observer.mjs",
+    "blob": "e484cd5e71d42c7d17fc71fcce4d5a0d44a11f33",
+    "bytes": 4451,
+    "sha256": "0331490c6284366533739100a15a71546ee26e718ff8597e43295857b4d72423"
+  }
+}

@@ -1,0 +1,79 @@
+name: Timeline height ownership qualification
+on:
+  push:
+    branches: ["cleanup/20261012/timeline-height-1862-validation"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    name: Timeline height ${{ matrix.mode }} (${{ matrix.side }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mode: controls
+            side: before
+            source: 9b5e6efcd2c580312bafbb5b7ad708ee2fa3e5f8
+            tree: 01df816bb51bfd68bf8446a4e0f5ca82d8d21d90
+          - mode: controls
+            side: after
+            source: 3f9919cc2220ff79e96d6f1ecd0e72034a49baf7
+            tree: 52973d90178abdde583bc697145e4cb5dbadf398
+          - mode: static
+            side: after
+            source: 3f9919cc2220ff79e96d6f1ecd0e72034a49baf7
+            tree: 52973d90178abdde583bc697145e4cb5dbadf398
+    steps:
+      - name: Checkout exact application source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+      - name: Check source and setup identity before dependencies
+        shell: bash
+        env:
+          EXPECTED_SOURCE: ${{ matrix.source }}
+          EXPECTED_TREE: ${{ matrix.tree }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXPECTED_TREE"
+          test "$(git hash-object .github/actions/setup-workspace/action.yml)" = "37d1f4325a3dc5eec69a4af4a6da293b49514fd2"
+          git diff --exit-code HEAD --
+      - name: Checkout immutable diagnostic driver
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+          path: .pr1862-driver
+          persist-credentials: false
+      - name: Install frozen workspace dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+          turbo: "false"
+      - name: Parse diagnostic JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check .pr1862-driver/scripts/timeline-height-1862-validation/runner.mjs
+          node --check .pr1862-driver/scripts/timeline-height-1862-validation/snapshots.mjs
+          node --check .pr1862-driver/scripts/timeline-height-1862-validation/owned-command-observer.mjs
+      - name: Install Chromium for actual browser controls
+        if: matrix.mode == 'controls'
+        working-directory: apps/web
+        run: bunx --no-install playwright install chromium
+      - name: Execute exact-source qualification
+        shell: bash
+        run: node .pr1862-driver/scripts/timeline-height-1862-validation/runner.mjs "${{ matrix.mode }}" "${{ matrix.side }}"
+      - name: Retain fixed source and result snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: timeline-height-1862-${{ matrix.mode }}-${{ matrix.side }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1862-${{ matrix.mode }}-${{ matrix.side }}/frozen/
+          if-no-files-found: error
+          retention-days: 14
