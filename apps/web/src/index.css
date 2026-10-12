@@ -155,9 +155,8 @@
 
   /* Seam token, side-agnostic so the value lives in ONE place. The route separates from
      the sidebar with a flat 1px divider only — no depth shadow is cast onto the sidebar.
-       • --seam-line : color of the straight vertical divider. The rail layout draws the
-                       seam with the block's hairline instead, and its hover/drag accent
-                       lives next to that rule (`.chat-content-card::after`, below). */
+       • --seam-line : color of the straight vertical divider; the content-seam
+                       SidebarRail intensifies it on hover (rule below). */
   .chat-content-card {
     /* The outer seam reads stronger than --color-border (and NOT the more-transparent
        --app-surface-divider used by the internal hairlines/splits): the route's outer
@@ -189,6 +188,10 @@
      layout width or painting top/bottom borders. */
   [data-sidebar-side="left"] .chat-content-card::before {
     box-shadow: inset 0.5px 0 0 var(--seam-line);
+  }
+
+  [data-sidebar-side="left"]:has([data-placement="content-seam"]:hover) .chat-content-card {
+    --seam-line: color-mix(in srgb, var(--foreground) 30%, transparent);
   }
 
   /* Sidebar collapsed (offcanvas): drop the divider because the content fills the
@@ -3010,26 +3013,6 @@ diffs-container {
 [data-sidebar-layout="rail"] .chat-content-card::after {
   z-index: 30;
   border: var(--app-rail-inset-border-width) solid var(--app-rail-inset-border);
-  transition:
-    border-radius 120ms ease-out var(--app-rail-corner-delay, 0ms),
-    border-color var(--default-transition-duration, 150ms)
-      var(--default-transition-timing-function, ease),
-    box-shadow var(--default-transition-duration, 150ms)
-      var(--default-transition-timing-function, ease);
-}
-
-/* Resize affordance: hovering or dragging the content-seam rail (`data-resizing`, set by
-   SidebarRail for the whole drag) brightens the panel seam to the neutral foreground mix the
-   seam hover has always used. The inset stroke thickens the hairline to about 1px inside the
-   border box, so nothing shifts. Only while the panel is open: collapsed, that rail is a toggle, not a
-   resize handle. The right dock's rail uses the sidebar-shell placement, so it never matches. */
-[data-sidebar-layout="rail"]:has([data-placement="content-seam"]:is(:hover, [data-resizing])):not(
-    :has([data-slot="sidebar"][data-side="left"][data-state="collapsed"])
-  )
-  .chat-content-card::after {
-  --seam-hover-line: color-mix(in srgb, var(--foreground) 30%, transparent);
-  border-left-color: var(--seam-hover-line);
-  box-shadow: inset var(--app-rail-inset-border-width) 0 0 var(--seam-hover-line);
 }
 
 /* Panel collapsed: its zero-width box must not leave a border line next to the rail. The

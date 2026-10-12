@@ -14,10 +14,10 @@ const RESIZABLE = { minWidth: 200 };
 
 // The `_chat.tsx` shell around a route: the left panel, the detached content-seam rail, and
 // the route column.
-function renderRailShell(open = true) {
+function renderRailShell() {
   return render(
     <SidebarProvider
-      defaultOpen={open}
+      defaultOpen
       data-sidebar-side="left"
       data-sidebar-layout="rail"
       style={{ "--app-top-strip-height": "44px" } as CSSProperties}
@@ -37,22 +37,6 @@ function renderRailShell(open = true) {
 
 const seamStyle = (container: HTMLElement) =>
   getComputedStyle(container.querySelector<HTMLElement>(".chat-content-card")!, "::after");
-const seamRail = (container: HTMLElement) =>
-  container.querySelector<HTMLButtonElement>('[data-placement="content-seam"]')!;
-const mousePointer = (type: string, rail: HTMLElement) => {
-  const { left, top, height } = rail.getBoundingClientRect();
-  return new PointerEvent(type, {
-    bubbles: true,
-    cancelable: true,
-    pointerType: "mouse",
-    pointerId: 1,
-    isPrimary: true,
-    button: 0,
-    buttons: type === "pointerup" ? 0 : 1,
-    clientX: left + 2,
-    clientY: top + height / 2,
-  });
-};
 
 describe("Hubs empty state", () => {
   beforeEach(async () => {
@@ -68,43 +52,6 @@ describe("Hubs empty state", () => {
       expect(card!.querySelector("main")!.textContent).toContain("No hubs yet");
       expect(seamStyle(screen.container).content).not.toBe("none");
       expect(seamStyle(screen.container).borderLeftWidth).not.toBe("0px");
-    } finally {
-      await screen.unmount();
-    }
-  });
-
-  it("lights the seam while the content-seam rail is hovered or dragged", async () => {
-    const screen = await renderRailShell();
-    try {
-      const rail = seamRail(screen.container);
-      const resting = seamStyle(screen.container).borderLeftColor;
-
-      await page.getByRole("button", { name: "Resize Sidebar" }).hover({ force: true });
-      expect(rail.matches(":hover")).toBe(true);
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).not.toBe(resting);
-      await page.getByText("No hubs yet").hover();
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).toBe(resting);
-
-      // A drag keeps the highlight even when `:hover` is not on the rail.
-      rail.dispatchEvent(mousePointer("pointerdown", rail));
-      expect(rail.hasAttribute("data-resizing")).toBe(true);
-      expect(rail.matches(":hover")).toBe(false);
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).not.toBe(resting);
-      rail.dispatchEvent(mousePointer("pointerup", rail));
-      expect(rail.hasAttribute("data-resizing")).toBe(false);
-      await expect.poll(() => seamStyle(screen.container).borderLeftColor).toBe(resting);
-    } finally {
-      await screen.unmount();
-    }
-  });
-
-  it("leaves the seam alone when the collapsed rail is only a toggle", async () => {
-    const screen = await renderRailShell(false);
-    try {
-      const resting = seamStyle(screen.container).borderLeftColor;
-      await page.getByRole("button", { name: "Toggle Sidebar" }).hover({ force: true });
-      expect(seamRail(screen.container).matches(":hover")).toBe(true);
-      expect(seamStyle(screen.container).borderLeftColor).toBe(resting);
     } finally {
       await screen.unmount();
     }
