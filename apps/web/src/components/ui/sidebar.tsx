@@ -489,6 +489,7 @@ function SidebarRail({
       }
       resolvedResizable?.onResize?.(resizeState.width);
       resizeStateRef.current = null;
+      resizeState.rail.removeAttribute("data-resizing");
       if (resizeState.rail.hasPointerCapture(pointerId)) {
         resizeState.rail.releasePointerCapture(pointerId);
       }
@@ -547,6 +548,9 @@ function SidebarRail({
         wrapper,
       };
       wrapper.style.setProperty("--sidebar-width", `${initialWidth}px`);
+      // Keeps the seam highlighted for the whole drag (index.css), not only while `:hover`
+      // happens to hold under the captured pointer.
+      event.currentTarget.setAttribute("data-resizing", "");
       event.currentTarget.setPointerCapture(event.pointerId);
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
@@ -677,8 +681,9 @@ function SidebarRail({
         isContentSeam
           ? [
               /* Resize hit-area on the chat card seam. The visible divider is the card's
-                 border-inline edge (follows the rounded corner); hovering this rail
-                 intensifies that border via :has() in index.css — no overlay line here.
+                 left border (follows the rounded corner); hovering or dragging this rail
+                 (`data-resizing`) turns that border accent via :has() in index.css — no
+                 overlay line here.
                  This rail lives OUTSIDE <Sidebar>, so `in-data-[side]` cursor variants
                  never match (no [data-side] ancestor). Set the cursor directly:
                  `col-resize` (the ↔ handle) when resizing is available — matching the
