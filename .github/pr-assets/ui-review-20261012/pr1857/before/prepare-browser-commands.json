@@ -1,0 +1,412 @@
+[
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "81b2ce105b3362e1266bb15916e0b16633f3843d\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "diff",
+      "HEAD",
+      "--exit-code",
+      "--"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:package.json"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:bun.lock"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "967fc9b407419dafb2e867d18c3f2ccf472745c9\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/web/vitest.browser.config.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "9da1682a3f584018e0587ef7f4f9f9f4c5749c03\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:assets/beta/beta-web-apple-touch-180.png"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "bfbc47ec905f719c7719f280b6dd0c00644f84f7\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/server/src/codexGeneratedImages.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "4062654e403990ef748c9504e1df02e2a2511986\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "0d92ba5ab164e394ee4386c73b64375af380241b\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "d343176ded616eeebce6c6ec62647482c47b6500\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:packages/contracts/src/providerRuntime.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "f026479fb9d6eb46c5c660613d6dabb5d7b9f39f\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/web/src/components/ChatView.browser.tsx"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/web/src/components/ChatView.tsx"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "9f9c13fe67a2ac4a27f150661b555180abadf675\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "e7ea6a83362bc11270ecce170eba3c5cd873bee1\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "diff",
+      "HEAD",
+      "--exit-code",
+      "--"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:.github/workflows/pr-root-source-evidence.yml"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "db73da2d33718c8b19009ccc6762b7a51775c4ec\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/README.md"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "3a55d6fd64c15fe6aac322a0f30a489203c98acb\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/browser.config.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "51c8ec2fee98640d6223411a2dba5afb83704f7b\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/chat-case.tsx"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "cd5c427f2277a431e624bf0eb5123b8de9f08055\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/fixtures.json"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "8a56bd6d69c0ba74a0ed4659c305d99a8bda03ac\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/projection-case.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "62f50ece5e7d250171e2bf65166da681a17c85eb\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/runner.mjs"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "cdffc611d101c53bad5f5c8bf6796cbec155bb36\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/settings-case.tsx"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "e541d3d235919f0c48c5e9f5da7defa9df5c4e48\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/settings-observer.ts"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "43ddcd1d02927dbb39524d6409b12dcfbf1c3e57\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/snapshots.mjs"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "3f6c01bbc83d6741767253fe75392b178caaee6e\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:scripts/pr-root-source-evidence/targets.json"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "2243e958ef333f423090ac0872eb294bcec11344\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "156b6f0300920f5ae49700b9f297f47d2facdc29\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "ls-files",
+      "--",
+      "apps/web/src/components/PrRootProjectionEvidence.data.json"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "rev-parse",
+      "HEAD:apps/web/src/components/ChatView.browser.tsx"
+    ],
+    "cwd": "/home/runner/work/synara/synara/.pr-root-driver",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57\n",
+    "stderr": ""
+  },
+  {
+    "executable": "git",
+    "args": [
+      "ls-files",
+      "--",
+      "apps/web/src/components/PrRootSourceEvidence.browser.tsx"
+    ],
+    "cwd": "/home/runner/work/synara/synara",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  }
+]

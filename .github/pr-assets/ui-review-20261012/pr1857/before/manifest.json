@@ -1,0 +1,168 @@
+{
+  "target": {
+    "id": "pr1857-before",
+    "kind": "images",
+    "variant": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "assets/beta/beta-web-apple-touch-180.png",
+      "apps/server/src/codexGeneratedImages.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts",
+      "packages/contracts/src/providerRuntime.ts",
+      "apps/web/src/components/ChatView.browser.tsx",
+      "apps/web/src/components/ChatView.tsx"
+    ]
+  },
+  "complete": true,
+  "files": [
+    {
+      "path": "browser-exit.json",
+      "bytes": 22,
+      "sha256": "2c533ff60254edc790dc36469a95637379ed0aead81e96c12e4d92c622b96421",
+      "blob": "702db895772b51bbb58b692aa10c3a1226030cf6"
+    },
+    {
+      "path": "browser.json",
+      "bytes": 76422,
+      "sha256": "22fbf35d2861e2bf398a75a82b8ca52547e37cfbd53bacb9c6b6ebaecdcdacef",
+      "blob": "5197fd7544ac22fd37e0956f28adc8f949a7e9e1"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 27298,
+      "sha256": "88dfa84d821b6ffec867a8f24b1c334ffa73033d18294f9fa8be78cfd04caa15",
+      "blob": "df11622e64a8e3575c7f9e2505757f4011e615a4"
+    },
+    {
+      "path": "generation-control.png",
+      "bytes": 60532,
+      "sha256": "61e97ef0069273a2d4c91ed6a6f227e43d4b44f8ef13f379b42bd0da2ace286e",
+      "blob": "94b054a135edae6b5ccaaa9e29a2b132c4c50abd"
+    },
+    {
+      "path": "live-output-cutoff.json",
+      "bytes": 336,
+      "sha256": "bf3244c2f6920919ad82d75943100b09324c7ba15f1bd1052535aa5f726a1c89",
+      "blob": "cf17dd62815bc5a4f1b025da515d8718db3891f7"
+    },
+    {
+      "path": "observed-PrRootProjectionEvidence.data.json",
+      "bytes": 115315,
+      "sha256": "fb92009a3f6da691a786fd6d14a50822b2aa12d378ddf62904390760354b751c",
+      "blob": "f22f6abc09121a0582a65d4d4fa3457975a3891a"
+    },
+    {
+      "path": "observed-PrRootProjectionEvidence.test.ts",
+      "bytes": 358207,
+      "sha256": "e7dfb085cfa31e405f336574d9cc956c1df1e6d5e89213f519611cb35973f1b7",
+      "blob": "18dbaf16d19c3275409b39b6bb28ae8dbc5756d5"
+    },
+    {
+      "path": "observed-PrRootSourceEvidence.browser.tsx",
+      "bytes": 581352,
+      "sha256": "60d363c7ea2a99564bd08566f3b728baea79cbba56eb8ee7adf5ffeb9c257a6e",
+      "blob": "6e6fd56f3dcf1c48551ae286ef3d75bf11a0101b"
+    },
+    {
+      "path": "observed-vitest.pr-root-source-evidence.config.ts",
+      "bytes": 1288,
+      "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a",
+      "blob": "51c8ec2fee98640d6223411a2dba5afb83704f7b"
+    },
+    {
+      "path": "original-ChatView.browser.tsx",
+      "bytes": 577781,
+      "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+      "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+    },
+    {
+      "path": "original-ingestion.test.ts",
+      "bytes": 353406,
+      "sha256": "ca0c7620f66b1ce264e4df40520045203ca66dc03d1696244118bec1591611b7",
+      "blob": "d343176ded616eeebce6c6ec62647482c47b6500"
+    },
+    {
+      "path": "output-snapshots.json",
+      "bytes": 7814,
+      "sha256": "672f2828361f1529f62447f03c6a5206c48d03c39159d5e6be51b12206c3bba7",
+      "blob": "f8317af9a91f075e817bb8f1693f94a4ce9d79b5"
+    },
+    {
+      "path": "prepare-browser-commands.json",
+      "bytes": 9470,
+      "sha256": "1a5527010e533a97d3a12d4b68a8c6d691af2bb85013dea7072be5c2c42bef98",
+      "blob": "fd5e40c1ef1ccb0acd515db5c34e20cc4828339b"
+    },
+    {
+      "path": "prepare-commands.json",
+      "bytes": 9499,
+      "sha256": "cab13115ebf06040f069949e63b6be966d681b511cc85f7241a48b84bb6f7843",
+      "blob": "94b5d94861fc8384dda8e93e61701e84bdfca723"
+    },
+    {
+      "path": "projection-generation.json",
+      "bytes": 55415,
+      "sha256": "b8ccc646b6e5739ea4bba18d471d6ec12582aafb7e0d12d335c3c5484480bfd0",
+      "blob": "4a9d55936c9b11253bc5ebe36118fff18c463c65"
+    },
+    {
+      "path": "projection-view.json",
+      "bytes": 55814,
+      "sha256": "69bd07d300d29af2fbc4c42c70c0c18010a03120f4cf75f620979c3eb914e4a1",
+      "blob": "4ded1c3dc9b73e991bb3add576eb7da667087f09"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 7522,
+      "sha256": "2911e9a1d78c45fcb6cfa73c6984a66d3d901bdb2c33810ae377939c8cc9f40b",
+      "blob": "729fc2104337d35783b7d07f43e32ccf0bf95e00"
+    },
+    {
+      "path": "server-exit.json",
+      "bytes": 22,
+      "sha256": "2c533ff60254edc790dc36469a95637379ed0aead81e96c12e4d92c622b96421",
+      "blob": "702db895772b51bbb58b692aa10c3a1226030cf6"
+    },
+    {
+      "path": "server.json",
+      "bytes": 52135,
+      "sha256": "8758b4e1970489caef881687714d14bebb4045014f549267f28a110c42a7b4c9",
+      "blob": "6286f97a82cba028f27457df8975db3a87f06738"
+    },
+    {
+      "path": "server.log",
+      "bytes": 30932,
+      "sha256": "ba040ace81da697941d675e1654a8fa87036d1ff9fc173a7f5a5ff2c16875103",
+      "blob": "5ef15392a14a3f4ae0d4984354cec8d161fa1d77"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 4802,
+      "sha256": "e04c4544b32ea97894d32b374daa9b0043ba88e6d49ce51bca563ea0b1513830",
+      "blob": "7d7c511df400f5a3c3cf7b3b97e2e7533c0ae872"
+    },
+    {
+      "path": "verify-commands.json",
+      "bytes": 8567,
+      "sha256": "a396babb1ca7a57b96ca0ef825ee2c99c06749cbe2ffbeea14c7e4fb92007aa7",
+      "blob": "ae47180073e296fe24e3603e248d318f7a7d713b"
+    },
+    {
+      "path": "video/page@ba3e038b99a3124e176d689c1545fe58.webm",
+      "bytes": 306063,
+      "sha256": "8e9d911d2749d2d52647445f85f1de3f53dd8ee655ca7dec32b8eaeefbe95f19",
+      "blob": "ca30a325b240c6187058a4abd56dffa0fe334a0e"
+    },
+    {
+      "path": "view-result.png",
+      "bytes": 62383,
+      "sha256": "f7528bfaca364ca2ae3aec1f2dd78c3bb647a414b5c86d43a19ca982cb87e808",
+      "blob": "a8174f9e27b4bcbeef9d5dbc676c1b3f234b63e4"
+    }
+  ]
+}

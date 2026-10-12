@@ -1,0 +1,427 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/server[39m
+
+[90mstdout[2m | src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22m[2mProviderRuntimeIngestion[2m > [22m[2msource UI evidence exports view projection
+[22m[39m[23:53:24.997] WARN (#4): SQLite WAL journal mode could not be enabled { resultingJournalMode: [32m'memory'[39m }
+[23:53:24.999] INFO (#4): Running all migrations...
+
+[90mstdout[2m | src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22m[2mProviderRuntimeIngestion[2m > [22m[2msource UI evidence exports view projection
+[22m[39m[23:53:25.169] INFO (#4): Migrations ran successfully {
+  migrations: [
+    [32m'1_OrchestrationEvents'[39m,
+    [32m'2_OrchestrationCommandReceipts'[39m,
+    [32m'3_CheckpointDiffBlobs'[39m,
+    [32m'4_ProviderSessionRuntime'[39m,
+    [32m'5_Projections'[39m,
+    [32m'6_ProjectionThreadSessionRuntimeModeColumns'[39m,
+    [32m'7_ProjectionThreadMessageAttachments'[39m,
+    [32m'8_ProjectionThreadActivitySequence'[39m,
+    [32m'9_ProviderSessionRuntimeMode'[39m,
+    [32m'10_ProjectionThreadsRuntimeMode'[39m,
+    [32m'11_OrchestrationThreadCreatedRuntimeMode'[39m,
+    [32m'12_ProjectionThreadsInteractionMode'[39m,
+    [32m'13_ProjectionThreadProposedPlans'[39m,
+    [32m'14_ProjectionThreadProposedPlanImplementation'[39m,
+    [32m'15_ProjectionTurnsSourceProposedPlan'[39m,
+    [32m'16_CanonicalizeModelSelections'[39m,
+    [32m'17_ThreadHandoffMetadata'[39m,
+    [32m'18_ProjectionThreadMessageMentions'[39m,
+    [32m'19_ProjectionThreadsEnvMode'[39m,
+    [32m'20_ProjectionThreadsForkSource'[39m,
+    [32m'21_ProjectionThreadsAssociatedWorktree'[39m,
+    [32m'22_ProjectionThreadsAssociatedWorktreeBranch'[39m,
+    [32m'23_ProjectionThreadsAssociatedWorktreeRef'[39m,
+    [32m'24_ProjectionThreadsArchivedAt'[39m,
+    [32m'25_ProjectionThreadsSubagents'[39m,
+    [32m'26_ProjectionThreadShellSummary'[39m,
+    [32m'27_BackfillProjectionThreadShellSummary'[39m,
+    [32m'28_ProjectionProjectsKind'[39m,
+    [32m'29_ProjectionThreadsLastKnownPr'[39m,
+    [32m'30_ProjectionThreadMessagesDispatchMode'[39m,
+    [32m'31_ProjectionThreadsCreateBranchFlowCompleted'[39m,
+    [32m'32_ReconcileImportedSchemaLineage'[39m,
+    [32m'33_ProjectionThreadsSidechatSource'[39m,
+    [32m'34_AuthAccessManagement'[39m,
+    [32m'35_NormalizeLegacyModelSelectionOptions'[39m,
+    [32m'36_ProjectionThreadsPinned'[39m,
+    [32m'37_ProjectionSnapshotCapIndexes'[39m,
+    [32m'38_ReconcileLegacySidechatSource'[39m,
+    [32m'39_ReconcileLegacyPinnedThreads'[39m,
+    [32m'40_ProjectionThreadsPinnedMessagesNotes'[39m,
+    [32m'41_ProjectionProjectsPinned'[39m,
+    [32m'42_ProjectionThreadsMarkers'[39m,
+    [32m'43_ProfileStatsIndexes'[39m,
+    [32m'44_Automations'[39m,
+    [32m'45_AutomationPolicies'[39m,
+    [32m'46_AutomationCompletionPolicy'[39m,
+    [32m'47_AutomationCompletionPolicyVersion'[39m,
+    [32m'48_AutomationCompletionEvaluationBacklog'[39m,
+    [32m'49_ProjectionThreadMessagesDispatchOrigin'[39m,
+    [32m'50_ProfileStatsArchive'[39m,
+    [32m'51_ProfileStatsDeletedTokensModel'[39m,
+    [32m'52_ProjectionThreadUserMessageSummaryIndex'[39m,
+    [32m'53_BackfillThreadActivitySequence'[39m,
+    [32m'54_DurableProviderCommandDelivery'[39m,
+    [32m'55_ManagedAttachments'[39m,
+    [32m'56_CommandReceiptFingerprints'[39m,
+    [32m'57_ThreadScopedProjectionMessageIdentity'[39m,
+    [32m'58_ThreadScopedPendingApprovalIdentity'[39m,
+    [32m'59_ProviderSessionLifecycleGeneration'[39m,
+    [32m'60_PendingApprovalLifecycleGeneration'[39m,
+    [32m'61_PendingApprovalSettlementState'[39m,
+    [32m'62_PendingInteractionSettlementParity'[39m,
+    [32m'63_ProjectionMessageCausalSequence'[39m,
+    [32m'64_DurableProviderCommandDeliveryCutover'[39m,
+    [32m'65_DurableQueuedTurnPromotions'[39m,
+    [32m'66_DurableProviderRuntimeEvents'[39m,
+    [32m'67_ProviderDeliveryReconciliation'[39m,
+    [32m'68_GitHandoffOperations'[39m,
+    [32m'69_ProjectPullRequestPins'[39m,
+    [32m'70_AgentGatewayOperations'[39m,
+    [32m'71_ProjectionThreadsGatewayProvenance'[39m,
+    [32m'72_AgentGatewayOperationRetention'[39m,
+    [32m'73_OperationalDiagnostics'[39m,
+    [32m'74_ExternalMcpIntegrations'[39m,
+    [32m'75_ExternalMcpActiveCapacity'[39m,
+    [32m'76_ExternalMcpHardening'[39m,
+    [32m'77_ExternalMcpCompensatingCapacity'[39m,
+    [32m'78_ExternalMcpLiveTurnCapacity'[39m,
+    [32m'79_Spaces'[39m,
+    [32m'80_ExternalMcpProjectScope'[39m,
+    [32m'81_AutomationProposals'[39m,
+    [32m'82_AutomationMemory'[39m,
+    [32m'83_AutomationHeartbeatEligibility'[39m,
+    [32m'84_AutomationNotificationPolicy'[39m,
+    [32m'85_AutomationSettings'[39m,
+    [32m'86_NormalizeStudioThreadWorkspaces'[39m,
+    [32m'87_DropUnusedOrchestrationEventIndexes'[39m,
+    [32m'88_ProjectionThreadsSettledAt'[39m,
+    [32m'89_RecoverRetentionHiddenThreads'[39m,
+    [32m'90_ProjectionThreadMessageTextSegments'[39m,
+    [32m'91_AutomationFailureTolerance'[39m,
+    [32m'92_BackfillAutomationRunThreadSource'[39m,
+    [32m'93_BackfillMaxIterationsDisabledReason'[39m,
+    [32m'94_ProjectionThreadsGoal'[39m,
+    [32m'95_ProjectionThreadsGoalTiming'[39m,
+    [32m'96_ProjectionThreadsGoalAchievements'[39m,
+    [32m'97_ProjectionThreadsSidechatLifecycle'[39m,
+    [32m'98_MigrateKiloToOpenCode'[39m,
+    [32m'99_InvalidateProjectionThreadsCursor'[39m,
+    [32m'100_MessageTextChunks'[39m,
+    ... 34 more items
+  ]
+}
+
+[90mstdout[2m | src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22m[2mProviderRuntimeIngestion[2m > [22m[2msource UI evidence exports view projection
+[22m[39m[23:53:25.186] INFO (#4): orchestration projection pipeline bootstrapped { projectors: [33m10[39m }
+[23:53:25.191] INFO (#4): orchestration engine started { sequence: [33m0[39m }
+
+[90mstdout[2m | src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22m[2mProviderRuntimeIngestion[2m > [22m[2msource UI evidence exports generation projection
+[22m[39m[23:53:25.346] WARN (#124): SQLite WAL journal mode could not be enabled { resultingJournalMode: [32m'memory'[39m }
+[23:53:25.347] INFO (#124): Running all migrations...
+
+[90mstdout[2m | src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22m[2mProviderRuntimeIngestion[2m > [22m[2msource UI evidence exports generation projection
+[22m[39m[23:53:25.481] INFO (#124): Migrations ran successfully {
+  migrations: [
+    [32m'1_OrchestrationEvents'[39m,
+    [32m'2_OrchestrationCommandReceipts'[39m,
+    [32m'3_CheckpointDiffBlobs'[39m,
+    [32m'4_ProviderSessionRuntime'[39m,
+    [32m'5_Projections'[39m,
+    [32m'6_ProjectionThreadSessionRuntimeModeColumns'[39m,
+    [32m'7_ProjectionThreadMessageAttachments'[39m,
+    [32m'8_ProjectionThreadActivitySequence'[39m,
+    [32m'9_ProviderSessionRuntimeMode'[39m,
+    [32m'10_ProjectionThreadsRuntimeMode'[39m,
+    [32m'11_OrchestrationThreadCreatedRuntimeMode'[39m,
+    [32m'12_ProjectionThreadsInteractionMode'[39m,
+    [32m'13_ProjectionThreadProposedPlans'[39m,
+    [32m'14_ProjectionThreadProposedPlanImplementation'[39m,
+    [32m'15_ProjectionTurnsSourceProposedPlan'[39m,
+    [32m'16_CanonicalizeModelSelections'[39m,
+    [32m'17_ThreadHandoffMetadata'[39m,
+    [32m'18_ProjectionThreadMessageMentions'[39m,
+    [32m'19_ProjectionThreadsEnvMode'[39m,
+    [32m'20_ProjectionThreadsForkSource'[39m,
+    [32m'21_ProjectionThreadsAssociatedWorktree'[39m,
+    [32m'22_ProjectionThreadsAssociatedWorktreeBranch'[39m,
+    [32m'23_ProjectionThreadsAssociatedWorktreeRef'[39m,
+    [32m'24_ProjectionThreadsArchivedAt'[39m,
+    [32m'25_ProjectionThreadsSubagents'[39m,
+    [32m'26_ProjectionThreadShellSummary'[39m,
+    [32m'27_BackfillProjectionThreadShellSummary'[39m,
+    [32m'28_ProjectionProjectsKind'[39m,
+    [32m'29_ProjectionThreadsLastKnownPr'[39m,
+    [32m'30_ProjectionThreadMessagesDispatchMode'[39m,
+    [32m'31_ProjectionThreadsCreateBranchFlowCompleted'[39m,
+    [32m'32_ReconcileImportedSchemaLineage'[39m,
+    [32m'33_ProjectionThreadsSidechatSource'[39m,
+    [32m'34_AuthAccessManagement'[39m,
+    [32m'35_NormalizeLegacyModelSelectionOptions'[39m,
+    [32m'36_ProjectionThreadsPinned'[39m,
+    [32m'37_ProjectionSnapshotCapIndexes'[39m,
+    [32m'38_ReconcileLegacySidechatSource'[39m,
+    [32m'39_ReconcileLegacyPinnedThreads'[39m,
+    [32m'40_ProjectionThreadsPinnedMessagesNotes'[39m,
+    [32m'41_ProjectionProjectsPinned'[39m,
+    [32m'42_ProjectionThreadsMarkers'[39m,
+    [32m'43_ProfileStatsIndexes'[39m,
+    [32m'44_Automations'[39m,
+    [32m'45_AutomationPolicies'[39m,
+    [32m'46_AutomationCompletionPolicy'[39m,
+    [32m'47_AutomationCompletionPolicyVersion'[39m,
+    [32m'48_AutomationCompletionEvaluationBacklog'[39m,
+    [32m'49_ProjectionThreadMessagesDispatchOrigin'[39m,
+    [32m'50_ProfileStatsArchive'[39m,
+    [32m'51_ProfileStatsDeletedTokensModel'[39m,
+    [32m'52_ProjectionThreadUserMessageSummaryIndex'[39m,
+    [32m'53_BackfillThreadActivitySequence'[39m,
+    [32m'54_DurableProviderCommandDelivery'[39m,
+    [32m'55_ManagedAttachments'[39m,
+    [32m'56_CommandReceiptFingerprints'[39m,
+    [32m'57_ThreadScopedProjectionMessageIdentity'[39m,
+    [32m'58_ThreadScopedPendingApprovalIdentity'[39m,
+    [32m'59_ProviderSessionLifecycleGeneration'[39m,
+    [32m'60_PendingApprovalLifecycleGeneration'[39m,
+    [32m'61_PendingApprovalSettlementState'[39m,
+    [32m'62_PendingInteractionSettlementParity'[39m,
+    [32m'63_ProjectionMessageCausalSequence'[39m,
+    [32m'64_DurableProviderCommandDeliveryCutover'[39m,
+    [32m'65_DurableQueuedTurnPromotions'[39m,
+    [32m'66_DurableProviderRuntimeEvents'[39m,
+    [32m'67_ProviderDeliveryReconciliation'[39m,
+    [32m'68_GitHandoffOperations'[39m,
+    [32m'69_ProjectPullRequestPins'[39m,
+    [32m'70_AgentGatewayOperations'[39m,
+    [32m'71_ProjectionThreadsGatewayProvenance'[39m,
+    [32m'72_AgentGatewayOperationRetention'[39m,
+    [32m'73_OperationalDiagnostics'[39m,
+    [32m'74_ExternalMcpIntegrations'[39m,
+    [32m'75_ExternalMcpActiveCapacity'[39m,
+    [32m'76_ExternalMcpHardening'[39m,
+    [32m'77_ExternalMcpCompensatingCapacity'[39m,
+    [32m'78_ExternalMcpLiveTurnCapacity'[39m,
+    [32m'79_Spaces'[39m,
+    [32m'80_ExternalMcpProjectScope'[39m,
+    [32m'81_AutomationProposals'[39m,
+    [32m'82_AutomationMemory'[39m,
+    [32m'83_AutomationHeartbeatEligibility'[39m,
+    [32m'84_AutomationNotificationPolicy'[39m,
+    [32m'85_AutomationSettings'[39m,
+    [32m'86_NormalizeStudioThreadWorkspaces'[39m,
+    [32m'87_DropUnusedOrchestrationEventIndexes'[39m,
+    [32m'88_ProjectionThreadsSettledAt'[39m,
+    [32m'89_RecoverRetentionHiddenThreads'[39m,
+    [32m'90_ProjectionThreadMessageTextSegments'[39m,
+    [32m'91_AutomationFailureTolerance'[39m,
+    [32m'92_BackfillAutomationRunThreadSource'[39m,
+    [32m'93_BackfillMaxIterationsDisabledReason'[39m,
+    [32m'94_ProjectionThreadsGoal'[39m,
+    [32m'95_ProjectionThreadsGoalTiming'[39m,
+    [32m'96_ProjectionThreadsGoalAchievements'[39m,
+    [32m'97_ProjectionThreadsSidechatLifecycle'[39m,
+    [32m'98_MigrateKiloToOpenCode'[39m,
+    [32m'99_InvalidateProjectionThreadsCursor'[39m,
+    [32m'100_MessageTextChunks'[39m,
+    ... 34 more items
+  ]
+}
+
+[90mstdout[2m | src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22m[2mProviderRuntimeIngestion[2m > [22m[2msource UI evidence exports generation projection
+[22m[39m[23:53:25.487] INFO (#124): orchestration projection pipeline bootstrapped { projectors: [33m10[39m }
+[23:53:25.489] INFO (#124): orchestration engine started { sequence: [33m0[39m }
+
+ [31m❯[39m src/orchestration/Layers/PrRootProjectionEvidence.test.ts [2m([22m[2m164 tests[22m[2m | [22m[31m1 failed[39m[2m | [22m[33m162 skipped[39m[2m)[22m[33m 585[2mms[22m[39m
+     [2m[90m↓[39m[22m backs off idle journal safety polls and returns to the fast recovery cadence
+     [2m[90m↓[39m[22m uses an already-persisted runtime stream without appending the event again
+[31m     [31m×[31m source UI evidence exports view projection[39m[33m 376[2mms[22m[39m
+     [32m✓[39m source UI evidence exports generation projection[32m 207[2mms[22m[39m
+     [2m[90m↓[39m[22m replays a committed text batch exactly once after an uncertain append and ingestion restart
+     [2m[90m↓[39m[22m measures real SQLite writes for 260 paced deltas (batching=false)
+     [2m[90m↓[39m[22m measures real SQLite writes for 260 paced deltas (batching=true)
+     [2m[90m↓[39m[22m preserves workflow phase agents and poll snapshots during replay ingestion
+     [2m[90m↓[39m[22m preserves workflow phase agents and poll snapshots during live ingestion
+     [2m[90m↓[39m[22m preserves distinct legacy Codex reasoning sections during replay ingestion
+     [2m[90m↓[39m[22m preserves distinct legacy Codex reasoning sections during live ingestion
+     [2m[90m↓[39m[22m keeps unrelated live text immediate while coalescing mixed-thread page snapshots
+     [2m[90m↓[39m[22m bounds shutdown without draining unread backlog and replays deferred progress after restart
+     [2m[90m↓[39m[22m restores accepted tool snapshot fingerprints without dispatching intermediate activities
+     [2m[90m↓[39m[22m coalesces changed tool snapshots during durable replay without discarding raw journal rows
+     [2m[90m↓[39m[22m flushes the newest live tool snapshot within the window without an explicit drain
+     [2m[90m↓[39m[22m flushes trailing progress before a terminal task snapshot in source order
+     [2m[90m↓[39m[22m does not resurrect coalesced accepted tool snapshots while rebuilding open-turn state
+     [2m[90m↓[39m[22m recovers a failed tool snapshot after its coalesced prefix was acknowledged
+     [2m[90m↓[39m[22m repairs a failed accepted task activity on restart without duplicating committed receipts
+     [2m[90m↓[39m[22m releases computer control on 'turn.completed' { state: 'completed' } without idle expiry
+     [2m[90m↓[39m[22m releases computer control on 'turn.aborted' { reason: 'User interrupted' } without idle expiry
+     [2m[90m↓[39m[22m releases computer control on 'session.exited' { exitKind: 'graceful' } without idle expiry
+     [2m[90m↓[39m[22m releases computer control on 'session.state.changed' { state: 'stopped' } without idle expiry
+     [2m[90m↓[39m[22m releases computer control on 'session.state.changed' { state: 'error' } without idle expiry
+     [2m[90m↓[39m[22m releases computer control on 'runtime.error' { message: 'Provider stopped' } without idle expiry
+     [2m[90m↓[39m[22m does not let a delayed computer terminal 'turn.completed' release a newer turn's desktop
+     [2m[90m↓[39m[22m does not let a delayed computer terminal 'session.exited' release a newer turn's desktop
+     [2m[90m↓[39m[22m keeps computer control on an ambiguous turnless terminal (session ready: false)
+     [2m[90m↓[39m[22m keeps computer control on an ambiguous turnless terminal (session ready: true)
+     [2m[90m↓[39m[22m does not assign an ambiguous turnless failed completion to the active turn
+     [2m[90m↓[39m[22m does not assign an ambiguous turnless completed completion to the active turn
+     [2m[90m↓[39m[22m REL-01C gate: replays output persisted before subscription without duplicate acceptance
+     [2m[90m↓[39m[22m quarantines a command identity collision (preceding ack fails: false)
+     [2m[90m↓[39m[22m quarantines a command identity collision (preceding ack fails: true)
+     [2m[90m↓[39m[22m quarantines a previously rejected command without blocking later assistant output
+     [2m[90m↓[39m[22m REL-01C gate: rebuilds accepted buffered output before a terminal event
+     [2m[90m↓[39m[22m REL-01C gate: does not re-buffer accepted streaming output during rebuild
+     [2m[90m↓[39m[22m keeps tokenized Codex Markdown contiguous in streaming delivery despite non-row item updates
+     [2m[90m↓[39m[22m keeps tokenized Codex Markdown contiguous in buffered delivery despite non-row item updates
+     [2m[90m↓[39m[22m marks streamed assistant text segments at tool-intervention boundaries
+     [2m[90m↓[39m[22m does not split assistant text for a row emitted by another thread
+     [2m[90m↓[39m[22m does not split the reply a Claude Monitor event woke
+     [2m[90m↓[39m[22m maps turn started/completed events into thread session updates
+     [2m[90m↓[39m[22m requests another goal turn after a clean active-goal completion
+     [2m[90m↓[39m[22m pauses an active goal instead of continuing after an interrupted completion
+     [2m[90m↓[39m[22m preserves Devin recovery goal ownership through success
+     [2m[90m↓[39m[22m preserves Devin recovery goal ownership through restart-failure
+     [2m[90m↓[39m[22m preserves Devin recovery goal ownership through user-interrupt
+     [2m[90m↓[39m[22m preserves Devin recovery goal ownership through user-cancel
+     [2m[90m↓[39m[22m applies provider session.state.changed transitions directly
+     [2m[90m↓[39m[22m clears active turn state when a provider session reports ready
+     [2m[90m↓[39m[22m does not clear active turn when session/thread started arrives mid-turn
+     [2m[90m↓[39m[22m settles orphaned pending interactions when a provider session (re)starts
+     [2m[90m↓[39m[22m settles orphaned uncertain interactions when a provider session (re)starts
+     [2m[90m↓[39m[22m settles a pending user-input request when its turn ends without a session restart
+     [2m[90m↓[39m[22m keeps a Claude background approval answerable after foreground completion
+     [2m[90m↓[39m[22m leaves a concurrent turn's pending user-input request open when another turn ends
+     [2m[90m↓[39m[22m settles a turnless pending approval when the thread's last turn ends
+     [2m[90m↓[39m[22m keeps a turnless pending approval open while another turn is still running
+     [2m[90m↓[39m[22m leaves a turnless pending approval from another generation answerable
+     [2m[90m↓[39m[22m scopes session.exited settlement to the exited lifecycle generation
+     [2m[90m↓[39m[22m clears running turn state when a stop emits turn.aborted without a turn id
+     [2m[90m↓[39m[22m projects a turn/completed provider notification with interrupted state as interrupted
+     [2m[90m↓[39m[22m prefers a persisted Studio copy over its provider-home image source
+     [2m[90m↓[39m[22m recovers generated-image references from persisted turn activities
+     [2m[90m↓[39m[22m attaches generated images to the empty terminal assistant message, not collapsed commentary
+     [2m[90m↓[39m[22m does not re-emit message-sent events when the same image_generation completion replays
+     [2m[90m↓[39m[22m ignores auxiliary turn completions from a different provider thread
+     [2m[90m↓[39m[22m does not project reasoning content deltas into transcript work rows
+     [2m[90m↓[39m[22m streams one coalesced Claude reasoning row and keeps its position when it completes
+     [2m[90m↓[39m[22m recovers accepted Claude reasoning and settles it on 'turn.aborted'
+     [2m[90m↓[39m[22m recovers accepted Claude reasoning and settles it on 'runtime.error'
+     [2m[90m↓[39m[22m recovers accepted Claude reasoning and settles it on 'session.exited'
+     [2m[90m↓[39m[22m recovers accepted Claude reasoning and settles it on 'turn.completed'
+     [2m[90m↓[39m[22m preserves durable failed Claude reasoning with 0 newer rows when ingestion receives a late completion
+     [2m[90m↓[39m[22m preserves durable failed Claude reasoning with 2001 newer rows when ingestion receives a late completion
+     [2m[90m↓[39m[22m projects only completed Codex reasoning with a readable summary
+     [2m[90m↓[39m[22m projects narrated Antigravity planner steps as completed reasoning
+     [2m[90m↓[39m[22m buffers Codex summary deltas into one completed reasoning activity
+     [2m[90m↓[39m[22m settles buffered Codex reasoning when a turn is turn.aborted
+     [2m[90m↓[39m[22m settles buffered Codex reasoning when a turn is turn.completed
+     [2m[90m↓[39m[22m settles and clears buffered Codex reasoning on runtime errors
+     [2m[90m↓[39m[22m does not project unsupported or unidentified reasoning lifecycle rows
+     [2m[90m↓[39m[22m uses assistant item completion detail when no assistant deltas were streamed
+     [2m[90m↓[39m[22m marks the source proposed plan implemented only after the target turn starts
+     [2m[90m↓[39m[22m does not mark the source proposed plan implemented for a rejected turn.started event
+     [2m[90m↓[39m[22m does not mark the source proposed plan implemented for an unrelated turn.started when no thread active turn is tracked
+     [2m[90m↓[39m[22m finalizes buffered proposed-plan deltas into a first-class proposed plan on turn completion
+     [2m[90m↓[39m[22m ignores whitespace-only assistant deltas on completion in buffered delivery
+     [2m[90m↓[39m[22m keeps full buffered text across silent gaps: {"initialSilenceMs":0,"deltaGapMs":2400000,"completionGapMs":0}
+     [2m[90m↓[39m[22m keeps full buffered text across silent gaps: {"initialSilenceMs":4800000,"deltaGapMs":2400000,"completionGapMs":0}
+     [2m[90m↓[39m[22m keeps full buffered text across silent gaps: {"initialSilenceMs":0,"deltaGapMs":4800000,"completionGapMs":0}
+     [2m[90m↓[39m[22m keeps full buffered text across silent gaps: {"initialSilenceMs":0,"deltaGapMs":2400000,"completionGapMs":4800000}
+     [2m[90m↓[39m[22m binds overlapping same-thread delivery modes in provider turn order
+     [2m[90m↓[39m[22m does not assign a new same-thread request mode to the already active turn
+     [2m[90m↓[39m[22m isolates overlapping buffered and streaming turns across threads
+     [2m[90m↓[39m[22m flushes the active Codex turn when a steer requests streaming mode
+     [2m[90m↓[39m[22m lazily binds a streaming request when assistant delta precedes turn.started
+     [2m[90m↓[39m[22m consumes a pending mode when a terminal event arrives without turn.started
+     [2m[90m↓[39m[22m does not let a completed unmatched turn claim a future request mode
+     [2m[90m↓[39m[22m flushes buffered assistant text before session exit clears turn state
+     [2m[90m↓[39m[22m finalizes buffered assistant text when a stop cleared the active turn before session exit
+     [2m[90m↓[39m[22m flushes buffered assistant text before runtime.error marks the session errored
+     [2m[90m↓[39m[22m spills oversized buffered deltas and still finalizes full assistant text
+     [2m[90m↓[39m[22m does not duplicate assistant completion when item.completed is followed by turn.completed
+     [2m[90m↓[39m[22m preserves the assistant turn id when a late item.completed omits it
+     [2m[90m↓[39m[22m keeps an existing assistant turn id when a late completion carries a newer turn id
+     [2m[90m↓[39m[22m reuses the live assistant message when item.completed omits the item id
+     [2m[90m↓[39m[22m reuses the live assistant message when item.completed supplies a late item id
+     [2m[90m↓[39m[22m honors the completed item id when a turn has multiple live assistant messages
+     [2m[90m↓[39m[22m bounds large tool activity data while keeping command metadata
+     [2m[90m↓[39m[22m attaches buffered command output deltas to the completed tool activity
+     [2m[90m↓[39m[22m keeps buffered command output when completed raw streams are empty
+     [2m[90m↓[39m[22m persists a turn-scoped failure through ready recovery and projected detail reopening
+     [2m[90m↓[39m[22m keeps the session running when a runtime.warning arrives during an active turn
+     [2m[90m↓[39m[22m maps session/thread lifecycle and item.started into session/activity projections
+     [2m[90m↓[39m[22m consumes P1 runtime events into thread metadata, diff checkpoints, and activities
+     [2m[90m↓[39m[22m updates live provider diff placeholders for the same turn
+     [2m[90m↓[39m[22m does not parse live diff files for providers without patch capability
+     [2m[90m↓[39m[22m suppresses identical consecutive context window updates
+     [2m[90m↓[39m[22m projects real zero-percent context window updates into normalized thread activities
+     [2m[90m↓[39m[22m projects compacted thread state into context compaction activities
+     [2m[90m↓[39m[22m projects context compaction progress from item.started into thread activities
+     [2m[90m↓[39m[22m projects context compaction completion and failure into thread activities
+     [2m[90m↓[39m[22m keeps async question completion separate from independent streaming text
+     [2m[90m↓[39m[22m projects Codex task lifecycle chunks into thread activities
+     [2m[90m↓[39m[22m creates and routes subagent runtime events into child threads
+     [2m[90m↓[39m[22m preserves the parent provider instance when a subagent model is specialized
+     [2m[90m↓[39m[22m handles collab receiver and child provider refs on the same event without duplicate thread creation
+     [2m[90m↓[39m[22m materializes subagent child threads even when the collab payload only exposes receiverAgents
+     [2m[90m↓[39m[22m keeps ingesting after a subagent child thread is deleted instead of re-creating it
+     [2m[90m↓[39m[22m starts when an accepted open-turn row can no longer replay its stored command
+     [2m[90m↓[39m[22m caps native child materialization per parent turn and deduplicates replay
+     [2m[90m↓[39m[22m records a subagent's brief on its child thread as a message from the parent agent
+     [2m[90m↓[39m[22m titles provider-native children from their prompt and never from a raw id
+     [2m[90m↓[39m[22m records the spawning subagent thread as the source of a nested subagent
+     [2m[90m↓[39m[22m never records the launching conversation as a subagent of its own subagent
+     [2m[90m↓[39m[22m publishes the native subagent cap notice once across distinct overflowing events
+     [2m[90m↓[39m[22m routes fallback-annotated child events without polluting the parent projection
+     [2m[90m↓[39m[22m continues processing runtime events after a single event handler failure
+     [2m[90m↓[39m[22m retries a failed page acknowledgement without repeating buffered text (sql-error)
+     [2m[90m↓[39m[22m retries a failed page acknowledgement without repeating buffered text (cursor-not-moved)
+     [2m[90m↓[39m[22m retries a failed page acknowledgement without repeating buffered text (bookkeeping-error)
+     [2m[90m↓[39m[22m acknowledges a burst of live journal notifications in pages, not one per event
+     [2m[90m↓[39m[22m keeps a newer turn's live tools after a stale turn.completed
+     [2m[90m↓[39m[22m keeps a newer turn's live tools after a stale turn.aborted
+     [2m[90m↓[39m[22m keeps a newer turn's live tools after a stale session.exited
+     [2m[90m↓[39m[22m maintains durable last-activity + in-flight tool rows for the worker monitor
+       [2m[90m↓[39m[22m keeps a message settled when a streaming delta arrives after its turn completed
+       [2m[90m↓[39m[22m keeps a message settled when a buffered delta arrives after its turn completed
+       [2m[90m↓[39m[22m settles a new late assistant item after ingestion restarts
+       [2m[90m↓[39m[22m attaches images to a later nonempty completion instead of an earlier skipped item
+       [2m[90m↓[39m[22m leaves the live turn untouched when a turnless terminal event is ambiguous
+       [2m[90m↓[39m[22m retries a failed buffered completion with 2 segment(s) exactly once
+       [2m[90m↓[39m[22m retries a failed buffered completion with 1 segment(s) exactly once
+       [2m[90m↓[39m[22m keeps a buffered proposed plan when its terminal upsert is retried
+       [2m[90m↓[39m[22m keeps buffered command output when the completed activity dispatch is retried
+       [2m[90m↓[39m[22m keeps buffered reasoning when the completed reasoning dispatch is retried
+       [2m[90m↓[39m[22m does not append a Claude reasoning delta twice when its preview dispatch is retried
+       [2m[90m↓[39m[22m keeps spilled buffered text when the spill dispatch is retried
+       [2m[90m↓[39m[22m settles turnless interactions after a turn that ended with runtime.error
+       [2m[90m↓[39m[22m does not attach a completion for a new item to another live message
+       [2m[90m↓[39m[22m does not create an empty assistant row for an empty completed item
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/orchestration/Layers/PrRootProjectionEvidence.test.ts[2m > [22mProviderRuntimeIngestion[2m > [22msource UI evidence exports view projection
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m src/orchestration/Layers/PrRootProjectionEvidence.test.ts:[2m630:103[22m[39m
+    [90m628|[39m       // Same correctness assertion on both heads. Before must retain …
+    [90m629|[39m       // misclassified-view failure after exporting the observed datab…
+    [90m630|[39m       expect(projectedThread.messages.some((message) => message.text.i…
+    [90m   |[39m                                                                                                       [31m^[39m
+    [90m631|[39m     } finally {
+    [90m632|[39m       vi.unstubAllEnvs();
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[2m | [22m[33m162 skipped[39m[90m (164)[39m
+[2m   Start at [22m 23:53:22
+[2m   Duration [22m 3.43s[2m (transform 1.98s, setup 0ms, import 2.71s, tests 585ms, environment 0ms)[22m
+
+JSON report written to /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/server.json

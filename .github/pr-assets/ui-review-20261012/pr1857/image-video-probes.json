@@ -1,0 +1,154 @@
+[
+  {
+    "path": "root-source-evidence-pr1857-after-00d069ea71154ae11b87944a542bb845878b7050/pr1857-after/video/page@7934e4c024badb358debb149585eacd3.webm",
+    "sha256": "960fb81b73dabbb3a7c35d7323a9689704aaff14db67663282de62b68703670c",
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "vp8",
+          "codec_long_name": "On2 VP8",
+          "profile": "0",
+          "codec_type": "video",
+          "codec_tag_string": "[0][0][0][0]",
+          "codec_tag": "0x0000",
+          "width": 960,
+          "height": 1100,
+          "coded_width": 960,
+          "coded_height": 1100,
+          "closed_captions": 0,
+          "film_grain": 0,
+          "has_b_frames": 0,
+          "sample_aspect_ratio": "1:1",
+          "display_aspect_ratio": "48:55",
+          "pix_fmt": "yuv420p",
+          "level": -99,
+          "chroma_location": "center",
+          "field_order": "progressive",
+          "refs": 1,
+          "r_frame_rate": "25/1",
+          "avg_frame_rate": "25/1",
+          "time_base": "1/1000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0
+          },
+          "tags": {
+            "language": "eng",
+            "ENCODER": "Lavc61.3.100 libvpx",
+            "DURATION": "00:01:31.240000000"
+          }
+        }
+      ],
+      "format": {
+        "filename": "campaign/root/source-ui-evidence/run38185895366/root-source-evidence-pr1857-after-00d069ea71154ae11b87944a542bb845878b7050/pr1857-after/video/page@7934e4c024badb358debb149585eacd3.webm",
+        "nb_streams": 1,
+        "nb_programs": 0,
+        "format_name": "matroska,webm",
+        "format_long_name": "Matroska / WebM",
+        "start_time": "0.000000",
+        "duration": "91.240000",
+        "size": "242756",
+        "bit_rate": "21285",
+        "probe_score": 100,
+        "tags": {
+          "ENCODER": "Lavf61.1.100"
+        }
+      }
+    }
+  },
+  {
+    "path": "root-source-evidence-pr1857-before-9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94/pr1857-before/video/page@ba3e038b99a3124e176d689c1545fe58.webm",
+    "sha256": "8e9d911d2749d2d52647445f85f1de3f53dd8ee655ca7dec32b8eaeefbe95f19",
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "vp8",
+          "codec_long_name": "On2 VP8",
+          "profile": "0",
+          "codec_type": "video",
+          "codec_tag_string": "[0][0][0][0]",
+          "codec_tag": "0x0000",
+          "width": 960,
+          "height": 1100,
+          "coded_width": 960,
+          "coded_height": 1100,
+          "closed_captions": 0,
+          "film_grain": 0,
+          "has_b_frames": 0,
+          "sample_aspect_ratio": "1:1",
+          "display_aspect_ratio": "48:55",
+          "pix_fmt": "yuv420p",
+          "level": -99,
+          "chroma_location": "center",
+          "field_order": "progressive",
+          "refs": 1,
+          "r_frame_rate": "25/1",
+          "avg_frame_rate": "25/1",
+          "time_base": "1/1000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0
+          },
+          "tags": {
+            "language": "eng",
+            "ENCODER": "Lavc61.3.100 libvpx",
+            "DURATION": "00:01:47.400000000"
+          }
+        }
+      ],
+      "format": {
+        "filename": "campaign/root/source-ui-evidence/run38185895366/root-source-evidence-pr1857-before-9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94/pr1857-before/video/page@ba3e038b99a3124e176d689c1545fe58.webm",
+        "nb_streams": 1,
+        "nb_programs": 0,
+        "format_name": "matroska,webm",
+        "format_long_name": "Matroska / WebM",
+        "start_time": "0.000000",
+        "duration": "107.400000",
+        "size": "306063",
+        "bit_rate": "22797",
+        "probe_score": 100,
+        "tags": {
+          "ENCODER": "Lavf61.1.100"
+        }
+      }
+    }
+  }
+]

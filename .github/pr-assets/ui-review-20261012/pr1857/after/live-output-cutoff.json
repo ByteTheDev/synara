@@ -1,0 +1,9 @@
+{
+  "outcomes": {
+    "server": "success",
+    "browser": "success"
+  },
+  "cutoffUtc": "2026-10-11T23:55:12.289Z",
+  "errors": [],
+  "qualification": "Timeout, cancellation, missing output, unsafe files or writes during a cutoff make evidence incomplete. Later writes can affect only separate live paths, never these frozen copies."
+}

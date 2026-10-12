@@ -1,0 +1,247 @@
+{
+  "files": [
+    {
+      "path": "projection-view.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data/projection-view.json",
+      "bytes": 55814,
+      "sha256": "69bd07d300d29af2fbc4c42c70c0c18010a03120f4cf75f620979c3eb914e4a1",
+      "sourceBefore": {
+        "size": 55814,
+        "mtimeMs": 1791762805318.6313,
+        "ctimeMs": 1791762805318.6313,
+        "dev": 2049,
+        "ino": 9713248
+      },
+      "sourceAfter": {
+        "size": 55814,
+        "mtimeMs": 1791762805318.6313,
+        "ctimeMs": 1791762805318.6313,
+        "dev": 2049,
+        "ino": 9713248
+      },
+      "cutoffUtc": "2026-10-11T23:53:25.957Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "projection-generation.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data/projection-generation.json",
+      "bytes": 55415,
+      "sha256": "b8ccc646b6e5739ea4bba18d471d6ec12582aafb7e0d12d335c3c5484480bfd0",
+      "sourceBefore": {
+        "size": 55415,
+        "mtimeMs": 1791762805542.6316,
+        "ctimeMs": 1791762805542.6316,
+        "dev": 2049,
+        "ino": 9713249
+      },
+      "sourceAfter": {
+        "size": 55415,
+        "mtimeMs": 1791762805542.6316,
+        "ctimeMs": 1791762805542.6316,
+        "dev": 2049,
+        "ino": 9713249
+      },
+      "cutoffUtc": "2026-10-11T23:53:25.957Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "browser-exit.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data/browser-exit.json",
+      "bytes": 22,
+      "sha256": "2c533ff60254edc790dc36469a95637379ed0aead81e96c12e4d92c622b96421",
+      "sourceBefore": {
+        "size": 22,
+        "mtimeMs": 1791762929929.241,
+        "ctimeMs": 1791762929929.241,
+        "dev": 2049,
+        "ino": 9713247
+      },
+      "sourceAfter": {
+        "size": 22,
+        "mtimeMs": 1791762929929.241,
+        "ctimeMs": 1791762929929.241,
+        "dev": 2049,
+        "ino": 9713247
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.266Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "browser.log",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data/browser.log",
+      "bytes": 27298,
+      "sha256": "88dfa84d821b6ffec867a8f24b1c334ffa73033d18294f9fa8be78cfd04caa15",
+      "sourceBefore": {
+        "size": 27298,
+        "mtimeMs": 1791762915041.718,
+        "ctimeMs": 1791762915041.718,
+        "dev": 2049,
+        "ino": 9713245
+      },
+      "sourceAfter": {
+        "size": 27298,
+        "mtimeMs": 1791762915041.718,
+        "ctimeMs": 1791762915041.718,
+        "dev": 2049,
+        "ino": 9713245
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.267Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "server-exit.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data/server-exit.json",
+      "bytes": 22,
+      "sha256": "2c533ff60254edc790dc36469a95637379ed0aead81e96c12e4d92c622b96421",
+      "sourceBefore": {
+        "size": 22,
+        "mtimeMs": 1791762805622.846,
+        "ctimeMs": 1791762805622.846,
+        "dev": 2049,
+        "ino": 9713238
+      },
+      "sourceAfter": {
+        "size": 22,
+        "mtimeMs": 1791762805622.846,
+        "ctimeMs": 1791762805622.846,
+        "dev": 2049,
+        "ino": 9713238
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.268Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "server.log",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data/server.log",
+      "bytes": 30932,
+      "sha256": "ba040ace81da697941d675e1654a8fa87036d1ff9fc173a7f5a5ff2c16875103",
+      "sourceBefore": {
+        "size": 30932,
+        "mtimeMs": 1791762805567.6316,
+        "ctimeMs": 1791762805567.6316,
+        "dev": 2049,
+        "ino": 9713231
+      },
+      "sourceAfter": {
+        "size": 30932,
+        "mtimeMs": 1791762805567.6316,
+        "ctimeMs": 1791762805567.6316,
+        "dev": 2049,
+        "ino": 9713231
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.268Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "generation-control.png",
+      "source": "/home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1857-before/generation-control.png",
+      "bytes": 60532,
+      "sha256": "61e97ef0069273a2d4c91ed6a6f227e43d4b44f8ef13f379b42bd0da2ace286e",
+      "sourceBefore": {
+        "size": 60532,
+        "mtimeMs": 1791762914968.718,
+        "ctimeMs": 1791762914968.718,
+        "dev": 2049,
+        "ino": 9714320
+      },
+      "sourceAfter": {
+        "size": 60532,
+        "mtimeMs": 1791762914968.718,
+        "ctimeMs": 1791762914968.718,
+        "dev": 2049,
+        "ino": 9714320
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.269Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "video/page@ba3e038b99a3124e176d689c1545fe58.webm",
+      "source": "/home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1857-before/video/page@ba3e038b99a3124e176d689c1545fe58.webm",
+      "bytes": 306063,
+      "sha256": "8e9d911d2749d2d52647445f85f1de3f53dd8ee655ca7dec32b8eaeefbe95f19",
+      "sourceBefore": {
+        "size": 306063,
+        "mtimeMs": 1791762929615.7202,
+        "ctimeMs": 1791762929615.7202,
+        "dev": 2049,
+        "ino": 9713308
+      },
+      "sourceAfter": {
+        "size": 306063,
+        "mtimeMs": 1791762929615.7202,
+        "ctimeMs": 1791762929615.7202,
+        "dev": 2049,
+        "ino": 9713308
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.269Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "view-result.png",
+      "source": "/home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1857-before/view-result.png",
+      "bytes": 62383,
+      "sha256": "f7528bfaca364ca2ae3aec1f2dd78c3bb647a414b5c86d43a19ca982cb87e808",
+      "sourceBefore": {
+        "size": 62383,
+        "mtimeMs": 1791762913505.717,
+        "ctimeMs": 1791762913505.717,
+        "dev": 2049,
+        "ino": 9714314
+      },
+      "sourceAfter": {
+        "size": 62383,
+        "mtimeMs": 1791762913505.717,
+        "ctimeMs": 1791762913505.717,
+        "dev": 2049,
+        "ino": 9714314
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.269Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "server.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/server.json",
+      "bytes": 52135,
+      "sha256": "8758b4e1970489caef881687714d14bebb4045014f549267f28a110c42a7b4c9",
+      "sourceBefore": {
+        "size": 52135,
+        "mtimeMs": 1791762805566.6316,
+        "ctimeMs": 1791762805566.6316,
+        "dev": 2049,
+        "ino": 9713237
+      },
+      "sourceAfter": {
+        "size": 52135,
+        "mtimeMs": 1791762805566.6316,
+        "ctimeMs": 1791762805566.6316,
+        "dev": 2049,
+        "ino": 9713237
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.270Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "browser.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/browser.json",
+      "bytes": 76422,
+      "sha256": "22fbf35d2861e2bf398a75a82b8ca52547e37cfbd53bacb9c6b6ebaecdcdacef",
+      "sourceBefore": {
+        "size": 76422,
+        "mtimeMs": 1791762915041.718,
+        "ctimeMs": 1791762915041.718,
+        "dev": 2049,
+        "ino": 9714322
+      },
+      "sourceAfter": {
+        "size": 76422,
+        "mtimeMs": 1791762915041.718,
+        "ctimeMs": 1791762915041.718,
+        "dev": 2049,
+        "ino": 9714322
+      },
+      "cutoffUtc": "2026-10-11T23:55:30.270Z",
+      "immutableCopy": true
+    }
+  ],
+  "qualification": "Only bounded stable copies enter the artifact tree; live writer paths are separate."
+}

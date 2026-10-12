@@ -1,0 +1,113 @@
+{
+  "target": {
+    "id": "pr1857-after",
+    "kind": "images",
+    "variant": "after",
+    "source": "00d069ea71154ae11b87944a542bb845878b7050",
+    "tree": "eeeb0b2796614b2680ea36ed27c77f3bdd161303",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "assets/beta/beta-web-apple-touch-180.png",
+      "apps/server/src/codexGeneratedImages.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts",
+      "packages/contracts/src/providerRuntime.ts",
+      "apps/web/src/components/ChatView.browser.tsx",
+      "apps/web/src/components/ChatView.tsx"
+    ]
+  },
+  "errors": [],
+  "reportRecords": [
+    {
+      "phase": "server",
+      "bytes": 51804,
+      "sha256": "e9e2da02dc092cf2abe4d8853932acbe313abcefec9c42800d90313ebafd71d7",
+      "immutableSnapshot": true,
+      "actualExit": {
+        "process": 0,
+        "tee": 0
+      },
+      "selected": [
+        {
+          "fullName": "ProviderRuntimeIngestion source UI evidence exports view projection",
+          "status": "passed"
+        },
+        {
+          "fullName": "ProviderRuntimeIngestion source UI evidence exports generation projection",
+          "status": "passed"
+        }
+      ],
+      "filteredCases": 162
+    },
+    {
+      "phase": "browser",
+      "bytes": 75402,
+      "sha256": "5995a7340bd1609485e851376c20bfd991e0a9f9bbeeacf8baed585050302f0b",
+      "immutableSnapshot": true,
+      "actualExit": {
+        "process": 0,
+        "tee": 0
+      },
+      "selected": [
+        {
+          "fullName": "ChatView transcript geometry (full app) source UI evidence renders view projection",
+          "status": "passed"
+        },
+        {
+          "fullName": "ChatView transcript geometry (full app) source UI evidence renders generation projection",
+          "status": "passed"
+        }
+      ],
+      "filteredCases": 220
+    }
+  ],
+  "observations": [
+    {
+      "stage": "view-result",
+      "source": "00d069ea71154ae11b87944a542bb845878b7050",
+      "sourceTree": "eeeb0b2796614b2680ea36ed27c77f3bdd161303",
+      "projectionSha256": "33e258f02a0e02c7fe82f0a7d4ece70b574d7d13b639fe3d0295a7eccc26b77f",
+      "kind": "view",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "rawMessageTexts": [
+        "Inspection complete. The input image contains the Synara Beta mark."
+      ],
+      "imageCount": 0,
+      "imageRequests": [],
+      "images": [],
+      "qualification": "Full production ChatView renders actual source-produced SQLite messages through canonical controlled RPC fixtures; exact checked-in image bytes use a labelled local-image HTTP seam."
+    },
+    {
+      "stage": "generation-control",
+      "source": "00d069ea71154ae11b87944a542bb845878b7050",
+      "sourceTree": "eeeb0b2796614b2680ea36ed27c77f3bdd161303",
+      "projectionSha256": "4561ac52d96261f6c09a792203fdab5feac1eccddd9ccaf6319f951a39688aca",
+      "kind": "generation",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "rawMessageTexts": [
+        "Generated image ready.\n\n![Generated image](</tmp/synara-image-evidence-oTVYWS/codex-home-overlay/generated_images/inspection 100%25.png>)"
+      ],
+      "imageCount": 1,
+      "imageRequests": [
+        "/tmp/synara-image-evidence-oTVYWS/codex-home-overlay/generated_images/inspection 100%.png"
+      ],
+      "images": [
+        {
+          "src": "http://127.0.0.1:51100/api/local-image?path=%2Ftmp%2Fsynara-image-evidence-oTVYWS%2Fcodex-home-overlay%2Fgenerated_images%2Finspection+100%25.png&cwd=%2Ftmp%2Fsynara-provider-project-NmwK5E",
+          "naturalWidth": 180,
+          "naturalHeight": 180
+        }
+      ],
+      "qualification": "Full production ChatView renders actual source-produced SQLite messages through canonical controlled RPC fixtures; exact checked-in image bytes use a labelled local-image HTTP seam."
+    }
+  ],
+  "qualification": "Source-pinned diagnostic evidence. Complete canonical fixtures are retained; only selected new cases execute. Before failures remain actual failures and must match the exact expected regression. No live provider, packaged desktop or native local-image HTTP route claim."
+}

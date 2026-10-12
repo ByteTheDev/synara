@@ -1,0 +1,44 @@
+{
+  "run": 38185895366,
+  "imagesVisuallyReviewedByRoot": [
+    "Before view",
+    "After view",
+    "Before generation",
+    "After generation"
+  ],
+  "rows": [
+    {
+      "variant": "before",
+      "sourceHead": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "sourceTree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+      "driverHead": "e7ea6a83362bc11270ecce170eba3c5cd873bee1",
+      "verifiedSourcePins": 10,
+      "verifiedDriverFiles": 11,
+      "canonicalFixtureReversals": 2,
+      "unchangedProjectionImports": 2,
+      "sameSemanticEventsAcrossSources": true,
+      "actualImageCounts": {
+        "view": 1,
+        "generation": 1
+      },
+      "rawBeforeFailuresPreserved": true
+    },
+    {
+      "variant": "after",
+      "sourceHead": "00d069ea71154ae11b87944a542bb845878b7050",
+      "sourceTree": "eeeb0b2796614b2680ea36ed27c77f3bdd161303",
+      "driverHead": "e7ea6a83362bc11270ecce170eba3c5cd873bee1",
+      "verifiedSourcePins": 10,
+      "verifiedDriverFiles": 11,
+      "canonicalFixtureReversals": 2,
+      "unchangedProjectionImports": 2,
+      "sameSemanticEventsAcrossSources": true,
+      "actualImageCounts": {
+        "view": 0,
+        "generation": 1
+      },
+      "rawBeforeFailuresPreserved": false
+    }
+  ],
+  "qualification": "Actual SQLite ingestion and production ChatView under controlled RPC/image HTTP fixtures; no live Codex, native HTTP route, packaged desktop, or newly generated artwork claim."
+}

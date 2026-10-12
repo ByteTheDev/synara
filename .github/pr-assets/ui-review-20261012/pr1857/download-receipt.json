@@ -1,0 +1,16 @@
+[
+  {
+    "id": 11720000497,
+    "name": "root-source-evidence-pr1857-after-00d069ea71154ae11b87944a542bb845878b7050",
+    "zipSha256": "fad15e936193fb56576d5f8f4073428ac6f6867409a52e139cd71aea4f9b86d7",
+    "zipBytes": 644235,
+    "members": 25
+  },
+  {
+    "id": 11719209295,
+    "name": "root-source-evidence-pr1857-before-9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "zipSha256": "6b2e04cd6e9d80adec157f68ff66f791d851dcad51a3c2fce9e175d2665edaaf",
+    "zipBytes": 701201,
+    "members": 25
+  }
+]

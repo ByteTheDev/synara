@@ -1,0 +1,24 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[33mPort 51100 is in use on a wildcard address, but 127.0.0.1:51100 is available. There may be another server running on a wildcard IP on port 51100.[39m
+[2m11:53:32 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+[2m11:53:33 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[BABEL] Note: The code generator has deoptimised the styling of /home/runner/work/synara/synara/apps/web/src/components/PrRootSourceEvidence.browser.tsx as it exceeds the max of 500KB.
+[90mstdout[2m | src/components/PrRootSourceEvidence.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2msource UI evidence renders view projection
+[22m[39mPR_ROOT_OBSERVATION {"stage":"view-result","source":"00d069ea71154ae11b87944a542bb845878b7050","sourceTree":"eeeb0b2796614b2680ea36ed27c77f3bdd161303","projectionSha256":"33e258f02a0e02c7fe82f0a7d4ece70b574d7d13b639fe3d0295a7eccc26b77f","kind":"view","viewport":{"width":960,"height":1100},"rawMessageTexts":["Inspection complete. The input image contains the Synara Beta mark."],"imageCount":0,"imageRequests":[],"images":[],"qualification":"Full production ChatView renders actual source-produced SQLite messages through canonical controlled RPC fixtures; exact checked-in image bytes use a labelled local-image HTTP seam."}
+[90mstdout[2m | src/components/PrRootSourceEvidence.browser.tsx[2m > [22m[2mChatView transcript geometry (full app)[2m > [22m[2msource UI evidence renders generation projection
+[22m[39mPR_ROOT_OBSERVATION {"stage":"generation-control","source":"00d069ea71154ae11b87944a542bb845878b7050","sourceTree":"eeeb0b2796614b2680ea36ed27c77f3bdd161303","projectionSha256":"4561ac52d96261f6c09a792203fdab5feac1eccddd9ccaf6319f951a39688aca","kind":"generation","viewport":{"width":960,"height":1100},"rawMessageTexts":["Generated image ready.\n\n![Generated image](</tmp/synara-image-evidence-oTVYWS/codex-home-overlay/generated_images/inspection 100%25.png>)"],"imageCount":1,"imageRequests":["/tmp/synara-image-evidence-oTVYWS/codex-home-overlay/generated_images/inspection 100%.png"],"images":[{"src":"http://127.0.0.1:51100/api/local-image?path=%2Ftmp%2Fsynara-image-evidence-oTVYWS%2Fcodex-home-overlay%2Fgenerated_images%2Finspection+100%25.png&cwd=%2Ftmp%2Fsynara-provider-project-NmwK5E","naturalWidth":180,"naturalHeight":180}],"qualification":"Full production ChatView renders actual source-produced SQLite messages through canonical controlled RPC fixtures; exact checked-in image bytes use a labelled local-image HTTP seam."}
+ [32m✓[39m [30m[43m chromium [49m[39m src/components/PrRootSourceEvidence.browser.tsx [2m([22m[2m222 tests[22m[2m | [22m[33m220 skipped[39m[2m)[22m[33m 16907[2mms[22m[39m
+     [33m[2m✓[22m[39m source UI evidence renders view projection [33m 15812[2mms[22m[39m
+     [33m[2m✓[22m[39m source UI evidence renders generation projection [33m 1030[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m2 passed[39m[22m[2m | [22m[33m220 skipped[39m[90m (222)[39m
+[2m   Start at [22m 23:53:30
+[2m   Duration [22m 91.49s[2m (transform 0ms, setup 0ms, import 70.86s, tests 16.91s, environment 0ms)[22m
+
+JSON report written to /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-after/browser.json

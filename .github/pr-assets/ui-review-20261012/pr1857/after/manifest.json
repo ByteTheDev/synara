@@ -1,0 +1,168 @@
+{
+  "target": {
+    "id": "pr1857-after",
+    "kind": "images",
+    "variant": "after",
+    "source": "00d069ea71154ae11b87944a542bb845878b7050",
+    "tree": "eeeb0b2796614b2680ea36ed27c77f3bdd161303",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "assets/beta/beta-web-apple-touch-180.png",
+      "apps/server/src/codexGeneratedImages.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts",
+      "packages/contracts/src/providerRuntime.ts",
+      "apps/web/src/components/ChatView.browser.tsx",
+      "apps/web/src/components/ChatView.tsx"
+    ]
+  },
+  "complete": true,
+  "files": [
+    {
+      "path": "browser-exit.json",
+      "bytes": 22,
+      "sha256": "1909795ae6b551692913f41e8f413ee4bf1c72baeb2d2ad31e864d2ef1da3cfe",
+      "blob": "4e4770a2a5ebd2c5137028593630cf469a1c740c"
+    },
+    {
+      "path": "browser.json",
+      "bytes": 75402,
+      "sha256": "5995a7340bd1609485e851376c20bfd991e0a9f9bbeeacf8baed585050302f0b",
+      "blob": "a0dfc84e021ed2f7d1e3d3616f6326755bfa30a6"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 3725,
+      "sha256": "df9b59bdb9ee30f91be86b4614845b5145e7d7ac771dc8475836a84e4ce15a66",
+      "blob": "9ecc497fd6b36f479785a1761bb7ae33532e141c"
+    },
+    {
+      "path": "generation-control.png",
+      "bytes": 60532,
+      "sha256": "61e97ef0069273a2d4c91ed6a6f227e43d4b44f8ef13f379b42bd0da2ace286e",
+      "blob": "94b054a135edae6b5ccaaa9e29a2b132c4c50abd"
+    },
+    {
+      "path": "live-output-cutoff.json",
+      "bytes": 336,
+      "sha256": "f59af1e992c64757f5687af7ab001efa0050c51e4dbf850639da0753c89c7775",
+      "blob": "c91b6c97799862210082893bbbf62a9b1ea7f485"
+    },
+    {
+      "path": "observed-PrRootProjectionEvidence.data.json",
+      "bytes": 115153,
+      "sha256": "228b6d30d7c71d9a55944da567381b1bd5c937b3beb8702ea52bd4bb4577859e",
+      "blob": "79748ec18257ec9b5e40f602a452010a031aa8a5"
+    },
+    {
+      "path": "observed-PrRootProjectionEvidence.test.ts",
+      "bytes": 358207,
+      "sha256": "e7dfb085cfa31e405f336574d9cc956c1df1e6d5e89213f519611cb35973f1b7",
+      "blob": "18dbaf16d19c3275409b39b6bb28ae8dbc5756d5"
+    },
+    {
+      "path": "observed-PrRootSourceEvidence.browser.tsx",
+      "bytes": 581352,
+      "sha256": "60d363c7ea2a99564bd08566f3b728baea79cbba56eb8ee7adf5ffeb9c257a6e",
+      "blob": "6e6fd56f3dcf1c48551ae286ef3d75bf11a0101b"
+    },
+    {
+      "path": "observed-vitest.pr-root-source-evidence.config.ts",
+      "bytes": 1288,
+      "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a",
+      "blob": "51c8ec2fee98640d6223411a2dba5afb83704f7b"
+    },
+    {
+      "path": "original-ChatView.browser.tsx",
+      "bytes": 577781,
+      "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb",
+      "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57"
+    },
+    {
+      "path": "original-ingestion.test.ts",
+      "bytes": 353406,
+      "sha256": "ca0c7620f66b1ce264e4df40520045203ca66dc03d1696244118bec1591611b7",
+      "blob": "d343176ded616eeebce6c6ec62647482c47b6500"
+    },
+    {
+      "path": "output-snapshots.json",
+      "bytes": 7838,
+      "sha256": "a079ec352ffb43a2239f6da102ca7461ceac1e24e8acfc055a9135ff495662d7",
+      "blob": "de387ae0007e52fd18e657be4412f788b79d1b57"
+    },
+    {
+      "path": "prepare-browser-commands.json",
+      "bytes": 9470,
+      "sha256": "c6e4bcf1193c219a5b27dbb939605f723804f37ce0d9bf8b71c5ab53cd1ec99f",
+      "blob": "905b4f11bf76fda30e7fa3d23aa912524624d855"
+    },
+    {
+      "path": "prepare-commands.json",
+      "bytes": 9499,
+      "sha256": "39878f840905f5617f6b0b7a405b74aea7cbf8acc55d0a4849ad002ae244311c",
+      "blob": "11c8940a056e23dac793d04f50f9cbe961b60c27"
+    },
+    {
+      "path": "projection-generation.json",
+      "bytes": 55594,
+      "sha256": "4561ac52d96261f6c09a792203fdab5feac1eccddd9ccaf6319f951a39688aca",
+      "blob": "3e64bb0c1200968fc47af203a913e5f96f827cd5"
+    },
+    {
+      "path": "projection-view.json",
+      "bytes": 55461,
+      "sha256": "33e258f02a0e02c7fe82f0a7d4ece70b574d7d13b639fe3d0295a7eccc26b77f",
+      "blob": "a73ef36e64633d6d8982cf141869251324ced835"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 7516,
+      "sha256": "db43e05a32ed503b267b806feb75b77a265863c06f24d75375d9a268b9a77254",
+      "blob": "2e125f5e594812625fd0ea8d8235682ac42fdb48"
+    },
+    {
+      "path": "server-exit.json",
+      "bytes": 22,
+      "sha256": "1909795ae6b551692913f41e8f413ee4bf1c72baeb2d2ad31e864d2ef1da3cfe",
+      "blob": "4e4770a2a5ebd2c5137028593630cf469a1c740c"
+    },
+    {
+      "path": "server.json",
+      "bytes": 51804,
+      "sha256": "e9e2da02dc092cf2abe4d8853932acbe313abcefec9c42800d90313ebafd71d7",
+      "blob": "bea345ea4d50ed1b99f1d055eb3938d4ee6b85ec"
+    },
+    {
+      "path": "server.log",
+      "bytes": 12544,
+      "sha256": "f92a97aa185fe43af09817462384cd0a698df1d4f7118d458ab8cb9750306adf",
+      "blob": "8b1117e88b1f7d5098f85a78f68eaa4091fbf3bc"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 4277,
+      "sha256": "1f06e9b5807d1dd7f608c9072b69d7c56784ac439e0aa2310fa8226e4d2fee88",
+      "blob": "e4f566bd3354bf4022f13758cad0a97efdffb160"
+    },
+    {
+      "path": "verify-commands.json",
+      "bytes": 8567,
+      "sha256": "b74633ed6576256e40a5ba2f2e8c983467c726edb151a292daac66d149c2d6fb",
+      "blob": "cc9a5ac10c6fff41b01e799acece575b016dc422"
+    },
+    {
+      "path": "video/page@7934e4c024badb358debb149585eacd3.webm",
+      "bytes": 242756,
+      "sha256": "960fb81b73dabbb3a7c35d7323a9689704aaff14db67663282de62b68703670c",
+      "blob": "4ad2554d5c1b0d3b4c13eb98fd482bc18ca6e208"
+    },
+    {
+      "path": "view-result.png",
+      "bytes": 38566,
+      "sha256": "16fd88ce400cf2defcbca28855a64a50c5e98d7c88a7424da526b0a5dc1f4cf3",
+      "blob": "ff8cec939e711bbf8f38d88bad94082c567f8409"
+    }
+  ]
+}

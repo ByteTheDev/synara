@@ -1,0 +1,187 @@
+{
+  "target": {
+    "id": "pr1857-before",
+    "kind": "images",
+    "variant": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "assets/beta/beta-web-apple-touch-180.png",
+      "apps/server/src/codexGeneratedImages.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.ts",
+      "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts",
+      "packages/contracts/src/providerRuntime.ts",
+      "apps/web/src/components/ChatView.browser.tsx",
+      "apps/web/src/components/ChatView.tsx"
+    ]
+  },
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "bytes": 5664,
+      "blob": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea",
+      "sha256": "ed94729f24c2261037bf04ad6c04a607d80648118b2a9d533da3d3b2231e8b4f"
+    },
+    {
+      "path": "bun.lock",
+      "bytes": 776515,
+      "blob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7"
+    },
+    {
+      "path": "apps/web/vitest.browser.config.ts",
+      "bytes": 1772,
+      "blob": "9da1682a3f584018e0587ef7f4f9f9f4c5749c03",
+      "sha256": "9af72c321e6d83162338b1f3e7ebb073ff400c35e55813b7beb63469d61835e7"
+    },
+    {
+      "path": "assets/beta/beta-web-apple-touch-180.png",
+      "bytes": 29727,
+      "blob": "bfbc47ec905f719c7719f280b6dd0c00644f84f7",
+      "sha256": "e9f10197645aa9c1e7a2be6109d29a79d2a3c9422150f949bec85fbdd4e9994b"
+    },
+    {
+      "path": "apps/server/src/codexGeneratedImages.ts",
+      "bytes": 13285,
+      "blob": "4062654e403990ef748c9504e1df02e2a2511986",
+      "sha256": "33afef91fee825f00cb413ab49fed462db12bd72588c2ed6bf6fe89a06311f8a"
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.ts",
+      "bytes": 180837,
+      "blob": "0d92ba5ab164e394ee4386c73b64375af380241b",
+      "sha256": "b375a0948803353b3fce456ab05fdb2e0b746ec4d402ff69f588d81fa6103448"
+    },
+    {
+      "path": "apps/server/src/orchestration/Layers/ProviderRuntimeIngestion.test.ts",
+      "bytes": 353406,
+      "blob": "d343176ded616eeebce6c6ec62647482c47b6500",
+      "sha256": "ca0c7620f66b1ce264e4df40520045203ca66dc03d1696244118bec1591611b7"
+    },
+    {
+      "path": "packages/contracts/src/providerRuntime.ts",
+      "bytes": 48705,
+      "blob": "f026479fb9d6eb46c5c660613d6dabb5d7b9f39f",
+      "sha256": "9490bc66900df677804a4472df75bffde7d54aaf478da3c081f72884ad6016c4"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.browser.tsx",
+      "bytes": 577781,
+      "blob": "db12f5f41a85d2cfc5fb9face0d8edbcd7ad6a57",
+      "sha256": "2e24ec6b25d09ad7dd9f99319a235681cfb465127554fe6510b0452e5543c5fb"
+    },
+    {
+      "path": "apps/web/src/components/ChatView.tsx",
+      "bytes": 283520,
+      "blob": "9f9c13fe67a2ac4a27f150661b555180abadf675",
+      "sha256": "48679c4cb8831a55f60079e8c2e51f4640d9f5a87ab6d265056048a782f59168"
+    }
+  ],
+  "driver": {
+    "head": "e7ea6a83362bc11270ecce170eba3c5cd873bee1",
+    "tree": "156b6f0300920f5ae49700b9f297f47d2facdc29",
+    "files": [
+      {
+        "path": ".github/workflows/pr-root-source-evidence.yml",
+        "bytes": 4681,
+        "blob": "db73da2d33718c8b19009ccc6762b7a51775c4ec",
+        "sha256": "60bad648680bbaf4a2dd5bf91b779d777650387878b5c4034ac32b06a521d7ca"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/README.md",
+        "bytes": 5499,
+        "blob": "3a55d6fd64c15fe6aac322a0f30a489203c98acb",
+        "sha256": "773a4d3f0edfda35876fc8efb48002ec4d6fe017495dfc2b256fa347cf8f343f"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/browser.config.ts",
+        "bytes": 1288,
+        "blob": "51c8ec2fee98640d6223411a2dba5afb83704f7b",
+        "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/chat-case.tsx",
+        "bytes": 3496,
+        "blob": "cd5c427f2277a431e624bf0eb5123b8de9f08055",
+        "sha256": "08a745b0ac05be83e03ef20ef1c6813218b1e7f0da6c91473e11eaca3b6f1560"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/fixtures.json",
+        "bytes": 699,
+        "blob": "8a56bd6d69c0ba74a0ed4659c305d99a8bda03ac",
+        "sha256": "7f7d57cbccf7dc9bb0c6636145d9a2eb9d44270fb5c0faae1ef5ac687257fdd5"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/projection-case.ts",
+        "bytes": 4801,
+        "blob": "62f50ece5e7d250171e2bf65166da681a17c85eb",
+        "sha256": "fa27b9293215d8a7975016315b06a1dd05dc7d258d6e6c23ab9e5c8e07bb2b16"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/runner.mjs",
+        "bytes": 19524,
+        "blob": "cdffc611d101c53bad5f5c8bf6796cbec155bb36",
+        "sha256": "d34e8e1a400213f1261d29042d51c6ade6e5cdbe3ef24548fe3b7b76f41d8b26"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/settings-case.tsx",
+        "bytes": 1208,
+        "blob": "e541d3d235919f0c48c5e9f5da7defa9df5c4e48",
+        "sha256": "6edb90cbbeb8e9d61665a2f65fa62f4214fdbcbd05edbe365f66c38b013f980a"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/settings-observer.ts",
+        "bytes": 1228,
+        "blob": "43ddcd1d02927dbb39524d6409b12dcfbf1c3e57",
+        "sha256": "04b528c17001382481c84f76a7792749e1a1cec6f0aebcc8f55ee1184accf7a7"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/snapshots.mjs",
+        "bytes": 5005,
+        "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+        "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/targets.json",
+        "bytes": 2745,
+        "blob": "2243e958ef333f423090ac0872eb294bcec11344",
+        "sha256": "744eb834a512d85133bd8acfb951d3ff5aeda80c9b030632499c0ed657477085"
+      }
+    ]
+  },
+  "overlays": [
+    {
+      "path": "apps/server/src/orchestration/Layers/PrRootProjectionEvidence.test.ts",
+      "bytes": 358207,
+      "sha256": "e7dfb085cfa31e405f336574d9cc956c1df1e6d5e89213f519611cb35973f1b7"
+    },
+    {
+      "path": "apps/web/vitest.pr-root-source-evidence.config.ts",
+      "bytes": 1288,
+      "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a"
+    },
+    {
+      "path": "apps/web/src/components/PrRootProjectionEvidence.data.json",
+      "bytes": 115315,
+      "sha256": "fb92009a3f6da691a786fd6d14a50822b2aa12d378ddf62904390760354b751c"
+    },
+    {
+      "path": "apps/web/src/components/PrRootSourceEvidence.browser.tsx",
+      "bytes": 581352,
+      "sha256": "60d363c7ea2a99564bd08566f3b728baea79cbba56eb8ee7adf5ffeb9c257a6e"
+    }
+  ],
+  "livePaths": {
+    "reports": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before",
+    "data": "/home/runner/work/_temp/root-source-evidence-38185895366-1-pr1857-before/data",
+    "media": "/home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1857-before",
+    "artifact": "/home/runner/work/synara/synara/root-source-evidence/pr1857-before"
+  },
+  "run": "38185895366",
+  "attempt": "1",
+  "node": "v24.21.0",
+  "qualification": "Source-pinned diagnostic evidence. Complete canonical fixtures are retained; only selected new cases execute. Before failures remain actual failures and must match the exact expected regression. No live provider, packaged desktop or native local-image HTTP route claim."
+}
