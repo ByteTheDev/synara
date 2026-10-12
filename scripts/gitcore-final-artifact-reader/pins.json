@@ -1,0 +1,114 @@
+{
+  "repository": "Emanuele-web04/synara",
+  "driver": "22bcb7d908a68a1da214689a2b182d5e4390f242",
+  "sources": {
+    "after": {
+      "head": "1de9fa2de0db98ca7966e00fc45f53df0fdd1b6d",
+      "tree": "e3b9a5aa4b3b7bba9c77f8379f4768f13556d1d6",
+      "production": "013c404ddb9c13620093d4ecf30a8ec773ec38c0"
+    },
+    "before": {
+      "head": "3a0375ae1dde80597002ec79d9ada39820815daa",
+      "tree": "c332250a419bae846762ad99de3f22efe407560c",
+      "production": "879f6ad7e08177ca1f977d81d4f0acf9e009d5ca"
+    }
+  },
+  "sourceBlobs": {
+    "apps/server/src/git/Layers/GitCore.test.ts": "3c19fb6244d34ca5a4dc2b63efa585e337e4a970",
+    "packages/shared/src/filesystemPlatform.ts": "8177805509291307814a721f0fc3fab9f69a037b",
+    "apps/marketing/content/docs/workflows/worktrees.mdx": "4ce7108bdb099272b9037b309b4d4acefbf54109",
+    "apps/marketing/content/docs/troubleshooting/git-and-worktrees.mdx": "c4a6cdef035ade671c26a63c6d03e03b4457dd5d"
+  },
+  "fixtureSha256": "45e90c82ef22d8978483b194f363e1f17758523e3bd2a9d3b172171cdd4e6042",
+  "selected": "refuses a trailing-space fallback replaced|keeps an over-cap trailing-space",
+  "driverFiles": [
+    {
+      "path": "scripts/gitcore-native-evidence/runner.mjs",
+      "gitBlob": "2142cbc8372aa0a3e4941a83c5d97efaf292eb79",
+      "sha256": "c1d3d87d607f9f9fd90b1c168b83e59f693b8cb1a77f758d1859aac9b36864b2",
+      "bytes": 13486
+    },
+    {
+      "path": ".github/workflows/gitcore-native-evidence.yml",
+      "gitBlob": "65062c6ec3d0bfe59498af6a63a62932ebf1919d",
+      "sha256": "88bc4fb6a41d502e7d2bc818a7e22e93ac677bc3449beb29607ffbb5630aa5d4",
+      "bytes": 4080
+    },
+    {
+      "path": "scripts/gitcore-native-evidence/README.md",
+      "gitBlob": "d204ed8c59a1e0e22bcf5950317e45af23af8a67",
+      "sha256": "8c7e4fd20f329471dc618371dea9faff86ba3f73f2df0d39aff54047fd1ff5b4",
+      "bytes": 15981
+    },
+    {
+      "path": "scripts/gitcore-native-evidence/format-proposal.mjs",
+      "gitBlob": "ed5c46bddf028431862797b3562e80e50379ad8d",
+      "sha256": "8f8c25b6b958a88b4b6380ee5ad9485863ebe502f56c3eea0108708dd3f41d96",
+      "bytes": 9309
+    },
+    {
+      "path": "scripts/gitcore-native-evidence/snapshot-control.mjs",
+      "gitBlob": "b42cab58d6f29543522b0a18002d4c9557a37805",
+      "sha256": "36424355bfa1ae99976b40b01439423172d70bf62b1182c4a4400849c72ca276",
+      "bytes": 14554
+    },
+    {
+      "path": ".github/workflows/gitcore-snapshot-control.yml",
+      "gitBlob": "483a43f6396dde79ec910e82046c296bc6c23551",
+      "sha256": "ab36da33842c8f153cc8565cccb2a8b80680c6c28eec2f521b6abd031cd20848",
+      "bytes": 1521
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11728305459,
+      "name": "gitcore-1847-format-proposal",
+      "run": 38207620611,
+      "kind": "format",
+      "side": "after",
+      "platform": "linux",
+      "bytes": 1544,
+      "sha256": "2d2ed7287b8331af1d03a3cd746d56609d25958617e3706f6f2018e4125a8715"
+    },
+    {
+      "id": 11727894320,
+      "name": "gitcore-1847-windows-latest",
+      "run": 38207620611,
+      "kind": "native",
+      "side": "after",
+      "platform": "win32",
+      "bytes": 19124,
+      "sha256": "4588e464c1ceea07afc75a2ed727627711f73d8e4a488121e179ab04aa12708f"
+    },
+    {
+      "id": 11727629026,
+      "name": "gitcore-1847-ubuntu-latest",
+      "run": 38207620611,
+      "kind": "native",
+      "side": "after",
+      "platform": "linux",
+      "bytes": 15283,
+      "sha256": "1b68918df234ff03bbf03a0362ee70b217a7bae1e3a65a798ab1d043f46b86ce"
+    },
+    {
+      "id": 11727858331,
+      "name": "gitcore-refusal-before",
+      "run": 38207620760,
+      "kind": "control",
+      "side": "before",
+      "platform": "linux",
+      "bytes": 19444,
+      "sha256": "88e9b5b64b85a3051916c736d998025d3ae030a31c95aa26562cd67045c1d158"
+    },
+    {
+      "id": 11727687370,
+      "name": "gitcore-refusal-after",
+      "run": 38207620760,
+      "kind": "control",
+      "side": "after",
+      "platform": "linux",
+      "bytes": 13702,
+      "sha256": "6a98e837f83a92e6a19bd8545186900663df648cc4d74b2944108b904301a1e7"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+name: Verify final retained GitCore evidence
+on:
+  push:
+    branches: [cleanup/20261012/gitcore-final-artifact-reader]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify retained ZIPs and expose bounded original bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/gitcore-final-artifact-reader/reader.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: verified-final-gitcore-receipts
+          path: ${{ runner.temp }}/pr1847-final-artifact-reader/
+          if-no-files-found: error
+          retention-days: 14
