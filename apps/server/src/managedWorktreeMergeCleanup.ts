@@ -1,3 +1,5 @@
+import { ServerConfig } from "./config";
+import { withWorktreeLifecycle } from "./worktreeLifecycle";
 import { ThreadId } from "@synara/contracts";
 import { automationContinuationThreadId } from "@synara/shared/automationMode";
 import { terminalScopeIdsForThread } from "@synara/shared/terminalThreads";
@@ -12,11 +14,13 @@ import { TerminalManager } from "./terminal/Services/Manager";
 export const resolveManagedWorktreeMergeCleanup: Effect.Effect<
   ManagedWorktreeMergeCleanup | undefined
 > = Effect.gen(function* () {
+  const config = yield* Effect.serviceOption(ServerConfig);
   const settings = yield* Effect.serviceOption(ServerSettingsService);
   const github = yield* Effect.serviceOption(GitHubCli);
   const automations = yield* Effect.serviceOption(AutomationRepository);
   const terminals = yield* Effect.serviceOption(TerminalManager);
   if (
+    Option.isNone(config) ||
     Option.isNone(settings) ||
     Option.isNone(github) ||
     Option.isNone(automations) ||
@@ -25,6 +29,7 @@ export const resolveManagedWorktreeMergeCleanup: Effect.Effect<
   )
     return undefined;
   return {
+    withOwnership: (effect) => withWorktreeLifecycle(config.value.homeDir, effect),
     enabled: settings.value.getSettings.pipe(
       Effect.map((value) => value.worktrees.pruneAfterMerge),
     ),

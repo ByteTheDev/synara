@@ -75,6 +75,7 @@ describe.runIf(process.env.SYNARA_LIVE_GITHUB === "1")("native merged cleanup", 
             readThreads: () => Effect.succeed(threads),
             git: core,
             mergeCleanup: {
+              withOwnership: (effect) => effect,
               enabled: Effect.succeed(true),
               github,
               isProtected: () => Effect.succeed(false),

@@ -1,3 +1,4 @@
+import { withWorktreeLifecycle } from "./worktreeLifecycle";
 import { createHash } from "node:crypto";
 import * as fs from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -171,6 +172,7 @@ describe("managed worktrees", () => {
     "protected",
     "detached",
     "restored-during-snapshot",
+    "restored-after-final-check",
     "snapshot-failed",
   ])("verifies merge-aware removal safety: %s", async (scenario) => {
     const { root, paths } = await makeManagedRoot(1);
@@ -199,6 +201,7 @@ describe("managed worktrees", () => {
         : []),
     ];
     let restored = false;
+    let restore: Promise<void> | undefined;
     const base = makeGit({
       removals,
       snapshots,
@@ -206,6 +209,22 @@ describe("managed worktrees", () => {
     });
     const git: GitCoreShape = {
       ...base,
+      removeWorktree: (input) =>
+        scenario === "restored-after-final-check"
+          ? Effect.gen(function* () {
+              restore = Effect.runPromise(
+                withWorktreeLifecycle(
+                  root,
+                  Effect.sync(() => {
+                    restored = true;
+                  }),
+                ),
+              );
+              yield* Effect.sleep("30 millis");
+              expect(restored).toBe(false);
+              yield* base.removeWorktree(input);
+            })
+          : base.removeWorktree(input),
       execute: (input) =>
         input.args[0] === "rev-parse"
           ? Effect.succeed({ code: 0, stdout: head + "\n", stderr: "" })
@@ -226,6 +245,7 @@ describe("managed worktrees", () => {
             ),
     };
     const policy: ManagedWorktreeMergeCleanup = {
+      withOwnership: (effect) => withWorktreeLifecycle(root, effect),
       enabled: Effect.succeed(scenario !== "disabled"),
       isProtected: () => Effect.succeed(scenario === "protected"),
       github: {
@@ -257,7 +277,11 @@ describe("managed worktrees", () => {
         readThreads: () => Effect.succeed(restored ? [{ ...thread, archivedAt: null }] : threads),
       }),
     );
-    expect(removals).toEqual(scenario === "merged" ? paths : []);
+    if (restore) await restore;
+    expect(removals).toEqual(
+      scenario === "merged" || scenario === "restored-after-final-check" ? paths : [],
+    );
+    if (scenario === "restored-after-final-check") expect(restored).toBe(true);
     if (scenario === "merged" || scenario === "restored-during-snapshot")
       expect(snapshots).toHaveLength(1);
   });

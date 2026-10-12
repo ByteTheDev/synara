@@ -105,6 +105,7 @@ export interface ManagedWorktreeThreadRef {
 export type ManagedWorktreeRemovalReason = "deleted" | "archived-retention" | "merged";
 
 export interface ManagedWorktreeMergeCleanup {
+  readonly withOwnership: <A, E, R>(effect: Effect.Effect<A, E, R>) => Effect.Effect<A, E, R>;
   readonly enabled: Effect.Effect<boolean, Error>;
   readonly github: Pick<GitHubCliShape, "getPullRequestWithChecks">;
   readonly isProtected: (threadId: string) => Effect.Effect<boolean, Error>;
@@ -423,6 +424,7 @@ function removeManagedWorktreeSafely(input: {
   readonly snapshotsDir: string;
   readonly candidate: ManagedWorktreeRemovalCandidate;
   readonly git: GitCoreShape;
+  readonly withOwnership?: ManagedWorktreeMergeCleanup["withOwnership"];
   readonly revalidate?: (
     candidate: ManagedWorktreeRemovalCandidate,
   ) => Effect.Effect<boolean, Error>;
@@ -445,44 +447,47 @@ function removeManagedWorktreeSafely(input: {
           yield* input.git.snapshotWorktree({ cwd: entry.path, outputPath: snapshotPath });
         }
 
-        const status = yield* input.git.statusDetails(entry.path).pipe(
-          Effect.catch((error) =>
-            Effect.logWarning("managed worktree cleanup could not read dirty state", {
-              threadId: thread.id,
-              worktreePath: entry.path,
-              reason,
-              error: error instanceof Error ? error.message : String(error),
-            }).pipe(Effect.as(null)),
-          ),
-        );
-        if (status === null) return false;
-        if (status.hasWorkingTreeChanges) {
-          yield* Effect.logWarning(
-            "managed worktree cleanup skipped dirty worktree; refusing silent data loss",
-            {
-              threadId: thread.id,
-              worktreePath: entry.path,
-              reason,
-              branch: status.branch,
-            },
+        const removal = Effect.gen(function* () {
+          const status = yield* input.git.statusDetails(entry.path).pipe(
+            Effect.catch((error) =>
+              Effect.logWarning("managed worktree cleanup could not read dirty state", {
+                threadId: thread.id,
+                worktreePath: entry.path,
+                reason,
+                error: error instanceof Error ? error.message : String(error),
+              }).pipe(Effect.as(null)),
+            ),
           );
-          return false;
-        }
+          if (status === null) return false;
+          if (status.hasWorkingTreeChanges) {
+            yield* Effect.logWarning(
+              "managed worktree cleanup skipped dirty worktree; refusing silent data loss",
+              {
+                threadId: thread.id,
+                worktreePath: entry.path,
+                reason,
+                branch: status.branch,
+              },
+            );
+            return false;
+          }
 
-        if (input.revalidate && !(yield* input.revalidate(input.candidate))) return false;
-        yield* input.git.removeWorktree({
-          cwd: entry.workspaceRoot,
-          path: entry.path,
-          force: false,
-          reclaimTemporaryBranch: reason !== "merged",
+          if (input.revalidate && !(yield* input.revalidate(input.candidate))) return false;
+          yield* input.git.removeWorktree({
+            cwd: entry.workspaceRoot,
+            path: entry.path,
+            force: false,
+            reclaimTemporaryBranch: reason !== "merged",
+          });
+          // The snapshot stays as the recovery net for this automatic removal, but
+          // the per-worktree parent folder has nothing left to hold.
+          yield* discardEmptyManagedWorktreeParent({
+            worktreesDir: input.worktreesDir,
+            worktreePath: entry.path,
+          });
+          return true;
         });
-        // The snapshot stays as the recovery net for this automatic removal, but
-        // the per-worktree parent folder has nothing left to hold.
-        yield* discardEmptyManagedWorktreeParent({
-          worktreesDir: input.worktreesDir,
-          worktreePath: entry.path,
-        });
-        return true;
+        return yield* input.withOwnership ? input.withOwnership(removal) : removal;
       }),
     )
     .pipe(
@@ -570,6 +575,7 @@ export function pruneArchivedManagedWorktrees(input: {
             git: input.git,
             ...(candidate.reason === "merged" && mergeCleanup
               ? {
+                  withOwnership: mergeCleanup.withOwnership,
                   revalidate: () =>
                     Effect.gen(function* () {
                       if (!(yield* mergeCleanup!.enabled)) return false;

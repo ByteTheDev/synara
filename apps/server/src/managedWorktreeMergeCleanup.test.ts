@@ -1,3 +1,5 @@
+import { NodeServices } from "@effect/platform-node";
+import { ServerConfig } from "./config";
 import { ThreadId } from "@synara/contracts";
 import { dockTerminalScopeId } from "@synara/shared/terminalThreads";
 import { Effect, Layer } from "effect";
@@ -20,6 +22,9 @@ it("protects enabled continuation automations and live dock terminals using fres
   let terminalRunning = false;
   const threadId = ThreadId.makeUnsafe("thread");
   const layer = Layer.mergeAll(
+    ServerConfig.layerTest(process.cwd(), { prefix: "worktree-fence-test-" }).pipe(
+      Layer.provide(NodeServices.layer),
+    ),
     ServerSettingsService.layerTest({ worktrees: { pruneAfterMerge: true } }),
     Layer.succeed(GitHubCli, {} as GitHubCliShape),
     Layer.succeed(AutomationRepository, {
