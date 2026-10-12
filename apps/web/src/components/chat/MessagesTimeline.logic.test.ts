@@ -21,6 +21,7 @@ import {
   deriveTurnTimingByTurnId,
   findLastLiveWorkGroupId,
   formatTurnHeaderLabel,
+  isPinnedBackgroundTaskEntry,
   normalizeCompactToolLabel,
   summarizeTurnFailureReason,
   planWorkEntryRenderChunks,
@@ -1094,6 +1095,87 @@ describe("deriveMessagesTimelineRows", () => {
     });
 
     expect(collapsedSignature(messageRow(rows, "report-1")!)).toEqual(["work:check-1"]);
+  });
+
+  it("keeps one response when a Monitor event arrives mid-turn", () => {
+    const rows = deriveMessagesTimelineRows({
+      ...baseInput,
+      timelineEntries: [
+        userEntry("u1", "2026-01-01T00:00:00Z"),
+        assistantEntry("watching", "2026-01-01T00:00:01Z", {
+          turnId: "t1",
+          text: "Watching CI",
+          completedAt: "2026-01-01T00:00:02Z",
+        }),
+        {
+          id: "entry-ci",
+          kind: "work",
+          createdAt: "2026-01-01T00:00:03Z",
+          entry: {
+            id: "ci",
+            createdAt: "2026-01-01T00:00:03Z",
+            label: "Monitor · CI updated",
+            tone: "info",
+            monitorNotification: {
+              taskId: "ci",
+              name: "CI",
+              output: "build passed",
+              outcome: "updated",
+              midTurn: true,
+            },
+          },
+        },
+        workEntry("read", "2026-01-01T00:00:04Z", "Read file"),
+        assistantEntry("done", "2026-01-01T00:00:05Z", {
+          turnId: "t1",
+          text: "CI is green.",
+          completedAt: "2026-01-01T00:00:06Z",
+        }),
+      ],
+    });
+
+    expect(collapsedSignature(messageRow(rows, "done")!)).toEqual([
+      "narration:watching",
+      "work:ci",
+      "work:read",
+    ]);
+    expect(messageRow(rows, "watching")).toBeUndefined();
+    expect(messageRow(rows, "done")?.turnHeader?.resumedBy).toBeNull();
+  });
+
+  it("pins only background tasks that outlived their turn", () => {
+    const runningTask = {
+      taskId: "task",
+      taskType: "local_bash",
+      description: "dev server",
+      command: "bun run dev",
+      status: "running" as const,
+      startedAt: "2026-01-01T00:00:00Z",
+      completedAt: null,
+      exitCode: null,
+    };
+    const plainWork: WorkLogEntry = {
+      id: "launch",
+      createdAt: "2026-01-01T00:00:00Z",
+      label: "Command run",
+      tone: "tool",
+    };
+    const turnEndedAt = "2026-01-01T00:05:00Z";
+    const pinned = (completedAt: string | null) =>
+      isPinnedBackgroundTaskEntry(
+        {
+          ...plainWork,
+          backgroundTask: completedAt
+            ? { ...runningTask, status: "stopped", completedAt }
+            : runningTask,
+        },
+        turnEndedAt,
+      );
+    expect(pinned(null)).toBe(true);
+    expect(pinned("2026-01-01T00:06:00Z")).toBe(true);
+    // The turn stopped its own server: the row folds with the turn's work.
+    expect(pinned("2026-01-01T00:04:00Z")).toBe(false);
+    expect(isPinnedBackgroundTaskEntry(plainWork, turnEndedAt)).toBe(false);
   });
 
   it("folds a settled turn's narration and work into one collapsed group on the terminal message", () => {
@@ -2361,10 +2443,10 @@ describe("deriveMessagesTimelineRows", () => {
         text: "It got faster.",
         completedAt: "2026-01-01T00:01:04Z",
       }),
-      userEntry("u3", "2026-01-01T00:02:00Z", "t3"),
+      userEntry("u3", "2026-01-01T00:02:00Z", "turn-3"),
       workEntry("w3", "2026-01-01T00:02:01Z", "tool 3"),
       assistantEntry("a3", "2026-01-01T00:02:02Z", {
-        turnId: "t3",
+        turnId: "turn-3",
         text: "Text only.",
         completedAt: "2026-01-01T00:02:03Z",
       }),
@@ -2468,6 +2550,29 @@ describe("deriveMessagesTimelineRows", () => {
     expect(messageRow(rows, "a1")!.turnHeaderRowId).toBeUndefined();
     expect(messageRow(rows, "a1")!.turnHeader?.elapsed).toBeTruthy();
     expect(collectInlineVisuals(entries).get(visualId)?.title).toBe("placed");
+    // A quotation in another turn cannot move or suppress the original figure.
+    const quoted = deriveMessagesTimelineRows({
+      ...baseInput,
+      timelineEntries: [
+        ...entries.slice(0, -1),
+        assistantEntry("a1", "2026-01-01T00:00:03Z", { turnId: "t1", text: "Original answer." }),
+        userEntry("u2", "2026-01-01T00:01:00Z", "t2"),
+        assistantEntry("a2", "2026-01-01T00:01:01Z", {
+          turnId: "t2",
+          text: `\`\`\`synara-visual\n${visualId}\n\`\`\``,
+        }),
+      ],
+    });
+    expect(quoted.find((row) => row.kind === "inline-visual")?.id).toBe("entry-placed");
+    // An intermediate narration that will be folded cannot own the visible placement.
+    const narrated = deriveMessagesTimelineRows({
+      ...baseInput,
+      timelineEntries: [
+        ...entries,
+        assistantEntry("a-final", "2026-01-01T00:00:05Z", { turnId: "t1", text: "Finished." }),
+      ],
+    });
+    expect(narrated.find((row) => row.kind === "inline-visual")?.id).toBe("entry-placed");
   });
 
   it("keeps an answered question visible while the rest of the turn collapses", () => {

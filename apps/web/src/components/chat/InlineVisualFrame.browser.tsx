@@ -1,6 +1,7 @@
 import "../../index.css";
 
 import { type InlineVisualActivityPayload, type NativeApi, ThreadId } from "@synara/contracts";
+import { buildInlineVisualDocument } from "@synara/shared/inlineVisual";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { page, userEvent } from "vitest/browser";
@@ -10,6 +11,13 @@ import { render } from "vitest-browser-react";
 import { useTheme } from "~/hooks/useTheme";
 
 import { InlineVisualFrame } from "./InlineVisualFrame";
+
+const runtime = vi.hoisted(() => ({ desktop: true }));
+vi.mock("~/env", () => ({
+  get isElectron() {
+    return runtime.desktop;
+  },
+}));
 
 const THREAD_ID = ThreadId.makeUnsafe("thread-inline-visual");
 
@@ -142,7 +150,7 @@ it("stops a page that navigates its own frame", async () => {
   );
 
   await expect
-    .element(page.getByText("This visual stopped because it tried to leave the page."))
+    .element(page.getByText("This visual stopped because it could not stay isolated."))
     .toBeVisible();
   expect(frame()).toBeNull();
 });
@@ -168,7 +176,7 @@ it("keeps showing a page whose frame is re-inserted into the document", async ()
   expect(frame()).toBe(element);
 });
 
-it("opens a link only from the reader's own click", async () => {
+it("does not open host URLs from HTML messages, including after a reader click", async () => {
   const links = visual("4", 200);
   const { openExternal } = await mount(
     {
@@ -176,6 +184,7 @@ it("opens a link only from the reader's own click", async () => {
         <script>
           // An unsolicited request at load must be ignored.
           parent.postMessage({ jsonrpc: "2.0", id: "sneaky", method: "ui/open-link", params: { url: "https://example.com/sneaky" } }, "*");
+          addEventListener("click", () => parent.postMessage({jsonrpc:"2.0",id:"after-click",method:"ui/open-link",params:{url:"https://example.com/unwanted"}},"*"));
           addEventListener("load", () => parent.postMessage({ probe: "links-ready" }, "*"));
         </script>`,
     },
@@ -186,8 +195,8 @@ it("opens a link only from the reader's own click", async () => {
 
   await userEvent.click(frame()!);
 
-  await expect.poll(() => openExternal.mock.calls.length).toBe(1);
-  expect(openExternal).toHaveBeenCalledWith("https://example.com/docs");
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  expect(openExternal).not.toHaveBeenCalled();
   expect(frame()).not.toBeNull();
 });
 
@@ -320,4 +329,102 @@ it("explains a visual that can no longer be loaded, and retries a transient fail
   await page.getByRole("button", { name: "Retry" }).click();
   await expect.poll(() => probes.some((entry) => entry.probe === "recovered")).toBe(true);
   expect(getInlineVisual).toHaveBeenCalledTimes(4);
+});
+
+it("coalesces untrusted frame height floods instead of remeasuring for every message", async () => {
+  const source = visual("f");
+  await mount(
+    {
+      [source.visualId]: `<div style="height:391px">chart</div><script>
+      addEventListener('message', event => { if(event.data.flood) {
+        let i=0; const timer=setInterval(() => {
+        parent.postMessage({jsonrpc:'2.0',method:'ui/notifications/size-changed',params:{height:300+(i%2)}},'*');
+        if(++i===40){clearInterval(timer);parent.postMessage({probe:'flood-done'},'*');}
+      },5);
+      }});
+    </script>`,
+    },
+    source,
+  );
+  await expect.poll(() => frame()?.getBoundingClientRect().height).toBe(391);
+  let changes = 0;
+  const observer = new MutationObserver((records) => {
+    changes += records.length;
+  });
+  observer.observe(frame()!, { attributes: true, attributeFilter: ["style"] });
+  const startedAt = performance.now();
+  frame()!.contentWindow!.postMessage({ flood: true }, "*");
+  await expect.poll(() => probes.some((probe) => probe.probe === "flood-done")).toBe(true);
+  await new Promise((resolve) => setTimeout(resolve, 120));
+  observer.disconnect();
+  expect(changes).toBeLessThanOrEqual(Math.ceil((performance.now() - startedAt) / 100) + 1);
+});
+
+// ICE uses a separate network stack, so CSP alone is insufficient. Exercise
+// the actual opaque frame and attempts to recover a fresh constructor.
+it("removes WebRTC capabilities before page code and prevents constructor recovery", async () => {
+  const shown = visual("e");
+  await mount(
+    {
+      [shown.visualId]: `<script>
+    const names=["RTCPeerConnection","webkitRTCPeerConnection","mozRTCPeerConnection","RTCIceGatherer","RTCIceTransport","RTCDtlsTransport","RTCRtpSender","RTCRtpReceiver","RTCSctpTransport","RTCQuicTransport"];
+    const frozen=names.every(name=>{const d=Object.getOwnPropertyDescriptor(window,name);return typeof window[name]==="undefined" && d && !d.configurable && !d.writable;});
+    const reassigned=Reflect.set(window,"RTCPeerConnection",function(){});
+    let redefined=false;try{Object.defineProperty(window,"RTCPeerConnection",{value:function(){}});redefined=true;}catch{}
+    let fresh=false;const child=document.createElement("iframe");document.documentElement.appendChild(child);
+    try{fresh=typeof child.contentWindow.RTCPeerConnection==="function";}catch{}
+    parent.postMessage({probe:"rtc-boundary",frozen,reassigned,redefined,fresh,dynamic:typeof RTCPeerConnection},"*");
+  </script>`,
+    },
+    shown,
+  );
+  await expect.poll(() => probes.find((entry) => entry.probe === "rtc-boundary")).toBeTruthy();
+  expect(probes.find((entry) => entry.probe === "rtc-boundary")).toMatchObject({
+    frozen: true,
+    reassigned: false,
+    redefined: false,
+    fresh: false,
+    dynamic: "undefined",
+  });
+});
+
+it("stops parsing before agent code when capability removal is unavailable", async () => {
+  const isolated = document.createElement("iframe");
+  isolated.sandbox.add("allow-scripts");
+  const messages: unknown[] = [];
+  const record = (event: MessageEvent) => {
+    if (event.source === isolated.contentWindow) messages.push(event.data);
+  };
+  window.addEventListener("message", record);
+  try {
+    const documentSource = buildInlineVisualDocument(
+      `<script>parent.postMessage({probe:"agent-executed"},"*");</script>`,
+      { appearance: "dark", variables: {} },
+    );
+    // Controlled runtime fixture, before the trusted bootstrap: simulate a
+    // platform exposing an immutable capability that cannot be restricted.
+    isolated.srcdoc = documentSource.replace(
+      "<script>",
+      `<script>Object.defineProperty(window,"RTCPeerConnection",{value:function(){},writable:false,configurable:false});parent.postMessage({probe:"runtime-ready"},"*");</script><script>`,
+    );
+    document.body.appendChild(isolated);
+    await expect
+      .poll(() =>
+        messages.some(
+          (message) =>
+            (message as { method?: string }).method === "synara/notifications/visual-stopped",
+        ),
+      )
+      .toBe(true);
+    expect(
+      messages.some((message) => (message as { probe?: string }).probe === "runtime-ready"),
+    ).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(
+      messages.some((message) => (message as { probe?: string }).probe === "agent-executed"),
+    ).toBe(false);
+  } finally {
+    window.removeEventListener("message", record);
+    isolated.remove();
+  }
 });

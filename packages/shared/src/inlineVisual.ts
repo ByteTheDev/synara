@@ -17,12 +17,13 @@ import {
  * without `allow-same-origin`), loaded from `srcdoc` so no URL (and no auth
  * token in one) is visible to it. This policy is the first element of that
  * document, ahead of every agent byte, so it governs all of the page's own
- * scripts and styles. It allows inline code and data: media and nothing that
- * reaches the network. A document can only add policies, never relax this one.
+ * scripts and styles. It allows inline code and data: media while blocking
+ * remote resource fetches. A document can only add policies, never relax this one.
  *
  * Not covered by CSP, and therefore not claimed: a page navigating its own
- * frame (desktop blocks subframe navigation; the web host tears the frame down
- * after the fact), WebRTC, and a link the reader clicks (opened externally).
+ * frame (HTML is desktop-only, where subframe navigation is blocked before
+ * loading). The trusted bootstrap removes WebRTC constructors before agent
+ * scripts. HTML messages cannot open host URLs; native host links are separate.
  */
 export const INLINE_VISUAL_CONTENT_SECURITY_POLICY = [
   "default-src 'none'",
@@ -74,6 +75,7 @@ const SIZE_CHANGED_METHOD = "ui/notifications/size-changed";
 const OPEN_LINK_METHOD = "ui/open-link";
 const HOST_CONTEXT_CHANGED_METHOD = "ui/notifications/host-context-changed";
 const SCROLL_INTENT_METHOD = "synara/notifications/scroll-intent";
+const STOPPED_METHOD = "synara/notifications/visual-stopped";
 const MAX_LINK_LENGTH = 2048;
 const THEME_STYLE_ID = "synara-visual-theme";
 const VARIABLE_NAME_PATTERN = /^--[a-z0-9-]+$/;
@@ -81,7 +83,8 @@ const VARIABLE_NAME_PATTERN = /^--[a-z0-9-]+$/;
 export type InlineVisualFrameMessage =
   | { readonly type: "size"; readonly height: number }
   | { readonly type: "open-link"; readonly id: string | number; readonly url: string }
-  | { readonly type: "scroll-intent"; readonly upward: boolean };
+  | { readonly type: "scroll-intent"; readonly upward: boolean }
+  | { readonly type: "stopped" };
 
 /**
  * Reads one message a visual's frame posted. The caller must already have
@@ -116,6 +119,8 @@ export function readInlineVisualFrameMessage(data: unknown): InlineVisualFrameMe
         return undefined;
       }
     }
+    case STOPPED_METHOD:
+      return { type: "stopped" };
     case SCROLL_INTENT_METHOD:
       return typeof fields.upward === "boolean"
         ? { type: "scroll-intent", upward: fields.upward }
@@ -186,6 +191,8 @@ function themeCss(theme: InlineVisualTheme): string {
 const BOOTSTRAP_SCRIPT = `(function(){
 var style=document.getElementById(${JSON.stringify(THEME_STYLE_ID)}),base=${JSON.stringify(BASE_CSS)},parentWindow=window.parent,linkId=0;
 function post(message){if(parentWindow&&parentWindow!==window)parentWindow.postMessage(message,"*");}
+// WebRTC ICE bypasses connect-src. Remove capabilities before agent markup; stop parsing if a runtime cannot enforce that boundary.
+try{["RTCPeerConnection","webkitRTCPeerConnection","mozRTCPeerConnection","RTCIceGatherer","RTCIceTransport","RTCDtlsTransport","RTCRtpSender","RTCRtpReceiver","RTCSctpTransport","RTCQuicTransport"].forEach(function(name){Object.defineProperty(window,name,{value:undefined,writable:false,configurable:false});});}catch(error){window.stop();document.documentElement.replaceChildren();post({jsonrpc:"2.0",method:${JSON.stringify(STOPPED_METHOD)}});return;}
 function applyTheme(appearance,variables){if(!style||!variables||typeof variables!=="object")return;var css=":root{color-scheme:"+(appearance==="light"?"light":"dark")+";";for(var name in variables){if(${VARIABLE_NAME_PATTERN.toString()}.test(name))css+=name+":"+String(variables[name]).replace(/[;{}<>]/g,"")+";";}style.textContent=css+"}"+base;}
 window.addEventListener("message",function(event){if(event.source!==parentWindow)return;var data=event.data,params=data&&data.params;if(data&&data.jsonrpc==="2.0"&&data.method===${JSON.stringify(HOST_CONTEXT_CHANGED_METHOD)}&&params&&params.styles)applyTheme(params.theme,params.styles.variables);});
 function memoryStorage(){var items=new Map();return{get length(){return items.size;},key:function(index){var keys=Array.from(items.keys());return index>=0&&index<keys.length?keys[index]:null;},getItem:function(key){key=String(key);return items.has(key)?items.get(key):null;},setItem:function(key,value){items.set(String(key),String(value));},removeItem:function(key){items.delete(String(key));},clear:function(){items.clear();}};}
@@ -221,15 +228,25 @@ export function buildInlineVisualDocument(html: string, theme: InlineVisualTheme
   ].join("");
 }
 
+/** The same exact-body rule is used by placement discovery and markdown rendering. */
+export function readInlineVisualEmbedId(body: string): string | null {
+  const id = body.trim();
+  return /^vis_[0-9a-f]{32}$/.test(id) ? id : null;
+}
+
 const EMBED_PATTERN = new RegExp(
   "^ {0,3}(`{3,}|~{3,})[ \\t]*" +
     INLINE_VISUAL_EMBED_FENCE +
-    "[ \\t]*\\r?\\n\\s*(vis_[0-9a-f]{32})\\b",
+    "[ \\t]*\\r?\\n([\\s\\S]*?)^ {0,3}(`{3,}|~{3,})[ \\t]*$",
   "gm",
 );
 
-/** Visual ids a message places with embed fences, in order. */
+/** Complete, exact visual fences; malformed fences remain ordinary code. */
 export function readInlineVisualEmbedIds(text: string): string[] {
   if (!text.includes(INLINE_VISUAL_EMBED_FENCE)) return [];
-  return Array.from(text.matchAll(EMBED_PATTERN), (match) => match[2]!);
+  return Array.from(text.matchAll(EMBED_PATTERN)).flatMap((match) => {
+    if (!match[3]!.startsWith(match[1]!)) return [];
+    const id = readInlineVisualEmbedId(match[2]!);
+    return id === null ? [] : [id];
+  });
 }

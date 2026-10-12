@@ -308,6 +308,11 @@ To put a feature behind the list:
 
 Promote a feature to Stable by deleting its entry; every gate resolves itself.
 
+HTML visuals execute only in the Beta desktop app, where native subframe navigation is blocked.
+HTTP-hosted clients retain native component visuals but never execute HTML. The trusted
+bootstrap removes WebRTC capabilities before page scripts and stops parsing if that boundary
+cannot be enforced. HTML messages cannot open external URLs through the host.
+
 The list currently holds `inline-visuals`: the `synara_show_visual` agent tool,
 its transcript rows, and the `orchestration.getInlineVisual` read. A Stable server
 leaves the tool out of the gateway catalog and the harness policy, refuses the

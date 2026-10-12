@@ -112,6 +112,7 @@ import {
   type ComposerImageAttachment,
   type DraftThreadEnvMode,
 } from "../composerDraftStore";
+import { composerDraftHasUnsentContent } from "../composerDraftDomain";
 import { useComposerFocusRequestStore } from "../composerFocusRequestStore";
 import {
   buildGoalSlashCommandPrompt,
@@ -4959,14 +4960,21 @@ export default function ChatView({
       const draft = (
         composerEditorRef.current?.readSnapshot()?.value ?? promptRef.current
       ).trimEnd();
-      if (draft.length > 0) {
-        setComposerPromptValue(`${draft}\n\n${message}`);
+      const stagedDraft = useComposerDraftStore.getState().draftsByThreadId[threadId];
+      const hasStagedContext =
+        isPreparingComposerImages ||
+        (stagedDraft !== undefined &&
+          (composerDraftHasUnsentContent({ ...stagedDraft, prompt: "" }) ||
+            stagedDraft.skills.length > 0 ||
+            stagedDraft.mentions.length > 0));
+      if (draft.length > 0 || hasStagedContext) {
+        setComposerPromptValue(draft.length > 0 ? `${draft}\n\n${message}` : message);
         return;
       }
       setComposerPromptValue(message);
       setComposerAutoSendRequest((current) => current + 1);
     },
-    [composerEditorRef, promptRef, setComposerPromptValue],
+    [composerEditorRef, promptRef, setComposerPromptValue, threadId, isPreparingComposerImages],
   );
 
   // A denied task offers the same visible, one-request invocation as the slash menu.
@@ -5978,7 +5986,7 @@ export default function ChatView({
         <ComposerColumnFrame>
           {/* A bare wrapper keeps the normal-flow panels' -mb-px seam onto the input shell
                 via margin collapse. */}
-          <div data-composer-panels>
+          <div>
             <ComposerTransportNotice />
             {isSidechatExpired ? (
               <ExpiredSidechatNotice onStartNew={startReplacementSidechat} />

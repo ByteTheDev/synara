@@ -24,7 +24,7 @@ import {
   type InlineVisualFormat,
 } from "@synara/contracts";
 import { compileInlineVisualFormula } from "@synara/shared/inlineVisualFormula";
-import { Effect, Schema } from "effect";
+import { Effect, Schema, Semaphore } from "effect";
 
 import { writeInlineVisual } from "../inlineVisualStore.ts";
 import { stableGatewayDigest } from "./creationUtils.ts";
@@ -270,6 +270,9 @@ export function makeAgentGatewayInlineVisualTools(
 ): ReadonlyArray<ToolEntry> {
   // Visual ids published per running turn. In memory only: a restart resets
   // the count, which is fine for a guard against a looping agent.
+  // Hold creation through activity append and rollback: overlapping retries must
+  // never delete a document referenced by a successful publication.
+  const publicationLock = Semaphore.makeUnsafe(1);
   const visualsByTurn = new Map<string, Set<string>>();
   const turnVisuals = (key: string) => {
     let visuals = visualsByTurn.get(key);
@@ -411,7 +414,10 @@ export function makeAgentGatewayInlineVisualTools(
           embed,
           message: `Place the visual in your reply by writing this block on its own lines where it belongs:\n${embed}\nState the key finding in words around it; do not describe the visual or say where it is.`,
         });
-      }).pipe(Effect.catch((error) => Effect.succeed(mcpToolResultError(errorText(error))))),
+      }).pipe(
+        publicationLock.withPermit,
+        Effect.catch((error) => Effect.succeed(mcpToolResultError(errorText(error)))),
+      ),
   };
 
   return [showVisual];

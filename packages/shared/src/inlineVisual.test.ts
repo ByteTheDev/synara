@@ -136,3 +136,12 @@ describe("readInlineVisualEmbedIds", () => {
     expect(readInlineVisualEmbedIds("```synara-visual\nvis_123\n```")).toEqual([]);
   });
 });
+
+it("does not claim incomplete or extra-content fences as placed visuals", () => {
+  const id = `vis_${"a".repeat(32)}`;
+  expect(readInlineVisualEmbedIds(`\`\`\`synara-visual\n${id}\nextra narration\n\`\`\``)).toEqual(
+    [],
+  );
+  expect(readInlineVisualEmbedIds(`\`\`\`synara-visual\n${id}`)).toEqual([]);
+  expect(readInlineVisualEmbedIds(`\`\`\`synara-visual\n${id}\n\`\`\``)).toEqual([id]);
+});

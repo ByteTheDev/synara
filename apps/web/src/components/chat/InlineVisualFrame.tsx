@@ -1,6 +1,6 @@
 // FILE: InlineVisualFrame.tsx
 // Purpose: One agent-published inline visual in the transcript: fetches its document, runs it
-//          in a sandboxed srcdoc frame, and bridges size, links, theme, and scroll intent.
+//          in a sandboxed srcdoc frame, and bridges size, theme, and scroll intent.
 // Layer: Chat transcript row content
 // Exports: InlineVisualFrame
 
@@ -8,7 +8,6 @@ import type { InlineVisualActivityPayload, ThreadId } from "@synara/contracts";
 import {
   buildInlineVisualDocument,
   clampInlineVisualHeight,
-  inlineVisualLinkResult,
   inlineVisualThemeMessage,
   readInlineVisualFrameMessage,
   type InlineVisualTheme,
@@ -16,10 +15,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { isElectron } from "~/env";
 import { useInlineVisualTheme } from "~/hooks/useInlineVisualTheme";
 import { DISCLOSURE_FADE_MOTION_CLASS } from "~/lib/disclosureMotion";
 import { RotateCcwIcon } from "~/lib/icons";
-import { openExternalLink } from "~/lib/linkChips";
 import { inlineVisualQueryOptions } from "~/lib/providerReactQuery";
 import { cn } from "~/lib/utils";
 
@@ -34,7 +33,24 @@ import { IconButton } from "../ui/icon-button";
  * never a follow signal. A reader who scrolls over the frame still detaches
  * follow through `onScrollIntent`, since those gestures never reach the host.
  */
-export function InlineVisualFrame({
+export function InlineVisualFrame(props: {
+  readonly threadId: ThreadId;
+  readonly visual: InlineVisualActivityPayload;
+  readonly onScrollIntent?: ((upward: boolean) => void) | undefined;
+}) {
+  // Browsers cannot intercept a document navigating its own iframe before the
+  // network request. Execute agent HTML only where the native guard can do so.
+  return isElectron ? (
+    <DesktopInlineVisualFrame {...props} />
+  ) : (
+    <InlineVisualNotice
+      title={props.visual.title}
+      message="HTML visuals are available in Synara Beta desktop. Use native components in the browser."
+    />
+  );
+}
+
+function DesktopInlineVisualFrame({
   threadId,
   visual,
   onScrollIntent,
@@ -86,7 +102,7 @@ export function InlineVisualFrame({
       ) : stopped ? (
         <InlineVisualNotice
           title={visual.title}
-          message="This visual stopped because it tried to leave the page."
+          message="This visual stopped because it could not stay isolated."
           action="Reload"
           onAction={reload}
         />
@@ -173,6 +189,8 @@ function InlineVisualDocument({
   // Registered in the commit that inserts the frame: a fast page can post its
   // first size before a passive effect would run.
   useLayoutEffect(() => {
+    let heightTimer: ReturnType<typeof setTimeout> | undefined;
+    let pendingHeight: number | undefined;
     const onMessage = (event: MessageEvent) => {
       const frame = frameRef.current;
       // Only the frame's own window; the page's origin is opaque, so this is
@@ -183,21 +201,26 @@ function InlineVisualDocument({
       const message = readInlineVisualFrameMessage(event.data);
       if (message === undefined) return;
       if (message.type === "size") {
-        setContentHeight(clampInlineVisualHeight(message.height));
+        pendingHeight = clampInlineVisualHeight(message.height);
+        // Bound expensive transcript remeasurement to ten updates per second.
+        if (heightTimer === undefined) {
+          heightTimer = setTimeout(() => {
+            heightTimer = undefined;
+            setContentHeight(pendingHeight ?? null);
+          }, 100);
+        }
+      } else if (message.type === "stopped") {
+        callbacks.current.onStopped();
       } else if (message.type === "scroll-intent") {
         callbacks.current.onScrollIntent?.(message.upward);
-      } else if (
-        // A page can post this at any time; open only right after the reader
-        // used this frame. It can still wait for the reader's next click.
-        document.activeElement === frame &&
-        navigator.userActivation?.isActive !== false
-      ) {
-        openExternalLink(message.url);
-        frame.contentWindow?.postMessage(inlineVisualLinkResult(message.id), "*");
       }
+      // Untrusted HTML cannot open host URLs, even during user activation.
     };
     window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
+    return () => {
+      window.removeEventListener("message", onMessage);
+      if (heightTimer !== undefined) clearTimeout(heightTimer);
+    };
   }, []);
 
   const onLoad = () => {

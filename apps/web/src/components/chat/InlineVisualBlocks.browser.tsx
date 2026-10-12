@@ -1,6 +1,7 @@
 import "../../index.css";
 
 import { type InlineVisualSpec, type NativeApi, ThreadId } from "@synara/contracts";
+import { act } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { userEvent } from "vitest/browser";
 import { afterEach, expect, it, vi } from "vitest";
@@ -18,16 +19,23 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-async function mountBlocks(source: InlineVisualSpec | string, onSendChoice = vi.fn()) {
+async function mountBlocks(
+  source: InlineVisualSpec | string,
+  onSendChoice = vi.fn(),
+  failure?: unknown,
+) {
   // A fresh id per mount: reader state is kept per visual across remounts.
   visualCount += 1;
   const visualId = `vis_${String(visualCount).padStart(32, "0")}`;
   vi.stubGlobal("nativeApi", {
     orchestration: {
-      getInlineVisual: vi.fn(async () => ({
-        visualId,
-        html: typeof source === "string" ? source : JSON.stringify(source),
-      })),
+      getInlineVisual: vi.fn(async () => {
+        if (failure !== undefined) throw failure;
+        return {
+          visualId,
+          html: typeof source === "string" ? source : JSON.stringify(source),
+        };
+      }),
     },
   } as unknown as NativeApi);
   const client = new QueryClient();
@@ -169,4 +177,46 @@ it("switches tabs and sorts a table by a numeric column", async () => {
 it("says so when the stored spec is not one this client can draw", async () => {
   const { screen } = await mountBlocks(JSON.stringify({ blocks: [{ type: "hologram" }] }));
   await expect.element(screen.getByText("This visual needs a newer Synara.")).toBeVisible();
+});
+
+it("consumes a choice synchronously even if two clicks arrive before React renders", async () => {
+  const { screen, onSendChoice } = await mountBlocks({
+    blocks: [{ type: "choices", options: [{ label: "Continue" }, { label: "Wait" }] }],
+  });
+  await expect.element(screen.getByRole("button", { name: /Continue/ })).toBeVisible();
+  const button = screen.getByRole("button", { name: /Continue/ }).element() as HTMLButtonElement;
+  await act(() => {
+    button.click();
+    button.click();
+  });
+  expect(onSendChoice).toHaveBeenCalledExactlyOnceWith("Continue");
+});
+
+it("does not offer retry for a permanently missing component document", async () => {
+  const { screen } = await mountBlocks(
+    { blocks: [{ type: "markdown", text: "Unavailable" }] },
+    vi.fn(),
+    { message: "missing", retryable: false },
+  );
+  await expect.element(screen.getByText("Visual unavailable.")).toBeVisible();
+  expect(screen.getByRole("button", { name: "Retry" }).query()).toBeNull();
+});
+
+it("draws losses to the left and gains to the right of the zero axis", async () => {
+  const { screen } = await mountBlocks({
+    blocks: [
+      {
+        type: "bar-chart",
+        items: [
+          { label: "Loss", value: -100 },
+          { label: "Gain", value: 100 },
+        ],
+      },
+    ],
+  });
+  await expect.element(screen.getByText("Loss", { exact: true })).toBeVisible();
+  const rows = screen.getByRole("listitem").elements();
+  const loss = rows[0]!.querySelector<HTMLElement>('span[style*="width"]')!.getBoundingClientRect();
+  const gain = rows[1]!.querySelector<HTMLElement>('span[style*="width"]')!.getBoundingClientRect();
+  expect(gain.left).toBeCloseTo(loss.right, 1);
 });

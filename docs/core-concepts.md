@@ -184,8 +184,7 @@ components, so a visual matches the app, the current light or dark theme, custom
 the chat font size. Bar charts can compare before and after on each row, with the change in
 percent. Tables sort when you click a column header and fold after ten rows.
 Calculators recompute as you move a slider or type a value. Checklists can be ticked. Clicking a
-follow-up choice sends it as your next message, or adds it below your draft if you were writing
-one. What you change in a visual is kept while you scroll. Anything the components cannot draw,
+follow-up choice sends it as your next message, or adds it to the composer for review if it already holds text, attachments, or context. What you change in a visual is kept while you scroll. Anything the components cannot draw,
 such as a diagram, the agent sends as a self-contained HTML page instead; the rest of this section
 covers those pages.
 
@@ -204,9 +203,11 @@ reloading.
 
 Scripts in a visual run in a sandboxed frame with its own origin. They cannot read Synara's
 pages, your session, or your files, or open windows or dialogs, and the page's fetches and remote
-scripts, fonts, and images are blocked. WebRTC is not blocked. A visual that tries to navigate
-stops and offers **Reload**: the desktop app refuses the navigation, while a plain browser can
-start it before Synara stops the visual. Clicking an `http(s)` link opens it in your browser. Hover
+scripts, fonts, and images are blocked. WebRTC entry points are removed before page scripts.
+A visual that tries to navigate
+stops and offers **Reload**: the desktop app refuses the navigation before the request. HTML
+execution is disabled in plain browsers; use native component specs there instead. HTML pages
+cannot open external links through the host. Hover
 a page to copy its source or reload it. Each page is limited to 256 KiB and each component spec to
 64 KiB, and a turn can show at most six visuals. A turn you stop after it showed a visual ends with the stop line below that
 visual.

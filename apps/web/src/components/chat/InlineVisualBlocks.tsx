@@ -14,7 +14,7 @@ import {
 } from "@synara/contracts";
 import { INLINE_VISUAL_SERIES_COLORS } from "@synara/shared/inlineVisual";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, type CSSProperties, type ReactNode } from "react";
+import { useMemo, useRef, type CSSProperties, type ReactNode } from "react";
 
 import { useTheme } from "~/hooks/useTheme";
 import {
@@ -81,7 +81,9 @@ export function InlineVisualBlocks({
       <BlocksNotice
         title={visual.title}
         message="Visual unavailable."
-        onRetry={() => void source.refetch()}
+        {...((source.error as { retryable?: boolean } | null)?.retryable === false
+          ? {}
+          : { onRetry: () => void source.refetch() })}
       />
     ) : (
       <div
@@ -473,6 +475,8 @@ function ChoicesBlock({
   readonly onSendChoice: ((message: string) => void) | undefined;
 }) {
   const [chosen, setChosen] = useInlineVisualState<number | null>(stateKey, null);
+  // A selection is consumed synchronously before React commits its disabled state.
+  const selectionPending = useRef(false);
   return (
     <div className="flex flex-col gap-1">
       {block.prompt ? (
@@ -488,7 +492,8 @@ function ChoicesBlock({
             {...(chosen === null ? {} : { selected: chosen === index })}
             disabled={onSendChoice === undefined || (chosen !== null && chosen !== index)}
             onSelect={() => {
-              if (onSendChoice === undefined || chosen !== null) return;
+              if (onSendChoice === undefined || chosen !== null || selectionPending.current) return;
+              selectionPending.current = true;
               setChosen(index);
               onSendChoice(option.message ?? option.label);
             }}

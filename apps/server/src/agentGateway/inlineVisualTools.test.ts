@@ -6,7 +6,7 @@ import path from "node:path";
 import { assert, describe, it } from "@effect/vitest";
 import { Effect } from "effect";
 
-import { readInlineVisual } from "../inlineVisualStore.ts";
+import { inlineVisualThreadDirectory, readInlineVisual } from "../inlineVisualStore.ts";
 import {
   type AppendInlineVisualActivityInput,
   INLINE_VISUALS_PER_TURN_LIMIT,
@@ -70,7 +70,10 @@ const withTools = <A>(
         appended,
         failAppend,
         call: (args, context = makeContext()) => tool!.handler(args, context),
-        storedFiles: () => readdir(path.join(attachmentsDir, "visuals", THREAD_ID)).catch(() => []),
+        storedFiles: () =>
+          readdir(inlineVisualThreadDirectory({ attachmentsDir, threadId: THREAD_ID })!).catch(
+            () => [],
+          ),
       });
     },
     (attachmentsDir) => Effect.promise(() => rm(attachmentsDir, { recursive: true, force: true })),
@@ -350,3 +353,41 @@ describe("synara_show_visual", () => {
     ),
   );
 });
+
+it.effect("keeps a successful visual when an identical overlapping retry fails", () =>
+  withTools(({ call, appended, attachmentsDir }) =>
+    Effect.gen(function* () {
+      const args = { title: "Shared", html: html("Shared") };
+      const [success, failure] = yield* Effect.all(
+        [
+          call(args),
+          call(
+            args,
+            makeContext({
+              assertCallerTurnActive: () =>
+                Effect.promise(() => new Promise((resolve) => setTimeout(resolve, 20))).pipe(
+                  Effect.andThen(
+                    Effect.fail(new GatewayToolError("caller_turn_inactive", "stopped")),
+                  ),
+                ),
+            }),
+          ),
+        ],
+        { concurrency: "unbounded" },
+      );
+      assert.isFalse(success.isError ?? false);
+      assert.isTrue(failure.isError);
+      assert.lengthOf(appended, 1);
+      assert.equal(
+        yield* Effect.promise(() =>
+          readInlineVisual({
+            attachmentsDir,
+            threadId: THREAD_ID,
+            visualId: appended[0]!.payload.visualId,
+          }),
+        ),
+        args.html,
+      );
+    }),
+  ),
+);

@@ -12,6 +12,8 @@ import type { TimelineEntry } from "../../session-logic";
 import { MessagesTimeline } from "./MessagesTimeline";
 import { useChatTranscriptScroll } from "./useChatTranscriptScroll";
 
+vi.mock("~/env", () => ({ isElectron: true }));
+
 const THREAD_ID = ThreadId.makeUnsafe("thread-visual-follow");
 const NOW = "2026-10-12T12:00:00.000Z";
 const VISUAL = {

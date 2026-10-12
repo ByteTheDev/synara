@@ -120,6 +120,7 @@ import {
 } from "./userTurnMarker";
 import {
   collectInlineVisuals,
+  collectInlineVisualEmbedOwners,
   canSubmitUserMessageEdit,
   capOpenWorkEntryRenderChunks,
   collapsibleHiddenRowCount,
@@ -130,6 +131,7 @@ import {
   deriveMessagesTimelineRows,
   formatTurnHeaderLabel,
   findLastLiveWorkGroupId,
+  isPinnedBackgroundTaskEntry,
   MAX_VISIBLE_WORK_LOG_ENTRIES,
   MIN_BACKGROUND_TASK_GROUP_SIZE,
   planWorkEntryRenderChunks,
@@ -1412,6 +1414,10 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     [markdownCwd, onSendVisualChoice],
   );
   const inlineVisualsById = useMemo(() => collectInlineVisuals(timelineEntries), [timelineEntries]);
+  const inlineVisualOwners = useMemo(
+    () => collectInlineVisualEmbedOwners(timelineEntries),
+    [timelineEntries],
+  );
   // Replies place visuals in their text with an embed fence; the markdown asks
   // for the visual by id and draws it right there, as part of the answer.
   const renderInlineVisual = useCallback(
@@ -1514,10 +1520,12 @@ export const MessagesTimeline = memo(function MessagesTimeline({
         item.kind === "work" ? [item.entry] : [],
       ),
     ]);
-    // Background tasks stay visible under the header while the turn is
-    // folded: each is one row whose status is the turn's lasting result.
+    // Keep main's lifetime semantics: only tasks outliving this turn stay pinned.
+    const turnEndedAt = row.turnHeader?.endedAt ?? null;
     const pinnedBackgroundEntries = (row.collapsedTurnItems ?? []).flatMap((item) =>
-      item.kind === "work" && item.entry.backgroundTask ? [item.entry] : [],
+      item.kind === "work" && isPinnedBackgroundTaskEntry(item.entry, turnEndedAt)
+        ? [item.entry]
+        : [],
     );
     const collapsedTurnItems = row.collapsedTurnItems?.filter(
       (item) =>
@@ -1526,7 +1534,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
           item.entry.synaraThreadCreation ||
           item.entry.computerSetupRequired ||
           item.entry.computerControlDenied ||
-          item.entry.backgroundTask
+          isPinnedBackgroundTaskEntry(item.entry, turnEndedAt)
         ),
     );
     const hasCollapsedWork = Boolean(collapsedTurnItems && collapsedTurnItems.length > 0);
@@ -1976,15 +1984,21 @@ export const MessagesTimeline = memo(function MessagesTimeline({
               data-chat-find-segment-index={row.segmentIndex}
             >
               <div className={MUTED_LABEL_TEXT_CLASS_NAME}>
-                <ChatMarkdown
-                  text={segmentText}
-                  cwd={markdownCwd}
-                  directionMode="auto-blocks"
-                  isStreaming={false}
-                  style={chatTypographyStyle}
-                  onImageExpand={onImageExpand}
-                  {...threadFindMarkdownProps(findHighlight, row.message.id, row.segmentIndex)}
-                />
+                <InlineVisualEmbedContext.Provider
+                  value={(id) =>
+                    inlineVisualOwners.get(id) === row.message.id ? renderInlineVisual(id) : null
+                  }
+                >
+                  <ChatMarkdown
+                    text={segmentText}
+                    cwd={markdownCwd}
+                    directionMode="auto-blocks"
+                    isStreaming={false}
+                    style={chatTypographyStyle}
+                    onImageExpand={onImageExpand}
+                    {...threadFindMarkdownProps(findHighlight, row.message.id, row.segmentIndex)}
+                  />
+                </InlineVisualEmbedContext.Provider>
               </div>
             </div>
           );
@@ -2425,16 +2439,20 @@ export const MessagesTimeline = memo(function MessagesTimeline({
               ),
             ).values(),
           ];
-          const hasCollapsedWork = (row.collapsedTurnItems ?? []).some(
+          // Background tasks that outlived the turn stay visible under the header
+          // while it is folded; ones the turn settled itself fold with its work.
+          const turnEndedAt = row.turnHeader?.endedAt ?? null;
+          const collapsedTurnItems = row.collapsedTurnItems?.filter(
             (item) =>
               item.kind !== "work" ||
               !(
                 item.entry.synaraThreadCreation ||
                 item.entry.computerSetupRequired ||
                 item.entry.computerControlDenied ||
-                item.entry.backgroundTask
+                isPinnedBackgroundTaskEntry(item.entry, turnEndedAt)
               ),
           );
+          const hasCollapsedWork = Boolean(collapsedTurnItems?.length);
           const isTailContentRow = row.id === tailContentRowId;
           const renderWorkDisplay = (
             display: typeof leadingWorkDisplay,
@@ -2624,29 +2642,37 @@ export const MessagesTimeline = memo(function MessagesTimeline({
                     data-assistant-message-id={row.message.id}
                     data-chat-find-document-id={row.message.id}
                   >
-                    <ChatMarkdown
-                      text={
-                        conversationOnly
-                          ? rewriteThreadIdsAsMarkdownLinks(
-                              messageText,
-                              synaraThreadCreationRecaps.flatMap((creation) =>
-                                creation.threads.map((thread) => ({
-                                  id: thread.threadId,
-                                  title: thread.title,
-                                })),
-                              ),
-                            )
-                          : messageText
+                    <InlineVisualEmbedContext.Provider
+                      value={(id) =>
+                        inlineVisualOwners.get(id) === row.message.id
+                          ? renderInlineVisual(id)
+                          : null
                       }
-                      cwd={markdownCwd}
-                      directionMode="auto-blocks"
-                      isStreaming={Boolean(row.message.streaming)}
-                      style={chatTypographyStyle}
-                      onImageExpand={onImageExpand}
-                      knownAbsoluteFilePaths={knownAbsoluteFilePaths}
-                      {...(conversationOnly && onOpenThread ? { onOpenThread } : {})}
-                      {...threadFindMarkdownProps(findHighlight, row.message.id)}
-                    />
+                    >
+                      <ChatMarkdown
+                        text={
+                          conversationOnly
+                            ? rewriteThreadIdsAsMarkdownLinks(
+                                messageText,
+                                synaraThreadCreationRecaps.flatMap((creation) =>
+                                  creation.threads.map((thread) => ({
+                                    id: thread.threadId,
+                                    title: thread.title,
+                                  })),
+                                ),
+                              )
+                            : messageText
+                        }
+                        cwd={markdownCwd}
+                        directionMode="auto-blocks"
+                        isStreaming={Boolean(row.message.streaming)}
+                        style={chatTypographyStyle}
+                        onImageExpand={onImageExpand}
+                        knownAbsoluteFilePaths={knownAbsoluteFilePaths}
+                        {...(conversationOnly && onOpenThread ? { onOpenThread } : {})}
+                        {...threadFindMarkdownProps(findHighlight, row.message.id)}
+                      />
+                    </InlineVisualEmbedContext.Provider>
                   </div>
                 ) : null}
                 {conversationOnly ? null : renderWorkDisplay(inlineWorkDisplay, "inline")}
@@ -3077,7 +3103,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
 
   return (
     <BackgroundTaskStopContext.Provider value={onStopBackgroundTask ?? null}>
-      <InlineVisualEmbedContext.Provider value={renderInlineVisual}>
+      <InlineVisualEmbedContext.Provider value={null}>
         <div ref={timelineRootRef} className="contents" data-messages-timeline-root="true">
           <LegendList<MessagesTimelineRow>
             ref={resolvedListRef}

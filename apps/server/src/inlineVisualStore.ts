@@ -4,7 +4,7 @@
 // Exports: INLINE_VISUALS_DIRECTORY, inlineVisualThreadDirectory, inlineVisualFilePath,
 //          writeInlineVisual, readInlineVisual
 
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -30,11 +30,12 @@ export function inlineVisualThreadDirectory(input: {
   readonly attachmentsDir: string;
   readonly threadId: string;
 }): string | null {
+  // Attachment prefixes are lossy; directory ownership hashes the complete ID.
   const threadSegment = toSafeThreadAttachmentSegment(input.threadId);
   if (!threadSegment) return null;
   return resolveAttachmentRelativePath({
     attachmentsDir: input.attachmentsDir,
-    relativePath: `${INLINE_VISUALS_DIRECTORY}/${threadSegment}`,
+    relativePath: `${INLINE_VISUALS_DIRECTORY}/${createHash("sha256").update(input.threadId).digest("hex")}`,
   });
 }
 

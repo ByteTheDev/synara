@@ -7,7 +7,7 @@ import { NonNegativeInt, ThreadId, TrimmedNonEmptyString } from "./baseSchemas";
  * `synara_show_visual` gateway tool. Usually a component spec (see
  * inlineVisualSpec.ts) that clients draw with their own components; for a view
  * the spec cannot express, a self-contained HTML document that clients run in a
- * sandboxed, network-less frame. The server stores the source and records a
+ * sandboxed desktop frame. The server stores the source and records a
  * small `visual.shown` activity; clients fetch the source by id.
  */
 export const INLINE_VISUAL_TOOL_NAME = "synara_show_visual";

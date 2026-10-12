@@ -25,15 +25,19 @@ export function InlineVisualBarChart({ block }: { readonly block: BarChartBlock 
   const items =
     block.sort === "value" ? block.items.toSorted((a, b) => b.value - a.value) : block.items;
   const compared = items.some((item) => item.baseline !== undefined);
-  const largest = Math.max(
-    ...items.map((item) => Math.max(Math.abs(item.value), Math.abs(item.baseline ?? 0))),
-    0,
-  );
+  const values = items.flatMap((item) => [item.value, item.baseline ?? 0]);
+  const minimum = Math.min(0, ...values);
+  const maximum = Math.max(0, ...values);
+  // Normalize first so opposite, finite extreme values cannot overflow the span.
+  const scale = Math.max(Math.abs(minimum), Math.abs(maximum)) || 1;
+  const scaledMinimum = minimum / scale;
+  const range = maximum / scale - scaledMinimum || 1;
+  const zero = (-scaledMinimum / range) * 100;
   const anyHighlight = items.some((item) => item.highlight);
-  const share = (value: number) => {
-    const width = largest === 0 ? 0 : (Math.abs(value) / largest) * 100;
-    return `${Math.max(width, value === 0 ? 0 : 1.5)}%`;
-  };
+  const barStyle = (value: number) => ({
+    marginLeft: `${((Math.min(0, value) / scale - scaledMinimum) / range) * 100}%`,
+    width: `${(Math.abs(value / scale) / range) * 100}%`,
+  });
   return (
     <InlineVisualSurface
       title={block.title}
@@ -76,18 +80,25 @@ export function InlineVisualBarChart({ block }: { readonly block: BarChartBlock 
               </span>
               <span className="flex min-w-0 flex-col gap-1">
                 {item.baseline !== undefined ? (
-                  <span className="h-1.5 overflow-hidden rounded-full bg-[var(--chart-grid)]">
+                  <span className="relative h-1.5 overflow-hidden rounded-full bg-[var(--chart-grid)]">
                     <span
                       className="block h-full rounded-full bg-[var(--chart-muted)]"
-                      style={{ width: share(item.baseline) }}
+                      style={barStyle(item.baseline)}
                     />
                   </span>
                 ) : null}
-                <span className="h-2.5 overflow-hidden rounded-full bg-[var(--chart-grid)]">
+                <span className="relative h-2.5 overflow-hidden rounded-full bg-[var(--chart-grid)]">
+                  {minimum < 0 ? (
+                    <span
+                      aria-hidden
+                      className="absolute inset-y-0 border-s border-foreground/40"
+                      style={{ left: `${zero}%` }}
+                    />
+                  ) : null}
                   <span
                     className="block h-full rounded-full"
                     style={{
-                      width: share(item.value),
+                      ...barStyle(item.value),
                       background: emphasized ? "var(--chart-accent)" : "var(--chart-muted)",
                     }}
                   />

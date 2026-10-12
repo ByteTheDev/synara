@@ -490,6 +490,21 @@ export function deriveTurnTimingByTurnId(input: {
   return timings;
 }
 
+// A background task still running when its turn ended stays pinned under the
+// folded turn's header: its status is the turn's lasting result. One the turn
+// started and settled itself (a dev server it stopped) folds with its work.
+export function isPinnedBackgroundTaskEntry(
+  entry: WorkLogEntry,
+  turnEndedAt: string | null,
+): boolean {
+  const task = entry.backgroundTask;
+  if (!task) return false;
+  if (task.completedAt === null || turnEndedAt === null) return true;
+  const completedMs = Date.parse(task.completedAt);
+  const endedMs = Date.parse(turnEndedAt);
+  return Number.isNaN(completedMs) || Number.isNaN(endedMs) || completedMs > endedMs;
+}
+
 // "“Run delayed echo” finished", or a count when several tasks woke the turn.
 export function formatTurnResumedBy(resumedBy: ReadonlyArray<TurnResumedBy>): string {
   if (resumedBy.length === 1) {
@@ -1008,21 +1023,13 @@ export function deriveMessagesTimelineRows(input: {
   conversationOnly?: boolean;
 }): MessagesTimelineRow[] {
   const nextRows: MessagesTimelineRow[] = [];
-  const embeddedVisualIds = new Set(
-    input.timelineEntries.flatMap((entry) =>
-      (entry.kind === "message" || entry.kind === "message-segment") &&
-      entry.message.role === "assistant"
-        ? readInlineVisualEmbedIds(entry.message.text)
-        : [],
-    ),
-  );
+  const embeddedVisualOwners = collectInlineVisualEmbedOwners(input.timelineEntries);
   // A finished background task wakes the agent into a new response, so it ends
   // the previous response and starts the next one's clock like a user message.
   const responseMessages = input.timelineEntries.flatMap((entry): TimelineDurationMessage[] =>
     entry.kind === "message"
       ? [entry.message]
-      : entry.kind === "work" &&
-          (entry.entry.backgroundTaskCompletion || entry.entry.monitorNotification)
+      : entry.kind === "work" && wakesAgent(entry.entry)
         ? [{ id: entry.id, role: "user", createdAt: entry.createdAt }]
         : [],
   );
@@ -1128,7 +1135,7 @@ export function deriveMessagesTimelineRows(input: {
           // running turn has not placed yet waits for its reply instead of
           // showing above it and then jumping into the text.
           if (
-            embeddedVisualIds.has(inlineVisual.visualId) ||
+            embeddedVisualOwners.has(inlineVisual.visualId) ||
             (input.activeTurnInProgress === true &&
               runEntry.entry.turnId != null &&
               runEntry.entry.turnId === input.activeTurnId)
@@ -1154,11 +1161,7 @@ export function deriveMessagesTimelineRows(input: {
             createdAt: runEntry.createdAt,
             entry: { ...runEntry.entry, userInputExchange },
           });
-        } else if (
-          isStandaloneWorkEntry(runEntry.entry) ||
-          runEntry.entry.backgroundTaskCompletion ||
-          runEntry.entry.monitorNotification
-        ) {
+        } else if (isStandaloneWorkEntry(runEntry.entry) || wakesAgent(runEntry.entry)) {
           flushPendingWorkGroup();
           nextRows.push({
             kind: "work",
@@ -1455,9 +1458,15 @@ function findLiveTurnHeaderInsertion(
 // Returns the terminal assistant only when it is still the transcript tail.
 // A newer user message means the next turn has begun but has not produced text yet.
 function isBackgroundTaskCompletionRow(row: MessagesTimelineRow): boolean {
-  return (
-    row.kind === "work" &&
-    row.groupedEntries.some((entry) => entry.backgroundTaskCompletion || entry.monitorNotification)
+  return row.kind === "work" && row.groupedEntries.some(wakesAgent);
+}
+
+// A finished background task or Monitor event that woke the idle agent. One
+// that arrived mid-turn is ordinary work inside that turn.
+function wakesAgent(entry: WorkLogEntry): boolean {
+  return Boolean(
+    entry.backgroundTaskCompletion ||
+    (entry.monitorNotification && !entry.monitorNotification.midTurn),
   );
 }
 
@@ -1746,9 +1755,9 @@ function collectResumedBy(
     const row = rows[scan]!;
     if (!isBackgroundTaskCompletionRow(row) || row.kind !== "work") break;
     for (const entry of row.groupedEntries.toReversed()) {
+      if (!wakesAgent(entry)) continue;
       const completion = entry.backgroundTaskCompletion;
       const monitor = entry.monitorNotification;
-      if (!completion && !monitor) continue;
       resumedBy.unshift({
         description: completion?.description ?? monitor?.name ?? null,
         outcome:
@@ -2166,4 +2175,30 @@ export function collectInlineVisuals(
     }
   }
   return visuals;
+}
+
+/** Only the last visible assistant reply in the publishing turn can place its visual. */
+export function collectInlineVisualEmbedOwners(
+  entries: ReadonlyArray<TimelineEntry>,
+): ReadonlyMap<string, string> {
+  const turnByVisual = new Map<string, string>();
+  const replyByTurn = new Map<string, { id: string; text: string }>();
+  for (const entry of entries) {
+    if (entry.kind === "work" && entry.entry.inlineVisual && entry.entry.turnId) {
+      turnByVisual.set(entry.entry.inlineVisual.visualId, entry.entry.turnId);
+    } else if (
+      (entry.kind === "message" || entry.kind === "message-segment") &&
+      entry.message.role === "assistant" &&
+      entry.message.turnId
+    ) {
+      replyByTurn.set(entry.message.turnId, entry.message);
+    }
+  }
+  const owners = new Map<string, string>();
+  for (const [turnId, reply] of replyByTurn) {
+    for (const id of readInlineVisualEmbedIds(reply.text)) {
+      if (turnByVisual.get(id) === turnId) owners.set(id, reply.id);
+    }
+  }
+  return owners;
 }
