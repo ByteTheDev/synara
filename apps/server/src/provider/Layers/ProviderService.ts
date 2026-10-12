@@ -4321,7 +4321,7 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
         payload: rawInput,
       }).pipe(
         Effect.flatMap((input) =>
-          lifecycle.runCurrent(input.threadId, () =>
+          lifecycle.runCurrent(input.threadId, (currentGeneration) =>
             Effect.gen(function* () {
               const routed = yield* resolveRoutableSession({
                 threadId: input.threadId,
@@ -4340,7 +4340,47 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                   `Provider '${routed.adapter.provider}' does not support stopping a provider task.`,
                 );
               }
-              yield* routed.adapter.stopTask(input.threadId, input.taskId);
+              yield* routed.adapter.stopTask(input.threadId, input.taskId, {
+                // A native subagent stop may revoke the parent's shared MCP
+                // credential. The adapter invokes this gate only when that
+                // revocation is needed, so ordinary shell stops do not force
+                // unrelated background tasks to drain before the next turn.
+                beforeGatewayCredentialRevocation: withBindingWriteLock(
+                  input.threadId,
+                  Effect.gen(function* () {
+                    const binding = Option.getOrUndefined(
+                      yield* directory.getBinding(input.threadId),
+                    );
+                    if (!binding) {
+                      return yield* toValidationError(
+                        "ProviderService.stopTask",
+                        `Cannot revoke task credentials for thread '${input.threadId}' without a persisted provider binding.`,
+                      );
+                    }
+                    const bindingGeneration = binding.lifecycleGeneration ?? currentGeneration;
+                    if (
+                      currentGeneration !== undefined &&
+                      (bindingGeneration !== currentGeneration ||
+                        lifecycle.currentGeneration(input.threadId) !== currentGeneration)
+                    ) {
+                      return yield* toValidationError(
+                        "ProviderService.stopTask",
+                        `Cannot revoke task credentials for a stale provider generation in thread '${input.threadId}'.`,
+                      );
+                    }
+                    yield* directory.upsert({
+                      threadId: input.threadId,
+                      provider: binding.provider,
+                      providerInstanceId: binding.providerInstanceId,
+                      runtimePayload: {
+                        [AGENT_GATEWAY_CREDENTIAL_ROTATION_REQUIRED]: true,
+                        lastRuntimeEvent: "provider.taskStopCredentialRotationRequired",
+                        lastRuntimeEventAt: new Date().toISOString(),
+                      },
+                    });
+                  }),
+                ),
+              });
             }),
           ),
         ),

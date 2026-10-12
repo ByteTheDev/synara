@@ -3178,7 +3178,15 @@ export function makeDevinAdapter(
                       // let a trailing update mutate the current turn's failure
                       // state. Resume replay stays suppressed like every other
                       // event.
-                      const recordedTurnId = toolCallTurnId;
+                      // Native task records outlive the one-turn tool-call
+                      // map. A sparse late update still belongs to that task's
+                      // original turn and parent, including nested tasks.
+                      const recordedTurnId =
+                        trackedSubagent?.turnId ?? shell?.turnId ?? toolCallTurnId;
+                      const providerParentAgentId =
+                        subagentContext?.parentAgentId ??
+                        trackedSubagent?.parentAgentId ??
+                        shell?.parentAgentId;
                       if (recordedTurnId !== undefined && recordedTurnId !== ctx.activeTurnId) {
                         yield* logNative(ctx.threadId, "session/update", event.rawPayload);
                         yield* offerRuntimeEvent(
@@ -3189,10 +3197,7 @@ export function makeDevinAdapter(
                             threadId: ctx.threadId,
                             turnId: recordedTurnId,
                             toolCall: scopeDevinToolCallStateForTurn(recordedTurnId, toolCall),
-                            providerRefs: devinProviderRefsForAgent(
-                              ctx,
-                              subagentContext?.parentAgentId,
-                            ),
+                            providerRefs: devinProviderRefsForAgent(ctx, providerParentAgentId),
                             rawPayload: event.rawPayload,
                           }),
                         );
@@ -3220,10 +3225,7 @@ export function makeDevinAdapter(
                           threadId: ctx.threadId,
                           turnId: activeTurnId,
                           toolCall: scopeDevinToolCallStateForTurn(activeTurnId, toolCall),
-                          providerRefs: devinProviderRefsForAgent(
-                            ctx,
-                            subagentContext?.parentAgentId,
-                          ),
+                          providerRefs: devinProviderRefsForAgent(ctx, providerParentAgentId),
                           rawPayload: event.rawPayload,
                         }),
                       );
@@ -3978,10 +3980,11 @@ export function makeDevinAdapter(
         };
       });
 
-    const stopDevinSubagentInternal = (
+    const stopDevinSubagentInternal = <TGateError = never>(
       ctx: DevinSessionContext,
       agentId: string,
       turnId: TurnId | undefined,
+      beforeGatewayCredentialRevocation?: Effect.Effect<void, TGateError>,
     ) =>
       Effect.gen(function* () {
         const state = ctx.devinSubagents.get(agentId);
@@ -3991,6 +3994,24 @@ export function makeDevinAdapter(
           state?.status === "stopped"
         ) {
           return;
+        }
+        if (ctx.gatewaySessionLease !== undefined && beforeGatewayCredentialRevocation) {
+          if (state === undefined) return;
+          const expectedToolCallId = state.toolCallId;
+          const expectedTurnId = state.turnId;
+          yield* beforeGatewayCredentialRevocation;
+          // Persistence can yield while ACP delivers completion or the runtime
+          // is replaced. Never stop a completed task or a different owner after
+          // the durable gate; its conservative rotation flag remains valid.
+          const current = ctx.devinSubagents.get(agentId);
+          if (
+            sessions.get(ctx.threadId) !== ctx ||
+            current?.status !== "running" ||
+            current.toolCallId !== expectedToolCallId ||
+            current.turnId !== expectedTurnId
+          ) {
+            return;
+          }
         }
         yield* withAgentGatewayTurnCancellation(
           ctx.gatewaySessionLease,
@@ -4040,7 +4061,7 @@ export function makeDevinAdapter(
         yield* interruptDevinTurn(threadId, turnId);
       });
 
-    const stopTask: DevinAdapterShape["stopTask"] = (threadId, taskId) =>
+    const stopTask: DevinAdapterShape["stopTask"] = (threadId, taskId, options) =>
       Effect.gen(function* () {
         const ctx = yield* requireSession(threadId);
         const shell = ctx.devinBackgroundShells.get(taskId);
@@ -4089,6 +4110,7 @@ export function makeDevinAdapter(
           ctx,
           subagent.agentId,
           subagent.turnId ?? ctx.activeTurnId,
+          options?.beforeGatewayCredentialRevocation,
         );
       });
 
