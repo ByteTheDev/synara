@@ -1,0 +1,76 @@
+name: PR 1147 reconciliation source validation
+
+on:
+  push:
+    branches:
+      - codex/runtime-reconciliation-1147-20261012
+
+permissions:
+  contents: read
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+jobs:
+  source-validation:
+    name: PR 1147 ${{ matrix.variant }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: before-original
+            source: d4509644c8b7c2ba419680f7da8c2441f230d67e
+          - variant: before-pagination
+            source: 27737496cf058e851e3a8b74c61a62b2bbb5b8c7
+          - variant: after
+            source: 27737496cf058e851e3a8b74c61a62b2bbb5b8c7
+    steps:
+      - name: Checkout exact product source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.source }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Checkout exact isolated observer and fixture overlays
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: .runtime-reconciliation-driver
+          persist-credentials: false
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/pr1147-reconciliation-validation.yml
+            scripts/pr1147-reconciliation-validation
+            apps/server/src/provider/providerRuntimeReconciliation.test.ts
+            apps/server/src/orchestration/Layers/ProjectionPipeline.test.ts
+            apps/server/src/agentGateway/Layers/AgentGateway.test.ts
+
+      - name: Check the diagnostic module syntax
+        run: |
+          node --check .runtime-reconciliation-driver/scripts/pr1147-reconciliation-validation/owned-command-observer.mjs
+          node --check .runtime-reconciliation-driver/scripts/pr1147-reconciliation-validation/runner.mjs
+
+      - name: Install exact frozen workspace dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: "false"
+          turbo: "false"
+
+      # The Before processes must retain exit 1. No continue-on-error or
+      # exit-code inversion is used to turn a reproduced failure into a green job.
+      - name: Execute and retain actual assertions and process results
+        run: node .runtime-reconciliation-driver/scripts/pr1147-reconciliation-validation/runner.mjs '${{ matrix.variant }}'
+
+      - name: Retain only immutable diagnostic snapshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr1147-reconciliation-${{ matrix.variant }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pr1147-reconciliation-${{ matrix.variant }}/frozen
+          if-no-files-found: error
+          retention-days: 30
