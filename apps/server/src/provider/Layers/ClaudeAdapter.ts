@@ -1216,7 +1216,10 @@ function mapClaudeModelInfo(model: ModelInfo): ProviderListModelsResult["models"
     name: model.displayName,
     ...(sdkOptions !== undefined
       ? {
-          supportedReasoningEfforts: sdkOptions.map(({ value, label }) => ({ value, label })),
+          supportedReasoningEfforts: capabilities.reasoningEffortLevels.map(({ value, label }) => ({
+            value,
+            label,
+          })),
           ...(staticDefault && sdkEfforts?.some((effort) => effort === staticDefault)
             ? { defaultReasoningEffort: staticDefault }
             : {}),
@@ -2446,7 +2449,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           catch: (cause) =>
             new ProviderAdapterValidationError({
               provider: PROVIDER,
-              operation: input.operation,
+              operation: input.operation === "sendTurn" ? "session/reconfigure" : input.operation,
               issue:
                 `Claude model capability discovery failed while verifying Auto mode support for "${requestedModel}": ` +
                 toMessage(cause, "unknown discovery error"),
@@ -2461,7 +2464,8 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
               ? cause
               : new ProviderAdapterValidationError({
                   provider: PROVIDER,
-                  operation: input.operation,
+                  operation:
+                    input.operation === "sendTurn" ? "session/reconfigure" : input.operation,
                   issue: `Could not verify that Claude model "${requestedModel}" supports Auto mode before the model discovery timeout.`,
                 }),
           ),
@@ -2476,14 +2480,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         if (resolution.status === "absent") {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
-            operation: input.operation,
+            operation: input.operation === "sendTurn" ? "session/reconfigure" : input.operation,
             issue: `Claude model "${requestedModel}" was not returned by Claude model discovery, so Auto mode support cannot be verified.`,
           });
         }
         if (resolution.status === "conflicting") {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
-            operation: input.operation,
+            operation: input.operation === "sendTurn" ? "session/reconfigure" : input.operation,
             issue: `Claude model "${requestedModel}" has conflicting Auto mode capability metadata across context-window variants.`,
           });
         }
@@ -2495,14 +2499,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         ) {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
-            operation: input.operation,
+            operation: input.operation === "sendTurn" ? "session/reconfigure" : input.operation,
             issue: `Claude model "${requestedModel}" does not support effort "${input.effort}" in this runtime.`,
           });
         }
         if (input.requireAuto && resolution.model.supportsAutoMode !== true) {
           return yield* new ProviderAdapterValidationError({
             provider: PROVIDER,
-            operation: input.operation,
+            operation: input.operation === "sendTurn" ? "session/reconfigure" : input.operation,
             issue: `Claude model "${resolution.model.displayName}" does not support Auto mode.`,
           });
         }

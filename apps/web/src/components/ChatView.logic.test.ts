@@ -1,3 +1,4 @@
+import type { Thread } from "../types";
 import {
   CheckpointRef,
   DEFAULT_MODEL_BY_PROVIDER,
@@ -2392,6 +2393,21 @@ describe("resolveWorkingLabel", () => {
         providerName: "Devin",
       }),
     ).toBe("Reconnecting to Devin…");
+  });
+  it("keeps first-turn reconnect editable and ignores imported assistant history", () => {
+    expect(
+      isFirstSessionConnect({
+        messages: [{ role: "user" }],
+        latestTurn: {
+          startedAt: "2026-10-12T00:00:00Z",
+          completedAt: null,
+        } as Thread["latestTurn"],
+      }),
+    ).toBe(false);
+    for (const source of ["fork-import", "handoff-import"] as const)
+      expect(
+        isFirstSessionConnect({ messages: [{ role: "assistant", source }], latestTurn: null }),
+      ).toBe(true);
   });
   it("shows Loading only while an unacknowledged send is still local", () => {
     expect(resolveWorkingLabel({ isSendBusy: true, turnTakenOver: false })).toBe("Loading");

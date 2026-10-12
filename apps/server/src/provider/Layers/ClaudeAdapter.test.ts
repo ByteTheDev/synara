@@ -6481,6 +6481,10 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         const descriptor = discovered.models[index]!.optionDescriptors?.find(
           (option) => option.id === "effort",
         );
+        assert.deepEqual(
+          discovered.models[index]!.supportedReasoningEfforts?.map(({ value }) => value),
+          [...expected],
+        );
         assert.equal(descriptor?.type, "select");
         if (descriptor?.type === "select") {
           assert.deepEqual(
@@ -15502,6 +15506,8 @@ it.effect("rejects startup effort excluded by Claude SDK discovery", () => {
     assert.equal(result._tag, "Failure");
     if (result._tag === "Failure")
       assert.include(providerValidationIssue(result.failure), 'does not support effort "xhigh"');
+    if (result._tag === "Failure" && result.failure instanceof ProviderAdapterValidationError)
+      assert.equal(result.failure.operation, "startSession");
     assert.equal(yield* adapter.hasSession(THREAD_ID), false);
     assert.equal(harness.query.closeCalls, 1);
   }).pipe(Effect.provide(harness.layer));
@@ -15542,6 +15548,8 @@ it.effect(
       assert.equal(result._tag, "Failure");
       if (result._tag === "Failure")
         assert.include(providerValidationIssue(result.failure), 'does not support effort "xhigh"');
+      if (result._tag === "Failure" && result.failure instanceof ProviderAdapterValidationError)
+        assert.equal(result.failure.operation, "session/reconfigure");
       assert.deepEqual(harness.query.applyFlagSettingsCalls, []);
       assert.deepEqual(harness.query.setModelCalls, []);
       assert.equal(yield* adapter.hasSession(THREAD_ID), true);

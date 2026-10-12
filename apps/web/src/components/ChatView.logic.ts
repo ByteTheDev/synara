@@ -1433,11 +1433,17 @@ export type WorkingLabel =
 
 /** The first send's own user echo is not evidence of a previously live session. */
 export function isFirstSessionConnect(input: {
-  messages: readonly Pick<ChatMessage, "role">[];
+  messages: readonly Pick<ChatMessage, "role" | "source">[];
   latestTurn: Thread["latestTurn"];
 }): boolean {
   return (
-    !input.messages.some((message) => message.role === "assistant") &&
+    !input.messages.some(
+      (message) =>
+        message.role === "assistant" &&
+        message.source !== "handoff-import" &&
+        message.source !== "fork-import",
+    ) &&
+    input.latestTurn?.startedAt == null &&
     input.latestTurn?.completedAt == null
   );
 }
