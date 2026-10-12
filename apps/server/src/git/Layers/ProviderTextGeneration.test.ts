@@ -671,7 +671,15 @@ describe("text-generation profile execution boundary", () => {
               return yield* service.generateThreadTitle({
                 cwd: "/repo",
                 message: "Do not use the default account for this named profile",
-                ...(origin === "request" ? { modelSelection } : {}),
+                modelSelection: origin === "request"
+                  ? modelSelection
+                  : {
+                      // Unsupported-provider requests take the configured fallback;
+                      // an omitted selection intentionally takes dedicated Codex.
+                      provider: "antigravity",
+                      profileId: DEFAULT_PROVIDER_PROFILE_ID,
+                      model: "gemini-3-pro",
+                    },
               });
             }).pipe(Effect.provide(fixture.layer)),
           ),
