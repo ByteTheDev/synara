@@ -31,7 +31,7 @@ import {
   type MessagesTimelineRow,
   type StableMessagesTimelineRowsState,
 } from "./MessagesTimeline.logic";
-import type { TimelineEntry, WorkLogEntry } from "../../session-logic";
+import { deriveWorkLogEntries, type TimelineEntry, type WorkLogEntry } from "../../session-logic";
 import type { ChatMessage, TurnDiffSummary, WorktreeSetupSnapshot } from "../../types";
 
 describe("canSubmitUserMessageEdit", () => {
@@ -2164,6 +2164,97 @@ describe("deriveMessagesTimelineRows", () => {
 
     expect(rows.some((row) => row.kind === "proposed-plan")).toBe(true);
     expect(collapsedSignature(messageRow(rows, "a2")!)).toEqual(["narration:a1", "work:w1"]);
+  });
+
+  it("keeps a published visual visible while the rest of its turn collapses", () => {
+    const visualPayload = {
+      visualId: `vis_${"1".repeat(32)}`,
+      title: "Build time by package",
+      height: 360,
+      byteLength: 2048,
+      sha256: "a".repeat(64),
+    };
+    const visualActivity = (
+      id: string,
+      createdAt: string,
+      payload: unknown,
+    ): OrchestrationThreadActivity => ({
+      id: EventId.makeUnsafe(id),
+      tone: "info",
+      kind: "visual.shown",
+      summary: "Visual: Build time by package",
+      payload: payload as OrchestrationThreadActivity["payload"],
+      turnId: TurnId.makeUnsafe("t1"),
+      createdAt,
+    });
+    // From the persisted activities, as the transcript receives them: the
+    // provider's own record of the tool call while its arguments still stream
+    // in, the server's record once the visual is stored, and a record whose
+    // payload no client could render (a path, not a visual id).
+    const streamingCall: OrchestrationThreadActivity = {
+      id: EventId.makeUnsafe("tool-call"),
+      tone: "tool",
+      kind: "tool.started",
+      summary: "synara_show_visual started",
+      payload: {
+        itemType: "mcp_tool_call",
+        title: "synara_show_visual",
+        data: { toolName: "synara_show_visual", input: { title: "Build", html: "<svg><rect" } },
+      },
+      turnId: TurnId.makeUnsafe("t1"),
+      createdAt: "2026-01-01T00:00:02.500Z",
+    };
+    const derived = deriveWorkLogEntries(
+      [
+        streamingCall,
+        visualActivity("visual-1", "2026-01-01T00:00:03Z", visualPayload),
+        visualActivity("visual-bad", "2026-01-01T00:00:03.500Z", {
+          ...visualPayload,
+          visualId: "../../etc/passwd",
+        }),
+      ],
+      TurnId.makeUnsafe("t1"),
+    );
+    // Partial input never renders; only the stored visual does.
+    expect(derived.map((entry) => [entry.id, entry.inlineVisual !== undefined])).toEqual([
+      ["tool-call", false],
+      ["visual-1", true],
+    ]);
+    const visualEntry = derived.find((entry) => entry.inlineVisual !== undefined)!;
+
+    const rows = deriveMessagesTimelineRows({
+      ...baseInput,
+      timelineEntries: [
+        userEntry("u1", "2026-01-01T00:00:00Z"),
+        workEntry("w1", "2026-01-01T00:00:01Z", "tool 1"),
+        assistantEntry("a0", "2026-01-01T00:00:02Z", {
+          turnId: "t1",
+          text: "Measuring",
+          completedAt: "2026-01-01T00:00:02Z",
+        }),
+        {
+          id: "entry-visual-1",
+          kind: "work",
+          createdAt: "2026-01-01T00:00:03Z",
+          entry: visualEntry,
+        },
+        workEntry("w2", "2026-01-01T00:00:04Z", "tool 2"),
+        assistantEntry("a1", "2026-01-01T00:00:05Z", {
+          turnId: "t1",
+          text: "Webpack dominates.",
+          completedAt: "2026-01-01T00:00:06Z",
+        }),
+      ],
+    });
+
+    expect(rows.map((row) => row.kind)).toEqual(["message", "inline-visual", "message"]);
+    expect(rows[1]).toMatchObject({ kind: "inline-visual", visual: visualPayload });
+    // Narration and work on both sides of the visual still fold into the header.
+    expect(collapsedSignature(messageRow(rows, "a1")!)).toEqual([
+      "work:w1",
+      "narration:a0",
+      "work:w2",
+    ]);
   });
 
   it("keeps an answered question visible while the rest of the turn collapses", () => {

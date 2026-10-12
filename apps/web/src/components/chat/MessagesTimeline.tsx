@@ -89,6 +89,7 @@ import { SynaraThreadCreationCard } from "./SynaraThreadCreationCard";
 import { WorkerMonitorNoticePill } from "./WorkerMonitorNoticePill";
 import { buildExpandedImagePreview, ExpandedImagePreview } from "./ExpandedImagePreview";
 import { ProposedPlanCard } from "./ProposedPlanCard";
+import { InlineVisualFrame } from "./InlineVisualFrame";
 import { DiffStatLabel } from "./DiffStatLabel";
 import { ReviewChangesButton } from "./ReviewChangesButton";
 import { FileEntryIcon } from "./FileEntryIcon";
@@ -538,6 +539,13 @@ interface MessagesTimelineProps {
   onMessagesTouchMove?: ComponentProps<typeof LegendList>["onTouchMove"];
   onMessagesTouchStart?: ComponentProps<typeof LegendList>["onTouchStart"];
   onMessagesWheel?: ComponentProps<typeof LegendList>["onWheel"];
+  /**
+   * Scroll gestures made over an inline visual's frame. They never reach the
+   * list's own handlers, so the frame forwards them; they can only detach follow.
+   */
+  onEmbeddedScrollIntent?: ((upward: boolean) => void) | undefined;
+  /** The thread whose transcript this is; inline visual rows fetch their documents with it. */
+  threadId?: string | null | undefined;
   markdownCwd: string | undefined;
   resolvedTheme: "light" | "dark";
   chatFontSizePx?: number;
@@ -634,6 +642,8 @@ export const MessagesTimeline = memo(function MessagesTimeline({
   onMessagesTouchMove,
   onMessagesTouchStart,
   onMessagesWheel,
+  onEmbeddedScrollIntent,
+  threadId,
   markdownCwd,
   resolvedTheme,
   chatFontSizePx: chatFontSizePxProp,
@@ -1384,6 +1394,13 @@ export const MessagesTimeline = memo(function MessagesTimeline({
       onMessagesWheel?.(event);
     },
     [onMessagesWheel, suppressTailExpansionScroll],
+  );
+  const handleEmbeddedScrollIntent = useCallback(
+    (upward: boolean) => {
+      suppressTailExpansionScroll();
+      onEmbeddedScrollIntent?.(upward);
+    },
+    [onEmbeddedScrollIntent, suppressTailExpansionScroll],
   );
   const handleViewableItemsChanged = useCallback<
     NonNullable<ComponentProps<typeof LegendList>["onViewableItemsChanged"]>
@@ -2904,6 +2921,16 @@ export const MessagesTimeline = memo(function MessagesTimeline({
           />
         </div>
       )}
+
+      {row.kind === "inline-visual" && threadId ? (
+        <div className="min-w-0 py-0.5">
+          <InlineVisualFrame
+            threadId={ThreadId.makeUnsafe(threadId)}
+            visual={row.visual}
+            onScrollIntent={handleEmbeddedScrollIntent}
+          />
+        </div>
+      ) : null}
 
       {row.kind === "user-input" && (
         <UserInputExchange

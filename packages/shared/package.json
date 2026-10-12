@@ -16,6 +16,10 @@
       "types": "./src/betaFeatures.ts",
       "import": "./src/betaFeatures.ts"
     },
+    "./inlineVisual": {
+      "types": "./src/inlineVisual.ts",
+      "import": "./src/inlineVisual.ts"
+    },
     "./cuaActionDiagnostics": {
       "types": "./src/cuaActionDiagnostics.ts",
       "import": "./src/cuaActionDiagnostics.ts"

@@ -170,6 +170,28 @@ again. An assistant item that ends without any text does not add an empty respon
 Chat code blocks above 250,000 characters display their complete source as plain text,
 using the same highlighting limit as file previews. Find, Copy code, and soft wrap remain available.
 
+### Inline visuals (Beta)
+
+In Synara Beta, an agent can answer with a visual: a chart, table, diagram, or small interactive
+view. Ask for one ("show this as a chart") and the agent publishes a self-contained HTML page with
+the `synara_show_visual` tool. The page appears in the conversation where the agent published it,
+usually above its final reply, and stays visible when the turn folds into **Worked for**. This
+works with every provider that has Synara's thread tools (see [Providers](providers.md)).
+
+Visuals use the current light or dark theme, custom theme colors, and the chat font size, and
+follow changes without reloading. Scripts in a visual run in an isolated, sandboxed frame. It
+cannot reach Synara, your session, files, or the network, open windows or dialogs, or navigate
+away. A visual that tries to navigate stops and offers **Reload**. Clicking an `http(s)` link
+opens it in your browser. Hover a visual to copy its source or reload it. Each page is limited
+to 256 KiB, and a turn can show at most six visuals.
+
+The transcript keeps following the end while a visual grows if you were at the end; scrolling
+up, including over a visual, leaves you where you are. A visual that is no longer available
+(for example after its thread was deleted) shows **Visual unavailable.** Deleting a thread
+deletes its visuals, and undoing a turn removes that turn's visuals from the conversation.
+Visuals are not included in thread exports. Far-off visuals are unloaded as you scroll, so an
+interactive visual restarts when you come back to it.
+
 If a connection drops while sending, Synara shows **Checking message delivery…** while it checks the original
 command's durable receipt. An accepted message is retained without resending it to the provider.
 If it was not accepted, Synara records a rejection that also blocks a delayed copy, then restores

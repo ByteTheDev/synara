@@ -4,6 +4,7 @@
 // Exports: row derivation, structural sharing, copy/timer helpers
 
 import {
+  type InlineVisualActivityPayload,
   type MessageId,
   type OrchestrationLatestTurn,
   type OrchestrationThreadActivity,
@@ -619,6 +620,14 @@ export type MessagesTimelineRow =
       createdAt: string;
       entry: WorkLogEntry & { userInputExchange: ReadonlyArray<WorkLogUserInputExchangeItem> };
     }
+  | {
+      // A visual the agent published with `synara_show_visual`. Like the plan
+      // card and answered questions it stays visible when the turn folds.
+      kind: "inline-visual";
+      id: string;
+      createdAt: string;
+      visual: InlineVisualActivityPayload;
+    }
   | { kind: "working"; id: string; createdAt: string | null }
   | {
       // Live-turn header that mirrors the settled turn header ("Working 12s"
@@ -1082,6 +1091,17 @@ export function deriveMessagesTimelineRows(input: {
           }
           continue;
         }
+        const inlineVisual = runEntry.entry.inlineVisual;
+        if (inlineVisual) {
+          flushPendingWorkGroup({ attachToPreviousAssistant: false });
+          nextRows.push({
+            kind: "inline-visual",
+            id: runEntry.id,
+            createdAt: runEntry.createdAt,
+            visual: inlineVisual,
+          });
+          continue;
+        }
         const userInputExchange = runEntry.entry.userInputExchange;
         if (userInputExchange) {
           flushPendingWorkGroup({ attachToPreviousAssistant: false });
@@ -1508,9 +1528,13 @@ function collapseSettledTurns(
         foldIndices.push(scan);
         continue;
       }
-      if (prev.kind === "proposed-plan" || prev.kind === "user-input") {
-        // The plan card and answered questions stay visible, but they should not strand earlier
-        // narration/work outside the final turn header disclosure.
+      if (
+        prev.kind === "proposed-plan" ||
+        prev.kind === "user-input" ||
+        prev.kind === "inline-visual"
+      ) {
+        // The plan card, answered questions, and visuals stay visible, but they should not
+        // strand earlier narration/work outside the final turn header disclosure.
         continue;
       }
       break;
@@ -2029,6 +2053,9 @@ function isRowUnchanged(a: MessagesTimelineRow, b: MessagesTimelineRow): boolean
 
     case "user-input":
       return a.entry.userInputExchange === (b as typeof a).entry.userInputExchange;
+
+    case "inline-visual":
+      return a.visual === (b as typeof a).visual;
 
     case "work":
       return (

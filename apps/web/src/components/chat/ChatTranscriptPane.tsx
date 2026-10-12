@@ -107,6 +107,7 @@ interface ChatTranscriptPaneProps {
   onMessagesTouchMove: TouchEventHandler<HTMLDivElement>;
   onMessagesTouchStart: TouchEventHandler<HTMLDivElement>;
   onMessagesWheel: WheelEventHandler<HTMLDivElement>;
+  onEmbeddedScrollIntent?: ((upward: boolean) => void) | undefined;
   onIsAtEndChange: (isAtEnd: boolean) => void;
   onNavigate?: () => void;
   onCloseAgentActivityDetail?: () => void;
@@ -210,6 +211,7 @@ export function ChatTranscriptPane({
   onMessagesTouchMove,
   onMessagesTouchStart,
   onMessagesWheel,
+  onEmbeddedScrollIntent,
   onIsAtEndChange,
   onNavigate,
   onCloseAgentActivityDetail,
@@ -458,6 +460,8 @@ export function ChatTranscriptPane({
               onMessagesClickCapture={onMessagesClickCapture}
               onMessagesMouseUp={onMessagesMouseUp}
               onMessagesWheel={onMessagesWheel}
+              onEmbeddedScrollIntent={onEmbeddedScrollIntent}
+              threadId={activeThreadId}
               onMessagesPointerDown={onMessagesPointerDown}
               onMessagesPointerUp={onMessagesPointerUp}
               onMessagesPointerCancel={onMessagesPointerCancel}

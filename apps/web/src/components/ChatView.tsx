@@ -3375,6 +3375,7 @@ export default function ChatView({
     onMessagesTouchMoveBase,
     onMessagesTouchStartBase,
     onMessagesWheelBase,
+    onEmbeddedScrollIntent,
   } = useChatTranscriptScroll({
     activeThreadId,
     legendListRef,
@@ -6842,6 +6843,7 @@ export default function ChatView({
                     onMessagesClickCapture={onMessagesClickCapture}
                     onMessagesMouseUp={onMessagesMouseUp}
                     onMessagesWheel={onMessagesWheel}
+                    onEmbeddedScrollIntent={onEmbeddedScrollIntent}
                     onMessagesPointerDown={onMessagesPointerDown}
                     onMessagesPointerUp={onMessagesPointerUp}
                     onMessagesPointerCancel={onMessagesPointerCancel}
