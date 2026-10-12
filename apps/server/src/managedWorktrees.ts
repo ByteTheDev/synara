@@ -120,23 +120,12 @@ export interface ManagedWorktreeRemovalCandidate {
 
 function mergedWorktreeCandidate(input: {
   readonly entry: ServerManagedWorktree;
-  readonly threads: ReadonlyArray<ManagedWorktreeThreadRef>;
+  readonly ownersByPath: ReadonlyMap<string, ReadonlyArray<ManagedWorktreeThreadRef>>;
   readonly git: GitCoreShape;
   readonly policy: ManagedWorktreeMergeCleanup;
 }): Effect.Effect<ManagedWorktreeRemovalCandidate | null, Error> {
   return Effect.gen(function* () {
-    const owners: ManagedWorktreeThreadRef[] = [];
-    for (const thread of input.threads) {
-      for (const recorded of [thread.worktreePath, thread.associatedWorktreePath]) {
-        if (
-          recorded &&
-          (yield* Effect.promise(() => canonicalizeRemovedPath(recorded))) === input.entry.path
-        ) {
-          owners.push(thread);
-          break;
-        }
-      }
-    }
+    const owners = input.ownersByPath.get(input.entry.path) ?? [];
     const liveOwners = owners.filter((thread) => !isDeletedManagedWorktreeThread(thread));
     if (
       liveOwners.length === 0 ||
@@ -288,17 +277,36 @@ function canonicalizeThreadWorktreePaths(
     try: async () => {
       const canonicalByRecordedPath = new Map<string, string>();
       for (const thread of threads) {
-        const recordedPath = threadManagedWorktreePath(thread);
-        if (recordedPath === null || canonicalByRecordedPath.has(recordedPath)) continue;
-        canonicalByRecordedPath.set(
-          recordedPath,
-          await fs.realpath(recordedPath).catch(() => path.resolve(recordedPath)),
-        );
+        for (const recordedPath of [thread.worktreePath, thread.associatedWorktreePath]) {
+          if (!recordedPath || canonicalByRecordedPath.has(recordedPath)) continue;
+          canonicalByRecordedPath.set(recordedPath, await canonicalizeRemovedPath(recordedPath));
+        }
       }
       return canonicalByRecordedPath;
     },
     catch: (cause) => (cause instanceof Error ? cause : new Error(String(cause))),
   });
+}
+
+function indexWorktreeOwners(
+  threads: ReadonlyArray<ManagedWorktreeThreadRef>,
+  canonical: ReadonlyMap<string, string>,
+) {
+  const index = new Map<string, ManagedWorktreeThreadRef[]>();
+  for (const thread of threads) {
+    const paths = new Set(
+      [thread.worktreePath, thread.associatedWorktreePath].map((path) =>
+        path ? canonical.get(path) : undefined,
+      ),
+    );
+    for (const path of paths) {
+      if (!path) continue;
+      const owners = index.get(path) ?? [];
+      owners.push(thread);
+      index.set(path, owners);
+    }
+  }
+  return index;
 }
 
 function snapshotDigestForWorktreePath(worktreePath: string): string {
@@ -543,6 +551,7 @@ export function pruneArchivedManagedWorktrees(input: {
         }
       : undefined;
     const canonicalByRecordedPath = yield* canonicalizeThreadWorktreePaths(input.threads);
+    const ownersByPath = indexWorktreeOwners(input.threads, canonicalByRecordedPath);
     const removalCandidates = [
       ...classifyManagedWorktreeRemovalCandidates({
         inventory,
@@ -555,7 +564,7 @@ export function pruneArchivedManagedWorktrees(input: {
         if (removalCandidates.some((candidate) => candidate.entry.path === entry.path)) continue;
         const candidate = yield* mergedWorktreeCandidate({
           entry,
-          threads: input.threads,
+          ownersByPath,
           git: input.git,
           policy: mergeCleanup,
         });
@@ -579,9 +588,13 @@ export function pruneArchivedManagedWorktrees(input: {
                   revalidate: () =>
                     Effect.gen(function* () {
                       if (!(yield* mergeCleanup!.enabled)) return false;
+                      const threads = input.readThreads
+                        ? yield* input.readThreads()
+                        : input.threads;
+                      const canonical = yield* canonicalizeThreadWorktreePaths(threads);
                       const fresh = yield* mergedWorktreeCandidate({
                         entry: candidate.entry,
-                        threads: input.readThreads ? yield* input.readThreads() : input.threads,
+                        ownersByPath: indexWorktreeOwners(threads, canonical),
                         git: input.git,
                         policy: mergeCleanup!,
                       });

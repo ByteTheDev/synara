@@ -271,6 +271,7 @@ export function makeServerRuntimeServicesLayer(
     // resolves the service on every platform to make that decision.
     Layer.provideMerge(DeviceServiceLive),
     Layer.provideMerge(ComputerServiceLive),
+    Layer.provideMerge(TerminalLayerLive),
   );
   // The inbox owns the repository inventory, GitHub read queue, and snapshots; the pull request
   // service shares them so detail reads and mutations stay consistent with the list.
