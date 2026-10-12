@@ -1,0 +1,52 @@
+{
+  "run": 38186426665,
+  "driver": "f0d9f4d19fb7dce9aadfec2b8301f663379e12ef",
+  "rows": [
+    {
+      "variant": "before",
+      "sourceHead": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "sourceTree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+      "allMembers": 15,
+      "sourcePins": 10,
+      "driverPins": 11,
+      "commands": 59,
+      "canonicalFixtureReversed": true,
+      "selectedPassed": 0,
+      "selectedFailed": 1,
+      "unselected": 20,
+      "actualExit": {
+        "process": 1,
+        "tee": 0
+      },
+      "originalPngs": 1,
+      "rawArgsPreserved": false,
+      "binaryAndHomePathsUnchanged": true
+    },
+    {
+      "variant": "after",
+      "sourceHead": "638e419bc952566932bbf7cddf0b129bafc4d434",
+      "sourceTree": "f3534dbf68d6550206470e7614e9d477ccb5e837",
+      "allMembers": 16,
+      "sourcePins": 10,
+      "driverPins": 11,
+      "commands": 59,
+      "canonicalFixtureReversed": true,
+      "selectedPassed": 1,
+      "selectedFailed": 0,
+      "unselected": 20,
+      "actualExit": {
+        "process": 0,
+        "tee": 0
+      },
+      "originalPngs": 2,
+      "rawArgsPreserved": true,
+      "binaryAndHomePathsUnchanged": true
+    }
+  ],
+  "visuallyReviewedByRoot": [
+    "Before initial",
+    "After initial",
+    "After saved"
+  ],
+  "qualification": "Actual production settings panel and canonical controlled native/status fixture. Confirms the exact settings callback patch and displayed raw value; no live account, durable reload or packaged desktop claim."
+}

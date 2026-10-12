@@ -1,0 +1,137 @@
+{
+  "files": [
+    {
+      "path": "browser-exit.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38186426665-1-pr1860-after/data/browser-exit.json",
+      "bytes": 22,
+      "sha256": "1909795ae6b551692913f41e8f413ee4bf1c72baeb2d2ad31e864d2ef1da3cfe",
+      "sourceBefore": {
+        "size": 22,
+        "mtimeMs": 1791763323328.2268,
+        "ctimeMs": 1791763323328.2268,
+        "dev": 66305,
+        "ino": 9729539
+      },
+      "sourceAfter": {
+        "size": 22,
+        "mtimeMs": 1791763323328.2268,
+        "ctimeMs": 1791763323328.2268,
+        "dev": 66305,
+        "ino": 9729539
+      },
+      "cutoffUtc": "2026-10-12T00:02:03.676Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "browser.log",
+      "source": "/home/runner/work/_temp/root-source-evidence-38186426665-1-pr1860-after/data/browser.log",
+      "bytes": 4920,
+      "sha256": "8088d19a0b6f7a54a0e86faa3e4bd6fbc0375450dce3ef092e4ff52bcb6bffd6",
+      "sourceBefore": {
+        "size": 4920,
+        "mtimeMs": 1791763322617.3801,
+        "ctimeMs": 1791763322617.3801,
+        "dev": 66305,
+        "ino": 9728697
+      },
+      "sourceAfter": {
+        "size": 4920,
+        "mtimeMs": 1791763322617.3801,
+        "ctimeMs": 1791763322617.3801,
+        "dev": 66305,
+        "ino": 9728697
+      },
+      "cutoffUtc": "2026-10-12T00:02:03.676Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "settings-initial.png",
+      "source": "/home/runner/work/synara/synara/.pr-root-live-media/38186426665-1-pr1860-after/settings-initial.png",
+      "bytes": 117867,
+      "sha256": "82c98ef81c60f892c8aa226efa10c9676aebbe0f3ec4d5786c8320bba65a1f0a",
+      "sourceBefore": {
+        "size": 117867,
+        "mtimeMs": 1791763322420.376,
+        "ctimeMs": 1791763322420.376,
+        "dev": 66305,
+        "ino": 9729536
+      },
+      "sourceAfter": {
+        "size": 117867,
+        "mtimeMs": 1791763322420.376,
+        "ctimeMs": 1791763322420.376,
+        "dev": 66305,
+        "ino": 9729536
+      },
+      "cutoffUtc": "2026-10-12T00:02:03.677Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "settings-saved.png",
+      "source": "/home/runner/work/synara/synara/.pr-root-live-media/38186426665-1-pr1860-after/settings-saved.png",
+      "bytes": 119296,
+      "sha256": "5a33b82dae38b58bc8e54e9c389ad02ea27ab2b230181c7fdcf10a3a6ed61016",
+      "sourceBefore": {
+        "size": 119296,
+        "mtimeMs": 1791763322593.3796,
+        "ctimeMs": 1791763322593.3796,
+        "dev": 66305,
+        "ino": 9729537
+      },
+      "sourceAfter": {
+        "size": 119296,
+        "mtimeMs": 1791763322593.3796,
+        "ctimeMs": 1791763322593.3796,
+        "dev": 66305,
+        "ino": 9729537
+      },
+      "cutoffUtc": "2026-10-12T00:02:03.677Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "video/page@39b72b8202531f65694962294cc0a568.webm",
+      "source": "/home/runner/work/synara/synara/.pr-root-live-media/38186426665-1-pr1860-after/video/page@39b72b8202531f65694962294cc0a568.webm",
+      "bytes": 264682,
+      "sha256": "154886e40e16655d341735ca9ca08b2a712c5c38c92cd481df5b3bf349b03e90",
+      "sourceBefore": {
+        "size": 264682,
+        "mtimeMs": 1791763323198.392,
+        "ctimeMs": 1791763323198.392,
+        "dev": 66305,
+        "ino": 9728710
+      },
+      "sourceAfter": {
+        "size": 264682,
+        "mtimeMs": 1791763323198.392,
+        "ctimeMs": 1791763323198.392,
+        "dev": 66305,
+        "ino": 9728710
+      },
+      "cutoffUtc": "2026-10-12T00:02:03.677Z",
+      "immutableCopy": true
+    },
+    {
+      "path": "browser.json",
+      "source": "/home/runner/work/_temp/root-source-evidence-38186426665-1-pr1860-after/browser.json",
+      "bytes": 6059,
+      "sha256": "46dc6374332054a9ad235fd215004a8f122617dae946f946179b5765f2c1005f",
+      "sourceBefore": {
+        "size": 6059,
+        "mtimeMs": 1791763322616.3801,
+        "ctimeMs": 1791763322616.3801,
+        "dev": 66305,
+        "ino": 9729538
+      },
+      "sourceAfter": {
+        "size": 6059,
+        "mtimeMs": 1791763322616.3801,
+        "ctimeMs": 1791763322616.3801,
+        "dev": 66305,
+        "ino": 9729538
+      },
+      "cutoffUtc": "2026-10-12T00:02:03.677Z",
+      "immutableCopy": true
+    }
+  ],
+  "qualification": "Only bounded stable copies enter the artifact tree; live writer paths are separate."
+}

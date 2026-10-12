@@ -1,0 +1,64 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+
+[2m12:02:02 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
+[2m12:02:03 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[90mstdout[2m | src/components/settings/PrRootSettingsEvidence.browser.tsx[2m > [22m[2msaves raw Codex launch args without changing account paths
+[22m[39mPR_ROOT_OBSERVATION {"stage":"settings-initial","source":"9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94","sourceTree":"81b2ce105b3362e1266bb15916e0b16633f3843d","viewport":{"width":960,"height":1100},"fields":[{"label":"Display name","value":"","placeholder":"Codex"},{"label":"Codex binary pathLeave blank to use codex from your PATH.","value":"/custom/codex","placeholder":"Codex binary path"},{"label":"CODEX_HOME pathOptional custom Codex home and config directory.","value":"/custom/codex-home","placeholder":"CODEX_HOME"},{"label":"","value":"","placeholder":"ANTHROPIC_API_KEY"},{"label":"","value":"","placeholder":"value"},{"label":"","value":"on","placeholder":""}],"accountText":"CodexDefaultAuthenticatedSign inIdentityDisplay nameAccent colorRuntimeCodex binary pathLeave blank to use codex from your PATH.CODEX_HOME pathOptional custom Codex home and config directory.EnvironmentEnvironment variablesApplied only to this instance's processes. Mark credentials as secret to store them redacted on the server.Add","qualification":"Actual ProvidersSettingsPanel under its canonical controlled native/status fixture, no packaged desktop or live account claim."}
+ [31m❯[39m [30m[43m chromium [49m[39m src/components/settings/PrRootSettingsEvidence.browser.tsx [2m([22m[2m21 tests[22m[2m | [22m[31m1 failed[39m[2m | [22m[33m20 skipped[39m[2m)[22m[33m 425[2mms[22m[39m
+   [2m[90m↓[39m[22m saves provider CPU priority opt-out and exposes reset to the default
+   [2m[90m↓[39m[22m shows installation and auth beside activity switches with visible setup guides
+   [2m[90m↓[39m[22m keeps disabled providers only in a collapsed recovery list
+   [2m[90m↓[39m[22m restores provider options and saved configuration after re-enabling
+   [2m[90m↓[39m[22m allows recovering after every provider is disabled
+   [2m[90m↓[39m[22m does not report cached provider health as connected before reconciliation
+   [2m[90m↓[39m[22m allows rechecking setup after installing externally and blocks duplicate refreshes
+   [2m[90m↓[39m[22m keeps the default account name when restoring its account defaults
+   [2m[90m↓[39m[22m shows a Claude usage authentication failure beside a locally signed-in account
+   [2m[90m↓[39m[22m lists every account of a provider, default included, with a status title and a switch
+   [2m[90m↓[39m[22m edits the selected account beside the list and offers one-click sign-in
+   [2m[90m↓[39m[22m leaves Artifacts to the default Claude account and keeps another account's binary path
+   [2m[90m↓[39m[22m adds an account from a dialog that derives its id from the label
+   [2m[90m↓[39m[22m routes a migrated Codex account's rename to its saved account entry
+   [2m[90m↓[39m[22m survives StrictMode, waits for account edits, and verifies selected-account auth rather than trusting CLI exit
+   [2m[90m↓[39m[22m sends Pi's login selector only after startup and keeps cancellation failures visible
+   [2m[90m↓[39m[22m closes a late authentication open after the settings dialog is cancelled
+   [2m[90m↓[39m[22m reports a retained ready authentication terminal when its viewport remounts
+   [2m[90m↓[39m[22m reports a retained error authentication terminal when its viewport remounts
+   [2m[90m↓[39m[22m reports a retained exited authentication terminal when its viewport remounts
+[31m   [31m×[31m saves raw Codex launch args without changing account paths[39m[33m 424[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m [30m[43m chromium [49m[39m src/components/settings/PrRootSettingsEvidence.browser.tsx[2m > [22msaves raw Codex launch args without changing account paths
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+Failure screenshot:
+  - [2msrc/components/settings/__screenshots__/PrRootSettingsEvidence.browser.tsx/saves-raw-Codex-launch-args-without-changing-account-paths-2.png[22m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m src/components/settings/PrRootSettingsEvidence.browser.tsx:[2m735:26[22m[39m
+    [90m733|[39m   [35mawait[39m [34mcaptureRootProviderSettings[39m([32m"initial"[39m)[33m;[39m
+    [90m734|[39m   const args = account.getByRole("textbox", { name: /^Codex launch arg…
+    [90m735|[39m   [34mexpect[39m(args[33m.[39m[34melements[39m())[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m   |[39m                          [31m^[39m
+    [90m736|[39m   const launchArgs = ' -c model_provider="api token" -- --value traili…
+    [90m737|[39m   [35mawait[39m args[33m.[39m[34mfill[39m(launchArgs)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[33m20 skipped[39m[90m (21)[39m
+[2m   Start at [22m 00:02:01
+[2m   Duration [22m 9.31s[2m (transform 0ms, setup 0ms, import 5.78s, tests 425ms, environment 0ms)[22m
+
+JSON report written to /home/runner/work/_temp/root-source-evidence-38186426665-1-pr1860-before/browser.json

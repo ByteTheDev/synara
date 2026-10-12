@@ -1,0 +1,140 @@
+{
+  "target": {
+    "id": "pr1860-after",
+    "kind": "settings",
+    "variant": "after",
+    "source": "638e419bc952566932bbf7cddf0b129bafc4d434",
+    "tree": "f3534dbf68d6550206470e7614e9d477ccb5e837",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "apps/web/src/appSettings.ts",
+      "packages/contracts/src/settings.ts",
+      "packages/shared/src/serverSettings.ts",
+      "apps/server/src/codexAppServerManager.ts",
+      "apps/server/src/codexProcessEnv.ts"
+    ]
+  },
+  "errors": [],
+  "reportRecords": [
+    {
+      "phase": "browser",
+      "bytes": 6059,
+      "sha256": "46dc6374332054a9ad235fd215004a8f122617dae946f946179b5765f2c1005f",
+      "immutableSnapshot": true,
+      "actualExit": {
+        "process": 0,
+        "tee": 0
+      },
+      "selected": [
+        {
+          "fullName": "saves raw Codex launch args without changing account paths",
+          "status": "passed"
+        }
+      ],
+      "filteredCases": 20
+    }
+  ],
+  "observations": [
+    {
+      "stage": "settings-initial",
+      "source": "638e419bc952566932bbf7cddf0b129bafc4d434",
+      "sourceTree": "f3534dbf68d6550206470e7614e9d477ccb5e837",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "fields": [
+        {
+          "label": "Display name",
+          "value": "",
+          "placeholder": "Codex"
+        },
+        {
+          "label": "Codex binary pathLeave blank to use codex from your PATH.",
+          "value": "/custom/codex",
+          "placeholder": "Codex binary path"
+        },
+        {
+          "label": "CODEX_HOME pathOptional custom Codex home and config directory.",
+          "value": "/custom/codex-home",
+          "placeholder": "CODEX_HOME"
+        },
+        {
+          "label": "Codex launch argsExtra CLI flags used for sessions on every Codex account, inserted before app-server. Tokens after an unquoted -- are appended after app-server. Example: -c model_provider=\"apitoken\".",
+          "value": "",
+          "placeholder": "-c model_provider=\"apitoken\""
+        },
+        {
+          "label": "",
+          "value": "",
+          "placeholder": "ANTHROPIC_API_KEY"
+        },
+        {
+          "label": "",
+          "value": "",
+          "placeholder": "value"
+        },
+        {
+          "label": "",
+          "value": "on",
+          "placeholder": ""
+        }
+      ],
+      "accountText": "CodexDefaultAuthenticatedSign inIdentityDisplay nameAccent colorRuntimeCodex binary pathLeave blank to use codex from your PATH.CODEX_HOME pathOptional custom Codex home and config directory.Codex launch argsExtra CLI flags used for sessions on every Codex account, inserted before app-server. Tokens after an unquoted -- are appended after app-server. Example: -c model_provider=\"apitoken\".EnvironmentEnvironment variablesApplied only to this instance's processes. Mark credentials as secret to store them redacted on the server.Add",
+      "qualification": "Actual ProvidersSettingsPanel under its canonical controlled native/status fixture, no packaged desktop or live account claim."
+    },
+    {
+      "stage": "settings-saved",
+      "source": "638e419bc952566932bbf7cddf0b129bafc4d434",
+      "sourceTree": "f3534dbf68d6550206470e7614e9d477ccb5e837",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "fields": [
+        {
+          "label": "Display name",
+          "value": "",
+          "placeholder": "Codex"
+        },
+        {
+          "label": "Codex binary pathLeave blank to use codex from your PATH.",
+          "value": "/custom/codex",
+          "placeholder": "Codex binary path"
+        },
+        {
+          "label": "CODEX_HOME pathOptional custom Codex home and config directory.",
+          "value": "/custom/codex-home",
+          "placeholder": "CODEX_HOME"
+        },
+        {
+          "label": "Codex launch argsExtra CLI flags used for sessions on every Codex account, inserted before app-server. Tokens after an unquoted -- are appended after app-server. Example: -c model_provider=\"apitoken\".",
+          "value": " -c model_provider=\"api token\" -- --value trailing\\ ",
+          "placeholder": "-c model_provider=\"apitoken\""
+        },
+        {
+          "label": "",
+          "value": "",
+          "placeholder": "ANTHROPIC_API_KEY"
+        },
+        {
+          "label": "",
+          "value": "",
+          "placeholder": "value"
+        },
+        {
+          "label": "",
+          "value": "on",
+          "placeholder": ""
+        }
+      ],
+      "accountText": "CodexDefaultAuthenticatedSign inIdentityDisplay nameAccent colorRuntimeCodex binary pathLeave blank to use codex from your PATH.CODEX_HOME pathOptional custom Codex home and config directory.Codex launch argsExtra CLI flags used for sessions on every Codex account, inserted before app-server. Tokens after an unquoted -- are appended after app-server. Example: -c model_provider=\"apitoken\".EnvironmentEnvironment variablesApplied only to this instance's processes. Mark credentials as secret to store them redacted on the server.Add",
+      "qualification": "Actual ProvidersSettingsPanel under its canonical controlled native/status fixture, no packaged desktop or live account claim."
+    }
+  ],
+  "qualification": "Source-pinned diagnostic evidence. Complete canonical fixtures are retained; only selected new cases execute. Before failures remain actual failures and must match the exact expected regression. No live provider, packaged desktop or native local-image HTTP route claim."
+}

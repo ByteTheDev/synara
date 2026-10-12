@@ -1,0 +1,114 @@
+{
+  "target": {
+    "id": "pr1860-after",
+    "kind": "settings",
+    "variant": "after",
+    "source": "638e419bc952566932bbf7cddf0b129bafc4d434",
+    "tree": "f3534dbf68d6550206470e7614e9d477ccb5e837",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "apps/web/src/appSettings.ts",
+      "packages/contracts/src/settings.ts",
+      "packages/shared/src/serverSettings.ts",
+      "apps/server/src/codexAppServerManager.ts",
+      "apps/server/src/codexProcessEnv.ts"
+    ]
+  },
+  "complete": true,
+  "files": [
+    {
+      "path": "browser-exit.json",
+      "bytes": 22,
+      "sha256": "1909795ae6b551692913f41e8f413ee4bf1c72baeb2d2ad31e864d2ef1da3cfe",
+      "blob": "4e4770a2a5ebd2c5137028593630cf469a1c740c"
+    },
+    {
+      "path": "browser.json",
+      "bytes": 6059,
+      "sha256": "46dc6374332054a9ad235fd215004a8f122617dae946f946179b5765f2c1005f",
+      "blob": "40160dc4a20753fbbeaa278ae863f8b27358f01f"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 4920,
+      "sha256": "8088d19a0b6f7a54a0e86faa3e4bd6fbc0375450dce3ef092e4ff52bcb6bffd6",
+      "blob": "5baa54f11d4a782158b93f88f7c78d6dd8478819"
+    },
+    {
+      "path": "live-output-cutoff.json",
+      "bytes": 336,
+      "sha256": "7687fcb69df411c82a17e662bf3fcb6a6fd47e0b9cdb396b8b449c93ffe9967d",
+      "blob": "a36e8df972c9b0ca61aa96e24ffc9304dd15336a"
+    },
+    {
+      "path": "observed-PrRootSettingsEvidence.browser.tsx",
+      "bytes": 30187,
+      "sha256": "da95f6ace70e5a50b6bd55de7f05231422502bb49b0cefe35f00918e0ff1feaf",
+      "blob": "5b0e0f5670aeafd6977f9bac125fd1d11a9d5996"
+    },
+    {
+      "path": "observed-vitest.pr-root-source-evidence.config.ts",
+      "bytes": 1288,
+      "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a",
+      "blob": "51c8ec2fee98640d6223411a2dba5afb83704f7b"
+    },
+    {
+      "path": "original-settings.browser.tsx",
+      "bytes": 28731,
+      "sha256": "28296f7997fb20dcb0db19f4a321b077991252777916f7e4ea4a01ab6750d2e7",
+      "blob": "a6d6143c27c6c7d860ea66a246d8b14de28ccd35"
+    },
+    {
+      "path": "output-snapshots.json",
+      "bytes": 4361,
+      "sha256": "6393d052671099df372ca1cfac1ea05880c2da00af898e97217b0ed1e31dcf61",
+      "blob": "3eeb41b13b629a13c0bf60da8fbd2afb5a449eca"
+    },
+    {
+      "path": "prepare-commands.json",
+      "bytes": 9460,
+      "sha256": "3024dd8c7377eed0e5bd6f9e1ce5f954955aa96c9b9de47cc155cc3847fc0351",
+      "blob": "8644c6da679058bb55bfbce93dbb97980d981df5"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 7055,
+      "sha256": "030fb04fd42e2aa2ac545d1d9097729a269bae36df6296dc47dfacd47b6e1606",
+      "blob": "be8ef26dbccfbb47a06469bc0d04f5b6193f8f9a"
+    },
+    {
+      "path": "settings-initial.png",
+      "bytes": 117867,
+      "sha256": "82c98ef81c60f892c8aa226efa10c9676aebbe0f3ec4d5786c8320bba65a1f0a",
+      "blob": "83841a188d48e4e9bb53cf4070a9b47836fe8935"
+    },
+    {
+      "path": "settings-saved.png",
+      "bytes": 119296,
+      "sha256": "5a33b82dae38b58bc8e54e9c389ad02ea27ab2b230181c7fdcf10a3a6ed61016",
+      "blob": "5ab3f73ae3fcc4dea0836b881cb7783e642ca62a"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 5726,
+      "sha256": "2c608dddbf31cf44bb90cec26a7277ab4cf8e0af17bd92accf968d6a0e972c94",
+      "blob": "e2b1ca1b02df027f3652a5c6dca571f427d34ad6"
+    },
+    {
+      "path": "verify-commands.json",
+      "bytes": 8532,
+      "sha256": "f9efced7037fc255be28bd318982eccc756bf99798c90d79dacffb1d21ea03c8",
+      "blob": "2576ec5ca36439d2612d5a5547265ba9afe602c0"
+    },
+    {
+      "path": "video/page@39b72b8202531f65694962294cc0a568.webm",
+      "bytes": 264682,
+      "sha256": "154886e40e16655d341735ca9ca08b2a712c5c38c92cd481df5b3bf349b03e90",
+      "blob": "6801cc671faf9d47c170aff5b4ba50df1937bc8f"
+    }
+  ]
+}

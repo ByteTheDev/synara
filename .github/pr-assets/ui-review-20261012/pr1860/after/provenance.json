@@ -1,0 +1,177 @@
+{
+  "target": {
+    "id": "pr1860-after",
+    "kind": "settings",
+    "variant": "after",
+    "source": "638e419bc952566932bbf7cddf0b129bafc4d434",
+    "tree": "f3534dbf68d6550206470e7614e9d477ccb5e837",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "apps/web/src/appSettings.ts",
+      "packages/contracts/src/settings.ts",
+      "packages/shared/src/serverSettings.ts",
+      "apps/server/src/codexAppServerManager.ts",
+      "apps/server/src/codexProcessEnv.ts"
+    ]
+  },
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "bytes": 5664,
+      "blob": "2ca95d2f08db8c66a805d308d3c53bcfd0ec5cea",
+      "sha256": "ed94729f24c2261037bf04ad6c04a607d80648118b2a9d533da3d3b2231e8b4f"
+    },
+    {
+      "path": "bun.lock",
+      "bytes": 776515,
+      "blob": "967fc9b407419dafb2e867d18c3f2ccf472745c9",
+      "sha256": "07245f09cb71927128136a52881e5bbadcd09c76694fb7bdeae98df522fe8ab7"
+    },
+    {
+      "path": "apps/web/vitest.browser.config.ts",
+      "bytes": 1772,
+      "blob": "9da1682a3f584018e0587ef7f4f9f9f4c5749c03",
+      "sha256": "9af72c321e6d83162338b1f3e7ebb073ff400c35e55813b7beb63469d61835e7"
+    },
+    {
+      "path": "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+      "bytes": 28731,
+      "blob": "a6d6143c27c6c7d860ea66a246d8b14de28ccd35",
+      "sha256": "28296f7997fb20dcb0db19f4a321b077991252777916f7e4ea4a01ab6750d2e7"
+    },
+    {
+      "path": "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "bytes": 94635,
+      "blob": "8f164fec5848ec7376408fd21cd0b087c88eb4a8",
+      "sha256": "fae6b37cb715183870e5c7a613f25e8be0d69928273b6669be36c21ea16c3f0e"
+    },
+    {
+      "path": "apps/web/src/appSettings.ts",
+      "bytes": 118376,
+      "blob": "d044992f0c20b112cc6ca381027b6a9b4994f5f4",
+      "sha256": "d199cf7c4a2c5523cdcd9a621ef7b2d1084863f95b28fc078e8fc8b834ae6be4"
+    },
+    {
+      "path": "packages/contracts/src/settings.ts",
+      "bytes": 14058,
+      "blob": "2db9bfd020ee6694d309a3a38aaacb65a54b6e02",
+      "sha256": "cc9dd8c8edc61a856f4de7047d94b48eacc286fcd01e1efc698acf58dcb82c1c"
+    },
+    {
+      "path": "packages/shared/src/serverSettings.ts",
+      "bytes": 5457,
+      "blob": "c9ba045f4d938145605344e6271d589dcd7128fb",
+      "sha256": "c8c14e13a7df5f96e4650dc7e6d11485e930544ba68a436f36f20aba3dc0c08f"
+    },
+    {
+      "path": "apps/server/src/codexAppServerManager.ts",
+      "bytes": 219682,
+      "blob": "27b5b9e3c3e89ee208f03c874041cacd6480015a",
+      "sha256": "b80e8badfb5a060f6349f4474599de97e24e31ddff297b0de88ccf3a41ad7ecd"
+    },
+    {
+      "path": "apps/server/src/codexProcessEnv.ts",
+      "bytes": 110512,
+      "blob": "7611d129a68dd7467ab7aa01696bc31188cd28a6",
+      "sha256": "51c2f25087980626e3d194bfcb28cb885b3820a9053266cf7e05e3345e60c8cd"
+    }
+  ],
+  "driver": {
+    "head": "f0d9f4d19fb7dce9aadfec2b8301f663379e12ef",
+    "tree": "439cd20d937ad396deaf71f7dd4a4aa3fc267fb9",
+    "files": [
+      {
+        "path": ".github/workflows/pr-root-source-evidence.yml",
+        "bytes": 4332,
+        "blob": "8efe86ed16d735bd43a2732ac15172e28a7f43fe",
+        "sha256": "36a00002c69c2dd24e488dcf4c2acaa9622c5606c983353d670b4f81f4adf03a"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/README.md",
+        "bytes": 6922,
+        "blob": "ad104d0ebe9584d30d658a5bb20c001f60ec376e",
+        "sha256": "1a030c2137ac70ae5e56993b6eb2416644e175196d3707e6bf2a8416f4f54870"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/browser.config.ts",
+        "bytes": 1288,
+        "blob": "51c8ec2fee98640d6223411a2dba5afb83704f7b",
+        "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/chat-case.tsx",
+        "bytes": 3496,
+        "blob": "cd5c427f2277a431e624bf0eb5123b8de9f08055",
+        "sha256": "08a745b0ac05be83e03ef20ef1c6813218b1e7f0da6c91473e11eaca3b6f1560"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/fixtures.json",
+        "bytes": 699,
+        "blob": "8a56bd6d69c0ba74a0ed4659c305d99a8bda03ac",
+        "sha256": "7f7d57cbccf7dc9bb0c6636145d9a2eb9d44270fb5c0faae1ef5ac687257fdd5"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/projection-case.ts",
+        "bytes": 4801,
+        "blob": "62f50ece5e7d250171e2bf65166da681a17c85eb",
+        "sha256": "fa27b9293215d8a7975016315b06a1dd05dc7d258d6e6c23ab9e5c8e07bb2b16"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/runner.mjs",
+        "bytes": 19524,
+        "blob": "cdffc611d101c53bad5f5c8bf6796cbec155bb36",
+        "sha256": "d34e8e1a400213f1261d29042d51c6ade6e5cdbe3ef24548fe3b7b76f41d8b26"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/settings-case.tsx",
+        "bytes": 1208,
+        "blob": "e541d3d235919f0c48c5e9f5da7defa9df5c4e48",
+        "sha256": "6edb90cbbeb8e9d61665a2f65fa62f4214fdbcbd05edbe365f66c38b013f980a"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/settings-observer.ts",
+        "bytes": 1319,
+        "blob": "10a5c246c807f26176f43b22d5a4245543c57c75",
+        "sha256": "0b055c28c93b4388f0480a2e19a6ddafcdd93a68876ed2f3285123bea6fd57f5"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/snapshots.mjs",
+        "bytes": 5005,
+        "blob": "3f6c01bbc83d6741767253fe75392b178caaee6e",
+        "sha256": "2cfdaf6967e76ec1dabef6a63370c37dcc065ac0cfada74c0201fe790ce964b1"
+      },
+      {
+        "path": "scripts/pr-root-source-evidence/targets.json",
+        "bytes": 2745,
+        "blob": "2243e958ef333f423090ac0872eb294bcec11344",
+        "sha256": "744eb834a512d85133bd8acfb951d3ff5aeda80c9b030632499c0ed657477085"
+      }
+    ]
+  },
+  "overlays": [
+    {
+      "path": "apps/web/src/components/settings/PrRootSettingsEvidence.browser.tsx",
+      "bytes": 30187,
+      "sha256": "da95f6ace70e5a50b6bd55de7f05231422502bb49b0cefe35f00918e0ff1feaf"
+    },
+    {
+      "path": "apps/web/vitest.pr-root-source-evidence.config.ts",
+      "bytes": 1288,
+      "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a"
+    }
+  ],
+  "livePaths": {
+    "reports": "/home/runner/work/_temp/root-source-evidence-38186426665-1-pr1860-after",
+    "data": "/home/runner/work/_temp/root-source-evidence-38186426665-1-pr1860-after/data",
+    "media": "/home/runner/work/synara/synara/.pr-root-live-media/38186426665-1-pr1860-after",
+    "artifact": "/home/runner/work/synara/synara/root-source-evidence/pr1860-after"
+  },
+  "run": "38186426665",
+  "attempt": "1",
+  "node": "v24.21.0",
+  "qualification": "Source-pinned diagnostic evidence. Complete canonical fixtures are retained; only selected new cases execute. Before failures remain actual failures and must match the exact expected regression. No live provider, packaged desktop or native local-image HTTP route claim."
+}

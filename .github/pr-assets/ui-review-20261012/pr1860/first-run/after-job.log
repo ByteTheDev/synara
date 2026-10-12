@@ -1,0 +1,712 @@
+﻿2026-10-11T23:52:28.7583812Z Current runner version: '2.337.0'
+2026-10-11T23:52:28.7611731Z ##[group]Runner Image Provisioner
+2026-10-11T23:52:28.7612759Z Hosted Compute Agent
+2026-10-11T23:52:28.7613645Z Version: 20261002.596
+2026-10-11T23:52:28.7614535Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-11T23:52:28.7615467Z Build Date: 2026-10-02T22:28:27Z
+2026-10-11T23:52:28.7616421Z Worker ID: {c4e78c90-45a4-4796-9d84-9d992e075ecc}
+2026-10-11T23:52:28.7617323Z Region: northcentralus
+2026-10-11T23:52:28.7618080Z Cloud: Azure
+2026-10-11T23:52:28.7618855Z ##[endgroup]
+2026-10-11T23:52:28.7620833Z ##[group]Operating System
+2026-10-11T23:52:28.7621766Z Ubuntu
+2026-10-11T23:52:28.7622420Z 24.04.5
+2026-10-11T23:52:28.7623235Z LTS
+2026-10-11T23:52:28.7624006Z ##[endgroup]
+2026-10-11T23:52:28.7624713Z ##[group]Runner Image
+2026-10-11T23:52:28.7625477Z Image: ubuntu-24.04
+2026-10-11T23:52:28.7626275Z Version: 20261004.327.1
+2026-10-11T23:52:28.7627460Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-11T23:52:28.7628786Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-11T23:52:28.7629580Z ##[endgroup]
+2026-10-11T23:52:28.7630549Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T23:52:28.7632282Z Contents: read
+2026-10-11T23:52:28.7632844Z Metadata: read
+2026-10-11T23:52:28.7633531Z ##[endgroup]
+2026-10-11T23:52:28.7635248Z Secret source: Actions
+2026-10-11T23:52:28.7636045Z Cache mode: write
+2026-10-11T23:52:28.7637011Z Prepare workflow directory
+2026-10-11T23:52:28.8054145Z Prepare all required actions
+2026-10-11T23:52:28.8092310Z Getting action download info
+2026-10-11T23:52:29.0352360Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+2026-10-11T23:52:29.1404632Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-11T23:52:29.3350553Z Download action repository 'actions/upload-artifact@v7' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-11T23:52:29.8336641Z Complete job name: Source evidence pr1860-after
+2026-10-11T23:52:29.8926594Z ##[group]Run actions/checkout@v6
+2026-10-11T23:52:29.8927306Z with:
+2026-10-11T23:52:29.8927717Z   ref: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:29.8928234Z   persist-credentials: false
+2026-10-11T23:52:29.8928689Z   repository: Emanuele-web04/synara
+2026-10-11T23:52:29.8932122Z   token: ***
+2026-10-11T23:52:29.8932502Z   ssh-strict: true
+2026-10-11T23:52:29.8932880Z   ssh-user: git
+2026-10-11T23:52:29.8933430Z   clean: true
+2026-10-11T23:52:29.8933814Z   sparse-checkout-cone-mode: true
+2026-10-11T23:52:29.8934260Z   fetch-depth: 1
+2026-10-11T23:52:29.8934623Z   fetch-tags: false
+2026-10-11T23:52:29.8935002Z   show-progress: true
+2026-10-11T23:52:29.8935395Z   lfs: false
+2026-10-11T23:52:29.8935755Z   submodules: false
+2026-10-11T23:52:29.8936137Z   set-safe-directory: true
+2026-10-11T23:52:29.8936570Z   allow-unsafe-pr-checkout: false
+2026-10-11T23:52:29.8937182Z env:
+2026-10-11T23:52:29.8937616Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:29.8938141Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:29.8938640Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:29.8939227Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:29.8939748Z ##[endgroup]
+2026-10-11T23:52:29.9777930Z Syncing repository: Emanuele-web04/synara
+2026-10-11T23:52:29.9779897Z ##[group]Getting Git version info
+2026-10-11T23:52:29.9780539Z Working directory is '/home/runner/work/synara/synara'
+2026-10-11T23:52:29.9781654Z [command]/usr/bin/git version
+2026-10-11T23:52:29.9797832Z git version 2.55.0
+2026-10-11T23:52:29.9816104Z ##[endgroup]
+2026-10-11T23:52:29.9827762Z Temporarily overriding HOME='/home/runner/work/_temp/6d5f8a46-2b0a-4c8a-91c9-650d6d8d17aa' before making global git config changes
+2026-10-11T23:52:29.9829481Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:52:29.9837556Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-11T23:52:29.9870244Z Deleting the contents of '/home/runner/work/synara/synara'
+2026-10-11T23:52:29.9874629Z ##[group]Determining repository object format
+2026-10-11T23:52:29.9876627Z ##[endgroup]
+2026-10-11T23:52:29.9878087Z ##[group]Initializing the repository
+2026-10-11T23:52:29.9880824Z [command]/usr/bin/git init /home/runner/work/synara/synara
+2026-10-11T23:52:29.9949261Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T23:52:29.9950462Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T23:52:29.9951250Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T23:52:29.9951872Z hint: call:
+2026-10-11T23:52:29.9952229Z hint:
+2026-10-11T23:52:29.9952683Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T23:52:29.9953435Z hint:
+2026-10-11T23:52:29.9953962Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T23:52:29.9954829Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T23:52:29.9955466Z hint:
+2026-10-11T23:52:29.9955834Z hint: 	git branch -m <name>
+2026-10-11T23:52:29.9956256Z hint:
+2026-10-11T23:52:29.9956822Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T23:52:29.9961538Z Initialized empty Git repository in /home/runner/work/synara/synara/.git/
+2026-10-11T23:52:29.9969031Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-11T23:52:30.0008082Z ##[endgroup]
+2026-10-11T23:52:30.0009293Z ##[group]Disabling automatic garbage collection
+2026-10-11T23:52:30.0011530Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T23:52:30.0038380Z ##[endgroup]
+2026-10-11T23:52:30.0039649Z ##[group]Setting up auth
+2026-10-11T23:52:30.0040632Z Removing SSH command configuration
+2026-10-11T23:52:30.0044610Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:52:30.0074268Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:52:30.0362944Z Removing HTTP extra header
+2026-10-11T23:52:30.0375763Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:52:30.0397611Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:52:30.0600567Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:52:30.0606178Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:52:30.0637090Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:52:30.0827786Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T23:52:30.0862576Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:30.0893429Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:30.0925780Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:30.0961423Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:30.0987598Z ##[endgroup]
+2026-10-11T23:52:30.0988245Z ##[group]Fetching the repository
+2026-10-11T23:52:30.0993921Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:33.9537133Z From https://github.com/Emanuele-web04/synara
+2026-10-11T23:52:33.9537880Z  * branch            638e419bc952566932bbf7cddf0b129bafc4d434 -> FETCH_HEAD
+2026-10-11T23:52:33.9545950Z [command]/usr/bin/git rev-parse --verify --quiet 638e419bc952566932bbf7cddf0b129bafc4d434^{object}
+2026-10-11T23:52:33.9611397Z 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:33.9612954Z ##[endgroup]
+2026-10-11T23:52:33.9613651Z ##[group]Determining the checkout info
+2026-10-11T23:52:33.9614081Z ##[endgroup]
+2026-10-11T23:52:33.9614372Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T23:52:33.9624860Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T23:52:33.9652814Z ##[group]Checking out the ref
+2026-10-11T23:52:33.9655995Z [command]/usr/bin/git checkout --progress --force 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:34.5676859Z Note: switching to '638e419bc952566932bbf7cddf0b129bafc4d434'.
+2026-10-11T23:52:34.5677370Z 
+2026-10-11T23:52:34.5677643Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T23:52:34.5678287Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T23:52:34.5678923Z state without impacting any branches by switching back to a branch.
+2026-10-11T23:52:34.5679287Z 
+2026-10-11T23:52:34.5679538Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T23:52:34.5680110Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T23:52:34.5680441Z 
+2026-10-11T23:52:34.5680582Z   git switch -c <new-branch-name>
+2026-10-11T23:52:34.5680837Z 
+2026-10-11T23:52:34.5681021Z Or undo this operation with:
+2026-10-11T23:52:34.5681301Z 
+2026-10-11T23:52:34.5681405Z   git switch -
+2026-10-11T23:52:34.5681565Z 
+2026-10-11T23:52:34.5682222Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T23:52:34.5682633Z 
+2026-10-11T23:52:34.5682998Z HEAD is now at 638e419 fix(codex): preserve literal launch arguments across current account settings
+2026-10-11T23:52:34.5695599Z ##[endgroup]
+2026-10-11T23:52:34.5735729Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T23:52:34.5758536Z 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:34.5769303Z ##[group]Removing auth
+2026-10-11T23:52:34.5769701Z Removing SSH command configuration
+2026-10-11T23:52:34.5770269Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:52:34.5797667Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:52:34.5991679Z Removing HTTP extra header
+2026-10-11T23:52:34.5996388Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:52:34.6027414Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:52:34.6220843Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:52:34.6224204Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:52:34.6249205Z includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-11T23:52:34.6249810Z includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-11T23:52:34.6250187Z includeif.gitdir:/github/workspace/.git.path
+2026-10-11T23:52:34.6250508Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-11T23:52:34.6256524Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git.path
+2026-10-11T23:52:34.6278828Z /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6286627Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git.path /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6318342Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path
+2026-10-11T23:52:34.6340011Z /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6347740Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6399141Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-11T23:52:34.6420794Z /github/runner_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6462743Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6495775Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-11T23:52:34.6516605Z /github/runner_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6521840Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config
+2026-10-11T23:52:34.6555266Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:52:34.6748710Z Removing credentials config '/home/runner/work/_temp/git-credentials-10210604-ccd3-497c-95d1-80f19a9c599c.config'
+2026-10-11T23:52:34.6757359Z ##[endgroup]
+2026-10-11T23:52:34.6964103Z ##[group]Run actions/checkout@v6
+2026-10-11T23:52:34.6964324Z with:
+2026-10-11T23:52:34.6964528Z   ref: e7ea6a83362bc11270ecce170eba3c5cd873bee1
+2026-10-11T23:52:34.6964772Z   path: .pr-root-driver
+2026-10-11T23:52:34.6964970Z   persist-credentials: false
+2026-10-11T23:52:34.6965176Z   repository: Emanuele-web04/synara
+2026-10-11T23:52:34.6967452Z   token: ***
+2026-10-11T23:52:34.6967630Z   ssh-strict: true
+2026-10-11T23:52:34.6967798Z   ssh-user: git
+2026-10-11T23:52:34.6967961Z   clean: true
+2026-10-11T23:52:34.6968140Z   sparse-checkout-cone-mode: true
+2026-10-11T23:52:34.6968349Z   fetch-depth: 1
+2026-10-11T23:52:34.6968519Z   fetch-tags: false
+2026-10-11T23:52:34.6968690Z   show-progress: true
+2026-10-11T23:52:34.6968865Z   lfs: false
+2026-10-11T23:52:34.6969022Z   submodules: false
+2026-10-11T23:52:34.6969193Z   set-safe-directory: true
+2026-10-11T23:52:34.6969397Z   allow-unsafe-pr-checkout: false
+2026-10-11T23:52:34.6969620Z env:
+2026-10-11T23:52:34.6969831Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:34.6970063Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:34.6970303Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:34.6970593Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:34.6970842Z ##[endgroup]
+2026-10-11T23:52:34.7639135Z Syncing repository: Emanuele-web04/synara
+2026-10-11T23:52:34.7640158Z ##[group]Getting Git version info
+2026-10-11T23:52:34.7640806Z Working directory is '/home/runner/work/synara/synara/.pr-root-driver'
+2026-10-11T23:52:34.7665286Z [command]/usr/bin/git version
+2026-10-11T23:52:34.7698064Z git version 2.55.0
+2026-10-11T23:52:34.7714156Z ##[endgroup]
+2026-10-11T23:52:34.7724883Z Temporarily overriding HOME='/home/runner/work/_temp/3ba9dbe4-02aa-45f1-9398-0326c1ff9034' before making global git config changes
+2026-10-11T23:52:34.7725924Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:52:34.7730571Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara/.pr-root-driver
+2026-10-11T23:52:34.7759957Z ##[group]Determining repository object format
+2026-10-11T23:52:34.7762105Z ##[endgroup]
+2026-10-11T23:52:34.7762747Z ##[group]Initializing the repository
+2026-10-11T23:52:34.7766271Z [command]/usr/bin/git init /home/runner/work/synara/synara/.pr-root-driver
+2026-10-11T23:52:34.7802884Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T23:52:34.7803820Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T23:52:34.7805265Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T23:52:34.7805919Z hint: call:
+2026-10-11T23:52:34.7806291Z hint:
+2026-10-11T23:52:34.7806733Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T23:52:34.7807275Z hint:
+2026-10-11T23:52:34.7807849Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T23:52:34.7808788Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T23:52:34.7809494Z hint:
+2026-10-11T23:52:34.7809892Z hint: 	git branch -m <name>
+2026-10-11T23:52:34.7810369Z hint:
+2026-10-11T23:52:34.7810893Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T23:52:34.7811753Z Initialized empty Git repository in /home/runner/work/synara/synara/.pr-root-driver/.git/
+2026-10-11T23:52:34.7814075Z [command]/usr/bin/git remote add origin https://github.com/Emanuele-web04/synara
+2026-10-11T23:52:34.7842399Z ##[endgroup]
+2026-10-11T23:52:34.7842908Z ##[group]Disabling automatic garbage collection
+2026-10-11T23:52:34.7846617Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T23:52:34.7873554Z ##[endgroup]
+2026-10-11T23:52:34.7875036Z ##[group]Setting up auth
+2026-10-11T23:52:34.7875370Z Removing SSH command configuration
+2026-10-11T23:52:34.7879721Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:52:34.7925137Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:52:34.8111918Z Removing HTTP extra header
+2026-10-11T23:52:34.8119125Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:52:34.8147875Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:52:34.8345129Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:52:34.8354460Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:52:34.8389005Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:52:34.8595020Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T23:52:34.8628868Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git.path /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:34.8659770Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:34.8738962Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.pr-root-driver/.git.path /github/runner_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:34.8780926Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.pr-root-driver/.git/worktrees/*.path /github/runner_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:34.8811035Z ##[endgroup]
+2026-10-11T23:52:34.8811547Z ##[group]Fetching the repository
+2026-10-11T23:52:34.8818159Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin e7ea6a83362bc11270ecce170eba3c5cd873bee1
+2026-10-11T23:52:38.7338448Z From https://github.com/Emanuele-web04/synara
+2026-10-11T23:52:38.7339026Z  * branch            e7ea6a83362bc11270ecce170eba3c5cd873bee1 -> FETCH_HEAD
+2026-10-11T23:52:38.7348346Z [command]/usr/bin/git rev-parse --verify --quiet e7ea6a83362bc11270ecce170eba3c5cd873bee1^{object}
+2026-10-11T23:52:38.7372111Z e7ea6a83362bc11270ecce170eba3c5cd873bee1
+2026-10-11T23:52:38.7375586Z ##[endgroup]
+2026-10-11T23:52:38.7375912Z ##[group]Determining the checkout info
+2026-10-11T23:52:38.7376804Z ##[endgroup]
+2026-10-11T23:52:38.7383691Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T23:52:38.7420752Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T23:52:38.7448298Z ##[group]Checking out the ref
+2026-10-11T23:52:38.7450973Z [command]/usr/bin/git checkout --progress --force e7ea6a83362bc11270ecce170eba3c5cd873bee1
+2026-10-11T23:52:39.3484768Z Note: switching to 'e7ea6a83362bc11270ecce170eba3c5cd873bee1'.
+2026-10-11T23:52:39.3485315Z 
+2026-10-11T23:52:39.3485717Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T23:52:39.3486338Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T23:52:39.3486887Z state without impacting any branches by switching back to a branch.
+2026-10-11T23:52:39.3487105Z 
+2026-10-11T23:52:39.3487263Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T23:52:39.3487612Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T23:52:39.3487812Z 
+2026-10-11T23:52:39.3487902Z   git switch -c <new-branch-name>
+2026-10-11T23:52:39.3488165Z 
+2026-10-11T23:52:39.3488316Z Or undo this operation with:
+2026-10-11T23:52:39.3488756Z 
+2026-10-11T23:52:39.3488848Z   git switch -
+2026-10-11T23:52:39.3488986Z 
+2026-10-11T23:52:39.3489243Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T23:52:39.3489587Z 
+2026-10-11T23:52:39.3489826Z HEAD is now at e7ea6a8 test: freeze every live evidence output before validation
+2026-10-11T23:52:39.3501182Z ##[endgroup]
+2026-10-11T23:52:39.3545488Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T23:52:39.3564811Z e7ea6a83362bc11270ecce170eba3c5cd873bee1
+2026-10-11T23:52:39.3573179Z ##[group]Removing auth
+2026-10-11T23:52:39.3573449Z Removing SSH command configuration
+2026-10-11T23:52:39.3576785Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:52:39.3607306Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:52:39.3804143Z Removing HTTP extra header
+2026-10-11T23:52:39.3809050Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:52:39.3843411Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:52:39.4038192Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:52:39.4041667Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:52:39.4064942Z includeif.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git.path
+2026-10-11T23:52:39.4065824Z includeif.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git/worktrees/*.path
+2026-10-11T23:52:39.4066620Z includeif.gitdir:/github/workspace/.pr-root-driver/.git.path
+2026-10-11T23:52:39.4067316Z includeif.gitdir:/github/workspace/.pr-root-driver/.git/worktrees/*.path
+2026-10-11T23:52:39.4074505Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git.path
+2026-10-11T23:52:39.4097035Z /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4105682Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git.path /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4140599Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git/worktrees/*.path
+2026-10-11T23:52:39.4163469Z /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4170851Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/synara/synara/.pr-root-driver/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4205065Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.pr-root-driver/.git.path
+2026-10-11T23:52:39.4226137Z /github/runner_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4238845Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.pr-root-driver/.git.path /github/runner_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4272443Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.pr-root-driver/.git/worktrees/*.path
+2026-10-11T23:52:39.4293194Z /github/runner_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4299218Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.pr-root-driver/.git/worktrees/*.path /github/runner_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config
+2026-10-11T23:52:39.4352525Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:52:39.4542456Z Removing credentials config '/home/runner/work/_temp/git-credentials-edd6cdf0-c98a-4783-bbd4-82fc34d9c621.config'
+2026-10-11T23:52:39.4551761Z ##[endgroup]
+2026-10-11T23:52:39.4786448Z Prepare all required actions
+2026-10-11T23:52:39.4786902Z Getting action download info
+2026-10-11T23:52:39.5846268Z Download action repository 'oven-sh/setup-bun@v2' (SHA:0c5077e51419868618aeaa5fe8019c62421857d6)
+2026-10-11T23:52:39.8720630Z Download action repository 'actions/setup-node@v6' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-10-11T23:52:40.0039465Z ##[group]Run ./.github/actions/setup-workspace
+2026-10-11T23:52:40.0039709Z with:
+2026-10-11T23:52:40.0039864Z   electron: false
+2026-10-11T23:52:40.0040026Z   scope: full
+2026-10-11T23:52:40.0040187Z   turbo: false
+2026-10-11T23:52:40.0040338Z env:
+2026-10-11T23:52:40.0040514Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:40.0040749Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:40.0040978Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:40.0041257Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:40.0041484Z ##[endgroup]
+2026-10-11T23:52:40.0090957Z ##[start-action display=Validate install scope;id=__self.__run]
+2026-10-11T23:52:40.0119468Z ##[group]Run case "$WORKSPACE_SCOPE" in
+2026-10-11T23:52:40.0119792Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-11T23:52:40.0120017Z [36;1m  full|static|runtime) ;;[0m
+2026-10-11T23:52:40.0120326Z [36;1m  *) echo "::error::Unknown workspace scope: $WORKSPACE_SCOPE"; exit 1 ;;[0m
+2026-10-11T23:52:40.0120631Z [36;1mesac[0m
+2026-10-11T23:52:40.0120866Z [36;1mif [ "$ELECTRON" = "true" ] && [ "$WORKSPACE_SCOPE" = "static" ]; then[0m
+2026-10-11T23:52:40.0121205Z [36;1m  echo "::error::Electron requires a full or runtime install."[0m
+2026-10-11T23:52:40.0121468Z [36;1m  exit 1[0m
+2026-10-11T23:52:40.0121630Z [36;1mfi[0m
+2026-10-11T23:52:40.0325093Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T23:52:40.0325378Z env:
+2026-10-11T23:52:40.0325563Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:40.0325800Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:40.0326042Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:40.0326332Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:40.0326567Z   WORKSPACE_SCOPE: full
+2026-10-11T23:52:40.0326745Z   ELECTRON: false
+2026-10-11T23:52:40.0326902Z ##[endgroup]
+2026-10-11T23:52:40.0426190Z ##[end-action id=__self.__run;outcome=success;conclusion=success;duration_ms=33]
+2026-10-11T23:52:40.0427942Z ##[start-action display=Setup Bun;id=__self.__oven-sh_setup-bun]
+2026-10-11T23:52:40.0472853Z ##[group]Run oven-sh/setup-bun@v2
+2026-10-11T23:52:40.0473216Z with:
+2026-10-11T23:52:40.0473389Z   bun-version-file: package.json
+2026-10-11T23:52:40.0473590Z   no-cache: false
+2026-10-11T23:52:40.0475740Z   token: ***
+2026-10-11T23:52:40.0475903Z env:
+2026-10-11T23:52:40.0476073Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:40.0476301Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:40.0476523Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:40.0476807Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:40.0477034Z ##[endgroup]
+2026-10-11T23:52:40.1768132Z Obtained version 1.4.2 from package.json
+2026-10-11T23:52:40.3122490Z Cache hit for: bun-gmoqYqdUbaYsI0KujeXt7Zg/p0I=
+2026-10-11T23:52:40.8943235Z Received 35684134 of 35684134 (100.0%), 72.4 MBs/sec
+2026-10-11T23:52:40.8943675Z Cache Size: ~34 MB (35684134 B)
+2026-10-11T23:52:40.8967385Z [command]/usr/bin/tar -xf /home/runner/work/_temp/30f48e79-86ad-4c5c-b9b0-fc1f378c67bf/cache.tzst -P -C /home/runner/work/synara/synara --use-compress-program unzstd
+2026-10-11T23:52:41.0032336Z Cache restored successfully
+2026-10-11T23:52:41.0052965Z [command]/home/runner/.bun/bin/bun --revision
+2026-10-11T23:52:41.0087920Z 1.4.2+744846f84
+2026-10-11T23:52:41.0092880Z Using a cached version of Bun: 1.4.2+744846f84
+2026-10-11T23:52:41.0170239Z ##[end-action id=__self.__oven-sh_setup-bun;outcome=success;conclusion=success;duration_ms=974]
+2026-10-11T23:52:41.0172629Z ##[start-action display=Setup Node;id=__self.__actions_setup-node]
+2026-10-11T23:52:41.0212323Z ##[group]Run actions/setup-node@v6
+2026-10-11T23:52:41.0212546Z with:
+2026-10-11T23:52:41.0212727Z   node-version-file: package.json
+2026-10-11T23:52:41.0212958Z   check-latest: false
+2026-10-11T23:52:41.0215358Z   token: ***
+2026-10-11T23:52:41.0215549Z   package-manager-cache: true
+2026-10-11T23:52:41.0215754Z env:
+2026-10-11T23:52:41.0215938Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:41.0216177Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:41.0216417Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:41.0216715Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:41.0216957Z ##[endgroup]
+2026-10-11T23:52:41.1290936Z Resolved package.json as ^24.13.1
+2026-10-11T23:52:41.1339886Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-11T23:52:41.1342938Z ##[group]Environment details
+2026-10-11T23:52:41.3943748Z node: v24.21.0
+2026-10-11T23:52:41.3943972Z npm: 11.19.0
+2026-10-11T23:52:41.3944171Z yarn: 1.22.22
+2026-10-11T23:52:41.3944586Z ##[endgroup]
+2026-10-11T23:52:41.4022656Z ##[end-action id=__self.__actions_setup-node;outcome=success;conclusion=success;duration_ms=384]
+2026-10-11T23:52:41.4024875Z ##[start-action display=Cache node_modules;id=__self.modules]
+2026-10-11T23:52:41.4560556Z ##[group]Run actions/cache@v5
+2026-10-11T23:52:41.4560770Z with:
+2026-10-11T23:52:41.4561050Z   path: node_modules
+apps/*/node_modules
+packages/*/node_modules
+scripts/node_modules
+
+2026-10-11T23:52:41.4561635Z   key: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:52:41.4562099Z   enableCrossOsArchive: false
+2026-10-11T23:52:41.4562307Z   fail-on-cache-miss: false
+2026-10-11T23:52:41.4562632Z   lookup-only: false
+2026-10-11T23:52:41.4562813Z   save-always: false
+2026-10-11T23:52:41.4562976Z env:
+2026-10-11T23:52:41.4563354Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:41.4563589Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:41.4563843Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:41.4564138Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:41.4564387Z ##[endgroup]
+2026-10-11T23:52:41.6538059Z Cache not found for input keys: Linux-X64-bun-modules-v2-electron-false-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:52:41.6592123Z ##[end-action id=__self.modules;outcome=success;conclusion=success;duration_ms=256]
+2026-10-11T23:52:41.6596874Z ##[start-action display=Cache Bun install;id=__self.__actions_cache]
+2026-10-11T23:52:41.7090607Z ##[group]Run actions/cache@v5
+2026-10-11T23:52:41.7090815Z with:
+2026-10-11T23:52:41.7090995Z   path: ~/.bun/install/cache
+2026-10-11T23:52:41.7091354Z   key: Linux-X64-bun-v2-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:52:41.7091722Z   enableCrossOsArchive: false
+2026-10-11T23:52:41.7091931Z   fail-on-cache-miss: false
+2026-10-11T23:52:41.7092129Z   lookup-only: false
+2026-10-11T23:52:41.7092318Z   save-always: false
+2026-10-11T23:52:41.7092483Z env:
+2026-10-11T23:52:41.7092660Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:41.7092903Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:41.7093330Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:41.7093627Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:41.7093867Z ##[endgroup]
+2026-10-11T23:52:41.9219698Z Cache not found for input keys: Linux-X64-bun-v2-5673fcc9ad33394a71ba4a5554f798c5825b152c328d7a370ed4407353a225d8
+2026-10-11T23:52:41.9276909Z ##[end-action id=__self.__actions_cache;outcome=success;conclusion=success;duration_ms=267]
+2026-10-11T23:52:41.9278908Z ##[start-action display=Cache Turbo outputs;id=__self.__actions_cache_2]
+2026-10-11T23:52:41.9284455Z ##[end-action id=__self.__actions_cache_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:52:41.9286138Z ##[start-action display=Cache Electron runtime;id=__self.__actions_cache_3]
+2026-10-11T23:52:41.9289284Z ##[end-action id=__self.__actions_cache_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:52:41.9291040Z ##[start-action display=Install dependencies;id=__self.__run_2]
+2026-10-11T23:52:41.9306654Z ##[group]Run # Hosted Windows checks out on D:, while Bun's default home cache is on C:.
+2026-10-11T23:52:41.9307138Z [36;1m# Hosted Windows checks out on D:, while Bun's default home cache is on C:.[0m
+2026-10-11T23:52:41.9307547Z [36;1m# Match the measured setup so package hardlinks can stay on one volume.[0m
+2026-10-11T23:52:41.9307879Z [36;1mif [ "$RUNNER_OS" = "Windows" ]; then[0m
+2026-10-11T23:52:41.9308185Z [36;1m  export BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-install-cache"[0m
+2026-10-11T23:52:41.9308526Z [36;1m  echo "Bun install cache: $BUN_INSTALL_CACHE_DIR"[0m
+2026-10-11T23:52:41.9308776Z [36;1mfi[0m
+2026-10-11T23:52:41.9309040Z [36;1m# Bound dependency lifecycles. Root postinstall patches each installed[0m
+2026-10-11T23:52:41.9309444Z [36;1m# TypeScript compiler once, after workspace hooks have completed.[0m
+2026-10-11T23:52:41.9309756Z [36;1mcase "$WORKSPACE_SCOPE" in[0m
+2026-10-11T23:52:41.9310061Z [36;1m  full) bun install --frozen-lockfile --concurrent-scripts=1 ;;[0m
+2026-10-11T23:52:41.9310551Z [36;1m  static) bun install --frozen-lockfile --filter './' --filter '@synara/scripts' --concurrent-scripts=1 ;;[0m
+2026-10-11T23:52:41.9311110Z [36;1m  runtime) bun install --frozen-lockfile --filter '!@synara/marketing' --concurrent-scripts=1 ;;[0m
+2026-10-11T23:52:41.9311478Z [36;1mesac[0m
+2026-10-11T23:52:41.9370914Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T23:52:41.9371190Z env:
+2026-10-11T23:52:41.9371376Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:52:41.9371755Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:52:41.9371997Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:52:41.9372281Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:52:41.9372538Z   ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+2026-10-11T23:52:41.9372756Z   WORKSPACE_SCOPE: full
+2026-10-11T23:52:41.9372937Z ##[endgroup]
+2026-10-11T23:52:41.9460451Z bun install v1.4.2 (744846f84)
+2026-10-11T23:52:41.9603326Z Resolving dependencies
+2026-10-11T23:52:42.5197469Z Resolved, downloaded and extracted [64]
+2026-10-11T23:53:03.0355598Z 
+2026-10-11T23:53:03.0356711Z $ node scripts/patch-workspace-typescript.ts && effect-tsgo patch --typescript --typescript-package @typescript/native
+2026-10-11T23:53:04.5382859Z [23:53:04.537] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/typescript.js patched successfully.
+2026-10-11T23:53:07.8069024Z [23:53:07.806] INFO (#22): /home/runner/work/synara/synara/node_modules/.bun/typescript@5.9.3/node_modules/typescript/lib/_tsc.js patched successfully.
+2026-10-11T23:53:07.8071313Z [23:53:07.807] INFO (#22): If your project uses incremental builds, delete the .tsbuildinfo files and perform a full build.
+2026-10-11T23:53:07.8080812Z [23:53:07.807] INFO (#22): No prepare script found in package.json; to make the patch persistent across package installations and updates, add the following to your package.json scripts:
+2026-10-11T23:53:07.8081565Z   "scripts": {
+2026-10-11T23:53:07.8081882Z           "prepare": "effect-language-service patch"
+2026-10-11T23:53:07.8082224Z   }
+2026-10-11T23:53:08.3174783Z Patched typescript at /home/runner/work/synara/synara/node_modules/.bun/@typescript+typescript-linux-x64@7.0.2/node_modules/@typescript/typescript-linux-x64/lib/tsc
+2026-10-11T23:53:08.3270674Z 
+2026-10-11T23:53:08.3270920Z + @effect/tsgo@0.41.0
+2026-10-11T23:53:08.3271313Z + @types/node@24.12.0 (v26.6.5 available)
+2026-10-11T23:53:08.3271683Z + @typescript/native@7.0.2
+2026-10-11T23:53:08.3271947Z + @vitest/coverage-v8@4.1.10
+2026-10-11T23:53:08.3272148Z + oxfmt@0.40.0
+2026-10-11T23:53:08.3272323Z + oxlint@1.56.0
+2026-10-11T23:53:08.3272485Z + turbo@2.10.5
+2026-10-11T23:53:08.3272645Z + vitest@4.1.10
+2026-10-11T23:53:08.3272747Z 
+2026-10-11T23:53:08.3273415Z 1662 packages installed [26.38s]
+2026-10-11T23:53:08.3356248Z ##[end-action id=__self.__run_2;outcome=success;conclusion=success;duration_ms=26406]
+2026-10-11T23:53:08.3359042Z ##[start-action display=Install Electron test runtime;id=__self.__run_3]
+2026-10-11T23:53:08.3364517Z ##[end-action id=__self.__run_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:53:08.3853742Z ##[group]Run actions/cache@v5
+2026-10-11T23:53:08.3853983Z with:
+2026-10-11T23:53:08.3854165Z   path: ~/.cache/ms-playwright
+2026-10-11T23:53:08.3854530Z   key: Linux-playwright-7c2515579b10ea38a91744e8cb45bc33216144422bda464324c120a1535c1c78
+2026-10-11T23:53:08.3854918Z   enableCrossOsArchive: false
+2026-10-11T23:53:08.3855139Z   fail-on-cache-miss: false
+2026-10-11T23:53:08.3855366Z   lookup-only: false
+2026-10-11T23:53:08.3855550Z   save-always: false
+2026-10-11T23:53:08.3855740Z env:
+2026-10-11T23:53:08.3855925Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:53:08.3856170Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:53:08.3856411Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:08.3856710Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:08.3856956Z ##[endgroup]
+2026-10-11T23:53:08.5862792Z Cache not found for input keys: Linux-playwright-7c2515579b10ea38a91744e8cb45bc33216144422bda464324c120a1535c1c78
+2026-10-11T23:53:08.5941279Z ##[group]Run ./apps/web/node_modules/.bin/playwright install chromium ffmpeg
+2026-10-11T23:53:08.5941714Z [36;1m./apps/web/node_modules/.bin/playwright install chromium ffmpeg[0m
+2026-10-11T23:53:08.5998692Z shell: /usr/bin/bash -e {0}
+2026-10-11T23:53:08.5998906Z env:
+2026-10-11T23:53:08.5999096Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:53:08.5999491Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:53:08.5999732Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:08.6000020Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:08.6000259Z ##[endgroup]
+2026-10-11T23:53:08.9912974Z Downloading Chrome for Testing 151.0.7922.34 (playwright chromium v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-linux64.zip
+2026-10-11T23:53:09.9523748Z |                                                                                |   0% of 184.3 MiB
+2026-10-11T23:53:10.1199917Z |■■■■■■■■                                                                        |  10% of 184.3 MiB
+2026-10-11T23:53:10.2595347Z |■■■■■■■■■■■■■■■■                                                                |  20% of 184.3 MiB
+2026-10-11T23:53:10.4532372Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 184.3 MiB
+2026-10-11T23:53:10.5660013Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 184.3 MiB
+2026-10-11T23:53:10.6953374Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 184.3 MiB
+2026-10-11T23:53:10.8192623Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 184.3 MiB
+2026-10-11T23:53:10.9829214Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 184.3 MiB
+2026-10-11T23:53:11.1807007Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 184.3 MiB
+2026-10-11T23:53:11.3149362Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 184.3 MiB
+2026-10-11T23:53:11.4774651Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 184.3 MiB
+2026-10-11T23:53:13.8136583Z Chrome for Testing 151.0.7922.34 (playwright chromium v1234) downloaded to /home/runner/.cache/ms-playwright/chromium-1234
+2026-10-11T23:53:13.8139899Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-11T23:53:14.6944076Z |                                                                                |   0% of 2.3 MiB
+2026-10-11T23:53:14.6987084Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-11T23:53:14.7014036Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-11T23:53:14.7037038Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-11T23:53:14.7060370Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-11T23:53:14.7068155Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-11T23:53:14.7081571Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-11T23:53:14.7098072Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-11T23:53:14.7105580Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-11T23:53:14.7136307Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-11T23:53:14.7145349Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-11T23:53:14.7580702Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-11T23:53:14.7582888Z Downloading Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) from https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-headless-shell-linux64.zip
+2026-10-11T23:53:15.7142928Z |                                                                                |   0% of 114.7 MiB
+2026-10-11T23:53:15.8286479Z |■■■■■■■■                                                                        |  10% of 114.7 MiB
+2026-10-11T23:53:15.9950465Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.7 MiB
+2026-10-11T23:53:16.1007770Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.7 MiB
+2026-10-11T23:53:16.1819312Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.7 MiB
+2026-10-11T23:53:16.2807627Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.7 MiB
+2026-10-11T23:53:16.4406755Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.7 MiB
+2026-10-11T23:53:16.5439901Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.7 MiB
+2026-10-11T23:53:16.6290206Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.7 MiB
+2026-10-11T23:53:16.7148604Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.7 MiB
+2026-10-11T23:53:16.7867033Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.7 MiB
+2026-10-11T23:53:18.4767789Z Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1234
+2026-10-11T23:53:18.4967169Z ##[group]Run node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs prepare
+2026-10-11T23:53:18.4967701Z [36;1mnode .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs prepare[0m
+2026-10-11T23:53:18.5024417Z shell: /usr/bin/bash -e {0}
+2026-10-11T23:53:18.5024641Z env:
+2026-10-11T23:53:18.5024829Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:53:18.5025073Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:53:18.5025314Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:18.5025617Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:18.5026022Z ##[endgroup]
+2026-10-11T23:53:19.4108342Z ##[group]Run set +e
+2026-10-11T23:53:19.4108566Z [36;1mset +e[0m
+2026-10-11T23:53:19.4109149Z [36;1mbunx vitest run --config vitest.pr-root-source-evidence.config.ts --reporter=default --reporter=json --outputFile="$PR_ROOT_LIVE/browser.json" 2>&1 | tee "$PR_ROOT_OUTPUT/browser.log"[0m
+2026-10-11T23:53:19.4109765Z [36;1mresult=("${PIPESTATUS[@]}")[0m
+2026-10-11T23:53:19.4109987Z [36;1mset -e[0m
+2026-10-11T23:53:19.4110317Z [36;1mprintf '{"process":%s,"tee":%s}\n' "${result[0]}" "${result[1]}" > "$PR_ROOT_OUTPUT/browser-exit.json"[0m
+2026-10-11T23:53:19.4110669Z [36;1mexit "${result[1]}"[0m
+2026-10-11T23:53:19.4166682Z shell: /usr/bin/bash -e {0}
+2026-10-11T23:53:19.4166900Z env:
+2026-10-11T23:53:19.4167097Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:53:19.4167338Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:53:19.4167575Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:19.4167904Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:19.4168295Z   PR_ROOT_OUTPUT: /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after/data
+2026-10-11T23:53:19.4168754Z   PR_ROOT_LIVE: /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after
+2026-10-11T23:53:19.4169075Z   PR_ROOT_KIND: settings
+2026-10-11T23:53:19.4169310Z   PR_ROOT_APPLICATION_ROOT: /home/runner/work/synara/synara
+2026-10-11T23:53:19.4169722Z   VITE_PR_ROOT_OUTPUT: /home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1860-after
+2026-10-11T23:53:19.4170130Z   VITE_PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:19.4170433Z   VITE_PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:19.4170689Z ##[endgroup]
+2026-10-11T23:53:20.4456855Z 
+2026-10-11T23:53:20.4459594Z [1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90m/home/runner/work/synara/synara/apps/web[39m
+2026-10-11T23:53:20.4460146Z 
+2026-10-11T23:53:22.5254979Z [2m11:53:22 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+2026-10-11T23:53:22.9433396Z Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+2026-10-11T23:53:22.9434010Z   npx update-browserslist-db@latest
+2026-10-11T23:53:22.9434548Z   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2026-10-11T23:53:28.5588249Z [90mstdout[2m | src/components/settings/PrRootSettingsEvidence.browser.tsx[2m > [22m[2msaves raw Codex launch args without changing account paths
+2026-10-11T23:53:28.5598345Z [22m[39mPR_ROOT_OBSERVATION {"stage":"settings-initial","source":"638e419bc952566932bbf7cddf0b129bafc4d434","sourceTree":"f3534dbf68d6550206470e7614e9d477ccb5e837","viewport":{"width":960,"height":1100},"fields":[{"label":null,"value":"","placeholder":"Codex"},{"label":null,"value":"/custom/codex","placeholder":"Codex binary path"},{"label":null,"value":"/custom/codex-home","placeholder":"CODEX_HOME"},{"label":null,"value":"","placeholder":"-c model_provider=\"apitoken\""},{"label":null,"value":"","placeholder":"ANTHROPIC_API_KEY"},{"label":null,"value":"","placeholder":"value"},{"label":null,"value":"on","placeholder":""}],"accountText":"CodexDefaultAuthenticatedSign inIdentityDisplay nameAccent colorRuntimeCodex binary pathLeave blank to use codex from your PATH.CODEX_HOME pathOptional custom Codex home and config directory.Codex launch argsExtra CLI flags used for sessions on every Codex account, inserted before app-server. Tokens after an unquoted -- are appended after app-server. Example: -c model_provider=\"apitoken\".EnvironmentEnvironment variablesApplied only to this instance's processes. Mark credentials as secret to store them redacted on the server.Add","qualification":"Actual ProvidersSettingsPanel under its canonical controlled native/status fixture, no packaged desktop or live account claim."}
+2026-10-11T23:53:28.7308790Z [90mstdout[2m | src/components/settings/PrRootSettingsEvidence.browser.tsx[2m > [22m[2msaves raw Codex launch args without changing account paths
+2026-10-11T23:53:28.7316110Z [22m[39mPR_ROOT_OBSERVATION {"stage":"settings-saved","source":"638e419bc952566932bbf7cddf0b129bafc4d434","sourceTree":"f3534dbf68d6550206470e7614e9d477ccb5e837","viewport":{"width":960,"height":1100},"fields":[{"label":null,"value":"","placeholder":"Codex"},{"label":null,"value":"/custom/codex","placeholder":"Codex binary path"},{"label":null,"value":"/custom/codex-home","placeholder":"CODEX_HOME"},{"label":null,"value":" -c model_provider=\"api token\" -- --value trailing\\ ","placeholder":"-c model_provider=\"apitoken\""},{"label":null,"value":"","placeholder":"ANTHROPIC_API_KEY"},{"label":null,"value":"","placeholder":"value"},{"label":null,"value":"on","placeholder":""}],"accountText":"CodexDefaultAuthenticatedSign inIdentityDisplay nameAccent colorRuntimeCodex binary pathLeave blank to use codex from your PATH.CODEX_HOME pathOptional custom Codex home and config directory.Codex launch argsExtra CLI flags used for sessions on every Codex account, inserted before app-server. Tokens after an unquoted -- are appended after app-server. Example: -c model_provider=\"apitoken\".EnvironmentEnvironment variablesApplied only to this instance's processes. Mark credentials as secret to store them redacted on the server.Add","qualification":"Actual ProvidersSettingsPanel under its canonical controlled native/status fixture, no packaged desktop or live account claim."}
+2026-10-11T23:53:28.7433556Z  [32m✓[39m [30m[43m chromium [49m[39m src/components/settings/PrRootSettingsEvidence.browser.tsx [2m([22m[2m21 tests[22m[2m | [22m[33m20 skipped[39m[2m)[22m[33m 482[2mms[22m[39m
+2026-10-11T23:53:28.7435481Z    [33m[2m✓[22m[39m saves raw Codex launch args without changing account paths [33m 480[2mms[22m[39m
+2026-10-11T23:53:28.7483347Z 
+2026-10-11T23:53:28.7486882Z [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+2026-10-11T23:53:28.7487815Z [2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m20 skipped[39m[90m (21)[39m
+2026-10-11T23:53:28.7498435Z [2m   Start at [22m 23:53:20
+2026-10-11T23:53:28.7499133Z [2m   Duration [22m 8.30s[2m (transform 0ms, setup 0ms, import 5.31s, tests 482ms, environment 0ms)[22m
+2026-10-11T23:53:28.7499562Z 
+2026-10-11T23:53:28.7505099Z JSON report written to /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after/browser.json
+2026-10-11T23:53:29.8189497Z ##[group]Run node .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs verify
+2026-10-11T23:53:29.8189994Z [36;1mnode .pr-root-driver/scripts/pr-root-source-evidence/runner.mjs verify[0m
+2026-10-11T23:53:29.8247193Z shell: /usr/bin/bash -e {0}
+2026-10-11T23:53:29.8247410Z env:
+2026-10-11T23:53:29.8247602Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:53:29.8247852Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:53:29.8248101Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:29.8248395Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:29.8248796Z   PR_ROOT_OUTPUT: /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after/data
+2026-10-11T23:53:29.8249257Z   PR_ROOT_LIVE: /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after
+2026-10-11T23:53:29.8249590Z   PR_ROOT_KIND: settings
+2026-10-11T23:53:29.8249824Z   PR_ROOT_APPLICATION_ROOT: /home/runner/work/synara/synara
+2026-10-11T23:53:29.8250267Z   VITE_PR_ROOT_OUTPUT: /home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1860-after
+2026-10-11T23:53:29.8250673Z   VITE_PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:29.8250980Z   VITE_PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:29.8251250Z   PR_ROOT_SERVER_OUTCOME: skipped
+2026-10-11T23:53:29.8251465Z   PR_ROOT_BROWSER_OUTCOME: success
+2026-10-11T23:53:29.8251672Z ##[endgroup]
+2026-10-11T23:53:30.1177616Z node:internal/modules/run_main:107
+2026-10-11T23:53:30.1177965Z     triggerUncaughtException(
+2026-10-11T23:53:30.1178408Z     ^
+2026-10-11T23:53:30.1178508Z 
+2026-10-11T23:53:30.1178770Z AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+2026-10-11T23:53:30.1179113Z + actual - expected
+2026-10-11T23:53:30.1179226Z 
+2026-10-11T23:53:30.1179293Z + [
+2026-10-11T23:53:30.1179632Z +   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
+2026-10-11T23:53:30.1179951Z +     '\n' +
+2026-10-11T23:53:30.1180142Z +     '0 !== 1\n'
+2026-10-11T23:53:30.1180315Z + ]
+2026-10-11T23:53:30.1180466Z - []
+2026-10-11T23:53:30.1180558Z 
+2026-10-11T23:53:30.1180879Z     at file:///home/runner/work/synara/synara/.pr-root-driver/scripts/pr-root-source-evidence/runner.mjs:484:10
+2026-10-11T23:53:30.1181385Z     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+2026-10-11T23:53:30.1181723Z     at async node:internal/modules/esm/loader:647:26
+2026-10-11T23:53:30.1182118Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+2026-10-11T23:53:30.1182474Z   generatedMessage: true,
+2026-10-11T23:53:30.1182684Z   code: 'ERR_ASSERTION',
+2026-10-11T23:53:30.1182878Z   actual: [
+2026-10-11T23:53:30.1183421Z     'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
+2026-10-11T23:53:30.1191961Z       '\n' +
+2026-10-11T23:53:30.1192208Z       '0 !== 1\n'
+2026-10-11T23:53:30.1192392Z   ],
+2026-10-11T23:53:30.1192566Z   expected: [],
+2026-10-11T23:53:30.1192796Z   operator: 'deepStrictEqual',
+2026-10-11T23:53:30.1193021Z   diff: 'simple'
+2026-10-11T23:53:30.1193409Z }
+2026-10-11T23:53:30.1193493Z 
+2026-10-11T23:53:30.1193576Z Node.js v24.21.0
+2026-10-11T23:53:30.1226553Z ##[error]Process completed with exit code 1.
+2026-10-11T23:53:30.1279365Z ##[group]Run actions/upload-artifact@v7
+2026-10-11T23:53:30.1279594Z with:
+2026-10-11T23:53:30.1279897Z   name: root-source-evidence-pr1860-after-638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:30.1280276Z   path: root-source-evidence/
+2026-10-11T23:53:30.1280486Z   if-no-files-found: error
+2026-10-11T23:53:30.1280699Z   include-hidden-files: true
+2026-10-11T23:53:30.1280895Z   retention-days: 30
+2026-10-11T23:53:30.1281072Z   compression-level: 6
+2026-10-11T23:53:30.1281258Z   overwrite: false
+2026-10-11T23:53:30.1281425Z   archive: true
+2026-10-11T23:53:30.1281589Z env:
+2026-10-11T23:53:30.1281769Z   NODE_OPTIONS: --max-old-space-size=4096
+2026-10-11T23:53:30.1282010Z   PR_ROOT_ID: pr1860-after
+2026-10-11T23:53:30.1282239Z   PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:30.1282527Z   PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:30.1282937Z   PR_ROOT_OUTPUT: /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after/data
+2026-10-11T23:53:30.1283673Z   PR_ROOT_LIVE: /home/runner/work/_temp/root-source-evidence-38185895366-1-pr1860-after
+2026-10-11T23:53:30.1284004Z   PR_ROOT_KIND: settings
+2026-10-11T23:53:30.1284243Z   PR_ROOT_APPLICATION_ROOT: /home/runner/work/synara/synara
+2026-10-11T23:53:30.1284649Z   VITE_PR_ROOT_OUTPUT: /home/runner/work/synara/synara/.pr-root-live-media/38185895366-1-pr1860-after
+2026-10-11T23:53:30.1285079Z   VITE_PR_ROOT_SOURCE: 638e419bc952566932bbf7cddf0b129bafc4d434
+2026-10-11T23:53:30.1285391Z   VITE_PR_ROOT_TREE: f3534dbf68d6550206470e7614e9d477ccb5e837
+2026-10-11T23:53:30.1285646Z ##[endgroup]
+2026-10-11T23:53:30.2415121Z With the provided path, there will be 16 files uploaded
+2026-10-11T23:53:30.2418591Z Artifact name is valid!
+2026-10-11T23:53:30.2419201Z Root directory input is valid!
+2026-10-11T23:53:30.4788155Z Uploading artifact: root-source-evidence-pr1860-after-638e419bc952566932bbf7cddf0b129bafc4d434.zip
+2026-10-11T23:53:30.4819506Z Beginning upload of artifact content to blob storage
+2026-10-11T23:53:30.7588788Z Uploaded bytes 445675
+2026-10-11T23:53:30.7902104Z Finished uploading artifact content to blob storage!
+2026-10-11T23:53:30.7902982Z SHA256 digest of uploaded artifact is 42264f3d545cedb11831f20d496603dbf8e90d33dc816f93e1168c89562bb667
+2026-10-11T23:53:30.7903901Z Finalizing artifact upload
+2026-10-11T23:53:31.0600674Z Artifact root-source-evidence-pr1860-after-638e419bc952566932bbf7cddf0b129bafc4d434 successfully finalized. Artifact ID 11719816081
+2026-10-11T23:53:31.0602043Z Artifact root-source-evidence-pr1860-after-638e419bc952566932bbf7cddf0b129bafc4d434 has been successfully uploaded! Final size is 445675 bytes. Artifact ID is 11719816081
+2026-10-11T23:53:31.0603788Z Artifact download URL: https://github.com/Emanuele-web04/synara/actions/runs/38185895366/artifacts/11719816081
+2026-10-11T23:53:31.0796539Z Post job cleanup.
+2026-10-11T23:53:31.0800977Z ##[start-action display=Cache Bun install;id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.__actions_cache]
+2026-10-11T23:53:31.0802621Z ##[end-action id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.__actions_cache;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:53:31.0804583Z ##[start-action display=Cache node_modules;id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.modules]
+2026-10-11T23:53:31.0806149Z ##[end-action id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.modules;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:53:31.0807658Z ##[start-action display=Setup Node;id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.__actions_setup-node]
+2026-10-11T23:53:31.0809156Z ##[end-action id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.__actions_setup-node;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:53:31.0810607Z ##[start-action display=Setup Bun;id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.__oven-sh_setup-bun]
+2026-10-11T23:53:31.0812056Z ##[end-action id=__1b0affad-60b2-4a33-a616-23e8388ff2c1.__oven-sh_setup-bun;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T23:53:31.0861316Z Post job cleanup.
+2026-10-11T23:53:31.1519346Z [command]/usr/bin/git version
+2026-10-11T23:53:31.1551692Z git version 2.55.0
+2026-10-11T23:53:31.1586634Z Temporarily overriding HOME='/home/runner/work/_temp/a4604a6b-6dd7-4254-a0a2-f6ba02d11ae4' before making global git config changes
+2026-10-11T23:53:31.1587741Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:53:31.1593256Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara/.pr-root-driver
+2026-10-11T23:53:31.1618765Z Removing SSH command configuration
+2026-10-11T23:53:31.1624221Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:53:31.1652832Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:53:31.1861919Z Removing HTTP extra header
+2026-10-11T23:53:31.1867318Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:53:31.1897583Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:53:31.2108284Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:53:31.2114910Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:53:31.2144107Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:53:31.2486902Z Post job cleanup.
+2026-10-11T23:53:31.3246759Z [command]/usr/bin/git version
+2026-10-11T23:53:31.3286230Z git version 2.55.0
+2026-10-11T23:53:31.3334353Z Temporarily overriding HOME='/home/runner/work/_temp/599e3cad-d552-463f-9fbb-aa7f5b18589c' before making global git config changes
+2026-10-11T23:53:31.3335928Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T23:53:31.3337242Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/synara/synara
+2026-10-11T23:53:31.3374919Z Removing SSH command configuration
+2026-10-11T23:53:31.3376050Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T23:53:31.3412284Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T23:53:31.3642554Z Removing HTTP extra header
+2026-10-11T23:53:31.3648286Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T23:53:31.3678088Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T23:53:31.3890247Z Removing includeIf entries pointing to credentials config files
+2026-10-11T23:53:31.3897979Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T23:53:31.3930685Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T23:53:31.4260753Z Cleaning up orphan processes
+

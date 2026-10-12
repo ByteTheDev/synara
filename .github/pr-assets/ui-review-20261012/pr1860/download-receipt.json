@@ -1,0 +1,173 @@
+[
+  {
+    "id": 11719986252,
+    "kind": "before",
+    "bytes": 285222,
+    "sha256": "e2b4fbe192b41d86f5069026f09a2790768dc01f52a2f9f53bb551345cc5e367",
+    "members": [
+      {
+        "path": "pr1860-before/browser-exit.json",
+        "bytes": 22,
+        "sha256": "2c533ff60254edc790dc36469a95637379ed0aead81e96c12e4d92c622b96421"
+      },
+      {
+        "path": "pr1860-before/browser.json",
+        "bytes": 7011,
+        "sha256": "573b57a64748d4261b94f2576e58c9999a080fdb04cbd2155bc99b66fd5bd492"
+      },
+      {
+        "path": "pr1860-before/browser.log",
+        "bytes": 6029,
+        "sha256": "3ccdadea9aad92d4af6c849ad336f89ec436449ca01af5551724159701b4be0f"
+      },
+      {
+        "path": "pr1860-before/live-output-cutoff.json",
+        "bytes": 336,
+        "sha256": "c027d144b64ea602ef3f64ba776e77b4ae4ef96319d261a4f05a749bb8fdfe70"
+      },
+      {
+        "path": "pr1860-before/manifest.json",
+        "bytes": 3770,
+        "sha256": "3f8aeeb2360c729a2999999dc035ece12ae01aeb9badf31859aed400b58c51cd"
+      },
+      {
+        "path": "pr1860-before/observed-PrRootSettingsEvidence.browser.tsx",
+        "bytes": 30187,
+        "sha256": "da95f6ace70e5a50b6bd55de7f05231422502bb49b0cefe35f00918e0ff1feaf"
+      },
+      {
+        "path": "pr1860-before/observed-vitest.pr-root-source-evidence.config.ts",
+        "bytes": 1288,
+        "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a"
+      },
+      {
+        "path": "pr1860-before/original-settings.browser.tsx",
+        "bytes": 28731,
+        "sha256": "28296f7997fb20dcb0db19f4a321b077991252777916f7e4ea4a01ab6750d2e7"
+      },
+      {
+        "path": "pr1860-before/output-snapshots.json",
+        "bytes": 3656,
+        "sha256": "2609c551935228b62324f1f5a7e5783bb29e307f03d6bf8319473c07acf06a3b"
+      },
+      {
+        "path": "pr1860-before/prepare-commands.json",
+        "bytes": 9460,
+        "sha256": "ac6218927747fb98a92d9996f68d6d522c4391d07925ee8358b478f654620b29"
+      },
+      {
+        "path": "pr1860-before/provenance.json",
+        "bytes": 7061,
+        "sha256": "18b2d886f1f6d8133554d60b07781f289ab96f2f27e22255738e101d93fe70e1"
+      },
+      {
+        "path": "pr1860-before/settings-initial.png",
+        "bytes": 98239,
+        "sha256": "afdac6e3cbc59283b0951957b7383cbcb838a94bfd284c8bd9c7f255a1141dfb"
+      },
+      {
+        "path": "pr1860-before/verification.json",
+        "bytes": 3046,
+        "sha256": "31b67fe79057a1c75d8cfa7a18df71e0bfbc4a308389d061522934f6149301b1"
+      },
+      {
+        "path": "pr1860-before/verify-commands.json",
+        "bytes": 8532,
+        "sha256": "ea60220ffeaa6d152bf2539cecb558cf908eb21cc9de39d2772dcbc1d4cf17c7"
+      },
+      {
+        "path": "pr1860-before/video/page@e4f28a9d7a2a17375d7837bdf09300f5.webm",
+        "bytes": 209349,
+        "sha256": "3a9b38c49d6226f04c60943fc93294d73b37defb7fad73adee9e89d42be7b4e0"
+      }
+    ]
+  },
+  {
+    "id": 11719474027,
+    "kind": "after",
+    "bytes": 491400,
+    "sha256": "7d7aa8918ddd2935516759970e6c142ec0ae7cf1ee5a30a6e5a7cda4e3eefdba",
+    "members": [
+      {
+        "path": "pr1860-after/browser-exit.json",
+        "bytes": 22,
+        "sha256": "1909795ae6b551692913f41e8f413ee4bf1c72baeb2d2ad31e864d2ef1da3cfe"
+      },
+      {
+        "path": "pr1860-after/browser.log",
+        "bytes": 4920,
+        "sha256": "8088d19a0b6f7a54a0e86faa3e4bd6fbc0375450dce3ef092e4ff52bcb6bffd6"
+      },
+      {
+        "path": "pr1860-after/browser.json",
+        "bytes": 6059,
+        "sha256": "46dc6374332054a9ad235fd215004a8f122617dae946f946179b5765f2c1005f"
+      },
+      {
+        "path": "pr1860-after/live-output-cutoff.json",
+        "bytes": 336,
+        "sha256": "7687fcb69df411c82a17e662bf3fcb6a6fd47e0b9cdb396b8b449c93ffe9967d"
+      },
+      {
+        "path": "pr1860-after/manifest.json",
+        "bytes": 3982,
+        "sha256": "f5bb34a684bb5edd95c7557eb778bd396f4ac4aedafee68e9eb4793683b42b54"
+      },
+      {
+        "path": "pr1860-after/observed-PrRootSettingsEvidence.browser.tsx",
+        "bytes": 30187,
+        "sha256": "da95f6ace70e5a50b6bd55de7f05231422502bb49b0cefe35f00918e0ff1feaf"
+      },
+      {
+        "path": "pr1860-after/observed-vitest.pr-root-source-evidence.config.ts",
+        "bytes": 1288,
+        "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a"
+      },
+      {
+        "path": "pr1860-after/original-settings.browser.tsx",
+        "bytes": 28731,
+        "sha256": "28296f7997fb20dcb0db19f4a321b077991252777916f7e4ea4a01ab6750d2e7"
+      },
+      {
+        "path": "pr1860-after/output-snapshots.json",
+        "bytes": 4361,
+        "sha256": "6393d052671099df372ca1cfac1ea05880c2da00af898e97217b0ed1e31dcf61"
+      },
+      {
+        "path": "pr1860-after/prepare-commands.json",
+        "bytes": 9460,
+        "sha256": "3024dd8c7377eed0e5bd6f9e1ce5f954955aa96c9b9de47cc155cc3847fc0351"
+      },
+      {
+        "path": "pr1860-after/provenance.json",
+        "bytes": 7055,
+        "sha256": "030fb04fd42e2aa2ac545d1d9097729a269bae36df6296dc47dfacd47b6e1606"
+      },
+      {
+        "path": "pr1860-after/settings-initial.png",
+        "bytes": 117867,
+        "sha256": "82c98ef81c60f892c8aa226efa10c9676aebbe0f3ec4d5786c8320bba65a1f0a"
+      },
+      {
+        "path": "pr1860-after/settings-saved.png",
+        "bytes": 119296,
+        "sha256": "5a33b82dae38b58bc8e54e9c389ad02ea27ab2b230181c7fdcf10a3a6ed61016"
+      },
+      {
+        "path": "pr1860-after/verification.json",
+        "bytes": 5726,
+        "sha256": "2c608dddbf31cf44bb90cec26a7277ab4cf8e0af17bd92accf968d6a0e972c94"
+      },
+      {
+        "path": "pr1860-after/video/page@39b72b8202531f65694962294cc0a568.webm",
+        "bytes": 264682,
+        "sha256": "154886e40e16655d341735ca9ca08b2a712c5c38c92cd481df5b3bf349b03e90"
+      },
+      {
+        "path": "pr1860-after/verify-commands.json",
+        "bytes": 8532,
+        "sha256": "f9efced7037fc255be28bd318982eccc756bf99798c90d79dacffb1d21ea03c8"
+      }
+    ]
+  }
+]

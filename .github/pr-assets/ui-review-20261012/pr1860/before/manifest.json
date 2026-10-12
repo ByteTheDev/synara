@@ -1,0 +1,108 @@
+{
+  "target": {
+    "id": "pr1860-before",
+    "kind": "settings",
+    "variant": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "apps/web/src/appSettings.ts",
+      "packages/contracts/src/settings.ts",
+      "packages/shared/src/serverSettings.ts",
+      "apps/server/src/codexAppServerManager.ts",
+      "apps/server/src/codexProcessEnv.ts"
+    ]
+  },
+  "complete": true,
+  "files": [
+    {
+      "path": "browser-exit.json",
+      "bytes": 22,
+      "sha256": "2c533ff60254edc790dc36469a95637379ed0aead81e96c12e4d92c622b96421",
+      "blob": "702db895772b51bbb58b692aa10c3a1226030cf6"
+    },
+    {
+      "path": "browser.json",
+      "bytes": 7011,
+      "sha256": "573b57a64748d4261b94f2576e58c9999a080fdb04cbd2155bc99b66fd5bd492",
+      "blob": "4c9f6ce16f2fd5056465052165b7e0f7b27c799c"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 6029,
+      "sha256": "3ccdadea9aad92d4af6c849ad336f89ec436449ca01af5551724159701b4be0f",
+      "blob": "1b2849cd545c721255a989b8385d80adb6ec4f6c"
+    },
+    {
+      "path": "live-output-cutoff.json",
+      "bytes": 336,
+      "sha256": "c027d144b64ea602ef3f64ba776e77b4ae4ef96319d261a4f05a749bb8fdfe70",
+      "blob": "997b139db89bc715b840d13d4c59cc0dcfd1911f"
+    },
+    {
+      "path": "observed-PrRootSettingsEvidence.browser.tsx",
+      "bytes": 30187,
+      "sha256": "da95f6ace70e5a50b6bd55de7f05231422502bb49b0cefe35f00918e0ff1feaf",
+      "blob": "5b0e0f5670aeafd6977f9bac125fd1d11a9d5996"
+    },
+    {
+      "path": "observed-vitest.pr-root-source-evidence.config.ts",
+      "bytes": 1288,
+      "sha256": "e1d249f33f085b2e2e49c3f3d8dc8b0cc3c2dcaa4175d987172fde5786d5b51a",
+      "blob": "51c8ec2fee98640d6223411a2dba5afb83704f7b"
+    },
+    {
+      "path": "original-settings.browser.tsx",
+      "bytes": 28731,
+      "sha256": "28296f7997fb20dcb0db19f4a321b077991252777916f7e4ea4a01ab6750d2e7",
+      "blob": "a6d6143c27c6c7d860ea66a246d8b14de28ccd35"
+    },
+    {
+      "path": "output-snapshots.json",
+      "bytes": 3656,
+      "sha256": "2609c551935228b62324f1f5a7e5783bb29e307f03d6bf8319473c07acf06a3b",
+      "blob": "9befde36ceb63ca32e5fb7ec05020d8630374971"
+    },
+    {
+      "path": "prepare-commands.json",
+      "bytes": 9460,
+      "sha256": "ac6218927747fb98a92d9996f68d6d522c4391d07925ee8358b478f654620b29",
+      "blob": "6b1762c45e175eb834bbb1f41b82e29805ffe849"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 7061,
+      "sha256": "18b2d886f1f6d8133554d60b07781f289ab96f2f27e22255738e101d93fe70e1",
+      "blob": "836cd3956c7973ebc7e16c685d4392166da0ba06"
+    },
+    {
+      "path": "settings-initial.png",
+      "bytes": 98239,
+      "sha256": "afdac6e3cbc59283b0951957b7383cbcb838a94bfd284c8bd9c7f255a1141dfb",
+      "blob": "abdcc5d7b57dc0d22d953701c18bde22d8ddd227"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 3046,
+      "sha256": "31b67fe79057a1c75d8cfa7a18df71e0bfbc4a308389d061522934f6149301b1",
+      "blob": "edea76cbbcf8d7b3f129cfaba6cf97312ff95010"
+    },
+    {
+      "path": "verify-commands.json",
+      "bytes": 8532,
+      "sha256": "ea60220ffeaa6d152bf2539cecb558cf908eb21cc9de39d2772dcbc1d4cf17c7",
+      "blob": "1d9cd45ab5ffb015f7ffea6a5efbe6e39c73d331"
+    },
+    {
+      "path": "video/page@e4f28a9d7a2a17375d7837bdf09300f5.webm",
+      "bytes": 209349,
+      "sha256": "3a9b38c49d6226f04c60943fc93294d73b37defb7fad73adee9e89d42be7b4e0",
+      "blob": "b4ac4a0deb470b07d7db340787cd9df7f30eebac"
+    }
+  ]
+}

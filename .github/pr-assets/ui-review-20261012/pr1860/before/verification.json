@@ -1,0 +1,87 @@
+{
+  "target": {
+    "id": "pr1860-before",
+    "kind": "settings",
+    "variant": "before",
+    "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+    "tree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+    "paths": [
+      "package.json",
+      "bun.lock",
+      "apps/web/vitest.browser.config.ts",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.browser.tsx",
+      "apps/web/src/components/settings/ProvidersSettingsPanel.tsx",
+      "apps/web/src/appSettings.ts",
+      "packages/contracts/src/settings.ts",
+      "packages/shared/src/serverSettings.ts",
+      "apps/server/src/codexAppServerManager.ts",
+      "apps/server/src/codexProcessEnv.ts"
+    ]
+  },
+  "errors": [],
+  "reportRecords": [
+    {
+      "phase": "browser",
+      "bytes": 7011,
+      "sha256": "573b57a64748d4261b94f2576e58c9999a080fdb04cbd2155bc99b66fd5bd492",
+      "immutableSnapshot": true,
+      "actualExit": {
+        "process": 1,
+        "tee": 0
+      },
+      "selected": [
+        {
+          "fullName": "saves raw Codex launch args without changing account paths",
+          "status": "failed"
+        }
+      ],
+      "filteredCases": 20
+    }
+  ],
+  "observations": [
+    {
+      "stage": "settings-initial",
+      "source": "9e01962e0b1e8fec9fb0e17f17a64017bc4eaf94",
+      "sourceTree": "81b2ce105b3362e1266bb15916e0b16633f3843d",
+      "viewport": {
+        "width": 960,
+        "height": 1100
+      },
+      "fields": [
+        {
+          "label": "Display name",
+          "value": "",
+          "placeholder": "Codex"
+        },
+        {
+          "label": "Codex binary pathLeave blank to use codex from your PATH.",
+          "value": "/custom/codex",
+          "placeholder": "Codex binary path"
+        },
+        {
+          "label": "CODEX_HOME pathOptional custom Codex home and config directory.",
+          "value": "/custom/codex-home",
+          "placeholder": "CODEX_HOME"
+        },
+        {
+          "label": "",
+          "value": "",
+          "placeholder": "ANTHROPIC_API_KEY"
+        },
+        {
+          "label": "",
+          "value": "",
+          "placeholder": "value"
+        },
+        {
+          "label": "",
+          "value": "on",
+          "placeholder": ""
+        }
+      ],
+      "accountText": "CodexDefaultAuthenticatedSign inIdentityDisplay nameAccent colorRuntimeCodex binary pathLeave blank to use codex from your PATH.CODEX_HOME pathOptional custom Codex home and config directory.EnvironmentEnvironment variablesApplied only to this instance's processes. Mark credentials as secret to store them redacted on the server.Add",
+      "qualification": "Actual ProvidersSettingsPanel under its canonical controlled native/status fixture, no packaged desktop or live account claim."
+    }
+  ],
+  "qualification": "Source-pinned diagnostic evidence. Complete canonical fixtures are retained; only selected new cases execute. Before failures remain actual failures and must match the exact expected regression. No live provider, packaged desktop or native local-image HTTP route claim."
+}
