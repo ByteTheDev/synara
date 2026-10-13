@@ -9,6 +9,7 @@ const OUTPUT_PATH = resolve(OUTPUT_DIR, "visibleBrowserMain.cjs");
 const ANNOTATION_PRELOAD_OUTPUT_PATH = resolve(OUTPUT_DIR, "browserAnnotationGuestPreload.cjs");
 const FLOATING_CHROME_PRELOAD_OUTPUT_PATH = resolve(OUTPUT_DIR, "floatingBrowserChromePreload.cjs");
 const FLOATING_HANDOFF_OUTPUT_PATH = resolve(OUTPUT_DIR, "floatingBrowserHandoff.cjs");
+const INLINE_VISUAL_OUTPUT_PATH = resolve(OUTPUT_DIR, "inlineVisualMain.cjs");
 
 export default function globalSetup(): () => void {
   mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -50,7 +51,20 @@ export default function globalSetup(): () => void {
     ],
     { cwd: WEB_DIR, stdio: "inherit" },
   );
+  execFileSync(
+    "bun",
+    [
+      "build",
+      "e2e/fixtures/inlineVisualMain.ts",
+      "--target=node",
+      "--format=cjs",
+      `--outfile=${INLINE_VISUAL_OUTPUT_PATH}`,
+      "--external=electron",
+    ],
+    { cwd: WEB_DIR, stdio: "inherit" },
+  );
   process.env.SYNARA_E2E_ELECTRON_MAIN = OUTPUT_PATH;
+  process.env.SYNARA_E2E_INLINE_VISUAL_MAIN = INLINE_VISUAL_OUTPUT_PATH;
   process.env.SYNARA_E2E_BROWSER_ANNOTATION_PRELOAD = ANNOTATION_PRELOAD_OUTPUT_PATH;
   process.env.SYNARA_E2E_FLOATING_CHROME_PRELOAD = FLOATING_CHROME_PRELOAD_OUTPUT_PATH;
   execFileSync(
