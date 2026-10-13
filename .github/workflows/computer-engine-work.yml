@@ -9,52 +9,21 @@ concurrency:
   group: computer-engine-work-1911
   cancel-in-progress: true
 jobs:
-  inspect_merge:
+  source:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: main
-          fetch-depth: 0
+          ref: 1200e08d7740a7b2a4ffb9f778a09285e0d03cfc
           persist-credentials: false
-      - name: Reproduce PR merge without touching any branch
-        shell: bash
+      - name: Export immutable PR source
         run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/conflict-data"
-          git rev-parse HEAD | tee "$RUNNER_TEMP/conflict-data/main-sha.txt"
-          feature_ref="refs/remotes/origin/feat/computer-attachments-readiness-20261013"
-          if ! git rev-parse --verify "$feature_ref" >/dev/null 2>&1; then
-            git fetch origin refs/heads/feat/computer-attachments-readiness-20261013:"$feature_ref"
-          fi
-          git rev-parse "$feature_ref" | tee "$RUNNER_TEMP/conflict-data/feature-sha.txt"
-          git merge-base HEAD "$feature_ref" | tee "$RUNNER_TEMP/conflict-data/merge-base.txt"
-          git archive --format=tar.gz --output="$RUNNER_TEMP/conflict-data/main.tar.gz" HEAD
-          git config user.name "CI Merge Inspector"
-          git config user.email "merge-inspector@users.noreply.github.com"
-          if git merge --no-commit --no-ff "$feature_ref"; then
-            echo clean > "$RUNNER_TEMP/conflict-data/merge-status.txt"
-          else
-            echo conflicts > "$RUNNER_TEMP/conflict-data/merge-status.txt"
-          fi
-          git status --porcelain=v1 > "$RUNNER_TEMP/conflict-data/status.txt"
-          git diff --name-only --diff-filter=U > "$RUNNER_TEMP/conflict-data/conflicts.txt"
-          mkdir -p "$RUNNER_TEMP/conflict-data/stages"
-          while IFS= read -r path; do
-            [ -n "$path" ] || continue
-            mkdir -p "$RUNNER_TEMP/conflict-data/stages/$(dirname "$path")"
-            for stage in 1 2 3; do
-              git show ":$stage:$path" > "$RUNNER_TEMP/conflict-data/stages/$path.stage$stage" 2>/dev/null || :
-            done
-          done < "$RUNNER_TEMP/conflict-data/conflicts.txt"
-          tar -czf "$RUNNER_TEMP/conflict-data/merged-working.tar.gz" --exclude=.git --exclude=node_modules .
-          echo "--- Conflicts ---"
-          cat "$RUNNER_TEMP/conflict-data/conflicts.txt"
-          echo "--- Status ---"
-          head -80 "$RUNNER_TEMP/conflict-data/status.txt"
+          mkdir -p "$RUNNER_TEMP/playbook-source"
+          git rev-parse HEAD > "$RUNNER_TEMP/playbook-source/head.txt"
+          git archive --format=tar.gz --output="$RUNNER_TEMP/playbook-source/source.tar.gz" HEAD
       - uses: actions/upload-artifact@v4
         with:
-          name: computer-pr-merge-inputs
-          path: ${{ runner.temp }}/conflict-data
+          name: computer-playbook-source
+          path: ${{ runner.temp }}/playbook-source
           retention-days: 2
