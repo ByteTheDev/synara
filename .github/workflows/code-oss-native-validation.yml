@@ -1,0 +1,39 @@
+name: Code OSS native integration validation
+
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths:
+      - apps/desktop/code-oss/**
+      - .github/actions/setup-code-oss/**
+      - .github/workflows/code-oss-native-validation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Archive native resources with executable modes
+        run: tar -czf code-oss-runtime.tar.gz -C .code-oss runtime
+      - uses: actions/upload-artifact@v7
+        with:
+          name: code-oss-native-linux-x64
+          path: code-oss-runtime.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+      - name: Check native workbench interface contracts
+        working-directory: .code-oss/source
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npm run typecheck-client

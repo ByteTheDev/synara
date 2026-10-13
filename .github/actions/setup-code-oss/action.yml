@@ -1,0 +1,41 @@
+name: Build native Code-OSS resources
+description: Prepare the native workbench for the existing Synara installer, on a matching platform and architecture.
+inputs:
+  flavor:
+    description: Existing Synara desktop flavor.
+    required: true
+  arch:
+    description: Native target architecture; must match the build runner.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Checkout pinned Microsoft Code-OSS
+      uses: actions/checkout@v6
+      with:
+        repository: microsoft/vscode
+        ref: 7baac39ec3ca969dab74ac12c097f6a486e46593
+        path: .code-oss/source
+        persist-credentials: false
+    - uses: actions/setup-node@v6
+      with:
+        node-version-file: .code-oss/source/.nvmrc
+    - name: Native Linux prerequisites
+      if: runner.os == 'Linux'
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev
+    - name: Prepare pinned embedding seam
+      shell: bash
+      env:
+        SYNARA_TARGET_ARCH: ${{ inputs.arch }}
+        SYNARA_BUILD_FLAVOR: ${{ inputs.flavor }}
+      run: |
+        node -e 'if (process.arch !== process.env.SYNARA_TARGET_ARCH) throw new Error("Code-OSS needs a matching native build runner")'
+        node apps/desktop/code-oss/scripts/prepare.mjs .code-oss/source "$SYNARA_BUILD_FLAVOR"
+    - name: Build production workbench and native extension hosts
+      shell: bash
+      run: node apps/desktop/code-oss/scripts/build.mjs .code-oss/source .code-oss/runtime
+    - name: Restore Synara Node version
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: package.json
