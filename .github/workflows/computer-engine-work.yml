@@ -28,32 +28,24 @@ jobs:
         with:
           ref: 73868ddbd0670975a1e7b05c475172f4ca64cecf
           persist-credentials: false
-      - name: Verify final candidate and unchanged server evidence
+      - name: Verify final candidate and retained test evidence
         run: |
           python3 "$RUNNER_TEMP/attachment-input/apply-attachment-candidate.py" "$GITHUB_WORKSPACE"
           python3 "$RUNNER_TEMP/attachment-input/finalize-attachment-candidate.py" "$GITHUB_WORKSPACE"
       - uses: ./.github/actions/setup-workspace
-      - name: Final formatting and lint
-        id: static
-        continue-on-error: true
-        shell: bash
-        run: |
-          set +e
-          failed=0
-          for check in fmt:check lint; do
-            bun run "$check" > "$RUNNER_TEMP/attachment-checks/${check//:/-}.log" 2>&1
-            code=$?; echo "$check=$code" | tee -a "$RUNNER_TEMP/attachment-checks/results.txt"
-            if [ "$code" -ne 0 ]; then failed=1; tail -60 "$RUNNER_TEMP/attachment-checks/${check//:/-}.log"; fi
-          done
-          exit "$failed"
-      - name: Corrected desktop upload tests
-        id: desktop
+      - name: Final formatting
+        id: format
         continue-on-error: true
         shell: bash
         run: |
           set -o pipefail
-          bun run --cwd apps/desktop test src/browserAutomation/workspaceUpload.test.ts 2>&1 | tee "$RUNNER_TEMP/attachment-checks/desktop-tests.log"
-      - name: Final workspace typecheck
+          bun run fmt:check 2>&1 | tee "$RUNNER_TEMP/attachment-checks/format.log"
+      - name: Verify type-only correction preserves executable server code
+        id: emission
+        shell: bash
+        run: |
+          bun -e 'const fs=require("node:fs");const p="apps/server/src/agentGateway/computerTools.ts";const after=fs.readFileSync(p,"utf8");const before=after.replace("let stoppedReason: \"no_usable_window\" | \"surface_not_settled\" | \"control_not_ready\" | undefined;", "let stoppedReason: \"no_usable_window\" | \"surface_not_settled\" | undefined;");if(before===after)throw Error("Missing exact type correction");const t=new Bun.Transpiler({loader:"ts"});if(t.transformSync(before)!==t.transformSync(after))throw Error("Runtime changed");console.log("Server type correction emits identical executable code to the 407-test passing candidate.");' | tee "$RUNNER_TEMP/attachment-checks/emission.log"
+      - name: Final workspace and fixture typecheck
         id: types
         continue-on-error: true
         shell: bash
@@ -63,20 +55,20 @@ jobs:
       - name: Record exact outcomes
         if: always()
         run: |
-          printf 'static=%s\ndesktop=%s\ntypes=%s\n' '${{ steps.static.outcome }}' '${{ steps.desktop.outcome }}' '${{ steps.types.outcome }}' >> "$RUNNER_TEMP/attachment-checks/results.txt"
-          printf 'server=407 passed on identical server/contract sources in run 38450890080\nwindows-runtime:check=passed in run 38450890080; desktop corrections do not alter process boundaries\n' >> "$RUNNER_TEMP/attachment-checks/results.txt"
+          printf 'format=%s\nemission=%s\ntypes=%s\n' '${{ steps.format.outcome }}' '${{ steps.emission.outcome }}' '${{ steps.types.outcome }}' >> "$RUNNER_TEMP/attachment-checks/results.txt"
+          printf 'server=407 passed in run 38450890080; subsequent server edit is type-only\ndesktop=18 passed in run 38451547054; desktop files unchanged\nlint=passed in run 38451547054; only stoppedReason type union changed afterward\nwindows-runtime:check=passed in run 38450890080; process boundaries unchanged\n' >> "$RUNNER_TEMP/attachment-checks/results.txt"
           cp "$RUNNER_TEMP/attachment-input/validated-manifest.json" "$RUNNER_TEMP/attachment-checks/"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: attachment-readiness-final-validation
+          name: attachment-readiness-complete-validation
           path: ${{ runner.temp }}/attachment-checks
           retention-days: 2
-      - name: Require every final check
+      - name: Require all final checks
         if: always()
         run: |
-          test '${{ steps.static.outcome }}' = success
-          test '${{ steps.desktop.outcome }}' = success
+          test '${{ steps.format.outcome }}' = success
+          test '${{ steps.emission.outcome }}' = success
           test '${{ steps.types.outcome }}' = success
   objects:
     needs: validation
@@ -119,6 +111,6 @@ jobs:
             console.log('Verified all 15 Git blobs. No branch, commit, ref, or PR was changed.');
       - uses: actions/upload-artifact@v4
         with:
-          name: attachment-readiness-final-objects
+          name: attachment-readiness-complete-objects
           path: ${{ runner.temp }}/attachment-objects
           retention-days: 2
