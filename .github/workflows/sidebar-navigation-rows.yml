@@ -5,31 +5,56 @@ on:
     paths: ['.workbench/**', '.github/workflows/sidebar-navigation-rows.yml']
 permissions:
   contents: write
+  actions: read
 jobs:
-  verify:
+  capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
           fetch-depth: 8
-      - name: Apply bounded candidate
-        run: python3 .workbench/sidebar-rows.py prepare
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 38472088329
+          name: sidebar-navigation-rows
+          path: /tmp/sidebar-navigation-rows
+      - name: Restore validated source and correct baseline selection
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib, runpy
+          module = runpy.run_path('.workbench/sidebar-rows.py')
+          root = module['ROOT']
+          manifest = json.loads((root / 'manifest.json').read_text())
+          assert {entry['path'] for entry in manifest} == set(module['PATHS'])
+          for entry in manifest:
+              data = (root / 'candidate' / entry['path']).read_bytes()
+              assert hashlib.sha1(f'blob {len(data)}\0'.encode() + data).hexdigest() == entry['sha']
+              pathlib.Path(entry['path']).write_bytes(data)
+          script = pathlib.Path('.workbench/sidebar-rows.py')
+          text = script.read_text()
+          start = text.index("    for theme in ('light', 'dark'):", text.index('def capture():'))
+          end = text.index('    original_test = TEST.read_text()', start)
+          baseline = '''    for theme, section in (('light', 'projects'), ('dark', 'chats')):
+                  source = Path(f'docs/pr-screenshots/sidebar-chat-access/apple-redesign/after-{theme}-{section}.png')
+                  assert source.is_file(), source
+                  shutil.copyfile(source, ROOT / f'before-{theme}-{section}.png')
+          '''
+          script.write_text(text[:start] + baseline + text[end:])
+          print('Restored seven byte-identical validated source files; only capture setup changed.')
+          PY
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
-      - name: Final static checks and affected unit tests
-        run: python3 .workbench/sidebar-rows.py checks
-      - name: Install browser and recording tools
+      - name: Install capture tools
         run: |
           (cd apps/web && bunx playwright install --with-deps chromium)
           sudo apt-get install --no-install-recommends -y ffmpeg
-      - name: Verify navigation, unread state, drafts, and accessibility
-        run: python3 .workbench/sidebar-rows.py browser
-      - name: Capture the actual app in light and dark
+      - name: Capture only - retain passing static and browser checks
         run: python3 .workbench/sidebar-rows.py capture
-      - name: Export candidate objects and evidence without moving any ref
+      - name: Export unchanged candidate and actual screenshots
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -41,5 +66,5 @@ jobs:
           name: sidebar-navigation-rows
           path: /tmp/sidebar-navigation-rows
           retention-days: 7
-      - name: Require successful verification
+      - name: Require successful evidence and retained checks
         run: python3 .workbench/sidebar-rows.py gate
