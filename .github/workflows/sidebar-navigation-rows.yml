@@ -1,0 +1,45 @@
+name: Sidebar navigation rows verification
+on:
+  push:
+    branches: [codex/sidebar-navigation-rows-check]
+    paths: ['.workbench/**', '.github/workflows/sidebar-navigation-rows.yml']
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 8
+      - name: Apply bounded candidate
+        run: python3 .workbench/sidebar-rows.py prepare
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+      - name: Final static checks and affected unit tests
+        run: python3 .workbench/sidebar-rows.py checks
+      - name: Install browser and recording tools
+        run: |
+          (cd apps/web && bunx playwright install --with-deps chromium)
+          sudo apt-get install --no-install-recommends -y ffmpeg
+      - name: Verify navigation, unread state, drafts, and accessibility
+        run: python3 .workbench/sidebar-rows.py browser
+      - name: Capture the actual app in light and dark
+        run: python3 .workbench/sidebar-rows.py capture
+      - name: Export candidate objects and evidence without moving any ref
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: python3 .workbench/sidebar-rows.py export
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sidebar-navigation-rows
+          path: /tmp/sidebar-navigation-rows
+          retention-days: 7
+      - name: Require successful verification
+        run: python3 .workbench/sidebar-rows.py gate
