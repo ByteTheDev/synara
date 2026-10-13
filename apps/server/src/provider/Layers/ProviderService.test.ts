@@ -3024,6 +3024,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         yield* provider.sendTurn({ threadId, input: "hello", attachments: [] });
         const binding = Option.getOrUndefined(yield* directory.getBinding(threadId));
         const activeTurnId = asRuntimePayloadRecord(binding?.runtimePayload).activeTurnId;
+        const lifecycleGeneration = binding?.lifecycleGeneration;
         assert.equal(typeof activeTurnId, "string");
 
         // A dying runtime cancels its outstanding user-input request during
@@ -3094,6 +3095,14 @@ routing.layer("ProviderServiceLive routing", (it) => {
         ] as const) {
           for (const matching of [true, false]) {
             const eventId = `stale-${type}-${matching}`;
+            const matchingTaskListCursor = { opaque: "stale-turn-task-list-cursor" };
+            const otherTaskListCursor = { opaque: "stale-other-turn-task-list-cursor" };
+            if (type === "turn.tasks.updated") {
+              staleSettlementRouting.codex.updateSession(threadId, (session) => ({
+                ...session,
+                resumeCursor: matching ? matchingTaskListCursor : otherTaskListCursor,
+              }));
+            }
             staleSettlementRouting.codex.emit({
               type,
               eventId: asEventId(eventId),
@@ -3102,15 +3111,48 @@ routing.layer("ProviderServiceLive routing", (it) => {
               turnId: TurnId.makeUnsafe(matching ? String(activeTurnId) : "other-turn"),
               createdAt: "2026-07-14T14:00:03.000Z",
               lifecycleGeneration: "old-generation",
-              payload: {
-                taskId: RuntimeTaskId.makeUnsafe("stale-task"),
-                description: "progress",
-                status: "completed",
-              },
+              payload:
+                type === "turn.tasks.updated"
+                  ? {
+                      tasks: [
+                        {
+                          task: "progress",
+                          status: "completed",
+                        },
+                      ],
+                    }
+                  : {
+                      taskId: RuntimeTaskId.makeUnsafe("stale-task"),
+                      description: "progress",
+                      status: "completed",
+                    },
             });
-            if (matching)
+            if (matching) {
               yield* waitUntil(() => staleSettlementPersistedEvents.has(eventId), 500, 10, eventId);
-            else assert.equal(staleSettlementPersistedEvents.has(eventId), false);
+              if (type === "turn.tasks.updated") {
+                yield* waitUntilEffect(
+                  () =>
+                    directory
+                      .getBinding(threadId)
+                      .pipe(
+                        Effect.map(
+                          (currentBinding) =>
+                            JSON.stringify(Option.getOrUndefined(currentBinding)?.resumeCursor) ===
+                            JSON.stringify(matchingTaskListCursor),
+                        ),
+                      ),
+                  500,
+                  10,
+                  "matching stale task-list resume cursor to be persisted",
+                );
+              }
+            } else {
+              assert.equal(staleSettlementPersistedEvents.has(eventId), false);
+              if (type === "turn.tasks.updated") {
+                const binding = Option.getOrUndefined(yield* directory.getBinding(threadId));
+                assert.deepEqual(binding?.resumeCursor, matchingTaskListCursor);
+              }
+            }
           }
         }
 
@@ -3122,6 +3164,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
           activeTurnId,
         );
         assert.equal(bindingAfter?.status, "running");
+        assert.equal(bindingAfter?.lifecycleGeneration, lifecycleGeneration);
       }),
     );
 

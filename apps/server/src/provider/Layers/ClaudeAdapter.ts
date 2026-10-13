@@ -1220,7 +1220,7 @@ function claudeContextModelInfo(
   model: string | undefined,
 ): ModelInfo | undefined {
   return [context.currentModelInfo, context.verifiedModelInfo].find(
-    (candidate) => candidate?.value === model,
+    (candidate) => candidate?.value === model || candidate?.resolvedModel === model,
   );
 }
 

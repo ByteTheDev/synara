@@ -15912,6 +15912,20 @@ it.effect("reuses verified extended-context alias capabilities through the send 
       attachments: [],
       modelSelection: selection,
     });
+    // The picker normalizes an SDK alias to its canonical resolved model ID.
+    // Cached capability metadata must match either form so sendTurn does not
+    // repeat the SDK discovery behind its five-second timeout.
+    const canonicalSelection = {
+      provider: "claudeAgent" as const,
+      model: "claude-opus-5",
+      options: { autoCompactWindow: "1m" },
+    };
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "canonical switch",
+      attachments: [],
+      modelSelection: canonicalSelection,
+    });
     assert.equal(discovery.mock.calls.length, 1);
     assert.deepEqual(harness.query.setModelCalls, ["claude-opus-5[1m]"]);
   }).pipe(Effect.provide(harness.layer));

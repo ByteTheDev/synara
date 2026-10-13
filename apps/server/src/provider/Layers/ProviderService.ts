@@ -1975,7 +1975,14 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
                 (lifecycle.currentGeneration(event.threadId) === undefined ||
                   binding.lifecycleGeneration === event.lifecycleGeneration ||
                   (event.turnId !== undefined && boundActiveTurnId === String(event.turnId)));
-              if (!staleTerminalSettlesThread) {
+              // Task-list snapshots are turn progress rather than lifecycle
+              // transitions. Retain their resume cursor only while the exact
+              // turn still owns this binding; never adopt the stale generation.
+              const staleTaskListUpdatesOwnedTurn =
+                event.type === "turn.tasks.updated" &&
+                event.turnId !== undefined &&
+                boundActiveTurnId === String(event.turnId);
+              if (!staleTerminalSettlesThread && !staleTaskListUpdatesOwnedTurn) {
                 return;
               }
             }
