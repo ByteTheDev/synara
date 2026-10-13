@@ -1,0 +1,46 @@
+name: Sidebar Apple design verification
+on:
+  push:
+    branches: [codex/sidebar-apple-design-check]
+    paths: ['.workbench/**', '.github/workflows/sidebar-apple-design.yml', 'apps/web/src/components/SidebarThreadSectionPicker.browser.tsx']
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 6
+      - name: Apply isolated candidate
+        run: python3 .workbench/sidebar-design.py
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+      - name: Workspace checks and focused unit tests
+        run: python3 .workbench/verify-design.py check
+      - name: Install Chromium and video encoder
+        run: |
+          (cd apps/web && bunx playwright install --with-deps chromium)
+          sudo apt-get install --no-install-recommends -y ffmpeg
+      - name: Focused browser regressions
+        run: python3 .workbench/verify-design.py browser
+      - name: Capture real before and after in both themes
+        continue-on-error: true
+        run: python3 .workbench/verify-design.py capture
+      - name: Export candidate and evidence without changing refs
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: python3 .workbench/verify-design.py export
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sidebar-apple-design
+          path: /tmp/sidebar-apple-design
+          retention-days: 7
+      - name: Require passing checks
+        run: python3 .workbench/verify-design.py gate
