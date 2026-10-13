@@ -829,6 +829,10 @@ function isStaleTurnProgressRuntimeEvent(event: ProviderRuntimeEvent): boolean {
     case "hook.started":
     case "hook.progress":
     case "hook.completed":
+    case "task.started":
+    case "task.progress":
+    case "task.updated":
+    case "task.completed":
     case "files.persisted":
       return true;
     default:

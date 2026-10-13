@@ -28,6 +28,7 @@ import {
   ProviderSessionStartInput,
   RuntimeItemId,
   RuntimeRequestId,
+  RuntimeTaskId,
   ThreadId,
   TurnId,
 } from "@synara/contracts";
@@ -3083,6 +3084,34 @@ routing.layer("ProviderServiceLive routing", (it) => {
           staleSettlementPersistedEvents.has("stale-user-input-resolved-other-turn"),
           false,
         );
+
+        for (const type of [
+          "task.started",
+          "task.progress",
+          "task.updated",
+          "task.completed",
+        ] as const) {
+          for (const matching of [true, false]) {
+            const eventId = `stale-${type}-${matching}`;
+            staleSettlementRouting.codex.emit({
+              type,
+              eventId: asEventId(eventId),
+              provider: "codex",
+              threadId,
+              turnId: TurnId.makeUnsafe(matching ? String(activeTurnId) : "other-turn"),
+              createdAt: "2026-07-14T14:00:03.000Z",
+              lifecycleGeneration: "old-generation",
+              payload: {
+                taskId: RuntimeTaskId.makeUnsafe("stale-task"),
+                description: "progress",
+                status: "completed",
+              },
+            });
+            if (matching)
+              yield* waitUntil(() => staleSettlementPersistedEvents.has(eventId), 500, 10, eventId);
+            else assert.equal(staleSettlementPersistedEvents.has(eventId), false);
+          }
+        }
 
         // Accepting a resolution must not settle the turn: it is not a terminal
         // event, so the binding keeps running the turn it still owns.

@@ -15786,3 +15786,42 @@ it.effect("reuses discovered capabilities for unchanged explicit effort", () => 
     assert.equal(discover.mock.calls.length, 0);
   }).pipe(Effect.provide(harness.layer));
 });
+
+it.effect("reuses model-switch discovery during dispatch", () => {
+  const harness = makeHarness();
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: { provider: "claudeAgent", model: "claude-opus-5" },
+    });
+    const discover = vi
+      .spyOn(harness.query, "supportedModels")
+      .mockResolvedValueOnce([
+        {
+          value: "claude-sonnet-5",
+          displayName: "Sonnet",
+          description: "Sonnet",
+          supportsEffort: true,
+          supportedEffortLevels: ["high"],
+        },
+      ])
+      .mockRejectedValue(new Error("second discovery unavailable"));
+    const selection = {
+      provider: "claudeAgent" as const,
+      model: "claude-sonnet-5",
+      options: { effort: "high" as const },
+    };
+    assert.equal(yield* adapter.requiresModelSelectionRestart!(THREAD_ID, selection), false);
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "switch",
+      attachments: [],
+      modelSelection: selection,
+    });
+    assert.equal(discover.mock.calls.length, 1);
+    assert.deepEqual(harness.query.setModelCalls, ["claude-sonnet-5"]);
+  }).pipe(Effect.provide(harness.layer));
+});

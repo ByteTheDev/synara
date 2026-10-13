@@ -470,6 +470,7 @@ interface ClaudeSessionContext {
   currentEffort: ClaudeApiEffort | null;
   modelCapabilities: ReturnType<typeof getModelCapabilities>;
   currentModelInfo: ModelInfo | undefined;
+  verifiedModelInfo?: ModelInfo | undefined;
   currentUltracode: boolean;
   currentFastMode: boolean;
   lastKnownAutoCompactThreshold: number | undefined;
@@ -7611,14 +7612,19 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           selection.model === context.currentModelInfo?.value ||
           resolveClaudeRuntimeApiModelId(selection, context.currentModelInfo) ===
             context.currentApiModelId;
-        let caps = sameModel
-          ? context.modelCapabilities
-          : getModelCapabilities(PROVIDER, selection.model);
+        const verifiedModelInfo = [context.currentModelInfo, context.verifiedModelInfo].find(
+          (model) => model?.value === selection.model,
+        );
+        let caps = verifiedModelInfo
+          ? claudeModelInfoCapabilities(verifiedModelInfo)
+          : sameModel
+            ? context.modelCapabilities
+            : getModelCapabilities(PROVIDER, selection.model);
         const apiEffort = getEffectiveClaudeCodeEffort(trimOrNull(selection.options?.effort));
         if (
           caps === EMPTY_MODEL_CAPABILITIES ||
-          (apiEffort && !sameModel) ||
-          (context.session.runtimeMode === "auto" && !sameModel)
+          (!verifiedModelInfo &&
+            (apiEffort || (context.session.runtimeMode === "auto" && !sameModel)))
         ) {
           const model = yield* verifyClaudeModelSupport({
             queryRuntime: context.query,
@@ -7630,6 +7636,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             effort: apiEffort,
           });
           caps = model ? claudeModelInfoCapabilities(model) : caps;
+          if (model) context.verifiedModelInfo = model;
         }
         const effort = trimOrNull(selection.options?.effort);
         const maxEffort = effort === "max" && hasEffortLevel(caps, "max");
@@ -7824,13 +7831,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           !isCompaction && input.modelSelection?.provider === "claudeAgent"
             ? input.modelSelection
             : undefined;
-        let discoveredModelInfo =
-          modelSelection?.model === context.currentModelInfo?.value
-            ? context.currentModelInfo
-            : undefined;
+        let discoveredModelInfo = modelSelection
+          ? [context.currentModelInfo, context.verifiedModelInfo].find(
+              (model) => model?.value === modelSelection.model,
+            )
+          : undefined;
         let turnCaps = modelSelection
           ? discoveredModelInfo
-            ? context.modelCapabilities
+            ? claudeModelInfoCapabilities(discoveredModelInfo)
             : getModelCapabilities(PROVIDER, modelSelection.model)
           : context.modelCapabilities;
         let resolvedModel = discoveredModelInfo?.resolvedModel ?? modelSelection?.model;
