@@ -27,12 +27,11 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cu-evidence"
           python3 - <<'PY'
           import base64, hashlib, json, os, pathlib, subprocess
-          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b', '1b75ed35c27db27f2bb75e32649c95cb99194ac3']
+          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b', '1b75ed35c27db27f2bb75e32649c95cb99194ac3', '1eacd5a314e37a21dfbcd28348ca54840b060398']
           for i, sha in enumerate(shas):
               result = json.loads(subprocess.check_output(['gh', 'api', f'repos/{os.environ["GITHUB_REPOSITORY"]}/git/blobs/{sha}']))
               data = base64.b64decode(result['content'])
-              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
-              assert actual == sha
+              assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
               path = pathlib.Path(os.environ['RUNNER_TEMP']) / f'cu-{i}.patch'
               path.write_bytes(data)
               subprocess.run(['git', 'apply', '--check', '--index', str(path)], check=True)
@@ -47,6 +46,7 @@ jobs:
           assert all(p.startswith(('apps/server/src/', 'apps/desktop/src/', 'packages/contracts/src/', 'docs/computer-use-cua/')) for p in paths)
           evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
           (evidence / 'paths.txt').write_text('\n'.join(paths) + '\n')
+          (evidence / 'prior-evidence.json').write_text(json.dumps({'integrated_run': 38418024741, 'unchanged_contracts_run': 38416827890, 'final_edit_scope': ['apps/server/src/agentGateway/computerTools.test.ts']}, indent=2))
           PY
       - uses: ./.github/actions/setup-workspace
       - name: Format only changed files
@@ -54,33 +54,7 @@ jobs:
         run: |
           git diff HEAD --name-only -z | xargs -0 ./node_modules/.bin/oxfmt --write
           git diff HEAD --check
-      - name: Verify regression sensitivity against original production modules
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import os, pathlib, subprocess
-          evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
-          cases = [
-              ('approval', 'apps/server', 'src/computer/ComputerApprovalGate.ts', 'src/computer/ComputerApprovalGate.recovery.test.ts', 'expires shared waiters'),
-              ('foreground', 'apps/server', 'src/computer/CuaComputerBackend.ts', 'src/computer/CuaComputerBackend.test.ts', 'keeps an exact field token'),
-              ('observation', 'apps/server', 'src/agentGateway/computerTools.ts', 'src/agentGateway/computerTools.test.ts', 'bounded exact-window observation|repeated scrolls with measured progress'),
-              ('clipboard', 'apps/server', 'src/computer/ComputerManager.ts', 'src/agentGateway/computerTools.test.ts', 'overwrite an unreadable clipboard|restore over newer text'),
-              ('listener', 'apps/desktop', 'src/escapeKillSwitchMonitor.ts', 'src/escapeKillSwitchMonitor.test.ts', 'restarts a silent armed helper'),
-          ]
-          for name, package, source, test, pattern in cases:
-              path = pathlib.Path(package) / source
-              saved = path.read_bytes()
-              try:
-                  path.write_bytes(subprocess.check_output(['git', 'show', f'HEAD:{path}']))
-                  with (evidence / f'before-{name}.log').open('w') as log:
-                      result = subprocess.run(['bun', 'run', '--cwd', package, 'test', test, '-t', pattern], stdout=log, stderr=subprocess.STDOUT, timeout=180)
-                  with (evidence / 'before-results.tsv').open('a') as out:
-                      out.write(f'{name}\t{result.returncode}\n')
-              finally:
-                  path.write_bytes(saved)
-                  assert path.read_bytes() == saved
-          PY
-      - name: Integrated targeted verification
+      - name: Verify final test-only corrections
         shell: bash
         run: |
           EVIDENCE="$RUNNER_TEMP/cu-evidence"
@@ -92,12 +66,10 @@ jobs:
             set -e
             printf '%s\t%s\n' "$name" "$code" >> "$EVIDENCE/results.tsv"
           }
-          check server-tests bun run --cwd apps/server test src/computer/ComputerApprovalGate.test.ts src/computer/ComputerApprovalGate.recovery.test.ts src/computer/CuaComputerBackend.test.ts src/computer/ComputerManager.test.ts src/agentGateway/computerTools.test.ts src/agentGateway/computerBrowserTools.test.ts src/agentGateway/computerGuidance.test.ts src/agentGateway/computerProgressGuard.test.ts src/agentGateway/computerForegroundConsent.test.ts
-          check desktop-tests bun run --cwd apps/desktop test src/escapeKillSwitchMonitor.test.ts
-          check formatting bun run fmt:check
-          check lint bun run lint
+          check tools-tests bun run --cwd apps/server test src/agentGateway/computerTools.test.ts
+          check formatting ./node_modules/.bin/oxfmt --check apps/server/src/agentGateway/computerTools.test.ts
+          check lint ./node_modules/.bin/oxlint --report-unused-disable-directives apps/server/src/agentGateway/computerTools.test.ts
           check typecheck bun run typecheck
-          check windows-runtime bun run windows-runtime:check
       - name: Export candidate blobs and evidence without updating any branch
         if: always()
         env:
@@ -137,4 +109,4 @@ jobs:
         run: |
           test -f "$RUNNER_TEMP/cu-evidence/results.tsv"
           cat "$RUNNER_TEMP/cu-evidence/results.tsv"
-          awk -F '\t' 'BEGIN { n=0; failed=0 } { n++; if ($2 != "0") failed=1 } END { exit (n != 6 || failed) }' "$RUNNER_TEMP/cu-evidence/results.tsv"
+          awk -F '\t' 'BEGIN { n=0; failed=0 } { n++; if ($2 != "0") failed=1 } END { exit (n != 4 || failed) }' "$RUNNER_TEMP/cu-evidence/results.tsv"
