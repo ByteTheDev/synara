@@ -947,14 +947,6 @@ function createSnapshotWithTallComposerStack(): OrchestrationReadModel {
   };
 }
 
-function createSnapshotWithActiveFileChanges(): OrchestrationReadModel {
-  const snapshot = createSnapshotWithTallComposerStack();
-  return {
-    ...snapshot,
-    threads: snapshot.threads.map((thread) => ({ ...thread, activities: [] })),
-  };
-}
-
 function createSnapshotWithSettledInlinePlan(): OrchestrationReadModel {
   const snapshot = createSnapshotWithActiveInlinePlan();
   const activeTurnId = TurnId.makeUnsafe("turn-inline-plan");
@@ -1227,6 +1219,22 @@ function recordProjectCreateCommand(command: unknown): boolean {
 
 function resolveWsRpc(body: WsRequestEnvelope["body"]): unknown {
   const tag = body._tag;
+  if (tag === ORCHESTRATION_WS_METHODS.getInlineVisual) {
+    return {
+      visualId: body.visualId,
+      html: JSON.stringify({
+        blocks: [
+          {
+            type: "choices",
+            options: [
+              { label: "Visual follow up", message: "Follow up from visual" },
+              { label: "Wait" },
+            ],
+          },
+        ],
+      }),
+    };
+  }
   if (tag === ORCHESTRATION_WS_METHODS.getShellSnapshot) {
     return createShellSnapshotFromReadModel(fixture.snapshot);
   }
@@ -1369,6 +1377,20 @@ function resolveWsRpc(body: WsRequestEnvelope["body"]): unknown {
   }
   return {};
 }
+
+const turnStartText = (request: (typeof wsRequests)[number]): string | null =>
+  request._tag === ORCHESTRATION_WS_METHODS.dispatchCommand &&
+  typeof request.command === "object" &&
+  request.command !== null &&
+  "type" in request.command &&
+  request.command.type === "thread.turn.start" &&
+  "message" in request.command &&
+  typeof request.command.message === "object" &&
+  request.command.message !== null &&
+  "text" in request.command.message &&
+  typeof request.command.message.text === "string"
+    ? request.command.message.text
+    : null;
 
 function installDeterministicSendNativeApi(options?: {
   rejectTurnStart?: boolean;
@@ -2765,6 +2787,184 @@ describe("ChatView transcript geometry (full app)", () => {
       }
     },
   );
+
+  it.each([
+    { childCount: 4, activation: "click", scrollTakeover: false },
+    { childCount: 24, activation: "click", scrollTakeover: false },
+    { childCount: 4, activation: "keyboard", scrollTakeover: false },
+    { childCount: 4, activation: "click", scrollTakeover: true },
+  ])(
+    "anchors sidebar navigation ($childCount children, $activation, scroll takeover: $scrollTakeover)",
+    async ({ childCount, activation, scrollTakeover }) => {
+      const base = createSnapshotForTargetUser({
+        targetMessageId: MessageId.makeUnsafe("subagent-navigation-anchor"),
+        targetText: "Review the sidebar navigation",
+      });
+      const template = base.threads[0]!;
+      const rootIds = Array.from({ length: 42 }, (_, index) =>
+        index === 20
+          ? THREAD_ID
+          : index === 21
+            ? OTHER_THREAD_ID
+            : ThreadId.makeUnsafe(`anchor-${index}`),
+      );
+      const roots = rootIds.map((id, index) => {
+        const timestamp = new Date(Date.parse(NOW_ISO) - index * 60_000).toISOString();
+        return {
+          ...template,
+          id,
+          title: `Anchor thread ${index}`,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          latestTurn: null,
+          messages: id === THREAD_ID ? template.messages : [],
+          session: { ...template.session!, threadId: id, updatedAt: timestamp },
+        };
+      });
+      const children = [THREAD_ID, OTHER_THREAD_ID].flatMap((parentThreadId, parentIndex) =>
+        Array.from({ length: parentIndex === 0 ? childCount : 4 }, (_, index) => {
+          const id = ThreadId.makeUnsafe(`anchor-child-${parentIndex}-${index}`);
+          return {
+            ...roots[parentIndex === 0 ? 20 : 21]!,
+            id,
+            title: `Subagent ${parentIndex}-${index}`,
+            parentThreadId,
+            subagentNickname: `Agent ${parentIndex}-${index}`,
+            messages: [],
+            session: { ...template.session!, threadId: id },
+          };
+        }),
+      );
+      localStorage.setItem(
+        "synara:sidebar-ui:v1",
+        JSON.stringify({
+          activityViewEnabled: false,
+          projectThreadListExtraPagesByCwd: { [base.projects[0]!.workspaceRoot]: 10 },
+        }),
+      );
+      const mounted = await mountChatView({
+        viewport: { ...DEFAULT_VIEWPORT, height: 700 },
+        snapshot: { ...base, threads: [...roots, ...children] },
+      });
+      try {
+        const row = await waitForElement(
+          () => document.querySelector<HTMLElement>('[aria-label="Open Anchor thread 21"]'),
+          "Unable to find the destination thread row.",
+        );
+        const viewport = row.closest<HTMLElement>('[data-slot="scroll-area-viewport"]')!;
+        row.scrollIntoView({ block: "center" });
+        await waitForLayout();
+        const beforeTop = row.getBoundingClientRect().top;
+        const viewportBounds = viewport.getBoundingClientRect();
+        expect(beforeTop).toBeGreaterThan(viewportBounds.top);
+        expect(beforeTop).toBeLessThan(viewportBounds.bottom);
+        // Exercise the route/layout change directly; pointer-down stability belongs to #1881.
+        if (activation === "keyboard") {
+          row.focus({ preventScroll: true });
+          row.dispatchEvent(
+            new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }),
+          );
+        } else {
+          row.click();
+        }
+        if (scrollTakeover) viewport.scrollTop += 60;
+        const requestedScrollTop = viewport.scrollTop;
+        await waitForURL(
+          mounted.router,
+          (path) => path === `/${OTHER_THREAD_ID}`,
+          "The destination did not open.",
+        );
+        await vi.waitFor(() =>
+          expect(
+            document.querySelectorAll('[data-testid="sidebar-subagent-status-dot"]'),
+          ).toHaveLength(4),
+        );
+        await waitForLayout();
+        const afterBounds = row.getBoundingClientRect();
+        expect(afterBounds.top).toBeGreaterThanOrEqual(viewportBounds.top);
+        expect(afterBounds.bottom).toBeLessThanOrEqual(viewportBounds.bottom);
+        if (scrollTakeover) {
+          expect(viewport.scrollTop).toBe(requestedScrollTop);
+        } else {
+          expect(Math.abs(afterBounds.top - beforeTop)).toBeLessThanOrEqual(1);
+        }
+      } finally {
+        await mounted.cleanup();
+      }
+    },
+  );
+
+  it("keeps the sidebar rows in place while a thread row is pressed", async () => {
+    const base = createSnapshotForTargetUser({
+      targetMessageId: MessageId.makeUnsafe("subagent-press"),
+      targetText: "Review the sidebar rows",
+    });
+    const parent = { ...base.threads[0]!, title: "Parent thread" };
+    const olderIso = "2026-03-01T12:00:00.000Z";
+    const subagents = ["Atlas", "Nova"].map((nickname, index) => {
+      const id = ThreadId.makeUnsafe(`subagent-press-${index}`);
+      return {
+        ...parent,
+        id,
+        title: `${nickname} task`,
+        messages: [],
+        session: { ...parent.session!, threadId: id },
+        parentThreadId: THREAD_ID,
+        subagentNickname: nickname,
+      };
+    });
+    const other = {
+      ...parent,
+      id: OTHER_THREAD_ID,
+      title: "Other thread",
+      createdAt: olderIso,
+      updatedAt: olderIso,
+      latestTurn: null,
+      messages: [],
+      session: { ...parent.session!, threadId: OTHER_THREAD_ID, updatedAt: olderIso },
+    };
+    localStorage.setItem("synara:sidebar-ui:v1", JSON.stringify({ activityViewEnabled: false }));
+    const mounted = await mountChatView({
+      viewport: DEFAULT_VIEWPORT,
+      snapshot: { ...base, threads: [parent, ...subagents, other] },
+    });
+    try {
+      const subagentDots = () =>
+        document.querySelectorAll('[data-testid="sidebar-subagent-status-dot"]').length;
+      const otherRowButton = await waitForElement(
+        () =>
+          [...document.querySelectorAll<HTMLElement>("[data-thread-item]")]
+            .find((row) => row.textContent?.includes("Other thread"))
+            ?.querySelector<HTMLElement>('[role="button"]') ?? null,
+        "Unable to find the other thread's sidebar row.",
+      );
+      await vi.waitFor(() => expect(subagentDots()).toBe(2));
+      const pressedTop = otherRowButton.getBoundingClientRect().top;
+
+      // The press highlights the row at once, but the open thread's subagent rows
+      // stay until the route changes, so the release lands on the same row.
+      otherRowButton.dispatchEvent(
+        new PointerEvent("pointerdown", { bubbles: true, button: 0, pointerType: "mouse" }),
+      );
+      await waitForLayout();
+      expect(otherRowButton.getAttribute("data-active")).toBe("true");
+      expect(subagentDots()).toBe(2);
+      expect(Math.abs(otherRowButton.getBoundingClientRect().top - pressedTop)).toBeLessThanOrEqual(
+        1,
+      );
+      expect(mounted.router.state.location.pathname).toBe(`/${THREAD_ID}`);
+
+      await userEvent.click(otherRowButton);
+      await waitForURL(
+        mounted.router,
+        (pathname) => pathname === `/${OTHER_THREAD_ID}`,
+        "The pressed sidebar row did not open its thread.",
+      );
+      await vi.waitFor(() => expect(subagentDots()).toBe(0));
+    } finally {
+      await mounted.cleanup();
+    }
+  });
 
   it.each(["user", "assistant"] as const)(
     "opens the linked PR number from a %s message when the repository path also contains pull",
@@ -9085,7 +9285,7 @@ describe("ChatView transcript geometry (full app)", () => {
     }
   });
 
-  it("editing a queued follow-up with live file changes removes only that row and restores its images to the composer", async () => {
+  it("editing a queued follow-up removes only that row and restores its images to the composer", async () => {
     const queuedImage = createComposerImage({
       id: "queued-image-1",
       previewUrl: "blob:queued-image-1",
@@ -9096,7 +9296,11 @@ describe("ChatView transcript geometry (full app)", () => {
 
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
-      snapshot: createSnapshotWithActiveFileChanges(),
+      snapshot: createSnapshotForTargetUser({
+        targetMessageId: "msg-user-running-edit-queue" as MessageId,
+        targetText: "running edit queue target",
+        sessionStatus: "running",
+      }),
     });
 
     try {
@@ -9161,24 +9365,6 @@ describe("ChatView transcript geometry (full app)", () => {
         },
         { timeout: 8_000, interval: 16 },
       );
-
-      // The queued rail and input form one continuous outline, including on narrow panes.
-      for (const viewport of [DEFAULT_VIEWPORT, { name: "narrow", width: 480, height: 640 }]) {
-        await mounted.setViewport(viewport);
-        const surface = document.querySelector<HTMLElement>(".chat-composer-surface")!;
-        const rail = document
-          .querySelector<HTMLElement>('[data-testid="queued-follow-up-row"]')!
-          .closest<HTMLElement>(".chat-composer-stacked-top")!;
-        const inputBounds = surface.getBoundingClientRect();
-        const railBounds = rail.getBoundingClientRect();
-        expect(railBounds.left).toBeCloseTo(inputBounds.left, 1);
-        expect(railBounds.right).toBeCloseTo(inputBounds.right, 1);
-        expect(railBounds.bottom).toBeCloseTo(inputBounds.top + 1, 1);
-        expect(getComputedStyle(surface).borderTopLeftRadius).toBe("0px");
-        expect(getComputedStyle(surface).borderTopRightRadius).toBe("0px");
-        expect(getComputedStyle(surface).borderBottomLeftRadius).not.toBe("0px");
-      }
-      await mounted.setViewport(DEFAULT_VIEWPORT);
 
       const actionButtons = document.querySelectorAll<HTMLButtonElement>(
         'button[aria-label="Queued follow-up actions"]',
@@ -9314,19 +9500,7 @@ describe("ChatView transcript geometry (full app)", () => {
   describe("queue paused by Stop", () => {
     const queuedPrompt = "queued prompt held after stop";
     const stoppedTurnId = TurnId.makeUnsafe("turn-stopped-by-user");
-    const turnStartText = (request: (typeof wsRequests)[number]): string | null =>
-      request._tag === ORCHESTRATION_WS_METHODS.dispatchCommand &&
-      typeof request.command === "object" &&
-      request.command !== null &&
-      "type" in request.command &&
-      request.command.type === "thread.turn.start" &&
-      "message" in request.command &&
-      typeof request.command.message === "object" &&
-      request.command.message !== null &&
-      "text" in request.command.message &&
-      typeof request.command.message.text === "string"
-        ? request.command.message.text
-        : null;
+
     const sentQueuedPrompt = () =>
       wsRequests.some((request) => turnStartText(request)?.includes(queuedPrompt) === true);
 
@@ -11208,6 +11382,99 @@ describe("ChatView transcript geometry (full app)", () => {
       await mounted.cleanup();
     }
   });
+
+  it.each([
+    { attentionFirst: false, reminderSeen: false, newerClientCompletion: false },
+    { attentionFirst: true, reminderSeen: true, newerClientCompletion: false },
+    { attentionFirst: true, reminderSeen: false, newerClientCompletion: false },
+    { attentionFirst: true, reminderSeen: true, newerClientCompletion: true },
+  ])(
+    "reopens a snapshot project with attentionFirst=$attentionFirst and reminderSeen=$reminderSeen, newerClientCompletion=$newerClientCompletion",
+    async ({ attentionFirst, reminderSeen, newerClientCompletion }) => {
+      const base = createSnapshotForTargetUser({
+        targetMessageId: MessageId.makeUnsafe("snapshot-project-order"),
+        targetText: "Open the existing project",
+      });
+      const neutral = {
+        ...base.threads[0]!,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+        messages: [],
+        latestUserMessageAt: "2026-01-01T00:00:00.000Z",
+      };
+      const reminderId = OTHER_THREAD_ID;
+      const newestId = ThreadId.makeUnsafe("snapshot-project-newest");
+      const reminder = {
+        ...neutral,
+        id: reminderId,
+        title: "Returned reminder",
+        session: { ...neutral.session!, threadId: reminderId },
+        createdAt: "2026-02-01T00:00:00.000Z",
+        updatedAt: "2026-02-01T00:00:00.000Z",
+        latestUserMessageAt: "2026-02-01T00:00:00.000Z",
+        snoozeReminderAt: "2026-02-02T00:00:00.000Z",
+      };
+      const newest = {
+        ...neutral,
+        id: newestId,
+        title: "Latest project chat",
+        session: { ...neutral.session!, threadId: newestId },
+        createdAt: "2026-03-01T00:00:00.000Z",
+        updatedAt: "2026-03-01T00:00:00.000Z",
+        latestUserMessageAt: "2026-03-01T00:00:00.000Z",
+      };
+      localStorage.setItem(
+        "synara:app-settings:v1",
+        JSON.stringify({
+          sidebarThreadSortOrder: "updated_at",
+          sidebarThreadAttentionFirst: attentionFirst,
+        }),
+      );
+      const mounted = await mountChatView({
+        viewport: DEFAULT_VIEWPORT,
+        snapshot: { ...base, threads: [neutral, reminder, newest] },
+      });
+      try {
+        if (reminderSeen)
+          useStore.getState().markThreadVisited(reminderId, "2026-02-03T00:00:00.000Z");
+        if (newerClientCompletion) {
+          // This update arrives after the response snapshot was captured. The
+          // stale response must not overwrite the client's newer completed turn.
+          useStore.getState().syncServerReadModel({
+            ...base,
+            snapshotSequence: base.snapshotSequence + 1,
+            threads: [
+              neutral,
+              {
+                ...reminder,
+                latestTurn: {
+                  turnId: TurnId.makeUnsafe("new-client-completion"),
+                  state: "completed",
+                  requestedAt: "2026-02-04T00:00:00.000Z",
+                  startedAt: "2026-02-04T00:00:01.000Z",
+                  completedAt: "2026-02-04T00:01:00.000Z",
+                  assistantMessageId: null,
+                },
+              },
+              newest,
+            ],
+          });
+        }
+        await page.getByRole("button", { name: "Add project", exact: true }).click();
+        await page.getByLabelText("Project folder path").fill("/repo/project");
+        await page.getByRole("button", { name: "Create project", exact: true }).click();
+        const expectedId =
+          attentionFirst && (!reminderSeen || newerClientCompletion) ? reminderId : newestId;
+        await waitForURL(
+          mounted.router,
+          (path) => path === `/${expectedId}`,
+          "Snapshot project opening ignored the attention preference or visited reminder state.",
+        );
+      } finally {
+        await mounted.cleanup();
+      }
+    },
+  );
 
   it("creates a project from the sidebar Create Project dialog and shows it in the sidebar", async () => {
     const mounted = await mountChatView({
@@ -14753,38 +15020,7 @@ describe("ChatView transcript geometry (full app)", () => {
     }
   });
 
-  it("joins live file changes to the composer without queued messages", async () => {
-    const mounted = await mountChatView({
-      viewport: DEFAULT_VIEWPORT,
-      snapshot: createSnapshotWithActiveFileChanges(),
-    });
-    try {
-      await expect.element(page.getByText("2 files changed", { exact: true })).toBeVisible();
-      expect(document.querySelector('[data-testid="queued-follow-up-row"]')).toBeNull();
-      for (const viewport of [DEFAULT_VIEWPORT, { name: "narrow", width: 480, height: 640 }]) {
-        await mounted.setViewport(viewport);
-        const surface = document.querySelector<HTMLElement>(".chat-composer-surface")!;
-        const rail = page
-          .getByText("2 files changed", { exact: true })
-          .element()
-          .closest<HTMLElement>(".chat-composer-stacked-top")!;
-        const inputBounds = surface.getBoundingClientRect();
-        const railBounds = rail.getBoundingClientRect();
-        expect(railBounds.left).toBeCloseTo(inputBounds.left, 1);
-        expect(railBounds.right).toBeCloseTo(inputBounds.right, 1);
-        expect(railBounds.bottom).toBeCloseTo(inputBounds.top + 1, 1);
-        expect(getComputedStyle(rail).borderTopLeftRadius).toBe(
-          getComputedStyle(surface).borderBottomLeftRadius,
-        );
-        expect(getComputedStyle(surface).borderTopLeftRadius).toBe("0px");
-        expect(getComputedStyle(surface).borderTopRightRadius).toBe("0px");
-      }
-    } finally {
-      await mounted.cleanup();
-    }
-  });
-
-  it("aligns the inline plan card with the composer input", async () => {
+  it("shows the skinny inline plan card for active turn plans", async () => {
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
       snapshot: createSnapshotWithActiveInlinePlan(),
@@ -14814,14 +15050,15 @@ describe("ChatView transcript geometry (full app)", () => {
       expect(transcriptPane!.getBoundingClientRect().bottom).toBeGreaterThan(
         taskListCard!.getBoundingClientRect().top + 1,
       );
-      // Active plan activity shares the input width and a continuous outline.
+      // Active plan activity shares the centered queued-follow-up rail, intentionally inset to
+      // fourteen fifteenths of the composer width while the input keeps its rounded top corners.
       const taskRect = taskListCard!.getBoundingClientRect();
       const composerRect = composerShell!.getBoundingClientRect();
-      expect(Math.abs(taskRect.width - composerRect.width)).toBeLessThanOrEqual(2);
+      expect(Math.abs(taskRect.width - (composerRect.width * 14) / 15)).toBeLessThanOrEqual(2);
       expect(
         Math.abs(taskRect.left + taskRect.width / 2 - (composerRect.left + composerRect.width / 2)),
       ).toBeLessThanOrEqual(1);
-      expect(getComputedStyle(composerShell!).borderTopLeftRadius).toBe("0px");
+      expect(parseFloat(getComputedStyle(composerShell!).borderTopLeftRadius)).toBeGreaterThan(0);
 
       const openPlanButton = await waitForElement(
         () => document.querySelector<HTMLButtonElement>('button[title="Open tasks sidebar"]'),
@@ -15127,6 +15364,121 @@ describe("ChatView transcript geometry (full app)", () => {
     } finally {
       await mounted.cleanup();
     }
+  });
+
+  describe("inline visual choice draft ownership", () => {
+    it.each(["attachment", "empty"] as const)(
+      "keeps %s composer ownership when selecting a follow-up",
+      async (mode) => {
+        const base = createSnapshotForTargetUser({
+          targetMessageId: MessageId.makeUnsafe("visual-user"),
+          targetText: "Show a visual",
+        });
+        const visualId = `vis_${(mode === "attachment" ? "a" : "b").repeat(32)}`;
+        const turnId = TurnId.makeUnsafe("visual-choice-turn");
+        const snapshot = {
+          ...base,
+          threads: base.threads.map((thread) => ({
+            ...thread,
+            latestTurn: {
+              turnId,
+              state: "completed" as const,
+              requestedAt: isoAt(150),
+              startedAt: isoAt(150),
+              completedAt: isoAt(153),
+              assistantMessageId: MessageId.makeUnsafe("visual-answer"),
+            },
+            messages: [
+              {
+                ...createUserMessage({
+                  id: MessageId.makeUnsafe("visual-user"),
+                  text: "Show a visual",
+                  offsetSeconds: 150,
+                }),
+                turnId,
+              },
+              {
+                ...createAssistantMessage({
+                  id: MessageId.makeUnsafe("visual-answer"),
+                  text: `\`\`\`synara-visual\n${visualId}\n\`\`\``,
+                  offsetSeconds: 152,
+                }),
+                turnId,
+              },
+            ],
+            activities: [
+              {
+                id: EventId.makeUnsafe("visual-choice-activity"),
+                kind: "visual.shown" as const,
+                tone: "info" as const,
+                summary: "Visual",
+                createdAt: isoAt(151),
+                turnId,
+                payload: {
+                  visualId,
+                  format: "components",
+                  title: "Follow up",
+                  height: 200,
+                  byteLength: 50,
+                  sha256: "a".repeat(64),
+                },
+              },
+            ],
+          })),
+        };
+        const restoreNativeApi = installDeterministicSendNativeApi();
+        const mounted = await mountChatView({ viewport: DEFAULT_VIEWPORT, snapshot });
+        try {
+          if (mode === "attachment") {
+            useComposerDraftStore.getState().addImages(THREAD_ID, [
+              createComposerImage({
+                id: "private-draft-image",
+                name: "private.png",
+                previewUrl: "blob:private-draft-image",
+              }),
+            ]);
+          }
+          await expect
+            .element(page.getByRole("button", { name: /Visual follow up/ }))
+            .toBeVisible();
+          const before = wsRequests.filter((request) =>
+            turnStartText(request)?.includes("Follow up from visual"),
+          ).length;
+          await page.getByRole("button", { name: /Visual follow up/ }).click();
+          if (mode === "attachment") {
+            await vi.waitFor(() =>
+              expect(useComposerDraftStore.getState().draftsByThreadId[THREAD_ID]?.prompt).toBe(
+                "Follow up from visual",
+              ),
+            );
+            await waitForLayout();
+            expect(
+              wsRequests.filter((request) =>
+                turnStartText(request)?.includes("Follow up from visual"),
+              ),
+            ).toHaveLength(before);
+            expect(
+              useComposerDraftStore
+                .getState()
+                .draftsByThreadId[THREAD_ID]?.images.map((image) => image.id),
+            ).toEqual(["private-draft-image"]);
+          } else {
+            await waitForLayout();
+
+            await vi.waitFor(() =>
+              expect(
+                wsRequests.filter((request) =>
+                  turnStartText(request)?.includes("Follow up from visual"),
+                ),
+              ).toHaveLength(before + 1),
+            );
+          }
+        } finally {
+          await mounted.cleanup();
+          restoreNativeApi();
+        }
+      },
+    );
   });
 
   describe("effort retry", () => {
