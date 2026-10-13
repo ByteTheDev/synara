@@ -4,30 +4,44 @@ on:
     branches: [work/computer-use-engine-1911]
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: computer-engine-work-1911
   cancel-in-progress: true
 jobs:
   prepare:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v5
         with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-workspace
-      - name: Export pinned dependencies and runtimes
-        shell: bash
-        run: |
-          mkdir -p /tmp/computer-engine-toolchain/bin
-          cp -L "$(command -v bun)" /tmp/computer-engine-toolchain/bin/bun
-          cp -L "$(command -v node)" /tmp/computer-engine-toolchain/bin/node
-          find node_modules apps packages scripts -type d -name node_modules -prune -print0 | tar --null -T - -czf /tmp/computer-engine-toolchain/dependencies.tar.gz
-          bun --version > /tmp/computer-engine-toolchain/versions.txt
-          node --version >> /tmp/computer-engine-toolchain/versions.txt
-      - uses: actions/upload-artifact@v4
-        with:
+          github-token: ${{ github.token }}
+          run-id: 38434751063
           name: computer-engine-toolchain
           path: /tmp/computer-engine-toolchain
-          retention-days: 3
+      - run: split -b 350M /tmp/computer-engine-toolchain/dependencies.tar.gz /tmp/dependencies.part-
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependencies-aa
+          path: /tmp/dependencies.part-aa
+          retention-days: 2
           compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependencies-ab
+          path: /tmp/dependencies.part-ab
+          retention-days: 2
+          compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependencies-ac
+          path: /tmp/dependencies.part-ac
+          retention-days: 2
+          compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engine-runtimes
+          path: |
+            /tmp/computer-engine-toolchain/bin
+            /tmp/computer-engine-toolchain/versions.txt
+          retention-days: 2
