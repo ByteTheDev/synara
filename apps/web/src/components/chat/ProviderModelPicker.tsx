@@ -577,47 +577,45 @@ export const ProviderModelMenuItems = function ProviderModelMenuItems(
         ))}
       </div>
     ) : filteredOptions.length > 0 ? (
-        <MenuRadioGroup
-          aria-label={`${providerLabel} models`}
-          value={isActiveAccount ? activeModelSlug : ""}
-          onValueChange={(value) => handleModelChange(provider, value, instanceId)}
-        >
-          <ProviderModelOptionGroupList
-            key={`${provider}:${instanceId}`}
-            options={filteredOptions}
-            provider={provider}
-            instanceId={instanceId}
-            activeModel={activeModelSlug}
-            isSearching={normalizedModelSearchQuery.length > 0}
-            {...(onAfterSelection ? { onAfterSelection } : {})}
-          />
-        </MenuRadioGroup>
-      ) : provider === "omp" && normalizedModelSearchQuery.length === 0 ? (
-        <div
-          role="status"
-          aria-live="polite"
-          aria-label="Couldn’t load OMP models. Check that omp is installed and authenticated."
-          tabIndex={-1}
-          className="text-ui-sm flex items-start gap-1.5 px-2 py-2 text-amber-600 dark:text-amber-300/90"
-        >
-          <TriangleAlertIcon className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-          <span>Couldn’t load OMP models — check that omp is installed and authenticated</span>
-        </div>
-      ) : (
-        <div
-          role="status"
-          className="flex flex-col items-center gap-2 px-4 py-6 text-center text-muted-foreground"
-        >
-          <SearchIcon aria-hidden="true" className="size-5 opacity-60" />
-          <span className="text-ui text-foreground">
+      <MenuRadioGroup
+        aria-label={`${providerLabel} models`}
+        value={isActiveAccount ? activeModelSlug : ""}
+        onValueChange={(value) => handleModelChange(provider, value, instanceId)}
+      >
+        <ProviderModelOptionGroupList
+          key={`${provider}:${instanceId}`}
+          options={filteredOptions}
+          provider={provider}
+          instanceId={instanceId}
+          activeModel={activeModelSlug}
+          isSearching={normalizedModelSearchQuery.length > 0}
+          {...(onAfterSelection ? { onAfterSelection } : {})}
+        />
+      </MenuRadioGroup>
+    ) : provider === "omp" && normalizedModelSearchQuery.length === 0 ? (
+      <div
+        role="status"
+        aria-live="polite"
+        aria-label="Couldn’t load OMP models. Check that omp is installed and authenticated."
+        tabIndex={-1}
+        className="text-ui-sm flex items-start gap-1.5 px-2 py-2 text-amber-600 dark:text-amber-300/90"
+      >
+        <TriangleAlertIcon className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+        <span>Couldn’t load OMP models — check that omp is installed and authenticated</span>
+      </div>
+    ) : (
+      <div
+        role="status"
+        className="flex flex-col items-center gap-2 px-4 py-6 text-center text-muted-foreground"
+      >
+        <SearchIcon aria-hidden="true" className="size-5 opacity-60" />
+        <span className="text-ui text-foreground">
           {provider === "pi" && normalizedModelSearchQuery.length === 0
             ? "No Pi models found"
             : "No matches"}
         </span>
         {normalizedModelSearchQuery.length > 0 ? (
-          <span className="text-ui-sm">
-            Try a different model or provider name.
-          </span>
+          <span className="text-ui-sm">Try a different model or provider name.</span>
         ) : null}
       </div>
     );
@@ -727,9 +725,7 @@ export const ProviderModelMenuItems = function ProviderModelMenuItems(
                   {accountIcon}
                   <span className="truncate">{accountLabel}</span>
                 </MenuSubTrigger>
-                <ComposerPickerMenuSubPopup
-                  className={COMPOSER_PICKER_MODEL_PANEL_CLASS_NAME}
-                >
+                <ComposerPickerMenuSubPopup className={COMPOSER_PICKER_MODEL_PANEL_CLASS_NAME}>
                   {renderModelRadioGroup(option.value, account.instanceId)}
                 </ComposerPickerMenuSubPopup>
               </MenuSub>

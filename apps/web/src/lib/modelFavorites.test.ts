@@ -1,6 +1,10 @@
 import { ProviderKind } from "@synara/contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { FAVORITE_MODEL_STORAGE_KEYS, favoriteModelStorageKey, readFavoriteModelSlugs } from "./modelFavorites";
+import {
+  FAVORITE_MODEL_STORAGE_KEYS,
+  favoriteModelStorageKey,
+  readFavoriteModelSlugs,
+} from "./modelFavorites";
 
 describe("model favourites", () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -30,15 +34,19 @@ describe("model favourites", () => {
 
   it("keeps legacy favourites on the default account and scoped favourites on their owner", () => {
     vi.stubGlobal("localStorage", {
-      getItem: (key: string) => key === FAVORITE_MODEL_STORAGE_KEYS.opencode
-        ? JSON.stringify([
-            "legacy-model",
-            favoriteModelStorageKey("opencode_work", "shared-model"),
-            favoriteModelStorageKey("opencode", "shared-model"),
-          ])
-        : null,
+      getItem: (key: string) =>
+        key === FAVORITE_MODEL_STORAGE_KEYS.opencode
+          ? JSON.stringify([
+              "legacy-model",
+              favoriteModelStorageKey("opencode_work", "shared-model"),
+              favoriteModelStorageKey("opencode", "shared-model"),
+            ])
+          : null,
     });
-    expect(readFavoriteModelSlugs("opencode", "opencode")).toEqual(["legacy-model", "shared-model"]);
+    expect(readFavoriteModelSlugs("opencode", "opencode")).toEqual([
+      "legacy-model",
+      "shared-model",
+    ]);
     expect(readFavoriteModelSlugs("opencode", "opencode_work")).toEqual(["shared-model"]);
     expect(readFavoriteModelSlugs("opencode", "opencode_removed")).toEqual([]);
   });

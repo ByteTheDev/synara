@@ -14,6 +14,7 @@ import {
   displayProvenanceWithinProvider,
   formatProviderModelOptionName,
   getOmpModelSelectionIssue,
+  groupProviderModelOptions,
   groupProviderModelOptionsWithFavorites,
   mergeDynamicModelOptions,
   providerModelCostMultiplierLabel,

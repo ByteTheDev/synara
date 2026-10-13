@@ -91,6 +91,43 @@ const MANY_OPENCODE_MODELS = Array.from({ length: 16 }, (_, index) => ({
   upstreamProviderName: index % 2 === 0 ? "OpenAI" : "Anthropic",
 })) satisfies ReadonlyArray<ProviderModelOption & { slug: ModelSlug }>;
 
+const MANY_CURSOR_MODELS = Array.from({ length: 16 }, (_, index) => ({
+  slug: `cursor-model-${index + 1}` as ModelSlug,
+  name: `${index % 2 === 0 ? "GPT" : "Claude"} Cursor ${index + 1}`,
+  upstreamProviderId: index % 2 === 0 ? "openai" : "anthropic",
+  upstreamProviderName: index % 2 === 0 ? "OpenAI" : "Anthropic",
+})) satisfies ReadonlyArray<ProviderModelOption & { slug: ModelSlug }>;
+
+const CURSOR_FAVORITE_SORT_MODELS = [
+  {
+    slug: "cursor-claude-favorite-sort" as ModelSlug,
+    name: "Claude Cursor Favorite Sort",
+    upstreamProviderId: "anthropic",
+    upstreamProviderName: "Anthropic",
+  },
+  {
+    slug: "cursor-gpt-favorite-sort" as ModelSlug,
+    name: "GPT Cursor Favorite Sort",
+    upstreamProviderId: "openai",
+    upstreamProviderName: "OpenAI",
+  },
+] satisfies ReadonlyArray<ProviderModelOption & { slug: ModelSlug }>;
+
+const PI_FAVORITE_SORT_MODELS = [
+  {
+    slug: "anthropic/claude-pi-favorite-sort" as ModelSlug,
+    name: "Claude Pi Favorite Sort",
+    upstreamProviderId: "anthropic",
+    upstreamProviderName: "Anthropic",
+  },
+  {
+    slug: "openai/gpt-pi-favorite-sort" as ModelSlug,
+    name: "GPT Pi Favorite Sort",
+    upstreamProviderId: "openai",
+    upstreamProviderName: "OpenAI",
+  },
+] satisfies ReadonlyArray<ProviderModelOption & { slug: ModelSlug }>;
+
 const LONG_CLINE_MODEL = {
   slug: "muse-spark-contributor" as ModelSlug,
   name: "Muse Spark 1.3 Contributor Extended Context Preview",
@@ -643,8 +680,20 @@ describe("ProviderModelPicker", () => {
   it("keeps same-slug favourites independent across provider accounts", async () => {
     const model = MODEL_OPTIONS_BY_PROVIDER.opencode[0]!;
     const providerInstances = [
-      { instanceId: "opencode", provider: "opencode", label: "Personal", enabled: true, isDefault: true },
-      { instanceId: "opencode_work", provider: "opencode", label: "Work", enabled: true, isDefault: false },
+      {
+        instanceId: "opencode",
+        provider: "opencode",
+        label: "Personal",
+        enabled: true,
+        isDefault: true,
+      },
+      {
+        instanceId: "opencode_work",
+        provider: "opencode",
+        label: "Work",
+        enabled: true,
+        isDefault: false,
+      },
     ] satisfies ProviderModelPickerInstance[];
     let mounted = await mountPicker({
       provider: "opencode",
@@ -652,13 +701,19 @@ describe("ProviderModelPicker", () => {
       lockedProvider: "opencode",
       providerInstances,
       selectedProviderInstanceId: "opencode_work",
-      providers: [providerStatus("opencode"), providerStatus("opencode", { instanceId: "opencode_work" })],
+      providers: [
+        providerStatus("opencode"),
+        providerStatus("opencode", { instanceId: "opencode_work" }),
+      ],
     });
     try {
       await page.getByRole("button", { name: /Work/ }).click();
-      await page.getByRole("button", { name: `Add ${model.name} to favourites`, exact: true }).click();
-      expect(JSON.parse(localStorage.getItem(FAVORITE_MODEL_STORAGE_KEYS.opencode) ?? "null"))
-        .toEqual([favoriteModelStorageKey("opencode_work", model.slug)]);
+      await page
+        .getByRole("button", { name: `Add ${model.name} to favourites`, exact: true })
+        .click();
+      expect(
+        JSON.parse(localStorage.getItem(FAVORITE_MODEL_STORAGE_KEYS.opencode) ?? "null"),
+      ).toEqual([favoriteModelStorageKey("opencode_work", model.slug)]);
       expect(mounted.onProviderModelChange).not.toHaveBeenCalled();
       await mounted.cleanup();
       mounted = await mountPicker({
@@ -667,14 +722,19 @@ describe("ProviderModelPicker", () => {
         lockedProvider: "opencode",
         providerInstances,
         selectedProviderInstanceId: "opencode",
-        providers: [providerStatus("opencode"), providerStatus("opencode", { instanceId: "opencode_work" })],
+        providers: [
+          providerStatus("opencode"),
+          providerStatus("opencode", { instanceId: "opencode_work" }),
+        ],
       });
       await page.getByRole("button", { name: /Personal/ }).click();
       await expect.element(page.getByText("Favourites", { exact: true })).not.toBeInTheDocument();
-      await expect.element(page.getByRole("button", { name: `Add ${model.name} to favourites`, exact: true }))
+      await expect
+        .element(page.getByRole("button", { name: `Add ${model.name} to favourites`, exact: true }))
         .toHaveAttribute("aria-pressed", "false");
-      expect(JSON.parse(localStorage.getItem(FAVORITE_MODEL_STORAGE_KEYS.opencode) ?? "null"))
-        .toEqual([favoriteModelStorageKey("opencode_work", model.slug)]);
+      expect(
+        JSON.parse(localStorage.getItem(FAVORITE_MODEL_STORAGE_KEYS.opencode) ?? "null"),
+      ).toEqual([favoriteModelStorageKey("opencode_work", model.slug)]);
       expect(mounted.onProviderModelChange).not.toHaveBeenCalled();
     } finally {
       await mounted.cleanup();
@@ -795,15 +855,7 @@ describe("ProviderModelPicker", () => {
       provider: "cline",
       model: LONG_CLINE_MODEL.slug,
       lockedProvider: null,
-      providers: [
-        {
-          provider: "cline",
-          status: "ready",
-          available: true,
-          authStatus: "authenticated",
-          checkedAt: "2026-09-15T00:00:00.000Z",
-        },
-      ],
+      providers: [providerStatus("cline", { checkedAt: "2026-09-15T00:00:00.000Z" })],
       modelOptionsByProvider: { ...MODEL_OPTIONS_BY_PROVIDER, cline: MANY_CLINE_MODELS },
     });
 

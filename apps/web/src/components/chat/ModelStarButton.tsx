@@ -31,9 +31,7 @@ export function ModelStarButton(props: {
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        props.onToggle(
-          event.currentTarget === event.currentTarget.ownerDocument.activeElement,
-        );
+        props.onToggle(event.currentTarget === event.currentTarget.ownerDocument.activeElement);
       }}
       onPointerDown={(event) => event.stopPropagation()}
       onKeyDown={(event) => event.stopPropagation()}
