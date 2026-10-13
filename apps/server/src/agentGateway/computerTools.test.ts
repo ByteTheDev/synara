@@ -6026,3 +6026,92 @@ describe("computer engine recovery and efficiency", () => {
     }
   });
 });
+
+describe("conditional readiness barriers", () => {
+  it("exposes disappearance and exact-value waits without sending input", async () => {
+    const { call, backend } = await setup();
+    const absent = resultJson(
+      await call("computer_wait", {
+        duration_ms: 0,
+        label: "Missing",
+        window_id: "fake-calculator",
+        absent: true,
+        include_screenshot: false,
+      }),
+    );
+    expect(absent).toMatchObject({ status: "ready", checks: 1 });
+    const value = resultJson(
+      await call("computer_wait", {
+        duration_ms: 0,
+        label: "Display",
+        window_id: "fake-calculator",
+        value_equals: "not the display value",
+        include_screenshot: false,
+      }),
+    );
+    expect(value).toMatchObject({ status: "timeout", checks: 1 });
+    expect(backend.callsFor("click")).toHaveLength(0);
+  });
+
+  it("stops the batch before input even when an unmet wait says continue_on_error", async () => {
+    const { call, backend } = await setup();
+    const result = resultJson(
+      await call("computer_run", {
+        include_screenshot: false,
+        steps: [
+          {
+            type: "wait",
+            duration_ms: 0,
+            window_id: "fake-calculator",
+            label: "Display",
+            value_equals: "not ready",
+            continue_on_error: true,
+          },
+          { type: "click", window_id: "fake-calculator", label: "1" },
+        ],
+      }),
+    );
+    expect(result).toMatchObject({ stopped: true, stoppedReason: "control_not_ready" });
+    expect(backend.callsFor("click")).toHaveLength(0);
+  });
+
+  it("prevalidates the entire batch before dispatching an earlier input", async () => {
+    const { call, backend } = await setup();
+    const result = await call("computer_run", {
+      steps: [
+        { type: "click", window_id: "fake-calculator", label: "1" },
+        {
+          type: "wait",
+          duration_ms: 10,
+          label: "Display",
+          window_id: "fake-calculator",
+          absent: true,
+          value_equals: "x",
+        },
+      ],
+    });
+    expect(result.isError).toBe(true);
+    expect(backend.callsFor("click")).toHaveLength(0);
+  });
+
+  it.each([
+    { absent: true },
+    { value_equals: "" },
+    { stable_ms: 1 },
+    { label: "Display", stable_ms: 11 },
+    { label: "Display", stable_ms: 0.5 },
+    { label: "Display", value_equals: "x", settle: true },
+  ])("rejects invalid wait combinations %j", async (condition) => {
+    const { call } = await setup();
+    expect(
+      (
+        await call("computer_wait", {
+          duration_ms: 10,
+          window_id: "fake-calculator",
+          include_screenshot: false,
+          ...condition,
+        })
+      ).isError,
+    ).toBe(true);
+  });
+});

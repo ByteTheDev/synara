@@ -7,7 +7,7 @@ import {
 } from "../computer/computerElementIdentity.ts";
 import { makeComputerSpaceTools } from "./computerSpaceTools.ts";
 import { cursorToolActivity } from "../computer/cursorActivity.ts";
-import { waitForControl } from "../computer/waitForControl.ts";
+import { waitForControl, type ComputerControlWaitOptions } from "../computer/waitForControl.ts";
 import {
   assertDesktopOperationActive,
   desktopOperationSignal,
@@ -1158,6 +1158,54 @@ function readWaitDurationMs(args: Record<string, unknown>): number {
   const value = readNumberArg(args, "duration_ms");
   if (value === undefined) throw new ToolInputError('Missing required argument "duration_ms".');
   return Math.min(COMPUTER_WAIT_MAX_MS, Math.max(0, Math.floor(value)));
+}
+
+const CONTROL_WAIT_PROPERTIES = {
+  absent: { type: "boolean", description: "Wait for the named control to disappear." },
+  value_equals: {
+    type: "string",
+    maxLength: COMPUTER_TEXT_MAX_LENGTH,
+    description:
+      "Wait for an exact accessibility value, including empty text. Not app save/upload proof.",
+  },
+  stable_ms: {
+    type: "integer",
+    minimum: 0,
+    maximum: COMPUTER_WAIT_MAX_MS,
+    description: "Require matching observations across this interval, within duration_ms.",
+  },
+} as const;
+
+function readControlWaitOptions(
+  args: Record<string, unknown>,
+  durationMs: number,
+): ComputerControlWaitOptions {
+  const absent = readBooleanArg(args, "absent") === true;
+  const valueEquals = args.value_equals;
+  const stableMs = readNumberArg(args, "stable_ms");
+  if (
+    valueEquals !== undefined &&
+    (typeof valueEquals !== "string" || valueEquals.length > COMPUTER_TEXT_MAX_LENGTH)
+  )
+    throw new ToolInputError('"value_equals" must be bounded text.');
+  if (
+    stableMs !== undefined &&
+    (!Number.isInteger(stableMs) || stableMs < 0 || stableMs > durationMs)
+  )
+    throw new ToolInputError('"stable_ms" must be an integer within duration_ms.');
+  if (absent && valueEquals !== undefined)
+    throw new ToolInputError('"absent" cannot combine with "value_equals".');
+  return {
+    absent,
+    ...(typeof valueEquals === "string" ? { valueEquals } : {}),
+    ...(stableMs === undefined ? {} : { stableMs }),
+  };
+}
+
+function hasControlWaitCondition(options: ComputerControlWaitOptions): boolean {
+  return (
+    options.absent === true || options.valueEquals !== undefined || options.stableMs !== undefined
+  );
 }
 
 function isToolResult(value: unknown): value is McpToolCallResult {
@@ -2594,6 +2642,8 @@ export function makeAgentGatewayComputerTools(
       "window_id",
       "windowId",
       "absent",
+      "value_equals",
+      "stable_ms",
     ],
     activate_window: ["window_id", "windowId"],
     launch_app: ["app", "arguments", "wait_for_window", "hidden"],
@@ -2731,19 +2781,19 @@ export function makeAgentGatewayComputerTools(
       }
       case "wait": {
         const durationMs = readWaitDurationMs(step);
-        const absent = readBooleanArg(step, "absent") === true;
+        const condition = readControlWaitOptions(step, durationMs);
         const raw = readScreenshotTarget(step);
         if (readBooleanArg(step, "settle") === true) {
           if (
             !raw.windowId ||
-            absent ||
+            hasControlWaitCondition(condition) ||
             raw.ref !== undefined ||
             raw.refOrdinal !== undefined ||
             raw.label !== undefined ||
             raw.role !== undefined
           )
             throw new ToolInputError(
-              "A settle step requires window_id and cannot combine with an element or absent.",
+              "A settle step requires window_id and cannot combine with a control condition.",
             );
           const windowId = raw.windowId;
           return async () => ({ windowId, ...(await manager.waitForSettle(windowId, durationMs)) });
@@ -2771,11 +2821,11 @@ export function makeAgentGatewayComputerTools(
               target,
               durationMs,
               desktopOperationSignal(),
-              { absent },
+              condition,
             );
         }
-        if (absent) {
-          throw new ToolInputError('A "wait" step with "absent" requires an element target.');
+        if (hasControlWaitCondition(condition)) {
+          throw new ToolInputError('A conditional "wait" step requires an element target.');
         }
         return async () => {
           if (durationMs > 0)
@@ -3112,7 +3162,7 @@ export function makeAgentGatewayComputerTools(
 
     const steps: Record<string, unknown>[] = [];
     let stopped = false;
-    let stoppedReason: "no_usable_window" | "surface_not_settled" | undefined;
+    let stoppedReason: "no_usable_window" | "surface_not_settled" | "control_not_ready" | undefined;
     // The window the last step touched scopes the closing state read.
     let lastWindowId: string | undefined;
     for (const [index, preparedStep] of prepared.entries()) {
@@ -3179,6 +3229,19 @@ export function makeAgentGatewayComputerTools(
           // A planned click cannot safely consume a still-changing layout.
           stopped = true;
           stoppedReason = "surface_not_settled";
+          break;
+        }
+        if (
+          preparedStep.type === "wait" &&
+          typeof value === "object" &&
+          value !== null &&
+          "status" in value &&
+          value.status !== "ready"
+        ) {
+          // Readiness is a barrier, not a best-effort delay. Even continue_on_error
+          // cannot authorize input whose preceding condition was not established.
+          stopped = true;
+          stoppedReason = "control_not_ready";
           break;
         }
         if (
@@ -3592,7 +3655,7 @@ export function makeAgentGatewayComputerTools(
       requiresActiveTurn: true,
       definition: {
         name: "computer_wait",
-        description: `Wait for delayed content without sending input or changing focus. Prefer label plus window_id when you know the next control: duration_ms is then a maximum, and the tool returns as soon as that unique control appears, with a screenshot by default. Target it by label afterward so a layout change cannot leave stale coordinates. An unavailable accessibility tree returns immediately; use the screenshot and do not repeat semantic waits until the environment changes. Or pass settle:true plus window_id to return as soon as the window's accessibility surface stops changing — duration_ms is again the maximum — or after a fixed pause reported as mode:"fixed" when it cannot be watched. Without label or settle this is a fixed pause with no screenshot. Never repeat the preceding action merely because a page is still loading. Waiting is capped at ${COMPUTER_WAIT_MAX_MS} ms; one accessibility read may finish after the deadline.`,
+        description: `Observe without input or focus changes. With label and window_id, return when a unique control appears; absent:true waits for disappearance, value_equals checks its exact accessibility value, and stable_ms requires matching observations over time. Unavailable or incomplete negative evidence returns immediately. A screenshot is included by default for control waits. settle:true instead watches layout quiet; fallback is labeled fixed. Without a condition this is a fixed pause. AX readiness is not renderer, upload, or save proof. Never replay preceding input. Maximum ${COMPUTER_WAIT_MAX_MS} ms; an in-flight AX read may finish after the deadline.`,
         inputSchema: {
           type: "object",
           properties: {
@@ -3619,6 +3682,7 @@ export function makeAgentGatewayComputerTools(
               description:
                 "Wait for the window's accessibility surface to go quiet instead of for a named control. Requires window_id; cannot combine with label.",
             },
+            ...CONTROL_WAIT_PROPERTIES,
             ...INCLUDE_ACTION_SCREENSHOT_PROPERTY,
           },
           required: ["duration_ms"],
@@ -3628,8 +3692,14 @@ export function makeAgentGatewayComputerTools(
       },
       handler: handle("computer_wait", async (args, context) => {
         const durationMs = readWaitDurationMs(args);
-        if (args.label !== undefined && readBooleanArg(args, "settle") === true)
-          throw new Error("A settle wait cannot combine with label; pick one observation mode.");
+        const condition = readControlWaitOptions(args, durationMs);
+        if (
+          (args.label !== undefined || hasControlWaitCondition(condition)) &&
+          readBooleanArg(args, "settle") === true
+        )
+          throw new ToolInputError("A settle wait cannot combine with a control condition.");
+        if (args.label === undefined && hasControlWaitCondition(condition))
+          throw new ToolInputError("A conditional wait requires a nonempty label and window_id.");
         if (args.label !== undefined) {
           const target = readTarget(args, context);
           if (!target.windowId || !target.label?.trim()) {
@@ -3652,11 +3722,13 @@ export function makeAgentGatewayComputerTools(
             target,
             durationMs,
             desktopOperationSignal(),
+            condition,
           );
           const result = { computerId: manager.computerId, ...readiness };
           if (
             readBooleanArg(args, "include_screenshot") === false ||
-            readiness.status === "closed"
+            readiness.status === "closed" ||
+            readiness.windowClosed === true
           ) {
             return result;
           }
@@ -4710,7 +4782,7 @@ export function makeAgentGatewayComputerTools(
     actionEntry(
       "computer_run",
       "Run computer actions",
-      'Batch up to 25 known desktop steps in one call, such as {"steps":[{"type":"press_key","key":"tab","window_id":"..."}]}. Each step uses type plus the matching computer_ tool fields; computer_help({tool:"computer_" + type}) lists exact fields. All steps are validated before dispatch and keep targeting, consent and refusal checks. Read state before acting; use get_state or if_element/unless_element for changes between steps. Stops on failure unless continue_on_error:true. No per-step screenshots or browser steps; an optional final screenshot covers the affected window.',
+      'Batch up to 25 known desktop steps in one call, such as {"steps":[{"type":"press_key","key":"tab","window_id":"..."}]}. Each step uses type plus the matching computer_ tool fields; computer_help({tool:"computer_" + type}) lists exact fields. All steps are validated before dispatch and keep targeting, consent and refusal checks. Read state before acting; use get_state or if_element/unless_element for changes between steps. Stops on failure unless continue_on_error:true; unmet wait/settle barriers always stop before the next input. No per-step screenshots or browser steps; an optional final screenshot covers the affected window.',
       {
         type: "object",
         properties: {
