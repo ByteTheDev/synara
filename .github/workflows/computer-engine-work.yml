@@ -9,21 +9,119 @@ concurrency:
   group: computer-engine-work-1911
   cancel-in-progress: true
 jobs:
-  baseline:
+  validation:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
+    env:
+      TURBO_TELEMETRY_DISABLED: '1'
+      DO_NOT_TRACK: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
     steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Preserve candidate transport
+        run: |
+          mkdir -p "$RUNNER_TEMP/attachment-input" "$RUNNER_TEMP/attachment-checks"
+          cp .github/attachment-candidate-*.b64 .github/attachment-candidate-manifest.json .github/apply-attachment-candidate.py "$RUNNER_TEMP/attachment-input/"
       - uses: actions/checkout@v6
         with:
           ref: 73868ddbd0670975a1e7b05c475172f4ca64cecf
           persist-credentials: false
-      - name: Export exact published baseline
+      - name: Verify exact candidate
+        run: python3 "$RUNNER_TEMP/attachment-input/apply-attachment-candidate.py" "$GITHUB_WORKSPACE"
+      - uses: ./.github/actions/setup-workspace
+      - name: Formatting lint and Windows boundaries
+        id: static
+        continue-on-error: true
+        shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/baseline"
-          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/baseline/source.tar.gz"
-          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/baseline/identity.txt"
+          set +e
+          failed=0
+          for check in fmt:check lint windows-runtime:check; do
+            bun run "$check" > "$RUNNER_TEMP/attachment-checks/${check//:/-}.log" 2>&1
+            code=$?; echo "$check=$code" | tee -a "$RUNNER_TEMP/attachment-checks/results.txt"
+            if [ "$code" -ne 0 ]; then failed=1; tail -60 "$RUNNER_TEMP/attachment-checks/${check//:/-}.log"; fi
+          done
+          exit "$failed"
+      - name: Targeted server readiness attachment and gateway tests
+        id: server
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          bun run --cwd apps/server test src/computer/waitForControl.test.ts src/computer/waitForControl.conditions.test.ts src/computer/computerAuditLog.test.ts src/agentGateway/computerAttachmentTools.test.ts src/agentGateway/computerTools.test.ts src/agentGateway/computerToolPermission.test.ts src/agentGateway/computerBrowserTools.test.ts src/agentGateway/browserTools.test.ts src/agentGateway/computerGuidance.test.ts src/agentGateway/computerRecoveryGuidance.test.ts 2>&1 | tee "$RUNNER_TEMP/attachment-checks/server-tests.log"
+      - name: Desktop upload selection verification tests
+        id: desktop
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          bun run --cwd apps/desktop test src/browserAutomation/workspaceUpload.test.ts 2>&1 | tee "$RUNNER_TEMP/attachment-checks/desktop-tests.log"
+      - name: Workspace typecheck
+        id: types
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          bun run typecheck -- --concurrency=1 2>&1 | tee "$RUNNER_TEMP/attachment-checks/typecheck.log"
+      - name: Record exact outcomes
+        if: always()
+        run: |
+          printf 'static=%s\nserver=%s\ndesktop=%s\ntypes=%s\n' '${{ steps.static.outcome }}' '${{ steps.server.outcome }}' '${{ steps.desktop.outcome }}' '${{ steps.types.outcome }}' >> "$RUNNER_TEMP/attachment-checks/results.txt"
+          cp "$RUNNER_TEMP/attachment-input/attachment-candidate-manifest.json" "$RUNNER_TEMP/attachment-checks/"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: attachment-readiness-validation
+          path: ${{ runner.temp }}/attachment-checks
+          retention-days: 2
+      - name: Require every applicable check
+        if: always()
+        run: |
+          test '${{ steps.static.outcome }}' = success
+          test '${{ steps.server.outcome }}' = success
+          test '${{ steps.desktop.outcome }}' = success
+          test '${{ steps.types.outcome }}' = success
+  objects:
+    needs: validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Preserve verified transport
+        run: |
+          mkdir -p "$RUNNER_TEMP/attachment-input" "$RUNNER_TEMP/attachment-objects"
+          cp .github/attachment-candidate-*.b64 .github/attachment-candidate-manifest.json .github/apply-attachment-candidate.py "$RUNNER_TEMP/attachment-input/"
+      - uses: actions/checkout@v6
+        with:
+          ref: 73868ddbd0670975a1e7b05c475172f4ca64cecf
+          persist-credentials: false
+      - name: Reconstruct exact validated source
+        run: python3 "$RUNNER_TEMP/attachment-input/apply-attachment-candidate.py" "$GITHUB_WORKSPACE"
+      - name: Materialize only verified Git blobs without updating any ref
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const crypto = require('node:crypto');
+            const manifest = JSON.parse(fs.readFileSync(path.join(process.env.RUNNER_TEMP,'attachment-input/attachment-candidate-manifest.json'),'utf8'));
+            for (const file of manifest.files) {
+              const content = fs.readFileSync(path.join(process.env.GITHUB_WORKSPACE,file.path));
+              const sha = crypto.createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
+              if (sha !== file.sha) throw new Error(`Changed candidate: ${file.path}`);
+              const reply = await github.rest.git.createBlob({...context.repo,content:content.toString('base64'),encoding:'base64'});
+              if (reply.data.sha !== sha) throw new Error(`Blob mismatch: ${file.path}`);
+            }
+            fs.writeFileSync(path.join(process.env.RUNNER_TEMP,'attachment-objects/blobs.json'),JSON.stringify(manifest,null,2));
+            console.log('Verified all 15 Git blobs. No branch, commit, ref, or PR was changed.');
       - uses: actions/upload-artifact@v4
         with:
-          name: computer-use-published-baseline
-          path: ${{ runner.temp }}/baseline
+          name: attachment-readiness-objects
+          path: ${{ runner.temp }}/attachment-objects
           retention-days: 2
