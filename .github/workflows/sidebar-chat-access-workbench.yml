@@ -9,42 +9,78 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-          fetch-depth: 10
+          ref: f1ffd5d5cd58d652a63e07ac7d6c57490a3ec064
       - uses: actions/download-artifact@v4
         with:
           github-token: ${{ github.token }}
-          run-id: 38436818649
+          run-id: 38438340270
           name: sidebar-access-verification
-          path: output/sidebar-access
-      - name: Prepare explicit unread completion fixture
-        run: python3 scripts/sidebar-chat-access-finalize.py prepare
+          path: /tmp/sidebar-access
+      - name: Integrate verified change over the new main commit
+        run: |
+          git apply --check /tmp/sidebar-access/candidate.patch
+          git apply /tmp/sidebar-access/candidate.patch
+          git diff --check
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
-      - name: Check changed fixture and formatting
-        run: python3 scripts/sidebar-chat-access-finalize.py checks
-      - name: Install browser and video encoder
+      - name: Validate clean integrated source
         run: |
-          (cd apps/web && bunx playwright install --with-deps chromium)
-          sudo apt-get install --no-install-recommends -y ffmpeg
-      - name: Verify the two corrected unread and navigation journeys
-        run: python3 scripts/sidebar-chat-access-finalize.py browser
-      - name: Export final candidate objects without changing any branch
-        if: always()
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          root = pathlib.Path('/tmp/sidebar-access')
+          results = {}
+          commands = {
+              'clean-format': ['bun', 'run', 'fmt:check'],
+              'integrated-web-typecheck': ['bun', 'run', '--cwd', 'apps/web', 'typecheck'],
+          }
+          for name, command in commands.items():
+              with (root / f'{name}.log').open('w') as log:
+                  results[name] = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=180).returncode
+              print(name, results[name], flush=True)
+          (root / 'integration-checks.json').write_text(json.dumps(results, indent=2))
+          assert all(code == 0 for code in results.values()), results
+          PY
+      - name: Export clean integrated source objects without changing any ref
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-        run: python3 scripts/sidebar-chat-access-finalize.py export
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess, urllib.request
+          root = pathlib.Path('/tmp/sidebar-access')
+          manifest = json.loads((root / 'manifest.json').read_text())
+          paths = [entry['path'] for entry in manifest if not entry['path'].startswith('docs/pr-screenshots/')]
+          for entry in manifest:
+              if entry['path'] not in paths:
+                  continue
+              data = pathlib.Path(entry['path']).read_bytes()
+              sha = hashlib.sha1(f'blob {len(data)}\0'.encode() + data).hexdigest()
+              if sha != entry['sha']:
+                  request = urllib.request.Request(
+                      f'https://api.github.com/repos/{os.environ["REPOSITORY"]}/git/blobs',
+                      data=json.dumps({'content': base64.b64encode(data).decode(), 'encoding': 'base64'}).encode(),
+                      headers={'Authorization': f'Bearer {os.environ["GH_TOKEN"]}', 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'}, method='POST')
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      blob = json.load(response)
+                  assert blob['sha'] == sha
+                  entry['sha'] = sha
+              (root / 'candidate' / entry['path']).write_bytes(data)
+          subprocess.run(['git', 'add', '-N', '--', *paths], check=True)
+          diff = subprocess.run(['git', 'diff', '--', *paths], capture_output=True, check=True).stdout
+          (root / 'candidate.patch').write_bytes(diff)
+          (root / 'manifest.json').write_text(json.dumps(manifest, indent=2))
+          (root / 'base.txt').write_text('f1ffd5d5cd58d652a63e07ac7d6c57490a3ec064\n')
+          print(json.dumps(manifest, indent=2))
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: sidebar-access-verification
-          path: output/sidebar-access
+          path: /tmp/sidebar-access
           retention-days: 7
-      - name: Require successful validation
-        run: python3 scripts/sidebar-chat-access-finalize.py gate
