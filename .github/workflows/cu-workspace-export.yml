@@ -1,4 +1,4 @@
-name: Computer reliability source snapshot
+name: Computer reliability candidate validation
 
 on:
   push:
@@ -6,21 +6,105 @@ on:
     paths: [.github/workflows/cu-workspace-export.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  snapshot:
+  validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 25
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: 60982507f81a2def5bf749f0065adf21475d2424
+          ref: fa2404553fd07fceb7e6acd90a882f1bb084da57
           persist-credentials: false
-      - name: Archive the exact reviewed source
-        run: git archive --format=tar HEAD | gzip > "$RUNNER_TEMP/synara-source.tar.gz"
+      - name: Apply hash-verified scoped source patches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/cu-evidence"
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess
+          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b']
+          for i, sha in enumerate(shas):
+              result = json.loads(subprocess.check_output(['gh', 'api', f'repos/{os.environ["GITHUB_REPOSITORY"]}/git/blobs/{sha}']))
+              data = base64.b64decode(result['content'])
+              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+              assert actual == sha
+              path = pathlib.Path(os.environ['RUNNER_TEMP']) / f'cu-{i}.patch'
+              path.write_bytes(data)
+              subprocess.run(['git', 'apply', '--check', '--index', str(path)], check=True)
+              subprocess.run(['git', 'apply', '--index', str(path)], check=True)
+          paths = subprocess.check_output(['git', 'diff', 'HEAD', '--name-only']).decode().splitlines()
+          assert len(paths) == 16, paths
+          assert all(p.startswith(('apps/server/src/', 'apps/desktop/src/', 'packages/contracts/src/', 'docs/computer-use-cua/')) for p in paths)
+          evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
+          (evidence / 'paths.txt').write_text('\n'.join(paths) + '\n')
+          PY
+      - uses: ./.github/actions/setup-workspace
+      - name: Format only changed files
+        shell: bash
+        run: |
+          git diff HEAD --name-only -z | xargs -0 ./node_modules/.bin/oxfmt --write
+          git diff HEAD --check
+      - name: Integrated targeted verification
+        shell: bash
+        run: |
+          EVIDENCE="$RUNNER_TEMP/cu-evidence"
+          check() {
+            local name="$1"; shift
+            set +e
+            "$@" 2>&1 | tee "$EVIDENCE/$name.log"
+            local code=${PIPESTATUS[0]}
+            set -e
+            printf '%s\t%s\n' "$name" "$code" >> "$EVIDENCE/results.tsv"
+          }
+          check server-tests bun run --cwd apps/server test src/computer/ComputerApprovalGate.test.ts src/computer/ComputerApprovalGate.recovery.test.ts src/computer/CuaComputerBackend.test.ts src/computer/ComputerManager.test.ts src/agentGateway/computerTools.test.ts src/agentGateway/computerBrowserTools.test.ts src/agentGateway/computerGuidance.test.ts src/agentGateway/computerProgressGuard.test.ts src/agentGateway/computerForegroundConsent.test.ts
+          check desktop-tests bun run --cwd apps/desktop test src/escapeKillSwitchMonitor.test.ts
+          check contracts-tests bun run --cwd packages/contracts test src/computer.test.ts
+          check formatting bun run fmt:check
+          check lint bun run lint
+          check typecheck bun run typecheck
+          check windows-runtime bun run windows-runtime:check
+      - name: Export candidate blobs and evidence without updating any branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess
+          evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
+          expected = (evidence / 'paths.txt').read_text().splitlines()
+          paths = subprocess.check_output(['git', 'diff', 'HEAD', '--name-only']).decode().splitlines()
+          assert paths == expected, 'Unexpected tracked changes outside the candidate'
+          subprocess.run(['git', 'diff', 'HEAD', '--check'], check=True)
+          (evidence / 'candidate.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD', '--binary']))
+          (evidence / 'status.txt').write_bytes(subprocess.check_output(['git', 'status', '--short']))
+          manifest = {'parent': subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip(), 'files': []}
+          for name in paths:
+              data = pathlib.Path(name).read_bytes()
+              payload = json.dumps({'content': base64.b64encode(data).decode(), 'encoding': 'base64'})
+              result = subprocess.run(['gh', 'api', '--method', 'POST', f'repos/{os.environ["GITHUB_REPOSITORY"]}/git/blobs', '--input', '-'], input=payload, text=True, capture_output=True, check=True)
+              sha = json.loads(result.stdout)['sha']
+              assert sha == hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+              manifest['files'].append({'path': name, 'mode': '100644', 'type': 'blob', 'sha': sha, 'sha256': hashlib.sha256(data).hexdigest()})
+          (evidence / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+          subprocess.run(['tar', '-czf', str(evidence / 'changed-files.tar.gz'), '-T', str(evidence / 'paths.txt')], check=True)
+          print(json.dumps(manifest, indent=2))
+          PY
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: synara-source-60982507
-          path: ${{ runner.temp }}/synara-source.tar.gz
-          retention-days: 1
+          name: computer-reliability-candidate
+          path: ${{ runner.temp }}/cu-evidence/
+          retention-days: 3
+      - name: Report verification outcome
+        if: always()
+        shell: bash
+        run: |
+          test -f "$RUNNER_TEMP/cu-evidence/results.tsv"
+          cat "$RUNNER_TEMP/cu-evidence/results.tsv"
+          awk -F '\t' 'BEGIN { n=0; failed=0 } { n++; if ($2 != "0") failed=1 } END { exit (n != 7 || failed) }' "$RUNNER_TEMP/cu-evidence/results.tsv"
