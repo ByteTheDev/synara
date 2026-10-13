@@ -12,7 +12,7 @@ describe("approval expiry and the computer progress guard", () => {
   it("does not treat an expired card as a repeated dispatch or target refusal", () => {
     const guard = new ComputerProgressGuard();
     for (let attempt = 0; attempt < 4; attempt += 1) {
-      guard.record(action, { effect: "not-dispatched", code: "approval_timed_out" });
+      guard.record(action, { effect: "not-dispatched", code: "approval_expired" });
       expect(guard.check(action)).toBe(undefined);
     }
   });
@@ -21,7 +21,7 @@ describe("approval expiry and the computer progress guard", () => {
     const guard = new ComputerProgressGuard();
     guard.record(action, { effect: "dispatched-unknown" });
     guard.record(action, { effect: "dispatched-unknown" });
-    guard.record(action, { effect: "not-dispatched", code: "approval_timed_out" });
+    guard.record(action, { effect: "not-dispatched", code: "approval_expired" });
     expect(guard.check(action)).toMatchObject({
       code: "repeated_unverified_action",
       previousInputMayHaveTakenEffect: true,
@@ -30,8 +30,8 @@ describe("approval expiry and the computer progress guard", () => {
 
   it("never lets a timeout code relabel an uncertain effect as undispatched", () => {
     const guard = new ComputerProgressGuard();
-    guard.record(action, { effect: "dispatched-unknown", code: "approval_timed_out" });
-    guard.record(action, { effect: "dispatched-unknown", code: "approval_timed_out" });
+    guard.record(action, { effect: "dispatched-unknown", code: "approval_expired" });
+    guard.record(action, { effect: "dispatched-unknown", code: "approval_expired" });
     expect(guard.check(action)).toMatchObject({ code: "repeated_unverified_action" });
   });
 });

@@ -25,7 +25,7 @@ describe("computer recovery playbooks", () => {
     expect(recovery).toContain("dispatched-unknown still forbids replay");
     expect(recovery).toContain("not solved by alternating paste, keys or scroll");
     expect(recovery).toContain("a fresh screenshot alone does not reset the guard");
-    expect(recovery).toContain("approval_timed_out means no decision and no input");
+    expect(recovery).toContain("approval_expired means no decision and no input");
     expect(recovery).toContain("An explicit decline or cancel remains binding");
     expect(recovery).toContain("permission denial needs user action");
   });

@@ -29,14 +29,11 @@ describe("Computer approval expiry", () => {
       vi.useFakeTimers();
       const { gate, input, opened, dismissed } = fixture();
       const pending = gate[method](input);
-      const expired =
-        method === "requestTask"
-          ? expect(pending).resolves.toBe(false)
-          : expect(pending).rejects.toMatchObject({
-              code: "approval_timed_out",
-              effect: "not-dispatched",
-              retryable: true,
-            });
+      const expired = expect(pending).rejects.toMatchObject({
+        code: "approval_expired",
+        effect: "not-dispatched",
+        retryable: true,
+      });
       await vi.advanceTimersByTimeAsync(EXPIRY_MS);
       await expired;
       expect(dismissed).toEqual([`${opened[0]}:cancel`]);
@@ -56,10 +53,10 @@ describe("Computer approval expiry", () => {
     vi.useFakeTimers();
     const { gate, input, opened } = fixture();
     const first = expect(gate.requestForegroundTask(input)).rejects.toMatchObject({
-      code: "approval_timed_out",
+      code: "approval_expired",
     });
     const second = expect(gate.requestForegroundTask(input)).rejects.toMatchObject({
-      code: "approval_timed_out",
+      code: "approval_expired",
     });
     expect(opened).toHaveLength(1);
     await vi.advanceTimersByTimeAsync(EXPIRY_MS);
@@ -100,7 +97,7 @@ describe("Computer approval expiry", () => {
           return new Promise(() => {});
         },
       }),
-    ).rejects.toMatchObject({ code: "approval_timed_out" });
+    ).rejects.toMatchObject({ code: "approval_expired" });
     await vi.advanceTimersByTimeAsync(EXPIRY_MS);
     await expired;
     expect(gate.respond("thread", staleId, "accept")).toBe(false);

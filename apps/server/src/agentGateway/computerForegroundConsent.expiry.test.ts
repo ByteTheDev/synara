@@ -1,11 +1,13 @@
 import { Effect } from "effect";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ComputerApprovalGate } from "../computer/ComputerApprovalGate.ts";
-import { CuaActionError } from "../computer/CuaComputerBackend.ts";
+import {
+  ComputerApprovalExpiredError,
+  ComputerApprovalGate,
+} from "../computer/ComputerApprovalGate.ts";
 import { makeComputerForegroundConsent } from "./computerForegroundConsent.ts";
 import { ComputerProgressGuard } from "./computerProgressGuard.ts";
-import { computerAuditErrorOutcome, cuaActionErrorPayload } from "./computerTools.ts";
+import { computerAuditErrorOutcome } from "./computerTools.ts";
 import type { ToolContext } from "./toolRuntime.ts";
 
 const context = {
@@ -43,7 +45,7 @@ function fixture() {
 describe("foreground approval expiry at the tool boundary", () => {
   afterEach(() => vi.useRealTimers());
 
-  it("reports no dispatch in the tool payload and audit without arming the retry guard", async () => {
+  it("propagates no-dispatch expiry to the tool boundary and audit without arming the retry guard", async () => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const { request, consent, cards, gate } = fixture();
     const guard = new ComputerProgressGuard();
@@ -53,15 +55,16 @@ describe("foreground approval expiry at the tool boundary", () => {
       await vi.waitFor(() => expect(cards).toHaveLength(attempt + 1));
       await vi.advanceTimersByTimeAsync(5 * 60_000);
       const error = await pending;
-      expect(error).toBeInstanceOf(CuaActionError);
-      const failure = error as CuaActionError;
-      expect(cuaActionErrorPayload(failure)).toMatchObject({
-        error: "approval_timed_out",
+      expect(error).toBeInstanceOf(ComputerApprovalExpiredError);
+      const failure = error as ComputerApprovalExpiredError;
+      expect(failure).toMatchObject({
+        code: "approval_expired",
         effect: "not-dispatched",
-        retryAllowed: false,
+        retryable: true,
+        message: expect.any(String),
       });
       const outcome = computerAuditErrorOutcome(failure);
-      expect(outcome).toMatchObject({ effect: "not-dispatched", code: "approval_timed_out" });
+      expect(outcome).toMatchObject({ effect: "not-dispatched", code: "approval_expired" });
       guard.record(action, outcome);
       expect(guard.check(action)).toBeUndefined();
       expect(await consent.resolveForegroundAuthorization(context)).toEqual({

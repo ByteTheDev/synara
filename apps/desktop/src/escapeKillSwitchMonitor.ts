@@ -115,8 +115,8 @@ export class EscapeKillSwitchMonitor {
         error: armed ? "input_monitor_starting" : "input_monitor_idle",
       });
     if (armed) {
-      this.#writeCommand("arm");
       this.#watchReadiness();
+      this.#writeCommand("arm");
     } else {
       this.#writeCommand("disarm");
       if (this.#restartTimer) {
@@ -184,8 +184,8 @@ export class EscapeKillSwitchMonitor {
     // A fresh helper starts disarmed; replay the armed side of the gate so a
     // respawn does not silently widen the window where Escape is inert.
     if (this.#armed) {
-      this.#writeCommand("arm");
       this.#watchReadiness();
+      this.#writeCommand("arm");
     }
   }
 

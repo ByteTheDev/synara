@@ -70,6 +70,7 @@ import {
   type ComputerBackendActionResult,
   type ComputerBrowserCallResult,
   type ComputerCaptureRequest,
+  type ComputerClipboardPayload,
   type ComputerStreamFrame,
   type ComputerMenuTarget,
   type ComputerResolvedTarget,
@@ -1531,6 +1532,7 @@ export class ComputerManager {
     actionPoint?: ComputerPoint,
     threadId?: string,
     settle = true,
+    followOpenedWindow?: (capture: ComputerCapturedWindow) => boolean,
   ): Promise<ComputerActionObservation | undefined> {
     return this.withComputerCall(async () => {
       // A name only when the call did not already take one: an observed
@@ -1546,7 +1548,7 @@ export class ComputerManager {
         }
       }
       return timedComputerLeg("observe", () =>
-        this.captureActionObservation(windowIdHint, actionPoint, threadId),
+        this.captureActionObservation(windowIdHint, actionPoint, threadId, followOpenedWindow),
       );
     });
   }
@@ -1608,6 +1610,7 @@ export class ComputerManager {
     windowIdHint: string | undefined,
     actionPoint: ComputerPoint | undefined,
     threadId: string | undefined,
+    followOpenedWindow: ((capture: ComputerCapturedWindow) => boolean) | undefined,
   ): Promise<ComputerActionObservation | undefined> {
     if (windowIdHint !== undefined) {
       // An action's own observation must not become a way to photograph a
@@ -1625,6 +1628,7 @@ export class ComputerManager {
             windowId: windowIdHint,
           },
           threadId,
+          followOpenedWindow,
         );
       } catch {
         try {
@@ -1653,6 +1657,7 @@ export class ComputerManager {
               windowId: pointWindowId,
             },
             threadId,
+            followOpenedWindow,
           );
         } catch {
           // The window vanished between the listing and the capture. It was
@@ -1667,6 +1672,7 @@ export class ComputerManager {
           agentFocusOnly: true,
         }),
         threadId,
+        followOpenedWindow,
       );
     } catch {
       return undefined;
@@ -1686,16 +1692,20 @@ export class ComputerManager {
    * answers it truthfully: a window that was not there before is the outcome,
    * so photograph that instead.
    *
-   * Checked against the pre-action window set before the gateway decides
-   * whether to reuse a delivered frame. This is best effort — the action already
-   * happened, and a perception failure must never turn its success into an
-   * error.
+   * The gateway permits this fallback only when the original target matches
+   * its latest delivered frame. A changed or previously unseen target keeps
+   * its own pixels. This is best effort — the action already happened, and a
+   * perception failure must never turn its success into an error.
    */
   private async observeActionCapture(
     capture: ComputerCapturedWindow,
     _threadId?: string,
+    followOpenedWindow?: (capture: ComputerCapturedWindow) => boolean,
   ): Promise<ComputerActionObservation> {
     const observation = capture;
+    // The caller owns delivered-frame comparison; the manager captures the
+    // target once and never guesses whether its pixels were already seen.
+    if (followOpenedWindow?.(capture) === false) return observation;
     const appeared = await this.windowOpenedByAction(capture.windowId);
     if (appeared === undefined) return observation;
     // A denied window the action opened — a password prompt, a security
@@ -3493,31 +3503,47 @@ export class ComputerManager {
    * but it still goes through the keyboard-target path, so it lands exactly
    * where computer_type_text would and nowhere else.
    *
-   * `clipboardRestored` reports whether the previous contents went back. A
-   * clipboard holding an image or other non-text content cannot be preserved
-   * by this text-only route, so it is refused before writing. A newer clipboard
-   * value is left alone; text read/compare/write is not an atomic OS transaction.
+   * Native preservation retains every representation without returning it to
+   * the model. The text-only fallback refuses unreadable or non-text contents
+   * before writing; text read/compare/write is not an atomic OS transaction.
+   * `clipboardRestored` reports whether the previous contents went back.
+   * Restoration must not overwrite a newer human clipboard write.
    */
   async paste(
     threadId: string | undefined,
-    text: string,
+    content: string | ComputerClipboardPayload,
     windowId?: string,
   ): Promise<ComputerActionResult & { readonly clipboardRestored: boolean }> {
     return this.withDesktopControl(threadId, async () => {
-      const read = this.backend.readClipboard?.bind(this.backend);
-      const write = this.backend.writeClipboard?.bind(this.backend);
-      if (!read || !write) throw clipboardUnsupportedError();
-      // Resolve the keyboard target before touching the human's clipboard.
+      const payload = typeof content === "string" ? { text: content } : content;
+      // Validate the destination before temporarily touching the user's clipboard.
       await timedComputerLeg("resolve", () => this.prepareKeyboardTarget(windowId, threadId));
-      const previous = await timedComputerLeg("dispatch", () => read().catch(() => undefined));
-      if (previous === undefined)
-        throw new CuaActionError(
-          "The existing clipboard cannot be preserved as text. Use type_text or an upload control; the clipboard was not changed.",
-          "not-dispatched",
-          "clipboard_preservation_unavailable",
-        );
-      assertDesktopOperationActive();
-      await timedComputerLeg("dispatch", () => write(text));
+      const prepare = this.backend.prepareClipboardPaste?.bind(this.backend);
+      let restore: () => Promise<boolean>;
+      if (prepare) {
+        assertDesktopOperationActive();
+        restore = await timedComputerLeg("dispatch", () => prepare(payload));
+      } else {
+        const read = this.backend.readClipboard?.bind(this.backend);
+        const write = this.backend.writeClipboard?.bind(this.backend);
+        if (!read || !write || !("text" in payload)) throw clipboardUnsupportedError();
+        const previous = await timedComputerLeg("dispatch", () => read().catch(() => undefined));
+        if (previous === undefined)
+          throw new CuaActionError(
+            "The existing clipboard cannot be preserved as text. Use type_text or an upload control; the clipboard was not changed.",
+            "not-dispatched",
+            "clipboard_preservation_unavailable",
+          );
+        assertDesktopOperationActive();
+        await timedComputerLeg("dispatch", () => write(payload.text));
+        restore = async () => {
+          // Text comparison cannot detect a same-value competing clipboard write.
+          const current = await read().catch(() => undefined);
+          if (current !== payload.text) return false;
+          await write(previous);
+          return true;
+        };
+      }
       let restored = false;
       let result: ComputerBackendActionResult | void;
       try {
@@ -3531,7 +3557,7 @@ export class ComputerManager {
         // The restore runs whether or not the shortcut dispatched: the payload
         // is already on the clipboard either way, and leaving it there leaks
         // the agent's text into the next paste the human makes.
-        if (previous !== undefined) {
+        await withoutDesktopCancellation(async () => {
           await timedComputerLeg(
             "settle",
             () =>
@@ -3539,22 +3565,15 @@ export class ComputerManager {
                 setTimeout(resolve, COMPUTER_PASTE_RESTORE_MS);
               }),
           );
-          // This text-only backend cannot compare a pasteboard generation.
-          // At least refuse to overwrite a visibly newer value or an image.
-          const current = await read().catch(() => undefined);
-          if (current === text) {
-            restored = await write(previous).then(
-              () => true,
-              () => false,
-            );
-          }
-        }
+          restored = await restore().then(
+            (value) => value,
+            () => false,
+          );
+        });
       }
       return {
         ...this.actionResult(threadId, "computer_paste", undefined, result, windowId),
-        // True only when what the user copied is back in place: a clipboard
-        // with no text had nothing to restore, and a failed restore reports
-        // false rather than claim their contents are safe.
+        // False also covers a newer human copy, which must remain untouched.
         clipboardRestored: restored,
       };
     });

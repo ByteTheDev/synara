@@ -1,11 +1,7 @@
 import type { OrchestrationMessage, ProviderApprovalDecision } from "@synara/contracts";
 import { Effect } from "effect";
 
-import {
-  ComputerApprovalTimeoutError,
-  type ComputerApprovalGate,
-} from "../computer/ComputerApprovalGate.ts";
-import { CuaActionError } from "../computer/CuaComputerBackend.ts";
+import type { ComputerApprovalGate } from "../computer/ComputerApprovalGate.ts";
 import {
   COMPUTER_FOREGROUND_NOT_AUTHORIZED,
   computerForegroundScopeChangedSince,
@@ -86,21 +82,12 @@ export function makeComputerForegroundConsent(options: ComputerForegroundConsent
     const before = await options.loadMessages(context.callerThreadId);
     if (before === undefined) return false;
     const beforeMessageId = lastUserRowId(before);
-    const accepted = await options.gate
-      .requestForegroundTask({
-        threadId: context.callerThreadId,
-        turnId: context.callerTurnId,
-        signal,
-        publish: options.publish(name, args, context),
-      })
-      .catch((error: unknown) => {
-        // Translate at the tool boundary so native and browser tools retain
-        // the known no-dispatch effect in both their payload and audit log.
-        // An unanswered card must not arm the uncertain-input progress guard.
-        if (error instanceof ComputerApprovalTimeoutError)
-          throw new CuaActionError(error.message, error.effect, error.code);
-        throw error;
-      });
+    const accepted = await options.gate.requestForegroundTask({
+      threadId: context.callerThreadId,
+      turnId: context.callerTurnId,
+      signal,
+      publish: options.publish(name, args, context),
+    });
     if (!accepted) return false;
     const messages = await options.loadMessages(context.callerThreadId);
     if (messages === undefined || computerForegroundScopeChangedSince(messages, beforeMessageId))
