@@ -780,9 +780,24 @@ export const makeAgentGateway = Effect.gen(function* () {
               }
               // An identical send may have committed after our snapshot read. Reuse
               // its durable time; the engine still validates the full command identity.
+              const events = yield* eventStore.readThreadEvents({
+                threadId: target.id,
+                throughSequenceInclusive: receipt.value.resultSequence,
+                limit: 1,
+                eventTypes: ["thread.turn-start-requested", "thread.turn-queued"],
+              });
+              const accepted = events[0];
+              if (
+                !accepted ||
+                accepted.sequence !== receipt.value.resultSequence ||
+                accepted.commandId !== followupCommandId ||
+                (accepted.type !== "thread.turn-start-requested" &&
+                  accepted.type !== "thread.turn-queued")
+              )
+                return yield* Effect.fail(error);
               return yield* orchestrationEngine.dispatch({
                 ...command,
-                createdAt: receipt.value.acceptedAt,
+                createdAt: accepted.payload.createdAt,
               });
             }),
           ),

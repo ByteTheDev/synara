@@ -384,6 +384,7 @@ function makeHarnessLayer(
     readonly threadDetails?: ReadonlyMap<string, OrchestrationThread>;
     readonly hubCoordinator?: boolean;
     readonly dispatch?: (typeof OrchestrationEngineService)["Service"]["dispatch"];
+    readonly readThreadEvents?: (typeof OrchestrationEventStore)["Service"]["readThreadEvents"];
     readonly commandReceipts?: (typeof OrchestrationCommandReceiptRepository)["Service"];
     readonly failDispatch?: (command: OrchestrationCommand) => boolean;
     readonly dispatchDelayMs?: number;
@@ -642,26 +643,29 @@ function makeHarnessLayer(
         ),
       ),
     getThreadTitleHighWaterSequence: () => Effect.succeed(0),
-    readThreadEvents: (input: {
-      threadId: string;
-      throughSequenceInclusive: number;
-      beforeSequenceExclusive?: number;
-      limit: number;
-      eventTypes?: ReadonlyArray<string>;
-    }) =>
-      Effect.succeed(
-        (options.diagnosticEvents ?? [])
-          .filter((event) => event.aggregateId === input.threadId)
-          .filter((event) => event.sequence <= input.throughSequenceInclusive)
-          .filter(
-            (event) => event.sequence < (input.beforeSequenceExclusive ?? Number.MAX_SAFE_INTEGER),
-          )
-          .filter(
-            (event) => input.eventTypes === undefined || input.eventTypes.includes(event.type),
-          )
-          .toSorted((left, right) => right.sequence - left.sequence)
-          .slice(0, input.limit),
-      ),
+    readThreadEvents:
+      options.readThreadEvents ??
+      ((input: {
+        threadId: string;
+        throughSequenceInclusive: number;
+        beforeSequenceExclusive?: number;
+        limit: number;
+        eventTypes?: ReadonlyArray<string>;
+      }) =>
+        Effect.succeed(
+          (options.diagnosticEvents ?? [])
+            .filter((event) => event.aggregateId === input.threadId)
+            .filter((event) => event.sequence <= input.throughSequenceInclusive)
+            .filter(
+              (event) =>
+                event.sequence < (input.beforeSequenceExclusive ?? Number.MAX_SAFE_INTEGER),
+            )
+            .filter(
+              (event) => input.eventTypes === undefined || input.eventTypes.includes(event.type),
+            )
+            .toSorted((left, right) => right.sequence - left.sequence)
+            .slice(0, input.limit),
+        )),
     readThreadEventsFromSequence: (
       threadId: string,
       sequenceExclusive: number,
@@ -5076,7 +5080,7 @@ describe("AgentGateway", () => {
       const engineLayer = OrchestrationEngineLive.pipe(
         Layer.provide(OrchestrationProjectionPipelineLive),
         Layer.provideMerge(OrchestrationProjectionSnapshotQueryLive),
-        Layer.provide(OrchestrationEventStoreLive),
+        Layer.provideMerge(OrchestrationEventStoreLive),
         Layer.provideMerge(OrchestrationCommandReceiptRepositoryLive),
         Layer.provide(SqlitePersistenceMemory),
         Layer.provide(ServerSettingsService.layerTest()),
@@ -5086,6 +5090,7 @@ describe("AgentGateway", () => {
       return Effect.gen(function* () {
         const engine = yield* OrchestrationEngineService;
         const receipts = yield* OrchestrationCommandReceiptRepository;
+        const eventStore = yield* OrchestrationEventStore;
         const snapshots = yield* ProjectionSnapshotQuery;
         yield* engine.dispatch({
           type: "project.create",
@@ -5113,6 +5118,7 @@ describe("AgentGateway", () => {
           hubCoordinator: true,
           dispatch: engine.dispatch,
           commandReceipts: receipts,
+          readThreadEvents: eventStore.readThreadEvents,
           // Hold the gateway's read snapshot behind the real engine's committed projection.
           threadDetails: new Map([[caller.id, { ...caller, messages: [source] }]]),
         });
