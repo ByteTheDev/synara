@@ -27,8 +27,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cu-evidence"
           python3 - <<'PY'
           import base64, hashlib, json, os, pathlib, subprocess
-          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b', '1b75ed35c27db27f2bb75e32649c95cb99194ac3', '1eacd5a314e37a21dfbcd28348ca54840b060398']
+          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b', '1b75ed35c27db27f2bb75e32649c95cb99194ac3', '1eacd5a314e37a21dfbcd28348ca54840b060398', 'c0fbafb54c487665bd2566aec5e9aba3870bf7ad']
           for i, sha in enumerate(shas):
+              if i == 6:
+                  (pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-pre-isolation.ts').write_bytes(pathlib.Path('apps/server/src/agentGateway/computerTools.ts').read_bytes())
               result = json.loads(subprocess.check_output(['gh', 'api', f'repos/{os.environ["GITHUB_REPOSITORY"]}/git/blobs/{sha}']))
               data = base64.b64decode(result['content'])
               assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
@@ -46,7 +48,7 @@ jobs:
           assert all(p.startswith(('apps/server/src/', 'apps/desktop/src/', 'packages/contracts/src/', 'docs/computer-use-cua/')) for p in paths)
           evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
           (evidence / 'paths.txt').write_text('\n'.join(paths) + '\n')
-          (evidence / 'prior-evidence.json').write_text(json.dumps({'integrated_run': 38418024741, 'unchanged_contracts_run': 38416827890, 'final_edit_scope': ['apps/server/src/agentGateway/computerTools.test.ts']}, indent=2))
+          (evidence / 'prior-evidence.json').write_text(json.dumps({'integrated_run': 38418024741, 'unchanged_contracts_run': 38416827890, 'final_edit_scope': ['apps/server/src/agentGateway/computerTools.ts', 'apps/server/src/agentGateway/computerTools.test.ts']}, indent=2))
           PY
       - uses: ./.github/actions/setup-workspace
       - name: Format only changed files
@@ -54,7 +56,24 @@ jobs:
         run: |
           git diff HEAD --name-only -z | xargs -0 ./node_modules/.bin/oxfmt --write
           git diff HEAD --check
-      - name: Verify final test-only corrections
+      - name: Confirm isolation regression before the repair
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, subprocess
+          root = pathlib.Path(os.environ['RUNNER_TEMP'])
+          source = pathlib.Path('apps/server/src/agentGateway/computerTools.ts')
+          saved = source.read_bytes()
+          try:
+              source.write_bytes((root / 'cu-pre-isolation.ts').read_bytes())
+              with (root / 'cu-evidence/before-isolation.log').open('w') as log:
+                  result = subprocess.run(['bun', 'run', '--cwd', 'apps/server', 'test', 'src/agentGateway/computerTools.test.ts', '-t', 'isolates recovery observations'], stdout=log, stderr=subprocess.STDOUT, timeout=90)
+              (root / 'cu-evidence/before-isolation-exit.txt').write_text(str(result.returncode))
+          finally:
+              source.write_bytes(saved)
+              assert source.read_bytes() == saved
+          PY
+      - name: Verify final affected behavior and types
         shell: bash
         run: |
           EVIDENCE="$RUNNER_TEMP/cu-evidence"
@@ -67,8 +86,8 @@ jobs:
             printf '%s\t%s\n' "$name" "$code" >> "$EVIDENCE/results.tsv"
           }
           check tools-tests bun run --cwd apps/server test src/agentGateway/computerTools.test.ts
-          check formatting ./node_modules/.bin/oxfmt --check apps/server/src/agentGateway/computerTools.test.ts
-          check lint ./node_modules/.bin/oxlint --report-unused-disable-directives apps/server/src/agentGateway/computerTools.test.ts
+          check formatting ./node_modules/.bin/oxfmt --check apps/server/src/agentGateway/computerTools.ts apps/server/src/agentGateway/computerTools.test.ts
+          check lint ./node_modules/.bin/oxlint --report-unused-disable-directives apps/server/src/agentGateway/computerTools.ts apps/server/src/agentGateway/computerTools.test.ts
           check typecheck bun run typecheck
       - name: Export candidate blobs and evidence without updating any branch
         if: always()
