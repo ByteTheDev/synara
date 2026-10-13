@@ -1,0 +1,21 @@
+{
+  "base": "73868ddbd0670975a1e7b05c475172f4ca64cecf",
+  "patchSha256": "5e496e438a48bafc75c938d527091654c46b77cd590cb04554911899b092cf4b",
+  "files": [
+    {"path":"apps/desktop/src/browserAutomation/workspaceUpload.test.ts","sha":"f15bc83de7ca31fe8d2fb2e28293e4bfb381f5bd","sha256":"c6cc655b021ea6b70374b0200f77b211424b0245bee488c940db5a176bbe7b29"},
+    {"path":"apps/desktop/src/browserAutomation/workspaceUpload.ts","sha":"5a81c4179ed5c2a1907b9edc69e7dd22e79f4281","sha256":"9eb354c33274868de4b4b6615017312786bf8d2d055bb8262134ef4f723d3b85"},
+    {"path":"apps/server/src/agentGateway/Layers/AgentGateway.ts","sha":"4bd059e1113cd70d494c0a6c4b88fd99ef849238","sha256":"45e8f8cf80b9462a01d74d66d541ffd2f778ac4b8c135547a4120d678f8289ee"},
+    {"path":"apps/server/src/agentGateway/computerAttachmentTools.test.ts","sha":"2da14c73e49e441cd561a65583bbe224904fd7f6","sha256":"9cde688d3880ebbb42ce89a9c87dbc955e67a040951dd51c0ae679bc21d10682"},
+    {"path":"apps/server/src/agentGateway/computerAttachmentTools.ts","sha":"372ef3939595aafcc4c5cebf41315aee8a89acad","sha256":"3a67ca64ffc07252ae3879804ea6aa7d530cfbbfeccbc4b853029386c415358c"},
+    {"path":"apps/server/src/agentGateway/computerGuidance.ts","sha":"95912e907070650e4019177a4661e8c15ac13c9a","sha256":"2623f19711ca6c38bfd2ef2c5edfe777df032371f06ccc4011e008bd8a942969"},
+    {"path":"apps/server/src/agentGateway/computerToolPermission.ts","sha":"3cdb301fd235ae3e135f7fa9642eca608f564051","sha256":"f9afd2a04f28e3a2341aef52ef24b6bba61d730f58e2bfcb8fda81796e4a51a1"},
+    {"path":"apps/server/src/agentGateway/computerTools.test.ts","sha":"4d0ee2497cdbc333a3214dd46d81f0f8dc1f3558","sha256":"05d5afa3b17ed33b26d5ef853ed8d7f0986ab76dfd2abf066bd4d4c18ee98560"},
+    {"path":"apps/server/src/agentGateway/computerTools.ts","sha":"c559a40b7bb7d70bf634aaaec40e68e3563f777d","sha256":"6cdffc26585d0c5bfb5fbcb6d64c3c7c2561134d239e5466b685aef9acf63574"},
+    {"path":"apps/server/src/computer/computerAuditLog.test.ts","sha":"ee8476af9c4e5b27551d9a4b5323c28cef7f548a","sha256":"fb6fe42911f2a2e050017e303218354ee2962cc31e12f2f6c866694728d09ed4"},
+    {"path":"apps/server/src/computer/computerAuditLog.ts","sha":"b9779c38bc88ce7b474414b0ae358ef5b7297a5d","sha256":"d956d66053ae762bb01db4c0e67c812f1b93f1f8989f00dae26d082cde188a15"},
+    {"path":"apps/server/src/computer/waitForControl.conditions.test.ts","sha":"555941aac64b1a1f286259c42781cf560df41c2f","sha256":"d2405108657197480cc80a2cb4779964ec14756a070abb480d6265fd421fe2b3"},
+    {"path":"apps/server/src/computer/waitForControl.ts","sha":"596cc006d96b5b60c3a8c64b53948d6d7e1d472d","sha256":"56beb733bd997a3b49cb9cc1c931571726316db036efc360b9b0ce4306761cb4"},
+    {"path":"docs/computer-use-cua/attachments-readiness-2026-10-13.md","sha":"3b07121be3d7e627f77697e84bff3ad51cf50669","sha256":"be2c08584f440f350c66f87e057b4e7ed9a9c02d2b2bf8afd98e10e1fe61135d"},
+    {"path":"packages/contracts/src/browserAutomationToolOutputs.ts","sha":"23d9f298a1bed73fe85f6f84c3bdc53cfd3a2517","sha256":"bf2e0a1925e362ce0f71ba605ff98470610f1751df88fb8f25ecd92650215d56"}
+  ]
+}
