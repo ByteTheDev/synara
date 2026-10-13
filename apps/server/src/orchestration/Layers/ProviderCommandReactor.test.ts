@@ -7703,6 +7703,13 @@ describe("ProviderCommandReactor", () => {
         expect(
           harness.sendTurn.mock.calls.filter(([request]) => request.threadId === threadId),
         ).toHaveLength(0);
+        await waitFor(async () =>
+          Boolean(
+            (await readHarnessThread(harness))?.session?.lastError?.includes(
+              PROVIDER_DELIVERY_BLOCK_SUMMARY,
+            ),
+          ),
+        );
         expect((await readHarnessThread(harness))?.session?.lastError).toContain(
           PROVIDER_DELIVERY_BLOCK_SUMMARY,
         );
@@ -18649,7 +18656,8 @@ describe("ProviderCommandReactor", () => {
     it("settles a timed-out target start and keeps the thread usable", async () => {
       const harness = await createHarness({
         threadModelSelection: { provider: "grok", model: "grok-code-fast-1" },
-        commandEventTimeout: Duration.millis(300),
+        // Handoff consumes 90% of this budget; leave time for durable recovery writes.
+        commandEventTimeout: Duration.seconds(2),
       });
       await runFirstGrokTurn(harness);
       harness.startSession.mockImplementationOnce(() => Effect.never);

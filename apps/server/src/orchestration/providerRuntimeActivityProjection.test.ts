@@ -1566,3 +1566,22 @@ it.each(["task.started", "task.updated", "task.completed"] as const)(
     decodeActivityAppendCommand(activities[0]!);
   },
 );
+
+it("persists running-task stop reconciliation for resumed background work", () => {
+  const event = Schema.decodeUnknownSync(ProviderRuntimeEvent)(
+    runtimeEvent({
+      type: "task.updated",
+      eventId: "replayed-running",
+      provider: "devin",
+      turnId: TURN_ID,
+      payload: { taskId: "child", status: "running", reconcilesStop: true, isBackgrounded: true },
+    }),
+  );
+  const activity = projectProviderRuntimeActivities(event)[0]!;
+  expect(activity.payload).toMatchObject({
+    status: "running",
+    reconcilesStop: true,
+    isBackgrounded: true,
+  });
+  decodeActivityAppendCommand(activity);
+});

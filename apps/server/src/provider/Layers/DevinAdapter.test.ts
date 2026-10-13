@@ -1239,7 +1239,12 @@ describe("Devin adapter lifecycle", () => {
           runtimeMode: "full-access",
           cwd: process.cwd(),
         });
-        yield* adapter.sendTurn({ threadId, input: "background the child", attachments: [] });
+        yield* adapter.sendTurn({
+          threadId,
+          input: "background the child",
+          attachments: [],
+          interactionMode: "default",
+        });
         yield* adapter.backgroundTask(threadId, "late-agent");
         yield* flushTimers();
 
@@ -1267,6 +1272,7 @@ describe("Devin adapter lifecycle", () => {
             type: "task.updated",
             payload: expect.objectContaining({
               taskId: "late-agent",
+              interactionMode: "default",
               status: "running",
               isBackgrounded: true,
             }),
@@ -1601,7 +1607,12 @@ describe("Devin adapter lifecycle", () => {
         expect(events).toContainEqual(
           expect.objectContaining({
             type: "task.updated",
-            payload: expect.objectContaining({ taskId: "replayed-shell", status: "running" }),
+            payload: expect.objectContaining({
+              taskId: "replayed-shell",
+              status: "running",
+              reconcilesStop: true,
+              isBackgrounded: true,
+            }),
           }),
         );
         yield* adapter.stopTask(threadId, "replayed-shell");
@@ -4148,6 +4159,9 @@ it.each(["stop", "exit"] as const)(
         expect(events[terminal]?.payload).toMatchObject({
           exitKind: kind === "exit" ? "error" : "graceful",
         });
+        expect(events.filter((event) => event.type === "runtime.error")).toHaveLength(
+          kind === "exit" ? 1 : 0,
+        );
         expect(yield* adapter.hasSession(threadId)).toBe(false);
       }).pipe(
         Effect.scoped,

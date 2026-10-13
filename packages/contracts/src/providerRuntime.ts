@@ -608,6 +608,7 @@ const TaskProgressPayload = Schema.Struct({
 export type TaskProgressPayload = typeof TaskProgressPayload.Type;
 
 const TaskUpdatedPayload = Schema.Struct({
+  reconcilesStop: Schema.optional(Schema.Boolean),
   interactionMode: Schema.optional(ProviderInteractionMode),
   taskId: RuntimeTaskId,
   status: Schema.optional(

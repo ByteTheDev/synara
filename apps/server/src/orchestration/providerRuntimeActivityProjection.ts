@@ -1102,6 +1102,7 @@ export function projectProviderRuntimeActivities(
                   : "Task updated",
           payload: toActivityPayload({
             taskId: event.payload.taskId,
+            ...(event.payload.reconcilesStop ? { reconcilesStop: true } : {}),
             ...(event.payload.interactionMode
               ? { interactionMode: event.payload.interactionMode }
               : {}),

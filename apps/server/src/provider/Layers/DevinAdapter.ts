@@ -2157,6 +2157,16 @@ export function makeDevinAdapter(
     ) =>
       Effect.gen(function* () {
         if (ctx.stopped) return;
+        if (exitKind === "error") {
+          yield* offerRuntimeEvent(ctx.lifecycleGeneration, {
+            type: "runtime.error",
+            ...(yield* makeEventStamp()),
+            provider: PROVIDER,
+            threadId: ctx.threadId,
+            ...(ctx.activeTurnId ? { turnId: ctx.activeTurnId } : {}),
+            payload: { message: "Devin runtime exited unexpectedly.", class: "transport_error" },
+          });
+        }
         ctx.stopped = true;
         clearDevinActiveToolCallIdleState(ctx);
         ctx.devinStallWatchDetectedAt = undefined;
@@ -2389,6 +2399,8 @@ export function makeDevinAdapter(
             payload: {
               taskId: RuntimeTaskId.makeUnsafe(taskId),
               status: "running",
+              reconcilesStop: true,
+              isBackgrounded: "agentId" in task ? task.isBackground : true,
               toolUseId: task.toolCallId,
             },
           });
@@ -4411,6 +4423,7 @@ export function makeDevinAdapter(
             agentId: toolUseId,
             toolCallId: toolUseId,
             turnId: ctx.activeTurnId,
+            interactionMode: ctx.activeInteractionMode,
             isBackground: false,
             status: "running",
           } satisfies DevinSubagentState);
@@ -4462,6 +4475,7 @@ export function makeDevinAdapter(
             taskId: RuntimeTaskId.makeUnsafe(current.agentId),
             status: "running",
             isBackgrounded: true,
+            ...(current.interactionMode ? { interactionMode: current.interactionMode } : {}),
             toolUseId: current.toolCallId,
           },
         });
