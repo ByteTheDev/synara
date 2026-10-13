@@ -32,6 +32,14 @@ corrections = [
         'sha': '2c51124eb1da267c8b70a9379b7f8aa9d75b5c03',
         'sha256': '675361270966cb4554ead07dc72c0c4fd7bf151ccd4a5954df06258f1f9d34c8',
     },
+    {
+        'path': 'apps/server/src/agentGateway/computerAttachmentTools.test.ts',
+        'oldSha': '2da14c73e49e441cd561a65583bbe224904fd7f6',
+        'old': '  const browser = {\n    requiredCapability: "browser:control",\n    definition: { name: "browser_upload" },\n    handler: browserHandler,\n  } as ToolEntry;\n  const computer = {\n    requiredCapability: "computer:control",\n    definition: { name: "computer_browser_upload" },\n    handler: computerHandler,\n  } as ToolEntry;',
+        'new': '  const browser: ToolEntry = {\n    requiredCapability: "browser:control",\n    definition: {\n      name: "browser_upload",\n      description: "Integrated upload fixture",\n      inputSchema: { type: "object" },\n    },\n    handler: browserHandler,\n  };\n  const computer: ToolEntry = {\n    requiredCapability: "computer:control",\n    definition: {\n      name: "computer_browser_upload",\n      description: "Driver upload fixture",\n      inputSchema: { type: "object" },\n    },\n    handler: computerHandler,\n  };',
+        'sha': 'edb030b38a88139e902aad9c05b58ec8dbc0dd9d',
+        'sha256': '8588e8d39cbbffa8c35bd2d52138bcb2c18658133fa227633cd11c39c645a76c',
+    },
 ]
 for fix in corrections:
     file = workspace / fix['path']
@@ -39,7 +47,11 @@ for fix in corrections:
     assert hashlib.sha1(f'blob {len(content)}\0'.encode() + content).hexdigest() == fix['oldSha']
     text = content.decode()
     assert text.count(fix['old']) == 1
-    content = text.replace(fix['old'], fix['new']).encode()
+    text = text.replace(fix['old'], fix['new'])
+    if fix['path'].endswith('computerAttachmentTools.test.ts'):
+        assert text.count(chr(92) * 2 + '0') == 1
+        text = text.replace(chr(92) * 2 + '0', chr(92) + '0')
+    content = text.encode()
     assert hashlib.sha1(f'blob {len(content)}\0'.encode() + content).hexdigest() == fix['sha']
     assert hashlib.sha256(content).hexdigest() == fix['sha256']
     file.write_bytes(content)
@@ -48,6 +60,7 @@ for fix in corrections:
 manifest['typeCorrections'] = corrections
 manifest['serverTestsRun'] = 38450890080
 manifest['desktopTestsRun'] = 38451547054
+manifest['sixPassingWorkspaceTypesRun'] = 38452076265
 (inputs / 'validated-manifest.json').write_text(json.dumps(manifest, indent=2))
 subprocess.run(['git', 'diff', '--check'], cwd=workspace, check=True)
-print('Verified exact final candidate. Server tests: run 38450890080, followed only by the explicit stoppedReason type-union correction. Desktop tests: run 38451547054 on identical desktop files.')
+print('Verified exact final 15-file candidate. Since run 38452076265 only the attachment test fixture changed; no application runtime or contract changed.')
