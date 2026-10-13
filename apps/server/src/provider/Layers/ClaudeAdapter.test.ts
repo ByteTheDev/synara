@@ -15873,3 +15873,46 @@ it.effect("does not retain untagged legacy efforts when the SDK disables them", 
     );
   }).pipe(Effect.provide(harness.layer));
 });
+
+it.effect("reuses verified extended-context alias capabilities through the send wrapper", () => {
+  const harness = makeHarness();
+  setSupportedModels(
+    harness.query,
+    ["opus-one", "opus-two"].map((value) => ({
+      value,
+      resolvedModel: "claude-opus-5",
+      displayName: "Opus",
+      description: "Alias",
+      supportsEffort: true,
+      supportedEffortLevels: ["high"],
+    })),
+  );
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: {
+        provider: "claudeAgent",
+        model: "opus-one",
+        options: { autoCompactWindow: "1m" },
+      },
+    });
+    const discovery = vi.spyOn(harness.query, "supportedModels");
+    const selection = {
+      provider: "claudeAgent" as const,
+      model: "opus-two",
+      options: { autoCompactWindow: "1m" },
+    };
+    assert.equal(yield* adapter.requiresModelSelectionRestart!(THREAD_ID, selection), false);
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "switch",
+      attachments: [],
+      modelSelection: selection,
+    });
+    assert.equal(discovery.mock.calls.length, 1);
+    assert.deepEqual(harness.query.setModelCalls, ["claude-opus-5[1m]"]);
+  }).pipe(Effect.provide(harness.layer));
+});

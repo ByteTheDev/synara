@@ -1215,6 +1215,15 @@ function claudeModelInfoCapabilities(model: ModelInfo) {
   return capabilities;
 }
 
+function claudeContextModelInfo(
+  context: Pick<ClaudeSessionContext, "currentModelInfo" | "verifiedModelInfo">,
+  model: string | undefined,
+): ModelInfo | undefined {
+  return [context.currentModelInfo, context.verifiedModelInfo].find(
+    (candidate) => candidate?.value === model,
+  );
+}
+
 function resolveClaudeRuntimeApiModelId(
   selection: ModelSelection,
   model: ModelInfo | undefined,
@@ -7609,13 +7618,11 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
       Effect.gen(function* () {
         const context = yield* requireSession(threadId);
         if (selection.provider !== PROVIDER) return true;
+        const verifiedModelInfo = claudeContextModelInfo(context, selection.model);
         const sameModel =
           selection.model === context.currentModelInfo?.value ||
-          resolveClaudeRuntimeApiModelId(selection, context.currentModelInfo) ===
+          resolveClaudeRuntimeApiModelId(selection, verifiedModelInfo) ===
             context.currentApiModelId;
-        const verifiedModelInfo = [context.currentModelInfo, context.verifiedModelInfo].find(
-          (model) => model?.value === selection.model,
-        );
         let caps = verifiedModelInfo
           ? claudeModelInfoCapabilities(verifiedModelInfo)
           : sameModel
@@ -7833,9 +7840,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             ? input.modelSelection
             : undefined;
         let discoveredModelInfo = modelSelection
-          ? [context.currentModelInfo, context.verifiedModelInfo].find(
-              (model) => model?.value === modelSelection.model,
-            )
+          ? claudeContextModelInfo(context, modelSelection.model)
           : undefined;
         let turnCaps = modelSelection
           ? discoveredModelInfo
@@ -8193,10 +8198,10 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         }
         const selection = isClaudeCompactionCommand(input.input) ? undefined : input.modelSelection;
         if (selection?.provider === "claudeAgent") {
-          const caps =
-            selection.model === context.currentModelInfo?.value
-              ? context.modelCapabilities
-              : getModelCapabilities(PROVIDER, selection.model);
+          const modelInfo = claudeContextModelInfo(context, selection.model);
+          const caps = modelInfo
+            ? claudeModelInfoCapabilities(modelInfo)
+            : getModelCapabilities(PROVIDER, selection.model);
           if (
             resolveSelectedClaudeAutoCompactWindow(
               selection.model,
