@@ -15737,3 +15737,52 @@ it.effect("switches known Claude models without depending on discovery", () => {
     assert.equal(discover.mock.calls.length, 0);
   }).pipe(Effect.provide(harness.layer));
 });
+
+it.effect("reuses discovered capabilities for unchanged explicit effort", () => {
+  const harness = makeHarness();
+  setSupportedModels(harness.query, [
+    {
+      value: "opus-full-effort",
+      resolvedModel: "claude-opus-5",
+      displayName: "Opus",
+      description: "Alias",
+      supportsEffort: true,
+      supportedEffortLevels: ["high", "xhigh", "max"],
+    },
+  ]);
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    const selection = {
+      provider: "claudeAgent" as const,
+      model: "opus-full-effort",
+      options: { effort: "high" as const },
+    };
+    yield* adapter.startSession({
+      threadId: THREAD_ID,
+      provider: "claudeAgent",
+      runtimeMode: "full-access",
+      modelSelection: selection,
+    });
+    const discover = vi
+      .spyOn(harness.query, "supportedModels")
+      .mockRejectedValue(new Error("discovery unavailable"));
+    assert.equal(yield* adapter.requiresModelSelectionRestart!(THREAD_ID, selection), false);
+    yield* adapter.sendTurn({
+      threadId: THREAD_ID,
+      input: "follow-up",
+      attachments: [],
+      modelSelection: selection,
+    });
+    assert.equal(discover.mock.calls.length, 0);
+    const unsupported = yield* Effect.result(
+      adapter.sendTurn({
+        threadId: THREAD_ID,
+        input: "unsupported",
+        attachments: [],
+        modelSelection: { ...selection, options: { effort: "low" } },
+      }),
+    );
+    assert.equal(unsupported._tag, "Failure");
+    assert.equal(discover.mock.calls.length, 0);
+  }).pipe(Effect.provide(harness.layer));
+});

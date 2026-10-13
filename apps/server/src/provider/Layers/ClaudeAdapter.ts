@@ -7617,7 +7617,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         const apiEffort = getEffectiveClaudeCodeEffort(trimOrNull(selection.options?.effort));
         if (
           caps === EMPTY_MODEL_CAPABILITIES ||
-          apiEffort ||
+          (apiEffort && !sameModel) ||
           (context.session.runtimeMode === "auto" && !sameModel)
         ) {
           const model = yield* verifyClaudeModelSupport({
@@ -7838,11 +7838,23 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           trimOrNull(modelSelection?.options?.effort),
         );
         if (
+          requestedApiEffort &&
+          discoveredModelInfo &&
+          (discoveredModelInfo.supportsEffort === false ||
+            (Array.isArray(discoveredModelInfo.supportedEffortLevels) &&
+              !discoveredModelInfo.supportedEffortLevels.includes(requestedApiEffort)))
+        ) {
+          return yield* new ProviderAdapterValidationError({
+            provider: PROVIDER,
+            operation: "session/reconfigure",
+            issue: `Claude model "${modelSelection?.model}" does not support effort "${requestedApiEffort}" in this runtime.`,
+          });
+        }
+        if (
           modelSelection &&
           (turnCaps === EMPTY_MODEL_CAPABILITIES ||
-            requestedApiEffort ||
-            (context.session.runtimeMode === "auto" &&
-              resolveApiModelId(modelSelection) !== context.currentApiModelId))
+            (!discoveredModelInfo &&
+              (requestedApiEffort || context.session.runtimeMode === "auto")))
         ) {
           const discoveredModel = yield* verifyClaudeModelSupport({
             queryRuntime: context.query,
