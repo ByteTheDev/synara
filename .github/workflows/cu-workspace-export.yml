@@ -1,0 +1,26 @@
+name: Computer reliability source snapshot
+
+on:
+  push:
+    branches: [codex/cu-reliability-workspace-20261013]
+    paths: [.github/workflows/cu-workspace-export.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 60982507f81a2def5bf749f0065adf21475d2424
+          persist-credentials: false
+      - name: Archive the exact reviewed source
+        run: git archive --format=tar HEAD | gzip > "$RUNNER_TEMP/synara-source.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-source-60982507
+          path: ${{ runner.temp }}/synara-source.tar.gz
+          retention-days: 1
