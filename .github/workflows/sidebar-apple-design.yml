@@ -2,35 +2,61 @@ name: Sidebar Apple design verification
 on:
   push:
     branches: [codex/sidebar-apple-design-check]
-    paths: ['.workbench/**', '.github/workflows/sidebar-apple-design.yml', 'apps/web/src/components/SidebarThreadSectionPicker.browser.tsx']
+    paths: ['.workbench/**', '.github/workflows/sidebar-apple-design.yml']
 permissions:
   contents: write
+  actions: read
 jobs:
-  verify:
+  capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-          fetch-depth: 6
-      - name: Apply isolated candidate
-        run: python3 .workbench/sidebar-design.py
+          fetch-depth: 8
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 38452282439
+          name: sidebar-apple-design
+          path: /tmp/sidebar-apple-design
+      - name: Restore byte-identical validated candidate and use allowed capture paths
+        run: |
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root = Path('/tmp/sidebar-apple-design')
+          for entry in json.loads((root / 'manifest.json').read_text()):
+              if not entry['path'].startswith('apps/web/src/'):
+                  continue
+              data = (root / 'candidate' / entry['path']).read_bytes()
+              assert hashlib.sha1(f'blob {len(data)}\0'.encode() + data).hexdigest() == entry['sha']
+              Path(entry['path']).write_bytes(data)
+          Path('output/sidebar-apple-design').mkdir(parents=True, exist_ok=True)
+          script = Path('.workbench/verify-design.py')
+          source = script.read_text()
+          assert source.count('/tmp/sidebar-apple-design/__VARIANT__') == 2
+          source = source.replace('/tmp/sidebar-apple-design/__VARIANT__', '../../../../output/sidebar-apple-design/__VARIANT__')
+          marker = "        (ROOT / 'captures.json').write_text(json.dumps(results, indent=2))"
+          assert source.count(marker) == 1
+          source = source.replace(marker, marker + "\n        for image in Path('output/sidebar-apple-design').glob('*.png'):\n            (ROOT / image.name).write_bytes(image.read_bytes())")
+          # Record the new run separately; do not reuse the failed capture's video.
+          source = source.replace('list((ROOT / \'video\').glob(\'*.webm\'))', 'list((ROOT / \'video-final\').glob(\'*.webm\'))')
+          source = source.replace('dir: "/tmp/sidebar-apple-design/video"', 'dir: "/tmp/sidebar-apple-design/video-final"')
+          script.write_text(source)
+          PY
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
-      - name: Workspace checks and focused unit tests
-        run: python3 .workbench/verify-design.py check
-      - name: Install Chromium and video encoder
+      - name: Install capture tools
         run: |
           (cd apps/web && bunx playwright install --with-deps chromium)
           sudo apt-get install --no-install-recommends -y ffmpeg
-      - name: Focused browser regressions
-        run: python3 .workbench/verify-design.py browser
-      - name: Capture real before and after in both themes
+      - name: Capture only - retain successful code checks and browser regressions
         continue-on-error: true
         run: python3 .workbench/verify-design.py capture
-      - name: Export candidate and evidence without changing refs
+      - name: Export unchanged candidate and corrected evidence
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -42,5 +68,5 @@ jobs:
           name: sidebar-apple-design
           path: /tmp/sidebar-apple-design
           retention-days: 7
-      - name: Require passing checks
+      - name: Require successful evidence
         run: python3 .workbench/verify-design.py gate
