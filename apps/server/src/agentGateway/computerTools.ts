@@ -1,3 +1,8 @@
+import {
+  COMPUTER_APP_PLAYBOOK_POLICY,
+  COMPUTER_APP_PLAYBOOK_TOPICS,
+  computerAppPlaybookEvidence,
+} from "./computerAppPlaybooks.ts";
 import { parseCuaActionDiagnostics } from "@synara/shared/cuaActionDiagnostics";
 import { ComputerProgressGuard, type ComputerProgressAction } from "./computerProgressGuard.ts";
 import { boundComputerPastePayload, readComputerPastePayload } from "./computerPasteInput.ts";
@@ -98,6 +103,7 @@ import {
   COMPUTER_HELP_INDEX,
   COMPUTER_HELP_SECTIONS,
   COMPUTER_HELP_TOPICS,
+  normalizeComputerHelpTopic,
   type ComputerHelpTopic,
 } from "./computerGuidance.ts";
 import { mcpToolResultError, type McpToolCallResult } from "./protocol.ts";
@@ -584,12 +590,13 @@ function validateInspectionArguments(
 
 /**
  * Per-app notes that change how the standard tools behave, attached once to
- * the first state read scoped to that app's window. Verified behavior only —
- * a hint that guesses teaches the model a wrong move it then has to unlearn.
+ * the first state read scoped to that app's window. Documentation-backed
+ * playbooks use a small discovery hint, not a claim of interaction testing.
  * Keyed by the lowercase appName computer_list_windows reports.
  */
 const APP_GUIDANCE: Record<string, string> = {
-  notion: COMPUTER_HELP_SECTIONS.notion,
+  notion:
+    'Notion playbook: computer_help({topic:"notion"}). Documentation-backed; not interaction-tested.',
   slack: COMPUTER_HELP_SECTIONS.slack,
 };
 
@@ -4222,9 +4229,8 @@ export function makeAgentGatewayComputerTools(
           properties: {
             topic: {
               type: "string",
-              enum: [...COMPUTER_HELP_TOPICS, "all"],
               description:
-                'Which chapter to read. Omit for the index of chapters; "all" reads every chapter.',
+                'Chapter name from the index; app names accept spaces or hyphens. Omit for the index; "all" explicitly reads every chapter.',
             },
             tool: {
               type: "string",
@@ -4241,7 +4247,8 @@ export function makeAgentGatewayComputerTools(
       },
       handler: handle("computer_help", async (args) => {
         const toolName = readStringArg(args, "tool");
-        const topic = readStringArg(args, "topic");
+        const rawTopic = readStringArg(args, "topic");
+        const topic = rawTopic === undefined ? undefined : normalizeComputerHelpTopic(rawTopic);
         if (toolName !== undefined) {
           if (topic !== undefined) {
             throw new ToolInputError("Use either tool or topic, not both.");
@@ -4286,7 +4293,9 @@ export function makeAgentGatewayComputerTools(
         // The tools chapter's static intro gains the generated catalog index
         // on the way out — same text for "tools" alone and inside "all".
         const sectionText = (name: string): string | undefined => {
-          const text = COMPUTER_HELP_SECTIONS[name as ComputerHelpTopic];
+          const text = Object.hasOwn(COMPUTER_HELP_SECTIONS, name)
+            ? COMPUTER_HELP_SECTIONS[name as ComputerHelpTopic]
+            : undefined;
           return name === "tools" && text !== undefined
             ? `${text}\n\n${computerToolIndexText()}`
             : text;
@@ -4299,7 +4308,18 @@ export function makeAgentGatewayComputerTools(
                   .join("\n\n")
               : undefined;
           return {
-            ...(chapters !== undefined ? { chapters } : { topics: COMPUTER_HELP_INDEX }),
+            ...(chapters !== undefined
+              ? {
+                  chapters,
+                  policy: COMPUTER_APP_PLAYBOOK_POLICY,
+                  playbooks: Object.fromEntries(
+                    COMPUTER_APP_PLAYBOOK_TOPICS.map((name) => [
+                      name,
+                      computerAppPlaybookEvidence(name),
+                    ]),
+                  ),
+                }
+              : { topics: COMPUTER_HELP_INDEX }),
           };
         }
         const section = sectionText(topic);
@@ -4308,7 +4328,12 @@ export function makeAgentGatewayComputerTools(
             `Unknown computer_help topic "${topic}". Topics: ${COMPUTER_HELP_TOPICS.join(", ")}, all.`,
           );
         }
-        return { topic, text: section };
+        const playbook = computerAppPlaybookEvidence(topic);
+        return {
+          topic,
+          text: section,
+          ...(playbook ? { playbook, policy: COMPUTER_APP_PLAYBOOK_POLICY } : {}),
+        };
       }),
     },
     discoveryOnly(
