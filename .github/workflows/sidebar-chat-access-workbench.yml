@@ -8,138 +8,37 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Apply bounded candidate patch
-        run: |
-          python3 - <<'PY'
-          import base64, gzip, json, pathlib, subprocess
-          payload = json.loads(pathlib.Path('.workbench/sidebar-access.json').read_text())
-          encoded = payload['patch'].replace('gDvRXcmR5zm0q', 'gDvRXcmRzm0q').replace('3MtuNs7bS7tj', '3MtuNs7rS7tj')
-          patch = gzip.decompress(base64.b64decode(encoded))
-          pathlib.Path('/tmp/sidebar.patch').write_bytes(patch)
-          subprocess.run(['git', 'apply', '--check', '/tmp/sidebar.patch'], check=True)
-          subprocess.run(['git', 'apply', '/tmp/sidebar.patch'], check=True)
-          pathlib.Path('output/sidebar-access').mkdir(parents=True, exist_ok=True)
-          PY
+          fetch-depth: 8
+      - name: Apply focused candidate and corrected fixtures
+        run: python3 scripts/sidebar-chat-access-workbench.py prepare
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
-      - name: Format only the changed files
-        run: |
-          python3 - <<'PY'
-          import json, pathlib, subprocess
-          paths = json.loads(pathlib.Path('.workbench/sidebar-access.json').read_text())['paths']
-          subprocess.run(['bun', 'run', 'fmt', *paths], check=True)
-          PY
-      - name: Final workspace checks and focused unit tests
-        continue-on-error: true
-        run: |
-          python3 - <<'PY'
-          import json, pathlib, subprocess
-          results = {}
-          commands = {
-            'format': ['bun','run','fmt:check'],
-            'lint': ['bun','run','lint'],
-            'typecheck': ['bun','run','typecheck'],
-            'unit': ['bun','run','test:web:focused', 'src/components/Sidebar.uiState.test.ts', 'src/components/Sidebar.logic.test.ts', 'src/components/SidebarActivityView.logic.test.ts', 'src/components/inbox/inbox.logic.test.ts', 'src/uiFontSize.test.ts', 'src/hasSelectorVariants.test.ts'],
-          }
-          for name, command in commands.items():
-              with open(f'output/sidebar-access/{name}.log', 'w') as log:
-                  try:
-                      results[name] = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=360).returncode
-                  except subprocess.TimeoutExpired:
-                      results[name] = 124
-              print(name, results[name], flush=True)
-          pathlib.Path('output/sidebar-access/checks.json').write_text(json.dumps(results, indent=2))
-          PY
+      - name: Final format, lint, and type checks
+        run: python3 scripts/sidebar-chat-access-workbench.py checks
       - name: Install Chromium for actual app verification
         run: cd apps/web && bunx playwright install --with-deps chromium
-      - name: Full-app sidebar regression tests
+      - name: Verify sidebar, keyboard, responsive layout, and draft preservation
+        run: python3 scripts/sidebar-chat-access-workbench.py browser
+      - name: Capture before, after, and real browser interactions
         continue-on-error: true
-        run: |
-          set -o pipefail
-          bun run --cwd apps/web test:browser src/components/ChatView.browser.tsx -t 'thread-list navigation reachable|restores the chat list|falls back to Projects' 2>&1 | tee output/sidebar-access/browser.log
-      - name: Capture baseline and candidate with identical app fixtures
-        continue-on-error: true
-        run: |
-          python3 - <<'PY'
-          import base64, gzip, json, pathlib, subprocess
-          payload = json.loads(pathlib.Path('.workbench/sidebar-access.json').read_text())
-          paths = payload['paths']
-          candidate = {path: pathlib.Path(path).read_bytes() for path in paths}
-          test_path = 'apps/web/src/components/ChatView.browser.tsx'
-          marker = '  it("keeps persistent turn failure visible after reopening and admits one manual continuation", async () => {'
-          capture = gzip.decompress(base64.b64decode(payload['capture'])).decode()
-          results = {}
-          try:
-              for variant in ('before', 'after'):
-                  for path, content in candidate.items():
-                      pathlib.Path(path).write_bytes(content)
-                  if variant == 'before':
-                      for path in paths:
-                          if path == test_path or path.endswith('SidebarThreadSectionPicker.tsx'):
-                              continue
-                          original = subprocess.run(['git', 'show', f'fa2404553fd07fceb7e6acd90a882f1bb084da57:{path}'], check=True, capture_output=True).stdout
-                          pathlib.Path(path).write_bytes(original)
-                  test = pathlib.Path(test_path)
-                  source = test.read_text()
-                  assert source.count(marker) == 1
-                  test.write_text(source.replace(marker, capture + marker))
-                  with open(f'output/sidebar-access/capture-{variant}.log', 'w') as log:
-                      result = subprocess.run(['bun','run','--cwd','apps/web','test:browser',test_path.removeprefix('apps/web/'),'-t','captures sidebar chat access evidence'], stdout=log, stderr=subprocess.STDOUT, timeout=240)
-                  results[variant] = result.returncode
-                  for name in ('projects', 'chats'):
-                      image = pathlib.Path(f'output/sidebar-access/{name}.png')
-                      if image.exists():
-                          image.rename(image.with_name(f'{variant}-{name}.png'))
-          finally:
-              for path, content in candidate.items():
-                  pathlib.Path(path).write_bytes(content)
-              pathlib.Path('output/sidebar-access/captures.json').write_text(json.dumps(results, indent=2))
-          PY
-      - name: Export candidate and evidence without updating any branch
+        run: python3 scripts/sidebar-chat-access-workbench.py capture
+      - name: Export reviewed candidate objects without changing any branch
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-        run: |
-          python3 - <<'PY'
-          import base64, json, os, pathlib, subprocess, urllib.request
-          root = pathlib.Path('output/sidebar-access')
-          root.mkdir(parents=True, exist_ok=True)
-          payload = json.loads(pathlib.Path('.workbench/sidebar-access.json').read_text())
-          paths = payload['paths']
-          diff = subprocess.run(['git','diff','--',*paths], check=True, capture_output=True).stdout
-          (root/'candidate.patch').write_bytes(diff)
-          manifest = []
-          for path in paths:
-              file = pathlib.Path(path)
-              if not file.exists():
-                  continue
-              data = json.dumps({'content':base64.b64encode(file.read_bytes()).decode(),'encoding':'base64'}).encode()
-              request = urllib.request.Request(f'https://api.github.com/repos/{os.environ["REPOSITORY"]}/git/blobs', data=data, headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}', 'Accept':'application/vnd.github+json','Content-Type':'application/json'}, method='POST')
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  blob = json.load(response)
-              manifest.append({'path':path,'mode':'100644','type':'blob','sha':blob['sha']})
-              copy = root/'candidate'/path
-              copy.parent.mkdir(parents=True, exist_ok=True)
-              copy.write_bytes(file.read_bytes())
-          for image in root.glob('*.png'):
-              data = json.dumps({'content':base64.b64encode(image.read_bytes()).decode(),'encoding':'base64'}).encode()
-              request = urllib.request.Request(f'https://api.github.com/repos/{os.environ["REPOSITORY"]}/git/blobs', data=data, headers={'Authorization':f'Bearer {os.environ["GH_TOKEN"]}', 'Accept':'application/vnd.github+json','Content-Type':'application/json'}, method='POST')
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  blob = json.load(response)
-              manifest.append({'path':f'docs/pr-screenshots/sidebar-chat-access/{image.name}','mode':'100644','type':'blob','sha':blob['sha']})
-          (root/'manifest.json').write_text(json.dumps(manifest, indent=2))
-          print(json.dumps(manifest, indent=2))
-          PY
+        run: python3 scripts/sidebar-chat-access-workbench.py export
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: sidebar-access-verification
           path: output/sidebar-access
           retention-days: 7
+      - name: Require successful validation
+        run: python3 scripts/sidebar-chat-access-workbench.py gate
