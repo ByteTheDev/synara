@@ -82,6 +82,8 @@ async function fixture(
     browserObservations?: boolean;
     clipboardPreservation?: boolean;
     clipboardReplyLost?: boolean;
+    clipboardRestoreFailure?: "lost-reply" | "native-error";
+    clipboardRestored?: boolean;
     inputDelayMs?: number;
     delayBrowserObservation?: boolean;
     delayObservation?: boolean;
@@ -139,7 +141,7 @@ if(!options.unpatched){
 }
 if(options.unpatched&&(process.argv.includes('--compact-cursor')||process.argv.includes('--idle-hide-ms'))) throw new Error('Upstream driver cannot parse Synara cursor flags');
 const socket=process.argv[process.argv.indexOf('--socket')+1];
-let action, timer, inputEpoch=0, interruptions=0, browserCleanupPending=false, cursorEnables=0, cursorHides=0;
+let action, timer, inputEpoch=0, interruptions=0, browserCleanupPending=false, cursorEnables=0, cursorHides=0, clipboardRestores=0;
 net.createServer(s=>{
   const reply=result=>s.end(JSON.stringify({ok:true,result})+'\\n');
   s.once('data',b=>{
@@ -195,7 +197,16 @@ net.createServer(s=>{
       write('permitted-native:'+r.name); reply({});
     }
     else if(r.name==='press_key') { if(!options.unpatched&&r.expected_input_epoch!==inputEpoch) { reply({isError:true,structuredContent:{effect:'refused',code:'input_admission_closed'}}); return; } write('key'); write('observation-budget-'+process.env.SYNARA_CUA_FOREGROUND_OBSERVATION_MS); reply(options.actionResult??{}); }
-    else if(options.clipboardPreservation&&r.name==='clipboard_write') { write('clipboard:'+JSON.stringify(r.args)); if(options.clipboardReplyLost&&r.args.preserve) s.destroy(); else reply({structuredContent:{restore_token:r.args.preserve_token,clipboard_restored:typeof r.args.restore_token==='string'}}); }
+    else if(options.clipboardPreservation&&r.name==='clipboard_write') {
+      write('clipboard:'+JSON.stringify(r.args));
+      const restoring=typeof r.args.restore_token==='string';
+      if(restoring&&clipboardRestores++===0&&options.clipboardRestoreFailure) {
+        if(options.clipboardRestoreFailure==='lost-reply') s.destroy();
+        else reply({isError:true,structuredContent:{effect:'unverifiable'}});
+      }
+      else if(options.clipboardReplyLost&&r.args.preserve) s.destroy();
+      else reply({structuredContent:{restore_token:r.args.preserve_token,clipboard_restored:restoring&&(options.clipboardRestored??true)}});
+    }
     else if(r.name==='get_window_state' && !r.args?.empty) { write('observe'); setTimeout(()=>reply({structuredContent:{elements:r.args?.fixture_usable?[{role:"AXWindow"}]:[],window_is_on_screen:r.args?.fixture_usable===true,window_on_current_space:r.args?.fixture_usable===true,degraded:r.args?.fixture_degraded,screenshot_frame_valid:r.args?.fixture_stale!==true,pid:r.args?.pid,window_id:r.args?.fixture_wrong_window?99999:r.args?.window_id}}),options.delayObservation?60:0); }
     else if(r.name==='get_desktop_state') reply({content:[{type:'image',data:'fixture-image'}]});
     else if(r.name==='list_windows') { write('list-windows'); setTimeout(()=>{reply({structuredContent:{windows:options.listWindows||[]}});if(options.delayListWindowsMs) write('list-windows-replied');},options.delayListWindowsMs??0); }
@@ -1340,45 +1351,67 @@ describe("agent cursor style", () => {
 
 describe("task-owned user stop", () => {
   const task = { threadId: "thread", turnId: "turn" };
-  it("restores only the stopped task's saved clipboard without reopening input", async () => {
-    const f = await fixture(capability, { clipboardPreservation: true });
-    const token = "2cfba20e-1536-4dd3-a92b-92667fefbefe";
-    const clipboard = (args: Record<string, unknown>, owner = task) =>
-      cuaRequest<CuaReply>(f.endpoint, {
-        method: "call",
-        name: "clipboard_write",
-        task: owner,
-        args,
+  it.each([
+    { failure: "none", restored: true },
+    { failure: "lost-reply", restored: true },
+    { failure: "native-error", restored: false },
+  ] as const)(
+    "restores only the stopped task's saved clipboard after $failure without reopening input",
+    async ({ failure, restored }) => {
+      const f = await fixture(capability, {
+        clipboardPreservation: true,
+        ...(failure === "none" ? {} : { clipboardRestoreFailure: failure }),
+        clipboardRestored: restored,
       });
-    await expect(
-      clipboard({ text: "temporary", preserve: true, preserve_token: token }),
-    ).resolves.toMatchObject({ ok: true });
-    await f.host.stopTaskByUser(task);
-    await expect(clipboard({ restore_token: token, text: "new payload" })).resolves.toMatchObject({
-      ok: false,
-      effect: "not-dispatched",
-    });
-    await expect(
-      clipboard({ restore_token: token }, { threadId: "other", turnId: "turn" }),
-    ).resolves.toMatchObject({ ok: false, effect: "not-dispatched" });
-    await expect(clipboard({ restore_token: token })).resolves.toMatchObject({
-      ok: true,
-      result: { structuredContent: { clipboard_restored: true } },
-    });
-    await expect(clipboard({ restore_token: token })).resolves.toMatchObject({ ok: false });
-    await expect(
-      cuaRequest(f.endpoint, {
-        method: "call",
-        name: "press_key",
-        task,
-        args: { key: "enter" },
-      }),
-    ).resolves.toMatchObject({ ok: false, effect: "not-dispatched" });
-    const events = await f.events();
-    expect(events.filter((event) => event.event.startsWith("clipboard:"))).toHaveLength(2);
-    expect(events.filter((event) => event.event === "start")).toHaveLength(1);
-    expect(events.some((event) => event.event === "key")).toBe(false);
-  });
+      const token = "2cfba20e-1536-4dd3-a92b-92667fefbefe";
+      const clipboard = (args: Record<string, unknown>, owner = task) =>
+        cuaRequest<CuaReply>(f.endpoint, {
+          method: "call",
+          name: "clipboard_write",
+          task: owner,
+          args,
+        });
+      await expect(
+        clipboard({ text: "temporary", preserve: true, preserve_token: token }),
+      ).resolves.toMatchObject({ ok: true });
+      await f.host.stopTaskByUser(task);
+      await expect(clipboard({ restore_token: token, text: "new payload" })).resolves.toMatchObject(
+        {
+          ok: false,
+          effect: "not-dispatched",
+        },
+      );
+      await expect(
+        clipboard({ restore_token: token }, { threadId: "other", turnId: "turn" }),
+      ).resolves.toMatchObject({ ok: false, effect: "not-dispatched" });
+      if (failure !== "none") {
+        await expect(clipboard({ restore_token: token })).resolves.toMatchObject(
+          failure === "lost-reply"
+            ? { ok: false, effect: "dispatched-unknown" }
+            : { ok: true, result: { isError: true } },
+        );
+      }
+      await expect(clipboard({ restore_token: token })).resolves.toMatchObject({
+        ok: true,
+        result: { structuredContent: { clipboard_restored: restored } },
+      });
+      await expect(clipboard({ restore_token: token })).resolves.toMatchObject({ ok: false });
+      await expect(
+        cuaRequest(f.endpoint, {
+          method: "call",
+          name: "press_key",
+          task,
+          args: { key: "enter" },
+        }),
+      ).resolves.toMatchObject({ ok: false, effect: "not-dispatched" });
+      const events = await f.events();
+      expect(events.filter((event) => event.event.startsWith("clipboard:"))).toHaveLength(
+        failure === "none" ? 2 : 3,
+      );
+      expect(events.filter((event) => event.event === "start")).toHaveLength(1);
+      expect(events.some((event) => event.event === "key")).toBe(false);
+    },
+  );
 
   it("never starts a replacement driver to restore an old clipboard token", async () => {
     const f = await fixture(capability, { clipboardPreservation: true });

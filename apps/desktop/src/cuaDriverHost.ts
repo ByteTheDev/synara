@@ -1653,12 +1653,11 @@ export class CuaDriverHost {
           error: "Clipboard cleanup requires the original live driver with native input drained.",
           effect: "not-dispatched",
         };
-      generation.clipboardRestores.delete(token);
       try {
         // Cleanup survives Stop but cannot rearm input, revive a task session,
         // or spawn a replacement. Native code also checks the saved token and
         // clipboard change counter before restoring any bytes.
-        return await cuaRequest<CuaReply>(
+        const reply = await cuaRequest<CuaReply>(
           generation.socket,
           {
             method: "call",
@@ -1667,6 +1666,16 @@ export class CuaDriverHost {
           },
           { timeoutMs: 5_000, mutation: true },
         );
+        // A transport loss or native error can leave the snapshot available.
+        // Consume the host receipt only after native confirms a terminal
+        // restore decision, including skipping a newer human clipboard copy.
+        if (
+          reply.ok &&
+          !reply.result?.isError &&
+          typeof reply.result?.structuredContent?.clipboard_restored === "boolean"
+        )
+          generation.clipboardRestores.delete(token);
+        return reply;
       } catch (error) {
         return {
           ok: false,
