@@ -233,7 +233,17 @@ app. Its binary SHA-256 is
 `0df4f53d9a7bf4f4c3ef78e9d1b513df41f26b0e2ecfceb72129610852791d82`,
 with macOS patch SHA-256
 `658e00ed0dd453f838f2b4f10b5f682c0b1f57839733581de8ecb796c5d6edfe`.
-Provenance, strict signature verification and version checks pass.
+Provenance, strict signature verification and version checks passed for that
+live artifact. PR CI subsequently exposed zero-context revision-40 patch hunks
+that the production `patch` command accepted but `git apply --check` refused.
+Only those hunks were regenerated with ordinary context; all earlier patch
+bytes were retained. The current patch SHA-256 is
+`ad4d1fc0b55e963d4430c386d37e3026476c2c5efcdf2e0587a9bd9ae34f653d`.
+Both patch applicators now accept the native and Linux patches without fuzz,
+offsets or rejected hunks. Comparison of all 501 native and 502 Linux source
+files, including executable modes, confirms identical resulting code. The
+live artifact above retains its original patch provenance; repackaged artifacts
+must be rebuilt through the supported provisioner, not relabeled.
 
 | Live case         | Result and limit                                                                                                                                                                                                                                                                                                                                                               |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

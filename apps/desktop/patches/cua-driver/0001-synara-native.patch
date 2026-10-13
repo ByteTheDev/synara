@@ -25236,7 +25236,10 @@ index 3b16eb4..c06facc 100644
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs
-@@ -451,0 +452,20 @@
+@@ -449,6 +449,26 @@
+             Err(error) => Err(error),
+         };
+
 +        // AX values in web editors can represent one block, a stale shim, or
 +        // a normalized value. They cannot prove a retryable partial insertion.
 +        // Apply the same surface trust boundary before incomplete errors too.
@@ -25257,11 +25260,23 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +                outcome
 +            })
 +        });
-@@ -486,3 +505,0 @@
+         match result {
+             Ok(Ok(outcome)) if outcome.delivered_chars.is_some_and(|n| n < char_count) => {
+                 let delivered_chars = outcome.delivered_chars.unwrap_or_default();
+@@ -483,9 +503,6 @@
+                 // chrome (address bar, toolbar) stays trusted. Probe ONLY when a
+                 // path with AXValue-only verification would otherwise confirm, so
+                 // native types and already-unverified deliveries pay nothing.
 -                let target_is_web_content = verified
 -                    && path_has_untrusted_web_readback(path)
 -                    && target_in_web_area(pid, element_ptr, window_id);
-@@ -952,0 +970,57 @@
+                 let verification = surface_verification(path, verified, target_is_web_content);
+                 let verified = verification.verified;
+                 let untrusted_web_readback = verification.untrusted_web_readback;
+@@ -950,6 +967,63 @@
+     Unverifiable,
+ }
+
 +fn ax_text_delivery(
 +    progress: Option<TypedProgress>,
 +    requested_chars: usize,
@@ -25319,21 +25334,36 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +    None
 +}
 +
-@@ -979,2 +1053,2 @@
+ fn foreground_settle_ms(pid: i32, frontmost_pid: Option<i32>) -> u64 {
+     if frontmost_pid == Some(pid) {
+         20
+@@ -976,8 +1050,8 @@
+ }
+
+ /// Classify an observable insertion without mistaking a prefix for complete
 -/// delivery. A positive length delta is an exact delivered-character count for
 -/// insert-at-cursor typing; it is capped at the request size defensively.
 +/// delivery. A partial count requires an exact inserted prefix with unchanged
 +/// surrounding text; length growth alone is not delivery evidence.
-@@ -988 +1062 @@
+ fn typed_progress(before: Option<&str>, after: Option<&str>, text: &str) -> TypedProgress {
+     if text.is_empty() {
+         return TypedProgress::Complete;
+@@ -985,21 +1059,40 @@
+     let Some(after) = after else {
+         return TypedProgress::Unverifiable;
+     };
 -    if after.contains(text) {
 +    if after.contains(text) && before.is_none_or(|before| !before.contains(text)) {
-@@ -989,0 +1064,5 @@
+         return TypedProgress::Complete;
 +    }
 +    // Upstream Cua also treats control characters as unobservable: Enter/Tab
 +    // can split a block, submit a form, change focus, or reset the value.
 +    if text.contains(['\n', '\r', '\t']) {
 +        return TypedProgress::Unverifiable;
-@@ -994 +1073,6 @@
+     }
+     let Some(before) = before else {
+         return TypedProgress::Unverifiable;
+     };
 -    let delivered = after
 +    if after == before {
 +        return TypedProgress::Unchanged;
@@ -25341,7 +25371,7 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +    // Length growth alone is not a count: smart quotes, input masks and
 +    // selected-text replacement can change it independently of typed bytes.
 +    let shared_prefix_bytes: usize = before
-@@ -996,5 +1080,14 @@
+         .chars()
 -        .count()
 -        .saturating_sub(before.chars().count())
 -        .min(text.chars().count());
@@ -25361,20 +25391,39 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +        } else {
 +            TypedProgress::Partial(inserted.chars().count())
 +        }
-@@ -1002 +1095 @@
+     } else {
 -        TypedProgress::Partial(delivered)
 +        TypedProgress::Unverifiable
-@@ -1143 +1236 @@
+     }
+ }
+
+@@ -1140,10 +1233,10 @@
+     // it rather than being clobbered by it. Re-applying once on a failed
+     // read-back covers apps that install their responder slightly late.
+     if let Some((ptr, _)) = element_ptr_and_idx {
 -        let _ = crate::input::ax_actions::focus_element(ptr);
 +        crate::input::ax_actions::focus_element(ptr)?;
-@@ -1146 +1239 @@
+         if settle_ms > 0 && !crate::input::ax_actions::is_element_focused(pid, ptr) {
+             std::thread::sleep(FOCUS_REAPPLY_DELAY);
 -            let _ = crate::input::ax_actions::focus_element(ptr);
 +            crate::input::ax_actions::focus_element(ptr)?;
-@@ -1156,0 +1250,3 @@
+         }
+     }
+     // First-keystroke settle (foreground rung only — caller passes `settle_ms > 0`).
+@@ -1154,6 +1247,9 @@
+     // sites pass 0 — they have no front transition and must not pay this latency.
+     if settle_ms > 0 {
+         std::thread::sleep(std::time::Duration::from_millis(settle_ms));
 +    }
 +    if let Some((ptr, _)) = element_ptr_and_idx {
 +        crate::input::cancellation::gate().check_ax_target(ptr)?;
-@@ -1443,22 +1539,3 @@
+     }
+     crate::input::keyboard::type_text_with_delay(pid, text, delay_ms)?;
+
+@@ -1440,66 +1536,27 @@
+         } else {
+             None
+         };
 -        if let Some(reason) = interruption {
 -            let observed_chars = match ax_progress {
 -                Some(TypedProgress::Complete) => Some(text.chars().count()),
@@ -25400,10 +25449,14 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +        // Inspect ancestry while the exact AX element is still retained.
 +        let target_is_web_content = (interruption.is_some()
 +            || ax_progress == Some(TypedProgress::Unchanged))
-@@ -1465,0 +1543,2 @@
+             && target_in_web_area(pid, Some((element as usize, idx_opt)), window_id);
 +        let unchanged_web_readback =
 +            ax_progress == Some(TypedProgress::Unchanged) && target_is_web_content;
-@@ -1471,32 +1550,10 @@
+         if owns {
+             unsafe {
+                 CFRelease(element as _);
+             }
+         }
 -        if ax_progress == Some(TypedProgress::Complete) {
 -            let idx_str = idx_opt.map(|i| format!(" [{i}]")).unwrap_or_default();
 -            return Ok(TypeTextDelivery::Typed(TypeTextOutcome {
@@ -25446,7 +25499,13 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +            &format!("{idx_str} {role} \"{title}\""),
 +        ) {
 +            return Ok(delivery);
-@@ -1718,0 +1776,109 @@
+         }
+         ax_attempt = match ax_progress {
+             Some(TypedProgress::Unchanged) if unchanged_web_readback => AxAttempt::Unverifiable,
+@@ -1716,6 +1773,115 @@
+     }
+
+     #[test]
 +    fn editor_transformations_never_supply_a_retry_offset() {
 +        for (before, after, text) in [
 +            ("", "", "first\nsecond"),
@@ -25556,10 +25615,16 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/type_text.rs b
 +    }
 +
 +    #[test]
+     fn delivery_waits_through_a_partial_readback_until_complete() {
+         let text = "BEGIN-payload-END";
+         let mut values = std::collections::VecDeque::from([
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/window_scope.rs b/libs/cua-driver/rust/crates/platform-macos/src/ax/window_scope.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/window_scope.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/window_scope.rs
-@@ -154,9 +154,6 @@
+@@ -151,21 +151,18 @@
+         };
+     }
+
 -    // Matched: walk the requested window plus the non-window top-level children.
 -    //
 -    // The menu bar is deliberately among them. MACOS.md documents a
@@ -25575,10 +25640,20 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/window_scope.rs b
 +    // Other application-level roots have no target-window ownership proof:
 +    // a retained web area or group can expose another document's controls.
 +    // Descendants of the matched window remain part of its normal walk.
-@@ -168 +165 @@
+     let dialog_scope = matched.iter().any(|&i| candidates[i].is_dialog_like());
+     let walk = candidates
+         .iter()
+         .enumerate()
+         .filter(|(i, c)| {
 -            (c.role != "AXWindow" || matched.contains(i))
 +            (matched.contains(i) || matches!(c.role.as_str(), "AXMenuBar" | "AXMenu" | "AXSheet"))
-@@ -202,0 +200,8 @@
+                 && !(dialog_scope && c.role == "AXMenuBar")
+         })
+         .map(|(i, _)| i)
+@@ -200,6 +197,14 @@
+             TopLevelCandidate::new("AXMenuBar", None),
+             TopLevelCandidate::new("AXWindow", Some(11)),
+             TopLevelCandidate::new("AXWindow", Some(22)),
 +            // Application-level content can retain an inactive document or a
 +            // container for a sibling window. It has no target-window proof.
 +            TopLevelCandidate::new("AXWebArea", None),
@@ -25587,43 +25662,84 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/window_scope.rs b
 +            TopLevelCandidate::new("AXGroup", None),
 +            TopLevelCandidate::new("AXToolbar", None),
 +            TopLevelCandidate::new("AXUnknown", None),
-@@ -294 +299 @@
+         ];
+         let d = decide_window_scope(&candidates, 22, never_called);
+         assert_eq!(d.scope, WindowScope::Matched);
+@@ -291,14 +296,15 @@
+     /// walks Chrome's other window ids expecting the consent `AXSheet` as a
+     /// top-level non-window child.
+     #[test]
 -    fn matched_window_keeps_sibling_sheets() {
 +    fn matched_window_keeps_sibling_sheets_and_open_menus() {
-@@ -297,0 +303 @@
+         let candidates = [
+             TopLevelCandidate::new("AXSheet", None),
+             TopLevelCandidate::new("AXWindow", Some(11)),
 +            TopLevelCandidate::new("AXMenu", None),
-@@ -301 +307 @@
+         ];
+         let d = decide_window_scope(&candidates, 11, never_called);
+         assert_eq!(d.scope, WindowScope::Matched);
 -        assert_eq!(d.walk, vec![0, 1]);
 +        assert_eq!(d.walk, vec![0, 1, 2]);
+     }
+
+     #[test]
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/cursor/overlay.rs b/libs/cua-driver/rust/crates/platform-macos/src/cursor/overlay.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/cursor/overlay.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/cursor/overlay.rs
-@@ -79,0 +80,5 @@
+@@ -77,8 +77,13 @@
+ static RENDER: Mutex<Option<RenderMap>> = Mutex::new(None);
+ static OVERLAY_WINDOW_ID: AtomicU32 = AtomicU32::new(0);
+
 +pub(crate) fn overlay_window_id() -> Option<u32> {
 +    let window_id = OVERLAY_WINDOW_ID.load(Ordering::Acquire);
 +    (window_id != 0).then_some(window_id)
 +}
 +
-@@ -81 +86 @@
+ pub(crate) fn is_overlay_window(window_id: u32) -> bool {
 -    window_id != 0 && OVERLAY_WINDOW_ID.load(Ordering::Acquire) == window_id
 +    overlay_window_id() == Some(window_id)
-@@ -747,3 +752,3 @@
+ }
+
+ /// The keyed, insertion-ordered collection of owned cursors that the render
+@@ -744,9 +749,9 @@
+     // otherwise show the overlay live while omitting it from an in-process
+     // display recording.
+     let _: () = msg_send![win, setSharingType: 1u64];
 -    // NSNormalWindowLevel = 0.  The overlay lives at the normal window level so
 -    // it appears in CGWindowList layer=0 results (which agents inspect via
 -    // list_windows).  Z-ordering above the target is managed dynamically via
 +    // NSNormalWindowLevel = 0. The overlay shares ordinary window stacking,
 +    // but list_windows excludes its registered ID from target/restore choices.
 +    // Z-ordering above the target is managed dynamically via
+     // orderWindow:relativeTo: (see dispatch_pin_above / render_loop repin).
+     let _: () = msg_send![win, setLevel: 0i64];
+     // NSWindowCollectionBehaviorCanJoinAllSpaces(1<<0) | FullScreenAuxiliary(1<<8) | Stationary(1<<4)
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.rs b/libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.rs
-@@ -83,0 +84 @@
+@@ -81,6 +81,7 @@
+                 window_records_with_keyboard_focus(
+                     &windows,
+                     true,
 +                    crate::cursor::overlay::overlay_window_id(),
-@@ -97,0 +99 @@
+                     crate::ax::exact_target::keyboard_focused_window_id,
+                 )
+             })
+@@ -95,6 +96,7 @@
+             window_records_with_keyboard_focus(
+                 &windows,
+                 false,
 +                crate::cursor::overlay::overlay_window_id(),
-@@ -113,0 +116 @@
+                 crate::ax::exact_target::keyboard_focused_window_id,
+             )
+         };
+@@ -111,10 +113,18 @@
+ fn window_records_with_keyboard_focus(
+     windows: &[crate::windows::WindowInfo],
+     include_keyboard_focus: bool,
 +    overlay_window_id: Option<u32>,
-@@ -115,0 +119,7 @@
+     mut focused_window: impl FnMut(i32) -> Option<u32>,
+ ) -> Vec<Value> {
 +    // The registered cursor surface is a visible layer-0 window, but cannot
 +    // become key or receive input. Never offer it as an app/restore target.
 +    // Keep ordinary windows even when they share its PID, title or geometry.
@@ -25631,21 +25747,41 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.r
 +        .iter()
 +        .filter(|window| Some(window.window_id) != overlay_window_id)
 +        .collect();
-@@ -117 +127 @@
+     if !include_keyboard_focus {
 -        return windows.iter().map(window_record_json).collect();
 +        return windows.into_iter().map(window_record_json).collect();
-@@ -200,0 +211 @@
+     }
+     let deadline = std::time::Instant::now() + std::time::Duration::from_millis(250);
+     let mut by_pid = std::collections::HashMap::<i32, Option<u32>>::new();
+@@ -198,10 +208,11 @@
+         let records = window_records_with_keyboard_focus(
+             &[window()],
+             args.bool_or("include_keyboard_focus", false),
 +            None,
-@@ -204 +215 @@
+             |_| panic!("Default window enumeration must not query Accessibility"),
+         );
+         assert_eq!(records, vec![window_record_json(&window())]);
 -        let records = window_records_with_keyboard_focus(&[window()], false, |_| {
 +        let records = window_records_with_keyboard_focus(&[window()], false, None, |_| {
-@@ -219 +230 @@
+             panic!("Disabled keyboard-focus observation must not query Accessibility")
+         });
+         assert_eq!(records, vec![window_record_json(&window())]);
+@@ -216,7 +227,7 @@
+         unknown.window_id = 44;
+         let mut reads = std::collections::HashMap::new();
+         let records =
 -            window_records_with_keyboard_focus(&[window(), sibling, unknown], true, |pid| {
 +            window_records_with_keyboard_focus(&[window(), sibling, unknown], true, None, |pid| {
-@@ -232 +243 @@
+                 *reads.entry(pid).or_insert(0) += 1;
+                 if pid == 123 {
+                     Some(42)
+@@ -229,8 +240,39 @@
+         assert_eq!(records[0]["keyboard_focused"], true);
+         assert_eq!(records[1]["keyboard_focused"], false);
+         assert!(records[2].get("keyboard_focused").is_none());
 -        let records = window_records_with_keyboard_focus(&[window()], true, |_| Some(99));
 +        let records = window_records_with_keyboard_focus(&[window()], true, None, |_| Some(99));
-@@ -233,0 +245,31 @@
+         assert!(records[0].get("keyboard_focused").is_none());
 +    }
 +
 +    #[test]
@@ -25677,10 +25813,16 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/list_windows.r
 +                "title/size/PID never infer overlay ownership"
 +            );
 +        }
+     }
+
+     #[test]
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs b/libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs
-@@ -69,0 +70,115 @@
+@@ -67,6 +67,121 @@
+         CFRelease(current as CFTypeRef);
+     }
+     resolved
 +}
 +
 +/// A document root parked outside its own window is not the active visual
@@ -25796,9 +25938,17 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs b
 +        CFRelease(current as CFTypeRef);
 +    }
 +    clipped
-@@ -343,0 +459 @@
+ }
+
+ /// The process's focused AX element, but only when it provably belongs to the
+@@ -341,9 +456,94 @@
+
+ #[cfg(test)]
+ mod tests {
 +    use super::document_root_is_clipped;
-@@ -346,0 +463,84 @@
+     use super::{
+         count_competing_keyboard_destinations, keyboard_focus_facts_match, AxWindowRecord,
+     };
 +
 +    #[test]
 +    fn parked_web_document_geometry_does_not_address_an_inactive_page() {
@@ -25883,14 +26033,20 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/exact_target.rs b
 +            );
 +        }
 +    }
+
+     #[test]
+     fn inactive_app_focus_requires_exact_window_and_addressed_field() {
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.rs b/libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.rs
-@@ -198,0 +199,3 @@
+@@ -196,13 +196,28 @@
+     /// Semantic dispatch may address an exact descendant of a normal modal.
+     /// Raw events have no such ancestry proof and retain the stricter gate.
+     pub fn check_ax_target(&self, element: usize) -> anyhow::Result<()> {
 +        let epoch = self.admission_epoch()?;
 +        Self::validate_web_document(element)?;
 +        self.validate_epoch(epoch)?;
-@@ -199,0 +203,11 @@
+         self.check_modal_target(Some(element))
 +    }
 +
 +    fn validate_web_document(element: usize) -> anyhow::Result<()> {
@@ -25902,25 +26058,60 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/input/cancellation.r
 +            anyhow::bail!("native_input_target_changed: the addressed web document is clipped outside its owning window; observe current state before choosing a target");
 +        }
 +        Ok(())
-@@ -205,0 +220 @@
+     }
+
+     pub fn post_ax<T>(&self, element: usize, send: impl FnOnce() -> T) -> anyhow::Result<T> {
+         let mut state = self.lock();
+         Self::validate_target(&mut state)?;
+         Self::validate_modal_target(&state, Some(element))?;
 +        Self::validate_web_document(element)?;
-@@ -299,0 +315,3 @@
+         Ok(send())
+     }
+
+@@ -297,6 +312,9 @@
+         let mut state = self.lock();
+         Self::validate_target(&mut state)?;
+         Self::validate_modal_target(&state, element)?;
 +        if let Some(element) = element {
 +            Self::validate_web_document(element)?;
 +        }
+         held.release = Some(release);
+         state.held += 1;
+         down();
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/tree.rs b/libs/cua-driver/rust/crates/platform-macos/src/ax/tree.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/ax/tree.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/ax/tree.rs
-@@ -42 +42 @@
+@@ -39,7 +39,7 @@
+ /// `AXUIElementCopyAttributeValue` after `spawn_blocking` starts, so the native
+ /// messaging timeout is what keeps an unresponsive app from retaining a worker
+ /// indefinitely.
 -const AX_MESSAGING_TIMEOUT_SECONDS: f32 = 2.0;
 +pub(crate) const AX_MESSAGING_TIMEOUT_SECONDS: f32 = 2.0;
-@@ -155 +155 @@
+
+ unsafe fn set_messaging_timeout(element: AXUIElementRef) {
+     let _ = AXUIElementSetMessagingTimeout(element, AX_MESSAGING_TIMEOUT_SECONDS);
+@@ -152,7 +152,7 @@
+ /// Walk the AX tree of `pid`, optionally filtered to a specific window.
+ ///
+ /// `window_id` — when Some, only the AXWindow matching that CGWindowID is
 -/// walked (plus non-window children like the menu bar). When None, all
 +/// walked (plus application menus and sheets). When None, all
-@@ -257 +257 @@
+ /// top-level children are walked.
+ ///
+ /// Key background-app fix: at the application root we union `AXChildren`
+@@ -254,7 +254,7 @@
+             }
+         }
+
 -        // Scope: keep non-window children (menu bar) + the target window —
 +        // Scope: keep application menus/sheets + the target window —
-@@ -694,0 +695,9 @@
+         // but ONLY once the target window has actually been identified. When
+         // nothing claims the requested id, `decide_window_scope` reports why
+         // and walks nothing; it must never fall back to "everything that isn't
+@@ -692,6 +692,15 @@
+
+     let role = role.unwrap_or_else(|| "AXUnknown".into());
+
 +    // Never publish or cache a retained document parked outside this window.
 +    // Ordinary offscreen controls inside a live document remain addressable.
 +    if super::exact_target::web_document_is_clipped(element, &role, frame) {
@@ -25930,34 +26121,55 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/ax/tree.rs b/libs/cu
 +        return;
 +    }
 +
-@@ -901 +910 @@
+     let in_web_content = in_web_content || is_web_content_role(&role);
+
+     // Skip pure layout containers that have no interesting content.
+@@ -898,7 +907,7 @@
+     }
+ }
+
 -fn is_web_content_role(role: &str) -> bool {
 +pub(crate) fn is_web_content_role(role: &str) -> bool {
+     let normalized = role
+         .chars()
+         .filter(|character| character.is_ascii_alphanumeric())
 diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs b/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs
 --- a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs
 +++ b/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs
-@@ -1 +1,4 @@
+@@ -1,17 +1,25 @@
 -use std::{path::Path, sync::Mutex};
 +use std::{
 +    path::Path,
 +    sync::{Arc, Mutex},
 +};
-@@ -4 +7,4 @@
+
+ use clipboard_rs::{common::RustImage, Clipboard, ClipboardContext, ContentFormat};
 -use cua_driver_core::clipboard::ClipboardBackend;
 +use cua_driver_core::clipboard::{ClipboardBackend, ClipboardPreserveError, ClipboardValue};
 +use objc2::runtime::ProtocolObject;
 +use objc2_app_kit::{NSPasteboard, NSPasteboardItem, NSPasteboardWriting};
 +use objc2_foundation::{NSArray, NSData, NSString, NSURL};
-@@ -7 +13,2 @@
+
+ pub struct MacosClipboard {
 -    context: Result<Mutex<ClipboardContext>, String>,
 +    context: Result<Arc<Mutex<ClipboardContext>>, String>,
 +    preserved: Arc<Mutex<Option<PreservedClipboard>>>,
-@@ -12,0 +20 @@
+ }
+
+ impl MacosClipboard {
+     pub fn new() -> Self {
+         Self {
 +            preserved: Arc::new(Mutex::new(None)),
-@@ -14 +22 @@
+             context: ClipboardContext::new()
 -                .map(Mutex::new)
 +                .map(|context| Arc::new(Mutex::new(context)))
-@@ -27,0 +36,19 @@
+                 .map_err(|error| error.to_string()),
+         }
+     }
+@@ -25,19 +33,122 @@
+     }
+ }
+
 +impl Drop for MacosClipboard {
 +    fn drop(&mut self) {
 +        let Ok(_context) = self.context() else {
@@ -25977,11 +26189,21 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs b
 +    }
 +}
 +
-@@ -33,0 +61,3 @@
+ fn absolute_existing_file(path: &str) -> Result<String, String> {
+     let path = Path::new(path);
+     if !path.is_absolute() {
+         return Err("clipboard file paths must be absolute".into());
+     }
+     let canonical = path.canonicalize().map_err(|error| error.to_string())?;
 +    if path != canonical {
 +        return Err("clipboard path changed canonical identity; nothing was written".into());
 +    }
-@@ -39,0 +70,27 @@
+     if !canonical.is_file() {
+         return Err("clipboard path must identify an existing file".into());
+     }
+     Ok(canonical.to_string_lossy().into_owned())
+ }
+
 +fn bounded_clipboard_image(path: &str) -> Result<clipboard_rs::RustImageData, String> {
 +    use std::os::unix::fs::OpenOptionsExt;
 +    let file = std::fs::OpenOptions::new()
@@ -26009,7 +26231,7 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs b
 +    Ok(clipboard_rs::RustImageData::from_dynamic_image(image))
 +}
 +
-@@ -40,0 +98,54 @@
+ impl ClipboardBackend for MacosClipboard {
 +    fn write_preserving(
 +        &self,
 +        value: ClipboardValue,
@@ -26064,10 +26286,22 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs b
 +        })
 +    }
 +
-@@ -62 +173 @@
+     fn available_formats(&self) -> Result<Vec<String>, String> {
+         self.context()?
+             .available_formats()
+@@ -59,7 +170,7 @@
+
+     fn write_image(&self, absolute_path: &str) -> Result<(), String> {
+         let path = absolute_existing_file(absolute_path)?;
 -        let image = clipboard_rs::RustImageData::from_path(&path).map_err(|e| e.to_string())?;
 +        let image = bounded_clipboard_image(&path)?;
-@@ -73,0 +185,179 @@
+         self.context()?.set_image(image).map_err(|e| e.to_string())
+     }
+
+@@ -71,9 +182,301 @@
+     }
+ }
+
 +// Rich data stays inside this native process. Tokens reveal no clipboard bytes.
 +const MAX_SNAPSHOT_BYTES: usize = 16 * 1024 * 1024;
 +const MAX_SNAPSHOT_ITEMS: usize = 32;
@@ -26247,7 +26481,9 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs b
 +    Ok(true)
 +}
 +
-@@ -76,0 +367,113 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
 +
 +    #[test]
 +    fn rich_clipboard_preservation_is_lossless_and_yields_to_external_copies() {
@@ -26361,16 +26597,28 @@ diff --git a/libs/cua-driver/rust/crates/platform-macos/src/tools/clipboard.rs b
 +            .contains("canonical identity"));
 +        assert!(bounded_clipboard_image(&canonical).is_err());
 +    }
+
+     #[test]
+     fn rejects_relative_local_paths_before_clipboard_access() {
 diff --git a/libs/cua-driver/rust/crates/platform-macos/Cargo.toml b/libs/cua-driver/rust/crates/platform-macos/Cargo.toml
 --- a/libs/cua-driver/rust/crates/platform-macos/Cargo.toml
 +++ b/libs/cua-driver/rust/crates/platform-macos/Cargo.toml
-@@ -56 +56 @@
+@@ -53,7 +53,7 @@
+     # transitive deps.
+     "NSImage", "NSImageView", "NSTextField", "NSControl", "NSCell",
+     # System cursor shape reporting (cursor_shape adapter).
 -    "NSCursor",
 +    "NSCursor", "NSPasteboard", "NSPasteboardItem",
+     "block2", "libc",
+ ] }
+
 diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs
-@@ -16,0 +17,33 @@
+@@ -14,7 +14,50 @@
+     tool_args::parse_typed_input,
+ };
+
 +#[derive(Debug)]
 +pub struct ClipboardPreserveError {
 +    pub message: String,
@@ -26404,7 +26652,7 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +    File(String),
 +}
 +
-@@ -17,0 +51,10 @@
+ pub trait ClipboardBackend: Send + Sync {
 +    fn write_preserving(
 +        &self,
 +        _value: ClipboardValue,
@@ -26415,17 +26663,25 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +    fn restore_preserved(&self, _token: &str) -> Result<bool, String> {
 +        Err("clipboard preservation is unsupported on this platform; nothing was written".into())
 +    }
-@@ -132 +175,5 @@
+     fn available_formats(&self) -> Result<Vec<String>, String>;
+     fn read_text(&self) -> Result<Option<String>, String>;
+     fn write_text(&self, text: String) -> Result<(), String>;
+@@ -129,47 +172,107 @@
+         let supplied = usize::from(input.text.is_some())
+             + usize::from(input.image_path.is_some())
+             + usize::from(input.file_path.is_some());
 -        if supplied != 1 {
 +        if (input.restore_token.is_some()
 +            && (supplied != 0 || input.preserve || input.preserve_token.is_some()))
 +            || (input.preserve_token.is_some() && !input.preserve)
 +            || (input.restore_token.is_none() && supplied != 1)
 +        {
-@@ -134 +181 @@
+             return ToolResult::error(
 -                "clipboard_write requires exactly one of text, image_path, or file_path",
 +                "clipboard_write requires exactly one of text, image_path, file_path, or restore_token; restoration cannot preserve",
-@@ -137,0 +185,7 @@
+             );
+         }
+
 +        let preserve_token = input
 +            .preserve_token
 +            .clone()
@@ -26433,7 +26689,8 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +        if uuid::Uuid::parse_str(&preserve_token).is_err() {
 +            return ToolResult::error("preserve_token must be a UUID; nothing was written");
 +        }
-@@ -140,9 +194,10 @@
+         let backend = self.backend.clone();
+         let result = tokio::task::spawn_blocking(move || {
 -            let written_type = if let Some(text) = input.text {
 -                backend.write_text(text)?;
 -                "text"
@@ -26453,7 +26710,7 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +                            .map_err(ClipboardPreserveError::attempted)?,
 +                    ),
 +                )
-@@ -150 +205,27 @@
+             } else {
 -                unreachable!("exactly one clipboard value was checked above")
 +                let (kind, value) = if let Some(text) = input.text {
 +                    ("text", ClipboardValue::Text(text))
@@ -26482,7 +26739,7 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +                    None
 +                };
 +                (kind, token, None)
-@@ -152,2 +233,10 @@
+             };
 -            let types = normalize_types(backend.available_formats()?);
 -            Ok::<_, String>((written_type, types))
 +            let types = match backend.available_formats() {
@@ -26495,10 +26752,12 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +                }
 +            };
 +            Ok::<_, ClipboardPreserveError>((written_type, types, restore_token, restored))
-@@ -157 +246 @@
+         })
+         .await;
+
 -        let (written_type, types) = match result {
 +        let (written_type, types, restore_token, restored) = match result {
-@@ -159 +248,10 @@
+             Ok(Ok(value)) => value,
 -            Ok(Err(error)) => return unavailable("write", error),
 +            Ok(Err(error)) => {
 +                let mut result = unavailable("write", error.message);
@@ -26510,10 +26769,17 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +                }
 +                return result;
 +            }
-@@ -162,0 +261,2 @@
+             Err(error) => return unavailable("write", format!("worker failed: {error}")),
+         };
+         let output = ClipboardWriteOutput {
 +            restore_token,
 +            clipboard_restored: restored,
-@@ -169,4 +269,7 @@
+             supported: true,
+             written_type: written_type.into(),
+             types,
+             privacy_sensitive: true,
+             content_redacted_from_telemetry: true,
+         };
 -        ToolResult::text(format!(
 -            "Clipboard write succeeded as {written_type}; inspect structuredContent.types before paste."
 -        ))
@@ -26525,7 +26791,13 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +        };
 +        ToolResult::text(message)
 +            .with_structured(serde_json::to_value(output).expect("clipboard output serializes"))
-@@ -267,0 +371,18 @@
+     }
+ }
+
+@@ -265,6 +368,24 @@
+         assert_eq!(output["text"], "private value");
+         assert_eq!(output["privacy_sensitive"], true);
+         assert_eq!(output["content_redacted_from_telemetry"], true);
 +    }
 +
 +    #[tokio::test]
@@ -26544,10 +26816,16 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/clipboard.rs b/libs
 +            "not-dispatched"
 +        );
 +        assert_eq!(backend.read_text().unwrap().as_deref(), Some("original"));
+     }
+
+     #[tokio::test]
 diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs b/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
 --- a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs
-@@ -2087 +2087,8 @@
+@@ -2084,7 +2084,14 @@
+                     } else {
+                         ("file_path", "file_url")
+                     };
 -                let source = canonical_existing_file(required_path_arg(args, argument)?)?;
 +                let requested = required_path_arg(args, argument)?;
 +                let source = canonical_existing_file(requested)?;
@@ -26557,10 +26835,16 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-core/src/tool.rs b/libs/cua-
 +                        "Clipboard path changed canonical identity; nothing was read",
 +                    ));
 +                }
+                 args[argument] = Value::String(source.clone());
+                 (
+                     serde_json::json!({
 diff --git a/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs b/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs
-@@ -849,0 +850,13 @@
+@@ -847,6 +847,19 @@
+ #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, uniffi::Record)]
+ #[serde(deny_unknown_fields)]
+ pub struct ClipboardWriteInput {
 +    /// Preserve all existing native clipboard representations before replacement.
 +    /// Unsupported platforms refuse before changing the clipboard.
 +    #[serde(default)]
@@ -26574,15 +26858,27 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-contract/src/inputs.rs b/lib
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    #[schemars(schema_with = "string_schema")]
 +    pub restore_token: Option<String>,
+     /// Plain text to place on the clipboard.
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     #[schemars(schema_with = "string_schema")]
 diff --git a/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs b/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs
-@@ -441,0 +442,4 @@
+@@ -439,6 +439,10 @@
+
+ #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq, uniffi::Record)]
+ pub struct ClipboardWriteOutput {
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    pub restore_token: Option<String>,
 +    #[serde(default, skip_serializing_if = "Option::is_none")]
 +    pub clipboard_restored: Option<bool>,
-@@ -454,2 +458,5 @@
+     pub supported: bool,
+     pub written_type: String,
+     pub types: Vec<String>,
+@@ -451,8 +455,11 @@
+         if !self.supported {
+             return Err("successful clipboard writes must be supported".into());
+         }
 -        if !matches!(self.written_type.as_str(), "text" | "image" | "file_url") {
 -            return Err("written_type must be text, image, or file_url".into());
 +        if !matches!(
@@ -26590,16 +26886,28 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver-contract/src/outputs.rs b/li
 +            "text" | "image" | "file_url" | "restored"
 +        ) {
 +            return Err("written_type must be text, image, file_url, or restored".into());
+         }
+         if !self.privacy_sensitive || !self.content_redacted_from_telemetry {
+             return Err("clipboard privacy metadata must remain enabled".into());
 diff --git a/libs/cua-driver/rust/crates/cua-driver-contract/src/desktop.rs b/libs/cua-driver/rust/crates/cua-driver-contract/src/desktop.rs
 --- a/libs/cua-driver/rust/crates/cua-driver-contract/src/desktop.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver-contract/src/desktop.rs
-@@ -117 +117 @@
+@@ -114,7 +114,7 @@
+ fn clipboard_write() -> ToolContract {
+     let mut contract = contract::<ClipboardWriteInput, ClipboardWriteOutput>(
+         "clipboard_write",
 -        "Replace the system clipboard with exactly one value: plain text, an image from an absolute local path, or a file URL from an absolute local path. Returns the available types for read-back before paste.",
 +        "Replace the system clipboard with exactly one value: plain text, an image from an absolute local path, or a file URL from an absolute local path. Returns available types for read-back before paste. On macOS preserve:true retains all existing representations in a bounded opaque restore_token; clipboard_write with only restore_token consumes it and restores only if nobody has changed the clipboard.",
+         &["clipboard.write", "clipboard.write.text", "clipboard.write.image", "clipboard.write.file_url", "clipboard.types"],
+         ToolAnnotations {
+             read_only: false,
 diff --git a/libs/cua-driver/rust/crates/cua-driver/src/sdk_adapter.rs b/libs/cua-driver/rust/crates/cua-driver/src/sdk_adapter.rs
 --- a/libs/cua-driver/rust/crates/cua-driver/src/sdk_adapter.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver/src/sdk_adapter.rs
-@@ -46,0 +47,13 @@
+@@ -44,6 +44,19 @@
+             | "browser_download"
+             | "browser_pointer"
+     )
 +}
 +
 +#[cfg(target_os = "macos")]
@@ -26613,15 +26921,27 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver/src/sdk_adapter.rs b/libs/cu
 +                    .and_then(Value::as_str)
 +                    .is_some_and(|token| uuid::Uuid::parse_str(token).is_ok())
 +        })
-@@ -247 +260,3 @@
+ }
+
+ #[cfg(target_os = "macos")]
+@@ -244,7 +257,9 @@
+         // A request interrupted during target resolution cannot join the
+         // reopened epoch after older input has drained.
+         #[cfg(target_os = "macos")]
 -        let native_epoch = if is_native_input_tool(name) {
 +        let native_epoch = if is_native_input_tool(name)
 +            && !is_clipboard_restoration(name, &arguments)
 +        {
+             let gate = platform_macos::input::cancellation::gate();
+             let admission = match _expected_input_epoch {
+                 Some(epoch) => gate.validate_epoch(epoch),
 diff --git a/libs/cua-driver/rust/crates/cua-driver/src/serve.rs b/libs/cua-driver/rust/crates/cua-driver/src/serve.rs
 --- a/libs/cua-driver/rust/crates/cua-driver/src/serve.rs
 +++ b/libs/cua-driver/rust/crates/cua-driver/src/serve.rs
-@@ -483,0 +484,10 @@
+@@ -481,6 +481,16 @@
+     if !trusted_host {
+         return Err("native input requires the authenticated embedded host".into());
+     }
 +    #[cfg(target_os = "macos")]
 +    if crate::sdk_adapter::is_clipboard_restoration(
 +        request.name.as_deref().unwrap_or(""),
@@ -26632,10 +26952,22 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver/src/serve.rs b/libs/cua-driv
 +    ) {
 +        return Ok(None);
 +    }
-@@ -713 +723 @@
+     #[derive(serde::Deserialize)]
+     struct InputAdmission {
+         expected_input_epoch: u64,
+@@ -710,7 +720,7 @@
+         .expect("daemon metadata is serializable");
+     #[cfg(target_os = "macos")]
+     {
 -        metadata["synara_native_revision"] = serde_json::json!(39);
 +        metadata["synara_native_revision"] = serde_json::json!(40);
-@@ -999,0 +1010,12 @@
+     }
+     DaemonResponse::ok(metadata)
+ }
+@@ -997,6 +1007,18 @@
+             let request: DaemonRequest = serde_json::from_str(wire).unwrap();
+             super::host_input_epoch(wire, &request, embedded, trusted)
+         };
 +        let restore = r#"{"method":"call","name":"clipboard_write","args":{"restore_token":"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee"}}"#;
 +        assert_eq!(parse(restore, true, true).unwrap(), None);
 +        assert!(parse(restore, true, false).is_err());
@@ -26648,3 +26980,6 @@ diff --git a/libs/cua-driver/rust/crates/cua-driver/src/serve.rs b/libs/cua-driv
 +                .to_string();
 +            assert!(parse(&request, true, true).is_err());
 +        }
+         let wire = r#"{"method":"call","name":"click","expected_input_epoch":7,"args":{"expected_input_epoch":99}}"#;
+         assert_eq!(parse(wire, true, true).unwrap(), Some(7));
+         assert!(parse(wire, true, false).is_err());

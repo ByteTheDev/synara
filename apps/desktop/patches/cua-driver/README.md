@@ -7,6 +7,14 @@ Rust version and native protocol revision. Preserve the upstream license in
 contributor attribution remain intact. This is a local macOS patch, not an
 upstream release or a claim of support on other platforms.
 
+Keep ordinary unified context in appended patch hunks. Revision 40's zero-context
+hunks passed the provisioner's `patch --batch --forward -p1` but failed CI's
+`git apply --check`. They were regenerated with context while preserving the
+earlier patch sections verbatim and every resulting source byte. Both applicators
+are verified against pristine upstream, including the subsequent
+`0002-synara-linux-browser.patch`. Repacking changes the patch checksum, so rebuild
+artifacts through the provisioner instead of editing their provenance receipts.
+
 The patch closes native input admission irreversibly for one driver process.
 Keyboard and mouse guards prepare their matching releases before sending a down
 event and release on normal return, failure, cancellation and Rust unwind. A
