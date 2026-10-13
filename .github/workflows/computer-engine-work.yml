@@ -1,0 +1,65 @@
+name: Computer engine work
+on:
+  push:
+    branches: [work/computer-use-engine-1911]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: computer-engine-work-1911
+  cancel-in-progress: true
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Inspect engine paths
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          specs = {
+            'apps/server/src/computer/ComputerManager.ts': [r'^  (?:async )?(?:scrollCalibrated|paste|typeTextAt|typeText|verifyState|waitForSettle)\('],
+            'apps/server/src/computer/CuaComputerBackend.ts': [r'^  (?:private )?(?:async )?(?:scroll|typeTextAt|typeText|readClipboard|writeClipboard|verifyState|call|action)\('],
+            'apps/server/src/agentGateway/computerBrowserTools.ts': [r'upload|file|clipboard'],
+            'packages/shared/src/cuaDriverProtocol.ts': [r'effect|delivered|typed|verification'],
+            'apps/desktop/src/cuaDriverHost.ts': [r'delivered|typed_chars|clipboard|type_text'],
+            'apps/server/src/computer/uiTreeTargeting.ts': [r'function actionableElements|ACTIONABLE|MAX_|limit'],
+          }
+          for path, patterns in specs.items():
+            lines = Path(path).read_text().splitlines()
+            print('\nSOURCE', path, 'TOTAL', len(lines))
+            ranges = []
+            for i,line in enumerate(lines):
+              if not any(re.search(pattern,line) for pattern in patterns): continue
+              if patterns[0].startswith('^'):
+                end = next((j for j in range(i+1,len(lines)) if re.match(r'^  (?:private |async |get |readonly )?[A-Za-z_]\w*\(', lines[j])), min(i+180,len(lines)))
+                ranges.append((max(0,i-3),min(end,i+220)))
+              else: ranges.append((max(0,i-3),min(len(lines),i+7)))
+            seen=set()
+            for a,b in ranges:
+              for j in range(a,b):
+                if j not in seen: print(f'{j+1}: {lines[j]}'); seen.add(j)
+          print('\nSOURCE package.json\n'+Path('package.json').read_text())
+          patch=Path('apps/desktop/patches/cua-driver/0001-synara-native.patch').read_text().splitlines()
+          for i,line in enumerate(patch):
+            if re.search(r'delivered_chars|typed_chars|delivered .* of|readback|browser_upload|clipboard',line,re.I) and ('type_text' in '\n'.join(patch[max(0,i-300):i]) or 'delivered' in line or 'clipboard' in line):
+              print('NATIVE',i+1,line[:250])
+          PY
+      - name: Inspect previous test failure
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const jobs = [115406149143, 115406252782];
+            for (const job_id of jobs) {
+              try {
+                const reply = await github.request('GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs', {...context.repo,job_id});
+                const text = typeof reply.data === 'string' ? reply.data : Buffer.from(reply.data).toString();
+                const lines=text.split('\n');
+                for(let i=0;i<lines.length;i++) if(/FAIL |AssertionError|Error:|would reformat|not formatted|Formatting issues|src\/.*\.ts$/.test(lines[i])) console.log(lines.slice(Math.max(0,i-2),Math.min(lines.length,i+18)).join('\n'));
+              } catch(error) { console.log('LOG_READ',job_id,error.message); }
+            }
