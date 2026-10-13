@@ -5,35 +5,41 @@ on:
     paths: ['.workbench/**', '.github/workflows/sidebar-chat-access-workbench.yml']
 permissions:
   contents: write
+  actions: read
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-          fetch-depth: 8
-      - name: Apply focused candidate and corrected fixtures
-        run: python3 scripts/sidebar-chat-access-workbench.py prepare
+          fetch-depth: 10
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 38436818649
+          name: sidebar-access-verification
+          path: output/sidebar-access
+      - name: Prepare explicit unread completion fixture
+        run: python3 scripts/sidebar-chat-access-finalize.py prepare
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
-      - name: Final format, lint, and type checks
-        run: python3 scripts/sidebar-chat-access-workbench.py checks
-      - name: Install Chromium for actual app verification
-        run: cd apps/web && bunx playwright install --with-deps chromium
-      - name: Verify sidebar, keyboard, responsive layout, and draft preservation
-        run: python3 scripts/sidebar-chat-access-workbench.py browser
-      - name: Capture before, after, and real browser interactions
-        continue-on-error: true
-        run: python3 scripts/sidebar-chat-access-workbench.py capture
-      - name: Export reviewed candidate objects without changing any branch
+      - name: Check changed fixture and formatting
+        run: python3 scripts/sidebar-chat-access-finalize.py checks
+      - name: Install browser and video encoder
+        run: |
+          (cd apps/web && bunx playwright install --with-deps chromium)
+          sudo apt-get install --no-install-recommends -y ffmpeg
+      - name: Verify the two corrected unread and navigation journeys
+        run: python3 scripts/sidebar-chat-access-finalize.py browser
+      - name: Export final candidate objects without changing any branch
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-        run: python3 scripts/sidebar-chat-access-workbench.py export
+        run: python3 scripts/sidebar-chat-access-finalize.py export
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -41,4 +47,4 @@ jobs:
           path: output/sidebar-access
           retention-days: 7
       - name: Require successful validation
-        run: python3 scripts/sidebar-chat-access-workbench.py gate
+        run: python3 scripts/sidebar-chat-access-finalize.py gate
