@@ -3501,6 +3501,51 @@ diffs-container {
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
+/* Compact sidebar toolbar variant. Unlike the raised settings picker, the selected
+   segment stays inside a quiet track and neither labels nor badges shift on selection. */
+.sidebar-segmented-picker-inset {
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+.sidebar-segmented-thumb-inset {
+  background: var(--background);
+  border: 1px solid color-mix(in oklab, var(--foreground) 6%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+.dark .sidebar-segmented-thumb-inset {
+  background: color-mix(in oklab, var(--foreground) 12%, var(--background));
+  border-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 16%);
+}
+
+@media (prefers-contrast: more) {
+  .sidebar-segmented-picker-inset {
+    outline: 1px solid var(--muted-foreground);
+  }
+
+  .sidebar-segmented-thumb-inset {
+    border-color: var(--foreground);
+  }
+}
+
+@media (forced-colors: active) {
+  .sidebar-segmented-picker-inset {
+    outline: 1px solid ButtonText;
+  }
+
+  .sidebar-segmented-thumb-inset {
+    background: Canvas;
+    border-color: Highlight;
+    box-shadow: none;
+  }
+
+  .sidebar-segmented-picker-inset [aria-checked="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
 /* Frosted translucent shell shared by floating menus & pickers (dropdown menus,
    selects, popovers, comboboxes) and composer pickers. Background + blur are
    theme-aware via the tokens set in theme.logic (control-opaque @70% + blur). */

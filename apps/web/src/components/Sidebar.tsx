@@ -6809,6 +6809,31 @@ export default function Sidebar() {
     </span>
   ) : null;
 
+  const sidebarHeaderActions = (
+    <div className="ml-auto flex shrink-0 items-center gap-1">
+      <SidebarIconButton
+        icon={SearchIcon}
+        label="Search"
+        glyph="leading"
+        size="header"
+        tooltip={searchShortcutLabel ? `Search (${searchShortcutLabel})` : "Search"}
+        tooltipSide="bottom"
+        onClick={() => {
+          setSearchPaletteOpen(true);
+        }}
+      />
+      {!isOnGroups ? (
+        <SidebarActivityBellButton
+          active={activityViewEnabled}
+          showUnreadDot={hasUnreadActivity}
+          shortcutLabel={activityShortcutLabel}
+          onClick={() => setActivityViewEnabledSmoothly(!activityViewEnabled)}
+        />
+      ) : null}
+      {!showThreadSectionPicker ? betaBadge : null}
+    </div>
+  );
+
   // Home and Spaces switch the panel; route items navigate (prewarm included). The store's
   // active item keeps one item selected.
   const isOnThreadsSection =
@@ -7202,28 +7227,11 @@ export default function Sidebar() {
                   onSelectView={handleSidebarViewChange}
                   onPrewarmView={prewarmSidebarViewTarget}
                 />
-                <div className="ml-auto flex items-center gap-1.5">
-                  <SidebarIconButton
-                    icon={SearchIcon}
-                    label="Search"
-                    glyph="leading"
-                    size="header"
-                    tooltip={searchShortcutLabel ? `Search (${searchShortcutLabel})` : "Search"}
-                    tooltipSide="bottom"
-                    onClick={() => {
-                      setSearchPaletteOpen(true);
-                    }}
-                  />
-                  {!isOnGroups ? (
-                    <SidebarActivityBellButton
-                      active={activityViewEnabled}
-                      showUnreadDot={hasUnreadActivity}
-                      shortcutLabel={activityShortcutLabel}
-                      onClick={() => setActivityViewEnabledSmoothly(!activityViewEnabled)}
-                    />
-                  ) : null}
-                  {betaBadge}
-                </div>
+                {showThreadSectionPicker ? (
+                  <div className="ml-auto">{betaBadge}</div>
+                ) : (
+                  sidebarHeaderActions
+                )}
               </div>
               {showThreadSectionPicker ? (
                 <SidebarThreadSectionPicker
@@ -7237,7 +7245,9 @@ export default function Sidebar() {
                       if (section === "chats") setChatSectionExpanded(true);
                     });
                   }}
-                />
+                >
+                  {sidebarHeaderActions}
+                </SidebarThreadSectionPicker>
               ) : null}
             </div>
           ) : null}
