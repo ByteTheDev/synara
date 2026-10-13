@@ -26,6 +26,10 @@ import { AsyncUserInput, AsyncUserInputQuestions, AsyncUserInputResponse } from 
 import { ProjectKind } from "./project";
 import { ClaudeCacheObservation } from "./claudeCache";
 import {
+  OrchestrationGetInlineVisualInput,
+  OrchestrationGetInlineVisualResult,
+} from "./inlineVisual";
+import {
   ApprovalRequestId,
   CheckpointRef,
   CommandId,
@@ -58,6 +62,7 @@ export const ORCHESTRATION_WS_METHODS = {
   repairState: "orchestration.repairState",
   getTurnDiff: "orchestration.getTurnDiff",
   getFullThreadDiff: "orchestration.getFullThreadDiff",
+  getInlineVisual: "orchestration.getInlineVisual",
   replayEvents: "orchestration.replayEvents",
   listProviderDeliveryBlockers: "orchestration.listProviderDeliveryBlockers",
   reconcileProviderDelivery: "orchestration.reconcileProviderDelivery",
@@ -1478,6 +1483,9 @@ export const ThreadHandoffImportedMessage = Schema.Struct({
   role: Schema.Literals(["user", "assistant"]),
   text: Schema.String,
   attachments: Schema.optional(Schema.Array(ChatAttachment)),
+  // Who wrote an imported user message. "agent" marks a subagent's brief from
+  // the agent that launched it, so it never counts as a human message.
+  dispatchOrigin: Schema.optional(MessageDispatchOrigin),
   createdAt: IsoDateTime,
   updatedAt: IsoDateTime,
 });
@@ -1752,11 +1760,15 @@ const ThreadClaudeCacheCompactedCommand = Schema.Struct({
   createdAt: IsoDateTime,
 });
 
+const TurnInterruptRequestedBy = Schema.Literals(["user", "agent", "system"]);
+
 const ThreadTurnInterruptCommand = Schema.Struct({
   type: Schema.Literal("thread.turn.interrupt"),
   commandId: CommandId,
   threadId: ThreadId,
   turnId: Schema.optional(TurnId),
+  // Explicit intent provenance. Historical/automatic requests may omit it.
+  requestedBy: Schema.optional(TurnInterruptRequestedBy),
   createdAt: IsoDateTime,
 });
 
@@ -2460,6 +2472,7 @@ export const ThreadGoalContinuationRequestedPayload = Schema.Struct({
 export const ThreadTurnInterruptRequestedPayload = Schema.Struct({
   threadId: ThreadId,
   turnId: Schema.optional(TurnId),
+  requestedBy: Schema.optional(TurnInterruptRequestedBy),
   createdAt: IsoDateTime,
 });
 
@@ -2808,6 +2821,8 @@ export type OrchestrationEvent = typeof OrchestrationEvent.Type;
 export const OrchestrationThreadDetailSnapshot = Schema.Struct({
   snapshotSequence: NonNegativeInt,
   thread: OrchestrationThread,
+  /** Latest projected rollback/revert; lets recovery discard removed local messages. */
+  historyRevisionSequence: Schema.optional(NonNegativeInt),
 });
 export type OrchestrationThreadDetailSnapshot = typeof OrchestrationThreadDetailSnapshot.Type;
 
@@ -3183,6 +3198,10 @@ export const OrchestrationRpcSchemas = {
   getFullThreadDiff: {
     input: OrchestrationGetFullThreadDiffInput,
     output: OrchestrationGetFullThreadDiffResult,
+  },
+  getInlineVisual: {
+    input: OrchestrationGetInlineVisualInput,
+    output: OrchestrationGetInlineVisualResult,
   },
   replayEvents: {
     input: OrchestrationReplayEventsInput,

@@ -1,3 +1,4 @@
+import { inlineVisualFilePath } from "../../inlineVisualStore.ts";
 import { ProjectionThreadMessageRepository } from "../../persistence/Services/ProjectionThreadMessages.ts";
 import { ProjectionThreadMessageRepositoryLive } from "../../persistence/Layers/ProjectionThreadMessages.ts";
 import {
@@ -4435,6 +4436,21 @@ it.layer(
       yield* fileSystem.writeFileString(otherThreadAttachmentPath, "other-thread");
       assert.isTrue(yield* exists(threadAttachmentPath));
       assert.isTrue(yield* exists(otherThreadAttachmentPath));
+      // Inline visuals sit in a per-thread folder the root scan never visits.
+      const threadVisualPath = inlineVisualFilePath({
+        attachmentsDir,
+        threadId,
+        visualId: `vis_${"a".repeat(32)}`,
+      })!;
+      const otherThreadVisualPath = inlineVisualFilePath({
+        attachmentsDir,
+        threadId: "thread-delete-files-extra",
+        visualId: `vis_${"b".repeat(32)}`,
+      })!;
+      for (const visualPath of [threadVisualPath, otherThreadVisualPath]) {
+        yield* fileSystem.makeDirectory(path.dirname(visualPath), { recursive: true });
+        yield* fileSystem.writeFileString(visualPath, "<svg></svg>");
+      }
 
       yield* appendAndProject({
         type: "thread.deleted",
@@ -4454,6 +4470,8 @@ it.layer(
 
       assert.isFalse(yield* exists(threadAttachmentPath));
       assert.isTrue(yield* exists(otherThreadAttachmentPath));
+      assert.isFalse(yield* exists(path.dirname(threadVisualPath)));
+      assert.isTrue(yield* exists(otherThreadVisualPath));
     }),
   );
 });
@@ -4691,6 +4709,33 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           },
         });
 
+        for (const commandId of [
+          "agent:probe:interrupt",
+          "agent-recovery:probe",
+          "unknown-interrupt",
+        ]) {
+          yield* appendAndProject({
+            type: "thread.turn-interrupt-requested",
+            eventId: EventId.makeUnsafe(`evt-neutral-${commandId}`),
+            aggregateKind: "thread",
+            aggregateId: ThreadId.makeUnsafe("thread-conflict"),
+            occurredAt: "2026-02-26T13:00:02.000Z",
+            commandId: CommandId.makeUnsafe(commandId),
+            causationEventId: null,
+            correlationId: CorrelationId.makeUnsafe(commandId),
+            metadata: {},
+            payload: {
+              threadId: ThreadId.makeUnsafe("thread-conflict"),
+              turnId: TurnId.makeUnsafe("turn-interrupted"),
+              createdAt: "2026-02-26T13:00:02.000Z",
+            },
+          });
+        }
+        assert.deepEqual(
+          yield* sql`SELECT kind FROM projection_thread_activities WHERE thread_id = 'thread-conflict'`,
+          [],
+        );
+
         yield* appendAndProject({
           type: "thread.turn-interrupt-requested",
           eventId: EventId.makeUnsafe("evt-conflict-3"),
@@ -4704,9 +4749,33 @@ it.layer(BaseTestLayer)("OrchestrationProjectionPipeline", (it) => {
           payload: {
             threadId: ThreadId.makeUnsafe("thread-conflict"),
             turnId: TurnId.makeUnsafe("turn-interrupted"),
+            requestedBy: "user",
             createdAt: "2026-02-26T13:00:02.000Z",
           },
         });
+
+        const stopRows = yield* sql<{
+          readonly turnId: string;
+          readonly kind: string;
+          readonly payload: string;
+        }>`
+          SELECT turn_id AS "turnId", kind, payload_json AS payload FROM projection_thread_activities
+          WHERE thread_id = 'thread-conflict'
+        `;
+        assert.deepEqual(
+          stopRows.map(({ turnId, kind, payload }) => ({
+            turnId,
+            kind,
+            payload: JSON.parse(payload),
+          })),
+          [
+            {
+              turnId: "turn-interrupted",
+              kind: "turn.stop-requested",
+              payload: { requestedBy: "user" },
+            },
+          ],
+        );
 
         yield* appendAndProject({
           type: "thread.message-sent",

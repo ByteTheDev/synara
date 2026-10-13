@@ -497,9 +497,8 @@ function ProviderModelDiscoveryWarmer() {
   // provider that doesn't render instantly when the model picker opens. Warm it
   // at app startup — ahead of the picker opening — so the catalog is ready by
   // the time the user browses to OMP. The server caches that catalog globally
-  // (keyed by binary path + agent dir), so any warm primes it for every later
-  // query; `modelRoles` merge a per-cwd project layer, so the picker's own
-  // cwd-scoped query key then only pays for the config reads on top.
+  // (keyed by account, binary path and agent dir), and the picker shares this
+  // account-global query across projects.
   const { settings } = useAppSettings();
   const queryClient = useQueryClient();
   const ompHidden = !isBetaFeatureOn("omp") || settings.hiddenProviders.includes("omp");
@@ -1822,11 +1821,29 @@ function EventRouter() {
       }),
     );
 
+    // Counts successful socket opens so the first welcome can tell whether the
+    // mount-time bootstrap already subscribed on the connection that sent it.
+    // Requests issued while connecting land on the next open, hence `+ 1`.
+    let transportOpenCount = 0;
+    let transportOpen = false;
+    const unsubTransportOpenCount = addWsTransportStateListener(
+      (state) => {
+        if (state === "open" && !transportOpen) transportOpenCount += 1;
+        transportOpen = state === "open";
+      },
+      { replayCurrent: true },
+    );
+    const currentTransportConnection = () =>
+      transportOpen ? transportOpenCount : transportOpenCount + 1;
+    let scopedSubscriptionConnection: number | null = null;
+    let awaitingInitialWelcome = true;
+
     let scopedSubscriptionRefresh: Promise<void> | null = null;
     const ensureScopedSubscriptions = () => {
       if (scopedSubscriptionRefresh) {
         return scopedSubscriptionRefresh;
       }
+      scopedSubscriptionConnection = currentTransportConnection();
       shellSubscriptionGeneration += 1;
       const generation = shellSubscriptionGeneration;
       if (shellSnapshotFallbackTimer !== null) {
@@ -2137,7 +2154,11 @@ function EventRouter() {
         // authoritative and can repair a client that advanced its cursor while
         // dropping or failing to reduce one of the corresponding live events.
         const stateBeforeProjectionApply = useStore.getState();
-        syncServerThreadDetailHotPath(snapshot.thread, snapshot.snapshotSequence);
+        syncServerThreadDetailHotPath(
+          snapshot.thread,
+          snapshot.snapshotSequence,
+          snapshot.historyRevisionSequence,
+        );
         threadResumeSeedSequenceById.delete(threadId);
         reconcilePromotedDraftFromThreadDetail(snapshot.thread);
         flushThreadBuffer(threadId, snapshot.snapshotSequence);
@@ -2364,7 +2385,11 @@ function EventRouter() {
           return;
         }
         flushQueuedDomainEventsBeforeSnapshot();
-        syncServerThreadDetailHotPath(item.snapshot.thread, item.snapshot.snapshotSequence);
+        syncServerThreadDetailHotPath(
+          item.snapshot.thread,
+          item.snapshot.snapshotSequence,
+          item.snapshot.historyRevisionSequence,
+        );
         // The projection can discard a tombstoned snapshot (deleted thread or
         // project) instead of applying it; committing the cursor or the stream
         // fence first would leave resume bookkeeping vouching for detail that
@@ -2562,7 +2587,17 @@ function EventRouter() {
           studioWorkspaceRoot: payload.studioWorkspaceRoot,
           groupsWorkspaceRoot: payload.groupsWorkspaceRoot,
         });
-        await ensureScopedSubscriptions();
+        // The first welcome of the connection the mount-time bootstrap already
+        // subscribed on carries nothing new. Resubscribing would interrupt the open
+        // chat's snapshot and load it twice; later welcomes still resynchronize.
+        const coveredByBootstrap =
+          awaitingInitialWelcome && scopedSubscriptionConnection === currentTransportConnection();
+        awaitingInitialWelcome = false;
+        if (coveredByBootstrap) {
+          await scopedSubscriptionRefresh;
+        } else {
+          await ensureScopedSubscriptions();
+        }
         if (disposed) {
           return;
         }
@@ -2816,6 +2851,7 @@ function EventRouter() {
       unsubServerConfigUpdated();
       unsubProviderStatusesUpdated();
       unsubWsTransportState();
+      unsubTransportOpenCount();
       unsubServerSettingsUpdated();
     };
   }, [

@@ -454,6 +454,7 @@ const worker = setupWorker(
 async function mountApp(options?: {
   routeThreadId?: ThreadId;
   waitForThreadId?: ThreadId | null;
+  requireSyncedThread?: boolean;
 }): Promise<{ router: ReturnType<typeof getRouter>; cleanup: () => Promise<void> }> {
   const host = createFullscreenTestHost();
 
@@ -479,6 +480,9 @@ async function mountApp(options?: {
         expect(
           expectedThread.messages.every((message) => hydratedMessageIdSet.has(message.id)),
         ).toBe(true);
+        if (options?.requireSyncedThread) {
+          expect(useStore.getState().threadDetailSyncById?.[expectedThreadId]).toBe("synced");
+        }
       },
       // The first Chromium/MSW mount can spend more than 40 seconds compiling
       // the full desktop route graph on a cold Windows dev cache.
@@ -847,7 +851,10 @@ describe("EventRouter scoped orchestration sync", () => {
   it.each(["thread", "shell"])(
     "surfaces one %s retry rejection even while the paused notice exits",
     async (scope) => {
-      const mounted = await mountApp();
+      // Cached detail can satisfy the mount's message check before its live
+      // snapshot arrives. Confirm that snapshot before injecting an exhausted
+      // failure, otherwise recovery legitimately dismisses the paused notice.
+      const mounted = await mountApp({ requireSyncedThread: true });
       const api = createWsNativeApi();
       const subscribe = vi
         .spyOn(api.orchestration, scope === "thread" ? "subscribeThread" : "subscribeShell")
@@ -988,6 +995,10 @@ describe("EventRouter scoped orchestration sync", () => {
 
     try {
       expect(subscribeShellRequestCount).toBe(1);
+      // The first welcome must not restart the open chat's stream: that would
+      // interrupt its snapshot and load the whole transcript a second time.
+      await new Promise((resolve) => window.setTimeout(resolve, 200));
+      expect(subscribeThreadRequestCountById.get(THREAD_ID)).toBe(1);
     } finally {
       await mounted.cleanup();
     }
@@ -2372,12 +2383,6 @@ describe("EventRouter scoped orchestration sync", () => {
         { timeout: 4_000, interval: 16 },
       );
       sendThreadEventPush(bufferedEvent);
-      await vi.waitFor(
-        () => {
-          expect(subscribeThreadRequestCountById.get(recoveryThreadId)).toBeGreaterThanOrEqual(2);
-        },
-        { timeout: 4_000, interval: 16 },
-      );
       const subscribeCountBeforeMaterialization =
         subscribeThreadRequestCountById.get(recoveryThreadId) ?? 0;
       const detailSnapshotReadsBeforeMaterialization = getThreadDetailSnapshotRequestCount;
