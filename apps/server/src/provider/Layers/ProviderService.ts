@@ -823,6 +823,7 @@ function isStaleTurnProgressRuntimeEvent(event: ProviderRuntimeEvent): boolean {
     case "turn.proposed.delta":
     case "turn.proposed.completed":
     case "turn.diff.updated":
+    case "turn.tasks.updated":
     case "turn.steered":
     case "tool.progress":
     case "tool.summary":

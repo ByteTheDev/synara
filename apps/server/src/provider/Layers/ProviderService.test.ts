@@ -3086,6 +3086,7 @@ routing.layer("ProviderServiceLive routing", (it) => {
         );
 
         for (const type of [
+          "turn.tasks.updated",
           "task.started",
           "task.progress",
           "task.updated",
