@@ -10,12 +10,14 @@ import type {
   ProviderModelDescriptor,
 } from "@synara/contracts";
 import {
+  getClaudeContextWindowSuffix,
   getDefaultEffort,
   getModelCapabilities,
   normalizeModelSlug,
   trimOrNull,
 } from "@synara/shared/model";
 import { normalizeCursorModelVariantBaseId } from "../../cursorModelVariants";
+import { normalizeClaudeModelOptionSlug } from "../../providerModelOptions";
 
 function runtimeEffortLabel(value: string): string {
   switch (value) {
@@ -80,6 +82,12 @@ export function resolveRuntimeModelDescriptor(input: {
     return exact;
   }
 
+  if (provider === "claudeAgent" && !getClaudeContextWindowSuffix(model)) {
+    return runtimeModels.find(
+      (candidate) => normalizeClaudeModelOptionSlug(candidate) === normalizedModel,
+    );
+  }
+
   // Selections outlive catalog reshapes: a stored opencode slug can carry a
   // stale upstream prefix (or none at all) while the label still resolves.
   // Only use an unambiguous model identifier: upstreams may configure different
@@ -140,7 +148,8 @@ export function getRuntimeAwareModelCapabilities(input: {
       input.provider !== "droid" &&
       input.provider !== "opencode" &&
       input.provider !== "pi" &&
-      input.provider !== "devin") ||
+      input.provider !== "devin" &&
+      input.provider !== "omp") ||
     !runtimeEfforts ||
     runtimeEfforts.length === 0
   ) {
