@@ -878,7 +878,7 @@ const makeOrchestrationProjectionPipeline = Effect.gen(function* () {
             ...(isSidechatThread(existingRow.value)
               ? { sidechatLastActivityAt: event.payload.createdAt }
               : {}),
-            updatedAt: event.payload.createdAt,
+            updatedAt: event.occurredAt,
           });
           return;
         }

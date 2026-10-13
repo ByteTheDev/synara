@@ -7125,7 +7125,11 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         )?.autoCompactWindow;
         const effectiveClaudeModel = modelSelection?.model ?? getDefaultModel("claudeAgent");
         let caps = getModelCapabilities("claudeAgent", effectiveClaudeModel);
-        const needsSdkCapabilities = caps === EMPTY_MODEL_CAPABILITIES || requestedEffort !== null;
+        const requestedEffortIsPromptInjected =
+          requestedEffort !== null && caps.promptInjectedEffortLevels.includes(requestedEffort);
+        const needsSdkCapabilities =
+          caps === EMPTY_MODEL_CAPABILITIES ||
+          (requestedEffort !== null && !requestedEffortIsPromptInjected);
         let requestedAutoCompactWindowTokens = resolveSelectedClaudeAutoCompactWindow(
           effectiveClaudeModel,
           requestedAutoCompactWindow,

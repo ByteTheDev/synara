@@ -1647,6 +1647,9 @@ describe("ClaudeAdapterLive", () => {
 
   it.effect("treats ultrathink as a prompt keyword instead of a session effort", () => {
     const harness = makeHarness();
+    const discover = vi
+      .spyOn(harness.query, "supportedModels")
+      .mockRejectedValue(new Error("discovery unavailable"));
     return Effect.gen(function* () {
       const adapter = yield* ClaudeAdapter;
       const session = yield* adapter.startSession({
@@ -1677,6 +1680,7 @@ describe("ClaudeAdapterLive", () => {
 
       const createInput = harness.getLastCreateQueryInput();
       assert.equal(createInput?.options.effort, undefined);
+      assert.equal(discover.mock.calls.length, 0);
       const promptText = yield* Effect.promise(() => readFirstPromptText(createInput));
       assert.equal(promptText, "Ultrathink:\nInvestigate the edge cases");
     }).pipe(
