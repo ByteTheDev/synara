@@ -1,0 +1,26 @@
+name: Code OSS integration source snapshot
+
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-source-snapshot.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Export tracked source for isolated integration development
+        run: git archive --format=tar.gz --output=synara-source.tar.gz HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-integration-source
+          path: synara-source.tar.gz
+          retention-days: 1
+          if-no-files-found: error
