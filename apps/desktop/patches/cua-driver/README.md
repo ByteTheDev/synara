@@ -690,3 +690,23 @@ the SDK internally; Synara does not ship or load its separate `cdylib` on macOS
 or patched Linux. Removing that output avoids its code generation/link step
 without removing SDK functionality or changing native protocol revision 39.
 The patch checksum and trusted build-cache key cover this build-only change.
+
+### Revision 40: truthful web text evidence
+
+Partial text read-back is now classified against the same web-content trust
+boundary as a complete read-back, before the partial-result branch. A web AX
+echo, including a count of zero or one, cannot become a delivered-character
+count or a retry offset. Electron processes remain untrusted even when their
+partial AX tree omits the web ancestor. Native non-web read-back is unchanged;
+partial/interrupted input no longer advertises automatic suffix replay.
+
+After one keyboard dispatch to web content or Electron, the driver skips the
+AX drain poll that cannot provide renderer evidence. The result remains
+unverifiable and Synara returns an observation; this is not a claim that the
+renderer accepted, saved or submitted the text. No input path is replayed.
+
+The revision literal, base patch checksum and Linux follow-on checksum are
+updated together. Exact targeting, modal/protected-input admission, leases,
+foreground authorization, cancellation and release/drain rules are unchanged.
+See [the recovery and efficiency follow-up](../../../../docs/computer-use-cua/recovery-efficiency-2026-10-13.md)
+for API behavior and qualification limits.

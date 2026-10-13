@@ -113,19 +113,16 @@ describe("Escape listener readiness recovery", () => {
     expect(monitor.state).toEqual({ ready: false, error: "input-monitoring-required" });
   });
 
-  it.each(["disarm", "dispose"] as const)(
-    "cancels watchdog recovery on %s",
-    async (action) => {
-      vi.useFakeTimers();
-      const { monitor, helpers } = fixture();
-      if (action === "disarm") monitor.setArmed(false);
-      else monitor.dispose();
-      await vi.advanceTimersByTimeAsync(60_000);
-      expect(helpers).toHaveLength(1);
-      expect(monitor.state.ready).toBe(false);
-      expect(helpers[0]!.kill).toHaveBeenCalledTimes(action === "dispose" ? 1 : 0);
-    },
-  );
+  it.each(["disarm", "dispose"] as const)("cancels watchdog recovery on %s", async (action) => {
+    vi.useFakeTimers();
+    const { monitor, helpers } = fixture();
+    if (action === "disarm") monitor.setArmed(false);
+    else monitor.dispose();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(helpers).toHaveLength(1);
+    expect(monitor.state.ready).toBe(false);
+    expect(helpers[0]!.kill).toHaveBeenCalledTimes(action === "dispose" ? 1 : 0);
+  });
 
   it("backs off repeated silent starts rather than spawning in a tight loop", async () => {
     vi.useFakeTimers();

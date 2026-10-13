@@ -5752,3 +5752,277 @@ describe("computer_help", () => {
     }
   });
 });
+
+describe("computer engine recovery and efficiency", () => {
+  it.each(["computer_type_text", "computer_run"])(
+    "%s selects keyboard typing explicitly, without a semantic fallback",
+    async (tool) => {
+      const typeTextWithKeyboard = vi.fn(async () => ({
+        effect: "dispatched-unknown" as const,
+      }));
+      const { backend, manager, call } = await setup(
+        Object.assign(new FakeComputerBackend(), { typeTextWithKeyboard }),
+        async () => true,
+      );
+      try {
+        const fields = {
+          text: "A rich editor draft",
+          window_id: "fake-calculator",
+          typing_mode: "keyboard",
+        };
+        const result = await call(
+          tool,
+          tool === "computer_run"
+            ? { delivery_mode: "foreground", steps: [{ type: "type_text", ...fields }] }
+            : { ...fields, delivery_mode: "foreground", include_screenshot: false },
+        );
+        expect(result.isError).not.toBe(true);
+        expect(typeTextWithKeyboard).toHaveBeenCalledExactlyOnceWith(fields.text, fields.window_id);
+        expect(backend.callsFor("typeText")).toHaveLength(0);
+        expect(backend.callsFor("setValue")).toHaveLength(0);
+      } finally {
+        await manager.dispose();
+      }
+    },
+  );
+
+  it.each([
+    { text: "draft", window_id: "fake-calculator", typing_mode: "keyboard" },
+    { text: "draft", typing_mode: "keyboard", delivery_mode: "foreground" },
+    {
+      text: "draft",
+      window_id: "fake-calculator",
+      typing_mode: "keyboard",
+      ref: 1,
+      delivery_mode: "foreground",
+    },
+    { text: "draft", window_id: "fake-calculator", typing_mode: "unknown" },
+  ])("refuses an unsafe/invalid typing route before sending input: %j", async (args) => {
+    const typeTextWithKeyboard = vi.fn(async () => ({}));
+    const { backend, manager, call } = await setup(
+      Object.assign(new FakeComputerBackend(), { typeTextWithKeyboard }),
+      async () => true,
+    );
+    try {
+      expect((await call("computer_type_text", args)).isError).toBe(true);
+      expect(typeTextWithKeyboard).not.toHaveBeenCalled();
+      expect(backend.callsFor("typeText")).toHaveLength(0);
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it("does not implement keyboard mode by silently falling back on an unsupported backend", async () => {
+    const { backend, manager, call } = await setup(new FakeComputerBackend(), async () => true);
+    try {
+      const result = await call("computer_type_text", {
+        text: "draft",
+        window_id: "fake-calculator",
+        typing_mode: "keyboard",
+        delivery_mode: "foreground",
+      });
+      expect(resultJson(result)).toMatchObject({
+        error: "unsupported_operation",
+        effect: "not-dispatched",
+      });
+      expect(backend.callsFor("typeText")).toHaveLength(0);
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it.each([true, false])(
+    "returns inline recovery evidence only when screenshots are enabled (%s), without replaying",
+    async (includeScreenshot) => {
+      const backend = new FakeComputerBackend();
+      const type = vi
+        .spyOn(backend, "typeText")
+        .mockRejectedValue(new CuaActionError("Delivery count unavailable", "dispatched-unknown"));
+      const { manager, call } = await setup(backend);
+      try {
+        const result = await call("computer_type_text", {
+          text: "draft",
+          window_id: "fake-calculator",
+          include_screenshot: includeScreenshot,
+        });
+        expect(result.isError).toBe(true);
+        expect(resultJson(result)).toMatchObject({
+          effect: "dispatched-unknown",
+          retryAllowed: false,
+        });
+        expect(type).toHaveBeenCalledTimes(1);
+        expect(result.content.some((part) => part.type === "image")).toBe(includeScreenshot);
+      } finally {
+        await manager.dispose();
+      }
+    },
+  );
+
+  it("does not replace an uncertain dispatch with a recovery-capture failure", async () => {
+    const backend = new FakeComputerBackend();
+    vi.spyOn(backend, "typeText").mockRejectedValue(
+      new CuaActionError("Original uncertainty", "dispatched-unknown", "original"),
+    );
+    const { manager, call } = await setup(backend);
+    vi.spyOn(manager, "captureActionScreenshot").mockRejectedValue(
+      new Error("Capture unavailable"),
+    );
+    try {
+      const result = await call("computer_type_text", {
+        text: "draft",
+        window_id: "fake-calculator",
+      });
+      expect(resultJson(result)).toMatchObject({ error: "original", effect: "dispatched-unknown" });
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it.each(["computer_scroll", "computer_run"])(
+    "%s offers larger explicit navigation while keeping the default reading overlap",
+    async (tool) => {
+      const { manager, call } = await setup();
+      try {
+        await call("computer_screenshot", { window_id: "fake-calculator" });
+        const scroll = vi.spyOn(manager, "scrollCalibrated").mockResolvedValue({
+          result: {
+            computerId: manager.computerId,
+            action: "computer_scroll",
+            windowId: "fake-calculator",
+          },
+        });
+        const fields = { window_id: "fake-calculator", delta_y: 10000 };
+        for (const mode of ["read", "navigate"]) {
+          await call(
+            tool,
+            tool === "computer_run"
+              ? { steps: [{ type: "scroll", ...fields, scroll_mode: mode }] }
+              : { ...fields, scroll_mode: mode, include_screenshot: false },
+          );
+        }
+        const [, , , reading] = scroll.mock.calls[0]!;
+        const [, , , navigation] = scroll.mock.calls[1]!;
+        expect(navigation).toBe(reading * 6);
+        expect(navigation).toBeLessThanOrEqual(6000);
+      } finally {
+        await manager.dispose();
+      }
+    },
+  );
+
+  it("does not block a third scroll whose actual movement was measured", async () => {
+    const { manager, call } = await setup();
+    try {
+      await call("computer_screenshot", { window_id: "fake-calculator" });
+      const scroll = vi.spyOn(manager, "scrollCalibrated").mockResolvedValue({
+        result: {
+          computerId: manager.computerId,
+          action: "computer_scroll",
+          windowId: "fake-calculator",
+          delivery: { path: "cua", verified: "unverifiable", effect: "dispatched-unknown" },
+          scroll: {
+            requested: { deltaX: 0, deltaY: 100 },
+            injected: { deltaX: 0, deltaY: 100 },
+            traveledY: 100,
+          },
+        },
+      });
+      for (let n = 0; n < 4; n++) {
+        const result = await call("computer_scroll", {
+          window_id: "fake-calculator",
+          delta_y: 100,
+          include_screenshot: false,
+        });
+        expect(result.isError).not.toBe(true);
+        expect(resultJson(result)).toMatchObject({
+          delivery: { effect: "dispatched-unknown" },
+          scrollObservation: { status: "movement-observed" },
+        });
+      }
+      expect(scroll).toHaveBeenCalledTimes(4);
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it("stops a batch before its next input when the surface has not settled", async () => {
+    const { backend, manager, call } = await setup();
+    vi.spyOn(manager, "waitForSettle").mockResolvedValue({
+      mode: "observer",
+      settled: false,
+      waitedMs: 10,
+      eventsSeen: 4,
+    });
+    try {
+      const result = await call("computer_run", {
+        steps: [
+          { type: "wait", duration_ms: 10, settle: true, window_id: "fake-calculator" },
+          { type: "type_text", text: "must not run", window_id: "fake-calculator" },
+        ],
+      });
+      expect(resultJson(result)).toMatchObject({
+        stopped: true,
+        stoppedReason: "surface_not_settled",
+        completed: 1,
+      });
+      expect(backend.callsFor("typeText")).toHaveLength(0);
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it("includes an explicitly requested screenshot after one settle wait", async () => {
+    const { manager, call } = await setup();
+    const settle = vi
+      .spyOn(manager, "waitForSettle")
+      .mockResolvedValue({ mode: "observer", settled: true, waitedMs: 10, eventsSeen: 0 });
+    try {
+      const result = await call("computer_wait", {
+        duration_ms: 100,
+        settle: true,
+        window_id: "fake-calculator",
+        include_screenshot: true,
+      });
+      expect(result.content.some((part) => part.type === "image")).toBe(true);
+      expect(settle).toHaveBeenCalledTimes(1);
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it("refuses a paste without replacing an unsaveable clipboard", async () => {
+    const backend = new FakeComputerBackend();
+    vi.spyOn(backend, "readClipboard").mockRejectedValue(new Error("Binary clipboard"));
+    const { manager, call } = await setup(backend);
+    try {
+      const result = await call("computer_paste", { window_id: "fake-calculator", text: "draft" });
+      expect(resultJson(result)).toMatchObject({
+        error: "clipboard_preservation_unavailable",
+        effect: "not-dispatched",
+      });
+      expect(backend.callsFor("writeClipboard")).toHaveLength(0);
+      expect(backend.callsFor("hotkey")).toHaveLength(0);
+    } finally {
+      await manager.dispose();
+    }
+  });
+
+  it("does not restore old clipboard text over a newer user copy", async () => {
+    const backend = new FakeComputerBackend();
+    vi.spyOn(backend, "readClipboard")
+      .mockResolvedValueOnce("old text")
+      .mockResolvedValueOnce("new human copy");
+    const { manager, call } = await setup(backend);
+    try {
+      const result = await call("computer_paste", {
+        window_id: "fake-calculator",
+        text: "draft",
+        include_screenshot: false,
+      });
+      expect(resultJson(result)).toMatchObject({ clipboardRestored: false });
+      expect(backend.callsFor("writeClipboard").map((entry) => entry.args[0])).toEqual(["draft"]);
+    } finally {
+      await manager.dispose();
+    }
+  });
+});

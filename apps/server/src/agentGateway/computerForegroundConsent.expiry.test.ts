@@ -44,14 +44,13 @@ describe("foreground approval expiry at the tool boundary", () => {
   afterEach(() => vi.useRealTimers());
 
   it("reports no dispatch in the tool payload and audit without arming the retry guard", async () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const { request, consent, cards, gate } = fixture();
     const guard = new ComputerProgressGuard();
     for (let attempt = 0; attempt < 4; attempt += 1) {
       const pending = request().catch((error: unknown) => error);
       // The gate's five-minute timeout starts after message/turn admission.
-      await vi.advanceTimersByTimeAsync(0);
-      expect(cards).toHaveLength(attempt + 1);
+      await vi.waitFor(() => expect(cards).toHaveLength(attempt + 1));
       await vi.advanceTimersByTimeAsync(5 * 60_000);
       const error = await pending;
       expect(error).toBeInstanceOf(CuaActionError);
@@ -71,19 +70,19 @@ describe("foreground approval expiry at the tool boundary", () => {
       expect(gate.respond("thread", cards[attempt]!, "accept")).toBe(false);
     }
     const next = request();
-    await vi.advanceTimersByTimeAsync(0);
+    await vi.waitFor(() => expect(cards).toHaveLength(5));
     gate.respond("thread", cards[4]!, "accept");
     await expect(next).resolves.toBe(true);
   });
 
   it("does not erase earlier uncertain input when a later approval expires", async () => {
-    vi.useFakeTimers();
-    const { request } = fixture();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const { request, cards } = fixture();
     const guard = new ComputerProgressGuard();
     guard.record(action, { effect: "dispatched-unknown" });
     guard.record(action, { effect: "dispatched-unknown" });
     const pending = request().catch((error: unknown) => error);
-    await vi.advanceTimersByTimeAsync(0);
+    await vi.waitFor(() => expect(cards).toHaveLength(1));
     await vi.advanceTimersByTimeAsync(5 * 60_000);
     guard.record(action, computerAuditErrorOutcome(await pending));
     expect(guard.check(action)).toMatchObject({
@@ -93,10 +92,10 @@ describe("foreground approval expiry at the tool boundary", () => {
   });
 
   it("keeps a deliberate decline binding without publishing another card", async () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const { request, cards, gate } = fixture();
     const pending = request();
-    await vi.advanceTimersByTimeAsync(0);
+    await vi.waitFor(() => expect(cards).toHaveLength(1));
     gate.respond("thread", cards[0]!, "decline");
     await expect(pending).resolves.toBe(false);
     await expect(request()).resolves.toBe(false);
