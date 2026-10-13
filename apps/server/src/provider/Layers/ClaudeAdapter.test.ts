@@ -15825,3 +15825,51 @@ it.effect("reuses model-switch discovery during dispatch", () => {
     assert.deepEqual(harness.query.setModelCalls, ["claude-sonnet-5"]);
   }).pipe(Effect.provide(harness.layer));
 });
+
+it.effect(
+  "discovers an SDK-added effort on a statically known model before its first prompt",
+  () => {
+    const harness = makeHarness();
+    setSupportedModels(harness.query, [
+      {
+        value: "claude-opus-4-5",
+        displayName: "Opus",
+        description: "Legacy",
+        supportsEffort: true,
+        supportedEffortLevels: ["xhigh"],
+      },
+    ]);
+    return Effect.gen(function* () {
+      const adapter = yield* ClaudeAdapter;
+      yield* adapter.startSession({
+        threadId: THREAD_ID,
+        provider: "claudeAgent",
+        runtimeMode: "full-access",
+        modelSelection: {
+          provider: "claudeAgent",
+          model: "claude-opus-4-5",
+          options: { effort: "xhigh" },
+        },
+      });
+      assert.equal(effortLevelFromOptions(harness.getLastCreateQueryInput()?.options), "xhigh");
+      assert.include(
+        harness.query.applyFlagSettingsCalls.map((flags) => flags.effortLevel),
+        "xhigh",
+      );
+    }).pipe(Effect.provide(harness.layer));
+  },
+);
+it.effect("does not retain untagged legacy efforts when the SDK disables them", () => {
+  const harness = makeHarness();
+  setSupportedModels(harness.query, [
+    { value: "claude-opus-4-5", displayName: "Opus", description: "Legacy", supportsEffort: false },
+  ]);
+  return Effect.gen(function* () {
+    const adapter = yield* ClaudeAdapter;
+    const result = yield* adapter.listModels!({ provider: "claudeAgent", cwd: "/tmp/project" });
+    assert.deepEqual(result.models[0]?.supportedReasoningEfforts, []);
+    assert.isUndefined(
+      result.models[0]?.optionDescriptors?.find((option) => option.id === "effort"),
+    );
+  }).pipe(Effect.provide(harness.layer));
+});

@@ -789,7 +789,6 @@ export const makeAgentGateway = Effect.gen(function* () {
               const accepted = events[0];
               if (
                 !accepted ||
-                accepted.sequence !== receipt.value.resultSequence ||
                 accepted.commandId !== followupCommandId ||
                 (accepted.type !== "thread.turn-start-requested" &&
                   accepted.type !== "thread.turn-queued")

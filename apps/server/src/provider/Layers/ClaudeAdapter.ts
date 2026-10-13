@@ -1205,7 +1205,8 @@ function claudeModelInfoCapabilities(model: ModelInfo) {
             // Synara-only modes (e.g. Ultracode) are not SDK API effort values.
             ...staticCapabilities.reasoningEffortLevels.filter(
               (option) =>
-                option.controlSource !== "api-effort" &&
+                (option.controlSource === "provider-setting" ||
+                  option.controlSource === "prompt-prefix") &&
                 (option.apiEffortValue === undefined ||
                   sdkEfforts?.some((effort) => effort === option.apiEffortValue)),
             ),
@@ -7115,7 +7116,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         )?.autoCompactWindow;
         const effectiveClaudeModel = modelSelection?.model ?? getDefaultModel("claudeAgent");
         let caps = getModelCapabilities("claudeAgent", effectiveClaudeModel);
-        const needsSdkCapabilities = caps === EMPTY_MODEL_CAPABILITIES;
+        const needsSdkCapabilities = caps === EMPTY_MODEL_CAPABILITIES || requestedEffort !== null;
         let requestedAutoCompactWindowTokens = resolveSelectedClaudeAutoCompactWindow(
           effectiveClaudeModel,
           requestedAutoCompactWindow,
