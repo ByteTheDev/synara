@@ -884,8 +884,7 @@ function SettingsRouteView() {
         {renderBooleanSettingRow({
           settingKey: "showChatsSection",
           title: "Chats",
-          description:
-            "Show the standalone Chats list in the sidebar footer (chats not tied to a project).",
+          description: "Show the Chats tab in the sidebar for chats not tied to a project.",
           resetLabel: "chats section",
           ariaLabel: "Show the Chats section in the sidebar",
         })}
