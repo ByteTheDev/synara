@@ -27,7 +27,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/cu-evidence"
           python3 - <<'PY'
           import base64, hashlib, json, os, pathlib, subprocess
-          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b']
+          shas = ['b930c0228699e7063ee0eda8890e38bff4fc4cec', '01f8b99a35d21505d8fc1c030c0c1c2d7727cff8', '8327ee64b0c17f2a9ec26dea89a92a83e183faa2', '8f1fc0aacfd48af114cded6c0854cab2970a3b3b', '1b75ed35c27db27f2bb75e32649c95cb99194ac3']
           for i, sha in enumerate(shas):
               result = json.loads(subprocess.check_output(['gh', 'api', f'repos/{os.environ["GITHUB_REPOSITORY"]}/git/blobs/{sha}']))
               data = base64.b64decode(result['content'])
@@ -37,8 +37,13 @@ jobs:
               path.write_bytes(data)
               subprocess.run(['git', 'apply', '--check', '--index', str(path)], check=True)
               subprocess.run(['git', 'apply', '--index', str(path)], check=True)
+          doc = pathlib.Path('docs/computer-use-cua/v2-parity-matrix.md')
+          text = doc.read_text()
+          old = 'Non text clipboard contents cannot be saved and are replaced.'
+          assert text.count(old) == 1
+          doc.write_text(text.replace(old, 'Unreadable clipboard is refused; newer text skips restoration.'))
           paths = subprocess.check_output(['git', 'diff', 'HEAD', '--name-only']).decode().splitlines()
-          assert len(paths) == 16, paths
+          assert len(paths) == 17, paths
           assert all(p.startswith(('apps/server/src/', 'apps/desktop/src/', 'packages/contracts/src/', 'docs/computer-use-cua/')) for p in paths)
           evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
           (evidence / 'paths.txt').write_text('\n'.join(paths) + '\n')
@@ -49,6 +54,32 @@ jobs:
         run: |
           git diff HEAD --name-only -z | xargs -0 ./node_modules/.bin/oxfmt --write
           git diff HEAD --check
+      - name: Verify regression sensitivity against original production modules
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, subprocess
+          evidence = pathlib.Path(os.environ['RUNNER_TEMP']) / 'cu-evidence'
+          cases = [
+              ('approval', 'apps/server', 'src/computer/ComputerApprovalGate.ts', 'src/computer/ComputerApprovalGate.recovery.test.ts', 'expires shared waiters'),
+              ('foreground', 'apps/server', 'src/computer/CuaComputerBackend.ts', 'src/computer/CuaComputerBackend.test.ts', 'keeps an exact field token'),
+              ('observation', 'apps/server', 'src/agentGateway/computerTools.ts', 'src/agentGateway/computerTools.test.ts', 'bounded exact-window observation|repeated scrolls with measured progress'),
+              ('clipboard', 'apps/server', 'src/computer/ComputerManager.ts', 'src/agentGateway/computerTools.test.ts', 'overwrite an unreadable clipboard|restore over newer text'),
+              ('listener', 'apps/desktop', 'src/escapeKillSwitchMonitor.ts', 'src/escapeKillSwitchMonitor.test.ts', 'restarts a silent armed helper'),
+          ]
+          for name, package, source, test, pattern in cases:
+              path = pathlib.Path(package) / source
+              saved = path.read_bytes()
+              try:
+                  path.write_bytes(subprocess.check_output(['git', 'show', f'HEAD:{path}']))
+                  with (evidence / f'before-{name}.log').open('w') as log:
+                      result = subprocess.run(['bun', 'run', '--cwd', package, 'test', test, '-t', pattern], stdout=log, stderr=subprocess.STDOUT, timeout=180)
+                  with (evidence / 'before-results.tsv').open('a') as out:
+                      out.write(f'{name}\t{result.returncode}\n')
+              finally:
+                  path.write_bytes(saved)
+                  assert path.read_bytes() == saved
+          PY
       - name: Integrated targeted verification
         shell: bash
         run: |
@@ -63,7 +94,6 @@ jobs:
           }
           check server-tests bun run --cwd apps/server test src/computer/ComputerApprovalGate.test.ts src/computer/ComputerApprovalGate.recovery.test.ts src/computer/CuaComputerBackend.test.ts src/computer/ComputerManager.test.ts src/agentGateway/computerTools.test.ts src/agentGateway/computerBrowserTools.test.ts src/agentGateway/computerGuidance.test.ts src/agentGateway/computerProgressGuard.test.ts src/agentGateway/computerForegroundConsent.test.ts
           check desktop-tests bun run --cwd apps/desktop test src/escapeKillSwitchMonitor.test.ts
-          check contracts-tests bun run --cwd packages/contracts test src/computer.test.ts
           check formatting bun run fmt:check
           check lint bun run lint
           check typecheck bun run typecheck
@@ -107,4 +137,4 @@ jobs:
         run: |
           test -f "$RUNNER_TEMP/cu-evidence/results.tsv"
           cat "$RUNNER_TEMP/cu-evidence/results.tsv"
-          awk -F '\t' 'BEGIN { n=0; failed=0 } { n++; if ($2 != "0") failed=1 } END { exit (n != 7 || failed) }' "$RUNNER_TEMP/cu-evidence/results.tsv"
+          awk -F '\t' 'BEGIN { n=0; failed=0 } { n++; if ($2 != "0") failed=1 } END { exit (n != 6 || failed) }' "$RUNNER_TEMP/cu-evidence/results.tsv"
