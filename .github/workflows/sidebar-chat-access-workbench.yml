@@ -1,0 +1,32 @@
+name: Sidebar chat access workbench
+on:
+  push:
+    branches: [codex/sidebar-chat-access-workbench]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Export source for isolated review
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import tarfile
+          allowed = {'.ts', '.tsx', '.js', '.mjs', '.json', '.md', '.yml', '.yaml', '.toml', '.lock', '.css', '.html'}
+          with tarfile.open('/tmp/sidebar-source.tar.gz', 'w:gz') as archive:
+              for path in Path('.').rglob('*'):
+                  if '.git' in path.parts or not path.is_file():
+                      continue
+                  if path.suffix in allowed or path.name.startswith('.ox'):
+                      archive.add(path)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sidebar-source
+          path: /tmp/sidebar-source.tar.gz
+          retention-days: 1
