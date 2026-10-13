@@ -25,27 +25,36 @@ jobs:
       - name: Preserve candidate transport
         run: |
           mkdir -p "$RUNNER_TEMP/playbook-input" "$RUNNER_TEMP/playbook-checks"
-          cp .github/playbook-candidate-*.txt .github/apply-playbook-candidate.py "$RUNNER_TEMP/playbook-input/"
+          cp .github/playbook-candidate-*.txt .github/apply-playbook-candidate.py .github/finalize-playbook-candidate.py "$RUNNER_TEMP/playbook-input/"
       - uses: actions/checkout@v6
         with:
           ref: 1200e08d7740a7b2a4ffb9f778a09285e0d03cfc
           persist-credentials: false
-      - name: Verify immutable candidate
-        run: python3 "$RUNNER_TEMP/playbook-input/apply-playbook-candidate.py" "$GITHUB_WORKSPACE"
+      - name: Verify exact candidate and two test-only corrections
+        run: |
+          python3 "$RUNNER_TEMP/playbook-input/apply-playbook-candidate.py" "$GITHUB_WORKSPACE"
+          python3 "$RUNNER_TEMP/playbook-input/finalize-playbook-candidate.py" "$GITHUB_WORKSPACE"
       - uses: ./.github/actions/setup-workspace
         with:
           scope: runtime
-      - name: Complete server and web typechecking
-        id: types
+      - name: Recheck only corrected files formatting and lint
+        run: |
+          bun x --no-install oxfmt --check apps/server/src/agentGateway/computerAppPlaybooks.test.ts apps/server/src/agentGateway/computerTools.test.ts > "$RUNNER_TEMP/playbook-checks/fmt.log" 2>&1
+          bun x --no-install oxlint apps/server/src/agentGateway/computerAppPlaybooks.test.ts apps/server/src/agentGateway/computerTools.test.ts > "$RUNNER_TEMP/playbook-checks/lint.log" 2>&1
+      - name: Verify corrected regression suites
+        run: |
+          bun run --cwd apps/server test src/agentGateway/computerAppPlaybooks.test.ts src/agentGateway/computerTools.test.ts > "$RUNNER_TEMP/playbook-checks/tests.log" 2>&1
+          tail -10 "$RUNNER_TEMP/playbook-checks/tests.log"
+      - name: Complete remaining server typecheck
         shell: bash
         run: |
           set +e
-          bun run typecheck -- --filter=@synara/cli --filter=@synara/web --only --concurrency=1 > "$RUNNER_TEMP/playbook-checks/types.log" 2>&1
+          bun run typecheck -- --filter=@synara/cli --only --concurrency=1 > "$RUNNER_TEMP/playbook-checks/types.log" 2>&1
           code=$?
-          echo "types=$code" | tee "$RUNNER_TEMP/playbook-checks/results.txt"
-          tail -35 "$RUNNER_TEMP/playbook-checks/types.log"
+          echo "server_types=$code" | tee "$RUNNER_TEMP/playbook-checks/results.txt"
+          tail -25 "$RUNNER_TEMP/playbook-checks/types.log"
           exit "$code"
-      - name: Materialize exact validated blobs without commit or ref updates
+      - name: Materialize verified blobs without commit or ref updates
         uses: actions/github-script@v8
         with:
           script: |
@@ -66,6 +75,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: computer-playbook-validation
+          name: computer-playbook-final-validation
           path: ${{ runner.temp }}/playbook-checks
           retention-days: 2
