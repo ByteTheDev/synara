@@ -63,6 +63,7 @@ const TRANSIENT_ADMISSION_CODES = new Set([
   "approval_denied",
   "approval_unavailable",
   "approval_queue_full",
+  "approval_timed_out",
   "target_not_on_active_space",
   "auth_sheet_focused",
 ]);

@@ -25,6 +25,19 @@ export const COMPUTER_APPROVAL_QUEUE_FULL_CODE = "approval_queue_full";
 export const COMPUTER_APPROVAL_QUEUE_GLOBAL_LIMIT = 128;
 export const COMPUTER_APPROVAL_QUEUE_THREAD_LIMIT = 8;
 
+/** Expiry is not a user decision and must never be cached as a turn-wide decline. */
+export class ComputerApprovalTimeoutError extends Error {
+  readonly code = "approval_timed_out";
+  readonly retryable = true;
+  readonly effect = "not-dispatched";
+  constructor() {
+    super(
+      "The computer approval card expired without a decision. No input was sent. Request a new card when the user is ready; do not treat expiry as a decline or retry in a loop.",
+    );
+    this.name = "ComputerApprovalTimeoutError";
+  }
+}
+
 export class ComputerApprovalQueueFullError extends Error {
   readonly code = COMPUTER_APPROVAL_QUEUE_FULL_CODE;
   readonly retryable = true;
@@ -84,7 +97,13 @@ export class ComputerApprovalGate {
 
   /** One consent for routine actions in the exact active turn, never a provider-wide grant. */
   requestTask(input: TaskApprovalInput): Promise<boolean> {
-    return this.requestTaskIn(this.tasks, input);
+    return this.requestTaskIn(this.tasks, input).catch((error: unknown) => {
+      // Routine approval keeps its boolean API. Expiry has already skipped
+      // the decision cache; returning false here sends no input and does not
+      // enter the gateway's uncertain-mutation error path.
+      if (error instanceof ComputerApprovalTimeoutError) return false;
+      throw error;
+    });
   }
 
   /**
@@ -185,8 +204,9 @@ export class ComputerApprovalGate {
       throw new ComputerApprovalQueueFullError("global");
     }
     const requestId = `computer:${randomUUID()}`;
-    let settle!: (decision: ProviderApprovalDecision) => void;
-    const answer = new Promise<ProviderApprovalDecision>((resolve) => {
+    type Outcome = ProviderApprovalDecision | "timed-out";
+    let settle!: (decision: Outcome) => void;
+    const answer = new Promise<Outcome>((resolve) => {
       settle = resolve;
     });
     this.pending.set(requestId, {
@@ -196,7 +216,7 @@ export class ComputerApprovalGate {
     });
     const cancel = () => settle("cancel");
     input.signal.addEventListener("abort", cancel, { once: true });
-    const timeout = setTimeout(cancel, 5 * 60_000);
+    const timeout = setTimeout(() => settle("timed-out"), 5 * 60_000);
     timeout.unref?.();
     let decision: ProviderApprovalDecision = "cancel";
     try {
@@ -207,13 +227,13 @@ export class ComputerApprovalGate {
       const published = input.publish(requestId).then(() => "ok" as const);
       const outcome = await Promise.race([published, answer]);
       void published.catch(() => undefined);
-      if (outcome === "ok") {
-        if (input.signal.aborted) cancel();
-        decision = await answer;
-      } else {
-        decision = outcome;
-      }
+      if (input.signal.aborted) cancel();
+      const resolved = outcome === "ok" ? await answer : outcome;
       input.signal.throwIfAborted();
+      // Leave dismissal as cancel, but reject the task waiter rather than
+      // resolving false: only an actual user decision may latch a decline.
+      if (resolved === "timed-out") throw new ComputerApprovalTimeoutError();
+      decision = resolved;
       return decision === "accept";
     } finally {
       clearTimeout(timeout);
