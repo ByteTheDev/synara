@@ -4,40 +4,30 @@ on:
     branches: [work/computer-use-engine-1911]
 permissions:
   contents: read
-  actions: read
 concurrency:
   group: computer-engine-work-1911
   cancel-in-progress: true
 jobs:
-  inspect:
+  prepare:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Export source
+      - uses: ./.github/actions/setup-workspace
+      - name: Export pinned dependencies and runtimes
+        shell: bash
         run: |
-          mkdir -p /tmp/computer-engine-evidence
-          git archive --format=tar.gz HEAD > /tmp/computer-engine-evidence/source.tar.gz
-      - name: Extract failing test evidence
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const fs = require('node:fs');
-            let output = '';
-            for (const job_id of [115406149143, 115406252782, 115406252887]) {
-              try {
-                const reply = await github.request('GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs', {...context.repo,job_id});
-                const text = typeof reply.data === 'string' ? reply.data : Buffer.from(reply.data).toString();
-                const lines=text.split('\n');
-                output += `\nJOB ${job_id}\n`;
-                for(let i=0;i<lines.length;i++) if(/FAIL |AssertionError|Error:|would reformat|not formatted|Formatting issues/.test(lines[i])) output += lines.slice(Math.max(0,i-2),Math.min(lines.length,i+24)).join('\n')+'\n';
-              } catch(error) { output += `LOG_READ ${job_id}: ${error.message}\n`; }
-            }
-            fs.writeFileSync('/tmp/computer-engine-evidence/failures.txt',output);
+          mkdir -p /tmp/computer-engine-toolchain/bin
+          cp -L "$(command -v bun)" /tmp/computer-engine-toolchain/bin/bun
+          cp -L "$(command -v node)" /tmp/computer-engine-toolchain/bin/node
+          find node_modules apps packages scripts -type d -name node_modules -prune -print0 | tar --null -T - -czf /tmp/computer-engine-toolchain/dependencies.tar.gz
+          bun --version > /tmp/computer-engine-toolchain/versions.txt
+          node --version >> /tmp/computer-engine-toolchain/versions.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: computer-engine-source
-          path: /tmp/computer-engine-evidence
+          name: computer-engine-toolchain
+          path: /tmp/computer-engine-toolchain
           retention-days: 3
+          compression-level: 0
