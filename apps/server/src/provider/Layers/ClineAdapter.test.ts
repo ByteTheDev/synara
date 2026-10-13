@@ -172,7 +172,14 @@ describe("Cline adapter lifecycle", () => {
         const models = yield* adapter.listModels!({
           provider: "cline",
           binaryPath: "/custom/cline",
+          environment: { CLINE_API_KEY: "discovery-key" },
           cwd: process.cwd(),
+        });
+        expect(h.calls.findLast(([key]) => key === "spawn")?.[1]).toMatchObject({
+          clineSettings: {
+            binaryPath: "/custom/cline",
+            environment: { CLINE_API_KEY: "discovery-key" },
+          },
         });
         expect(models.source).toBe("cline.acp");
         expect(models.models.map((m) => m.slug)).toEqual([

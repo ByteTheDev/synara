@@ -24,9 +24,16 @@ const selected = { provider: "cline", model: "Vendor/MixedCase-Model" } as const
 
 describe("Cline frontend provider", () => {
   it("preserves Cline and exact model IDs through schema and draft reloads", () => {
-    expect(Schema.decodeUnknownSync(ModelSelection)(selected)).toEqual(selected);
+    const normalized = { ...selected, instanceId: "cline" };
+    expect(Schema.decodeUnknownSync(ModelSelection)(selected)).toEqual(normalized);
     expect(normalizeModelSelection(JSON.parse(JSON.stringify(selected)))).toEqual(selected);
     expect(buildModelSelection("cline", selected.model)).toEqual(selected);
+    const workInstance = { ...selected, instanceId: "cline_work" };
+    expect(Schema.decodeUnknownSync(ModelSelection)(workInstance)).toEqual(workInstance);
+    expect(normalizeModelSelection(JSON.parse(JSON.stringify(workInstance)))).toEqual(workInstance);
+    expect(
+      buildModelSelection("cline", selected.model, undefined, { instanceId: "cline_work" }),
+    ).toEqual(workInstance);
   });
   it("exposes Cline settings and passes custom binary paths to the server", () => {
     const settings = AppSettingsSchema.makeUnsafe({

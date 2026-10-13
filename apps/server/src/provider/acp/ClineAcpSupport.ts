@@ -16,6 +16,7 @@ import {
 
 export interface ClineAcpRuntimeSettings {
   readonly binaryPath?: string | undefined;
+  readonly environment?: Readonly<Record<string, string>> | undefined;
 }
 
 export interface ClineAcpRuntimeInput extends Omit<
@@ -31,11 +32,17 @@ export function buildClineAcpSpawnInput(
   cwd: string,
 ): AcpSpawnInput {
   return {
-    command: settings?.binaryPath?.trim() || resolveExecutable("cline") || "cline",
+    command:
+      settings?.binaryPath?.trim() ||
+      resolveExecutable("cline", { env: { ...process.env, ...settings?.environment } }) ||
+      "cline",
     // Never inherit --yolo or a saved auto-approval preference. Synara owns approvals.
     args: ["--acp", "--auto-approve", "false"],
     cwd,
-    env: buildProviderChildEnvironment({ provider: "cline" }),
+    env: buildProviderChildEnvironment({
+      provider: "cline",
+      ...(settings?.environment ? { baseEnv: { ...process.env, ...settings.environment } } : {}),
+    }),
   };
 }
 

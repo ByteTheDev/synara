@@ -65,6 +65,21 @@ describe("Cline ACP integration contract", () => {
     expect(spawn.env?.CLINE_API_KEY).toBe("test-cline-key");
     expect(spawn.env?.SYNARA_AUTH_TOKEN).toBeUndefined();
   });
+  it("uses the selected instance environment and still strips control credentials", () => {
+    const spawn = buildClineAcpSpawnInput(
+      {
+        environment: {
+          CLINE_API_KEY: "instance-key",
+          HOME: "/isolated/cline",
+          SYNARA_AUTH_TOKEN: "must-not-leak",
+        },
+      },
+      "/project",
+    );
+    expect(spawn.env?.CLINE_API_KEY).toBe("instance-key");
+    expect(spawn.env?.HOME).toBe("/isolated/cline");
+    expect(spawn.env?.SYNARA_AUTH_TOKEN).toBeUndefined();
+  });
   it("merges the runtime catalog without inventing models or effort settings", () => {
     const models = mapClineModels(startResult);
     expect(models.map((m) => m.slug)).toEqual(["default", "upstream/Model-A", "upstream/Model-B"]);
