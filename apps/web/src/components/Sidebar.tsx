@@ -6830,7 +6830,7 @@ export default function Sidebar() {
           onClick={() => setActivityViewEnabledSmoothly(!activityViewEnabled)}
         />
       ) : null}
-      {!showThreadSectionPicker ? betaBadge : null}
+      {betaBadge}
     </div>
   );
 
@@ -7219,7 +7219,7 @@ export default function Sidebar() {
                 // The panel has no header above it, so the title row gets breathing room from
                 // the panel's top edge. pt-1.5 puts the title's cap height as far from the top
                 // edge as its first letter is from the side.
-                className="flex shrink-0 items-center gap-1 pt-1.5 pb-1 pr-2.5 pl-1.5"
+                className="flex shrink-0 flex-wrap items-center gap-1 pt-1.5 pb-1 pr-2.5 pl-1.5"
               >
                 <SidebarSurfacePicker
                   views={["threads", ...(groupsSectionVisible ? (["groups"] as const) : [])]}
@@ -7227,11 +7227,7 @@ export default function Sidebar() {
                   onSelectView={handleSidebarViewChange}
                   onPrewarmView={prewarmSidebarViewTarget}
                 />
-                {showThreadSectionPicker ? (
-                  <div className="ml-auto">{betaBadge}</div>
-                ) : (
-                  sidebarHeaderActions
-                )}
+                {sidebarHeaderActions}
               </div>
               {showThreadSectionPicker ? (
                 <SidebarThreadSectionPicker
@@ -7245,9 +7241,7 @@ export default function Sidebar() {
                       if (section === "chats") setChatSectionExpanded(true);
                     });
                   }}
-                >
-                  {sidebarHeaderActions}
-                </SidebarThreadSectionPicker>
+                />
               ) : null}
             </div>
           ) : null}

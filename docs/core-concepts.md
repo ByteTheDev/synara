@@ -31,11 +31,12 @@ composer; it is not sent twice.
 - **Sidebar** — projects, spaces, tasks, and activity requiring attention. The rail
   is a fixed column of icon tabs for Home, Spaces, Tasks, Code review, Automations, Hubs, and
   Settings, with the thread panel beside it and the route shown as a card inset from the window.
-  The Home panel keeps **Projects** and **Chats** above the scrolling list, alongside Search and
-  Activity. Select either list without scrolling past other sessions; the choice survives reloads.
+  The Home panel keeps **Projects** and **Chats** as pinned navigation rows above the scrolling
+  list, with Search and Activity beside the title. The rows use the same icons and selection
+  treatment as the sidebar, without a sliding segmented control. Select either list without scrolling past other sessions; the choice survives reloads.
   A dot marks unread completions or pending actions in that list, including rows beyond its preview.
   Selecting a list does not mark its threads read. Numbered thread shortcuts follow its visible rows.
-  Turning off **Chats** under **Sidebar sections** hides the chooser and returns to Projects.
+  Turning off **Chats** under **Sidebar sections** hides the navigation rows and returns to Projects.
   Open saved threads appear as tabs across the top of the chat. Unsent drafts stay out of
   the tab strip until they become saved threads on the first send. Saved tabs remain
   available to return to while an unsent draft is on screen, including in the editor view.

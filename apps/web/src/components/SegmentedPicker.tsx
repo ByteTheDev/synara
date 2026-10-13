@@ -15,8 +15,6 @@ export interface SegmentedPickerOption<T extends string> {
   readonly label: string;
   readonly ariaLabel?: string;
   readonly icon?: ReactNode;
-  /** A non-interactive trailing status marker; kept outside the centred label. */
-  readonly badge?: ReactNode;
   readonly disabled?: boolean;
   readonly title?: string;
 }
@@ -47,7 +45,6 @@ export function SegmentedPicker<T extends string>({
   ariaLabel,
   disabled: disabledProp,
   className,
-  variant = "raised",
 }: {
   value: T | null;
   options: ReadonlyArray<SegmentedPickerOption<T>>;
@@ -55,8 +52,6 @@ export function SegmentedPicker<T extends string>({
   ariaLabel: string;
   disabled?: boolean;
   className?: string;
-  /** Inset keeps selection inside the track for compact sidebar toolbars. */
-  variant?: "raised" | "inset";
 }) {
   const disabled = disabledProp ?? false;
   const radioItemProps = useRadioGroupKeyboardNav({
@@ -65,39 +60,19 @@ export function SegmentedPicker<T extends string>({
     onValueChange,
   });
   const activeIndex = options.findIndex((option) => option.value === value);
-  const inset = variant === "inset";
-  const thumb =
-    activeIndex < 0
-      ? null
-      : inset
-        ? {
-            left: "0.125rem",
-            width: `calc((100% - 0.25rem) / ${options.length})`,
-            transform: `translateX(${activeIndex * 100}%)`,
-          }
-        : thumbGeometry(activeIndex, options.length);
+  const thumb = activeIndex >= 0 ? thumbGeometry(activeIndex, options.length) : null;
 
   return (
-    <div className={cn(inset ? "min-w-0" : "px-1", className)}>
+    <div className={cn("px-1", className)}>
       <div
         role="radiogroup"
         aria-label={ariaLabel}
-        data-variant={variant}
-        className={cn(
-          "relative isolate inline-flex w-full rounded-lg p-0.5",
-          inset ? "sidebar-segmented-picker-inset" : "sidebar-segmented-picker",
-        )}
+        className="sidebar-segmented-picker relative isolate inline-flex w-full rounded-lg p-0.5"
       >
         {thumb ? (
           <div
             aria-hidden
-            data-slot="segmented-thumb"
-            className={cn(
-              "pointer-events-none absolute z-0 rounded-md motion-reduce:transition-none",
-              inset
-                ? "sidebar-segmented-thumb-inset inset-y-0.5 transition-transform duration-200 ease-out"
-                : "sidebar-segmented-thumb -inset-y-[1.5px] transition-[left,width] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
-            )}
+            className="sidebar-segmented-thumb pointer-events-none absolute -inset-y-[1.5px] z-0 rounded-md transition-[left,width] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none"
             style={thumb}
           />
         ) : null}
@@ -114,7 +89,6 @@ export function SegmentedPicker<T extends string>({
               title={option.title}
               className={cn(
                 "relative z-10 flex min-w-0 flex-1 items-center justify-center rounded-md px-2.5 py-1 text-ui-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50",
-                inset && "min-h-7 px-4 py-1 focus-visible:ring-2 motion-reduce:transition-none",
                 active
                   ? "text-[var(--color-text-foreground)]"
                   : "text-[var(--color-text-foreground-secondary)] hover:text-[var(--color-text-foreground)]",
@@ -125,19 +99,12 @@ export function SegmentedPicker<T extends string>({
               <span
                 className="flex min-w-0 items-center gap-1.5 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none"
                 style={{
-                  transform: `translateX(${active && !inset ? labelShift(index, options.length) : "0px"})`,
+                  transform: `translateX(${active ? labelShift(index, options.length) : "0px"})`,
                 }}
               >
                 {option.icon}
-                <span data-slot="segmented-label" className="truncate">
-                  {option.label}
-                </span>
+                <span className="truncate">{option.label}</span>
               </span>
-              {option.badge ? (
-                <span className="pointer-events-none absolute end-1.5 top-1/2 flex -translate-y-1/2 items-center">
-                  {option.badge}
-                </span>
-              ) : null}
             </button>
           );
         })}
