@@ -86,6 +86,13 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
       "Move each sent message to the top of the conversation. Turn off to keep it at the bottom and follow replies as they stream. chat enter send scroll anchor",
   },
   {
+    id: "general:thread-tabs",
+    section: "general",
+    title: "Thread tabs",
+    keywords:
+      "Show open threads as tabs in the chat header. Turn off to show only the current thread's title. horizontal tabs strip header chat title",
+  },
+  {
     id: "general:welcome-tour",
     section: "general",
     title: "Welcome tour",
@@ -104,6 +111,13 @@ export const SETTINGS_SEARCH_ENTRIES: readonly SettingsSearchEntry[] = [
     title: "Thread order",
     keywords:
       "Controls how threads are arranged inside each project in the main sidebar. sort updated created",
+  },
+  {
+    id: "general:thread-attention-first",
+    section: "general",
+    title: "Working and unread on top",
+    keywords:
+      "With Recently active order, move working and unread threads above the rest. sort unread jump reorder pin top hold",
   },
   {
     id: "general:chats-section",
