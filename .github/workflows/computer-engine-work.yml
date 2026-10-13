@@ -4,44 +4,33 @@ on:
     branches: [work/computer-use-engine-1911]
 permissions:
   contents: read
-  actions: read
 concurrency:
   group: computer-engine-work-1911
   cancel-in-progress: true
 jobs:
-  prepare:
+  native-source:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/checkout@v6
         with:
-          github-token: ${{ github.token }}
-          run-id: 38434751063
-          name: computer-engine-toolchain
-          path: /tmp/computer-engine-toolchain
-      - run: split -b 350M /tmp/computer-engine-toolchain/dependencies.tar.gz /tmp/dependencies.part-
+          persist-credentials: false
+          path: synara
+      - uses: actions/checkout@v6
+        with:
+          repository: trycua/cua
+          ref: 7fe7c33f741ee2dd5961ba80044d59f93b48ba47
+          persist-credentials: false
+          path: native
+          sparse-checkout: libs/cua-driver
+      - name: Apply pinned patch and export driver source
+        run: |
+          cd native
+          git apply ../synara/apps/desktop/patches/cua-driver/0001-synara-native.patch
+          mkdir -p /tmp/native-engine
+          tar -czf /tmp/native-engine/native-source.tar.gz libs/cua-driver/rust
       - uses: actions/upload-artifact@v4
         with:
-          name: dependencies-aa
-          path: /tmp/dependencies.part-aa
-          retention-days: 2
-          compression-level: 0
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dependencies-ab
-          path: /tmp/dependencies.part-ab
-          retention-days: 2
-          compression-level: 0
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dependencies-ac
-          path: /tmp/dependencies.part-ac
-          retention-days: 2
-          compression-level: 0
-      - uses: actions/upload-artifact@v4
-        with:
-          name: engine-runtimes
-          path: |
-            /tmp/computer-engine-toolchain/bin
-            /tmp/computer-engine-toolchain/versions.txt
+          name: native-engine-source
+          path: /tmp/native-engine
           retention-days: 2
