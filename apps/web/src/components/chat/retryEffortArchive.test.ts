@@ -131,6 +131,33 @@ describe("durable effort retry archive", () => {
     });
   });
 
+  it("keeps durable metrics when the original browser archive has no metrics", () => {
+    const durable = resolveDurableRetryEffortVariants({
+      activities: [receipt(1)],
+      userMessageId: USER_ID,
+      userMessageText: "Fix the test",
+    });
+    const metrics = {
+      inputTokens: 100,
+      outputTokens: 25,
+      totalTokens: 125,
+      durationMs: 2500,
+      costUsd: 0.12,
+    };
+    const durableVariant = { ...durable[0]!, metrics };
+    for (const localMetrics of [undefined, {}]) {
+      const localVariant = { ...durable[0]!, effortLabel: "Low", metrics: localMetrics };
+      expect(
+        mergeArchivedRetryEffortVariants({ durable: [durableVariant], local: [localVariant] }),
+      ).toEqual([{ ...localVariant, metrics }]);
+    }
+    const localMetrics = { ...metrics, durationMs: 3000 };
+    const localVariant = { ...durable[0]!, effortLabel: "Low", metrics: localMetrics };
+    expect(
+      mergeArchivedRetryEffortVariants({ durable: [durableVariant], local: [localVariant] }),
+    ).toEqual([localVariant]);
+  });
+
   it("deduplicates the server receipt with the original browser's richer label", () => {
     const durable = resolveDurableRetryEffortVariants({
       activities: [receipt(1)],

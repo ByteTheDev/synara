@@ -110,7 +110,10 @@ export function mergeArchivedRetryEffortVariants(input: {
 }): ReadonlyArray<RetryEffortVariant> {
   const byMessage = new Map<MessageId, RetryEffortVariant>();
   for (const variant of [...input.durable, ...input.local]) {
-    byMessage.set(variant.assistantMessageId, variant);
+    const previous = byMessage.get(variant.assistantMessageId);
+    const metrics =
+      Object.keys(variant.metrics ?? {}).length === 0 ? previous?.metrics : variant.metrics;
+    byMessage.set(variant.assistantMessageId, metrics ? { ...variant, metrics } : variant);
   }
   return Array.from(byMessage.values()).toSorted((left, right) =>
     left.createdAt.localeCompare(right.createdAt),
