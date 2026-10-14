@@ -6,6 +6,7 @@ import {
   getVisibleSidebarEntriesForPreview,
   resolveSidebarThreadListPaging,
   sortThreadsForSidebar,
+  type SidebarThreadSortOptions,
 } from "../../components/Sidebar.logic";
 import type { Project, SidebarThreadSummary } from "../../types";
 import { checkoutKey } from "../projectCatalog/model";
@@ -157,6 +158,8 @@ export function mergeSidebarChats(input: {
   sessions: readonly WorkspaceSession[];
   section: "chats" | "studio";
   sortOrder: SidebarThreadSortOrder;
+  /** Attention-first and held pointer-order keys, shared with the local sidebar lists. */
+  sortOptions?: SidebarThreadSortOptions;
   selectedByEnvironment?: ReadonlyMap<string, ThreadId>;
 }): WorkspaceThreadEntry[] {
   const roots: (WorkspaceSummary["threads"][number] & { rows: WorkspaceThreadEntry[] })[] = [];
@@ -166,7 +169,7 @@ export function mergeSidebarChats(input: {
     session: WorkspaceSession | null,
   ) => {
     const rows = buildProjectThreadTree({
-      threads: sortThreadsForSidebar(threads, input.sortOrder),
+      threads: sortThreadsForSidebar(threads, input.sortOrder, input.sortOptions),
       forceVisibleThreadId: input.selectedByEnvironment?.get(environmentId),
     });
     let family: WorkspaceThreadEntry[] = [];
@@ -208,7 +211,9 @@ export function mergeSidebarChats(input: {
     );
   }
   // Sort roots across computers while keeping revealed subagent families together.
-  return sortThreadsForSidebar(roots, input.sortOrder).flatMap((root) => root.rows);
+  return sortThreadsForSidebar(roots, input.sortOrder, input.sortOptions).flatMap(
+    (root) => root.rows,
+  );
 }
 
 /** Activity presentation uses scoped keys; mutations still belong to the original runtime. */

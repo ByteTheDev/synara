@@ -94,7 +94,9 @@ import {
 import type { ProviderAdapterForkThreadInput } from "./provider/Services/ProviderAdapter.ts";
 import { withoutProviderCredentialEnvironment } from "./providerChildEnvironment.ts";
 import { resolveCodexServiceTier } from "./codexServiceTier.ts";
+import { classifyTerminalTurnApplicability } from "./provider/terminalTurnApplicability.ts";
 import { assertCodexWorkingDirectoryExists } from "./codexWorkingDirectory.ts";
+import { startEventLoopDeadline } from "./eventLoopDeadline.ts";
 import { executableIdentity, resolveExecutable } from "./executableLookup.ts";
 import {
   teardownChildProcessTree,
@@ -3317,7 +3319,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       try {
         let expired = false;
         const abort = new AbortController();
-        let timer: ReturnType<typeof setTimeout> | undefined;
+        let cancelDeadline: (() => void) | undefined;
         const read = async () => {
           for (let attempt = 0; ; attempt++) {
             if (expired || context.authInvalidation)
@@ -3345,17 +3347,18 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
               this.authReadSlots.withPermit(Effect.uninterruptible(Effect.promise(read))),
               { signal: abort.signal },
             ),
+            // A timeout stops the session, so a server event-loop stall must not
+            // count against the read: only a hung read on a live loop expires.
             new Promise<never>((_, reject) => {
-              timer = setTimeout(() => {
+              cancelDeadline = startEventLoopDeadline(this.authRevalidationTimeoutMs, () => {
                 expired = true;
                 abort.abort();
                 reject(new Error("Codex auth revalidation timed out."));
-              }, this.authRevalidationTimeoutMs);
-              timer.unref();
+              });
             }),
           ]);
         } finally {
-          if (timer) clearTimeout(timer);
+          cancelDeadline?.();
         }
         if (fingerprint !== context.authFingerprint) {
           stalenessMessage =
@@ -4381,9 +4384,16 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       (notification.method === "turn/completed" ||
         notification.method === "turn/aborted" ||
         isTerminalError);
-    const terminalGatewayTurnId = isTerminalParentTurn
-      ? (rawRoute.turnId ?? context.session.activeTurnId)
-      : undefined;
+    const appliesToActiveTurn =
+      !isTerminalParentTurn ||
+      classifyTerminalTurnApplicability({
+        activeTurnId: context.session.activeTurnId,
+        eventTurnId: rawRoute.turnId,
+      }).applicable;
+    const terminalGatewayTurnId =
+      isTerminalParentTurn && appliesToActiveTurn
+        ? (rawRoute.turnId ?? context.session.activeTurnId)
+        : undefined;
     const gatewayTurnAuthorityRetired =
       terminalGatewayTurnId !== undefined && context.gatewaySessionLease !== undefined;
     if (gatewayTurnAuthorityRetired) {
@@ -4420,6 +4430,16 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       textDelta,
       payload: eventPayload,
     });
+
+    // Keep late outcomes in history without releasing a newer native turn.
+    // The legacy completion fallback can finish before stalled stdout catches up.
+    if (isTerminalParentTurn && !appliesToActiveTurn) {
+      // Clean the old review membership without touching the current owner.
+      // Otherwise a later exitedReviewMode can mistake that finished review
+      // for an active chain and settle an unrelated newer turn.
+      if (rawRoute.turnId) context.reviewTurnIds.delete(rawRoute.turnId);
+      return;
+    }
 
     if (notification.method === "thread/started") {
       const startedThreadId = normalizeProviderThreadId(

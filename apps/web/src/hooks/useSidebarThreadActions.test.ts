@@ -248,6 +248,7 @@ function render(
       archiveDeletesOrphanedWorktree: overrides.archiveDeletesOrphanedWorktree ?? false,
       confirmThreadArchive: overrides.confirmThreadArchive ?? false,
       confirmThreadDelete: false,
+      sidebarThreadAttentionFirst: true,
       sidebarThreadSortOrder: "updated_at",
     },
     clearTerminalState: harness.clearTerminalState,

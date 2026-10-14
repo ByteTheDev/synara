@@ -470,7 +470,7 @@ export function WorkspaceProjectItem({
             }
             label={project.name}
             hostName={hostName}
-            reserveClassName="group-hover/project-header:pr-12 group-has-[:focus-visible]/project-header:pr-12"
+            reserveClassName="group-hover/project-header:pr-12 project-header-focus:pr-12"
             trailing={
               status ? (
                 <span

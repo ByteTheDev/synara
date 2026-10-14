@@ -1,14 +1,14 @@
-import Migration0139 from "./Migrations/139_RemoteAccessControls.ts";
-import Migration0138 from "./Migrations/138_RemoteConnectionPreferences.ts";
-import Migration0137 from "./Migrations/137_RemoteDeviceTrust.ts";
+import Migration0140 from "./Migrations/140_RemoteAccessControls.ts";
+import Migration0139 from "./Migrations/139_RemoteConnectionPreferences.ts";
+import Migration0138 from "./Migrations/138_RemoteDeviceTrust.ts";
 import {
   classifyAccountMigrationLineage,
   migrationTrackerFingerprint,
   validateAccountMigrationSchema,
   type MigrationIdentity,
 } from "./AccountMigrationLineage.ts";
-import Migration0135 from "./Migrations/135_AccountUsageSync.ts";
-import Migration0136 from "./Migrations/136_AccountUsageSyncIdentity.ts";
+import Migration0136 from "./Migrations/136_AccountUsageSync.ts";
+import Migration0137 from "./Migrations/137_AccountUsageSyncIdentity.ts";
 /**
  * MigrationsLive - Migration runner with inline loader
  *
@@ -161,6 +161,7 @@ import Migration0131 from "./Migrations/131_ProjectSourceFolders.ts";
 import Migration0132 from "./Migrations/132_ExternalMcpTurnCapacityRecovery.ts";
 import Migration0133 from "./Migrations/133_ProjectionTurnsWorkspaceInitialization.ts";
 import Migration0134 from "./Migrations/134_ProjectionThreadsForkSourceMessage.ts";
+import Migration0135 from "./Migrations/135_ProjectionMessageTurnActivityIndex.ts";
 
 /**
  * Migration loader with all migrations defined inline.
@@ -311,11 +312,12 @@ export const migrationEntries = [
   [132, "ExternalMcpTurnCapacityRecovery", Migration0132],
   [133, "ProjectionTurnsWorkspaceInitialization", Migration0133],
   [134, "ProjectionThreadsForkSourceMessage", Migration0134],
-  [135, "AccountUsageSync", Migration0135],
-  [136, "AccountUsageSyncIdentity", Migration0136],
-  [137, "RemoteDeviceTrust", Migration0137],
-  [138, "RemoteConnectionPreferences", Migration0138],
-  [139, "RemoteAccessControls", Migration0139],
+  [135, "ProjectionMessageTurnActivityIndex", Migration0135],
+  [136, "AccountUsageSync", Migration0136],
+  [137, "AccountUsageSyncIdentity", Migration0137],
+  [138, "RemoteDeviceTrust", Migration0138],
+  [139, "RemoteConnectionPreferences", Migration0139],
+  [140, "RemoteAccessControls", Migration0140],
 ] as const;
 
 export const makeMigrationLoader = (throughId?: number) =>

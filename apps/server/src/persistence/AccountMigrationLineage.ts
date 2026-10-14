@@ -3,7 +3,19 @@ import { createHash } from "node:crypto";
 /** Private account builds; these are whole lineages, not interchangeable aliases. */
 export const ACCOUNT_MIGRATION_LINEAGES = [
   {
-    // Latest private remote builds followed ProjectSourceFolders at 132–136.
+    // Private remote builds after ProjectionThreadsForkSourceMessage used 135–139,
+    // before released ProjectionMessageTurnActivityIndex (1.0.4) took 135.
+    prefix: 134,
+    tail: [
+      "AccountUsageSync",
+      "AccountUsageSyncIdentity",
+      "RemoteDeviceTrust",
+      "RemoteConnectionPreferences",
+      "RemoteAccessControls",
+    ],
+  },
+  {
+    // Private remote builds that followed ProjectSourceFolders at 132–136.
     prefix: 131,
     tail: [
       "AccountUsageSync",

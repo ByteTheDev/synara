@@ -277,6 +277,13 @@ and creates independent conversation copies without replacing your existing Syna
 
 Each task owns a provider session.
 
+Codex terminal notifications retain the turn they name. If a legacy completion
+fallback has already allowed the next turn to start, a delayed completion, abort,
+or terminal error for the previous turn updates its history without settling the
+new turn or changing its gateway credential renewal state. A stale terminal also
+removes only its old review membership so a later review-exit notification cannot
+settle an unrelated new turn.
+
 The session may preserve provider-specific behavior such as:
 
 - Plans
@@ -653,6 +660,12 @@ Sources: [OpenAI app-server documentation](https://developers.openai.com/codex/a
 [upstream asynchronous tool handler](https://github.com/openai/codex/blob/b0d95427c2443e90998f48065902309187564085/codex-rs/core/src/tools/handlers/request_user_input_async.rs).
 
 ## Passive results from delegated tasks
+
+When an orchestrator needs delegated results to finish the user's request, it must keep calling
+`synara_wait_for_threads` with the returned `runIds` until `allTerminal` is true, then read and
+synthesize the results. A timeout reports progress; it is not completion. Native provider
+subagents use their provider's own completion mechanism. Neither launching work nor opting
+into passive receipts is a substitute for collecting required results before ending the turn.
 
 An authenticated agent can pass `notifyCreatorOnComplete: true` to
 `synara_create_thread`, or on individual entries in `synara_create_threads`.
