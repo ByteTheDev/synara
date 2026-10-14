@@ -1299,7 +1299,10 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
     let configured: Record<string, unknown>;
     try {
       const response = this.readObject(
-        await this.sendRequest(context, "config/read", { includeLayers: false }),
+        await this.sendRequest(context, "config/read", {
+          includeLayers: false,
+          cwd: context.session.cwd,
+        }),
       );
       const config = this.readObject(response, "config");
       if (!config) throw new Error("Missing Codex configuration.");

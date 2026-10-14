@@ -83,6 +83,7 @@ type SyntheticCodexRequest = {
 
 function createSyntheticCodexAppServer(options?: {
   readonly mcpServers?: Record<string, unknown>;
+  readonly projectMcpServers?: Record<string, unknown>;
   readonly forceFullHistoryResponse?: boolean;
   readonly gatewayRenewal?:
     | "supported"
@@ -236,7 +237,14 @@ function createSyntheticCodexAppServer(options?: {
             respond(result);
           }
         } else if (request.method === "config/read") {
-          respond({ config: { mcp_servers: options?.mcpServers ?? {} } });
+          respond({
+            config: {
+              mcp_servers: {
+                ...options?.mcpServers,
+                ...(typeof request.params?.cwd === "string" ? options?.projectMcpServers : {}),
+              },
+            },
+          });
         } else if (request.method === "thread/start") {
           respond({ thread: { id: "fresh-provider-thread" } });
         } else if (request.method === "turn/start") {
@@ -347,52 +355,56 @@ const fullAccessTurnOverrides = {
   sandboxPolicy: { type: "dangerFullAccess" },
 } as const;
 
-it("does not overlay a connector onto the user's same-named Codex MCP server", async () => {
-  const fake = createSyntheticCodexAppServer({
-    mcpServers: { supabase_connector: { command: "user-mcp", args: ["serve"] } },
-  });
-  const endpoint = "http://127.0.0.1:48123/mcp";
-  const { manager } = createSyntheticCodexManager(fake, undefined, {
-    endpointUrl: () => endpoint,
-    acquireSessionLease: (threadId, input) =>
-      acquireAgentGatewaySessionLease(
-        {
-          connectionForThread: () => ({
-            url: endpoint,
-            bearerToken: "lease",
-            connectors: [
-              { name: "supabase_connector", url: `${endpoint}/connectors/supabase` },
-              { name: "linear_connector", url: `${endpoint}/connectors/linear` },
-            ],
-          }),
-          revokeSessionToken: () => {},
-        },
-        threadId,
-        "codex",
-        input ?? AGENT_GATEWAY_NO_CAPABILITIES,
-      )!,
-  });
-  const cwd = mkdtempSync(path.join(os.tmpdir(), "synara-codex-connector-collision-"));
-  try {
-    await manager.startSession({
-      threadId: asThreadId("connector-collision"),
-      provider: "codex",
-      cwd,
-      runtimeMode: "full-access",
-      agentGatewayCapabilityInput: AGENT_GATEWAY_NO_CAPABILITIES,
+it.each(["global", "project"] as const)(
+  "does not overlay a connector onto the user's same-named Codex MCP server (%s)",
+  async (layer) => {
+    const servers = { supabase_connector: { command: "user-mcp", args: ["serve"] } };
+    const fake = createSyntheticCodexAppServer({
+      ...(layer === "global" ? { mcpServers: servers } : { projectMcpServers: servers }),
     });
-    const start = fake.requests.find((request) => request.method === "thread/start");
-    const config = start?.params?.config as { mcp_servers: Record<string, unknown> };
-    expect(config.mcp_servers.supabase_connector).toBeUndefined();
-    expect(config.mcp_servers.linear_connector).toMatchObject({
-      url: `${endpoint}/connectors/linear`,
+    const endpoint = "http://127.0.0.1:48123/mcp";
+    const { manager } = createSyntheticCodexManager(fake, undefined, {
+      endpointUrl: () => endpoint,
+      acquireSessionLease: (threadId, input) =>
+        acquireAgentGatewaySessionLease(
+          {
+            connectionForThread: () => ({
+              url: endpoint,
+              bearerToken: "lease",
+              connectors: [
+                { name: "supabase_connector", url: `${endpoint}/connectors/supabase` },
+                { name: "linear_connector", url: `${endpoint}/connectors/linear` },
+              ],
+            }),
+            revokeSessionToken: () => {},
+          },
+          threadId,
+          "codex",
+          input ?? AGENT_GATEWAY_NO_CAPABILITIES,
+        )!,
     });
-    expect(config.mcp_servers.synara).toBeDefined();
-  } finally {
-    await manager.stopAll();
-    rmSync(cwd, { recursive: true, force: true });
-  }
-});
+    const cwd = mkdtempSync(path.join(os.tmpdir(), "synara-codex-connector-collision-"));
+    try {
+      await manager.startSession({
+        threadId: asThreadId("connector-collision"),
+        provider: "codex",
+        cwd,
+        runtimeMode: "full-access",
+        agentGatewayCapabilityInput: AGENT_GATEWAY_NO_CAPABILITIES,
+      });
+      const start = fake.requests.find((request) => request.method === "thread/start");
+      const config = start?.params?.config as { mcp_servers: Record<string, unknown> };
+      expect(config.mcp_servers.supabase_connector).toBeUndefined();
+      expect(config.mcp_servers.linear_connector).toMatchObject({
+        url: `${endpoint}/connectors/linear`,
+      });
+      expect(config.mcp_servers.synara).toBeDefined();
+    } finally {
+      await manager.stopAll();
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  },
+);
 
 it.each([
   "supported",
