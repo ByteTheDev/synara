@@ -1,0 +1,47 @@
+name: Notion integration workspace bootstrap
+
+on:
+  push:
+    branches: [feat/notion-enterprise-oauth-integration]
+    paths: [.github/workflows/notion-workspace-bootstrap.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.13.1
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Install the unchanged workspace lockfile
+        id: install
+        continue-on-error: true
+        run: bun install --frozen-lockfile
+      - name: Package isolated source and tooling
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/notion-workspace-tools
+          cp "$(command -v bun)" /tmp/notion-workspace-tools/bun
+          cp "$(command -v node)" /tmp/notion-workspace-tools/node
+          printf '%s\n' '${{ steps.install.outcome }}' > /tmp/notion-workspace-tools/install-outcome.txt
+          tar --exclude=.git --exclude=.synara --exclude=.env --exclude=.env.local -czf /tmp/notion-workspace.tar.gz .
+          tar -czf /tmp/notion-workspace-tools.tar.gz -C /tmp/notion-workspace-tools .
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: notion-isolated-workspace
+          path: |
+            /tmp/notion-workspace.tar.gz
+            /tmp/notion-workspace-tools.tar.gz
+          retention-days: 1
+          compression-level: 0
