@@ -1,0 +1,182 @@
+name: Synara native appearance acceptance
+on:
+  push:
+    branches: [codex/1920-synara-appearance-qa]
+    paths: [.github/workflows/code-oss-appearance-qa.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: eaa15d81bbb9f8e554e129b94f997e2ab361075e
+          persist-credentials: false
+      - name: Verify exact appearance patch before applying it
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto'),zlib=require('node:zlib');
+            const {data}=await github.rest.git.getBlob({...context.repo,file_sha:'0c9f8822a79ec668f0940600888d5a1b846f540c'});
+            let encoded=data.content.replace(/\s/g,'');
+            // Correct the identified extra transfer character; the complete source digest below is authoritative.
+            encoded=encoded.replace('C3Ifjd3bIFO8','C3Ifjd3IFO8');
+            const patch=zlib.inflateSync(Buffer.from(encoded,'base64'),{maxOutputLength:100000});
+            if(crypto.createHash('sha256').update(patch).digest('hex')!=='bcb05efa3ef23e930d3249956ca5e81ccabd678bd2a0fbda9b2397fc6cb1ef52')throw Error('Patch checksum mismatch');
+            fs.mkdirSync('.code-oss/appearance',{recursive:true});
+            fs.writeFileSync('.code-oss/appearance/source.patch',patch);
+            const paths=['apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/appearance.ts','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/media/appearance.css','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts','apps/desktop/code-oss/scripts/appearance-smoke.mjs','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/ipcChannels.ts','apps/desktop/src/preload.ts','apps/web/src/components/DesktopIdeCoordinator.tsx','apps/web/src/index.css','apps/web/src/lib/desktopIdeAppearance.ts','packages/contracts/src/desktopIde.test.ts','packages/contracts/src/desktopIde.ts'];
+            fs.writeFileSync('.code-oss/appearance/paths.json',JSON.stringify(paths));
+            console.log('PASS exact local patch SHA256 and bounded transfer');
+      - run: git apply --check .code-oss/appearance/source.patch && git apply .code-oss/appearance/source.patch
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format only the appearance change and preserve exact source
+        run: |
+          node - <<'JS'
+          const fs=require('node:fs'),cp=require('node:child_process'),crypto=require('node:crypto');
+          const files=JSON.parse(fs.readFileSync('.code-oss/appearance/paths.json','utf8'));
+          cp.execFileSync('node_modules/.bin/oxfmt',files,{stdio:'inherit'});
+          const manifest=files.map(path=>({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')}));
+          fs.writeFileSync('.code-oss/appearance/manifest.json',JSON.stringify(manifest));
+          cp.execFileSync('tar',['-czf','.code-oss/appearance/source.tar.gz',...files]);
+          JS
+          git diff --check
+          git diff --stat
+      - name: Required formatting, lint, typecheck and focused UI contracts
+        run: |
+          bun run fmt:check
+          bun run lint > .code-oss/appearance/lint.log 2>&1 || { tail -80 .code-oss/appearance/lint.log; exit 1; }
+          bun run typecheck > .code-oss/appearance/typecheck.log 2>&1 || { tail -100 .code-oss/appearance/typecheck.log; exit 1; }
+          bun run --cwd packages/contracts test -- src/desktopIde.test.ts
+          bun run --cwd apps/web test -- src/uiFontSize.test.ts src/hasSelectorVariants.test.ts
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: synara-appearance-source
+          path: .code-oss/appearance
+          retention-days: 3
+  native:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: eaa15d81bbb9f8e554e129b94f997e2ab361075e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-appearance-source
+          path: .code-oss/appearance
+      - run: tar -xzf .code-oss/appearance/source.tar.gz
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Native theme service and contribution interface check
+        working-directory: .code-oss/source
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npm run typecheck-client
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build the changed host and retained Synara renderer
+        run: bun run build:desktop > .code-oss/build.log 2>&1 || { tail -100 .code-oss/build.log; exit 1; }
+      - name: Preserve exact compiled runtime for focused acceptance repairs
+        run: tar -czf .code-oss/appearance-runtime.tar.gz .code-oss/runtime apps/desktop/dist-electron apps/server/dist apps/web/dist packages/contracts/dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: synara-appearance-runtime
+          path: .code-oss/appearance-runtime.tar.gz
+          retention-days: 3
+          compression-level: 0
+      - name: Prepare real Linux display
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 > .code-oss/display.log 2>&1
+      - name: Native service continuity and live Synara appearance acceptance
+        timeout-minutes: 6
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs --appearance
+      - name: Actual mode-switch recording and visual-review thumbnails
+        run: |
+          ffmpeg -y -loglevel error -i .code-oss/screenshots/agent-ide-switch.mp4 -vf 'fps=6,scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse' .code-oss/screenshots/agent-ide-switch.gif
+          for mode in dark light; do ffmpeg -y -loglevel error -i .code-oss/screenshots/after-synara-ide-$mode.png -vf scale=840:-1 -c:v libwebp -quality 55 .code-oss/screenshots/review-$mode.webp; done
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: synara-appearance-evidence
+          path: .code-oss/screenshots
+          retention-days: 7
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-appearance-source
+      - name: Validate source archive as data
+        run: |
+          python - <<'PY'
+          import tarfile,pathlib
+          with tarfile.open('source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  path=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or path.is_absolute() or '..' in path.parts or item.size>250000: raise ValueError('Unexpected source entry')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store verified source blobs without publishing a branch
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const allowed=new Set(['apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/appearance.ts','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/media/appearance.css','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts','apps/desktop/code-oss/scripts/appearance-smoke.mjs','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/ipcChannels.ts','apps/desktop/src/preload.ts','apps/web/src/components/DesktopIdeCoordinator.tsx','apps/web/src/index.css','apps/web/src/lib/desktopIdeAppearance.ts','packages/contracts/src/desktopIde.test.ts','packages/contracts/src/desktopIde.ts']);
+            const rows=JSON.parse(fs.readFileSync('manifest.json','utf8'));
+            if(rows.length!==allowed.size)throw Error('Unexpected manifest');
+            for(const row of rows){
+              if(!allowed.delete(row.path))throw Error('Unexpected path');
+              const bytes=fs.readFileSync('source/'+row.path);
+              if(crypto.createHash('sha256').update(bytes).digest('hex')!==row.sha256)throw Error('Source checksum mismatch');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('APPEARANCE_BLOB='+JSON.stringify({...row,sha:data.sha,mode:'100644',type:'blob'}));
+            }
+  evidence:
+    needs: native
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-appearance-evidence
+      - name: Read exact acceptance outcome
+        run: |
+          for file in after-checks.json failure.txt failure-page-1.txt failure-page-2.txt; do if [ -f "$file" ]; then echo "=== $file ==="; head -c 14000 "$file"; echo; fi; done
+      - name: Store successful real capture blobs only
+        if: needs.native.result == 'success'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            if(fs.existsSync('failure.txt'))throw Error('Acceptance failed');
+            for(const name of ['after-synara-ide-dark.png','after-synara-ide-light.png','after-agent-mode.png','agent-ide-switch.gif']){
+              const bytes=fs.readFileSync(name);
+              if(bytes.length>3000000)throw Error('Unexpected image size');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('APPEARANCE_CAPTURE='+JSON.stringify({path:'docs/images/code-oss/'+name,sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),mode:'100644',type:'blob'}));
+            }
+            for(const mode of ['dark','light'])console.log('REVIEW_'+mode+'='+fs.readFileSync('review-'+mode+'.webp').toString('base64'));
