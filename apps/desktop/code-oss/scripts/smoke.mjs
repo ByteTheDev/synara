@@ -446,6 +446,10 @@ try {
       )
     )
       throw new Error("A production syntax worker resource is still missing");
+    if (process.argv.includes("--appearance")) {
+      const { verifyAppearance } = await import("./appearance-smoke.mjs");
+      await verifyAppearance({ application, agent, workbench, composer, screen, until, record });
+    }
     // Capture an actual short X11 video only after all functional checks pass.
     recording = spawn(
       "ffmpeg",
@@ -485,6 +489,10 @@ try {
     recording = undefined;
     await writeFile(join(output, "native-probe.json"), JSON.stringify(await probe(), null, 2));
     await writeFile(join(output, "native-dom.txt"), await workbench.locator("body").innerText());
+    if (process.argv.includes("--appearance")) {
+      const { verifySessionControl } = await import("./appearance-smoke.mjs");
+      await verifySessionControl({ agent, until, record });
+    }
   }
 } catch (error) {
   screen(baseline ? "before-failure.png" : "after-failure.png");

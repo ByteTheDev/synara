@@ -17,6 +17,7 @@ import { pathToFileURL } from "node:url";
 import {
   DESKTOP_IDE_PROTOCOL,
   isDesktopIdeContext,
+  isDesktopIdeAppearance,
   isDesktopIdeScope,
   type DesktopIdeMode,
   type DesktopIdeScope,
@@ -400,6 +401,12 @@ export class CodeOssHost {
       if (typeof value !== "string" || !this.options.isQuitRequestActive(value))
         throw new Error("No matching Synara quit request.");
       return this.permitShutdown();
+    });
+    handleAgent(IDE_IPC.appearance, (value) => {
+      if (!isDesktopIdeAppearance(value)) throw new Error("Invalid Synara appearance tokens.");
+      if (JSON.stringify(value) === JSON.stringify(this.state.appearance)) return;
+      this.state = { ...this.state, appearance: value };
+      this.publish();
     });
     handleAgent(IDE_IPC.attention, (value) => {
       if (!Number.isSafeInteger(value) || Number(value) < 0 || Number(value) > 100000)

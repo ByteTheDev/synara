@@ -8,6 +8,7 @@ export const DESKTOP_IPC_CHANNELS = {
     mode: "synara:ide:mode",
     scope: "synara:ide:scope",
     attention: "synara:ide:attention",
+    appearance: "synara:ide:appearance",
     context: "synara:ide:context",
     prepareQuit: "synara:ide:prepare-quit",
   },

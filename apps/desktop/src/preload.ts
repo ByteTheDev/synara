@@ -134,6 +134,7 @@ contextBridge.exposeInMainWorld("desktopBridge", {
     setMode: (mode) => ipcRenderer.invoke(IPC.ide.mode, mode),
     setScope: (scope) => ipcRenderer.invoke(IPC.ide.scope, scope),
     setAttention: (count) => ipcRenderer.invoke(IPC.ide.attention, count),
+    setAppearance: (appearance) => ipcRenderer.invoke(IPC.ide.appearance, appearance),
     prepareQuit: (requestId) => ipcRenderer.invoke(IPC.ide.prepareQuit, requestId),
     onState: (listener) => {
       const receive = (_event: Electron.IpcRendererEvent, state: Parameters<typeof listener>[0]) =>

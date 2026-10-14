@@ -1,0 +1,93 @@
+/* Presentation only. Native split/grid geometry, editor glyph fonts, hit targets
+   and user layout settings remain under Code-OSS control. High contrast opts out. */
+.monaco-workbench.synara-workbench {
+  font-family: var(--synara-ui-font);
+  font-size: var(--synara-ui-size);
+  --vscode-shadow-md: 0 6px 24px rgb(0 0 0 / 0.14);
+  --vscode-shadow-lg: 0 12px 40px rgb(0 0 0 / 0.2);
+}
+.monaco-workbench.synara-workbench
+  :is(
+    .part > .title,
+    .pane-header,
+    .tabs-container .tab-label,
+    .part.statusbar,
+    .part.titlebar,
+    .monaco-list-row .monaco-icon-label,
+    .monaco-inputbox,
+    .monaco-select-box,
+    .monaco-button,
+    .quick-input-widget,
+    .monaco-menu,
+    .monaco-breadcrumbs
+  ) {
+  font-family: var(--synara-ui-font);
+  font-size: var(--synara-ui-size);
+}
+.monaco-workbench.synara-workbench :is(.part > .title, .pane-header) :is(h2, h3, .title) {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: inherit;
+  font-weight: 500;
+}
+.monaco-workbench.synara-workbench :is(.monaco-inputbox, .monaco-select-box, .monaco-button) {
+  border-radius: calc(var(--synara-radius) * 0.6);
+}
+.monaco-workbench.synara-workbench .monaco-action-bar .action-label:not(.codicon) {
+  font-family: inherit;
+}
+.monaco-workbench.synara-workbench .part.titlebar .command-center-center {
+  border-radius: calc(var(--synara-radius) * 0.8);
+}
+.monaco-workbench.synara-workbench
+  .part.titlebar
+  .command-center-center
+  :is(.search-label, .monaco-icon-label) {
+  font-size: inherit;
+}
+.monaco-workbench.synara-workbench
+  :is(.quick-input-widget, .monaco-menu .monaco-action-bar.vertical, .monaco-hover) {
+  border-radius: var(--synara-radius);
+}
+.monaco-workbench.synara-workbench .quick-input-widget .quick-input-header {
+  padding: 10px;
+}
+.monaco-workbench.synara-workbench .quick-input-widget .quick-input-list {
+  padding: 0 4px 4px;
+}
+.monaco-workbench.synara-workbench .monaco-list-row {
+  border-radius: calc(var(--synara-radius) * 0.4);
+}
+.monaco-workbench.synara-workbench
+  .part.editor
+  > .content
+  .editor-group-container
+  > .title
+  .tabs-container
+  > .tab {
+  border-top-left-radius: calc(var(--synara-radius) * 0.5);
+  border-top-right-radius: calc(var(--synara-radius) * 0.5);
+}
+.monaco-workbench.synara-workbench .part.activitybar .action-item.checked .action-label {
+  border-radius: calc(var(--synara-radius) * 0.8);
+  background: var(--vscode-toolbar-hoverBackground);
+}
+.monaco-workbench.synara-workbench .part.statusbar > .items-container > .statusbar-item {
+  border-radius: calc(var(--synara-radius) * 0.4);
+}
+.monaco-workbench.synara-workbench .part.statusbar [id="synara.mode"] {
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+.monaco-workbench.synara-workbench .part.statusbar [id="synara.attention"] {
+  color: var(--vscode-descriptionForeground);
+}
+.monaco-workbench.synara-workbench
+  :is(.monaco-button, .monaco-action-bar .action-label):focus-visible {
+  outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .monaco-workbench.synara-workbench :is(.tab, .action-label, .monaco-list-row, .monaco-button) {
+    transition: none;
+  }
+}

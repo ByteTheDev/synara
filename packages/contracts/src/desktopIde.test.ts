@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { DESKTOP_IDE_MAX_CONTEXT, isDesktopIdeContext, isDesktopIdeScope } from "./desktopIde";
+import {
+  DESKTOP_IDE_MAX_CONTEXT,
+  DESKTOP_IDE_APPEARANCE_COLORS,
+  isDesktopIdeAppearance,
+  isDesktopIdeContext,
+  isDesktopIdeScope,
+} from "./desktopIde";
 
 describe("native IDE bridge payloads", () => {
   const context = {
@@ -41,5 +47,40 @@ describe("native IDE bridge payloads", () => {
     ]) {
       expect(isDesktopIdeScope({ threadId: "t", projectId: "p", roots })).toBe(false);
     }
+  });
+});
+
+describe("Synara appearance bridge", () => {
+  const appearance = {
+    variant: "dark",
+    colors: Object.fromEntries(DESKTOP_IDE_APPEARANCE_COLORS.map((key) => [key, "#181818ff"])),
+    uiFontFamily: '-apple-system, "Segoe UI", system-ui, sans-serif',
+    uiFontSize: 13,
+    radius: 10,
+  };
+  it("accepts bounded resolved light/dark tokens, alpha colors and adjustable typography", () => {
+    expect(isDesktopIdeAppearance(appearance)).toBe(true);
+    expect(
+      isDesktopIdeAppearance({ ...appearance, variant: "light", uiFontSize: 18, radius: 0 }),
+    ).toBe(true);
+  });
+  it("rejects arbitrary CSS, settings, missing colors and non-finite dimensions", () => {
+    for (const value of [
+      null,
+      {},
+      { ...appearance, variant: "system" },
+      { ...appearance, colors: { ...appearance.colors, surface: "var(--secret)" } },
+      { ...appearance, colors: { ...appearance.colors, surface: "url(https://example.invalid)" } },
+      { ...appearance, colors: { ...appearance.colors, "workbench.colorTheme": "custom" } },
+      { ...appearance, colors: { surface: "#181818" } },
+      { ...appearance, uiFontFamily: "system-ui; background: red" },
+      { ...appearance, uiFontFamily: "url(https://example.invalid)" },
+      { ...appearance, uiFontFamily: "x".repeat(513) },
+      { ...appearance, uiFontSize: Number.NaN },
+      { ...appearance, uiFontSize: Number.POSITIVE_INFINITY },
+      { ...appearance, uiFontSize: 100 },
+      { ...appearance, radius: -1 },
+    ])
+      expect(isDesktopIdeAppearance(value)).toBe(false);
   });
 });

@@ -1,5 +1,7 @@
 /* Native Code-OSS contribution. The pane hosts the existing Synara renderer via
  * an Electron sibling view, not a webview/iframe or a second agent extension. */
+import { SynaraWorkbenchAppearance } from "./appearance.js";
+import { IWorkbenchThemeService } from "../../workbench/services/themes/common/workbenchThemeService.js";
 import { Codicon } from "../../base/common/codicons.js";
 import { KeyCode, KeyMod } from "../../base/common/keyCodes.js";
 import { Disposable, toDisposable } from "../../base/common/lifecycle.js";
@@ -362,8 +364,10 @@ class SynaraWorkbench extends Disposable {
     @INotificationService notifications: INotificationService,
     @IQuickInputService quickInput: IQuickInputService,
     @IDialogService dialogs: IDialogService,
+    @IWorkbenchThemeService themes: IWorkbenchThemeService,
   ) {
     super();
+    const appearance = this._register(new SynaraWorkbenchAppearance(themes));
     revealAgents = async () => {
       await views.openView(VIEW_ID, true);
       activePane?.reportBounds();
@@ -452,10 +456,18 @@ class SynaraWorkbench extends Disposable {
       }),
     );
     const update = (next: DesktopIdeState) => {
+      if (next.appearance)
+        void appearance
+          .apply(next.appearance)
+          .catch((error) =>
+            notifications.error(`Synara could not synchronize appearance: ${String(error)}`),
+          );
       attention.update({
         name: "Synara agent attention",
-        text: `$(bell) ${next.attention}`,
-        ariaLabel: `${next.attention} agents need attention`,
+        text: next.attention ? `$(bell-dot) ${next.attention}` : "$(check) All caught up",
+        ariaLabel: next.attention
+          ? `${next.attention} agents need attention`
+          : "No agents need attention",
         command: "synara.nextAttention",
         tooltip: "Open the next Synara agent needing attention",
       });
@@ -463,7 +475,8 @@ class SynaraWorkbench extends Disposable {
       state = next;
       entry.update({
         name: "Synara",
-        text: `${next.mode === "agent" ? "$(hubot) Agent" : "$(code) IDE"}${next.attention ? ` · ${next.attention} need attention` : ""}`,
+        text:
+          next.mode === "agent" ? "$(comment-discussion) Synara · Agent" : "$(code) Synara · IDE",
         ariaLabel: "Switch Synara Agent and IDE modes",
         command: "synara.toggleMode",
         tooltip: "Synara: Agent / IDE — sessions and editors stay running",
