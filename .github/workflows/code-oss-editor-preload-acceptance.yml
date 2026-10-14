@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: 7fa9c086ad574ebbff5c4d51791466370e963d0c
+          ref: 82257a2f8e80bb2ef18fb77e4d4c72fba689b5f7
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
         with:
@@ -31,11 +31,25 @@ jobs:
           run-id: 38571986911
           github-token: ${{ github.token }}
           path: .code-oss/import
-      - name: Reuse checked native and unchanged React resources
+      - uses: actions/download-artifact@v8
+        with:
+          name: editor-repaired-source
+          run-id: 38573568900
+          github-token: ${{ github.token }}
+          path: .code-oss/import
+      - name: Reuse native resources and preserve interrupted path-safety fixes
         run: |
           tar -xzf .code-oss/import/compiled-editor.tar.gz
           tar -xzf .code-oss/import/existing-editor-runtime.tar.gz -C .code-oss
-      - name: Check only changed native adoption and harness files
+          tar -xzf .code-oss/import/editor-repair.tar.gz
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          for(const row of JSON.parse(fs.readFileSync('.code-oss/checked/manifest.json','utf8'))){
+            if(crypto.createHash('sha256').update(fs.readFileSync(row.path)).digest('hex')!==row.sha256)throw Error('Recovered source hash mismatch');
+          }
+          JS
+      - name: Check changed adoption and path boundaries
         run: |
           node_modules/.bin/oxfmt apps/desktop/src/nativeEditorView.ts apps/desktop/src/nativeEditorView.test.ts apps/desktop/code-oss/scripts/smoke.mjs
           bun run --cwd apps/desktop typecheck
@@ -43,7 +57,7 @@ jobs:
           bun run --cwd packages/contracts build
           bun run --cwd apps/desktop build
           tar -czf .code-oss/repaired-editor.tar.gz apps/desktop/dist-electron apps/server/dist apps/web/dist apps/desktop/code-oss/scripts/smoke.mjs
-          tar -czf .code-oss/repaired-source.tar.gz apps/desktop/src/nativeEditorView.ts apps/desktop/src/nativeEditorView.test.ts apps/desktop/code-oss/scripts/smoke.mjs
+          tar -czf .code-oss/repaired-source.tar.gz apps/desktop/src/nativeEditorView.ts apps/desktop/src/nativeEditorView.test.ts apps/desktop/code-oss/scripts/smoke.mjs apps/web/src/components/EditorWorkspaceView.tsx apps/desktop/src/codeOssHost.ts apps/desktop/src/editorSurface.ts apps/desktop/src/editorSurface.test.ts
       - uses: actions/upload-artifact@v7
         with:
           name: native-preload-repaired-app
