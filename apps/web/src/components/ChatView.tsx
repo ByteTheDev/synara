@@ -6760,7 +6760,9 @@ export default function ChatView({
                   CHAT_COLUMN_GUTTER_CLASS_NAME,
                 )}
               >
-                <AsciiWaveBackground />
+                {settings.showAsciiBackground && !terminalWorkspaceTerminalTabActive ? (
+                  <AsciiWaveBackground />
+                ) : null}
                 {/* The heading floats centered in the space above the composer, which is
                     anchored to the bottom of the pane (with its workspace-tools rail
                     stacked on top of the input) so starting a chat keeps the composer

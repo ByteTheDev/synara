@@ -11,6 +11,8 @@ import { useTheme } from "~/hooks/useTheme";
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const FONT_SIZE_PX = 10;
 const LINE_HEIGHT_PX = 13;
+// Bound the three full-size RGBA surfaces to roughly 48 MiB, even on Retina/4K displays.
+const MAX_BACKING_PIXELS = 4_000_000;
 // The idle field drifts slowly, so it redraws rarely on a plain timer; only click ripples,
 // which need smooth motion, use animation frames.
 const IDLE_FRAME_INTERVAL_MS = 1000 / 15;
@@ -280,14 +282,19 @@ export function AsciiWaveBackground() {
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
-      dpr = window.devicePixelRatio || 1;
       width = rect.width;
       height = rect.height;
+      dpr = Math.min(
+        window.devicePixelRatio || 1,
+        2,
+        Math.sqrt(MAX_BACKING_PIXELS / Math.max(1, width * height)),
+      );
+      revealStartMs = null;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.font = `${FONT_SIZE_PX}px ${fontFamily}`;
-      const cellW = Math.max(4, Math.round((ctx.measureText("M").width + 1) * dpr));
-      const cellH = Math.round(LINE_HEIGHT_PX * dpr);
+      const cellW = Math.max(1, Math.round((ctx.measureText("M").width + 1) * dpr));
+      const cellH = Math.max(1, Math.round(LINE_HEIGHT_PX * dpr));
       const cols = Math.ceil(canvas.width / cellW);
       const rows = Math.ceil(canvas.height / cellH);
       // Hidden or not laid out yet: the ResizeObserver rebuilds once there is room.
@@ -351,15 +358,21 @@ export function AsciiWaveBackground() {
 
     const draw = (nowMs: number) => {
       if (!field) return;
-      if (field.filled < field.glyphs.length) fillGlyphs(field);
+      if (field.filled < field.glyphs.length) {
+        fillGlyphs(field);
+        // Publish only a complete layer, including after resize. Filling stays sliced
+        // across frames without exposing a top-to-bottom wipe at full opacity.
+        if (field.filled < field.glyphs.length) return;
+      }
       if (revealStartMs === null) revealStartMs = nowMs;
       const reveal = reduceMotion ? 1 : smoothstep(0, REVEAL_MS, nowMs - revealStartMs);
       const { cols, rows, cellW, cellH, glyphs } = field;
       const inkBytes = field.inkMask.image.data;
       const accentBytes = field.accentMask.image.data;
       // The seed shifts time so each mount starts somewhere new in the noise.
-      const t = nowMs / 1000 + seed;
-      const elapsed = nowMs - startMs;
+      const fieldMs = reduceMotion ? startMs : nowMs;
+      const t = fieldMs / 1000 + seed;
+      const elapsed = fieldMs - startMs;
       const cycle = Math.floor(elapsed / PATTERN_DURATION_MS);
       const pattern = FIELD_PATTERNS[(firstPattern + cycle) % FIELD_PATTERNS.length]!;
       const patternMix = smoothstep(
@@ -496,6 +509,15 @@ export function AsciiWaveBackground() {
       frameId = 0;
       // Not set up yet: the idle setup calls wake() itself once the field exists.
       if (document.hidden || !field) return;
+      // Retained chat owners can be parked under an invisible ancestor. Do no canvas
+      // work there; the slow visibility-only retry also resumes after DOM reparenting.
+      if (!container.checkVisibility({ visibilityProperty: true, opacityProperty: true })) {
+        timerId = window.setTimeout(() => {
+          timerId = 0;
+          tick(performance.now());
+        }, 1000);
+        return;
+      }
       const interval =
         ripplesRef.current.length > 0 ? RIPPLE_FRAME_INTERVAL_MS : IDLE_FRAME_INTERVAL_MS;
       if (nowMs - lastFrameMs >= interval) {
