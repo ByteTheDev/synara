@@ -1,0 +1,78 @@
+name: Existing editor integrated tests
+on:
+  push:
+    branches: [codex/1920-editor-surface-qa]
+    paths: [.github/workflows/code-oss-editor-integrated-tests.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 82257a2f8e80bb2ef18fb77e4d4c72fba689b5f7
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: final-editor-source-checks
+          run-id: 38587622382
+          github-token: ${{ github.token }}
+          path: .code-oss/checked
+      - name: Restore integrated candidate and same-document navigation repair
+        run: |
+          tar -xzf .code-oss/checked/source.tar.gz
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('apps/desktop/src/codeOssHost.ts');s=p.read_text()
+          before='''    this.agent.webContents.on("did-start-navigation", (_event, _url, _inPlace, isMainFrame) => {
+                if (!isMainFrame) return;'''
+          after='''    this.agent.webContents.on("did-start-navigation", (_event, _url, isInPlace, isMainFrame) => {
+                // Hash routing retains the same React-owned slot. Clear it only when
+                // the main document is replaced, not when selecting a file or session.
+                if (!isMainFrame || isInPlace) return;'''
+          assert s.count(before)==1
+          p.write_text(s.replace(before,after))
+          PY
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Check platform boundary and integrated tests
+        run: |
+          mkdir -p .code-oss/test-evidence
+          node_modules/.bin/oxfmt apps/desktop/src/codeOssHost.ts
+          git diff --check
+          set +e
+          bun run windows-runtime:check > .code-oss/test-evidence/windows-runtime.log 2>&1; boundary=$?
+          bun run test > .code-oss/test-evidence/tests.log 2>&1; suite=$?
+          printf 'windows_runtime=%s repository_tests=%s\n' "$boundary" "$suite" | tee .code-oss/test-evidence/results.txt
+          test "$boundary$suite" = 00
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: integrated-editor-test-evidence
+          path: .code-oss/test-evidence
+          retention-days: 7
+  report:
+    needs: tests
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: integrated-editor-test-evidence
+      - name: Read results and failure summary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          for name in ['results.txt','windows-runtime.log','tests.log']:
+              p=Path(name)
+              if p.exists():
+                  s=re.sub(r'\x1b\[[0-9;]*m','',p.read_text(errors='replace'))
+                  print('\n'+name+'\n'+s[-36000:])
+          PY
