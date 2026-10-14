@@ -68,13 +68,24 @@ function connectorPreset(connector: McpConnector): McpConnectorPreset | undefine
   return MCP_CONNECTOR_PRESETS.find((entry) => entry.id === connector.presetId);
 }
 
-// Reconnecting reuses the OAuth app saved with the connector, so the dialog
-// only asks for one again if the server reports that none is saved.
+// Reuse saved credentials, but keep the current redirect visible: the desktop
+// callback port may have changed since the user's OAuth app was registered.
 function connectorTarget(connector: McpConnector): McpConnectorTarget {
   const preset = connectorPreset(connector);
   return preset
-    ? { ...presetTarget(preset), requiresOwnApp: false }
-    : { presetId: null, name: connector.name, url: connector.url, docsUrl: null };
+    ? {
+        ...presetTarget(preset),
+        requiresOwnApp: connector.usesOwnOAuthApp === true,
+        reuseSavedClient: true,
+      }
+    : {
+        presetId: null,
+        name: connector.name,
+        url: connector.url,
+        docsUrl: null,
+        requiresOwnApp: connector.usesOwnOAuthApp === true,
+        reuseSavedClient: true,
+      };
 }
 
 // Host only: some servers put an API key in the URL path.

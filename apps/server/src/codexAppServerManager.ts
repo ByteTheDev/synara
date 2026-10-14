@@ -1289,6 +1289,37 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
   // they settle, even after the caller's deadline rejects its session origin.
   // Stay below libuv's default four-worker pool so auth reads cannot occupy it all.
   private readonly authReadSlots = Semaphore.makeUnsafe(2);
+
+  /** Codex deep-merges MCP tables: never mix a connector with the user's server. */
+  private async gatewayThreadConfig(
+    context: CodexSessionContext,
+    connection: AgentGatewaySessionLease["connection"],
+  ): Promise<ReturnType<typeof buildCodexMcpThreadConfig>> {
+    if (!connection.connectors?.length) return buildCodexMcpThreadConfig(connection);
+    let configured: Record<string, unknown>;
+    try {
+      const response = this.readObject(
+        await this.sendRequest(context, "config/read", { includeLayers: false }),
+      );
+      const config = this.readObject(response, "config");
+      if (!config) throw new Error("Missing Codex configuration.");
+      configured = this.readObject(config, "mcp_servers") ?? {};
+    } catch {
+      // Do not guess a free namespace or log raw config errors containing secrets.
+      log.warn(
+        "Codex connector configuration could not be checked; connectors omitted for this session",
+      );
+      return buildCodexMcpThreadConfig({ ...connection, connectors: [] });
+    }
+    const connectors = connection.connectors.filter((connector) => {
+      if (!Object.hasOwn(configured, connector.name)) return true;
+      log.warn("Codex connector name is already configured; preserving the user's MCP server", {
+        server: connector.name,
+      });
+      return false;
+    });
+    return buildCodexMcpThreadConfig({ ...connection, connectors });
+  }
   constructor(
     services?: ServiceMap.ServiceMap<never>,
     options?: {
@@ -1529,7 +1560,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       );
       const sessionOverrides = {
         ...(gatewaySessionLease
-          ? { config: buildCodexMcpThreadConfig(gatewaySessionLease.connection) }
+          ? { config: await this.gatewayThreadConfig(context, gatewaySessionLease.connection) }
           : {}),
         model: normalizedModel ?? null,
         ...(input.serviceTier !== undefined ? { serviceTier: input.serviceTier } : {}),
@@ -2580,7 +2611,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       }
       const forkParams = {
         ...(gatewaySessionLease
-          ? { config: buildCodexMcpThreadConfig(gatewaySessionLease.connection) }
+          ? { config: await this.gatewayThreadConfig(context, gatewaySessionLease.connection) }
           : {}),
         threadId: sourceProviderThreadId,
         excludeTurns: true,
@@ -3143,7 +3174,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
           model: context.session.model ?? null,
           ...(context.serviceTier !== undefined ? { serviceTier: context.serviceTier } : {}),
           ...mapCodexRuntimeMode(context.session.runtimeMode),
-          config: buildCodexMcpThreadConfig(replacement.connection),
+          config: await this.gatewayThreadConfig(context, replacement.connection),
         }),
       );
       if (

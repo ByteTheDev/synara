@@ -242,10 +242,10 @@ export async function forwardMcpConnectorRequest(
     if (!collector.isComplete()) collector.finish();
     if (requestIds.length === 0) return { status: 202, sessionId, body: { kind: "empty" } };
     const responses = collector.responses();
-    if (responses.length === 0) {
+    if (!collector.isComplete()) {
       return jsonRpcErrorResult(
         request.body,
-        `${displayName} closed the stream without answering.`,
+        `${displayName} closed the stream without answering every request.`,
       );
     }
     return {
@@ -350,7 +350,38 @@ export async function probeMcpConnector(
     if (sessionId) {
       void forwardMcpConnectorRequest({ url, method: "DELETE", sessionId }, displayName);
     }
-    return { kind: "open" };
+    let answer: unknown;
+    if (isEventStream(response.headers)) {
+      collector?.finish();
+      answer = collector?.responses()[0];
+    } else if (isJson(response.headers)) {
+      try {
+        answer = JSON.parse(new TextDecoder().decode(response.body));
+      } catch {
+        /* Not an MCP response. */
+      }
+    }
+    // A website, login page, 202 stream acknowledgement or JSON-RPC error
+    // must not be saved as a connected MCP server.
+    const result = isRecord(answer) ? answer.result : undefined;
+    if (
+      isRecord(answer) &&
+      answer.jsonrpc === "2.0" &&
+      answer.id === 0 &&
+      !("error" in answer) &&
+      isRecord(result) &&
+      typeof result.protocolVersion === "string" &&
+      isRecord(result.capabilities) &&
+      isRecord(result.serverInfo) &&
+      typeof result.serverInfo.name === "string" &&
+      typeof result.serverInfo.version === "string"
+    ) {
+      return { kind: "open" };
+    }
+    return {
+      kind: "unavailable",
+      message: `${displayName} did not return a valid MCP initialize response.`,
+    };
   }
   if (response.status === 403) {
     return { kind: "unavailable", message: `${displayName} refused the connection.` };

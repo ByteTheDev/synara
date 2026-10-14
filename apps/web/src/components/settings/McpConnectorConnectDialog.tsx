@@ -40,6 +40,7 @@ export interface McpConnectorTarget {
   readonly docsUrl: string | null;
   /** The server registers no clients, so the user brings their own OAuth app. */
   readonly requiresOwnApp?: boolean;
+  readonly reuseSavedClient?: boolean;
   readonly appSetupUrl?: string | null;
 }
 
@@ -177,7 +178,7 @@ export function McpConnectorConnectDialog(props: {
 
   const brandColor = readableBrandColor(mcpConnectorArtwork(target?.presetId ?? null).color);
   const busy = connectMutation.isPending || waitingSince !== null;
-  const missingOwnApp = needsOwnApp && !clientId.trim();
+  const missingOwnApp = needsOwnApp && !target?.reuseSavedClient && !clientId.trim();
   const name = target?.name ?? "";
 
   return (

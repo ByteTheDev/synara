@@ -60,7 +60,10 @@ const unauthorized: McpConnectorProxyResult = {
 };
 const call = { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "list_tables" } };
 
-function makeRuntime(initial: string | null = null) {
+function makeRuntime(
+  initial: string | null = null,
+  saveHook?: (document: string) => Promise<void>,
+) {
   let saved = initial;
   let failSaves = false;
   let now = Date.parse("2026-10-14T10:00:00.000Z");
@@ -69,6 +72,7 @@ function makeRuntime(initial: string | null = null) {
   const runtime = new McpConnectorRuntime({
     load: async () => saved,
     save: async (document) => {
+      await saveHook?.(document);
       if (failSaves) throw new Error("disk full");
       saved = document;
     },
@@ -148,6 +152,125 @@ beforeEach(() => {
 });
 
 describe("McpConnectorRuntime.connect", () => {
+  it("keeps a rotated refresh token usable when the disk write fails", async () => {
+    const harness = makeRuntime();
+    const connector = await connectSupabase(harness);
+    harness.advance(3_600_000);
+    harness.failSaves(true);
+    mocks.refreshAuthorization.mockResolvedValue({
+      access_token: "rotated-access",
+      refresh_token: "rotated-refresh",
+      token_type: "bearer",
+      expires_in: 3600,
+    });
+    mocks.forward.mockResolvedValue(ok({ tools: [] }));
+    await harness.runtime.forward(connector.connectorId, { method: "POST", body: call });
+    await harness.runtime.forward(connector.connectorId, { method: "POST", body: call });
+    expect(mocks.refreshAuthorization).toHaveBeenCalledTimes(1);
+    expect(
+      mocks.forward.mock.calls.every(([request]) => request.accessToken === "rotated-access"),
+    ).toBe(true);
+    expect(harness.warnings).toContain("Could not save refreshed connector tokens.");
+  });
+
+  it.each([false, true])(
+    "does not expose or retain failed concurrent saves (both fail: %s)",
+    async (bothFail) => {
+      const firstSave = Promise.withResolvers<void>();
+      let saves = 0;
+      const harness = makeRuntime(null, async () => {
+        saves += 1;
+        if (saves === 1) await firstSave.promise;
+        else if (bothFail) throw new Error("disk full");
+      });
+      mocks.probe.mockResolvedValue({ kind: "open" });
+      const results = Promise.allSettled([
+        harness.runtime.connect({ url: "https://first.example.com/mcp", name: "Failed" }),
+        harness.runtime.connect({ url: "https://second.example.com/mcp", name: "Saved" }),
+      ]);
+      await vi.waitFor(() => expect(saves).toBeGreaterThan(0));
+      const visibleWhileSaving = harness.runtime.list();
+      firstSave.reject(new Error("disk full"));
+      const outcomes = await results;
+      expect(visibleWhileSaving).toEqual([]);
+      expect(outcomes.map((result) => result.status)).toEqual([
+        "rejected",
+        bothFail ? "rejected" : "fulfilled",
+      ]);
+      expect(harness.runtime.list().map((entry) => entry.url)).toEqual(
+        bothFail ? [] : ["https://second.example.com/mcp"],
+      );
+      expect(harness.published.flat().some((entry) => entry.name === "failed_connector")).toBe(
+        false,
+      );
+      expect(
+        JSON.parse(harness.saved() ?? '{"connectors":[]}').connectors.map(
+          (entry: { url: string }) => entry.url,
+        ),
+      ).toEqual(bothFail ? [] : ["https://second.example.com/mcp"]);
+    },
+  );
+
+  it("does not replace OAuth credentials when anonymous initialization succeeds on reconnect", async () => {
+    const harness = makeRuntime();
+    await connectSupabase(harness);
+    mocks.probe.mockResolvedValue({ kind: "open" });
+    const reconnect = await harness.runtime.connect({ presetId: "supabase" });
+    expect(reconnect.authorizationUrl).not.toBeNull();
+    expect(harness.runtime.list()[0]?.authKind).toBe("oauth");
+    expect(JSON.parse(harness.saved()!).connectors[0].oauth.tokens.access_token).toBe("access-1");
+  });
+
+  it.each([false, true])(
+    "keeps a disconnect authoritative over pending OAuth (exchange started: %s)",
+    async (exchangeStarted) => {
+      const harness = makeRuntime();
+      const connector = await connectSupabase(harness);
+      const reconnect = await harness.runtime.connect({ presetId: "supabase" });
+      const state = new URL(reconnect.authorizationUrl!).searchParams.get("state")!;
+      const exchange = Promise.withResolvers<void>();
+      const originalAuth = mocks.auth.getMockImplementation()!;
+      let exchanging = false;
+      mocks.auth.mockImplementation(async (provider, options) => {
+        exchanging = true;
+        await exchange.promise;
+        return originalAuth(provider, options);
+      });
+      const callback = () =>
+        harness.runtime.completeAuthorization({
+          state,
+          code: "good-code",
+          error: undefined,
+          errorDescription: undefined,
+        });
+      const pending = exchangeStarted ? callback() : undefined;
+      if (pending) await vi.waitFor(() => expect(exchanging).toBe(true));
+      await harness.runtime.disconnect(connector.connectorId);
+      exchange.resolve();
+      const result = await (pending ?? callback());
+      expect(result.ok).toBe(false);
+      expect(harness.runtime.list()).toEqual([]);
+      expect(JSON.parse(harness.saved()!).connectors).toEqual([]);
+      expect(harness.published.at(-1)).toEqual([]);
+    },
+  );
+
+  it("turns an anonymous connector's 401 into an MCP error instead of a gateway OAuth challenge", async () => {
+    const harness = makeRuntime();
+    mocks.probe.mockResolvedValue({ kind: "open" });
+    const { connector } = await harness.runtime.connect({ presetId: "huggingface" });
+    mocks.forward.mockResolvedValue(unauthorized);
+    const result = await harness.runtime.forward(connector!.connectorId, {
+      method: "POST",
+      body: call,
+    });
+    expect(result.status).toBe(200);
+    expect(result.body).toMatchObject({
+      kind: "json",
+      value: { id: 1, error: { message: expect.stringContaining("reconnected") } },
+    });
+  });
+
   it("connects a server that needs no sign-in and publishes it", async () => {
     const harness = makeRuntime();
     await harness.runtime.init();

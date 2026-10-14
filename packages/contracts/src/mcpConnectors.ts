@@ -25,6 +25,8 @@ export const McpConnector = Schema.Struct({
   /** MCP server name provider sessions see, e.g. `supabase_connector`. */
   serverName: TrimmedNonEmptyString,
   authKind: McpConnectorAuthKind,
+  /** Non-secret setup hint so reconnect can display the current redirect URL. */
+  usesOwnOAuthApp: Schema.optional(Schema.Boolean),
   status: McpConnectorStatus,
   createdAt: IsoDateTime,
   updatedAt: IsoDateTime,

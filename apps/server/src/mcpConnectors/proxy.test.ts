@@ -96,6 +96,25 @@ describe("jsonRpcErrorResult", () => {
 describe("forwardMcpConnectorRequest", () => {
   const call = { jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "x" } };
 
+  it("answers every requested id when an SSE batch ends with missing responses", async () => {
+    mockOutbound({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      chunks: ['data: {"jsonrpc":"2.0","id":1,"result":{}}\n\n'],
+    });
+    const result = await forwardMcpConnectorRequest(
+      { url: "https://mcp.example.com/mcp", method: "POST", body: [call, { ...call, id: 2 }] },
+      "Example",
+    );
+    expect(result.body).toMatchObject({
+      kind: "json",
+      value: [
+        { id: 1, error: expect.any(Object) },
+        { id: 2, error: expect.any(Object) },
+      ],
+    });
+  });
+
   it("collapses an SSE answer to its JSON-RPC response and keeps the session id", async () => {
     const spy = mockOutbound({
       status: 200,
@@ -193,12 +212,34 @@ describe("probeMcpConnector", () => {
     mockOutbound({
       status: 200,
       headers: { "content-type": "application/json" },
-      chunks: ['{"jsonrpc":"2.0","id":0,"result":{}}'],
+      chunks: [
+        '{"jsonrpc":"2.0","id":0,"result":{"protocolVersion":"2025-06-18","capabilities":{},"serverInfo":{"name":"Example","version":"1"}}}',
+      ],
     });
     await expect(
       probeMcpConnector("https://mcp.example.com/mcp", "Example", "1.0.0"),
     ).resolves.toEqual({ kind: "open" });
   });
+
+  it.each([
+    [200, "text/html", "<html>Sign in</html>"],
+    [
+      200,
+      "application/json",
+      '{"jsonrpc":"2.0","id":0,"error":{"code":-32601,"message":"unknown method"}}',
+    ],
+    [200, "application/json", '{"jsonrpc":"2.0","id":99,"result":{}}'],
+    [200, "application/json", '{"jsonrpc":"2.0","id":0,"result":{}}'],
+    [202, "application/json", ""],
+  ])(
+    "refuses a successful HTTP status without an initialize result (%s %s)",
+    async (status, contentType, body) => {
+      mockOutbound({ status, headers: { "content-type": contentType }, chunks: [body] });
+      expect(
+        (await probeMcpConnector("https://mcp.example.com/mcp", "Example", "1.0.0")).kind,
+      ).toBe("unavailable");
+    },
+  );
 
   it("explains a refusal", async () => {
     mockOutbound({ status: 403, headers: {}, chunks: [] });

@@ -200,6 +200,7 @@ function toContract(connector: StoredConnector): McpConnector {
     url: connector.url,
     serverName: connector.serverName,
     authKind: connector.authKind,
+    usesOwnOAuthApp: connector.oauth?.userClient === true,
     status: connector.status,
     createdAt: connector.createdAt,
     updatedAt: connector.updatedAt,
@@ -219,6 +220,8 @@ interface PendingAuthorization {
   readonly authorization: ConnectorAuthorizationState;
   readonly userClient: boolean;
   readonly createdAtMs: number;
+  readonly existingConnectorId?: string;
+  claimed?: boolean;
 }
 
 export type McpConnectorCallbackOutcome =
@@ -327,9 +330,13 @@ export class McpConnectorRuntime {
 
     const probe = await probeMcpConnector(target.url, target.name, this.deps.clientVersion);
     if (probe.kind === "unavailable") throw new McpConnectorFailure(probe.message);
-    if (probe.kind === "open") {
-      const { document, connector } = this.withUpserted(target, null);
-      await this.commit(document);
+    if (probe.kind === "open" && !existing?.oauth) {
+      let connector!: StoredConnector;
+      await this.commit(() => {
+        const upsert = this.withUpserted(target, null);
+        connector = upsert.connector;
+        return upsert.document;
+      });
       return { authorizationUrl: null, connector: toContract(connector) };
     }
 
@@ -348,6 +355,7 @@ export class McpConnectorRuntime {
     const authorization: ConnectorAuthorizationState = {
       redirectUrl: this.deps.redirectUrl(),
       state: randomBytes(32).toString("base64url"),
+      ...(existing?.oauth ? { discovery: existing.oauth.discovery } : {}),
       ...(ownClient ? { clientInformation: ownClient } : {}),
     };
     const { auth } = await loadMcpAuth();
@@ -355,8 +363,8 @@ export class McpConnectorRuntime {
     try {
       result = await auth(makeConnectorOAuthProvider(authorization), {
         serverUrl: target.url,
-        ...(probe.scope ? { scope: probe.scope } : {}),
-        ...(probe.resourceMetadataUrl
+        ...(probe.kind === "oauth" && probe.scope ? { scope: probe.scope } : {}),
+        ...(probe.kind === "oauth" && probe.resourceMetadataUrl
           ? { resourceMetadataUrl: new URL(probe.resourceMetadataUrl) }
           : {}),
         fetchFn: connectorOAuthFetch,
@@ -375,11 +383,15 @@ export class McpConnectorRuntime {
     if (authorizationUrl.protocol !== "https:") {
       throw new McpConnectorFailure(`${target.name} offered a sign-in page that is not HTTPS.`);
     }
+    if (existing && this.find(existing.connectorId) === undefined) {
+      throw new McpConnectorFailure("This connector was disconnected during sign-in.");
+    }
     this.pending.set(authorization.state, {
       target,
       authorization,
       userClient: ownClient !== undefined,
       createdAtMs: this.now(),
+      ...(existing ? { existingConnectorId: existing.connectorId } : {}),
     });
     return { authorizationUrl: authorizationUrl.href, connector: null };
   }
@@ -391,92 +403,113 @@ export class McpConnectorRuntime {
     readonly errorDescription: string | undefined;
   }): Promise<McpConnectorCallbackOutcome> {
     const pending = query.state ? this.pending.get(query.state) : undefined;
-    if (query.state) this.pending.delete(query.state);
-    if (!pending || this.now() - pending.createdAtMs > PENDING_AUTHORIZATION_TTL_MS) {
+    if (
+      !pending ||
+      pending.claimed ||
+      this.now() - pending.createdAtMs > PENDING_AUTHORIZATION_TTL_MS
+    ) {
       return {
         ok: false,
         title: "This sign-in link expired",
         message: "Start again from Synara under Settings → Connectors.",
       };
     }
-    const { target, authorization } = pending;
-    if (query.error || !query.code) {
-      const reason = query.errorDescription?.slice(0, 300) || query.error;
-      return {
-        ok: false,
-        title: `${target.name} was not connected`,
-        message: reason
-          ? `${target.name} did not authorize Synara: ${reason}`
-          : `${target.name} did not authorize Synara.`,
-      };
-    }
+    // Keep the claimed attempt reachable so Disconnect can fence an exchange
+    // already awaiting the vendor; another callback cannot claim it twice.
+    pending.claimed = true;
+    try {
+      const { target, authorization } = pending;
+      if (query.error || !query.code) {
+        const reason = query.errorDescription?.slice(0, 300) || query.error;
+        return {
+          ok: false,
+          title: `${target.name} was not connected`,
+          message: reason
+            ? `${target.name} did not authorize Synara: ${reason}`
+            : `${target.name} did not authorize Synara.`,
+        };
+      }
 
-    const mcpAuth = await loadMcpAuth();
-    const provider = makeConnectorOAuthProvider(authorization);
-    try {
-      await mcpAuth.auth(provider, {
-        serverUrl: target.url,
-        authorizationCode: query.code,
-        fetchFn: connectorOAuthFetch,
-      });
-    } catch (error) {
-      this.deps.logWarning("Connector token exchange failed.", {
-        connector: target.name,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return {
-        ok: false,
-        title: `${target.name} was not connected`,
-        message: `${target.name} did not issue access for Synara. Try connecting again.`,
-      };
+      const mcpAuth = await loadMcpAuth();
+      const provider = makeConnectorOAuthProvider(authorization);
+      try {
+        await mcpAuth.auth(provider, {
+          serverUrl: target.url,
+          authorizationCode: query.code,
+          fetchFn: connectorOAuthFetch,
+        });
+      } catch (error) {
+        this.deps.logWarning("Connector token exchange failed.", {
+          connector: target.name,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        return {
+          ok: false,
+          title: `${target.name} was not connected`,
+          message: `${target.name} did not issue access for Synara. Try connecting again.`,
+        };
+      }
+      const { tokens, clientInformation, discovery } = authorization;
+      if (!tokens || !clientInformation || !discovery) {
+        return {
+          ok: false,
+          title: `${target.name} was not connected`,
+          message: `${target.name} did not issue access for Synara. Try connecting again.`,
+        };
+      }
+      // Concurrent sign-ins each passed the limit when they started.
+      const isNew = !this.document.connectors.some((entry) => entry.url === target.url);
+      if (isNew && this.document.connectors.length >= MCP_CONNECTORS_MAX_COUNT) {
+        return {
+          ok: false,
+          title: `${target.name} was not connected`,
+          message: `You can connect up to ${MCP_CONNECTORS_MAX_COUNT} connectors.`,
+        };
+      }
+      const resource = await mcpAuth
+        .selectResourceURL(target.url, provider, discovery.resourceMetadata)
+        .catch(() => undefined);
+      try {
+        await this.commit(() => {
+          if (
+            this.pending.get(query.state!) !== pending ||
+            (pending.existingConnectorId && !this.find(pending.existingConnectorId))
+          ) {
+            void revokeConnectorTokens({ discovery, clientInformation, tokens });
+            throw new McpConnectorFailure("This sign-in was cancelled.");
+          }
+          return this.withUpserted(target, {
+            clientInformation,
+            tokens,
+            expiresAtMs: tokenExpiryMs(tokens, this.now()),
+            discovery,
+            resource: resource?.href ?? null,
+            userClient: pending.userClient,
+          }).document;
+        });
+      } catch {
+        return {
+          ok: false,
+          title: `${target.name} was not connected`,
+          message: "Synara could not save the connection. Try again.",
+        };
+      }
+      return { ok: true, name: target.name };
+    } finally {
+      if (this.pending.get(query.state!) === pending) this.pending.delete(query.state!);
     }
-    const { tokens, clientInformation, discovery } = authorization;
-    if (!tokens || !clientInformation || !discovery) {
-      return {
-        ok: false,
-        title: `${target.name} was not connected`,
-        message: `${target.name} did not issue access for Synara. Try connecting again.`,
-      };
-    }
-    // Concurrent sign-ins each passed the limit when they started.
-    const isNew = !this.document.connectors.some((entry) => entry.url === target.url);
-    if (isNew && this.document.connectors.length >= MCP_CONNECTORS_MAX_COUNT) {
-      return {
-        ok: false,
-        title: `${target.name} was not connected`,
-        message: `You can connect up to ${MCP_CONNECTORS_MAX_COUNT} connectors.`,
-      };
-    }
-    const resource = await mcpAuth
-      .selectResourceURL(target.url, provider, discovery.resourceMetadata)
-      .catch(() => undefined);
-    const { document } = this.withUpserted(target, {
-      clientInformation,
-      tokens,
-      expiresAtMs: tokenExpiryMs(tokens, this.now()),
-      discovery,
-      resource: resource?.href ?? null,
-      userClient: pending.userClient,
-    });
-    try {
-      await this.commit(document);
-    } catch {
-      return {
-        ok: false,
-        title: `${target.name} was not connected`,
-        message: "Synara could not save the connection. Try again.",
-      };
-    }
-    return { ok: true, name: target.name };
   }
 
   async disconnect(connectorId: string): Promise<boolean> {
     const connector = this.find(connectorId);
     if (!connector) return false;
-    await this.commit({
+    for (const [state, pending] of this.pending) {
+      if (pending.target.url === connector.url) this.pending.delete(state);
+    }
+    await this.commit(() => ({
       ...this.document,
       connectors: this.document.connectors.filter((entry) => entry.connectorId !== connectorId),
-    });
+    }));
     // Revoke only once the removal is saved, so a failed save leaves it usable.
     const oauth = connector.oauth;
     if (oauth) {
@@ -515,7 +548,10 @@ export class McpConnectorRuntime {
         },
         connector.name,
       );
-    if (connector.authKind === "none") return send(undefined);
+    if (connector.authKind === "none") {
+      const result = await send(undefined);
+      return result.status === 401 ? reconnectResult(request.body, connector.name) : result;
+    }
 
     try {
       const first = await send(await this.accessToken(connectorId, false));
@@ -589,6 +625,13 @@ export class McpConnectorRuntime {
   ): { readonly document: ConnectorsDocument; readonly connector: StoredConnector } {
     const timestamp = new Date(this.now()).toISOString();
     const existing = this.document.connectors.find((entry) => entry.url === target.url);
+    // A concurrent OAuth reconnect may have committed while the open probe ran.
+    if (!oauth && existing?.oauth) return { document: this.document, connector: existing };
+    if (!existing && this.document.connectors.length >= MCP_CONNECTORS_MAX_COUNT) {
+      throw new McpConnectorFailure(
+        `You can connect up to ${MCP_CONNECTORS_MAX_COUNT} connectors.`,
+      );
+    }
     const connector: StoredConnector = {
       connectorId: existing?.connectorId ?? `mcp_conn_${randomUUID()}`,
       presetId: target.presetId,
@@ -613,32 +656,35 @@ export class McpConnectorRuntime {
   }
 
   /**
-   * Applies a user-initiated change and saves it; on a failed save the change
-   * is undone so the list, new sessions, and the file on disk never disagree.
+   * Derives each mutation from committed state and saves it before publishing.
+   * Serializing the whole transition prevents failed changes leaking into
+   * another caller's write or new provider sessions.
    */
-  private async commit(next: ConnectorsDocument): Promise<void> {
-    const previous = this.document;
-    this.document = next;
-    try {
-      await this.persist();
-    } catch (error) {
-      if (this.document === next) {
-        this.document = previous;
-        this.publish();
+  private commit(
+    change: () => ConnectorsDocument | undefined,
+    retainRefreshedTokensOnSaveFailure = false,
+  ): Promise<void> {
+    const write = this.writes.then(async () => {
+      if (this.loadFailed) {
+        throw new McpConnectorFailure(
+          "Synara could not read your saved connectors, so it won't change them. Restart Synara and try again.",
+        );
       }
-      throw error;
-    }
-  }
-
-  // A background refresh is not a user-visible change, so `updatedAt` (which
-  // the connect dialog watches to spot a finished sign-in) stays put.
-  private replaceOAuth(connectorId: string, oauth: StoredConnectorOAuth): void {
-    this.document = {
-      ...this.document,
-      connectors: this.document.connectors.map((entry) =>
-        entry.connectorId === connectorId ? { ...entry, oauth } : entry,
-      ),
-    };
+      const next = change();
+      if (!next) return;
+      try {
+        await this.deps.save(encodeConnectorsDocument(next));
+      } catch (error) {
+        // A vendor may already have consumed the old refresh token. Keep its
+        // replacement usable in memory; failed management changes stay invisible.
+        if (retainRefreshedTokensOnSaveFailure) this.document = next;
+        throw error;
+      }
+      this.document = next;
+      this.publish();
+    });
+    this.writes = write.catch(() => undefined);
+    return write;
   }
 
   /**
@@ -646,17 +692,18 @@ export class McpConnectorRuntime {
    * sign-in: a reconnect that finished meanwhile must stay connected.
    */
   private async markNeedsAuth(connectorId: string, failed: StoredConnectorOAuth): Promise<void> {
-    const connector = this.find(connectorId);
-    if (!connector || connector.status === "needs-auth" || connector.oauth !== failed) return;
-    this.document = {
-      ...this.document,
-      connectors: this.document.connectors.map((entry) =>
-        entry.connectorId === connectorId
-          ? { ...entry, status: "needs-auth", updatedAt: new Date(this.now()).toISOString() }
-          : entry,
-      ),
-    };
-    await this.persist().catch((error: unknown) => {
+    await this.commit(() => {
+      const connector = this.find(connectorId);
+      if (!connector || connector.status === "needs-auth" || connector.oauth !== failed) return;
+      return {
+        ...this.document,
+        connectors: this.document.connectors.map((entry) =>
+          entry.connectorId === connectorId
+            ? { ...entry, status: "needs-auth", updatedAt: new Date(this.now()).toISOString() }
+            : entry,
+        ),
+      };
+    }).catch((error: unknown) => {
       this.deps.logWarning("Could not save connector status.", {
         error: error instanceof Error ? error.message : String(error),
       });
@@ -716,18 +763,25 @@ export class McpConnectorRuntime {
       refresh_token: refreshed.refresh_token ?? refreshToken,
     };
     // A reconnect or disconnect during the refresh owns the record now.
-    if (this.find(connectorId)?.oauth === oauth) {
-      this.replaceOAuth(connectorId, {
+    await this.commit(() => {
+      if (this.find(connectorId)?.oauth !== oauth) return;
+      const replacement = {
         ...oauth,
         tokens,
         expiresAtMs: tokenExpiryMs(tokens, this.now()),
+      };
+      return {
+        ...this.document,
+        // Refresh is not a user-visible reconnect: leave updatedAt unchanged.
+        connectors: this.document.connectors.map((entry) =>
+          entry.connectorId === connectorId ? { ...entry, oauth: replacement } : entry,
+        ),
+      };
+    }, true).catch((error: unknown) => {
+      this.deps.logWarning("Could not save refreshed connector tokens.", {
+        error: error instanceof Error ? error.message : String(error),
       });
-      await this.persist().catch((error: unknown) => {
-        this.deps.logWarning("Could not save refreshed connector tokens.", {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      });
-    }
+    });
     return tokens.access_token;
   }
 
@@ -749,21 +803,5 @@ export class McpConnectorRuntime {
         .filter((entry) => entry.status === "connected")
         .map((entry) => ({ name: entry.serverName, connectorId: entry.connectorId })),
     );
-  }
-
-  /** Publishes, then queues a write of the current document after earlier writes. */
-  private persist(): Promise<void> {
-    this.publish();
-    if (this.loadFailed) {
-      return Promise.reject(
-        new McpConnectorFailure(
-          "Synara could not read your saved connectors, so it won't change them. Restart Synara and try again.",
-        ),
-      );
-    }
-    const snapshot = encodeConnectorsDocument(this.document);
-    const write = this.writes.then(() => this.deps.save(snapshot));
-    this.writes = write.catch(() => undefined);
-    return write;
   }
 }
