@@ -1,0 +1,115 @@
+name: Native dirty quit cancellation
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-quit-acceptance.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  quit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 3cfeaa8c5a18c8c5a967799cd1cb0f6a66a80d01
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-runtime
+          run-id: 38543125228
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - uses: actions/download-artifact@v8
+        with:
+          name: compiled-synara-existing
+          run-id: 38541504429
+          github-token: ${{ github.token }}
+      - run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss && tar -xzf compiled-synara.tar.gz
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Isolate the native quit scenario without rerunning completed service tests
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const path='apps/desktop/code-oss/scripts/smoke.mjs';
+          let text=fs.readFileSync(path,'utf8');
+          const launch='  application = await _electron.launch({';
+          if(text.split(launch).length!==2)throw Error('Launch anchor changed');
+          text=text.replace(launch, `  await mkdir(join(home, "config/synara/User"), { recursive: true });
+            await writeFile(join(home, "config/synara/User/settings.json"), JSON.stringify({ "files.hotExit": "off", "window.confirmBeforeClose": "never", "terminal.integrated.confirmOnExit": "never" }));
+          `+launch);
+          const start=text.indexOf('    const assets = await workbench.evaluate(');
+          const end=text.indexOf('\n  }\n} catch (error)',start);
+          if(start<0||end<0)throw Error('Acceptance boundaries changed');
+          text=text.slice(0,start)+`    await probeCommand("open", "Open sample file");
+            await workbench.keyboard.press("Control+End");
+            await workbench.keyboard.type("\\n// UNSAVED_QUIT_SENTINEL\\n");
+            const dirty = await probeCommand("inspect", "Inspect state");
+            if (!dirty.editor?.dirty || !dirty.editor.text.includes("UNSAVED_QUIT_SENTINEL")) throw new Error("Dirty quit fixture missing");
+            // Only the disposable test app's native dialog responder is substituted.
+            // The production main/renderer lifecycle and before-unload veto run unchanged.
+            await application.evaluate(({ app, dialog }) => {
+              globalThis.__nativeQuitProbe = { cancelled: false, dialogs: [] };
+              const original = dialog.showMessageBox.bind(dialog);
+              dialog.showMessageBox = async (...args) => {
+                const options = args.find(value => value && Array.isArray(value.buttons));
+                if (!options) return original(...args);
+                const cancel = options.cancelId ?? options.buttons.findIndex(label => /cancel/i.test(label));
+                globalThis.__nativeQuitProbe.dialogs.push({ message: options.message, buttons: options.buttons, response: cancel });
+                if (cancel < 0) throw new Error("Quit dialog has no cancel operation");
+                globalThis.__nativeQuitProbe.cancelled = true;
+                return { response: cancel, checkboxChecked: false };
+              };
+              setImmediate(() => app.quit());
+            });
+            const quit = await until(() => application.evaluate(() => globalThis.__nativeQuitProbe), value => value.cancelled, "native dirty save prompt is presented", 15000);
+            if (!quit.dialogs.some(item => /save/i.test(item.message) && item.buttons.some(label => /cancel/i.test(label)))) throw new Error("Did not exercise the native dirty-save dialog");
+            await agent.evaluate(() => window.desktopBridge.ide.setMode("ide"));
+            const retained = await probeCommand("inspect", "Inspect state");
+            if (!retained.editor?.dirty || !retained.editor.text.includes("UNSAVED_QUIT_SENTINEL") || retained.extensionHostPid !== dirty.extensionHostPid) throw new Error("Cancellation lost the editor or restarted native services");
+            if ((await readFile(join(workspace, "sample.ts"), "utf8")).includes("UNSAVED_QUIT_SENTINEL")) throw new Error("Cancel unexpectedly saved the buffer");
+            if ((await agent.evaluate(() => window.__synaraSmokeIdentity)) !== marker) throw new Error("Quit cancellation reloaded Agent Mode");
+            if (!(await composer.innerText()).includes("keep this draft unsent")) throw new Error("Quit cancellation lost the Agent draft");
+            const windows = await application.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().map(window => ({ enabled: window.isEnabled(), destroyed: window.isDestroyed() })));
+            if (windows.length !== 1 || !windows[0].enabled || windows[0].destroyed) throw new Error("Quit cancellation did not restore the usable single window");
+            await writeFile(join(output, "quit-dialog.json"), JSON.stringify(quit, null, 2));
+            await record("native dirty-save cancellation preserves Agent renderer, draft, unsaved buffer and extension host", { dialogs: quit.dialogs, windows });
+            screen("after-cancelled-quit.png");
+          `+text.slice(end);
+          fs.writeFileSync(path,text);
+          JS
+          node --check apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Real Linux display
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot libasound2t64 libgtk-3-0t64 libnss3 libgbm1 > .code-oss/display.log 2>&1
+      - name: Exercise actual lifecycle veto with a cancelled native dialog response
+        timeout-minutes: 4
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/quit-evidence
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-quit-evidence
+          path: .code-oss/quit-evidence
+          retention-days: 7
+          if-no-files-found: warn
+  report:
+    needs: quit
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-quit-evidence
+      - name: Exact quit acceptance result
+        run: |
+          for file in after-checks.json failure.txt quit-dialog.json probe-at-failure.json; do
+            if [ -f "$file" ]; then echo "=== $file ==="; head -c 12000 "$file"; echo; fi
+          done
+          grep -E 'quit|shutdown|ERR|Error:' after-electron.log | tail -30 || true
