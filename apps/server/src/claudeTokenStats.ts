@@ -89,7 +89,7 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
         ${tokenStatsLineageFilter(sql, sql.literal("a.thread_id"), scope)}
     ),
     -- Ownership generations can be reused when a failed provider switch rolls
-    -- back. SessionStart observations distinguish the restarted native process
+    -- back. Explicit startup/resume observations distinguish the restarted process
     -- without changing those generations or scanning the retained runtime journal.
     claude_request_observations AS (
       SELECT
@@ -100,6 +100,7 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
         a.activity_id,
         json_extract(a.payload_json, '$.claudeCache.lifecycleGeneration') AS lifecycle_generation,
         CASE WHEN json_extract(a.payload_json, '$.claudeCache.source') = 'session-start'
+          AND json_extract(a.payload_json, '$.claudeCache.sessionStartReason') IN ('startup', 'resume')
           AND json_type(a.payload_json, '$.claudeCache.observedAt') = 'text'
           THEN json_extract(a.payload_json, '$.claudeCache.observedAt')
         END AS session_started_at,

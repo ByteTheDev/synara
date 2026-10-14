@@ -69,8 +69,14 @@ export function claudeCacheFromSessionStart(
     restored?.lastResponseAt !== undefined &&
     Math.abs(Date.parse(lastResponseAt) - Date.parse(restored.lastResponseAt)) < 1_000;
   const retainRequestEvidence = sameResponse || (lastResponseAt === undefined && expired !== false);
+  const { sessionStartReason: _previousReason, ...restoredEvidence } = restored ?? {};
+  const reason = input.source;
+  const sessionStartReason =
+    reason === "startup" || reason === "resume" || reason === "compact" || reason === "clear"
+      ? reason
+      : undefined;
   return {
-    ...(retainRequestEvidence ? restored : {}),
+    ...(retainRequestEvidence ? restoredEvidence : {}),
     ...(restored?.model ? { model: restored.model } : {}),
     nativeSessionId: input.session_id,
     ...(lifecycleGeneration !== undefined ? { lifecycleGeneration } : {}),
@@ -80,6 +86,7 @@ export function claudeCacheFromSessionStart(
     ...(lastResponseAt !== undefined ? { lastResponseAt } : {}),
     state: expired === true ? "likely-expired" : expired === false ? "likely-warm" : "unknown",
     source: "session-start",
+    ...(sessionStartReason ? { sessionStartReason } : {}),
     ...(typeof estimate === "number" && Number.isFinite(estimate) && estimate >= 0
       ? { estimatedCacheWriteUsd: estimate }
       : {}),

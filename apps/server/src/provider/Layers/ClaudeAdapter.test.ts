@@ -14368,13 +14368,22 @@ describe("Claude cache preflight", () => {
 
   it.effect("does not restore pre-compaction cache metadata from a sparse startup hook", () => {
     const harness = makeHarness();
+    harness.query.supportedCommandList = [
+      { name: "compact", description: "Compact context", argumentHint: "" },
+    ];
     return Effect.gen(function* () {
       const adapter = yield* ClaudeAdapter;
       yield* adapter.startSession({
         threadId: THREAD_ID,
         runtimeMode: "full-access",
-        resumeCursor: { resume: nativeSessionId, claudeCache: resumedObservation },
+        resumeCursor: {
+          resume: nativeSessionId,
+          claudeCache: resumedObservation,
+          processedTokenTotal: 0,
+          tokenAccountingVersion: 1,
+        },
       });
+      yield* adapter.sendTurn({ threadId: THREAD_ID, input: "/compact", attachments: [] });
       const boundary = yield* adapter.streamEvents.pipe(
         Stream.filter(
           (event) => event.type === "thread.state.changed" && event.payload.state === "compacted",
@@ -14404,6 +14413,26 @@ describe("Claude cache preflight", () => {
       assert.isUndefined(observation?.contextTokens);
       assert.isUndefined(observation?.lastResponseAt);
       assert.isUndefined(observation?.ttlSeconds);
+      const settledUsage = yield* adapter.streamEvents.pipe(
+        Stream.filter((event) => event.type === "thread.token-usage.updated"),
+        Stream.take(1),
+        Stream.runCollect,
+        Effect.forkChild,
+      );
+      emitSuccessResult(harness.query, nativeSessionId, "compact-result", {
+        input_tokens: 11,
+        output_tokens: 2,
+      });
+      const [usage] = yield* Fiber.join(settledUsage);
+      assert.equal(usage?.type, "thread.token-usage.updated");
+      if (usage?.type === "thread.token-usage.updated") {
+        // The sparse hook is still persisted by the accounting-only result.
+        // Stats must distinguish this same-process hook from a native restart.
+        assert.deepInclude(usage.payload.usage.claudeCache, {
+          source: "session-start",
+          sessionStartReason: "compact",
+        });
+      }
     }).pipe(
       Effect.provideService(Random.Random, makeDeterministicRandomService()),
       Effect.provide(harness.layer),

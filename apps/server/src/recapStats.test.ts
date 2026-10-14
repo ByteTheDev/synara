@@ -367,6 +367,9 @@ describe("RecapStatsQuery", () => {
   it.each([
     "new generation",
     "SessionStart",
+    "compact hook",
+    "clear hook",
+    "legacy hook",
     "missing restart evidence",
     "new native session",
   ] as const)("accounts for restored usage with %s", async (evidence) => {
@@ -477,13 +480,23 @@ describe("RecapStatsQuery", () => {
         // Provider-switch rollback deliberately restores its ownership generation.
         // The native SessionStart observation still identifies the new process.
         const resumedGeneration = evidence === "new generation" ? "gen-2" : "gen-1";
-        if (evidence === "SessionStart") {
+        if (["SessionStart", "compact hook", "clear hook", "legacy hook"].includes(evidence)) {
           const at = "2026-09-30T07:00:00.000Z";
           const payload = JSON.stringify({
             claudeCache: {
               nativeSessionId: "session-1",
               lifecycleGeneration: resumedGeneration,
               source: "session-start",
+              ...(evidence === "legacy hook"
+                ? {}
+                : {
+                    sessionStartReason:
+                      evidence === "compact hook"
+                        ? "compact"
+                        : evidence === "clear hook"
+                          ? "clear"
+                          : "resume",
+                  }),
               observedAt: at,
             },
           });
@@ -544,7 +557,12 @@ describe("RecapStatsQuery", () => {
     // requests, excluding output) + 300; the children report none; Codex adds 1000.
     // Without a persisted restart boundary these same values could represent
     // legitimate process usage. Do not guess a restart and discard that usage.
-    const missingEvidence = evidence === "missing restart evidence";
+    const missingEvidence = [
+      "missing restart evidence",
+      "compact hook",
+      "clear hook",
+      "legacy hook",
+    ].includes(evidence);
     const newNativeSession = evidence === "new native session";
     // A child completed before the native identity changed is not included
     // in the new session's first result, even when ownership generation matches.

@@ -31,9 +31,11 @@ carry the restored totals. Profile Stats finds them as the first turn of each
 process that resumed an earlier process of the same native session, and counts
 those turns' main loop instead. Process identity combines
 `claudeCache.lifecycleGeneration`, `nativeSessionId`, and the latest persisted
-`session-start` observation's `observedAt`: provider-switch rollback reuses the ownership
+`session-start` observation's `observedAt` when its `sessionStartReason` is
+`startup` or `resume`: provider-switch rollback reuses the ownership
 generation but still starts a new native process. Repeated emissions of one
-SessionStart observation do not introduce another boundary. Once the first
+SessionStart observation do not introduce another boundary. Native `compact`
+and `clear` hooks reuse the process and never establish a restart. Once the first
 result is settled, a later native-session identity change counts fresh usage
 normally rather than withholding another result.
 
@@ -71,9 +73,11 @@ unclassified cache reads. The total remains unchanged.
 
 ## Historical limits
 
-If an old restart reused a generation and retained no new SessionStart
+If an old restart reused a generation and retained no explicit startup/resume
 observation, it cannot be distinguished safely from continued work in the same
-process. Such historical totals remain unchanged rather than guessing a reset.
+process. Legacy SessionStart observations without a reason are also ambiguous:
+the SDK emits that hook for compaction and clear as well as process startup.
+Such historical totals remain unchanged rather than guessing a reset.
 Missing request history can likewise prevent the first resumed turn from being
 identified. The runtime fix protects new results independently of this recovery.
 
