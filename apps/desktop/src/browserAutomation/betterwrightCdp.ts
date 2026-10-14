@@ -293,7 +293,10 @@ export class BetterwrightCdpTarget {
       // then lands in the agent page and reads as a human takeover. Guests
       // still need DOM focus, scoped below; Page.bringToFront can still move
       // native focus, so the user's previous owner is restored afterwards.
-      const previousFocus = nativeInput ? webContents.getFocusedWebContents() : null;
+      // Only bringToFront can own a native focus change. Input may overlap a
+      // real user click, and restoring its snapshot would undo that takeover.
+      const previousFocus =
+        method === "Page.bringToFront" ? webContents.getFocusedWebContents() : null;
       try {
         const send = async () => {
           if (

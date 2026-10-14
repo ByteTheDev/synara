@@ -235,35 +235,39 @@ describe("Betterwright target boundary", () => {
     await f.target.dispose(false);
   });
 
-  it.each(["restored", "user moved focus", "host destroyed", "dispatch failed"])(
-    "returns focus taken by Page.bringToFront to its previous owner (%s)",
-    async (outcome) => {
-      const f = fixture();
-      let destroyed = false;
-      const host = { isDestroyed: () => destroyed, focus: vi.fn() };
-      focusState.current = host as unknown as WebContents;
-      await f.target.receive({
-        id: 1,
-        method: "Target.attachToTarget",
-        params: { targetId: f.target.targetId },
-      });
-      const sessionId = (f.messages[0]!.result as { sessionId: string }).sessionId;
-      f.debuggerApi.sendCommand.mockImplementationOnce(async () => {
-        // Chromium focuses the page's outermost WebContents for bringToFront.
-        focusState.current = f.contents as unknown as WebContents;
-        if (outcome === "user moved focus") focusState.current = null;
-        if (outcome === "host destroyed") destroyed = true;
-        if (outcome === "dispatch failed") throw new Error("Bring to front failed");
-        return {};
-      });
-      await f.target.receive({ id: 2, sessionId, method: "Page.bringToFront", params: {} });
-      expect(f.contents.focus).not.toHaveBeenCalled();
-      expect(host.focus).toHaveBeenCalledTimes(
-        outcome === "restored" || outcome === "dispatch failed" ? 1 : 0,
-      );
-      await f.target.dispose(false);
-    },
-  );
+  it.each([
+    ["restored", "Page.bringToFront"],
+    ["user moved focus", "Page.bringToFront"],
+    ["host destroyed", "Page.bringToFront"],
+    ["dispatch failed", "Page.bringToFront"],
+    ["user focused target", "Input.insertText"],
+  ])("restores only command-owned focus (%s, %s)", async (outcome, method) => {
+    const f = fixture();
+    let destroyed = false;
+    const host = { isDestroyed: () => destroyed, focus: vi.fn() };
+    focusState.current = host as unknown as WebContents;
+    await f.target.receive({
+      id: 1,
+      method: "Target.attachToTarget",
+      params: { targetId: f.target.targetId },
+    });
+    const sessionId = (f.messages[0]!.result as { sessionId: string }).sessionId;
+    f.debuggerApi.sendCommand.mockImplementationOnce(async () => {
+      // bringToFront moves focus itself; during Input the user may intentionally
+      // click the browser. Only the former owns a focus change to restore.
+      focusState.current = f.contents as unknown as WebContents;
+      if (outcome === "user moved focus") focusState.current = null;
+      if (outcome === "host destroyed") destroyed = true;
+      if (outcome === "dispatch failed") throw new Error("Bring to front failed");
+      return {};
+    });
+    await f.target.receive({ id: 2, sessionId, method, params: {} });
+    expect(f.contents.focus).not.toHaveBeenCalled();
+    expect(host.focus).toHaveBeenCalledTimes(
+      outcome === "restored" || outcome === "dispatch failed" ? 1 : 0,
+    );
+    await f.target.dispose(false);
+  });
   it("blocks app shortcuts before provenance or dispatch across session aliases", async () => {
     const expected = vi.fn();
     const f = fixture([], undefined, false, expected);
