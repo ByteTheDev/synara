@@ -29,12 +29,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ ! -f operations/.qa/code-oss-source-edit.py ]; then
-            echo 'Source-edit program has not been published; nothing was changed.'
-            exit 0
-          fi
           cd source
           git fetch --no-tags --depth=1 origin a62d7c733d19f5538ffc0d126d57437b3b578ff1
+          python - <<'PY'
+          from pathlib import Path
+          script = Path('../operations/.qa/code-oss-source-edit.py')
+          text = script.read_text()
+          before = 'debugState: "inactive"' + "'"
+          after = 'debugState: "inactive" |' + "'"
+          assert text.count(before) == 2
+          script.write_text(text.replace(before, after))
+          PY
           python ../operations/.qa/code-oss-source-edit.py
           git diff --stat
           if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then exit 0; fi
