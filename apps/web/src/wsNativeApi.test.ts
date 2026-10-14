@@ -443,6 +443,11 @@ describe("wsNativeApi", () => {
         },
         providerInstances: {},
         skills: { disabled: [] },
+        newThreadDefaults: {
+          modelSelectionByProvider: {},
+          activeProvider: null,
+          runtimeMode: null,
+        },
       },
     } as const;
     emitPush(WS_CHANNELS.serverSettingsUpdated, payload);

@@ -7,6 +7,7 @@ import {
   type ModelSelection,
   type ProviderInstanceId,
   type ProviderKind,
+  type RuntimeMode,
   type ThreadId,
 } from "@synara/contracts";
 import { useMemo } from "react";
@@ -42,6 +43,7 @@ import {
   flushStorageBeforePageHide,
   type StateStorage,
 } from "./lib/storage";
+import { DEFAULT_RUNTIME_MODE } from "./types";
 
 export {
   findSupersededComposerImageBlobAttachments,
@@ -68,6 +70,7 @@ export type {
   QueuedComposerPlanFollowUp,
   QueuedComposerTurn,
   RestoredComposerSourceProposedPlan,
+  SharedNewThreadDefaults,
 } from "./composerDraftDomain";
 export type { BrowserAnnotationDraft } from "./lib/browserAnnotations";
 export {
@@ -120,11 +123,17 @@ export const useComposerDraftStore = create<ComposerDraftStoreState>()(
           projectDraftThreadIdByProjectId: normalizedPersisted.projectDraftThreadIdByProjectId,
           stickyModelSelectionByProvider: normalizedPersisted.stickyModelSelectionByProvider ?? {},
           stickyActiveProvider: normalizedPersisted.stickyActiveProvider ?? null,
+          stickyRuntimeMode: normalizedPersisted.stickyRuntimeMode ?? null,
         };
       },
     },
   ),
 );
+
+/** The access mode a brand-new chat starts in: the shared pick, else the app default. */
+export function resolveNewThreadRuntimeMode(): RuntimeMode {
+  return useComposerDraftStore.getState().stickyRuntimeMode ?? DEFAULT_RUNTIME_MODE;
+}
 
 export function useComposerThreadDraft(threadId: ThreadId): ComposerThreadDraftState {
   return useComposerDraftStore((state) => selectComposerThreadDraft(state, threadId));

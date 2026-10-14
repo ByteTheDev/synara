@@ -3,6 +3,7 @@ import {
   buildStalePendingRequestFailureDetail,
   pendingRequestInstanceKey,
 } from "@synara/shared/threadSummary";
+import { applyServerSettingsPatch } from "@synara/shared/serverSettings";
 // Production CSS is part of the behavior under test because row height depends on it.
 import "../index.css";
 
@@ -25,6 +26,8 @@ import {
   type ProjectId,
   type ProjectAgentOverview,
   type ServerConfig,
+  type ServerSettingsPatch,
+  type ServerSettingsView,
   SpaceId,
   ThreadId,
   TurnId,
@@ -177,6 +180,7 @@ interface WsRequestEnvelope {
 interface TestFixture {
   snapshot: OrchestrationReadModel;
   serverConfig: ServerConfig;
+  serverSettings: ServerSettingsView;
   providerStatusesSnapshot: ServerConfig["providers"] | null;
   welcome: WsWelcomePayload;
   gitBranchByCwd: Record<string, string>;
@@ -325,6 +329,8 @@ function createSnapshotForTargetUser(options: {
   targetText: string;
   targetAttachmentCount?: number;
   sessionStatus?: OrchestrationSessionStatus;
+  // The selection stored on the thread, which a started chat's composer shows.
+  modelSelection?: OrchestrationReadModel["threads"][number]["modelSelection"];
 }): OrchestrationReadModel {
   const messages: Array<OrchestrationReadModel["threads"][number]["messages"][number]> = [];
 
@@ -384,7 +390,7 @@ function createSnapshotForTargetUser(options: {
         id: THREAD_ID,
         projectId: PROJECT_ID,
         title: THREAD_TITLE,
-        modelSelection: {
+        modelSelection: options.modelSelection ?? {
           provider: "codex",
           model: "gpt-5",
         },
@@ -555,6 +561,7 @@ function buildFixture(snapshot: OrchestrationReadModel): TestFixture {
   return {
     snapshot,
     serverConfig: createBaseServerConfig(),
+    serverSettings: createBrowserTestServerSettings(NOW_ISO),
     providerStatusesSnapshot: null,
     gitBranchByCwd: {},
     projectAgentOverviews: {},
@@ -1252,7 +1259,20 @@ function resolveWsRpc(body: WsRequestEnvelope["body"]): unknown {
     return createAutomationDefinitionFromCreateRequest(body);
   }
   if (tag === WS_METHODS.serverGetSettings) {
-    return createBrowserTestServerSettings(NOW_ISO);
+    return fixture.serverSettings;
+  }
+  if (tag === WS_METHODS.serverUpdateSettings) {
+    // Answers like the server: the stored settings with the patch applied, so the
+    // shared new-chat defaults a mount migrates are not read back as empty.
+    const { _tag: _updateTag, ...patch } = body;
+    fixture = {
+      ...fixture,
+      serverSettings: applyServerSettingsPatch(
+        fixture.serverSettings,
+        patch as ServerSettingsPatch,
+      ),
+    };
+    return fixture.serverSettings;
   }
   if (tag === WS_METHODS.serverGetConfig) {
     return fixture.serverConfig;
@@ -8124,14 +8144,17 @@ describe("ChatView transcript geometry (full app)", () => {
         { provider: "codex", model: "gpt-5.4", effort: "medium", fastMode: true, thinking: null },
       ]),
     );
-    useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
+    // A started chat's composer shows the selection stored on the thread.
+    const storedSelection = {
       provider: "codex",
       model: "gpt-5.4",
       options: { reasoningEffort: "medium", fastMode: true },
-    });
+    } as const;
+    useComposerDraftStore.getState().setModelSelection(THREAD_ID, storedSelection);
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
       snapshot: createSnapshotForTargetUser({
+        modelSelection: storedSelection,
         targetMessageId: "msg-user-target-hotkey" as MessageId,
         targetText: "hotkey target",
       }),
@@ -8222,14 +8245,17 @@ describe("ChatView transcript geometry (full app)", () => {
 
   it("keeps the model picker open for 1500ms after the latest Shift+Tab press", async () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: true }));
-    useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
+    // A started chat's composer shows the selection stored on the thread.
+    const storedSelection = {
       provider: "codex",
       model: "gpt-5.4",
       options: { reasoningEffort: "low" },
-    });
+    } as const;
+    useComposerDraftStore.getState().setModelSelection(THREAD_ID, storedSelection);
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
       snapshot: createSnapshotForTargetUser({
+        modelSelection: storedSelection,
         targetMessageId: "msg-user-effort-preview-timer" as MessageId,
         targetText: "effort preview timer",
       }),
@@ -8275,14 +8301,17 @@ describe("ChatView transcript geometry (full app)", () => {
 
   it("keeps a manually opened model picker open after the effort shortcut timer expires", async () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: true }));
-    useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
+    // A started chat's composer shows the selection stored on the thread.
+    const storedSelection = {
       provider: "codex",
       model: "gpt-5.4",
       options: { reasoningEffort: "medium" },
-    });
+    } as const;
+    useComposerDraftStore.getState().setModelSelection(THREAD_ID, storedSelection);
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
       snapshot: createSnapshotForTargetUser({
+        modelSelection: storedSelection,
         targetMessageId: "msg-user-effort-preview-manual-picker" as MessageId,
         targetText: "manual model picker",
       }),
@@ -8319,14 +8348,17 @@ describe("ChatView transcript geometry (full app)", () => {
 
   it("keeps the existing slider menu open when choosing another model after Shift+Tab", async () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: true }));
-    useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
+    // A started chat's composer shows the selection stored on the thread.
+    const storedSelection = {
       provider: "codex",
       model: "gpt-5.4",
       options: { reasoningEffort: "medium" },
-    });
+    } as const;
+    useComposerDraftStore.getState().setModelSelection(THREAD_ID, storedSelection);
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
       snapshot: createSnapshotForTargetUser({
+        modelSelection: storedSelection,
         targetMessageId: "msg-user-effort-shortcut-model-selection" as MessageId,
         targetText: "choose model from effort shortcut",
       }),
@@ -8378,14 +8410,17 @@ describe("ChatView transcript geometry (full app)", () => {
 
   it("opens the existing model picker effort menu when its slider setting is disabled", async () => {
     localStorage.setItem("synara:app-settings:v1", JSON.stringify({ composerEffortSlider: false }));
-    useComposerDraftStore.getState().setModelSelection(THREAD_ID, {
+    // A started chat's composer shows the selection stored on the thread.
+    const storedSelection = {
       provider: "codex",
       model: "gpt-5.4",
       options: { reasoningEffort: "medium" },
-    });
+    } as const;
+    useComposerDraftStore.getState().setModelSelection(THREAD_ID, storedSelection);
     const mounted = await mountChatView({
       viewport: DEFAULT_VIEWPORT,
       snapshot: createSnapshotForTargetUser({
+        modelSelection: storedSelection,
         targetMessageId: "msg-user-effort-shortcut-menu-setting" as MessageId,
         targetText: "effort menu setting",
       }),

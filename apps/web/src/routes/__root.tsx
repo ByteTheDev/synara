@@ -51,6 +51,8 @@ import { ProjectImportAnnouncementDialog } from "../projectImport/ProjectImportA
 import { useProjectImportDialogStore } from "../projectImport/projectImportDialogStore";
 import { FeatureTourDialog } from "../components/FeatureTourDialog";
 import { SafariAccessOnboarding } from "../components/SafariAccessOnboarding";
+import { NewThreadDefaultsSyncCoordinator } from "../components/NewThreadDefaultsSyncCoordinator";
+import { settingsChangedBeyondNewThreadDefaults } from "@synara/shared/serverSettings";
 import { QueuedComposerDrainCoordinator } from "../components/QueuedComposerDrainCoordinator";
 import { GlobalAccountDialogs } from "../components/account/GlobalAccountDialogs";
 import { HostDiscoverabilityPrompt } from "../components/hosts/HostDiscoverabilityPrompt";
@@ -375,6 +377,7 @@ function RootRouteView() {
           {!readWorkspaceFrame() && <GlobalWhatsNewSurface />}
           <TaskCompletionNotifications />
           <QueuedComposerDrainCoordinator />
+          <NewThreadDefaultsSyncCoordinator />
           {!readWorkspaceFrame() && (
             <>
               {/* Beta welcome resolves the first-run gate while Safari is queued. */}
@@ -2708,9 +2711,16 @@ function EventRouter() {
         // Another window toggled it; the local patch path already invalidates its own.
         void queryClient.invalidateQueries({ queryKey: providerDiscoveryQueryKeys.all });
       }
-      void queryClient.invalidateQueries({
-        queryKey: serverSettingsQueryOptions().queryKey,
-      });
+      // A composer pick only moves the shared new-chat defaults, which the push
+      // already carries whole; refetching on each one would only add load.
+      if (
+        previousSettings === undefined ||
+        settingsChangedBeyondNewThreadDefaults(previousSettings, payload.settings)
+      ) {
+        void queryClient.invalidateQueries({
+          queryKey: serverSettingsQueryOptions().queryKey,
+        });
+      }
     });
     subscribed = true;
     void ensureScopedSubscriptions();

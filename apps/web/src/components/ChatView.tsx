@@ -108,6 +108,7 @@ import {
   stripComposerTriggerText,
 } from "../composer-logic";
 import {
+  resolveNewThreadRuntimeMode,
   useComposerDraftStore,
   type ComposerImageAttachment,
   type DraftThreadEnvMode,
@@ -446,6 +447,7 @@ import { useChatProviderModels } from "./chat/useChatProviderModels";
 import { useChatProviderStatus } from "./chat/useChatProviderStatus";
 import { useChatQueuedTurns } from "./chat/useChatQueuedTurns";
 import { useChatRuntimeModes } from "./chat/useChatRuntimeModes";
+import { useLiveThreadModelSelection } from "./chat/useLiveThreadModelSelection";
 import { useChatTerminalController } from "./chat/useChatTerminalController";
 import { useChatTimelineMessages } from "./chat/useChatTimelineMessages";
 import { useChatTranscriptScroll } from "./chat/useChatTranscriptScroll";
@@ -1334,7 +1336,7 @@ export default function ChatView({
       setProjectDraftThreadId(activeProject.id, nextThreadId, {
         ...draftThreadContext,
         createdAt: new Date().toISOString(),
-        runtimeMode: DEFAULT_RUNTIME_MODE,
+        runtimeMode: resolveNewThreadRuntimeMode(),
         interactionMode: DEFAULT_INTERACTION_MODE,
       });
       await navigate({
@@ -1457,6 +1459,11 @@ export default function ChatView({
     resolvedThreadWorktreePath,
     // Same gate as the Hand off menu: a coordinator is one per-group identity.
     allowProviderHandoff: isServerThread && !isCoordinatorConversation,
+  });
+  useLiveThreadModelSelection({
+    threadId,
+    serverModelSelection: serverThread?.modelSelection,
+    composerModelSelection: selectedModelSelection,
   });
   const selectedProviderInstances = useMemo(
     () => providerInstances.filter((instance) => instance.provider === selectedProvider),

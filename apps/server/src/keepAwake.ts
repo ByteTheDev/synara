@@ -32,7 +32,7 @@ import {
 import * as Semaphore from "effect/Semaphore";
 import { OrchestrationEngineService } from "./orchestration/Services/OrchestrationEngine";
 import { ProjectionSnapshotQuery } from "./orchestration/Services/ProjectionSnapshotQuery";
-import { ServerSettingsService } from "./serverSettings";
+import { ServerSettingsService, withoutNewThreadDefaultsOnlyChanges } from "./serverSettings";
 
 const KEEP_AWAKE_ARGS = ["-dims", "-w", String(process.pid)] as const;
 export const KEEP_AWAKE_MAX_RESTARTS = 5;
@@ -290,12 +290,14 @@ export const makeKeepAwake = Effect.fn(function* (runtime: KeepAwakeRuntime) {
     yield* reconcile;
 
     yield* Effect.forkScoped(
-      Stream.runForEach(serverSettings.streamChanges, (settings) =>
-        Effect.gen(function* () {
-          yield* Ref.set(modeRef, settings.keepAwakeMode);
-          yield* publish({ mode: settings.keepAwakeMode });
-          yield* reconcile;
-        }),
+      Stream.runForEach(
+        withoutNewThreadDefaultsOnlyChanges(serverSettings.streamChanges),
+        (settings) =>
+          Effect.gen(function* () {
+            yield* Ref.set(modeRef, settings.keepAwakeMode);
+            yield* publish({ mode: settings.keepAwakeMode });
+            yield* reconcile;
+          }),
       ),
     );
 

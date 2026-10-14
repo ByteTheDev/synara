@@ -79,7 +79,7 @@ import { ProviderSessionReaperLive } from "./provider/Layers/ProviderSessionReap
 import { ProviderRuntimeReconcilerLive } from "./provider/Layers/ProviderRuntimeReconciler";
 import { Server } from "./effectServer";
 import { ServerLoggerLive } from "./serverLogger";
-import { ServerSettingsService } from "./serverSettings";
+import { ServerSettingsService, withoutNewThreadDefaultsOnlyChanges } from "./serverSettings";
 import { formatHostForUrl, isLoopbackHost, isWildcardHost } from "./startupAccess";
 import { startHostConnectivity } from "./hostConnectivity";
 import { remoteTlsIdentityPath } from "./remoteTransport/certificates";
@@ -620,9 +620,9 @@ const makeServerProgram = (input: CliInput) =>
     // Attach before reading the initial snapshot. The settings PubSub does not
     // replay, so reading first could miss a disable/path update in the small
     // window before the stream consumer subscribes.
-    const claudeKeepaliveSettingsChanges = yield* serverSettings.streamChanges.pipe(
-      Stream.toQueue({ capacity: "unbounded" }),
-    );
+    const claudeKeepaliveSettingsChanges = yield* withoutNewThreadDefaultsOnlyChanges(
+      serverSettings.streamChanges,
+    ).pipe(Stream.toQueue({ capacity: "unbounded" }));
     yield* reconcileClaudeKeepalive(yield* serverSettings.getSettings);
     yield* Stream.fromQueue(claudeKeepaliveSettingsChanges).pipe(
       Stream.runForEach(reconcileClaudeKeepalive),
