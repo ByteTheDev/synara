@@ -18,6 +18,22 @@ jobs:
         with:
           scope: full
           electron: 'false'
+      - name: Correct the checked optional accelerator contract
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const path = 'apps/desktop/src/codeOssHost.ts';
+          let text = fs.readFileSync(path,'utf8');
+          for (const [before,after] of [
+            ['  setAgentMenu(menu: Menu | null): void {', '  setAgentMenu(menu: Menu | null): void {\n    const menuAccelerator = resolveDesktopMenuAccelerator(process.platform, this.accelerator ?? undefined);'],
+            ['accelerator: resolveDesktopMenuAccelerator(process.platform, this.accelerator),', '...(menuAccelerator ? { accelerator: menuAccelerator } : {}),'],
+            ['resolveDesktopMenuAccelerator(process.platform, this.accelerator) ?? null', 'resolveDesktopMenuAccelerator(process.platform, this.accelerator ?? undefined) ?? null'],
+          ]) {
+            if (text.split(before).length !== 2) throw Error('Unexpected source anchor: '+before);
+            text=text.replace(before,after);
+          }
+          fs.writeFileSync(path,text);
+          JS
       - name: Format only changed integration files
         run: |
           node --input-type=module <<'JS'
