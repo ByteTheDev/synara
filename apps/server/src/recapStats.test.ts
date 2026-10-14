@@ -372,6 +372,9 @@ describe("RecapStatsQuery", () => {
     "legacy hook",
     "missing restart evidence",
     "new native session",
+    "unversioned result",
+    "withheld result",
+    "synthetic completion",
   ] as const)("accounts for restored usage with %s", async (evidence) => {
     const recap = await runRecapTest(
       Effect.gen(function* () {
@@ -505,14 +508,27 @@ describe("RecapStatsQuery", () => {
           rows.push(["restart-repeat", null, "context-window.updated", payload, rows.length, at]);
         }
         // Claude Code restored t1 + t2 into this first result of the new process.
-        pushRequest("t3", resumedGeneration, "2026-09-30T07:01:00.000Z", {
-          input: 10,
-          cacheRead: 240,
-          cacheCreation: 40, // The remaining 10 tokens are output, never cache reads.
-        });
+        if (evidence !== "synthetic completion") {
+          pushRequest("t3", resumedGeneration, "2026-09-30T07:01:00.000Z", {
+            input: 10,
+            cacheRead: 240,
+            cacheCreation: 40, // The remaining 10 tokens are output, never cache reads.
+          });
+        }
+        // A child-only synthetic turn has no new parent request or SDK result.
+        // Its child is included by the next actual result, not counted twice.
         pushCompleted("t3", "2026-09-30T07:02:00.000Z", {
-          mainLoopTokens: 300,
-          modelUsage: { "claude-opus-5": { totalTokens: 600, cacheReadInputTokens: 450 } },
+          mainLoopTokens: evidence === "synthetic completion" ? 0 : 300,
+          ...(evidence === "unversioned result" ? { tokenAccountingVersion: undefined } : {}),
+          ...(evidence === "synthetic completion" ? { claudeResultObserved: false } : {}),
+          ...(evidence === "withheld result" ? { claudeResultObserved: true } : {}),
+          ...(["withheld result", "synthetic completion"].includes(evidence)
+            ? {
+                mainLoopCacheReadTokens: evidence === "synthetic completion" ? 0 : 240,
+              }
+            : {
+                modelUsage: { "claude-opus-5": { totalTokens: 600, cacheReadInputTokens: 450 } },
+              }),
         });
         // t4's result also settles child-settled's 20 tokens (380 + 20).
         pushRequest("t4", resumedGeneration, "2026-09-30T08:01:00.000Z", {
@@ -523,7 +539,12 @@ describe("RecapStatsQuery", () => {
         pushCompleted("t4", "2026-09-30T08:02:00.000Z", {
           mainLoopTokens: 380,
           mainLoopCacheReadTokens: 290,
-          modelUsage: { "claude-opus-5": { totalTokens: 400, cacheReadInputTokens: 300 } },
+          modelUsage: {
+            "claude-opus-5": {
+              totalTokens: evidence === "synthetic completion" ? 450 : 400,
+              cacheReadInputTokens: 300,
+            },
+          },
         });
         for (const [activityId, turnId, kind, payload, sequence, at] of rows) {
           yield* sql`
@@ -564,21 +585,24 @@ describe("RecapStatsQuery", () => {
       "legacy hook",
     ].includes(evidence);
     const newNativeSession = evidence === "new native session";
+    const noParentUsage = evidence === "unversioned result" || evidence === "synthetic completion";
     // A child completed before the native identity changed is not included
     // in the new session's first result, even when ownership generation matches.
     expect(recap.totals.tokens).toEqual({
-      user: newNativeSession ? 2_850 : missingEvidence ? 2_800 : 2_550,
+      user: noParentUsage ? 2_250 : newNativeSession ? 2_850 : missingEvidence ? 2_800 : 2_550,
       automation: 0,
       agent: 0,
     });
-    expect(recap.totals.cacheReadTokens).toBe(missingEvidence || newNativeSession ? 1_960 : 1_750);
+    expect(recap.totals.cacheReadTokens).toBe(
+      noParentUsage ? 1_510 : missingEvidence || newNativeSession ? 1_960 : 1_750,
+    );
     expect(recap.models).toEqual([
       { provider: "codex", model: "gpt-5-codex", turns: 0, tokens: 1_500 },
       {
         provider: "claudeAgent",
         model: "claude-opus-5",
         turns: 0,
-        tokens: newNativeSession ? 1_350 : missingEvidence ? 1_300 : 1_050,
+        tokens: noParentUsage ? 750 : newNativeSession ? 1_350 : missingEvidence ? 1_300 : 1_050,
       },
     ]);
   });

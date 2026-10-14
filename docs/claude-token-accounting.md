@@ -107,6 +107,16 @@ turn boundaries, and Claude accounting follows them at migration 103. Keep the
 numeric `migrationEntries` values literal because the lineage checker parses
 that source.
 
+A parent completion retains `claudeResultObserved`: true for an SDK result,
+false for a synthetic UI turn closed without one. Every actual result ends its
+accounting span, even when its breakdown is untrusted or withheld, so a later
+result cannot suppress that span's child usage. Explicitly resultless synthetic
+turns leave the span open. Older completions lack this distinction: they form
+conservative barriers rather than allowing unrelated later usage to erase
+children. In that ambiguous history, a child may remain separately counted
+when a later result also included it; the missing evidence cannot safely settle
+that overlap.
+
 ## Input and cache behavior
 
 Claude obtains automation authoring guidance from the create/update tool

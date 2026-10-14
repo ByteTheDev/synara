@@ -3879,6 +3879,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             ...(result?.stop_reason !== undefined ? { stopReason: result.stop_reason } : {}),
             ...(result?.usage ? { usage: result.usage } : {}),
             ...(turnResultUsage ? { modelUsage: turnResultUsage.modelUsage } : {}),
+            claudeResultObserved: result !== undefined,
             tokenAccountingVersion: 1,
             mainLoopTokens,
             mainLoopCacheReadTokens,

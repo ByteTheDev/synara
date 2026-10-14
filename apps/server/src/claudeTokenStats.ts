@@ -193,6 +193,7 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
           PARTITION BY c.thread_id ORDER BY c.created_at, c.sequence, c.activity_id
         ) AS settlement_index,
         CASE WHEN resumed.turn_id IS NULL
+          AND json_extract(c.payload_json, '$.tokenAccountingVersion') = 1
           AND json_type(c.payload_json, '$.modelUsage') = 'object'
           AND EXISTS (
             SELECT 1 FROM json_each(json_extract(c.payload_json, '$.modelUsage')) m
@@ -204,8 +205,10 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
       LEFT JOIN claude_turn_requests t ON t.thread_id = c.thread_id AND t.turn_id = c.turn_id
       LEFT JOIN claude_resumed_first_turns resumed
         ON resumed.thread_id = c.thread_id AND resumed.turn_id = c.turn_id
-      WHERE json_extract(c.payload_json, '$.tokenAccountingVersion') = 1
-        AND (json_type(c.payload_json, '$.modelUsage') = 'object' OR resumed.turn_id IS NOT NULL)
+      -- Every actual result closes its span, even without trusted usage. Older
+      -- completions without a marker are ambiguous; do not attribute their
+      -- children to a later result. Explicitly resultless UI turns do not close it.
+      WHERE json_extract(c.payload_json, '$.claudeResultObserved') IS NOT 0
     ),
     -- Assign the latest process preceding each child on an ordered timeline.
     -- Joining children to all previous process starts also grows quadratically

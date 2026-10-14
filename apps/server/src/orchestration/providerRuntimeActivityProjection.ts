@@ -1367,6 +1367,10 @@ export function projectProviderRuntimeActivities(
                     : {}),
                 }
               : {}),
+            ...(event.provider === "claudeAgent" &&
+            typeof event.payload.claudeResultObserved === "boolean"
+              ? { claudeResultObserved: event.payload.claudeResultObserved }
+              : {}),
             ...(modelUsage ? { modelUsage } : {}),
             ...(typeof event.payload.totalCostUsd === "number"
               ? { totalCostUsd: event.payload.totalCostUsd }

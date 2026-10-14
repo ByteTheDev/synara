@@ -10381,6 +10381,12 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         events.filter((event) => event.type === "turn.completed")[1]?.payload.mainLoopTokens,
         10,
       );
+      assert.deepEqual(
+        events
+          .filter((event) => event.type === "turn.completed")
+          .map((event) => (event.payload as Record<string, unknown>).claudeResultObserved),
+        [true, false, true],
+      );
       // A result settles its turn's cache reads; a resultless turn sums its requests'.
       assert.deepEqual(
         events.flatMap((event) =>
