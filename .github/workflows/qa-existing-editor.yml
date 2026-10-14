@@ -1,0 +1,22 @@
+name: Existing editor integration evidence
+on:
+  push:
+    branches: [codex/code-oss-existing-editor-qa]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Export isolated source snapshot
+        run: tar --exclude=.git -czf "$RUNNER_TEMP/synara-source.tar.gz" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: existing-editor-source
+          path: ${{ runner.temp }}/synara-source.tar.gz
+          retention-days: 3
