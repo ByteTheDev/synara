@@ -2,6 +2,7 @@ name: Existing editor integration evidence
 on:
   push:
     branches: [codex/code-oss-existing-editor-qa]
+    paths: ['.github/workflows/qa-existing-editor.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -9,11 +10,14 @@ jobs:
   native-build:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Apply candidate window-boundary changes
+      - name: Prepare native integration candidate
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -33,17 +37,18 @@ jobs:
               for edit in patch['edits']:
                 if edit['before']=='contents.setWindowOpenHandler(details => {':
                   edit['after']="contents.setWindowOpenHandler(details => {\n\t\t\t\tif (synaraHost()) { return { action: 'deny' }; } // No auxiliary IDE windows in the embedded application."
+          patches.append({'path':'build/lib/fetch.ts','edits':[{'before':"ghApiHeaders.Authorization = 'Basic ' + Buffer.from(process.env.GITHUB_TOKEN).toString('base64');",'after':"ghApiHeaders.Authorization = 'Bearer ' + process.env.GITHUB_TOKEN;"}]})
           p.write_text(json.dumps(patches,indent=2)+'\n')
           PY
       - uses: ./.github/actions/setup-code-oss
         id: native-build
         continue-on-error: true
         env:
-          GITHUB_TOKEN: x-access-token:${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           flavor: production
           arch: x64
-      - name: Typecheck native overlay against pinned services
+      - name: Typecheck pinned native overlay
         id: native-types
         if: always()
         continue-on-error: true
@@ -53,7 +58,7 @@ jobs:
         run: |
           node -e 'require("fs").writeFileSync("tsconfig.synara.json", JSON.stringify({extends:"./src/tsconfig.json",include:["src/vs/synara/**/*.ts","src/typings","src/vscode-dts/vscode.d.ts","src/vscode-dts/vscode.proposed.*.d.ts"]}))'
           node node_modules/@typescript/native/bin/tsc --noEmit --project tsconfig.synara.json 2>&1 | tee "$RUNNER_TEMP/native-types.log"
-      - name: Export native runtime and local rebuild sources
+      - name: Export native runtime and rebuild sources
         if: always()
         run: |
           mkdir "$RUNNER_TEMP/native-export"
