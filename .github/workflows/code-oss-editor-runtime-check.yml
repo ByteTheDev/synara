@@ -9,7 +9,7 @@ permissions:
 jobs:
   desktop:
     runs-on: ubuntu-24.04
-    timeout-minutes: 9
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
@@ -21,41 +21,52 @@ jobs:
           run-id: 38583801636
           github-token: ${{ github.token }}
           path: .code-oss/import
-      - name: Restore exact checked source and compiled application
+      - uses: actions/download-artifact@v8
+        with:
+          name: final-editor-source-checks
+          run-id: 38587622382
+          github-token: ${{ github.token }}
+          path: .code-oss/checked
+      - name: Restore verified source and preserve same-document editor placement
         run: |
-          tar -xzf .code-oss/import/native-editor-source.tar.gz
+          tar -xzf .code-oss/checked/source.tar.gz
           tar -xzf .code-oss/import/compiled-editor.tar.gz
           tar -xzf .code-oss/import/native-editor.tar.gz -C .code-oss
           python - <<'PY'
           from pathlib import Path
-          p=Path('apps/desktop/code-oss/scripts/smoke.mjs');s=p.read_text()
-          anchor='      await agent.getByRole("button", { name: "Editor view", exact: true }).click();'
-          assert s.count(anchor)==1
-          s=s.replace(anchor,'''      const environment = agent.getByRole("button", { name: "Toggle environment panel", exact: true });
-                if ((await environment.getAttribute("aria-pressed")) !== "true") await environment.click();
-          '''+anchor)
-          anchor='      await agent.locator("[data-editor-workspace]").waitFor({ state: "visible" });'
-          assert s.count(anchor)==1
-          s=s.replace(anchor,anchor+'''
-                // The original editor defaults to Diff. Select its existing Files
-                // activity item, but do not re-click an already active Files sidebar.
-                const files = agent.getByRole("navigation", { name: "Editor activity bar", exact: true }).getByRole("button", { name: "Files", exact: true });
-                if (await files.count()) await files.click();''')
-          p.write_text(s)
+          p=Path('apps/desktop/src/codeOssHost.ts');s=p.read_text()
+          before='''    this.agent.webContents.on("did-start-navigation", (_event, _url, _inPlace, isMainFrame) => {
+                if (!isMainFrame) return;'''
+          after='''    this.agent.webContents.on("did-start-navigation", (_event, _url, isInPlace, isMainFrame) => {
+                // Hash routing retains the same React-owned slot. Clear it only when
+                // the main document is replaced, not when selecting a file or session.
+                if (!isMainFrame || isInPlace) return;'''
+          assert s.count(before)==1
+          p.write_text(s.replace(before,after))
           PY
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
           electron: 'true'
-      - name: Check revised navigation harness and retain source changes
+      - name: Check changed host and rebuild only the desktop entry
         run: |
-          node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/smoke.mjs
-          node --check apps/desktop/code-oss/scripts/smoke.mjs
+          node_modules/.bin/oxfmt apps/desktop/src/codeOssHost.ts
+          bun run --cwd apps/desktop typecheck
+          bun run --cwd packages/contracts build
+          bun run --cwd apps/desktop build
           mkdir -p .code-oss/evidence
           git diff --check
           git diff --stat
           git diff > .code-oss/evidence/source-changes.patch
-          git ls-files -z | tar --null -T - -czf .code-oss/evidence/checked-source.tar.gz
+          tar -czf .code-oss/evidence/desktop-entry.tar.gz apps/desktop/dist-electron
+          python - <<'PY'
+          import tarfile,subprocess,hashlib,json
+          from pathlib import Path
+          paths=subprocess.check_output(['git','diff','--name-only','-z']).decode().strip('\0').split('\0')
+          with tarfile.open('.code-oss/evidence/source.tar.gz','w:gz') as archive:
+              for p in paths:archive.add(p)
+          Path('.code-oss/evidence/manifest.json').write_text(json.dumps([{'path':p,'sha256':hashlib.sha256(Path(p).read_bytes()).hexdigest()} for p in paths],indent=2))
+          PY
       - name: Display and sandbox
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 >/dev/null
@@ -85,9 +96,9 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import json
           for p in Path('.').glob('*'):
               if p.name=='probe-at-failure.json':
-                  import json
                   d=json.loads(p.read_text());d.pop('extensionIds',None);print(p.name,json.dumps(d));continue
-              if p.suffix in ['.txt','.json']: print('\n'+p.name+'\n'+p.read_text(errors='replace')[-16000:])
+              if p.suffix in ['.txt','.json']:print('\n'+p.name+'\n'+p.read_text(errors='replace')[-20000:])
           PY
