@@ -1677,6 +1677,13 @@ async function waitForLayout(): Promise<void> {
   await nextFrame();
 }
 
+// Fixture subagents are titled "Subagent …" or "<nickname> task"; neither may reach the sidebar.
+function sidebarSubagentRows(): HTMLElement[] {
+  return [...document.querySelectorAll<HTMLElement>("[data-thread-item]")].filter((row) =>
+    /Subagent|Atlas|Nova/.test(row.textContent ?? ""),
+  );
+}
+
 async function waitForTranscriptLayoutToSettle(container: HTMLElement): Promise<void> {
   let lastTop = container.scrollTop;
   let lastHeight = container.scrollHeight;
@@ -2786,13 +2793,12 @@ describe("ChatView transcript geometry (full app)", () => {
   );
 
   it.each([
-    { childCount: 4, activation: "click", scrollTakeover: false },
-    { childCount: 24, activation: "click", scrollTakeover: false },
-    { childCount: 4, activation: "keyboard", scrollTakeover: false },
-    { childCount: 4, activation: "click", scrollTakeover: true },
+    { activation: "click", scrollTakeover: false },
+    { activation: "keyboard", scrollTakeover: false },
+    { activation: "click", scrollTakeover: true },
   ])(
-    "anchors sidebar navigation ($childCount children, $activation, scroll takeover: $scrollTakeover)",
-    async ({ childCount, activation, scrollTakeover }) => {
+    "keeps subagents out of the sidebar while navigating ($activation, scroll takeover: $scrollTakeover)",
+    async ({ activation, scrollTakeover }) => {
       const base = createSnapshotForTargetUser({
         targetMessageId: MessageId.makeUnsafe("subagent-navigation-anchor"),
         targetText: "Review the sidebar navigation",
@@ -2819,7 +2825,7 @@ describe("ChatView transcript geometry (full app)", () => {
         };
       });
       const children = [THREAD_ID, OTHER_THREAD_ID].flatMap((parentThreadId, parentIndex) =>
-        Array.from({ length: parentIndex === 0 ? childCount : 4 }, (_, index) => {
+        Array.from({ length: parentIndex === 0 ? 24 : 4 }, (_, index) => {
           const id = ThreadId.makeUnsafe(`anchor-child-${parentIndex}-${index}`);
           return {
             ...roots[parentIndex === 0 ? 20 : 21]!,
@@ -2871,12 +2877,8 @@ describe("ChatView transcript geometry (full app)", () => {
           (path) => path === `/${OTHER_THREAD_ID}`,
           "The destination did not open.",
         );
-        await vi.waitFor(() =>
-          expect(
-            document.querySelectorAll('[data-testid="sidebar-subagent-status-dot"]'),
-          ).toHaveLength(4),
-        );
         await waitForLayout();
+        expect(sidebarSubagentRows()).toHaveLength(0);
         const afterBounds = row.getBoundingClientRect();
         expect(afterBounds.top).toBeGreaterThanOrEqual(viewportBounds.top);
         expect(afterBounds.bottom).toBeLessThanOrEqual(viewportBounds.bottom);
@@ -2926,8 +2928,6 @@ describe("ChatView transcript geometry (full app)", () => {
       snapshot: { ...base, threads: [parent, ...subagents, other] },
     });
     try {
-      const subagentDots = () =>
-        document.querySelectorAll('[data-testid="sidebar-subagent-status-dot"]').length;
       const otherRowButton = await waitForElement(
         () =>
           [...document.querySelectorAll<HTMLElement>("[data-thread-item]")]
@@ -2935,17 +2935,16 @@ describe("ChatView transcript geometry (full app)", () => {
             ?.querySelector<HTMLElement>('[role="button"]') ?? null,
         "Unable to find the other thread's sidebar row.",
       );
-      await vi.waitFor(() => expect(subagentDots()).toBe(2));
+      expect(sidebarSubagentRows()).toHaveLength(0);
       const pressedTop = otherRowButton.getBoundingClientRect().top;
 
-      // The press highlights the row at once, but the open thread's subagent rows
-      // stay until the route changes, so the release lands on the same row.
+      // The press highlights the row at once without moving it, so the release
+      // lands on the same row.
       otherRowButton.dispatchEvent(
         new PointerEvent("pointerdown", { bubbles: true, button: 0, pointerType: "mouse" }),
       );
       await waitForLayout();
       expect(otherRowButton.getAttribute("data-active")).toBe("true");
-      expect(subagentDots()).toBe(2);
       expect(Math.abs(otherRowButton.getBoundingClientRect().top - pressedTop)).toBeLessThanOrEqual(
         1,
       );
@@ -2957,7 +2956,7 @@ describe("ChatView transcript geometry (full app)", () => {
         (pathname) => pathname === `/${OTHER_THREAD_ID}`,
         "The pressed sidebar row did not open its thread.",
       );
-      await vi.waitFor(() => expect(subagentDots()).toBe(0));
+      expect(sidebarSubagentRows()).toHaveLength(0);
     } finally {
       await mounted.cleanup();
     }

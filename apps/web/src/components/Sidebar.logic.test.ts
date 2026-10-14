@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  buildProjectThreadTree,
   derivePinnedProjectIdsForSidebar,
   derivePinnedThreadIdsForSidebar,
   deriveSidebarProjectData,
@@ -860,25 +859,14 @@ describe("pin helpers", () => {
     ).toEqual([threads[2], threads[0]]);
   });
 
-  it("keeps a pinned parent in project lists so its children stay reachable and nested", () => {
-    const threads = [
-      makeThread("thread-1"),
-      {
-        ...makeThread("child-1"),
-        parentThreadId: "thread-1" as ThreadId,
-      },
-      makeThread("thread-2"),
-    ];
+  it("hides pinned threads from project lists", () => {
+    const threads = [makeThread("thread-1"), makeThread("thread-2"), makeThread("thread-3")];
 
-    // Pinning the parent must not hide child-1 entirely (buildProjectThreadTree
-    // hides children with missing parents); the parent stays in the tree,
-    // children render under it.
-    expect(getUnpinnedThreadsForSidebar(threads, ["thread-1" as ThreadId])).toEqual(threads);
-    // Childless pinned threads are still hidden from project lists.
     expect(getUnpinnedThreadsForSidebar(threads, ["thread-2" as ThreadId])).toEqual([
       threads[0],
-      threads[1],
+      threads[2],
     ]);
+    expect(getUnpinnedThreadsForSidebar(threads, [])).toEqual(threads);
   });
 
   it("lets an optimistic unpin override server and persisted pinned state", () => {
@@ -1278,162 +1266,36 @@ describe("resolveProjectStatusIndicator", () => {
   });
 });
 
-describe("buildProjectThreadTree", () => {
-  it("shows the open parent's children under the subagent that launched them", () => {
-    const parent = ThreadId.makeUnsafe("parent");
-    const outer = ThreadId.makeUnsafe("outer");
-    const inner = ThreadId.makeUnsafe("inner");
-    const threads = [
-      makeThread({ id: parent }),
-      makeThread({ id: outer, parentThreadId: parent }),
-      makeThread({ id: inner, parentThreadId: parent, sourceThreadId: outer }),
-    ];
-    for (const active of [parent, inner]) {
-      expect(
-        buildProjectThreadTree({ threads, forceVisibleThreadId: active }).map((row) => [
-          row.thread.id,
-          row.depth,
-        ]),
-      ).toEqual([
-        [parent, 0],
-        [outer, 1],
-        [inner, 2],
-      ]);
-    }
-  });
-
-  it("keeps a child reachable under its root when its launching subagent is missing", () => {
-    const parent = ThreadId.makeUnsafe("parent");
-    const child = ThreadId.makeUnsafe("child");
-    const rows = buildProjectThreadTree({
-      threads: [
-        makeThread({ id: parent }),
-        makeThread({
-          id: child,
-          parentThreadId: parent,
-          sourceThreadId: ThreadId.makeUnsafe("missing"),
-        }),
-      ],
-      forceVisibleThreadId: parent,
-    });
-    expect(rows.map((row) => [row.thread.id, row.depth])).toEqual([
-      [parent, 0],
-      [child, 1],
-    ]);
-  });
-
-  it("keeps inactive child threads out of the sidebar", () => {
-    const rows = buildProjectThreadTree({
-      threads: [
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-parent"),
-          createdAt: "2026-03-09T10:02:00.000Z",
-        }),
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-child"),
-          parentThreadId: ThreadId.makeUnsafe("thread-parent"),
-          createdAt: "2026-03-09T10:01:00.000Z",
-        }),
-      ],
-    });
-
-    expect(rows).toEqual([
-      expect.objectContaining({
-        thread: expect.objectContaining({ id: ThreadId.makeUnsafe("thread-parent") }),
-        depth: 0,
-      }),
-    ]);
-  });
-
-  it("hides subagent subtrees whose parent is not in the list", () => {
-    // Regression: archiving (or deleting) a parent removes it from the sidebar
-    // list; its subagent children must stay hidden instead of surfacing as
-    // top-level rows (#488).
-    const rows = buildProjectThreadTree({
-      threads: [
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-other"),
-          createdAt: "2026-03-09T10:03:00.000Z",
-        }),
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-child"),
-          parentThreadId: ThreadId.makeUnsafe("thread-archived-parent"),
-          createdAt: "2026-03-09T10:02:00.000Z",
-        }),
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-grandchild"),
-          parentThreadId: ThreadId.makeUnsafe("thread-child"),
-          createdAt: "2026-03-09T10:01:00.000Z",
-        }),
-      ],
-    });
-
-    expect(rows).toEqual([
-      expect.objectContaining({
-        thread: expect.objectContaining({ id: ThreadId.makeUnsafe("thread-other") }),
-        depth: 0,
-      }),
-    ]);
-  });
-
-  it("reveals the active child thread and its ancestors", () => {
-    const rows = buildProjectThreadTree({
-      threads: [
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-parent"),
-          createdAt: "2026-03-09T10:03:00.000Z",
-        }),
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-child"),
-          parentThreadId: ThreadId.makeUnsafe("thread-parent"),
-          createdAt: "2026-03-09T10:02:00.000Z",
-        }),
-        makeThread({
-          id: ThreadId.makeUnsafe("thread-grandchild"),
-          parentThreadId: ThreadId.makeUnsafe("thread-child"),
-          createdAt: "2026-03-09T10:01:00.000Z",
-        }),
-      ],
-      forceVisibleThreadId: ThreadId.makeUnsafe("thread-grandchild"),
-    });
-
-    expect(rows.map((row) => [row.thread.id, row.depth])).toEqual([
-      [ThreadId.makeUnsafe("thread-parent"), 0],
-      [ThreadId.makeUnsafe("thread-child"), 1],
-      [ThreadId.makeUnsafe("thread-grandchild"), 2],
-    ]);
-  });
-});
-
 describe("getVisibleSidebarEntriesForPreview", () => {
-  it("caps preview by rendered rows, not root-thread count", () => {
+  const entries = ["thread-1", "thread-2", "thread-3", "thread-4"].map((id) => ({
+    rowId: ThreadId.makeUnsafe(id),
+  }));
+
+  it("caps the preview at the limit", () => {
     const result = getVisibleSidebarEntriesForPreview({
-      entries: [
-        {
-          rowId: ThreadId.makeUnsafe("thread-parent"),
-          rootRowId: ThreadId.makeUnsafe("thread-parent"),
-        },
-        {
-          rowId: ThreadId.makeUnsafe("thread-child"),
-          rootRowId: ThreadId.makeUnsafe("thread-parent"),
-        },
-        {
-          rowId: ThreadId.makeUnsafe("thread-second-root"),
-          rootRowId: ThreadId.makeUnsafe("thread-second-root"),
-        },
-        {
-          rowId: ThreadId.makeUnsafe("thread-third-root"),
-          rootRowId: ThreadId.makeUnsafe("thread-third-root"),
-        },
-      ],
+      entries,
       activeEntryId: undefined,
       previewLimit: 2,
     });
 
     expect(result.hasHiddenEntries).toBe(true);
     expect(result.visibleEntries.map((entry) => entry.rowId)).toEqual([
-      ThreadId.makeUnsafe("thread-parent"),
-      ThreadId.makeUnsafe("thread-child"),
+      ThreadId.makeUnsafe("thread-1"),
+      ThreadId.makeUnsafe("thread-2"),
+    ]);
+  });
+
+  it("keeps the open row visible past the limit", () => {
+    const result = getVisibleSidebarEntriesForPreview({
+      entries,
+      activeEntryId: ThreadId.makeUnsafe("thread-4"),
+      previewLimit: 2,
+    });
+
+    expect(result.visibleEntries.map((entry) => entry.rowId)).toEqual([
+      ThreadId.makeUnsafe("thread-1"),
+      ThreadId.makeUnsafe("thread-2"),
+      ThreadId.makeUnsafe("thread-4"),
     ]);
   });
 });
@@ -1844,31 +1706,32 @@ describe("deriveSidebarProjectData", () => {
     });
   });
 
-  it("reveals an active subagent and its parent beyond the preview limit", () => {
+  it("reveals the open thread beyond the preview limit", () => {
     const project = makeProject();
     const firstThread = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("thread-first") });
-    const parent = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("thread-parent") });
-    const child = makeSidebarThreadSummary({
-      id: ThreadId.makeUnsafe("thread-child"),
-      parentThreadId: parent.id,
-    });
+    const secondThread = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("thread-second") });
+    const openThread = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("thread-open") });
     const data = deriveSidebarProjectData({
       projects: [project],
-      sortedSidebarThreadsByProjectId: groupSidebarThreadsByProjectId([firstThread, parent, child]),
+      sortedSidebarThreadsByProjectId: groupSidebarThreadsByProjectId([
+        firstThread,
+        secondThread,
+        openThread,
+      ]),
       pinnedThreadIds: [],
       threadListExtraPagesByProjectCwd: new Map(),
       normalizeProjectCwd: (cwd) => cwd,
-      activeSidebarThreadId: child.id,
+      activeSidebarThreadId: openThread.id,
       previewLimit: 1,
       previewPageSize: 5,
     });
 
     expect(data.get(project.id)?.visibleEntries.map((entry) => entry.rowId)).toEqual([
       firstThread.id,
-      parent.id,
-      child.id,
+      openThread.id,
     ]);
-    expect(data.get(project.id)?.activeEntryId).toBe(child.id);
+    expect(data.get(project.id)?.activeEntryId).toBe(openThread.id);
+    expect(data.get(project.id)?.canShowMoreThreads).toBe(true);
   });
 
   it("pages the thread preview five rows at a time and clamps stale paging", () => {
