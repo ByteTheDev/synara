@@ -510,7 +510,8 @@ scaling beyond one task.
 - `mod+1` through `mod+9` — open a numbered sidebar thread. Hold `mod` to show the
   default numbers in the classic and Activity views.
 - `mod+alt+a` — open the next chat that needs you: one waiting on an answer first, then
-  unseen work. This uses current urgency, independently of Priority's held row order.
+  unseen work. Repeated presses advance through that urgency order and wrap after the last
+  actionable chat, independently of Priority's held row order.
 
 Every split chat has an **X** in its header to close it. Closing an ordinary pane keeps
 the remaining chats and preserves focus on a surviving chat. Closing a forked Side

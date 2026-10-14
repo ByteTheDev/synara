@@ -23,10 +23,11 @@ export function isThreadRunningForActivity(
  * at least once, or explicitly snoozed/reminded. Ordinary drafts stay out,
  * but a thread whose very first turn is starting up already counts as work.
  */
-export function isActivityThread(thread: SidebarThreadSummary): boolean {
+export function isActivityThread(thread: SidebarThreadSummary, preparingWorktree = false): boolean {
   if (thread.archivedAt != null) return false;
   if (thread.parentThreadId) return false;
   return (
+    preparingWorktree ||
     thread.snoozedUntil != null ||
     thread.snoozeReminderAt != null ||
     thread.latestTurn !== null ||
@@ -125,6 +126,8 @@ export function buildActivityViewModel(input: {
   threads: readonly SidebarThreadSummary[];
   pinnedThreadIdSet: ReadonlySet<ThreadId>;
   draftThreadIdSet?: ReadonlySet<ThreadId>;
+  /** First sends preparing a worktree have no provider session or turn yet. */
+  preparingThreadIdSet?: ReadonlySet<ThreadId>;
   /** The open thread: its draft is being typed, so it never moves to Drafts. */
   activeThreadId?: ThreadId | null;
   settledOverrideByThreadId?: ReadonlyMap<ThreadId, boolean>;
@@ -136,7 +139,8 @@ export function buildActivityViewModel(input: {
     draftThreadIdSet: input.draftThreadIdSet ?? null,
     activeThreadId: input.activeThreadId ?? null,
   };
-  const isDraft = (thread: SidebarThreadSummary) => isParkedActivityDraft(thread, draftOptions);
+  const isDraft = (thread: SidebarThreadSummary) =>
+    !input.preparingThreadIdSet?.has(thread.id) && isParkedActivityDraft(thread, draftOptions);
   const pinned: SidebarThreadSummary[] = [];
   const drafts: SidebarThreadSummary[] = [];
   const active: SidebarThreadSummary[] = [];
@@ -144,7 +148,7 @@ export function buildActivityViewModel(input: {
   const snoozed: SidebarThreadSummary[] = [];
 
   for (const thread of input.threads) {
-    if (!isActivityThread(thread)) continue;
+    if (!isActivityThread(thread, input.preparingThreadIdSet?.has(thread.id))) continue;
     if (projectFilterIds !== null && !projectFilterIds.has(thread.projectId)) continue;
     // The server clears snooze on expiry. Client clocks must not surface a thread
     // before that durable update, and pins cannot bypass the user's snooze.
@@ -307,10 +311,11 @@ export type ActivityScopeOption =
 export function collectActivityScopeOptions(
   threads: readonly SidebarThreadSummary[],
   isRealProject: (projectId: ProjectId) => boolean,
+  preparingThreadIdSet?: ReadonlySet<ThreadId>,
 ): ActivityScopeOption[] {
   const countByProjectId = new Map<ProjectId, number>();
   for (const thread of threads) {
-    if (!isActivityThread(thread)) continue;
+    if (!isActivityThread(thread, preparingThreadIdSet?.has(thread.id))) continue;
     countByProjectId.set(thread.projectId, (countByProjectId.get(thread.projectId) ?? 0) + 1);
   }
 
@@ -559,23 +564,20 @@ export function hasActivityNeedingAttention(
   return collectThreadsNeedingAttention(threads, activeThreadId, resolveTier).threads.length > 0;
 }
 
-/**
- * The "next chat needing attention" target: the most urgent thread other than the open
- * one, by Priority's ranking. Repeated presses move on because the open thread is skipped.
- */
+/** Cycle through current urgency order, wrapping only after the last actionable chat. */
 export function findNextThreadNeedingAttention(
   threads: readonly SidebarThreadSummary[],
   activeThreadId: ThreadId | null,
   resolveTier: ActivityPriorityTierResolver,
 ): ThreadId | null {
-  const needing = collectThreadsNeedingAttention(threads, activeThreadId, resolveTier);
-  let next: SidebarThreadSummary | null = null;
-  for (const thread of needing.threads) {
-    if (next === null || compareActivityPriority(thread, next, needing.tierById) < 0) {
-      next = thread;
-    }
-  }
-  return next?.id ?? null;
+  const needing = collectThreadsNeedingAttention(threads, null, resolveTier);
+  const ordered = needing.threads.toSorted((left, right) =>
+    compareActivityPriority(left, right, needing.tierById),
+  );
+  if (ordered.length === 0) return null;
+  const currentIndex = ordered.findIndex((thread) => thread.id === activeThreadId);
+  const next = ordered[(currentIndex + 1) % ordered.length];
+  return next && next.id !== activeThreadId ? next.id : null;
 }
 
 /**

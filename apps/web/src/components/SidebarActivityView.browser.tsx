@@ -692,6 +692,62 @@ describe("SidebarActivityView", () => {
     await mounted.unmount();
   });
 
+  it.each(["persisted", "optimistic"] as const)(
+    "returns a Done pin from Priority to Pinned (%s)",
+    async (mode) => {
+      const pinned = makeThread(930, { hasPendingApprovals: true });
+      const props = {
+        threads: [pinned],
+        pinnedThreadIdSet: new Set([pinned.id]),
+        resolveThreadStatus: realThreadStatus,
+      };
+      const mounted = await render(renderActivity(props));
+      await expect.poll(activityLayout).toEqual(["# Priority", pinned.id]);
+      await mounted.rerender(
+        renderActivity({
+          ...props,
+          threads: [
+            {
+              ...pinned,
+              hasPendingApprovals: false,
+              ...(mode === "persisted" ? { settledAt: "2026-08-02T12:00:00.000Z" } : {}),
+            },
+          ],
+          settledOverrideByThreadId:
+            mode === "optimistic" ? new Map([[pinned.id, true]]) : new Map(),
+        }),
+      );
+      await expect.poll(activityLayout).toEqual([pinned.id]);
+      await expect.element(page.getByRole("button", { name: "Pinned", exact: true })).toBeVisible();
+      await mounted.unmount();
+    },
+  );
+
+  it("shows a preparing first worktree in its project scope while excluding plain drafts and children", async () => {
+    const preparing = makeThread(940, { latestTurn: null, latestHumanMessageAt: null });
+    const draft = makeThread(941, { latestTurn: null, latestHumanMessageAt: null });
+    const child = makeThread(942, { latestTurn: null, parentThreadId: preparing.id });
+    const archived = makeThread(943, { latestTurn: null, archivedAt: "2026-08-02T11:00:00.000Z" });
+    const onChange = vi.fn();
+    const status = (thread: SidebarThreadSummary) =>
+      resolveThreadStatusPill({
+        thread,
+        hasPendingApprovals: false,
+        hasPendingUserInput: false,
+        isPreparingWorktree: thread.id !== draft.id,
+      });
+    const mounted = await render(
+      renderActivity({
+        threads: [preparing, draft, child, archived],
+        resolveThreadStatus: status,
+        scope: { selection: PROJECT_A, onChange },
+      }),
+    );
+    await expect.poll(activityLayout).toEqual(["# Priority", preparing.id]);
+    expect(onChange).not.toHaveBeenCalled();
+    await mounted.unmount();
+  });
+
   it("lists every chat that needs the user or is running in Priority, with no cap", async () => {
     const running = Array.from({ length: 6 }, (_, index) =>
       makeThread(900 + index, { hasLiveTailWork: true }),

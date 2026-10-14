@@ -666,9 +666,18 @@ export function SidebarActivityView({
   // of re-running six passes and four sorts over every activity thread per render.
   // Scope options and the unread sweep intentionally ignore the active scope:
   // the menu must keep offering every project, and "Mark all as read" means all.
+  const preparingThreadIdSet = useMemo(
+    () =>
+      new Set(
+        threads
+          .filter((thread) => resolveThreadStatus(thread)?.label === "Preparing worktree")
+          .map((thread) => thread.id),
+      ),
+    [threads, resolveThreadStatus],
+  );
   const scopeOptions = useMemo(
-    () => collectActivityScopeOptions(threads, isRealProject),
-    [isRealProject, threads],
+    () => collectActivityScopeOptions(threads, isRealProject, preparingThreadIdSet),
+    [isRealProject, threads, preparingThreadIdSet],
   );
   const unreadThreads = useMemo(() => collectUnreadActivityThreads(threads), [threads]);
 
@@ -688,6 +697,7 @@ export function SidebarActivityView({
         threads,
         pinnedThreadIdSet,
         draftThreadIdSet,
+        preparingThreadIdSet,
         activeThreadId,
         settledOverrideByThreadId,
         projectFilterIds,
@@ -695,6 +705,7 @@ export function SidebarActivityView({
     [
       activeThreadId,
       draftThreadIdSet,
+      preparingThreadIdSet,
       pinnedThreadIdSet,
       projectFilterIds,
       settledOverrideByThreadId,
@@ -708,13 +719,19 @@ export function SidebarActivityView({
     () =>
       groupMode === "time"
         ? resolveActivityPriority({
-            candidates: [...model.pinned, ...model.drafts, ...model.active],
+            candidates: [
+              ...model.pinned.filter(
+                (thread) => !isThreadSettledForActivity(thread, settledOverrideByThreadId),
+              ),
+              ...model.drafts,
+              ...model.active,
+            ],
             resolveTier: (thread) => resolveActivityPriorityTier(resolveThreadStatus(thread)),
             previous: previousPriority,
             nowMs: Date.now(),
           })
         : null,
-    [groupMode, model, previousPriority, resolveThreadStatus],
+    [groupMode, model, previousPriority, resolveThreadStatus, settledOverrideByThreadId],
   );
   useEffect(() => {
     // Before hydration every thread is missing; storing that would sort later rows as

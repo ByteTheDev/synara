@@ -1112,7 +1112,7 @@ describe("findNextThreadNeedingAttention", () => {
       lastVisitedAt: "2026-08-01T10:00:00.000Z",
     });
 
-  it("opens the most urgent other thread and moves on once it is open", () => {
+  it("cycles through all actionable chats before wrapping and skips the sole open chat", () => {
     const newerUnread = unreadAt("newer-unread", "2026-08-01T10:30:00.000Z");
     const olderWaiting = makeThread({
       id: "older-waiting",
@@ -1134,6 +1134,9 @@ describe("findNextThreadNeedingAttention", () => {
     const threads = [newerUnread, olderWaiting, newerWaiting, running];
     expect(findNextThreadNeedingAttention(threads, null, tier)).toBe("newer-waiting");
     expect(findNextThreadNeedingAttention(threads, newerWaiting.id, tier)).toBe("older-waiting");
+    expect(findNextThreadNeedingAttention(threads, olderWaiting.id, tier)).toBe("newer-unread");
+    expect(findNextThreadNeedingAttention(threads, newerUnread.id, tier)).toBe("newer-waiting");
+    expect(findNextThreadNeedingAttention([newerWaiting], newerWaiting.id, tier)).toBeNull();
     expect(findNextThreadNeedingAttention([newerUnread, running], null, tier)).toBe("newer-unread");
   });
 
