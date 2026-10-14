@@ -23,19 +23,17 @@ jobs:
           sandbox=$(realpath apps/desktop/node_modules/electron/dist/chrome-sandbox)
           sudo chown root:root "$sandbox"
           sudo chmod 4755 "$sandbox"
-      - name: Verify native view reparenting without changing application source
+      - name: Verify native WebContents adoption without changing application source
         run: |
           cat > .code-oss-view-probe.cjs <<'JS'
-          const { app, BrowserWindow, View, WebContentsView } = require('electron');
+          const { app, BrowserWindow, WebContentsView } = require('electron');
           app.whenReady().then(async () => {
             const window = new BrowserWindow({show:false,width:1000,height:700});
-            const native = window.contentView.children.find(view => view instanceof WebContentsView && view.webContents === window.webContents);
-            if (!native) throw new Error('Native workbench view is not accessible');
-            const root = new View();
+            const contents=window.webContents;
             const shell = new WebContentsView();
-            window.setContentView(root);
-            root.addChildView(shell);
-            root.addChildView(native);
+            const native = new WebContentsView({webContents:contents});
+            window.contentView.addChildView(shell);
+            window.contentView.addChildView(native);
             shell.setBounds({x:0,y:0,width:1000,height:700});
             native.setBounds({x:80,y:60,width:600,height:500});
             await native.webContents.loadURL('data:text/html,<h1>Retained native renderer</h1>');
@@ -44,7 +42,10 @@ jobs:
             await new Promise(r=>setTimeout(r,200));
             const bounds=native.getBounds();
             if(bounds.x!==80||bounds.width!==600)throw Error('Native bounds overwritten by window resize');
+            if(BrowserWindow.fromWebContents(native.webContents)?.id!==window.id||window.webContents!==contents)throw Error('Native window ownership changed');
             console.log('RESIZED', JSON.stringify({bounds,viewport:await native.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})'),owned:BrowserWindow.fromWebContents(native.webContents)?.id===window.id}));
+            native.setVisible(false);native.setVisible(true);
+            if(await contents.executeJavaScript('document.querySelector("h1").textContent')!=='Retained native renderer')throw Error('Renderer state lost');
             shell.webContents.close(); app.exit(0);
           }).catch(error=>{console.error(error);app.exit(1)});
           JS
