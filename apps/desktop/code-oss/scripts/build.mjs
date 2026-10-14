@@ -28,6 +28,9 @@ function run(command, args) {
 }
 // npm ci preserves the upstream lock; .npmrc selects Synara's existing Electron ABI.
 await run(npm, ["ci", "--no-audit", "--no-fund"]);
+// The upstream desktop build requires generated API/extension-point indexes and
+// the codicon asset before bundling. Use its tasks rather than reproducing them.
+await run(npm, ["run", "gulp", "copy-codicons", "compile-api-proposal-names", "compile-extension-point-names"]);
 // The pinned MIT debug built-ins are fetched from their upstream GitHub releases,
 // not Microsoft's Marketplace. Restore Open VSX before bundling product metadata.
 const productPath = join(source, "product.json");
