@@ -1,0 +1,114 @@
+name: Clean native PR acceptance
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-clean-smoke.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 739c530386c8b4f6547373ab5a977a981cd85616
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Check formatting
+        id: format
+        continue-on-error: true
+        run: bun run fmt:check
+      - name: Check lint
+        id: lint
+        continue-on-error: true
+        run: bun run lint
+      - name: Direct desktop typecheck
+        id: desktop
+        continue-on-error: true
+        run: bun run --cwd apps/desktop typecheck
+      - name: Direct web typecheck
+        id: web
+        continue-on-error: true
+        run: bun run --cwd apps/web typecheck
+      - name: Focused bridge, renderer, quit and packaging tests
+        id: tests
+        continue-on-error: true
+        run: |
+          bun run --cwd apps/desktop test -- src/desktopRenderer.test.ts src/runningChatsQuitGuard.test.ts
+          bun run --cwd packages/contracts test -- src/desktopIde.test.ts
+          bun run --cwd scripts test -- lib/code-oss-runtime.test.ts
+      - name: Export formatted smoke source for publication if needed
+        if: always()
+        run: |
+          node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/smoke.mjs
+          mkdir -p .code-oss/check-output
+          cp apps/desktop/code-oss/scripts/smoke.mjs .code-oss/check-output/
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: clean-native-focused-output
+          path: .code-oss/check-output
+          retention-days: 3
+      - name: Enforce all focused checks
+        if: always() && (steps.format.outcome != 'success' || steps.lint.outcome != 'success' || steps.desktop.outcome != 'success' || steps.web.outcome != 'success' || steps.tests.outcome != 'success')
+        run: exit 1
+  desktop:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [baseline, integrated]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.mode == 'baseline' && 'a62d7c733d19f5538ffc0d126d57437b3b578ff1' || '739c530386c8b4f6547373ab5a977a981cd85616' }}
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        if: matrix.mode == 'baseline'
+        with:
+          ref: 739c530386c8b4f6547373ab5a977a981cd85616
+          path: .code-oss/harness
+          persist-credentials: false
+          sparse-checkout: apps/desktop/code-oss/scripts
+      - name: Reuse verified native workbench
+        if: matrix.mode == 'integrated'
+        uses: actions/download-artifact@v8
+        with:
+          name: code-oss-native-linux-x64
+          run-id: 38489938571
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - name: Restore native permissions
+        if: matrix.mode == 'integrated'
+        run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build actual Synara desktop
+        run: bun run build:desktop
+      - name: Prepare real Linux desktop capture
+        run: sudo apt-get update && sudo apt-get install -y xvfb scrot libasound2t64 libgtk-3-0t64 libnss3 libgbm1
+      - name: Run real application smoke
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+          SYNARA_SMOKE_MODE: ${{ matrix.mode }}
+        run: |
+          if [ "$SYNARA_SMOKE_MODE" = baseline ]; then
+            xvfb-run -a -s '-screen 0 1440x1000x24' node .code-oss/harness/apps/desktop/code-oss/scripts/smoke.mjs --baseline
+          else
+            xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: clean-native-${{ matrix.mode }}-screenshots
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
