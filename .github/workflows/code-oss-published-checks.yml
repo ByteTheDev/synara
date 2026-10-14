@@ -1,0 +1,64 @@
+name: Published native integration checks
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-published-checks.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 3cfeaa8c5a18c8c5a967799cd1cb0f6a66a80d01
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Required integrated checks with exact exit statuses
+        shell: bash
+        run: |
+          mkdir -p .code-oss/checks
+          failed=0
+          for check in fmt:check lint typecheck test windows-runtime:check; do
+            file=${check//:/-}
+            echo "=== $check ==="
+            status=0
+            bun run "$check" > ".code-oss/checks/$file.log" 2>&1 || status=$?
+            printf '%s\t%s\n' "$check" "$status" | tee -a .code-oss/checks/status.tsv
+            tail -25 ".code-oss/checks/$file.log"
+            if [ "$status" != 0 ]; then failed=1; fi
+          done
+          exit "$failed"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: published-native-checks
+          path: .code-oss/checks
+          retention-days: 7
+          if-no-files-found: warn
+  report:
+    needs: verify
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: published-native-checks
+      - name: Report exact outcomes and actionable failures
+        run: |
+          cat status.tsv
+          while IFS=$'\t' read -r check status; do
+            file=${check//:/-}
+            echo "=== $check (exit $status) ==="
+            if [ "$status" = 0 ]; then
+              tail -12 "$file.log"
+            else
+              grep -E -B 2 -A 6 'error TS|FAIL|Error:|AssertionError|failed|Format issues|\.tsx? \(' "$file.log" | head -200 || true
+              tail -35 "$file.log"
+            fi
+          done < status.tsv
