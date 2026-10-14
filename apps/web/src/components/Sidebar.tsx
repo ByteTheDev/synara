@@ -6233,7 +6233,7 @@ export default function Sidebar() {
         activeThreadId: visualActiveSidebarThreadId ?? undefined,
         direction: command === "chat.visible.previous" ? "backward" : "forward",
       });
-      if (nextThreadId && nextThreadId !== activeSidebarThreadId) {
+      if (nextThreadId && nextThreadId !== visualActiveSidebarThreadId) {
         activateThreadFromSidebarIntent(nextThreadId);
       }
     };
