@@ -1,89 +1,45 @@
-name: Code OSS editor integration QA
+name: Code OSS source editing
 on:
   push:
     branches: [qa/code-oss-editor-20261014]
+    paths:
+      - .github/workflows/code-oss-editor-qa.yml
+      - .qa/code-oss-source-edit.py
 permissions:
-  contents: read
+  contents: write
 concurrency:
-  group: code-oss-editor-qa-${{ github.ref }}
+  group: code-oss-source-edit
   cancel-in-progress: false
 jobs:
-  direct-view:
+  edit-source:
+    if: github.repository == 'Emanuele-web04/synara'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
         with:
-          node-version: 24
-      - run: npm install --prefix /tmp/direct-view electron@43.4.1 --no-audit --no-fund
-      - name: Exercise a directly created view in the application window
+          path: operations
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/code-oss-existing-editor
+          path: source
+          persist-credentials: true
+      - name: Apply source-only integration edits
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/evidence
-          cat > /tmp/direct-view/main.cjs <<'JS'
-          const {app,BrowserWindow,WebContentsView,dialog}=require('electron');
-          const assert=require('node:assert/strict');
-          const fs=require('node:fs');
-          app.commandLine.appendSwitch('no-sandbox');
-          app.whenReady().then(async()=>{
-            const win=new BrowserWindow({width:1100,height:780,show:true,webPreferences:{sandbox:true}});
-            const shell=win.webContents;
-            const native=new WebContentsView({webPreferences:{sandbox:true,backgroundThrottling:false}});
-            win.contentView.addChildView(native);
-            native.setBounds({x:300,y:100,width:450,height:350});
-            console.log('DESCRIPTOR',Object.getOwnPropertyDescriptor(win,'webContents'));
-            let override=false,overrideError=null;
-            try{Object.defineProperty(win,'webContents',{value:native.webContents,configurable:true});override=true;}catch(error){overrideError=String(error);}
-            console.log('OVERRIDE',JSON.stringify({override,overrideError}));
-            await shell.loadURL('data:text/html,<body>Existing application shell</body>');
-            await native.webContents.loadURL('data:text/html,<body>Native editor surface</body>');
-            await new Promise(r=>setTimeout(r,200));
-            const inspect=async()=>({viewport:await native.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})'),nativeOwner:BrowserWindow.fromWebContents(native.webContents)?.id,shellOwner:BrowserWindow.fromWebContents(shell)?.id,windowId:win.id,windowCount:BrowserWindow.getAllWindows().length,override,overrideError});
-            assert.deepEqual((await inspect()).viewport,{width:450,height:350});
-            assert.equal(BrowserWindow.fromWebContents(native.webContents),win);
-            native.setVisible(false);assert.equal(native.getVisible(),false);native.setVisible(true);
-            native.setBounds({x:280,y:120,width:560,height:400});win.setSize(1200,820);
-            await new Promise(r=>setTimeout(r,200));
-            assert.deepEqual((await inspect()).viewport,{width:560,height:400});
-            assert.equal(BrowserWindow.getAllWindows().length,1);
-            fs.writeFileSync('/tmp/evidence/direct-view.json',JSON.stringify(await inspect(),null,2));
-            console.log('RESULT',JSON.stringify(await inspect()));
-            native.webContents.close();win.destroy();app.quit();
-          }).catch(e=>{console.error(e);app.exit(1)});
-          JS
-          xvfb-run -a /tmp/direct-view/node_modules/.bin/electron --no-sandbox /tmp/direct-view/main.cjs 2>&1 | tee /tmp/evidence/direct-view.log
-          test -f /tmp/evidence/direct-view.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: direct-native-view-evidence
-          path: /tmp/evidence
-          retention-days: 7
-  native-baseline:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 35
-    env:
-      CC: clang-18
-      CXX: clang++-18
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: 85c70ad544f0409dc9051dde38c549530b2605ec
-          persist-credentials: false
-      - run: clang++-18 --version
-      - uses: ./.github/actions/setup-code-oss
-        with:
-          flavor: production
-          arch: x64
-      - name: Preserve exact build for isolated integration iterations
-        run: |
-          set -euo pipefail
-          tar -C .code-oss -czf /tmp/code-oss-build.tar.gz --exclude='source/.git' source runtime
-      - uses: actions/upload-artifact@v4
-        with:
-          name: code-oss-native-build
-          path: /tmp/code-oss-build.tar.gz
-          compression-level: 0
-          retention-days: 7
-          if-no-files-found: error
+          if [ ! -f operations/.qa/code-oss-source-edit.py ]; then
+            echo 'Source-edit program has not been published; nothing was changed.'
+            exit 0
+          fi
+          cd source
+          git fetch --no-tags --depth=1 origin a62d7c733d19f5538ffc0d126d57437b3b578ff1
+          python ../operations/.qa/code-oss-source-edit.py
+          git diff --stat
+          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then exit 0; fi
+          git config user.name 'Commander Chara'
+          git config user.email '249489759+cmdr-chara@users.noreply.github.com'
+          git add apps packages scripts
+          git commit -m 'feat(editor): wire Code-OSS services into existing Synara surfaces'
+          git push origin HEAD:refs/heads/feat/code-oss-existing-editor
