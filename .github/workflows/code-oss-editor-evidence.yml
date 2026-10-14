@@ -1,0 +1,58 @@
+name: Native editor evidence
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-editor-evidence.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-modal-existing-evidence
+          run-id: 38541504429
+          github-token: ${{ github.token }}
+      - name: Inspect terminal failure and completed editor checks
+        run: |
+          for file in failure.txt probe-at-failure.json focus-at-failure.json failure-page-1.txt; do echo "=== $file ==="; head -c 16000 "$file"; echo; done
+          grep -E 'ERR|Error|failed|not found|Cannot|pty|terminal' after-electron.log | tail -30 || true
+  images:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-modal-existing-evidence
+          run-id: 38541504429
+          github-token: ${{ github.token }}
+          path: after
+      - uses: actions/download-artifact@v8
+        with:
+          name: clean-native-baseline-screenshots
+          run-id: 38491063206
+          github-token: ${{ github.token }}
+          path: before
+      - name: Store actual PNG capture blobs only; connector decides publication
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const checks=JSON.parse(fs.readFileSync('after/after-checks.json','utf8'));
+            if (!checks.some(c=>c.passed&&c.name==='TypeScript extension, definition, completion and diagnostics') || !checks.some(c=>c.passed&&c.name==='native debug adapter and call stack')) throw Error('Missing runtime proof');
+            const files=['after-agent-mode.png','after-native-file-open.png','after-ide-editor.png','after-ide-agent-context.png','after-ide-debugger.png','after-return-to-agent.png'].map(name=>['after/'+name,name]);
+            files.unshift(['before/before-agent-mode.png','before-agent-mode.png']);
+            for (const [source,name] of files) {
+              const bytes=fs.readFileSync(source);
+              if(bytes.length>3000000||!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) throw Error('Invalid capture');
+              const width=bytes.readUInt32BE(16),height=bytes.readUInt32BE(20);
+              if(width<800||width>2000||height<600||height>1500) throw Error('Unexpected capture bounds');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('CAPTURE_BLOB='+JSON.stringify({path:'docs/images/code-oss/'+name,sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),width,height,bytes:bytes.length,mode:'100644',type:'blob'}));
+            }
