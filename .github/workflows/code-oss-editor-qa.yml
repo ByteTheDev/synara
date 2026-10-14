@@ -8,27 +8,68 @@ concurrency:
   group: code-oss-editor-qa-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  source-baselines:
+  upstream-and-view-probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
+          repository: microsoft/vscode
+          ref: 7baac39ec3ca969dab74ac12c097f6a486e46593
           persist-credentials: false
-      - name: Archive exact source baselines
-        shell: bash
+      - name: Archive exact upstream
         run: |
-          set -euo pipefail
-          mkdir -p /tmp/synara-baselines
-          git fetch --no-tags --depth=1 https://github.com/Emanuele-web04/synara.git a62d7c733d19f5538ffc0d126d57437b3b578ff1
-          git archive a62d7c733d19f5538ffc0d126d57437b3b578ff1 | gzip > /tmp/synara-baselines/main.tar.gz
-          git fetch --no-tags --depth=1 https://github.com/Emanuele-web04/synara.git 85c70ad544f0409dc9051dde38c549530b2605ec
-          git archive 85c70ad544f0409dc9051dde38c549530b2605ec | gzip > /tmp/synara-baselines/pr1920.tar.gz
-          printf '%s\n' 'main a62d7c733d19f5538ffc0d126d57437b3b578ff1' 'pr1920 85c70ad544f0409dc9051dde38c549530b2605ec' > /tmp/synara-baselines/refs.txt
-          sha256sum /tmp/synara-baselines/*.tar.gz > /tmp/synara-baselines/sha256.txt
-      - uses: actions/upload-artifact@v4
+          mkdir -p /tmp/synara-qa
+          git archive HEAD | gzip > /tmp/synara-qa/code-oss-source.tar.gz
+      - uses: actions/setup-node@v4
         with:
-          name: code-oss-editor-source-baselines
-          path: /tmp/synara-baselines
+          node-version: 24
+      - name: Install pinned Electron for native view probe
+        run: npm install --prefix /tmp/synara-view-probe electron@43.4.1 --no-audit --no-fund
+      - name: Probe native content view reparenting
+        run: |
+          cat > /tmp/synara-view-probe/main.cjs <<'JS'
+          const { app, BrowserWindow, View, WebContentsView } = require('electron');
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          app.commandLine.appendSwitch('no-sandbox');
+          app.whenReady().then(async () => {
+            const window = new BrowserWindow({ width: 1100, height: 780, show: true, webPreferences: { sandbox: true } });
+            const native = window.contentView;
+            const root = new View();
+            const shell = new WebContentsView({ webPreferences: { sandbox: true } });
+            window.setContentView(root);
+            root.addChildView(shell);
+            root.addChildView(native);
+            shell.setBounds({ x: 0, y: 0, width: 1100, height: 780 });
+            native.setBounds({ x: 300, y: 100, width: 450, height: 350 });
+            await shell.webContents.loadURL('data:text/html,<body style="background:rgb(25,25,25);color:white"><h1>Existing Synara shell boundary probe</h1>');
+            await window.webContents.loadURL('data:text/html,<body style="background:rgb(0,80,110);color:white"><h2>Native workbench viewport</h2>');
+            const viewport = await window.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})');
+            assert.equal(viewport.width, 450);
+            assert.equal(viewport.height, 350);
+            assert.equal(BrowserWindow.fromWebContents(window.webContents), window);
+            native.setVisible(false);
+            assert.equal(native.getVisible(), false);
+            native.setVisible(true);
+            native.setBounds({ x: 250, y: 120, width: 560, height: 400 });
+            await new Promise(resolve => setTimeout(resolve, 100));
+            const resized = await window.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})');
+            assert.deepEqual(resized, {width:560,height:400});
+            window.setSize(1200, 820);
+            await new Promise(resolve => setTimeout(resolve, 100));
+            assert.equal(native.getBounds().width, 560);
+            fs.writeFileSync('/tmp/synara-qa/view-probe.json', JSON.stringify({ passed:true, nativeView:native.constructor.name, viewport,resized,bounds:native.getBounds(),sameWindow:true },null,2));
+            shell.webContents.close();
+            window.destroy();
+            app.quit();
+          }).catch(error => { console.error(error); app.exit(1); });
+          JS
+          xvfb-run -a /tmp/synara-view-probe/node_modules/.bin/electron --no-sandbox /tmp/synara-view-probe/main.cjs 2>&1 | tee /tmp/synara-qa/view-probe.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: code-oss-upstream-and-view-probe
+          path: /tmp/synara-qa
           retention-days: 3
           if-no-files-found: error
