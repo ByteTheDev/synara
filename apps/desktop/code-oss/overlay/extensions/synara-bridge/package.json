@@ -1,0 +1,18 @@
+{
+  "name": "synara-bridge",
+  "publisher": "synara",
+  "version": "1.0.0",
+  "displayName": "Synara Integration",
+  "description": "Internal bridge between the existing Synara interface and native Code-OSS services.",
+  "license": "MIT",
+  "engines": { "vscode": "^1.141.0" },
+  "main": "./extension.cjs",
+  "extensionKind": ["workspace"],
+  "extensionDependencies": ["vscode.git"],
+  "activationEvents": ["onCommand:synara.native.git"],
+  "capabilities": { "untrustedWorkspaces": { "supported": false } },
+  "contributes": {
+    "commands": [{ "command": "synara.native.git", "title": "Synara Internal Git Operation" }],
+    "menus": { "commandPalette": [{ "command": "synara.native.git", "when": "false" }] }
+  }
+}
