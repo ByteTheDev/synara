@@ -4,6 +4,7 @@ import type { BrowserAutomationVisibleRuntime } from "../browserManager";
 import { betterwrightExpectedInputs } from "./betterwrightInput";
 import { BetterwrightKeyboardPolicy } from "./betterwrightKeyboardPolicy";
 import { withRendererGuestFocus } from "./betterwrightFocus";
+import { BrowserAutomationHostError } from "./hostErrors";
 
 type Params = Record<string, unknown>;
 let nativeInputQueue: Promise<unknown> = Promise.resolve();
@@ -89,6 +90,7 @@ export class BetterwrightCdpTarget {
     private readonly backendSessionId?: string,
     private readonly cookieImport = false,
     private readonly expectAgentInput?: BrowserAutomationVisibleRuntime["expectAgentInput"],
+    private readonly controlSignal?: AbortSignal,
   ) {
     if (contents.isDestroyed()) throw new Error("Browser target is unavailable.");
     if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
@@ -341,7 +343,12 @@ export class BetterwrightCdpTarget {
       } finally {
         try {
           if (
-            !this.disposed &&
+            (!this.disposed ||
+              (method === "Page.bringToFront" &&
+                !(
+                  this.controlSignal?.reason instanceof BrowserAutomationHostError &&
+                  this.controlSignal.reason.browserError.code === "BrowserInterruptedByHuman"
+                ))) &&
             previousFocus &&
             previousFocus !== this.contents &&
             !previousFocus.isDestroyed() &&

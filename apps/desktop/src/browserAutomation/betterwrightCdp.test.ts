@@ -3,6 +3,7 @@ import type { WebContents } from "electron";
 import { describe, expect, it, vi } from "vitest";
 import { BetterwrightCdpTarget } from "./betterwrightCdp";
 import type { BrowserAutomationVisibleRuntime } from "../browserManager";
+import { BrowserAutomationHostError } from "./hostErrors";
 
 const focusState = vi.hoisted(() => ({ current: null as WebContents | null }));
 vi.mock("electron", () => ({ webContents: { getFocusedWebContents: () => focusState.current } }));
@@ -12,6 +13,7 @@ function fixture(
   backendSessionId?: string,
   cookieImport = false,
   expectInput?: BrowserAutomationVisibleRuntime["expectAgentInput"],
+  controlSignal?: AbortSignal,
 ) {
   focusState.current = null;
   const debuggerApi = Object.assign(new EventEmitter(), {
@@ -44,6 +46,7 @@ function fixture(
     backendSessionId,
     cookieImport,
     expectInput,
+    controlSignal,
   );
   return { contents, target, messages, debuggerApi };
 }
@@ -241,8 +244,12 @@ describe("Betterwright target boundary", () => {
     ["host destroyed", "Page.bringToFront"],
     ["dispatch failed", "Page.bringToFront"],
     ["human revoked lease", "Input.insertText"],
+    ["lease closed", "Page.bringToFront"],
+    ["timed out", "Page.bringToFront"],
+    ["human revoked lease", "Page.bringToFront"],
   ])("restores only command-owned focus (%s, %s)", async (outcome, method) => {
-    const f = fixture();
+    const controller = new AbortController();
+    const f = fixture([], undefined, false, undefined, controller.signal);
     let destroyed = false;
     const host = { isDestroyed: () => destroyed, focus: vi.fn() };
     focusState.current = host as unknown as WebContents;
@@ -255,7 +262,19 @@ describe("Betterwright target boundary", () => {
     f.debuggerApi.sendCommand.mockImplementationOnce(async () => {
       // Real user input revokes the target lease before the command settles.
       focusState.current = f.contents as unknown as WebContents;
-      if (outcome === "human revoked lease") void f.target.dispose(false);
+      if (outcome === "human revoked lease" || outcome === "timed out") {
+        controller.abort(
+          new BrowserAutomationHostError({
+            code:
+              outcome === "human revoked lease" ? "BrowserInterruptedByHuman" : "BrowserTimeout",
+            retryable: true,
+            phase: "input",
+            effectMayHaveCommitted: true,
+          }),
+        );
+        void f.target.dispose(true);
+      }
+      if (outcome === "lease closed") void f.target.dispose(false);
       if (outcome === "user moved focus") focusState.current = null;
       if (outcome === "host destroyed") destroyed = true;
       if (outcome === "dispatch failed") throw new Error("Bring to front failed");
@@ -264,7 +283,12 @@ describe("Betterwright target boundary", () => {
     await f.target.receive({ id: 2, sessionId, method, params: {} });
     expect(f.contents.focus).not.toHaveBeenCalled();
     expect(host.focus).toHaveBeenCalledTimes(
-      outcome === "restored" || outcome === "dispatch failed" ? 1 : 0,
+      outcome === "restored" ||
+        outcome === "dispatch failed" ||
+        outcome === "lease closed" ||
+        outcome === "timed out"
+        ? 1
+        : 0,
     );
     await f.target.dispose(false);
   });

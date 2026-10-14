@@ -109,6 +109,7 @@ export function synaraHostTarget(
             options.uploadFiles ?? [],
             options.cookieImport ?? false,
             options.expectAgentInput,
+            options.signal,
           );
           pending.add(opening);
           const connection = await opening;
