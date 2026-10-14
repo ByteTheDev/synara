@@ -2742,6 +2742,26 @@ describe.skipIf(!TEST_DATABASE_URL)("createV1Routes", () => {
       expect(workos.requests.length).toBe(before);
     });
 
+    it("preserves a cached SSO avatar when an imported identity has no picture yet", async () => {
+      const { app } = buildApp({ avatarStorage: fakeAvatarStorage().storage });
+      const { token, userId } = await signInWithPicture();
+      const handle = await onboard(app, token, { public: true });
+      const cached = "https://cdn.example.com/imported-avatar.png";
+      await database.db
+        .update(profiles)
+        .set({ avatarSsoUrl: cached })
+        .where(eq(profiles.userId, userId));
+      const me = await app.request("/api/v1/me", { headers: authHeaders(token) });
+      expect(await me.json()).toMatchObject({ image: cached, profile: { avatarUrl: cached } });
+      const [stored] = await database.db
+        .select({ avatar: profiles.avatarSsoUrl })
+        .from(profiles)
+        .where(eq(profiles.userId, userId));
+      expect(stored?.avatar).toBe(cached);
+      const publicProfile = await app.request(`/api/v1/profiles/${handle}`);
+      expect(await publicProfile.json()).toMatchObject({ avatarUrl: cached });
+    });
+
     it("serves null for an sso source when the provider has no picture", async () => {
       const { app } = buildApp({ avatarStorage: fakeAvatarStorage().storage });
       const { token } = await signInWithPicture(); // no picture

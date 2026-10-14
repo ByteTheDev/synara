@@ -20,6 +20,28 @@ const base = {
 };
 
 describe("loadApiConfig", () => {
+  it("accepts only destination-bound, one-to-one identity migration pairs", () => {
+    const mapping = {
+      clientId: base.WORKOS_CLIENT_ID,
+      users: { user_old: "user_new" },
+      organizations: { org_old: "org_new" },
+    };
+    expect(
+      loadWorkosConfig({ ...base, WORKOS_IDENTITY_MAP: JSON.stringify(mapping) }).workosIdentityMap,
+    ).toEqual(mapping);
+    for (const invalid of [
+      "invalid JSON",
+      JSON.stringify({ ...mapping, clientId: "client_wrong" }),
+      JSON.stringify({ ...mapping, users: { user_a: "user_new", user_b: "user_new" } }),
+      JSON.stringify({ ...mapping, users: { user_old: "user_old" } }),
+      JSON.stringify({ ...mapping, users: { user_a: "user_b", user_b: "user_c" } }),
+      JSON.stringify({ ...mapping, organizations: { org_old: "user_new" } }),
+      JSON.stringify({ clientId: base.WORKOS_CLIENT_ID }),
+    ])
+      expect(() => loadApiConfig({ ...base, WORKOS_IDENTITY_MAP: invalid })).toThrow(
+        /WORKOS_IDENTITY_MAP/,
+      );
+  });
   it("loads multiline and dashboard-escaped APNs keys, rejecting partial and wrong-environment configurations", () => {
     const { privateKey } = generateKeyPairSync("ec", { namedCurve: "prime256v1" });
     const pem = privateKey.export({ type: "pkcs8", format: "pem" }).toString();

@@ -55,7 +55,7 @@ are already set in `wrangler.jsonc`. The container forces production WorkOS mode
 port 8788 and one trusted proxy hop.
 
 Optional Worker secrets are forwarded only by explicit name:
-`API_SIGNING_KEY_PREVIOUS`, `PROFILE_PROXY_SECRET`, and the existing `S3_*`
+`API_SIGNING_KEY_PREVIOUS`, `WORKOS_IDENTITY_MAP`, `PROFILE_PROXY_SECRET`, and the existing `S3_*`
 avatar configuration, plus `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`,
 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_TUNNEL_DOMAIN` and `REMOTE_TEST_USER_IDS`
 for remote access. Configure the complete avatar set or leave all of it
@@ -138,6 +138,13 @@ public user profile. Follow the [operator checklist](../../../docs/implementatio
 to configure, deploy and test the whole trial.
 
 ## Verification limits
+
+When changing identity environments, follow the
+[WorkOS production migration guide](../../../docs/workos-production-migration.md).
+Swapping the API key and client ID alone strands existing ownership records.
+An imported email identity can initially have no upstream SSO photo. The API
+retains its existing cached profile photo until a new upstream photo is available;
+the user's explicit uploaded-avatar or placeholder choice remains authoritative.
 
 `wrangler deploy --dry-run --containers-rollout=none` validates and bundles the
 ingress Worker only. It does not build, run or publish the container. Full local

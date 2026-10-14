@@ -733,12 +733,20 @@ export function createV1Routes(deps: {
     organization: OrganizationSummary,
   ): Promise<AccountMe> {
     const row = await readProfileRow(user.id);
-    if (row && row.avatarSource === "sso" && row.avatarSsoUrl !== (user.avatarUrl ?? null)) {
+    // Imported/email-only identities may not have their SSO picture yet.
+    // Absence is not an avatar deletion; the explicit placeholder choice hides it.
+    const ssoAvatarUrl = user.avatarUrl ?? row?.avatarSsoUrl ?? undefined;
+    if (
+      row &&
+      row.avatarSource === "sso" &&
+      user.avatarUrl &&
+      row.avatarSsoUrl !== user.avatarUrl
+    ) {
       // Cheap and best-effort by design: the response already carries the
       // live URL, so a failed cache write only delays the public route.
       await db
         .update(profiles)
-        .set({ avatarSsoUrl: user.avatarUrl ?? null })
+        .set({ avatarSsoUrl: user.avatarUrl })
         .where(eq(profiles.userId, user.id))
         .catch((error: unknown) => {
           console.error("[api] avatar sso-url cache write failed:", error);
@@ -748,9 +756,9 @@ export function createV1Routes(deps: {
       id: user.id,
       name: user.name ?? user.email,
       email: user.email,
-      ...(user.avatarUrl ? { image: user.avatarUrl } : {}),
+      ...(ssoAvatarUrl ? { image: ssoAvatarUrl } : {}),
       organization,
-      profile: row ? toAccountProfile(row, resolvedAvatarUrl(row, user.avatarUrl)) : null,
+      profile: row ? toAccountProfile(row, resolvedAvatarUrl(row, ssoAvatarUrl)) : null,
     };
   }
 

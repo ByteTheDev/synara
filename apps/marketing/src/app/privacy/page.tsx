@@ -89,11 +89,12 @@ export default function PrivacyPage() {
 
         <Section title="Where your prompts and code go">
           <p>
-            When you chat with a model, Synara connects <strong>directly</strong> to the provider
-            you chose — Claude, Codex, OpenCode, Cursor, Antigravity, Grok, Droid, and so on — using
-            your own existing logins. Your prompts and code go only to that provider, governed by{" "}
-            <em>their</em> privacy terms. Synara does not proxy, copy, or store that traffic on any
-            server of ours.
+            The host computer connects <strong>directly</strong> to the provider you chose — Claude,
+            Codex, OpenCode, Cursor, Antigravity, Grok, Droid, and so on — using your own existing
+            logins. That provider receives the prompts and code needed for the session, governed by{" "}
+            <em>their</em> privacy terms. Synara does not proxy normal provider requests through its
+            own model service. For managed remote connections, Cloudflare transports chat and file
+            traffic between your approved device and the host before the host contacts the provider.
           </p>
         </Section>
 
@@ -141,7 +142,10 @@ export default function PrivacyPage() {
             diagnostic context. Stable does not send Beta diagnostics. Product analytics consent
             does not control this separate Beta path, whose retention policy is independent of the
             30-day product-event policy. See the{" "}
-            <a href="https://github.com/Emanuele-web04/synara/blob/main/docs/diagnostics.md">
+            <a
+              href="https://github.com/Emanuele-web04/synara/blob/main/docs/diagnostics.md"
+              className="text-[var(--accent-link)]"
+            >
               diagnostics documentation
             </a>{" "}
             for its field allowlist and storage details.

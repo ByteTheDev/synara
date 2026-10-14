@@ -1,5 +1,6 @@
 import { resolveTrustedProxyHops } from "./clientIp";
 import { createPrivateKey, randomBytes } from "node:crypto";
+import { parseWorkosIdentityMap, type WorkosIdentityMap } from "./identity/workosIdentityMap";
 
 /**
  * Where uploaded profile avatars live: any S3-compatible object store
@@ -116,6 +117,8 @@ export type WorkosApiConfig = ApiConfigBase & {
   identityProvider: "workos";
   workosApiKey: string;
   workosClientId: string;
+  /** Operator-approved old-to-current IDs; keeps existing Synara data ownership stable. */
+  workosIdentityMap?: WorkosIdentityMap;
   /** WorkOS API origin, no trailing slash. Overridable so tests can point at a local server. */
   workosApiUrl: string;
   /**
@@ -347,6 +350,9 @@ export function loadApiConfig(env: Env): ApiConfig {
 
   requireVars(env, REQUIRED_VARS);
   const workosClientId = env.WORKOS_CLIENT_ID as string;
+  const workosIdentityMap = env.WORKOS_IDENTITY_MAP
+    ? parseWorkosIdentityMap(env.WORKOS_IDENTITY_MAP, workosClientId)
+    : undefined;
   const apiSigningKey = signingSeed(env, "API_SIGNING_KEY");
   if (!apiSigningKey) {
     throw new ApiConfigError("API_SIGNING_KEY must be a base64url-encoded 32-byte Ed25519 seed");
@@ -369,6 +375,7 @@ export function loadApiConfig(env: Env): ApiConfig {
     ...(apns ? { apns } : {}),
     workosApiKey: env.WORKOS_API_KEY as string,
     workosClientId,
+    ...(workosIdentityMap ? { workosIdentityMap } : {}),
     workosApiUrl,
     ...(env.WORKOS_JWKS_URL ? { workosJwksUrl: env.WORKOS_JWKS_URL } : {}),
     ...(env.WORKOS_ISSUER ? { workosIssuer: env.WORKOS_ISSUER } : {}),

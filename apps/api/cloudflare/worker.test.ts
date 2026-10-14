@@ -122,6 +122,7 @@ describe("Cloudflare account API container configuration", () => {
       CLOUDFLARE_API_TOKEN: "test-tunnel-token",
       CLOUDFLARE_TUNNEL_DOMAIN: "example.com",
       REMOTE_TEST_USER_IDS: "user_mini, user_macbook",
+      WORKOS_IDENTITY_MAP: '{"clientId":"test","users":{},"organizations":{}}',
       ...(additional ? { REMOTE_TEST_ADDITIONAL_USER_IDS: additional } : {}),
     });
 
@@ -133,6 +134,7 @@ describe("Cloudflare account API container configuration", () => {
       CLOUDFLARE_API_TOKEN: "test-tunnel-token",
       CLOUDFLARE_TUNNEL_DOMAIN: "example.com",
       REMOTE_TEST_USER_IDS: expected,
+      WORKOS_IDENTITY_MAP: '{"clientId":"test","users":{},"organizations":{}}',
     });
   });
 

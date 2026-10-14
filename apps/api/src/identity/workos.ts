@@ -341,6 +341,22 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
   grants: EnvironmentGrantIssuer;
   organizations: WorkosOrganizationsApi;
 } {
+  // Migration pairs keep database/grant ownership stable; all upstream calls
+  // still use Production IDs and all tokens still require its exact client/issuer.
+  const usersToWorkos = new Map(Object.entries(config.workosIdentityMap?.users ?? {}));
+  const orgsToWorkos = new Map(Object.entries(config.workosIdentityMap?.organizations ?? {}));
+  const usersToSynara = new Map(
+    [...usersToWorkos].map(([previous, current]) => [current, previous]),
+  );
+  const orgsToSynara = new Map([...orgsToWorkos].map(([previous, current]) => [current, previous]));
+  const workosUser = (id: string) => usersToWorkos.get(id) ?? id;
+  const workosOrg = (id: string) => orgsToWorkos.get(id) ?? id;
+  const synaraUser = (id: string) => usersToSynara.get(id) ?? id;
+  const synaraOrg = (id: string) => orgsToSynara.get(id) ?? id;
+  const synaraTokens = (raw: unknown): AuthTokens => {
+    const tokens = toAuthTokens(raw);
+    return { ...tokens, user: { ...tokens.user, id: synaraUser(tokens.user.id) } };
+  };
   /**
    * Resolved on first verification and kept for the process lifetime. The
    * promise itself is what is cached, so concurrent first requests share one
@@ -517,7 +533,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
     const seenCursors = new Set<string>();
     do {
       const response = (await workosFetch(
-        `/user_management/organization_memberships?user_id=${encodeURIComponent(userId)}&limit=${MEMBERSHIP_PAGE_LIMIT}${after ? `&after=${encodeURIComponent(after)}` : ""}`,
+        `/user_management/organization_memberships?user_id=${encodeURIComponent(workosUser(userId))}&limit=${MEMBERSHIP_PAGE_LIMIT}${after ? `&after=${encodeURIComponent(after)}` : ""}`,
       )) as WorkosMembershipListWire;
       // A 200 without a `data` array is not an empty membership list, it is an
       // answer this service does not understand — and reading it as "no
@@ -526,7 +542,12 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
       if (!Array.isArray(response.data)) {
         throw new IdentityProviderError(502, "WorkOS membership listing returned no data array");
       }
-      memberships.push(...response.data.map(toOrganization));
+      memberships.push(
+        ...response.data.map((entry) => {
+          const organization = toOrganization(entry);
+          return { ...organization, orgId: synaraOrg(organization.orgId) };
+        }),
+      );
       const metadata = response.list_metadata;
       if (typeof metadata !== "object" || metadata === null) {
         throw new IdentityProviderError(502, "WorkOS membership listing returned no metadata");
@@ -565,7 +586,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
     await workosFetch("/user_management/organization_memberships", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ organization_id: orgId, user_id: userId }),
+      body: JSON.stringify({ organization_id: workosOrg(orgId), user_id: workosUser(userId) }),
     });
   }
 
@@ -610,16 +631,20 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
       }
       // `org_id` is genuinely optional — a device-grant token has none — so its
       // absence is a routing fact for the caller, not a verification failure.
-      return { userId: sub, sessionId: sid, ...(typeof orgId === "string" ? { orgId } : {}) };
+      return {
+        userId: synaraUser(sub),
+        sessionId: sid,
+        ...(typeof orgId === "string" ? { orgId: synaraOrg(orgId) } : {}),
+      };
     },
 
     async getUser(userId) {
       const user = (await workosFetch(
-        `/user_management/users/${encodeURIComponent(userId)}`,
+        `/user_management/users/${encodeURIComponent(workosUser(userId))}`,
       )) as WorkosUserResponse;
       const name = fullName(user);
       return {
-        id: user.id,
+        id: synaraUser(user.id),
         email: user.email,
         ...(name ? { name } : {}),
         ...(user.profile_picture_url ? { avatarUrl: user.profile_picture_url } : {}),
@@ -641,7 +666,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
             refresh_token: refreshToken,
             client_id: config.workosClientId,
             client_secret: config.workosApiKey,
-            ...(organizationId ? { organization_id: organizationId } : {}),
+            ...(organizationId ? { organization_id: workosOrg(organizationId) } : {}),
             ...contextFields(context),
           }),
         },
@@ -651,11 +676,13 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
       );
       if (response.ok) {
         const raw: unknown = await response.json();
-        const tokens = toAuthTokens(raw);
+        const tokens = synaraTokens(raw);
         const echoed = (raw as Record<string, unknown>).organization_id;
         return {
           ...tokens,
-          ...(typeof echoed === "string" && echoed.length > 0 ? { organizationId: echoed } : {}),
+          ...(typeof echoed === "string" && echoed.length > 0
+            ? { organizationId: synaraOrg(echoed) }
+            : {}),
         };
       }
 
@@ -725,7 +752,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
         // Grant-consuming: the emailed code is single-use.
         grantTimeoutMs,
       );
-      return toAuthTokens(raw);
+      return synaraTokens(raw);
     },
 
     buildAuthorizeUrl({ provider, redirectUri, codeChallenge, state }) {
@@ -762,7 +789,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
         // Grant-consuming: the authorization code is single-use.
         grantTimeoutMs,
       );
-      return toAuthTokens(raw);
+      return synaraTokens(raw);
     },
 
     describeInstanceAuth() {
@@ -800,7 +827,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
       // `atLeast` rows answers "single-member or not" in one bounded request
       // without paginating a large team.
       const response = (await workosFetch(
-        `/user_management/organization_memberships?organization_id=${encodeURIComponent(orgId)}&limit=${Math.max(1, atLeast)}`,
+        `/user_management/organization_memberships?organization_id=${encodeURIComponent(workosOrg(orgId))}&limit=${Math.max(1, atLeast)}`,
       )) as WorkosMembershipListWire;
       if (!Array.isArray(response.data)) {
         throw new IdentityProviderError(
@@ -813,11 +840,14 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
 
     async renameOrganization(orgId, name) {
       // WorkOS models the rename as a full replacement (PUT).
-      const response = (await workosFetch(`/organizations/${encodeURIComponent(orgId)}`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name }),
-      })) as WorkosOrganizationWire;
+      const response = (await workosFetch(
+        `/organizations/${encodeURIComponent(workosOrg(orgId))}`,
+        {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ name }),
+        },
+      )) as WorkosOrganizationWire;
       if (typeof response.id !== "string" || response.id.length === 0) {
         throw new IdentityProviderError(502, "WorkOS organization update returned no id");
       }
@@ -825,7 +855,7 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
       // moment the rename lands — including the one this request populated.
       invalidateOrgCacheForOrganization(orgId);
       return {
-        orgId: response.id,
+        orgId: synaraOrg(response.id),
         orgName: typeof response.name === "string" && response.name ? response.name : name,
       };
     },

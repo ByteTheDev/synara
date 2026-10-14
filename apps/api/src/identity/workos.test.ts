@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { generateKeyPair, SignJWT } from "jose";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { WorkosApiConfig } from "../config";
@@ -33,6 +34,67 @@ function discoveryPath(clientId: string): string {
 }
 
 describe("verifyAccessToken", () => {
+  it("preserves migrated ownership across email/SSO grants, refresh, membership and revocation", async () => {
+    const user = workos.addUser({
+      id: "user_production_migration",
+      email: "migration@example.net",
+    });
+    workos.addOrganization({ id: "org_production_migration", name: "Personal migration" });
+    workos.addMembership("org_production_migration", user.id);
+    const { verifier, grants } = createWorkosIdentityProvider(
+      workos.config({
+        workosIdentityMap: {
+          clientId: workos.clientId,
+          users: { user_existing_migration: user.id },
+          organizations: { org_existing_migration: "org_production_migration" },
+        },
+      }),
+    );
+    await expect(verifier.getUser("user_existing_migration")).resolves.toMatchObject({
+      id: "user_existing_migration",
+      email: user.email,
+    });
+    await verifier.createOtpChallenge({ email: user.email });
+    const signedIn = await verifier.authenticateWithOtp({
+      email: user.email,
+      code: workos.currentMagicAuth(user.email)!.code,
+    });
+    expect(signedIn.user.id).toBe("user_existing_migration");
+    const refreshed = await verifier.refreshTokens({
+      refreshToken: signedIn.refreshToken,
+      organizationId: "org_existing_migration",
+    });
+    expect(refreshed.organizationId).toBe("org_existing_migration");
+    const session = await verifier.verifyAccessToken(refreshed.accessToken);
+    expect(session).toMatchObject({
+      userId: "user_existing_migration",
+      orgId: "org_existing_migration",
+    });
+    await expect(
+      grants.resolveEnvironmentScope(session, user.email, { freshMembership: true }),
+    ).resolves.toMatchObject({ kind: "scoped", organization: { orgId: "org_existing_migration" } });
+    await expect(grants.countOrganizationMembers("org_existing_migration", 2)).resolves.toBe(1);
+    const verifierString = "migration-test-pkce-verifier";
+    const code = workos.issueAuthorizationCode(user.email, {
+      codeChallenge: createHash("sha256").update(verifierString).digest("base64url"),
+    });
+    await expect(
+      verifier.exchangeAuthorizationCode({ code, codeVerifier: verifierString }),
+    ).resolves.toMatchObject({ user: { id: "user_existing_migration" } });
+    const other = await workos.signAccessToken({
+      sub: "user_other_migration",
+      sid: "session_other",
+    });
+    await expect(verifier.verifyAccessToken(other)).resolves.toMatchObject({
+      userId: "user_other_migration",
+    });
+    const sibling = await workos.signAccessToken({ sub: user.id, clientId: "client_other" });
+    await expect(verifier.verifyAccessToken(sibling)).rejects.toThrow();
+    workos.removeMembership("org_production_migration", user.id);
+    await expect(
+      grants.resolveEnvironmentScope(session, user.email, { freshMembership: true }),
+    ).resolves.toMatchObject({ kind: "selection_required", why: "not_a_member" });
+  });
   it("returns the user and session ids from a valid token", async () => {
     const auth = createWorkosAuth(workos.config());
     const token = await workos.signAccessToken({ sub: "user_123", sid: "session_456" });

@@ -6,6 +6,7 @@ import { isIP } from "node:net";
 type OptionalSecrets = Partial<
   Record<
     | "API_SIGNING_KEY_PREVIOUS"
+    | "WORKOS_IDENTITY_MAP"
     | "PROFILE_PROXY_SECRET"
     | "CLOUDFLARE_ACCOUNT_ID"
     | "CLOUDFLARE_ZONE_ID"
@@ -32,6 +33,10 @@ export class AccountApi extends Container<Cloudflare.Env & OptionalSecrets> {
   override defaultPort = 8788;
   override sleepAfter = "30m";
   override enableInternet = true;
+  // Observe restarts without logging the runtime environment or its credentials.
+  override onStart() {
+    console.info("[account-api] Container started");
+  }
   override envVars = {
     NODE_ENV: "production",
     IDENTITY_PROVIDER: "workos",
@@ -47,6 +52,7 @@ export class AccountApi extends Container<Cloudflare.Env & OptionalSecrets> {
       (
         [
           "API_SIGNING_KEY_PREVIOUS",
+          "WORKOS_IDENTITY_MAP",
           "PROFILE_PROXY_SECRET",
           "CLOUDFLARE_ACCOUNT_ID",
           "CLOUDFLARE_ZONE_ID",
