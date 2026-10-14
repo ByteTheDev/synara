@@ -6,17 +6,61 @@ on:
 permissions:
   contents: read
 jobs:
-  source:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+  native-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Export isolated source snapshot
-        run: tar --exclude=.git -czf "$RUNNER_TEMP/synara-source.tar.gz" .
+      - uses: actions/checkout@v6
+        with:
+          repository: microsoft/vscode
+          ref: 7baac39ec3ca969dab74ac12c097f6a486e46593
+          path: .code-oss/source
+          persist-credentials: false
+      - name: Export pinned API sources
+        run: tar -czf "$RUNNER_TEMP/native-api-source.tar.gz" -C .code-oss/source src extensions/git/src package.json .nvmrc
       - uses: actions/upload-artifact@v4
         with:
-          name: existing-editor-source
-          path: ${{ runner.temp }}/synara-source.tar.gz
+          name: native-api-source
+          path: ${{ runner.temp }}/native-api-source.tar.gz
+          retention-days: 3
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+          electron: 'true'
+      - name: Check native WebContentsView adoption
+        run: |
+          cat > "$RUNNER_TEMP/view-contract.cjs" <<'JS'
+          const { app, BrowserWindow, WebContentsView } = require('electron');
+          const fs = require('node:fs');
+          app.whenReady().then(async () => {
+            const win = new BrowserWindow({ width: 1000, height: 700, show: false });
+            const original = win.webContents;
+            const shell = new WebContentsView();
+            win.contentView.addChildView(shell);
+            const editor = new WebContentsView({ webContents: original });
+            win.contentView.addChildView(editor);
+            shell.setBounds({ x: 0, y: 0, width: 1000, height: 700 });
+            editor.setBounds({ x: 200, y: 100, width: 400, height: 300 });
+            await shell.webContents.loadURL('data:text/html,<body style="background:lightblue">Synara shell</body>');
+            await original.loadURL('data:text/html,<body style="background:lightgreen">Embedded editor</body>');
+            if (win.webContents !== original || editor.webContents !== original) throw new Error('Workbench contents were replaced');
+            win.show();
+            fs.writeFileSync(process.env.RUNNER_TEMP + '/view-contract.json', JSON.stringify({ sameContents: true, root: win.contentView.constructor.name, children: win.contentView.children.map(view => view.constructor.name), bounds: editor.getBounds() }));
+            fs.writeFileSync(process.env.RUNNER_TEMP + '/view-contract.png', (await win.capturePage()).toPNG());
+            shell.webContents.close();
+            win.destroy();
+            app.quit();
+          }).catch(error => { console.error(error); app.exit(1); });
+          JS
+          xvfb-run -a apps/desktop/node_modules/.bin/electron --no-sandbox "$RUNNER_TEMP/view-contract.cjs"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-view-contract
+          path: |
+            ${{ runner.temp }}/view-contract.json
+            ${{ runner.temp }}/view-contract.png
           retention-days: 3
