@@ -1,0 +1,226 @@
+name: Native complete service acceptance
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-final-services.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-renderer-source
+          run-id: 38538975984
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-modal-source
+          run-id: 38541504429
+          github-token: ${{ github.token }}
+      - run: tar -xzf renderer-source.tar.gz && tar -xzf modal-source.tar.gz
+      - name: Finish native terminal focus and worker asset packaging
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const paths=new Set([...JSON.parse(fs.readFileSync('renderer-manifest.json','utf8')), ...JSON.parse(fs.readFileSync('modal-manifest.json','utf8'))].map(row=>row.path));
+          function edit(path,replacements) {
+            let text=fs.readFileSync(path,'utf8');
+            for(const [before,after] of replacements) {
+              if(text.split(before).length!==2) throw Error('Changed source anchor: '+path+' '+before);
+              text=text.replace(before,after);
+            }
+            fs.writeFileSync(path,text);paths.add(path);
+          }
+          edit('apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts',[
+            ['      await terminals.revealActiveTerminal();','      await terminals.revealActiveTerminal();\n      await terminal.focusWhenReady();'],
+          ]);
+          fs.writeFileSync('apps/desktop/code-oss/scripts/stage-browser-resources.mjs',`import { access, cp, mkdir } from "node:fs/promises";
+          import { join, resolve } from "node:path";
+          import { fileURLToPath } from "node:url";
+          /** Upstream renderer and workers use both production dependency roots.
+           * These are resource directories inside the same Synara installation,
+           * not additional applications or native dependency copies. */
+          export async function stageNativeBrowserResources(runtime) {
+            const packages = ["vscode-oniguruma", "@vscode/tree-sitter-wasm"];
+            for (const name of packages) await access(join(runtime, "node_modules", name, "package.json"));
+            for (const resourceRoot of ["node_modules.asar", "node_modules.asar.unpacked"]) {
+              for (const name of packages) {
+                const destination = join(runtime, resourceRoot, name);
+                await mkdir(join(destination, ".."), { recursive: true });
+                await cp(join(runtime, "node_modules", name), destination, { recursive: true, verbatimSymlinks: true });
+              }
+              await access(join(runtime, resourceRoot, "vscode-oniguruma/release/onig.wasm"));
+              await access(join(runtime, resourceRoot, "@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm"));
+            }
+          }
+          if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+            if (!process.argv[2]) throw new Error("Pass the prepared native runtime directory.");
+            await stageNativeBrowserResources(resolve(process.argv[2]));
+          }
+          `);
+          for (const path of ['scripts/lib/code-oss-runtime.ts','scripts/lib/code-oss-runtime.test.ts']) edit(path,[
+            ['"out/synara.js",','"out/synara.js",\n    "node_modules.asar/vscode-oniguruma/release/onig.wasm",\n    "node_modules.asar/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",'],
+          ]);
+          edit('apps/desktop/code-oss/scripts/smoke.mjs',[
+            ['        "/node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm",','        "/node_modules.asar/vscode-oniguruma/release/onig.wasm",\n        "/node_modules.asar/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",\n        "/node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm",'],
+            ['    await command("Synara: New Terminal in Active Worktree");',`    await command("Synara: New Terminal in Active Worktree");
+              // Palette dismissal precedes async terminal creation. Wait for the
+              // product's own focusWhenReady, rather than sending text to the editor.
+              await until(() => workbench.evaluate(() => document.activeElement?.classList.contains("xterm-helper-textarea")), Boolean, "new native terminal automatically receives keyboard focus");
+              await record("native worktree terminal automatically receives input focus");`],
+            ['    // Capture an actual short X11 video only after all functional checks pass.',`    await workbench.keyboard.press("Control+Shift+g");
+              await until(() => workbench.locator("body").innerText(), text => text.includes("Source Control"), "native Source Control view");
+              screen("after-ide-git.png");
+              if (/Failed to load resource .*\\/node_modules\\.asar.*\\.wasm|TextMateWorker.*Failed to fetch/.test(log)) throw new Error("A production syntax worker resource is still missing");
+              // Capture an actual short X11 video only after all functional checks pass.`],
+          ]);
+          fs.writeFileSync('.service-paths.json',JSON.stringify([...paths]));
+          JS
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format exact implementation source and produce full final diff
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const paths=JSON.parse(fs.readFileSync('.service-paths.json','utf8'));
+          execFileSync('node_modules/.bin/oxfmt',paths,{stdio:'inherit'});
+          fs.writeFileSync('service-manifest.json',JSON.stringify(paths.map(path=>({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')})),null,2));
+          execFileSync('tar',['-czf','service-source.tar.gz','service-manifest.json',...paths]);
+          execFileSync('git',['add','--',...paths]);
+          fs.writeFileSync('continuation.diff',execFileSync('git',['diff','--cached','--no-ext-diff','--binary']));
+          console.log(execFileSync('git',['diff','--cached','--stat'],{encoding:'utf8'}));
+          JS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-complete-source
+          path: |
+            service-source.tar.gz
+            continuation.diff
+          retention-days: 3
+          if-no-files-found: error
+      - name: Final packaging regression check
+        run: bun run --cwd scripts test -- lib/code-oss-runtime.test.ts
+  native:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-source
+      - run: tar -xzf service-source.tar.gz
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Native workbench interface check
+        working-directory: .code-oss/source
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npm run typecheck-client
+      - name: Preserve complete runtime
+        run: tar -czf code-oss-runtime.tar.gz -C .code-oss runtime
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-complete-runtime
+          path: code-oss-runtime.tar.gz
+          retention-days: 3
+          compression-level: 0
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - uses: actions/download-artifact@v8
+        with:
+          name: compiled-synara-existing
+          run-id: 38541504429
+          github-token: ${{ github.token }}
+      - name: Reuse unchanged compiled Synara host and renderer
+        run: tar -xzf compiled-synara.tar.gz
+      - name: Real Linux display
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 > .code-oss/display.log 2>&1
+      - name: Verify actual IDE and Agent continuity
+        timeout-minutes: 8
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Encode real mode switching GIF
+        if: success()
+        run: ffmpeg -y -i .code-oss/screenshots/agent-ide-switch.mp4 -vf 'fps=6,scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse' .code-oss/screenshots/agent-ide-switch.gif
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-complete-evidence
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
+  report:
+    needs: native
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-evidence
+      - name: Exact acceptance results
+        run: |
+          for file in after-checks.json failure.txt focus-at-failure.json native-probe.json probe-at-failure.json failure-page-1.txt; do
+            if [ -f "$file" ]; then echo "=== $file ==="; head -c 15000 "$file"; echo; fi
+          done
+          grep -E 'Failed to load|Uncaught|ERR |Error:' after-electron.log | tail -15 || true
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-source
+      - name: Validate exact prepared source as data
+        run: |
+          python - <<'PY'
+          import tarfile,pathlib
+          with tarfile.open('service-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  p=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>300000:
+                      raise ValueError('Unexpected source member')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store exact Git blobs only; connector publishes reviewed changes
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const allowed=new Set(['apps/desktop/src/desktopSchemes.ts','apps/desktop/src/desktopSchemes.test.ts','apps/desktop/src/codeOssHost.ts','apps/desktop/src/main.ts','apps/desktop/code-oss/scripts/stage-browser-resources.mjs','apps/desktop/code-oss/scripts/build.mjs','scripts/lib/code-oss-runtime.ts','scripts/lib/code-oss-runtime.test.ts','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/code-oss/scripts/fixtures/probe.cjs','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts','apps/web/src/components/DesktopIdeCoordinator.tsx']);
+            const rows=JSON.parse(fs.readFileSync('source/service-manifest.json','utf8'));
+            if(!Array.isArray(rows)||rows.length!==allowed.size)throw Error('Invalid manifest');
+            for(const row of rows) {
+              if(!allowed.delete(row.path))throw Error('Unexpected path');
+              const bytes=fs.readFileSync('source/'+row.path);
+              if(crypto.createHash('sha256').update(bytes).digest('hex')!==row.sha256)throw Error('Content mismatch');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('SERVICE_BLOB='+JSON.stringify({...row,sha:data.sha,mode:'100644',type:'blob'}));
+            }
+            console.log('=== FINAL CONTINUATION DIFF ===\n'+fs.readFileSync('continuation.diff','utf8'));
