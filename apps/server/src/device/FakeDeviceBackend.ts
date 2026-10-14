@@ -545,6 +545,21 @@ export class FakeDeviceBackend implements DeviceBackend {
     this.listeners.set(udid, onFrame);
   }
 
+  private readonly interruptionListeners = new Set<(udid: string, reason: string) => void>();
+
+  onStreamInterrupted(listener: (udid: string, reason: string) => void): () => void {
+    this.interruptionListeners.add(listener);
+    return () => {
+      this.interruptionListeners.delete(listener);
+    };
+  }
+
+  /** End a device's stream the way a helper crash does: no detach, frames just stop. */
+  interruptStream(udid: string, reason = "device helper exited (code=null, signal=SIGKILL)"): void {
+    this.listeners.delete(udid);
+    for (const listener of this.interruptionListeners) listener(udid, reason);
+  }
+
   async detachStream(udid: string): Promise<void> {
     if (!this.listeners.has(udid)) return;
     this.record({ kind: "detachStream", udid });

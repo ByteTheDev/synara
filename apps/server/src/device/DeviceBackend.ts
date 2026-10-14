@@ -242,6 +242,13 @@ export interface DeviceBackend {
   attachStream(udid: string, onFrame: DeviceFrameListener): Promise<void>;
   detachStream(udid: string): Promise<void>;
 
+  /**
+   * Called when a running stream ends without being detached (the helper
+   * process died). Optional: a backend that cannot lose its stream need not
+   * implement it. Returns an unsubscribe.
+   */
+  onStreamInterrupted?(listener: (udid: string, reason: string) => void): () => void;
+
   /** Release every process, socket, and timer the backend owns. */
   dispose(): Promise<void>;
 }

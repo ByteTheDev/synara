@@ -140,6 +140,7 @@ export interface IosSimulatorBackendOptions {
     binaryPath: string,
     env?: NodeJS.ProcessEnv,
     launch?: HelperSandboxCommand,
+    onExit?: (reason: string) => void,
   ) => HelperClient;
   /** Keeps the long-lived simctl process controllable in tests. */
   readonly spawnProcess?: SpawnRecordingProcess;
@@ -293,7 +294,11 @@ export class IosSimulatorBackend implements DeviceBackend {
     binaryPath: string,
     env?: NodeJS.ProcessEnv,
     launch?: HelperSandboxCommand,
+    onExit?: (reason: string) => void,
   ) => HelperClient;
+  /** The device the helper is streaming, so a helper death can name it. */
+  private streamingUdid: string | null = null;
+  private readonly streamInterruptedListeners = new Set<(udid: string, reason: string) => void>();
   /** One warning per backend when the helper runs unconfined. */
   private warnedUnsandboxed = false;
   private readonly spawnProcess: SpawnRecordingProcess;
@@ -354,7 +359,8 @@ export class IosSimulatorBackend implements DeviceBackend {
     this.run = options.run ?? runProcess;
     this.makeHelperClient =
       options.makeHelperClient ??
-      ((binaryPath, env, launch) => new HelperClient({ binaryPath, env, launch }));
+      ((binaryPath, env, launch, onExit) =>
+        new HelperClient({ binaryPath, env, launch, ...(onExit ? { onExit } : {}) }));
     this.spawnProcess =
       options.spawnProcess ??
       ((command, args) => spawn(command, [...args], { stdio: "pipe", windowsHide: true }));
@@ -1054,12 +1060,40 @@ export class IosSimulatorBackend implements DeviceBackend {
       await this.attachedHelper(udid, { force: true });
       await helper.startStream(udid, onFrame);
     }
+    this.streamingUdid = udid;
   }
 
   async detachStream(udid: string): Promise<void> {
+    if (this.streamingUdid === udid) this.streamingUdid = null;
     // The helper holds one attachment, so its stream is this device's stream.
     if (!this.helper || this.helper.attachedDevice?.udid !== udid) return;
     await this.helper.stopStream().catch(() => undefined);
+  }
+
+  onStreamInterrupted(listener: (udid: string, reason: string) => void): () => void {
+    this.streamInterruptedListeners.add(listener);
+    return () => {
+      this.streamInterruptedListeners.delete(listener);
+    };
+  }
+
+  /**
+   * The helper process exited. A running stream died with it, which nothing
+   * else reports: frames just stop. The next request starts a new helper; the
+   * listeners decide whether the stream is still wanted.
+   */
+  private helperExited(helper: HelperClient, reason: string): void {
+    if (this.disposed || this.helper !== helper) return;
+    const udid = this.streamingUdid;
+    this.streamingUdid = null;
+    if (udid === null) return;
+    for (const listener of this.streamInterruptedListeners) {
+      try {
+        listener(udid, reason);
+      } catch {
+        // One listener's failure must not hide the interruption from the rest.
+      }
+    }
   }
 
   async dispose(): Promise<void> {
@@ -1532,7 +1566,9 @@ export class IosSimulatorBackend implements DeviceBackend {
     const env = await this.toolchainEnv();
     const sandbox = await this.sandboxFor([binaryPath], env);
     if (this.disposed) throw new DeviceBackendError("The iOS simulator backend is disposed");
-    const helper = this.makeHelperClient(binaryPath, env, sandbox);
+    const helper: HelperClient = this.makeHelperClient(binaryPath, env, sandbox, (reason) =>
+      this.helperExited(helper, reason),
+    );
     helper.start();
     this.helper = helper;
     return helper;

@@ -243,6 +243,12 @@ export class DeviceManager {
   } | null = null;
   /** Devices this manager booted, and therefore may shut down again. */
   private readonly synaraBooted = new Set<string>();
+  /**
+   * Boots still running. A device being booted can still read as shut down in
+   * a listing taken meanwhile, and reconciling against that listing released
+   * its slot and forgot that Synara owns it.
+   */
+  private readonly bootsInFlight = new Set<string>();
   private readonly idleTimers = new Map<string, NodeJS.Timeout>();
   private activeStreamUdid: string | null = null;
   private desiredStreamUdid: string | null = null;
@@ -263,6 +269,9 @@ export class DeviceManager {
     this.schedule = options.setTimeout ?? ((handler, ms) => setTimeout(handler, ms));
     this.cancel = options.clearTimeout ?? ((handle) => clearTimeout(handle));
     this.now = options.now ?? Date.now;
+    this.backend.onStreamInterrupted?.((udid, reason) =>
+      this.handleStreamInterrupted(udid, reason),
+    );
   }
 
   private async recordBootOwnership(): Promise<void> {
@@ -356,8 +365,11 @@ export class DeviceManager {
 
   /** Devices the pane may offer as shutdown candidates when the cap is hit. */
   async synaraBootedDevices(): Promise<readonly DeviceDescriptor[]> {
-    const devices = await this.backend.listDevices({ includeShutdown: true }).catch(() => []);
-    this.reconcileSynaraBooted(devices);
+    const listed = await this.backend.listDevices({ includeShutdown: true }).catch(() => null);
+    // A failed listing says nothing about what is running; reconciling against
+    // it would drop every device Synara booted.
+    if (listed !== null) this.reconcileSynaraBooted(listed);
+    const devices = listed ?? [];
     return devices
       .filter((device) => this.synaraBooted.has(device.udid))
       .map((device) => this.describe(device));
@@ -383,7 +395,7 @@ export class DeviceManager {
         .map((device) => device.udid),
     );
     for (const udid of this.synaraBooted) {
-      if (running.has(udid)) continue;
+      if (running.has(udid) || this.bootsInFlight.has(udid)) continue;
       this.synaraBooted.delete(udid);
       this.clearIdleTimer(udid);
     }
@@ -392,10 +404,11 @@ export class DeviceManager {
   // ── Boot / shutdown ────────────────────────────────────────────────
 
   async boot(udid: string): Promise<DeviceBootResult> {
-    const devices = await this.backend.listDevices({ includeShutdown: true }).catch(() => []);
+    const listed = await this.backend.listDevices({ includeShutdown: true }).catch(() => null);
     // Devices that stopped without Synara doing it still held their slots, so
     // three shutdowns from a shell were enough to make every later boot refuse.
-    this.reconcileSynaraBooted(devices);
+    if (listed !== null) this.reconcileSynaraBooted(listed);
+    const devices = listed ?? [];
     const known = devices.find((device) => device.udid === udid) ?? null;
     // Viewing an already-booted device is uncapped: the cap exists to stop
     // Synara from accumulating simulators, not to limit what the user watches.
@@ -416,6 +429,7 @@ export class DeviceManager {
     // exists to stop Synara accumulating multi-gigabyte simulators would be
     // exceeded by however many requests arrived inside that window.
     this.synaraBooted.add(udid);
+    this.bootsInFlight.add(udid);
     let device: DeviceDescriptor;
     try {
       device = await this.backend.boot(udid);
@@ -424,6 +438,8 @@ export class DeviceManager {
       // after a failure would leak the slot for the process lifetime.
       this.synaraBooted.delete(udid);
       throw cause;
+    } finally {
+      this.bootsInFlight.delete(udid);
     }
     // Persisted before the caller is told the boot succeeded, so a crash in the
     // next instant still leaves a record to reclaim from.
@@ -508,6 +524,18 @@ export class DeviceManager {
       const attachment = this.threads.get(threadId);
       // Superseded or gone: another attach owns this thread's state now.
       if (!attachment || attachment.attachToken !== token) return;
+
+      if (this.wouldStealStream(udid)) {
+        // Nobody is watching this device yet, while another thread's viewers
+        // watch a different one on the helper's single stream. Taking it over
+        // froze their pane for an attachment nobody could see; the stream
+        // starts when this device gets a viewer instead.
+        if (attachment.attachPhase !== null) {
+          attachment.attachPhase = null;
+          await this.publish(threadId);
+        }
+        return;
+      }
 
       try {
         const started = await this.startStream(udid);
@@ -598,7 +626,18 @@ export class DeviceManager {
    */
   subscribeFrames(udid: string, sink: DeviceFrameSink): () => void {
     const unsubscribe = this.transport.subscribe(udid, sink);
-    void this.startStream(udid).catch(() => undefined);
+    // A thread whose attach deferred its stream (see `wouldStealStream`) gets
+    // the attach's retry loop now that someone is watching: the device may
+    // still be publishing its display.
+    const waiting = [...this.threads].find(
+      ([, attachment]) => attachment.attachedDeviceUdid === udid && this.activeStreamUdid !== udid,
+    );
+    if (waiting) {
+      const [threadId, attachment] = waiting;
+      void this.bringStreamUp(threadId, udid, attachment.attachToken);
+    } else {
+      void this.startStream(udid).catch(() => undefined);
+    }
     return () => {
       unsubscribe();
       // Capture stops as soon as the last viewer goes, whether or not a thread
@@ -1192,6 +1231,50 @@ export class DeviceManager {
       if (attachment.attachedDeviceUdid === udid) return true;
     }
     return false;
+  }
+
+  /** Starting `udid` would end a stream someone is watching, for no viewer of its own. */
+  private wouldStealStream(udid: string): boolean {
+    const active = this.activeStreamUdid;
+    return (
+      active !== null &&
+      active !== udid &&
+      this.transport.deviceSubscriberCount(udid) === 0 &&
+      this.transport.deviceSubscriberCount(active) > 0
+    );
+  }
+
+  /**
+   * The helper died under a live stream. Its frames simply stopped, so the
+   * pane froze on the last one with nothing reporting it. The stream is
+   * rebuilt on a fresh helper while anyone still needs it, and a failure is
+   * shown on every thread watching the device.
+   */
+  private handleStreamInterrupted(udid: string, reason: string): void {
+    const recovery = this.streamTransition.then(async () => {
+      if (this.disposed || this.activeStreamUdid !== udid) return;
+      this.activeStreamUdid = null;
+      this.transport.resetDevice(udid);
+      const needed =
+        this.transport.deviceSubscriberCount(udid) > 0 || this.isAttachedAnywhere(udid);
+      if (!needed) {
+        if (this.desiredStreamUdid === udid) this.desiredStreamUdid = null;
+        return;
+      }
+      this.desiredStreamUdid = udid;
+      try {
+        await this.reconcileStream();
+      } catch (error) {
+        const message = `The simulator helper stopped (${reason}) and could not be restarted: ${errorMessage(error)}`;
+        for (const [threadId, attachment] of this.threads) {
+          if (attachment.attachedDeviceUdid !== udid) continue;
+          attachment.attachPhase = null;
+          attachment.lastError = message;
+          await this.publish(threadId);
+        }
+      }
+    });
+    this.streamTransition = recovery.catch(() => undefined);
   }
 
   private async startStream(udid: string): Promise<boolean> {
