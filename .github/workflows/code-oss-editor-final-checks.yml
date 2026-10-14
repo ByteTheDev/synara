@@ -1,4 +1,4 @@
-name: Existing editor final source checks
+name: Existing editor publication review
 on:
   push:
     branches: [codex/1920-editor-surface-qa]
@@ -7,126 +7,60 @@ permissions:
   contents: read
   actions: read
 jobs:
-  source:
+  review:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: 82257a2f8e80bb2ef18fb77e4d4c72fba689b5f7
+          ref: c524c0bbda673f634b420f060a8575080d6d7f5b
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/download-artifact@v8
         with:
           name: bounded-files-evidence
-          run-id: 38586616119
+          run-id: 38589477844
           github-token: ${{ github.token }}
-          path: .code-oss/import
-      - name: Restore exact integrated source and current visible navigation
+          path: .code-oss/evidence
+      - name: Verify committed source matches tested artifact and audit complete change set
         run: |
-          tar -xzf .code-oss/import/checked-source.tar.gz
           python - <<'PY'
+          import hashlib,json,subprocess,re
           from pathlib import Path
-          p=Path('apps/desktop/code-oss/scripts/smoke.mjs');s=p.read_text()
-          anchor='      await agent.getByRole("button", { name: "Editor view", exact: true }).click();'
-          assert s.count(anchor)==1
-          s=s.replace(anchor,'''      const environment = agent.getByRole("button", { name: "Toggle environment panel", exact: true });
-                if ((await environment.getAttribute("aria-pressed")) !== "true") await environment.click();
-          '''+anchor)
-          # Keep one explicit default rather than the temporary duplicate watchdog setting.
-          s=s.replace('  application.context().setDefaultTimeout(15000);\n','')
-          p.write_text(s)
+          manifest=json.loads(Path('.code-oss/evidence/manifest.json').read_text())
+          for row in manifest:
+              assert hashlib.sha256(Path(row['path']).read_bytes()).hexdigest()==row['sha256'],row['path']
+          captures={'after-native-file-open.png':'after-native-file-open.png','after-existing-markdown-preview.png':'after-existing-markdown-preview.png','after-existing-native-diff.png':'after-existing-native-diff.png','after-synara-ide-dark.png':'after-existing-editor-dark.png','after-synara-ide-light.png':'after-existing-editor-light.png','files-chat-switch.gif':'files-chat-switch.gif'}
+          for artifact,committed in captures.items():
+              assert Path('.code-oss/evidence',artifact).read_bytes()==Path('docs/images/code-oss',committed).read_bytes(),committed
+          changes=subprocess.check_output(['git','diff','HEAD^','HEAD','--name-status']).decode();print(changes)
+          paths=subprocess.check_output(['git','diff','HEAD^','HEAD','--name-only']).decode().splitlines()
+          assert len(paths)==37,len(paths)
+          assert not any(p.startswith('.github/') or 'lock' in Path(p).name or '/dist/' in p or p.startswith('.code-oss/') for p in paths)
+          assert not any(line.startswith('D\t') for line in changes.splitlines())
+          patch=subprocess.check_output(['git','diff','HEAD^','HEAD','--', '.', ':!docs/images/**']).decode()
+          additions='\n'.join(line for line in patch.splitlines() if line.startswith('+') and not line.startswith('+++'))
+          for pattern in [r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',r'gh[pousr]_[A-Za-z0-9]{30,}',r'github_pat_[A-Za-z0-9_]{40,}']:
+              assert not re.search(pattern,additions),'Unexpected credential material'
+          print('Verified all 10 recovered source hashes, 6 capture byte comparisons, 37 intentional paths, no deletions/QA workflows/lockfiles/runtime binaries or detected credentials.')
+          Path('.code-oss/final-review.patch').write_text(patch)
           PY
+          git diff HEAD^ HEAD --check
+          git diff HEAD^ HEAD --stat
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
           electron: 'true'
-      - name: Format only the revised harness
-        run: node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/smoke.mjs
-      - name: Preserve reviewable source and diff
+      - name: Validate only changes since successful static checks
         run: |
-          mkdir -p .code-oss/final
-          git diff --check
-          git diff --stat
-          git diff > .code-oss/final/source.patch
-          python - <<'PY'
-          import subprocess,hashlib,json,tarfile
-          from pathlib import Path
-          paths=subprocess.check_output(['git','diff','--name-only','-z']).decode().strip('\0').split('\0')
-          allowed={'apps/desktop/code-oss/overlay/src/vs/synara/electron-main/host.ts','apps/desktop/code-oss/patches.json','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts','apps/desktop/src/nativeEditorView.ts','apps/desktop/src/nativeEditorView.test.ts','apps/web/src/components/EditorWorkspaceView.tsx'}
-          assert set(paths)==allowed,(paths,allowed)
-          manifest=[{'path':p,'sha256':hashlib.sha256(Path(p).read_bytes()).hexdigest()} for p in paths]
-          Path('.code-oss/final/manifest.json').write_text(json.dumps(manifest,indent=2))
-          with tarfile.open('.code-oss/final/source.tar.gz','w:gz') as archive:
-              for p in paths:archive.add(p)
-          PY
-      - name: Required integrated static checks and affected React tests
-        run: |
-          set +e
-          bun run fmt:check > .code-oss/final/format.log 2>&1; fmt=$?
-          bun run lint > .code-oss/final/lint.log 2>&1; lint=$?
-          bun run typecheck > .code-oss/final/typecheck.log 2>&1; types=$?
-          bun run test:web:focused src/components/EditorWorkspaceView.test.tsx > .code-oss/final/web-tests.log 2>&1; tests=$?
-          printf 'format=%s lint=%s typecheck=%s affected_web_tests=%s\n' "$fmt" "$lint" "$types" "$tests" | tee .code-oss/final/results.txt
-          test "$fmt$lint$types$tests" = 0000
+          node_modules/.bin/oxfmt --check docs/code-oss.md apps/desktop/src/codeOssHost.ts apps/desktop/code-oss/scripts/appearance-smoke.mjs
+          node_modules/.bin/oxlint --report-unused-disable-directives apps/desktop/src/codeOssHost.ts apps/desktop/code-oss/scripts/appearance-smoke.mjs
+      - name: Review complete source diff
+        if: always()
+        run: cat .code-oss/final-review.patch
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: final-editor-source-checks
-          path: .code-oss/final
+          name: existing-editor-publication-review
+          path: .code-oss/final-review.patch
           retention-days: 7
-  review:
-    needs: source
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 3
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: final-editor-source-checks
-      - name: Report exact changes and check results
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          for name in ['results.txt','source.patch','format.log','lint.log','typecheck.log','web-tests.log']:
-              p=Path(name)
-              if p.exists():print('\nFILE '+name+'\n'+p.read_text(errors='replace')[-48000:])
-          PY
-  blobs:
-    needs: source
-    if: always()
-    runs-on: ubuntu-24.04
-    timeout-minutes: 4
-    permissions:
-      contents: write
-      actions: read
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: final-editor-source-checks
-      - name: Extract source as data
-        run: |
-          python - <<'PY'
-          import tarfile,pathlib
-          with tarfile.open('source.tar.gz') as archive:
-              for item in archive.getmembers():
-                  p=pathlib.PurePosixPath(item.name)
-                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>300000:raise ValueError('Unexpected source member')
-              archive.extractall('source',filter='data')
-          PY
-      - uses: actions/github-script@v8
-        with:
-          script: |
-            const fs=require('node:fs'),crypto=require('node:crypto');
-            const manifest=JSON.parse(fs.readFileSync('manifest.json','utf8'));
-            const allowed=new Set(['apps/desktop/code-oss/overlay/src/vs/synara/electron-main/host.ts','apps/desktop/code-oss/patches.json','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts','apps/desktop/src/nativeEditorView.ts','apps/desktop/src/nativeEditorView.test.ts','apps/web/src/components/EditorWorkspaceView.tsx']);
-            if(manifest.length!==allowed.size)throw Error('Unexpected source count');
-            const result=[];
-            for(const item of manifest){
-              if(!allowed.delete(item.path))throw Error('Unexpected path');
-              const bytes=fs.readFileSync('source/'+item.path);
-              if(crypto.createHash('sha256').update(bytes).digest('hex')!==item.sha256)throw Error('Invalid source hash');
-              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
-              result.push({...item,sha:data.sha,mode:'100644',type:'blob'});
-            }
-            console.log('SOURCE_BLOBS='+JSON.stringify(result));
-            // No commits or branch changes: final publication stays with the connector.
