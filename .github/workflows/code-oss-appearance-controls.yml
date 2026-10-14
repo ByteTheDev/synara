@@ -1,0 +1,120 @@
+name: Synara appearance final controls
+on:
+  push:
+    branches: [codex/1920-synara-appearance-qa]
+    paths: [.github/workflows/code-oss-appearance-controls.yml]
+permissions:
+  contents: read
+jobs:
+  controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 650437438ca9b1913ab2dbf6115d6c865ab384f8
+          persist-credentials: false
+      - name: Reuse the existing new-session flow and document shared appearance
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('apps/web/src/components/DesktopIdeCoordinator.tsx')
+          s=p.read_text()
+          def replace(before,after):
+              global s
+              if s.count(before)!=1: raise ValueError('Changed session source anchor: '+before[:80])
+              s=s.replace(before,after)
+          replace('import { useEffect, useMemo } from "react";', 'import { useEffect, useMemo, useState } from "react";\nimport { useHandleNewChat } from "../hooks/useHandleNewChat";')
+          anchor='  const { focusedThreadId, activeThread, activeProject } = useFocusedChatContext();\n  const navigate = useNavigate();'
+          replace(anchor,anchor+'\n  const { handleNewChat } = useHandleNewChat();\n  const fail = useDesktopIdeStore((store) => store.fail);\n  const [creating, setCreating] = useState(false);\n  const createSession = async () => {\n    if (creating) return;\n    setCreating(true);\n    try {\n      const result = await handleNewChat({ fresh: true });\n      if (!result.ok) fail(result.error);\n    } catch (error) {\n      fail(error);\n    } finally {\n      setCreating(false);\n    }\n  };')
+          replace('''          onClick={() => {
+                        void navigate({
+                          to: "/",
+                          search: (previous) => ({ ...previous, splitViewId: undefined, view: undefined }),
+                        });
+                      }}'''.replace('              ','',1) if False else '          onClick={() => {\n            void navigate({\n              to: "/",\n              search: (previous) => ({ ...previous, splitViewId: undefined, view: undefined }),\n            });\n          }}', '          disabled={creating}\n          aria-busy={creating}\n          onClick={() => {\n            void createSession();\n          }}')
+          p.write_text(s)
+          p=Path('docs/code-oss.md')
+          s=p.read_text()
+          anchor='## Build and packaging'
+          assert s.count(anchor)==1
+          text='''## Shared Synara appearance
+
+          The native IDE follows the active Synara light/dark theme, imported palette, UI font family, text size and control radius. Changes propagate live from the existing theme settings. Neutral chrome, tabs, lists, menus, inputs, the command palette and status bar use the same semantic surfaces, borders and accents as the Agent renderer.
+
+          The Agent / IDE switch is a compact segmented control with explicit selected and keyboard-focus states. The docked Agent header reuses Synara buttons and its session picker, displays readable session/project names, and opens a new session through the existing new-chat flow. The native status bar separates mode identity from agent attention.
+
+          Appearance changes are window-local Code-OSS color overlays, not writes to user or workspace settings. Native syntax-token colors, editor/terminal font settings, split geometry and layouts remain under Code-OSS control. Native high-contrast themes opt out of cosmetic colors and CSS. UI fonts must be installed on the operating system; the bridge does not fetch font URLs or grant the workbench access to arbitrary resources. macOS vibrancy and platform window materials still need platform-specific visual qualification.
+
+          The bridge accepts only bounded semantic colors, font-family text and numeric sizes. It does not accept arbitrary stylesheets. A frame-batched observer watches only theme-related root attributes, never the conversation subtree, and unchanged palettes are not retransmitted.
+
+          '''
+          s=s.replace(anchor,text+anchor)
+          p.write_text(s)
+          PY
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Verify only the changed control and its existing creation flow
+        run: |
+          node_modules/.bin/oxfmt apps/web/src/components/DesktopIdeCoordinator.tsx docs/code-oss.md
+          git diff --check
+          node_modules/.bin/oxlint apps/web/src/components/DesktopIdeCoordinator.tsx
+          bun run --cwd apps/web typecheck
+          bun run --cwd apps/web test -- src/lib/startContainerChat.test.ts src/uiFontSize.test.ts
+      - name: Build final Synara host and Agent UI without rebuilding Code-OSS
+        run: bun run build:desktop > .code-oss-controls-build.log 2>&1 || { tail -100 .code-oss-controls-build.log; exit 1; }
+      - name: Preserve final source and compiled application
+        run: |
+          mkdir -p .code-oss/controls
+          tar -czf .code-oss/controls/controls-source.tar.gz apps/web/src/components/DesktopIdeCoordinator.tsx docs/code-oss.md
+          tar -czf .code-oss/controls/compiled-synara.tar.gz apps/desktop/dist-electron apps/server/dist apps/web/dist packages/contracts/dist
+          git diff -- apps/web/src/components/DesktopIdeCoordinator.tsx docs/code-oss.md > .code-oss/controls/controls.diff
+          node - <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto');
+          const files=['apps/web/src/components/DesktopIdeCoordinator.tsx','docs/code-oss.md'];
+          fs.writeFileSync('.code-oss/controls/manifest.json',JSON.stringify(files.map(path=>({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')}))));
+          JS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: synara-appearance-final-controls
+          path: .code-oss/controls
+          retention-days: 3
+  blobs:
+    needs: controls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-appearance-final-controls
+      - name: Extract only validated source data
+        run: |
+          python - <<'PY'
+          import pathlib,tarfile
+          with tarfile.open('controls-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  p=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>50000: raise ValueError('Unexpected source')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store verified changes without publishing a branch
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const allowed=new Set(['apps/web/src/components/DesktopIdeCoordinator.tsx','docs/code-oss.md']);
+            const rows=JSON.parse(fs.readFileSync('manifest.json','utf8'));
+            if(rows.length!==allowed.size)throw Error('Unexpected manifest');
+            for(const row of rows){
+              if(!allowed.delete(row.path))throw Error('Unexpected path');
+              const bytes=fs.readFileSync('source/'+row.path);
+              if(crypto.createHash('sha256').update(bytes).digest('hex')!==row.sha256)throw Error('Source checksum mismatch');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('CONTROL_BLOB='+JSON.stringify({...row,sha:data.sha,mode:'100644',type:'blob'}));
+            }
+            console.log('FINAL_CONTROL_DIFF\n'+fs.readFileSync('controls.diff','utf8'));
