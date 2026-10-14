@@ -16,19 +16,33 @@ jobs:
           name: native-service-runtime
           run-id: 38530755801
           github-token: ${{ github.token }}
-      - name: Read exact bundled startup sites, without launching or changing source
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-service-acceptance-evidence
+          run-id: 38530755801
+          github-token: ${{ github.token }}
+          path: evidence
+      - name: Read actual evidence and the corresponding bundled source
         run: |
           tar -xzf code-oss-runtime.tar.gz runtime/out/synara.js runtime/out/vs/workbench/workbench.desktop.main.js
           node --input-type=module <<'JS'
           import fs from 'node:fs';
-          const sites = [['runtime/out/vs/workbench/workbench.desktop.main.js', [775534,970929,1066283]], ['runtime/out/synara.js', [122916]]];
-          for (const [file, rows] of sites) {
-            const lines = fs.readFileSync(file, 'utf8').split('\n');
-            for (const row of rows) {
-              let marker = row - 1;
-              while (marker >= 0 && !/^\/\/ (src\/|vs\/|node_modules\/)/.test(lines[marker])) marker--;
-              console.log('\n=== '+file+':'+row+' ===\n'+(marker >= 0 ? lines[marker] : 'No source marker'));
-              for (let n = Math.max(0,row-20); n < Math.min(lines.length,row+15); n++) console.log((n+1)+': '+lines[n]);
-            }
+          const log = fs.readFileSync('evidence/after-electron.log', 'utf8');
+          console.log('EVIDENCE FILES', fs.readdirSync('evidence'));
+          for (const file of ['failure.txt','after-checks.json','probe-at-failure.json','failure-page-0.txt','failure-page-1.txt']) {
+            if (fs.existsSync('evidence/'+file)) console.log('=== '+file+' ===\n'+fs.readFileSync('evidence/'+file, 'utf8').slice(0,6000));
+          }
+          console.log('=== ERROR LOG ===\n'+log.split('\n').filter(line => /ERR|Error|TypeError|workbench\.desktop\.main\.js:|synara\.js:/.test(line)).join('\n').slice(-15000));
+          const seen = new Set();
+          for (const hit of log.matchAll(/(?:runtime|code-oss)\/out\/(synara\.js|vs\/workbench\/workbench\.desktop\.main\.js):(\d+):\d+/g)) {
+            const key = hit[1]+':'+hit[2];
+            if (seen.has(key) || seen.size >= 12) continue;
+            seen.add(key);
+            const lines = fs.readFileSync('runtime/out/'+hit[1], 'utf8').split('\n');
+            const row = Number(hit[2]);
+            let marker = row-1;
+            while (marker >= 0 && !/^\/\/ (src\/|vs\/|node_modules\/)/.test(lines[marker])) marker--;
+            console.log('\n=== '+key+' ===\n'+(marker >= 0 ? lines[marker] : 'No source marker'));
+            for (let n = Math.max(0,row-10); n < Math.min(lines.length,row+10); n++) console.log((n+1)+': '+lines[n]);
           }
           JS
