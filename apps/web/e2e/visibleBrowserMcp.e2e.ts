@@ -920,6 +920,43 @@ test("preserves composer keyboard ownership while hovering two background browse
         };
       }),
     ).toEqual({ blurs: 0, focused: true, value: "draft text", selection: [3, 6] });
+    if (process.platform === "darwin") {
+      // The same owned background tabs must receive hover while the user is in
+      // another app. Blur only this isolated test window; agent input may not raise it.
+      await electronApp.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0]!.blur());
+      await expect
+        .poll(() =>
+          electronApp.evaluate(({ BrowserWindow }) =>
+            BrowserWindow.getAllWindows()[0]!.isFocused(),
+          ),
+        )
+        .toBe(false);
+      for (const tabId of tabs) {
+        const before = await run(
+          tabId,
+          `return await page.evaluate(() => Number(document.body.dataset.trustedMoves));`,
+        );
+        await run(
+          tabId,
+          `for (let index = 0; index < 5; index += 1) await page.mouse.move(400 + index * 2, 220 + index);`,
+        );
+        await expect
+          .poll(async () => {
+            const after = await run(
+              tabId,
+              `return await page.evaluate(() => Number(document.body.dataset.trustedMoves));`,
+            );
+            return Number(after.structuredContent.value);
+          })
+          .toBeGreaterThan(Number(before.structuredContent.value));
+        expect(
+          await electronApp.evaluate(({ BrowserWindow }) =>
+            BrowserWindow.getAllWindows()[0]!.isFocused(),
+          ),
+        ).toBe(false);
+      }
+    }
+
     for (const [index, tabId] of tabs.entries()) {
       const observed = await run(
         tabId,

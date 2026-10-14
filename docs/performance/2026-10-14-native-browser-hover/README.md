@@ -52,7 +52,11 @@ The real Electron MCP regression in
 opens two background browser tabs, disables Playwright's focus emulation, and
 checks the composer's focus events, draft, and selection during 80 pointer moves.
 Before the repair it failed with **80 blur events instead of zero**. It also
-checks trusted hover feedback and typing in both tabs. Existing queue tests now
+checks trusted hover feedback and typing in both tabs. On macOS it also blurs the
+isolated shell window and verifies that both production-managed background tabs
+still receive trusted pointer moves without refocusing that window. This
+qualification uses the real MCP/BrowserManager path; it does not infer behavior
+from a detached, never-rendered WebContentsView. Existing queue tests now
 exercise a queued native hover both with and without cancellation.
 
 Native hover delivery is asynchronous in both versions. An immediate style read
