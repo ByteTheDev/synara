@@ -23,7 +23,7 @@ jobs:
           sandbox=$(realpath apps/desktop/node_modules/electron/dist/chrome-sandbox)
           sudo chown root:root "$sandbox"
           sudo chmod 4755 "$sandbox"
-      - name: Verify native WebContents adoption without changing application source
+      - name: Verify pinned ownership handoff without changing application source
         run: |
           cat > .code-oss-view-probe.cjs <<'JS'
           const { app, BrowserWindow, WebContentsView } = require('electron');
@@ -31,7 +31,11 @@ jobs:
             const window = new BrowserWindow({show:false,width:1000,height:700});
             const contents=window.webContents;
             const shell = new WebContentsView();
-            const native = new WebContentsView({webContents:contents});
+            let native;
+            if(typeof contents._setOwnerWindow!=='function')throw Error('Pinned owner handoff not available');
+            contents._setOwnerWindow(null);
+            try { native = new WebContentsView({webContents:contents}); }
+            finally { contents._setOwnerWindow(window); }
             window.contentView.addChildView(shell);
             window.contentView.addChildView(native);
             shell.setBounds({x:0,y:0,width:1000,height:700});
@@ -43,7 +47,9 @@ jobs:
             const bounds=native.getBounds();
             if(bounds.x!==80||bounds.width!==600)throw Error('Native bounds overwritten by window resize');
             if(BrowserWindow.fromWebContents(native.webContents)?.id!==window.id||window.webContents!==contents)throw Error('Native window ownership changed');
-            console.log('RESIZED', JSON.stringify({bounds,viewport:await native.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})'),owned:BrowserWindow.fromWebContents(native.webContents)?.id===window.id}));
+            const viewport=await native.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})');
+            if(viewport.width!==600||viewport.height!==500)throw Error('Primary viewport layout did not follow editor slot');
+            console.log('RESIZED', JSON.stringify({bounds,viewport,owned:BrowserWindow.fromWebContents(native.webContents)?.id===window.id}));
             native.setVisible(false);native.setVisible(true);
             if(await contents.executeJavaScript('document.querySelector("h1").textContent')!=='Retained native renderer')throw Error('Renderer state lost');
             shell.webContents.close(); app.exit(0);
