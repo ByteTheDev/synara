@@ -1,0 +1,28 @@
+name: Inspect existing editor startup
+on:
+  push:
+    branches: [codex/1920-editor-surface-qa]
+    paths: [.github/workflows/code-oss-editor-startup-diagnostics.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: existing-editor-resumed-evidence
+          run-id: 38578035023
+          github-token: ${{ github.token }}
+      - name: Read actual renderer failure and session diagnostics
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          print('FILES', [(str(p),p.stat().st_size) for p in Path('.').rglob('*') if p.is_file()])
+          for p in Path('.').rglob('*'):
+              if p.is_file() and p.suffix in ['.txt','.log','.json']:
+                  text=p.read_text(errors='replace')
+                  print('\nFILE '+str(p)+'\n'+text[-35000:])
+          PY
