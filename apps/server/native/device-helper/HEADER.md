@@ -181,6 +181,29 @@ boots or reuses a simulator, streams ≥30 frames asserting keyframe and Annex B
 NAL structure, injects a tap, dumps the accessibility tree, verifies PNG magic on
 a screenshot, and shuts down only a simulator it booted itself.
 
+### Xcode 27 qualification
+
+Checked on Xcode 27.0 (27A266a), iOS 27.0 (24A434), and macOS 27.0.1
+(26A434), using a dedicated SwiftUI fixture in a private CoreSimulator device
+set. The evidence driver copied these native sources and changed only the
+device-set lookup; no existing user simulator was used. The shipped default-set
+lookup was separately verified through `--probe`.
+
+The fixture verified an HID tap by its changed counter, mixed-case typing and
+subsequent lowercase input without a held Shift, exact Unicode value replacement,
+an empty value clearing the field, and H.264 delivery with keyframes and stream
+stop. The actual server backend and manager also passed with the Seatbelt profile:
+Italian-layout `auto` input preserved `Wi-Fi Città`, the flattened system keyboard
+was summarized, and one capture produced a 390×844-point preview plus a
+1170×2532-pixel full proof. An already-aborted input was rejected before dispatch.
+
+This checks one iPhone simulator/runtime, not every keyboard, an iPad, a signed
+packaged app, or Windows. XPC interruption/release is covered by the deterministic
+transport regression below rather than by terminating the guest's input service.
+Cancellation prevents later dispatch; it cannot revoke native events already sent.
+Raw app stdout/stderr is intentionally not redirected or captured; `device_logs`
+retains bounded unified logs and crash reports.
+
 ### Offline input-delivery regression
 
 The bridge bounds one input RPC to 13 seconds, with at most one further second
