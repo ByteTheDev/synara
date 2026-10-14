@@ -11,7 +11,8 @@ import { useTheme } from "~/hooks/useTheme";
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const FONT_SIZE_PX = 10;
 const LINE_HEIGHT_PX = 13;
-// The idle field drifts slowly, so it redraws rarely; ripples need smooth motion.
+// The idle field drifts slowly, so it redraws rarely on a plain timer; only click ripples,
+// which need smooth motion, use animation frames.
 const IDLE_FRAME_INTERVAL_MS = 1000 / 15;
 const RIPPLE_FRAME_INTERVAL_MS = 1000 / 40;
 // Share of cells that swap glyphs each frame; cells inside a ripple swap far more often.
@@ -289,6 +290,11 @@ export function AsciiWaveBackground() {
       const cellH = Math.round(LINE_HEIGHT_PX * dpr);
       const cols = Math.ceil(canvas.width / cellW);
       const rows = Math.ceil(canvas.height / cellH);
+      // Hidden or not laid out yet: the ResizeObserver rebuilds once there is room.
+      if (cols < 1 || rows < 1) {
+        field = null;
+        return;
+      }
       atlas = buildAtlas(fontFamily, cellW, cellH, dpr, ink);
       const layer = createCanvas(cols * cellW, rows * cellH);
       const scratch = createCanvas(cols * cellW, rows * cellH);
@@ -474,6 +480,18 @@ export function AsciiWaveBackground() {
       if (hasAccent) composite(field, field.accentMask, accent);
     };
 
+    let timerId = 0;
+    const scheduleNext = (delayMs: number) => {
+      if (ripplesRef.current.length > 0) {
+        frameId = requestAnimationFrame(tick);
+      } else {
+        timerId = window.setTimeout(() => {
+          timerId = 0;
+          tick(performance.now());
+        }, delayMs);
+      }
+    };
+
     const tick = (nowMs: number) => {
       frameId = 0;
       // Not set up yet: the idle setup calls wake() itself once the field exists.
@@ -488,12 +506,19 @@ export function AsciiWaveBackground() {
       // (or while the glyph layer is still filling in).
       const filling = field.filled < field.glyphs.length;
       if (!reduceMotion || filling || ripplesRef.current.length > 0) {
-        frameId = requestAnimationFrame(tick);
+        scheduleNext(Math.max(0, lastFrameMs + IDLE_FRAME_INTERVAL_MS - nowMs));
       }
     };
 
+    // Draw soon. A pending idle timer is kept unless a new ripple needs frame-rate updates.
     const wake = () => {
-      if (frameId === 0) frameId = requestAnimationFrame(tick);
+      if (frameId !== 0) return;
+      if (timerId !== 0) {
+        if (ripplesRef.current.length === 0) return;
+        window.clearTimeout(timerId);
+        timerId = 0;
+      }
+      scheduleNext(0);
     };
 
     // Listen on the landing itself: its heading and composer sit above the canvas.
@@ -560,6 +585,7 @@ export function AsciiWaveBackground() {
       resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", wake);
       if (frameId !== 0) cancelAnimationFrame(frameId);
+      window.clearTimeout(timerId);
     };
   }, [ink, accent, reduceMotion]);
 
