@@ -1,0 +1,83 @@
+name: Resume existing Synara editor acceptance
+on:
+  push:
+    branches: [codex/1920-editor-surface-qa]
+    paths: [.github/workflows/code-oss-existing-editor-resume.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  desktop:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 382bee08a3f5c0c5323b4b775a61179de261f27c
+          persist-credentials: false
+      - name: Reveal the existing hover-only project toolbar normally
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('apps/desktop/code-oss/scripts/smoke.mjs')
+          s=p.read_text()
+          old='    await agent.getByRole("button", { name: "Add project", exact: true }).first().click();'
+          new='''    await agent.getByRole("dialog").waitFor({ state: "hidden" });
+              const addProject = agent.getByRole("button", { name: "Add project", exact: true }).first();
+              // This action intentionally reveals on section hover/focus. Playwright
+              // checks hit testing before moving the pointer for click, so reveal it first.
+              await addProject.locator('xpath=ancestor::div[contains(@class,"group/project-header")][1]').hover();
+              await addProject.click();'''
+          assert s.count(old)==1
+          p.write_text(s.replace(old,new))
+          PY
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Check changed acceptance source
+        run: node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/download-artifact@v8
+        with:
+          name: existing-editor-runtime
+          run-id: 38571986911
+          github-token: ${{ github.token }}
+          path: .code-oss/import
+      - run: tar -xzf .code-oss/import/existing-editor-runtime.tar.gz -C .code-oss
+      - name: Build candidate with verified native resources
+        run: bun run build:desktop
+      - name: Preserve compiled candidate for focused UI iteration
+        run: |
+          tar -czf compiled-editor.tar.gz apps/desktop/dist-electron apps/server/dist apps/web/dist apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: existing-editor-compiled
+          path: compiled-editor.tar.gz
+          retention-days: 3
+      - name: Prepare desktop display
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 >/dev/null
+          SANDBOX=$(realpath apps/desktop/node_modules/electron/dist/chrome-sandbox)
+          sudo chown root:root "$SANDBOX" && sudo chmod 4755 "$SANDBOX"
+      - name: Exercise actual existing editor, inspector and native services
+        id: smoke
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/evidence
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs --appearance
+      - name: Print focused diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['failure.txt','after-checks.json','webcontents.json','failure-page-0.txt','failure-page-1.txt']:
+              p=Path('.code-oss/evidence')/name
+              if p.exists(): print(name+'\n'+p.read_text()[:24000])
+          PY
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: existing-editor-resumed-evidence
+          path: .code-oss/evidence
+          retention-days: 7
+          if-no-files-found: warn
