@@ -1,523 +1,256 @@
-/* Native Code-OSS contribution. The pane hosts the existing Synara renderer via
- * an Electron sibling view, not a webview/iframe or a second agent extension. */
-import { SynaraWorkbenchAppearance } from "./appearance.js";
-import { IWorkbenchThemeService } from "../../workbench/services/themes/common/workbenchThemeService.js";
-import { Codicon } from "../../base/common/codicons.js";
-import { KeyCode, KeyMod } from "../../base/common/keyCodes.js";
+/* Code-OSS services inside the existing Synara editor, not another IDE surface. */
 import { Disposable, toDisposable } from "../../base/common/lifecycle.js";
 import { URI } from "../../base/common/uri.js";
 import { ipcRenderer } from "../../base/parts/sandbox/electron-browser/globals.js";
-import { ICommandService } from "../../platform/commands/common/commands.js";
 import { ICodeEditorService } from "../../editor/browser/services/codeEditorService.js";
-import { localize2 } from "../../nls.js";
-import { Action2, MenuId, registerAction2 } from "../../platform/actions/common/actions.js";
-import { ContextKeyExpr } from "../../platform/contextkey/common/contextkey.js";
-import { IDialogService } from "../../platform/dialogs/common/dialogs.js";
-import { SyncDescriptor } from "../../platform/instantiation/common/descriptors.js";
-import { ServicesAccessor } from "../../platform/instantiation/common/instantiation.js";
-import { IKeybindingService } from "../../platform/keybinding/common/keybinding.js";
-import { KeybindingWeight } from "../../platform/keybinding/common/keybindingsRegistry.js";
+import { IModelService } from "../../editor/common/services/model.js";
+import { ITextModelService } from "../../editor/common/services/resolverService.js";
+import { ICommandService } from "../../platform/commands/common/commands.js";
+import { IExtensionManagementService } from "../../platform/extensionManagement/common/extensionManagement.js";
+import { IFileService } from "../../platform/files/common/files.js";
 import { IMarkerService, MarkerSeverity } from "../../platform/markers/common/markers.js";
 import { INotificationService } from "../../platform/notification/common/notification.js";
 import { IQuickInputService } from "../../platform/quickinput/common/quickInput.js";
-import { Registry } from "../../platform/registry/common/platform.js";
 import { IWorkspaceContextService } from "../../platform/workspace/common/workspace.js";
-import { ViewPane } from "../../workbench/browser/parts/views/viewPane.js";
-import { ViewPaneContainer } from "../../workbench/browser/parts/views/viewPaneContainer.js";
-import {
-  registerWorkbenchContribution2,
-  WorkbenchPhase,
-} from "../../workbench/common/contributions.js";
-import {
-  Extensions as ViewExtensions,
-  IViewContainersRegistry,
-  IViewsRegistry,
-  ViewContainerLocation,
-} from "../../workbench/common/views.js";
-import { IDebugService } from "../../workbench/contrib/debug/common/debug.js";
+import { registerWorkbenchContribution2, WorkbenchPhase } from "../../workbench/common/contributions.js";
+import { IDebugService, State, type IExpressionContainer } from "../../workbench/contrib/debug/common/debug.js";
 import { ITerminalService } from "../../workbench/contrib/terminal/browser/terminal.js";
-import {
-  IStatusbarService,
-  StatusbarAlignment,
-} from "../../workbench/services/statusbar/browser/statusbar.js";
-import { IViewsService } from "../../workbench/services/views/common/viewsService.js";
+import { IEditorGroupsService } from "../../workbench/services/editor/common/editorGroupsService.js";
+import { IEditorService } from "../../workbench/services/editor/common/editorService.js";
+import { IWorkbenchLayoutService, Parts, EditorTabsMode } from "../../workbench/services/layout/browser/layoutService.js";
+import { ITextFileService } from "../../workbench/services/textfile/common/textfiles.js";
+import { IWorkbenchThemeService } from "../../workbench/services/themes/common/workbenchThemeService.js";
 import { IWorkspaceEditingService } from "../../workbench/services/workspaces/common/workspaceEditing.js";
-import {
-  DESKTOP_IDE_MAX_CONTEXT,
-  type DesktopIdeState,
-  type DesktopIdeContext,
+import { DESKTOP_IDE_PROTOCOL, DESKTOP_IDE_MAX_CONTEXT, isDesktopIdeRequest,
+  type DesktopIdeCommand, type DesktopIdeContext, type DesktopIdeEvent,
+  type DesktopIdeReply, type DesktopIdeRequest, type DesktopIdeState,
 } from "../common/desktopIde.js";
+import { SynaraWorkbenchAppearance } from "./appearance.js";
+import { SynaraDocuments } from "./documents.js";
+import { SynaraTerminals } from "./terminals.js";
 
 const CHANNEL = "vscode:synara";
-const VIEW_ID = "synara.agents";
-let state: DesktopIdeState | undefined;
-let activePane: SynaraAgentPane | undefined;
+const COMMANDS: Partial<Record<DesktopIdeCommand, string>> = {
+  suggest: "editor.action.triggerSuggest",
+  definition: "editor.action.revealDefinition",
+  references: "editor.action.referenceSearch.trigger",
+  rename: "editor.action.rename",
+  format: "editor.action.formatDocument",
+  commands: "workbench.action.showCommands",
+  debugStart: "workbench.action.debug.start",
+  debugStop: "workbench.action.debug.stop",
+  debugContinue: "workbench.action.debug.continue",
+  debugPause: "workbench.action.debug.pause",
+  debugStepOver: "workbench.action.debug.stepOver",
+  debugStepInto: "workbench.action.debug.stepInto",
+  debugStepOut: "workbench.action.debug.stepOut",
+  debugRestart: "workbench.action.debug.restart",
+  debugConfigure: "workbench.action.debug.configure",
+  breakpoint: "editor.debug.action.toggleBreakpoint",
+};
+
 function request(kind: string, value?: unknown): Promise<unknown> {
   return ipcRenderer.invoke(CHANNEL, { kind, value });
 }
-let revealAgents: (() => Promise<void>) | undefined;
-function sendPane(visible: boolean, rect: DOMRect): void {
-  void request("pane", {
-    visible,
-    x: Math.max(0, rect.x),
-    y: Math.max(0, rect.y),
-    width: rect.width,
-    height: rect.height,
-  });
-}
-
-class SynaraAgentPane extends ViewPane {
-  private agentBody: HTMLElement | undefined;
-  private frame: number | undefined;
-  protected override renderBody(container: HTMLElement): void {
-    super.renderBody(container);
-    this.agentBody = container;
-    activePane = this;
-    container.setAttribute("aria-label", "Synara agents");
-    const observer = new ResizeObserver(() => this.reportBounds());
-    observer.observe(container);
-    this._register(
-      toDisposable(() => {
-        observer.disconnect();
-        if (this.frame !== undefined) cancelAnimationFrame(this.frame);
-        if (activePane === this) activePane = undefined;
-        sendPane(false, container.getBoundingClientRect());
-      }),
-    );
-    this._register(this.onDidChangeBodyVisibility(() => this.reportBounds()));
-    this._register(this.viewDescriptorService.onDidChangeLocation(() => this.reportBounds()));
-    this.reportBounds();
-  }
-  override focus(): void {
-    super.focus();
-    void request("focus-agent");
-  }
-  protected override layoutBody(height: number, width: number): void {
-    super.layoutBody(height, width);
-    this.reportBounds();
-  }
-  reportBounds(): void {
-    if (this.frame !== undefined) cancelAnimationFrame(this.frame);
-    this.frame = requestAnimationFrame(() => {
-      this.frame = undefined;
-      if (this.agentBody) sendPane(this.isBodyVisible(), this.agentBody.getBoundingClientRect());
-    });
-  }
-}
-const container = Registry.as<IViewContainersRegistry>(
-  ViewExtensions.ViewContainersRegistry,
-).registerViewContainer(
-  {
-    id: "synara",
-    title: localize2("synara.container", "Synara Agents"),
-    icon: Codicon.commentDiscussion,
-    ctorDescriptor: new SyncDescriptor(ViewPaneContainer, [
-      "synara",
-      { mergeViewWithContainerWhenSingleView: true },
-    ]),
-    storageId: "synara",
-    hideIfEmpty: false,
-    order: 0,
-  },
-  ViewContainerLocation.AuxiliaryBar,
-);
-Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews(
-  [
-    {
-      id: VIEW_ID,
-      name: localize2("synara.agents", "Synara Agents"),
-      containerIcon: Codicon.commentDiscussion,
-      ctorDescriptor: new SyncDescriptor(SynaraAgentPane),
-      canToggleVisibility: true,
-      canMoveView: true,
-      focusCommand: { id: "synara.focusAgents" },
-    },
-  ],
-  container,
-);
-
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.toggleMode",
-        title: localize2("synara.toggle", "Synara: Switch Agent / IDE Mode"),
-        f1: true,
-        icon: Codicon.layout,
-        keybinding: {
-          primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyCode.KeyG,
-          weight: KeybindingWeight.WorkbenchContrib,
-        },
-        menu: [
-          { id: MenuId.TitleBar, group: "navigation", order: -100 },
-          {
-            id: MenuId.ViewTitle,
-            when: ContextKeyExpr.equals("view", VIEW_ID),
-            group: "navigation",
-          },
-        ],
-      });
-    }
-    async run(): Promise<void> {
-      await request("mode", state?.mode === "agent" ? "ide" : "agent");
-    }
-  },
-);
-
-async function sendContext(
-  kind: DesktopIdeContext["kind"],
-  title: string,
-  text: string,
-): Promise<void> {
-  const selected = state;
-  if (!selected?.scope.threadId)
-    throw new Error("Select a Synara agent session before sending context.");
-  if (!text.trim()) throw new Error("There is no selected context to send.");
-  const suffix = "\n[Context truncated by Synara.]";
-  const context: DesktopIdeContext = {
-    threadId: selected.scope.threadId,
-    generation: selected.generation,
-    kind,
-    title: title.slice(0, 512),
-    text:
-      text.length > DESKTOP_IDE_MAX_CONTEXT
-        ? text.slice(0, DESKTOP_IDE_MAX_CONTEXT - suffix.length) + suffix
-        : text,
-  };
-  await revealAgents?.();
-  await request("context", context);
-}
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.sendSelection",
-        title: localize2("synara.selection", "Synara: Add Selected Code to Agent Draft"),
-        f1: true,
-        menu: [{ id: MenuId.EditorContext, group: "synara", order: 1 }],
-      });
-    }
-    async run(accessor: ServicesAccessor): Promise<void> {
-      const editor =
-        accessor.get(ICodeEditorService).getFocusedCodeEditor() ??
-        accessor.get(ICodeEditorService).getActiveCodeEditor();
-      const model = editor?.getModel();
-      const selections = editor?.getSelections();
-      if (!model || !selections?.length) return;
-      const text = selections
-        .map(
-          (selection) =>
-            `Lines ${selection.startLineNumber}-${selection.endLineNumber}\n${model.getValueInRange(selection)}`,
-        )
-        .join("\n\n");
-      if (selections.every((selection) => selection.isEmpty()))
-        throw new Error("Select code before adding it to the agent draft.");
-      await sendContext("selection", model.uri.toString(), text);
-    }
-  },
-);
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.sendDiagnostics",
-        title: localize2("synara.diagnostics", "Synara: Add Current File Problems to Agent Draft"),
-        f1: true,
-      });
-    }
-    async run(accessor: ServicesAccessor): Promise<void> {
-      const model = accessor.get(ICodeEditorService).getActiveCodeEditor()?.getModel();
-      if (!model) return;
-      const markers = accessor.get(IMarkerService).read({ resource: model.uri, take: 100 });
-      await sendContext(
-        "diagnostics",
-        model.uri.toString(),
-        markers
-          .map(
-            (marker) =>
-              `${marker.startLineNumber}:${marker.startColumn} ${MarkerSeverity.toString(marker.severity)} ${marker.message}`,
-          )
-          .join("\n"),
-      );
-    }
-  },
-);
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.sendTerminalSelection",
-        title: localize2("synara.terminal", "Synara: Add Terminal Selection to Agent Draft"),
-        f1: true,
-        menu: [{ id: MenuId.TerminalInstanceContext, group: "synara", order: 1 }],
-      });
-    }
-    async run(accessor: ServicesAccessor): Promise<void> {
-      const terminal = accessor.get(ITerminalService).activeInstance;
-      await sendContext("terminal", terminal?.title ?? "Terminal", terminal?.selection ?? "");
-    }
-  },
-);
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.sendDebugContext",
-        title: localize2("synara.debug", "Synara: Add Debug Stack to Agent Draft"),
-        f1: true,
-      });
-    }
-    async run(accessor: ServicesAccessor): Promise<void> {
-      const viewModel = accessor.get(IDebugService).getViewModel();
-      const frame = viewModel.focusedStackFrame;
-      const frames = viewModel.focusedThread?.getCallStack() ?? [];
-      await sendContext(
-        "debug",
-        viewModel.focusedSession?.name ?? "Debug session",
-        frames
-          .map(
-            (item) =>
-              `${item === frame ? "> " : "  "}${item.name} ${item.source.uri.toString()}:${item.range.startLineNumber}`,
-          )
-          .join("\n"),
-      );
-    }
-  },
-);
-
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.newWorktreeTerminal",
-        title: localize2("synara.worktreeTerminal", "Synara: New Terminal in Active Worktree"),
-        f1: true,
-        icon: Codicon.terminal,
-        menu: [
-          {
-            id: MenuId.ViewTitle,
-            when: ContextKeyExpr.equals("view", VIEW_ID),
-            group: "navigation",
-            order: 2,
-          },
-        ],
-      });
-    }
-    async run(accessor: ServicesAccessor): Promise<void> {
-      const root = state?.scope.roots[0];
-      if (!root) throw new Error("Select a Synara session with a local project or worktree first.");
-      const terminals = accessor.get(ITerminalService);
-      const terminal = await terminals.createTerminal({
-        config: { cwd: URI.file(root), name: "Synara worktree" },
-      });
-      terminals.setActiveInstance(terminal);
-      await terminals.revealActiveTerminal();
-      await terminal.focusWhenReady();
-    }
-  },
-);
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.revealWorktree",
-        title: localize2("synara.revealWorktree", "Synara: Reveal Active Worktree in Explorer"),
-        f1: true,
-      });
-    }
-    async run(accessor: ServicesAccessor): Promise<void> {
-      const root = state?.scope.roots[0];
-      if (!root) throw new Error("Select a Synara session with a local project or worktree first.");
-      await accessor.get(ICommandService).executeCommand("revealInExplorer", URI.file(root));
-    }
-  },
-);
-
-registerAction2(
-  class extends Action2 {
-    constructor() {
-      super({
-        id: "synara.nextAttention",
-        title: localize2("synara.attention", "Synara: Next Agent Needing Attention"),
-        f1: true,
-        icon: Codicon.bell,
-      });
-    }
-    async run(): Promise<void> {
-      await revealAgents?.();
-      await request("attention");
-    }
-  },
-);
 
 class SynaraWorkbench extends Disposable {
   static readonly ID = "synara.workbench";
+  private state: DesktopIdeState | undefined;
   private workspaceQueue = Promise.resolve();
   private generation = -1;
-  private hasEnteredIde = false;
+  private readonly documents: SynaraDocuments;
+  private readonly terminals: SynaraTerminals;
+
   constructor(
-    @IViewsService views: IViewsService,
-    @IStatusbarService statusbar: IStatusbarService,
+    @ICommandService private readonly commands: ICommandService,
+    @ICodeEditorService private readonly codeEditors: ICodeEditorService,
+    @IEditorService private readonly editors: IEditorService,
+    @ITextFileService textFiles: ITextFileService,
+    @IFileService files: IFileService,
+    @IModelService models: IModelService,
+    @ITextModelService textModels: ITextModelService,
+    @ITerminalService terminals: ITerminalService,
+    @IDebugService private readonly debug: IDebugService,
+    @IMarkerService private readonly markers: IMarkerService,
+    @IQuickInputService private readonly quickInput: IQuickInputService,
+    @INotificationService private readonly notifications: INotificationService,
+    @IExtensionManagementService private readonly extensions: IExtensionManagementService,
+    @IWorkbenchThemeService themes: IWorkbenchThemeService,
     @IWorkspaceContextService workspace: IWorkspaceContextService,
     @IWorkspaceEditingService editing: IWorkspaceEditingService,
-    @IKeybindingService keybindings: IKeybindingService,
-    @INotificationService notifications: INotificationService,
-    @IQuickInputService quickInput: IQuickInputService,
-    @IDialogService dialogs: IDialogService,
-    @IWorkbenchThemeService themes: IWorkbenchThemeService,
+    @IWorkbenchLayoutService layout: IWorkbenchLayoutService,
+    @IEditorGroupsService groups: IEditorGroupsService,
   ) {
     super();
+    const emit = (event: DesktopIdeEvent) => {
+      void request("event", event).catch((error) => console.error("Synara native event delivery failed", error));
+    };
+    this.documents = this._register(new SynaraDocuments(textFiles, editors, files, models, textModels, emit));
+    this.terminals = this._register(new SynaraTerminals(terminals, emit));
     const appearance = this._register(new SynaraWorkbenchAppearance(themes));
-    revealAgents = async () => {
-      await views.openView(VIEW_ID, true);
-      activePane?.reportBounds();
+    this._register(groups.enforcePartOptions({ showTabs: EditorTabsMode.NONE }));
+    // Only the native editor area is rendered. Synara owns Files, Changes,
+    // navigation, tabs, chat and terminal presentation. Services remain loaded.
+    const hidden = new Set<Parts>([
+      Parts.TITLEBAR_PART, Parts.BANNER_PART, Parts.ACTIVITYBAR_PART,
+      Parts.SIDEBAR_PART, Parts.AUXILIARYBAR_PART, Parts.STATUSBAR_PART,
+      Parts.PANEL_PART, Parts.SESSIONS_PART, Parts.CUSTOM_VIEW_GRID_PART,
+    ]);
+    const hideChrome = () => {
+      for (const part of hidden) layout.setPartHidden(true, part);
+      layout.setPartHidden(false, Parts.EDITOR_PART);
     };
-    const attention = this._register(
-      statusbar.addEntry(
-        {
-          name: "Synara agent attention",
-          text: "$(bell) 0",
-          ariaLabel: "Agents needing attention",
-          command: "synara.nextAttention",
-        },
-        "synara.attention",
-        StatusbarAlignment.LEFT,
-        9999,
-      ),
-    );
-    const entry = this._register(
-      statusbar.addEntry(
-        {
-          name: "Synara",
-          text: "Agent / IDE",
-          ariaLabel: "Switch Synara Agent and IDE modes",
-          command: "synara.toggleMode",
-        },
-        "synara.mode",
-        StatusbarAlignment.LEFT,
-        10000,
-      ),
-    );
-    const updateShortcut = () => {
-      void request(
-        "shortcut",
-        keybindings.lookupKeybinding("synara.toggleMode")?.getElectronAccelerator() ?? null,
-      );
+    hideChrome();
+    this._register(layout.onDidChangePartVisibility(({ partId, visible }) => {
+      if (visible && hidden.has(partId as Parts)) layout.setPartHidden(true, partId as Parts);
+    }));
+    const publishDebug = () => emit({ kind: "debug.state", state:
+      debug.state === State.Stopped ? "stopped" : debug.state === State.Running ? "running" :
+        debug.state === State.Initializing ? "initializing" : "inactive" });
+    this._register(debug.onDidChangeState(publishDebug));
+    const update = (state: DesktopIdeState) => {
+      if (state.protocol !== DESKTOP_IDE_PROTOCOL) return;
+      this.state = state;
+      if (state.appearance) void appearance.apply(state.appearance).catch((error) => notifications.error(error));
+      if (state.generation === this.generation) return;
+      this.generation = state.generation;
+      this.workspaceQueue = this.workspaceQueue.catch(() => undefined).then(async () => {
+        const existing = new Set(workspace.getWorkspace().folders.map((folder) => folder.uri.toString()));
+        const additions = state.scope.roots.map((root) => URI.file(root)).filter((uri) => !existing.has(uri.toString()));
+        if (additions.length) await editing.addFolders(additions.map((uri) => ({ uri })));
+        this.documents.setRoots(workspace.getWorkspace().folders.map((folder) => folder.uri.fsPath));
+      });
+      void this.workspaceQueue.catch((error) => notifications.error(error));
     };
-    this._register(keybindings.onDidUpdateKeybindings(updateShortcut));
-    let quickInputOpen = false;
-    let dialogOpen = false;
-    let modalEditorOpen = false;
-    let previousOverlay: boolean | undefined;
-    const occlusion = () => {
-      const open = quickInputOpen || dialogOpen || modalEditorOpen;
-      if (open === previousOverlay) return;
-      previousOverlay = open;
-      void request("overlay", open);
+    const listener = (_event: unknown, state: DesktopIdeState) => update(state);
+    ipcRenderer.on(CHANNEL, listener);
+    this._register(toDisposable(() => ipcRenderer.removeListener(CHANNEL, listener)));
+    const operation = (_event: unknown, packet: { id?: unknown; request?: unknown }) => {
+      if (!packet || !Number.isSafeInteger(packet.id) || !isDesktopIdeRequest(packet.request)) return;
+      const id = Number(packet.id);
+      const command = packet.request;
+      void this.workspaceQueue.then(() => this.handle(command)).then(
+        (result) => request("reply", { id, result }),
+        (error) => request("reply", { id, error: (error instanceof Error ? error.message : String(error)).slice(0, 8192) }),
+      ).catch((error) => console.error("Synara native request reply failed", error));
     };
-    // Upstream modal editors (Trust, Settings, Keybindings) are direct
-    // workbench children. Native sibling views must not cover their UI.
-    // Observe only that child list, never the editor text or agent DOM.
-    const workbenchRoot = document.querySelector(".monaco-workbench");
-    if (workbenchRoot) {
-      const updateModal = () => {
-        modalEditorOpen = Array.from(workbenchRoot.children).some((child) =>
-          child.classList.contains("monaco-modal-editor-block"),
-        );
-        occlusion();
-      };
-      const observer = new MutationObserver(updateModal);
-      observer.observe(workbenchRoot, { childList: true });
-      this._register(toDisposable(() => observer.disconnect()));
-      updateModal();
+    ipcRenderer.on(`${CHANNEL}:request`, operation);
+    this._register(toDisposable(() => ipcRenderer.removeListener(`${CHANNEL}:request`, operation)));
+    void request("ready", DESKTOP_IDE_PROTOCOL).then((state) => { update(state as DesktopIdeState); publishDebug(); }, (error) => notifications.error(error));
+  }
+
+  private async handle(operation: DesktopIdeRequest): Promise<DesktopIdeReply> {
+    if ("document" in operation) return this.documents.handle(operation);
+    if (operation.kind.startsWith("terminal.")) {
+      return this.terminals.handle(operation as Extract<DesktopIdeRequest, { id: string; kind: `terminal.${string}` }>);
     }
-    this._register(
-      quickInput.onShow(() => {
-        quickInputOpen = true;
-        occlusion();
-      }),
-    );
-    this._register(
-      quickInput.onHide(() => {
-        quickInputOpen = false;
-        occlusion();
-      }),
-    );
-    this._register(
-      dialogs.onWillShowDialog(() => {
-        dialogOpen = true;
-        occlusion();
-      }),
-    );
-    this._register(
-      dialogs.onDidShowDialog(() => {
-        dialogOpen = false;
-        occlusion();
-      }),
-    );
-    const update = (next: DesktopIdeState) => {
-      if (next.appearance)
-        void appearance
-          .apply(next.appearance)
-          .catch((error) =>
-            notifications.error(`Synara could not synchronize appearance: ${String(error)}`),
-          );
-      attention.update({
-        name: "Synara agent attention",
-        text: next.attention ? `$(bell-dot) ${next.attention}` : "$(check) All caught up",
-        ariaLabel: next.attention
-          ? `${next.attention} agents need attention`
-          : "No agents need attention",
-        command: "synara.nextAttention",
-        tooltip: "Open the next Synara agent needing attention",
-      });
-      const previousMode = state?.mode;
-      state = next;
-      entry.update({
-        name: "Synara",
-        text:
-          next.mode === "agent" ? "$(comment-discussion) Synara · Agent" : "$(code) Synara · IDE",
-        ariaLabel: "Switch Synara Agent and IDE modes",
-        command: "synara.toggleMode",
-        tooltip: "Synara: Agent / IDE — sessions and editors stay running",
-      });
-      if (next.mode !== "ide") return;
-      if (previousMode !== "ide") {
-        if (!this.hasEnteredIde) {
-          this.hasEnteredIde = true;
-          void views.openView(VIEW_ID, false).then(() => activePane?.reportBounds());
-        } else {
-          activePane?.reportBounds();
-        }
+    switch (operation.kind) {
+      case "editor.command": await this.command(operation.command); return null;
+      case "git.stage": case "git.unstage":
+        await this.commands.executeCommand("synara.native.git", {
+          operation: operation.kind === "git.stage" ? "stage" : "unstage", root: operation.root, paths: operation.paths,
+        });
+        await request("event", { kind: "git.changed", root: operation.root });
+        return null;
+      case "extensions.list": {
+        const installed = await this.extensions.getInstalled();
+        return installed.map((extension) => ({ id: extension.identifier.id, name: extension.manifest.displayName ?? extension.manifest.name, version: extension.manifest.version, builtin: extension.isBuiltin }));
       }
-      if (next.generation === this.generation) return;
-      this.workspaceQueue = this.workspaceQueue
-        .then(async () => {
-          if (state?.generation !== next.generation || next.generation === this.generation) return;
-          const folders = next.scope.roots
-            .map((root) => ({ uri: URI.file(root) }))
-            .filter((folder) => !workspace.getWorkspaceFolder(folder.uri));
-          // Additive multi-root handoff: no folder reload, dirty-buffer discard,
-          // terminal restart, debugger restart or implicit Git checkout.
-          if (folders.length) await editing.addFolders(folders, true);
-          this.generation = next.generation;
-        })
-        .catch((error) =>
-          notifications.error(`Synara could not add the selected workspace: ${String(error)}`),
-        );
-    };
-    const receive = (_event: unknown, next: unknown) => {
-      if (next && typeof next === "object" && (next as DesktopIdeState).protocol === 1)
-        update(next as DesktopIdeState);
-    };
-    ipcRenderer.on(CHANNEL, receive);
-    this._register(toDisposable(() => ipcRenderer.removeListener(CHANNEL, receive)));
-    void request("ready")
-      .then((next) => {
-        receive(undefined, next);
-        updateShortcut();
-      })
-      .catch((error) => notifications.error(`Synara desktop bridge unavailable: ${String(error)}`));
+      case "extensions.install":
+        await this.commands.executeCommand("workbench.extensions.installExtension", operation.id);
+        return null;
+      case "extensions.uninstall": {
+        const installed = await this.extensions.getInstalled();
+        const extension = installed.find((item) => item.identifier.id.toLowerCase() === operation.id.toLowerCase());
+        if (!extension || extension.isBuiltin) throw new Error("Only an installed, non-built-in extension can be uninstalled.");
+        await this.extensions.uninstall(extension);
+        return null;
+      }
+      default: throw new Error("Unsupported Synara native operation.");
+    }
+  }
+
+  private async command(command: DesktopIdeCommand): Promise<void> {
+    const action = COMMANDS[command];
+    if (action) { await this.commands.executeCommand(action); return; }
+    switch (command) {
+      case "sendSelection": {
+        const editor = this.codeEditors.getFocusedCodeEditor() ?? this.codeEditors.getActiveCodeEditor();
+        const model = editor?.getModel();
+        const selections = editor?.getSelections();
+        if (!model || !selections?.length || selections.every((selection) => selection.isEmpty())) throw new Error("Select code before adding it to the agent draft.");
+        await this.context("selection", model.uri.toString(), selections.map((selection) => `Lines ${selection.startLineNumber}-${selection.endLineNumber}\n${model.getValueInRange(selection)}`).join("\n\n"));
+        return;
+      }
+      case "sendDiagnostics": {
+        const resource = this.editors.activeEditor?.resource;
+        if (!resource) return;
+        await this.context("diagnostics", resource.toString(), this.markers.read({ resource, take: 100 }).map((marker) => `${marker.startLineNumber}:${marker.startColumn} ${MarkerSeverity.toString(marker.severity)} ${marker.message}`).join("\n"));
+        return;
+      }
+      case "problems": {
+        const markers = this.markers.read({ take: 500 });
+        const selected = await this.quickInput.pick(markers.map((marker) => ({ label: marker.message, description: `${marker.resource.fsPath}:${marker.startLineNumber}`, marker })), { placeHolder: "Workspace problems" });
+        if (selected) await this.editors.openEditor({ resource: selected.marker.resource, options: { pinned: true, selection: { startLineNumber: selected.marker.startLineNumber, startColumn: selected.marker.startColumn } } });
+        return;
+      }
+      case "extensions": await this.manageExtensions(); return;
+      case "debugConsole": await this.inspectDebugger(); return;
+      default: throw new Error("This editor command is not supported.");
+    }
+  }
+  private async context(kind: DesktopIdeContext["kind"], title: string, text: string): Promise<void> {
+    const state = this.state;
+    if (!state?.scope.threadId) throw new Error("Select a Synara session before adding context.");
+    if (!text.trim()) throw new Error("There is no context to add.");
+    await request("context", { threadId: state.scope.threadId, generation: state.generation, kind, title: title.slice(0, 512), text: text.slice(0, DESKTOP_IDE_MAX_CONTEXT) });
+  }
+  private async manageExtensions(): Promise<void> {
+    const installed = await this.extensions.getInstalled();
+    const selected = await this.quickInput.pick([
+      { label: "Install extension…", description: "Open VSX · publisher.extension", id: "", builtin: false },
+      ...installed.map((extension) => ({ label: extension.manifest.displayName ?? extension.manifest.name, description: `${extension.identifier.id} · ${extension.manifest.version}${extension.isBuiltin ? " · built-in" : ""}`, id: extension.identifier.id, builtin: extension.isBuiltin })),
+    ], { placeHolder: "Extensions for the existing Synara editor" });
+    if (!selected) return;
+    if (!selected.id) {
+      const id = await this.quickInput.input({ prompt: "Open VSX extension identifier (publisher.extension)", validateInput: async (value) => /^[a-z0-9][a-z0-9-]*\.[a-z0-9][a-z0-9-]*$/iu.test(value) ? undefined : "Enter publisher.extension." });
+      if (id) await this.handle({ kind: "extensions.install", id });
+    } else if (!selected.builtin) {
+      const action = await this.quickInput.pick([{ label: "Uninstall", id: "uninstall" }, { label: "Cancel", id: "cancel" }], { placeHolder: selected.id });
+      if (action?.id === "uninstall") await this.handle({ kind: "extensions.uninstall", id: selected.id });
+    }
+  }
+  private async inspectDebugger(): Promise<void> {
+    const session = this.debug.getViewModel().focusedSession;
+    const frame = this.debug.getViewModel().focusedStackFrame;
+    if (!session) throw new Error("Start a debugging session first.");
+    const action = await this.quickInput.pick([
+      { label: "Debug console output", id: "output" },
+      { label: "Evaluate expression", id: "evaluate" },
+      { label: "Variables in current frame", id: "variables" },
+      { label: "Choose stack frame", id: "stack" },
+    ], { placeHolder: session.name });
+    if (action?.id === "evaluate") {
+      const expression = await this.quickInput.input({ prompt: "Evaluate in the current debug frame" });
+      if (expression) await session.addReplExpression(frame, expression);
+    }
+    if (action?.id === "output" || action?.id === "evaluate") {
+      await this.quickInput.pick(session.getReplElements().slice(-200).map((element) => ({ label: element.toString() || " " })), { placeHolder: "Debug console" });
+    } else if (action?.id === "variables" && frame) {
+      const scopes = await frame.getScopes();
+      const scope = await this.quickInput.pick(scopes.map((scope) => ({ label: scope.name, scope })), { placeHolder: "Variables" });
+      if (scope) await this.inspectVariables(scope.scope);
+    } else if (action?.id === "stack") {
+      const frames = session.getAllThreads().flatMap((thread) => thread.getCallStack());
+      const chosen = await this.quickInput.pick(frames.map((frame) => ({ label: frame.name, description: `${frame.source.name}:${frame.range.startLineNumber}`, frame })), { placeHolder: "Call stack" });
+      if (chosen) await this.debug.focusStackFrame(chosen.frame);
+    }
+  }
+  private async inspectVariables(container: IExpressionContainer): Promise<void> {
+    const children = await container.getChildren();
+    const selected = await this.quickInput.pick(children.map((child) => ({ label: child.name, description: child.value, child })), { placeHolder: "Variables · select to expand" });
+    if (selected?.child.hasChildren) await this.inspectVariables(selected.child);
   }
 }
+
 registerWorkbenchContribution2(SynaraWorkbench.ID, SynaraWorkbench, WorkbenchPhase.AfterRestored);
