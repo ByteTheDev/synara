@@ -132,9 +132,14 @@ describe("Betterwright target boundary", () => {
     ).toBe(false);
   });
 
-  it.each([false, true])(
-    "serializes native focus across targets and skips revoked queued work (%s)",
-    async (cancelQueued) => {
+  it.each([
+    [false, "text"],
+    [true, "text"],
+    [false, "hover"],
+    [true, "hover"],
+  ] as const)(
+    "serializes native input across targets and skips revoked queued work (cancel=%s, %s)",
+    async (cancelQueued, kind) => {
       const first = fixture([], "first-backend");
       const second = fixture([], "second-backend");
       for (const f of [first, second])
@@ -174,17 +179,22 @@ describe("Betterwright target boundary", () => {
       const b = second.target.receive({
         id: 2,
         sessionId: secondSession,
-        method: "Input.insertText",
-        params: { text: "second" },
+        method: kind === "hover" ? "Input.dispatchMouseEvent" : "Input.insertText",
+        params: kind === "hover" ? { type: "mouseMoved", x: 20, y: 30 } : { text: "second" },
       });
       await Promise.resolve();
       expect(second.contents.focus).not.toHaveBeenCalled();
+      expect(second.contents.sendInputEvent).not.toHaveBeenCalled();
       expect(focusState.current).toBe(first.contents);
       if (cancelQueued) await second.target.dispose(false);
       finish({});
       await Promise.all([a, b]);
       expect(focusState.current).toBe(host);
-      expect(second.contents.focus).toHaveBeenCalledTimes(cancelQueued ? 0 : 1);
+      if (kind === "text") {
+        expect(second.contents.focus).toHaveBeenCalledTimes(cancelQueued ? 0 : 1);
+      } else {
+        expect(second.contents.sendInputEvent).toHaveBeenCalledTimes(cancelQueued ? 0 : 1);
+      }
       if (cancelQueued) {
         expect(second.messages.find((message) => message.id === 2)).toHaveProperty("error");
         expect(
