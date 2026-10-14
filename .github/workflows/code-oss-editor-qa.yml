@@ -4,104 +4,70 @@ on:
     branches: [qa/code-oss-editor-20261014]
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: code-oss-editor-qa-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  view-probe:
+  split-dependencies:
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: npm install --prefix /tmp/synara-view-probe electron@43.4.1 --no-audit --no-fund
-      - name: Verify adopted native WebContents geometry
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/synara-qa
-          cat > /tmp/synara-view-probe/main.cjs <<'JS'
-          const { app, BrowserWindow, View, WebContentsView } = require('electron');
-          const fs = require('node:fs');
-          const assert = require('node:assert/strict');
-          const delay = () => new Promise(resolve => setTimeout(resolve, 200));
-          app.commandLine.appendSwitch('no-sandbox');
-          app.whenReady().then(async () => {
-            const win = new BrowserWindow({width:1100,height:780,show:true,webPreferences:{sandbox:true}});
-            const contents = win.webContents;
-            const root = new View();
-            const native = new WebContentsView({webContents:contents});
-            const shell = new WebContentsView({webPreferences:{sandbox:true}});
-            win.setContentView(root);root.addChildView(shell);root.addChildView(native);
-            shell.setBounds({x:0,y:0,width:1100,height:780});
-            await shell.webContents.loadURL('data:text/html,<body>Synara shell</body>');
-            await contents.loadURL('data:text/html,<body>Native editor</body>');
-            native.setBounds({x:300,y:100,width:450,height:350});await delay();
-            const inspect = async () => ({nativeClass:native.constructor.name,contentsUnchanged:win.webContents===contents,owner:BrowserWindow.fromWebContents(contents)?.id,windowId:win.id,bounds:native.getBounds(),viewport:await contents.executeJavaScript('({width:innerWidth,height:innerHeight})')});
-            console.log('INITIAL',JSON.stringify(await inspect()));
-            assert.deepEqual((await inspect()).viewport,{width:450,height:350});
-            assert.equal(win.webContents,contents);assert.equal(BrowserWindow.fromWebContents(contents),win);
-            native.setVisible(false);assert.equal(native.getVisible(),false);native.setVisible(true);
-            native.setBounds({x:250,y:120,width:560,height:400});await delay();
-            console.log('RESIZED',JSON.stringify(await inspect()));
-            assert.deepEqual((await inspect()).viewport,{width:560,height:400});
-            win.setSize(1200,820);await delay();
-            console.log('WINDOW RESIZED',JSON.stringify(await inspect()));
-            native.setBounds({x:250,y:120,width:560,height:400});await delay();
-            assert.deepEqual((await inspect()).viewport,{width:560,height:400});
-            fs.writeFileSync('/tmp/synara-qa/view-probe.json',JSON.stringify({passed:true,...await inspect()},null,2));
-            shell.webContents.close();win.destroy();app.quit();
-          }).catch(error=>{console.error(error);app.exit(1)});
-          JS
-          xvfb-run -a /tmp/synara-view-probe/node_modules/.bin/electron --no-sandbox /tmp/synara-view-probe/main.cjs 2>&1 | tee /tmp/synara-qa/view-probe.log
-          test -f /tmp/synara-qa/view-probe.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: code-oss-native-viewport-probe
-          path: /tmp/synara-qa
-          retention-days: 3
-          if-no-files-found: error
-  synara-dependencies:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: a62d7c733d19f5538ffc0d126d57437b3b578ff1
-          persist-credentials: false
-      - uses: ./.github/actions/setup-workspace
-        with:
-          electron: 'true'
-          scope: full
-      - name: Archive installed pinned dependencies and tools
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/synara-deps/tools/bin
-          cp "$(command -v node)" /tmp/synara-deps/tools/bin/node
-          cp "$(command -v bun)" /tmp/synara-deps/tools/bin/bun
-          find node_modules apps packages scripts -type d -name node_modules -prune -print0 > /tmp/module-paths
-          tar --null -T /tmp/module-paths -czf /tmp/synara-deps/synara-node-modules.tar.gz
-          tar -C /tmp/synara-deps -czf /tmp/synara-deps/tools.tar.gz tools
-          rm -r /tmp/synara-deps/tools
-          sha256sum /tmp/synara-deps/*.tar.gz > /tmp/synara-deps/sha256.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: synara-offline-dependencies
+          run-id: 38615403888
+          github-token: ${{ github.token }}
           path: /tmp/synara-deps
+      - name: Split archive within transfer limits
+        run: |
+          set -euo pipefail
+          split -b 300M -d /tmp/synara-deps/synara-node-modules.tar.gz /tmp/synara-deps/modules.part-
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-offline-tools
+          path: |
+            /tmp/synara-deps/tools.tar.gz
+            /tmp/synara-deps/sha256.txt
           compression-level: 0
           retention-days: 3
-          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-modules-00
+          path: /tmp/synara-deps/modules.part-00
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-modules-01
+          path: /tmp/synara-deps/modules.part-01
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-modules-02
+          path: /tmp/synara-deps/modules.part-02
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-modules-03
+          path: /tmp/synara-deps/modules.part-03
+          compression-level: 0
+          retention-days: 3
   native-runtime:
     runs-on: ubuntu-22.04
     timeout-minutes: 45
+    env:
+      CC: clang
+      CXX: clang++
     steps:
       - uses: actions/checkout@v4
         with:
           ref: 85c70ad544f0409dc9051dde38c549530b2605ec
           persist-credentials: false
+      - name: Record native compiler
+        run: clang++ --version
       - uses: ./.github/actions/setup-code-oss
         with:
           flavor: production
@@ -114,19 +80,76 @@ jobs:
           tar -C .code-oss -czf /tmp/code-oss-deps/runtime.tar.gz runtime
           tar -C .code-oss -czf /tmp/code-oss-deps/prepared-source.tar.gz --exclude='source/.git' source
           sha256sum /tmp/code-oss-deps/*.tar.gz > /tmp/code-oss-deps/sha256.txt
+          split -b 300M -d /tmp/code-oss-deps/runtime.tar.gz /tmp/code-oss-deps/runtime.part-
+          split -b 300M -d /tmp/code-oss-deps/prepared-source.tar.gz /tmp/code-oss-deps/source.part-
       - uses: actions/upload-artifact@v4
         with:
-          name: code-oss-offline-runtime
-          path: /tmp/code-oss-deps/runtime.tar.gz
+          name: code-oss-runtime-00
+          path: /tmp/code-oss-deps/runtime.part-00
           compression-level: 0
           retention-days: 3
-          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
-          name: code-oss-offline-build-source
-          path: |
-            /tmp/code-oss-deps/prepared-source.tar.gz
-            /tmp/code-oss-deps/sha256.txt
+          name: code-oss-runtime-01
+          path: /tmp/code-oss-deps/runtime.part-01
           compression-level: 0
           retention-days: 3
-          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-runtime-02
+          path: /tmp/code-oss-deps/runtime.part-02
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-00
+          path: /tmp/code-oss-deps/source.part-00
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-01
+          path: /tmp/code-oss-deps/source.part-01
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-02
+          path: /tmp/code-oss-deps/source.part-02
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-03
+          path: /tmp/code-oss-deps/source.part-03
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-04
+          path: /tmp/code-oss-deps/source.part-04
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-05
+          path: /tmp/code-oss-deps/source.part-05
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-06
+          path: /tmp/code-oss-deps/source.part-06
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-source-07
+          path: /tmp/code-oss-deps/source.part-07
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-dependency-checksums
+          path: /tmp/code-oss-deps/sha256.txt
+          retention-days: 3
