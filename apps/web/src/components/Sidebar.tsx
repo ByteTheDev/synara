@@ -4717,10 +4717,7 @@ export default function Sidebar() {
   );
 
   const sidebarThreadSortOrder = appSettings.sidebarThreadSortOrder;
-  const groupScopedSortedSidebarThreadsByProjectId = useMemo(() => {
-    if (!isOnGroups) {
-      return sortedSidebarThreadsByProjectId;
-    }
+  const groupMemberThreadIdsByProjectId = useMemo(() => {
     const memberThreadIdsByProjectId = new Map<ProjectId, ReadonlySet<ThreadId>>();
     for (const project of groupProjects) {
       const memberIds = summariesByProjectId.get(project.id)?.memberThreadIds;
@@ -4728,10 +4725,25 @@ export default function Sidebar() {
         memberThreadIdsByProjectId.set(project.id, new Set(memberIds));
       }
     }
+    return memberThreadIdsByProjectId;
+  }, [groupProjects, summariesByProjectId]);
+  const groupScopedStatusThreadsByProjectId = useMemo(() => {
+    if (!isOnGroups) return statusThreadsByProjectId;
+    const statusThreads = [...statusThreadsByProjectId.values()].flat();
+    return mergeGroupMemberThreadsIntoProjectBuckets({
+      sortedSidebarThreadsByProjectId: statusThreadsByProjectId,
+      threads: statusThreads,
+      memberThreadIdsByProjectId: groupMemberThreadIdsByProjectId,
+      includeSubagentDescendants: true,
+      sortThreads: (threads) => threads,
+    });
+  }, [groupMemberThreadIdsByProjectId, isOnGroups, statusThreadsByProjectId]);
+  const groupScopedSortedSidebarThreadsByProjectId = useMemo(() => {
+    if (!isOnGroups) return sortedSidebarThreadsByProjectId;
     return mergeGroupMemberThreadsIntoProjectBuckets({
       sortedSidebarThreadsByProjectId,
       threads: displaySidebarTreeThreads,
-      memberThreadIdsByProjectId,
+      memberThreadIdsByProjectId: groupMemberThreadIdsByProjectId,
       sortThreads: (threads) =>
         sortThreadsForSidebar(threads, sidebarThreadSortOrder, {
           attentionFirst: sidebarThreadAttentionFirst,
@@ -4740,13 +4752,12 @@ export default function Sidebar() {
     });
   }, [
     displaySidebarTreeThreads,
-    groupProjects,
+    groupMemberThreadIdsByProjectId,
     heldSidebarThreadSortKeys,
     isOnGroups,
     sidebarThreadAttentionFirst,
     sidebarThreadSortOrder,
     sortedSidebarThreadsByProjectId,
-    summariesByProjectId,
   ]);
   const groupProjectSidebarDataById = useMemo<
     ReadonlyMap<ProjectId, SidebarDerivedProjectData>
@@ -4766,7 +4777,7 @@ export default function Sidebar() {
       activeSidebarThreadId: routeActiveSidebarThreadId ?? undefined,
       previewLimit: THREAD_PREVIEW_LIMIT,
       previewPageSize: THREAD_PREVIEW_PAGE_SIZE,
-      statusThreadsByProjectId,
+      statusThreadsByProjectId: groupScopedStatusThreadsByProjectId,
       resolveThreadStatus: resolveThreadStatusForSidebar,
     });
   }, [
@@ -4777,7 +4788,7 @@ export default function Sidebar() {
     groupScopedSortedSidebarThreadsByProjectId,
     groupProjects,
     resolveThreadStatusForSidebar,
-    statusThreadsByProjectId,
+    groupScopedStatusThreadsByProjectId,
   ]);
   const surfaceProjects = isOnGroups ? groupProjects : standardProjects;
   const surfaceProjectSidebarDataById = isOnGroups

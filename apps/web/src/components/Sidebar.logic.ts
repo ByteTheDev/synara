@@ -11,6 +11,7 @@ import {
 } from "@synara/contracts";
 import { isGroupThreadRoute } from "./SidebarGroupsSurface.logic";
 import { pluralize } from "@synara/shared/text";
+import { collectSubagentDescendants } from "@synara/shared/threadHierarchy";
 import { resolveThreadEnvironmentMode } from "@synara/shared/threadEnvironment";
 import { isWorkspaceRootWithin, workspaceRootsEqual } from "@synara/shared/threadWorkspace";
 import type { SidebarProjectSortOrder, SidebarThreadSortOrder } from "../appSettings";
@@ -1489,6 +1490,7 @@ export function mergeGroupMemberThreadsIntoProjectBuckets(input: {
   readonly sortedSidebarThreadsByProjectId: ReadonlyMap<ProjectId, SidebarThreadSummary[]>;
   readonly threads: readonly SidebarThreadSummary[];
   readonly memberThreadIdsByProjectId: ReadonlyMap<ProjectId, ReadonlySet<ThreadId>>;
+  readonly includeSubagentDescendants?: boolean;
   readonly sortThreads: (
     threads: readonly SidebarThreadSummary[],
   ) => readonly SidebarThreadSummary[];
@@ -1505,7 +1507,16 @@ export function mergeGroupMemberThreadsIntoProjectBuckets(input: {
     const bucket = input.sortedSidebarThreadsByProjectId.get(projectId) ?? [];
     const knownIds = new Set(bucket.map((thread) => thread.id));
     const extras: SidebarThreadSummary[] = [];
-    for (const threadId of memberIds) {
+    // Status buckets include native descendants of members; visible row buckets do not.
+    const scopedIds = new Set(memberIds);
+    if (input.includeSubagentDescendants) {
+      for (const memberId of memberIds) {
+        for (const descendant of collectSubagentDescendants(input.threads, memberId)) {
+          scopedIds.add(descendant.id);
+        }
+      }
+    }
+    for (const threadId of scopedIds) {
       if (knownIds.has(threadId)) continue;
       const thread = threadById.get(threadId);
       if (thread) extras.push(thread);

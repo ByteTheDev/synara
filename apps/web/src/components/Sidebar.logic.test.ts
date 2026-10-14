@@ -1608,6 +1608,72 @@ describe("mergeGroupMemberThreadsIntoProjectBuckets", () => {
   });
 });
 
+describe("linked Hub child status", () => {
+  it("includes only member descendants in Hub status without adding child rows", () => {
+    const hub = { ...makeProject(), id: ProjectId.makeUnsafe("hub") };
+    const otherHub = { ...makeProject(), id: ProjectId.makeUnsafe("other-hub") };
+    const repoId = ProjectId.makeUnsafe("linked-repo");
+    const parent = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("member"),
+      projectId: repoId,
+    });
+    const child = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("child"),
+      projectId: repoId,
+      parentThreadId: parent.id,
+    });
+    const nested = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("nested"),
+      projectId: repoId,
+      parentThreadId: child.id,
+      hasPendingApprovals: true,
+    });
+    const other = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("other-member"),
+      projectId: repoId,
+    });
+    const unrelated = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("unrelated"),
+      projectId: repoId,
+      parentThreadId: other.id,
+    });
+    const threads = [parent, child, nested, other, unrelated];
+    const membership = new Map([
+      [hub.id, new Set([parent.id])],
+      [otherHub.id, new Set([other.id])],
+    ]);
+    const visible = mergeGroupMemberThreadsIntoProjectBuckets({
+      sortedSidebarThreadsByProjectId: groupSidebarThreadsByProjectId([parent, other]),
+      threads: [parent, other],
+      memberThreadIdsByProjectId: membership,
+      sortThreads: sortThreadsById,
+    });
+    const statuses = mergeGroupMemberThreadsIntoProjectBuckets({
+      sortedSidebarThreadsByProjectId: groupSidebarThreadsByProjectId(threads),
+      threads,
+      memberThreadIdsByProjectId: membership,
+      sortThreads: sortThreadsById,
+      includeSubagentDescendants: true,
+    });
+    const data = deriveSidebarProjectData({
+      projects: [hub, otherHub],
+      sortedSidebarThreadsByProjectId: visible,
+      statusThreadsByProjectId: statuses,
+      pinnedThreadIds: [],
+      threadListExtraPagesByProjectCwd: new Map(),
+      normalizeProjectCwd: (cwd) => cwd,
+      activeSidebarThreadId: parent.id,
+      previewLimit: 5,
+      previewPageSize: 5,
+    });
+    expect(data.get(hub.id)?.projectStatus?.label).toBe("Pending Approval");
+    expect(data.get(hub.id)?.visibleEntries.map((entry) => entry.rowId)).toEqual([parent.id]);
+    expect(statuses.get(otherHub.id)?.map((thread) => thread.id)).toEqual([other.id, unrelated.id]);
+    expect(data.get(otherHub.id)?.projectStatus?.label).not.toBe("Pending Approval");
+    expect(data.get(otherHub.id)?.visibleEntries.map((entry) => entry.rowId)).toEqual([other.id]);
+  });
+});
+
 describe("hidden child navigation", () => {
   it.each([true, false])("reveals the root while a child is open (expanded: %s)", (expanded) => {
     const project = { ...makeProject(), expanded };
