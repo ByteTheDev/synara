@@ -1,0 +1,161 @@
+name: Prepare and validate single-app source
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.code-oss-work/**, .github/workflows/code-oss-source-prepare.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Materialize hash-checked edits without changing refs
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const sha = data => crypto.createHash('sha256').update(data).digest('hex');
+          const edits = ['main-edits.json', 'other-edits.json'].flatMap(name => JSON.parse(fs.readFileSync('.code-oss-work/' + name, 'utf8')));
+          const paths = new Set();
+          for (const row of edits) {
+            if (!/^(apps\/|packages\/|scripts\/|package\.json$|\.gitignore$|\.github\/workflows\/release-platform\.yml$)/.test(row.path) || row.path.includes('..') || paths.has(row.path)) throw Error('Unexpected source path');
+            let text = fs.readFileSync(row.path);
+            if (sha(text) !== row.base) throw Error('Changed base: ' + row.path);
+            for (const [start, length, replacement] of [...row.edits].reverse()) {
+              if (!Number.isInteger(start) || !Number.isInteger(length) || start < 0 || length < 0 || start + length > text.length) throw Error('Invalid edit');
+              text = Buffer.concat([text.subarray(0, start), Buffer.from(replacement), text.subarray(start + length)]);
+            }
+            if (sha(text) !== row.result) throw Error('Changed output: ' + row.path);
+            fs.writeFileSync(row.path, text); paths.add(row.path);
+          }
+          for (const path of execFileSync('git', ['ls-files'], {encoding:'utf8'}).trim().split('\n')) {
+            if (path.startsWith('apps/desktop/code-oss/') || path.startsWith('.github/actions/setup-code-oss/') || [
+              'apps/desktop/src/codeOssHost.ts','apps/desktop/src/desktopRenderer.ts','apps/desktop/src/desktopRenderer.test.ts',
+              'apps/web/src/components/DesktopIdeCoordinator.tsx','apps/web/src/desktopIdeStore.ts','apps/web/src/lib/desktopIdeContext.ts',
+              'packages/contracts/src/desktopIde.ts','packages/contracts/src/desktopIde.test.ts',
+              'scripts/lib/code-oss-runtime.ts','scripts/lib/code-oss-runtime.test.ts'
+            ].includes(path)) paths.add(path);
+          }
+          fs.writeFileSync('prepared-paths.json', JSON.stringify([...paths]));
+          JS
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format only the implementation files
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const paths = JSON.parse(fs.readFileSync('prepared-paths.json', 'utf8'));
+          execFileSync('node_modules/.bin/oxfmt', paths.filter(path => /\.(ts|tsx|mjs|json|css|yml)$/.test(path)), {stdio:'inherit'});
+          const manifest = paths.map(path => ({path, sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')}));
+          fs.writeFileSync('prepared-manifest.json', JSON.stringify(manifest, null, 2));
+          execFileSync('tar', ['-czf', 'prepared-source.tar.gz', 'prepared-manifest.json', ...paths]);
+          JS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: prepared-synara-source
+          path: prepared-source.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+  verify:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: prepared-synara-source
+      - run: tar -xzf prepared-source.tar.gz
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Remove preparation-only files from validation workspace
+        run: rm -rf .code-oss-work .github/workflows/code-oss-source-prepare.yml .github/workflows/code-oss-source-snapshot.yml prepared-source.tar.gz prepared-manifest.json
+      - name: Format check
+        id: format
+        continue-on-error: true
+        run: bun run fmt:check
+      - name: Lint
+        id: lint
+        continue-on-error: true
+        run: bun run lint
+      - name: Typecheck
+        id: types
+        continue-on-error: true
+        run: bun run typecheck
+      - name: Repository tests
+        id: tests
+        continue-on-error: true
+        run: bun run test
+      - name: Windows runtime boundary
+        id: windows
+        continue-on-error: true
+        run: bun run windows-runtime:check
+      - name: Enforce validation results
+        if: always()
+        env:
+          FORMAT: ${{ steps.format.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          TYPES: ${{ steps.types.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
+          WINDOWS: ${{ steps.windows.outcome }}
+        run: node -e 'for (const key of ["FORMAT","LINT","TYPES","TESTS","WINDOWS"]) { console.log(key, process.env[key]); if (process.env[key] !== "success") process.exitCode = 1; }'
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      # No checkout, install, build, or execution of repository code with a write token.
+      - uses: actions/download-artifact@v8
+        with:
+          name: prepared-synara-source
+      - name: Read-only validation of prepared artifact data
+        run: |
+          python - <<'PY'
+          import tarfile, pathlib
+          with tarfile.open('prepared-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  path = pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or path.is_absolute() or '..' in path.parts or item.size > 1000000:
+                      raise ValueError('Invalid prepared source member')
+              archive.extractall('source', filter='data')
+          PY
+      - name: Store content-addressed source blobs only; connector publishes tree and ref
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            const crypto = require('node:crypto');
+            const manifest = JSON.parse(fs.readFileSync('source/prepared-manifest.json', 'utf8'));
+            const entries = [];
+            if (!Array.isArray(manifest) || manifest.length > 80) throw Error('Invalid manifest');
+            for (const item of manifest) {
+              if (!/^(apps\/|packages\/|scripts\/|package\.json$|\.gitignore$|\.github\/actions\/setup-code-oss\/|\.github\/workflows\/release-platform\.yml$)/.test(item.path) || item.path.includes('..')) throw Error('Unexpected path');
+              const bytes = fs.readFileSync('source/' + item.path);
+              if (crypto.createHash('sha256').update(bytes).digest('hex') !== item.sha256) throw Error('Content hash mismatch');
+              const {data} = await github.rest.git.createBlob({...context.repo, content:bytes.toString('base64'), encoding:'base64'});
+              entries.push({path:item.path, mode:'100644', type:'blob', sha:data.sha, sha256:item.sha256});
+            }
+            fs.writeFileSync('prepared-blobs.json', JSON.stringify(entries, null, 2));
+      - uses: actions/upload-artifact@v7
+        with:
+          name: prepared-synara-blobs
+          path: prepared-blobs.json
+          retention-days: 3
+          if-no-files-found: error
