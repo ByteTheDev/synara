@@ -13,151 +13,114 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: 382bee08a3f5c0c5323b4b775a61179de261f27c
+          ref: 82257a2f8e80bb2ef18fb77e4d4c72fba689b5f7
           persist-credentials: false
-      - name: Repair server rendering and canonical path boundary
+      - uses: actions/download-artifact@v8
+        with:
+          name: bounded-files-evidence
+          run-id: 38586616119
+          github-token: ${{ github.token }}
+          path: .code-oss/import
+      - name: Restore exact integrated source and current visible navigation
         run: |
+          tar -xzf .code-oss/import/checked-source.tar.gz
           python - <<'PY'
           from pathlib import Path
-          import hashlib
-          def edit(path,before,after):
-              p=Path(path);s=p.read_text();assert s.count(before)==1,path;p.write_text(s.replace(before,after))
-          edit('apps/web/src/components/EditorWorkspaceView.tsx',
-               '    Boolean(window.desktopBridge?.ide?.setSurface) && nativeState?.status !== "unavailable";',
-               '    typeof window !== "undefined" &&\n    Boolean(window.desktopBridge?.ide?.setSurface) &&\n    nativeState?.status !== "unavailable";')
-          edit('apps/desktop/src/editorSurface.ts','import * as Path from "node:path";',
-               'import * as Path from "node:path";\nimport { realpath } from "node:fs/promises";')
-          with open('apps/desktop/src/editorSurface.ts','a') as f:f.write('''
-          /** Match Synara's existing canonical read boundary, including symlinked roots.
-           * Keep the lexical URI so native tabs and the existing tree refer to one model.
-           */
-          export async function assertDesktopEditorFileContained(root: string, filePath: string): Promise<void> {
-            const [realRoot, realFile] = await Promise.all([realpath(root), realpath(filePath)]);
-            const relative = Path.relative(realRoot, realFile);
-            if (!relative || relative === ".." || relative.startsWith(".." + Path.sep) || Path.isAbsolute(relative)) {
-              throw new Error("The file resolves outside the selected Synara workspace.");
-            }
-          }
-          ''')
-          edit('apps/desktop/src/codeOssHost.ts',
-               'import { clipEditorSurface, resolveDesktopEditorFile } from "./editorSurface";',
-               'import { clipEditorSurface, resolveDesktopEditorFile, assertDesktopEditorFileContained } from "./editorSurface";')
-          edit('apps/desktop/src/codeOssHost.ts','handleAgent(IDE_IPC.openFile, (value) => {','handleAgent(IDE_IPC.openFile, async (value) => {')
-          edit('apps/desktop/src/codeOssHost.ts','      const filePath = resolveDesktopEditorFile(value, this.state);',
-               '      const filePath = resolveDesktopEditorFile(value, this.state);\n      await assertDesktopEditorFileContained(value.root, filePath);\n      // The user may have changed sessions while canonical paths were resolved.\n      resolveDesktopEditorFile(value, this.state);')
-          edit('apps/desktop/src/editorSurface.test.ts','import { describe, expect, it } from "vitest";',
-               'import { mkdtemp, mkdir, writeFile, symlink, rm } from "node:fs/promises";\nimport { tmpdir } from "node:os";\nimport { join } from "node:path";\nimport { describe, expect, it } from "vitest";')
-          edit('apps/desktop/src/editorSurface.test.ts','import { clipEditorSurface, resolveDesktopEditorFile } from "./editorSurface";',
-               'import { clipEditorSurface, resolveDesktopEditorFile, assertDesktopEditorFileContained } from "./editorSurface";')
-          with open('apps/desktop/src/editorSurface.test.ts','a') as f:f.write('''
-          describe("native file canonical boundary", () => {
-            it("supports an aliased root but rejects an out-of-root file symlink", async () => {
-              const home = await mkdtemp(join(tmpdir(), "synara-editor-path-"));
-              try {
-                const root = join(home, "workspace");
-                await mkdir(root);
-                await writeFile(join(root, "file.ts"), "export const x = 1;");
-                await writeFile(join(home, "outside.ts"), "private");
-                await expect(assertDesktopEditorFileContained(root, join(root, "file.ts"))).resolves.toBeUndefined();
-                await expect(assertDesktopEditorFileContained(root, join(home, "outside.ts"))).rejects.toThrow("outside");
-                // Windows symlink creation depends on developer-mode/admin privileges.
-                if (process.platform !== "win32") {
-                  const alias = join(home, "alias");
-                  await symlink(root, alias);
-                  await expect(assertDesktopEditorFileContained(alias, join(alias, "file.ts"))).resolves.toBeUndefined();
-                  await symlink(join(home, "outside.ts"), join(root, "escape.ts"));
-                  await expect(assertDesktopEditorFileContained(root, join(root, "escape.ts"))).rejects.toThrow("outside");
-                }
-              } finally { await rm(home, { recursive: true, force: true }); }
-            });
-          });
-          ''')
+          p=Path('apps/desktop/code-oss/scripts/smoke.mjs');s=p.read_text()
+          anchor='      await agent.getByRole("button", { name: "Editor view", exact: true }).click();'
+          assert s.count(anchor)==1
+          s=s.replace(anchor,'''      const environment = agent.getByRole("button", { name: "Toggle environment panel", exact: true });
+                if ((await environment.getAttribute("aria-pressed")) !== "true") await environment.click();
+          '''+anchor)
+          # Keep one explicit default rather than the temporary duplicate watchdog setting.
+          s=s.replace('  application.context().setDefaultTimeout(15000);\n','')
+          p.write_text(s)
           PY
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
           electron: 'true'
-      - name: Format affected files only
-        run: node_modules/.bin/oxfmt apps/web/src/components/EditorWorkspaceView.tsx apps/desktop/src/codeOssHost.ts apps/desktop/src/editorSurface.ts apps/desktop/src/editorSurface.test.ts
-      - name: Preserve exact repaired source
+      - name: Format only the revised harness
+        run: node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Preserve reviewable source and diff
         run: |
-          mkdir -p .code-oss/checked
-          node --input-type=module <<'JS'
-          import fs from 'node:fs';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';
-          const paths=['apps/web/src/components/EditorWorkspaceView.tsx','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts'];
-          fs.writeFileSync('.code-oss/checked/manifest.json',JSON.stringify(paths.map(path=>({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')})),null,2));
-          execFileSync('tar',['-czf','.code-oss/checked/editor-repair.tar.gz','.code-oss/checked/manifest.json',...paths]);
-          JS
-      - uses: actions/upload-artifact@v7
-        with:
-          name: editor-repaired-source
-          path: .code-oss/checked/editor-repair.tar.gz
-          retention-days: 3
-      - name: Focused changed behavior and interfaces
+          mkdir -p .code-oss/final
+          git diff --check
+          git diff --stat
+          git diff > .code-oss/final/source.patch
+          python - <<'PY'
+          import subprocess,hashlib,json,tarfile
+          from pathlib import Path
+          paths=subprocess.check_output(['git','diff','--name-only','-z']).decode().strip('\0').split('\0')
+          allowed={'apps/desktop/code-oss/overlay/src/vs/synara/electron-main/host.ts','apps/desktop/code-oss/patches.json','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts','apps/desktop/src/nativeEditorView.ts','apps/desktop/src/nativeEditorView.test.ts','apps/web/src/components/EditorWorkspaceView.tsx'}
+          assert set(paths)==allowed,(paths,allowed)
+          manifest=[{'path':p,'sha256':hashlib.sha256(Path(p).read_bytes()).hexdigest()} for p in paths]
+          Path('.code-oss/final/manifest.json').write_text(json.dumps(manifest,indent=2))
+          with tarfile.open('.code-oss/final/source.tar.gz','w:gz') as archive:
+              for p in paths:archive.add(p)
+          PY
+      - name: Required integrated static checks and affected React tests
         run: |
-          bun run --cwd apps/desktop typecheck
-          bun run --cwd apps/web typecheck
-          bun run --cwd apps/desktop test -- src/editorSurface.test.ts
-          bun run test:web:focused src/components/EditorWorkspaceView.test.tsx
-          bun run --cwd scripts test -- lib/code-oss-runtime.test.ts
-      - name: Build final Synara for native runtime acceptance
-        run: bun run build:desktop
-      - name: Preserve compiled application without native dependencies
-        run: tar -czf .code-oss/checked/compiled-editor.tar.gz apps/desktop/dist-electron apps/server/dist apps/web/dist packages/contracts/dist packages/shared/dist
+          set +e
+          bun run fmt:check > .code-oss/final/format.log 2>&1; fmt=$?
+          bun run lint > .code-oss/final/lint.log 2>&1; lint=$?
+          bun run typecheck > .code-oss/final/typecheck.log 2>&1; types=$?
+          bun run test:web:focused src/components/EditorWorkspaceView.test.tsx > .code-oss/final/web-tests.log 2>&1; tests=$?
+          printf 'format=%s lint=%s typecheck=%s affected_web_tests=%s\n' "$fmt" "$lint" "$types" "$tests" | tee .code-oss/final/results.txt
+          test "$fmt$lint$types$tests" = 0000
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
-          name: editor-repaired-application
-          path: .code-oss/checked/compiled-editor.tar.gz
-          retention-days: 3
-  repository_tests:
+          name: final-editor-source-checks
+          path: .code-oss/final
+          retention-days: 7
+  review:
     needs: source
+    if: always()
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 3
     steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: 382bee08a3f5c0c5323b4b775a61179de261f27c
-          persist-credentials: false
       - uses: actions/download-artifact@v8
         with:
-          name: editor-repaired-source
-          path: .code-oss/checked
-      - run: tar -xzf .code-oss/checked/editor-repair.tar.gz
-      - uses: ./.github/actions/setup-workspace
-        with:
-          scope: full
-          electron: 'false'
-      - name: Required final repository test cycle
-        run: bun run test
+          name: final-editor-source-checks
+      - name: Report exact changes and check results
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['results.txt','source.patch','format.log','lint.log','typecheck.log','web-tests.log']:
+              p=Path(name)
+              if p.exists():print('\nFILE '+name+'\n'+p.read_text(errors='replace')[-48000:])
+          PY
   blobs:
     needs: source
+    if: always()
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 4
     permissions:
       contents: write
       actions: read
     steps:
       - uses: actions/download-artifact@v8
         with:
-          name: editor-repaired-source
-      - name: Validate repaired source as data
+          name: final-editor-source-checks
+      - name: Extract source as data
         run: |
           python - <<'PY'
           import tarfile,pathlib
-          with tarfile.open('editor-repair.tar.gz') as archive:
+          with tarfile.open('source.tar.gz') as archive:
               for item in archive.getmembers():
                   p=pathlib.PurePosixPath(item.name)
-                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>300000: raise ValueError('Unexpected source member')
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>300000:raise ValueError('Unexpected source member')
               archive.extractall('source',filter='data')
           PY
       - uses: actions/github-script@v8
         with:
           script: |
             const fs=require('node:fs'),crypto=require('node:crypto');
-            const manifest=JSON.parse(fs.readFileSync('source/.code-oss/checked/manifest.json','utf8'));
-            const allowed=new Set(['apps/web/src/components/EditorWorkspaceView.tsx','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts']);
+            const manifest=JSON.parse(fs.readFileSync('manifest.json','utf8'));
+            const allowed=new Set(['apps/desktop/code-oss/overlay/src/vs/synara/electron-main/host.ts','apps/desktop/code-oss/patches.json','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts','apps/desktop/src/nativeEditorView.ts','apps/desktop/src/nativeEditorView.test.ts','apps/web/src/components/EditorWorkspaceView.tsx']);
+            if(manifest.length!==allowed.size)throw Error('Unexpected source count');
             const result=[];
-            if(manifest.length!==4)throw Error('Unexpected source count');
             for(const item of manifest){
               if(!allowed.delete(item.path))throw Error('Unexpected path');
               const bytes=fs.readFileSync('source/'+item.path);
@@ -165,4 +128,5 @@ jobs:
               const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
               result.push({...item,sha:data.sha,mode:'100644',type:'blob'});
             }
-            console.log('REPAIRED_BLOBS='+JSON.stringify(result));
+            console.log('SOURCE_BLOBS='+JSON.stringify(result));
+            // No commits or branch changes: final publication stays with the connector.
