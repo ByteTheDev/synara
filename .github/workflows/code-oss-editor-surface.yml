@@ -1,0 +1,52 @@
+name: Existing editor surface integration
+on:
+  push:
+    branches: [codex/1920-editor-surface-qa]
+    paths: [.github/workflows/code-oss-editor-surface.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Export exact feature source
+        run: git archive --format=tar.gz -o editor-surface-source.tar.gz HEAD
+      - uses: actions/upload-artifact@v7
+        with:
+          name: editor-surface-source
+          path: editor-surface-source.tar.gz
+          retention-days: 3
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Display prerequisite
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libasound2t64 libgtk-3-0t64 libnss3 libgbm1 >/dev/null
+      - name: Verify native view reparenting without changing application source
+        run: |
+          cat > .code-oss-view-probe.cjs <<'JS'
+          const { app, BrowserWindow, View, WebContentsView } = require('./apps/desktop/node_modules/electron');
+          app.whenReady().then(async () => {
+            const window = new BrowserWindow({show:false,width:1000,height:700});
+            const native = window.contentView.children.find(view => view instanceof WebContentsView && view.webContents === window.webContents);
+            if (!native) throw new Error('Native workbench view is not accessible');
+            const root = new View();
+            const shell = new WebContentsView();
+            window.setContentView(root);
+            root.addChildView(shell);
+            root.addChildView(native);
+            shell.setBounds({x:0,y:0,width:1000,height:700});
+            native.setBounds({x:80,y:60,width:600,height:500});
+            await native.webContents.loadURL('data:text/html,<h1>Retained native renderer</h1>');
+            console.log('INITIAL', JSON.stringify({bounds:native.getBounds(),viewport:await native.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})'),owned:BrowserWindow.fromWebContents(native.webContents)?.id===window.id}));
+            window.setSize(1100,800);
+            await new Promise(r=>setTimeout(r,200));
+            console.log('RESIZED', JSON.stringify({bounds:native.getBounds(),viewport:await native.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})'),owned:BrowserWindow.fromWebContents(native.webContents)?.id===window.id}));
+            shell.webContents.close(); app.exit(0);
+          }).catch(error=>{console.error(error);app.exit(1)});
+          JS
+          xvfb-run -a apps/desktop/node_modules/electron/dist/electron .code-oss-view-probe.cjs
