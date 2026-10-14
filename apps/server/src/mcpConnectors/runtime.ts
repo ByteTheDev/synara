@@ -535,19 +535,33 @@ export class McpConnectorRuntime {
       );
     }
     if (connector.status === "needs-auth") return reconnectResult(request.body, connector.name);
-    const send = (accessToken: string | undefined) =>
-      forwardMcpConnectorRequest(
+    const send = (accessToken: string | undefined) => {
+      // Recheck ownership after token refresh: Disconnect or Reconnect may have finished.
+      const current = this.find(connectorId);
+      if (!current) {
+        return Promise.resolve(
+          jsonRpcErrorResult(
+            request.body,
+            "This connector was disconnected in Synara. Its tools are no longer available.",
+            404,
+          ),
+        );
+      }
+      if (current.status === "needs-auth")
+        return Promise.resolve(reconnectResult(request.body, current.name));
+      return forwardMcpConnectorRequest(
         {
-          url: connector.url,
+          url: current.url,
           method: request.method,
           body: request.body,
           sessionId: request.sessionId,
           protocolVersion: request.protocolVersion,
-          accessToken,
+          accessToken: current.oauth?.tokens.access_token ?? accessToken,
           signal: request.signal,
         },
-        connector.name,
+        current.name,
       );
+    };
     if (connector.authKind === "none") {
       const result = await send(undefined);
       return result.status === 401 ? reconnectResult(request.body, connector.name) : result;
@@ -782,7 +796,9 @@ export class McpConnectorRuntime {
         error: error instanceof Error ? error.message : String(error),
       });
     });
-    return tokens.access_token;
+    const current = this.find(connectorId);
+    if (current?.status !== "connected" || !current.oauth) throw new McpConnectorNeedsAuth();
+    return current.oauth.tokens.access_token;
   }
 
   private prunePending(): void {

@@ -530,6 +530,79 @@ describe("McpConnectorRuntime.forward", () => {
     ]);
   });
 
+  it.each([true, false])(
+    "does not deliver after disconnect during refresh (expired: %s)",
+    async (expired) => {
+      const harness = makeRuntime();
+      const connector = await connectSupabase(harness);
+      if (expired) harness.advance(2 * 60 * 60_000);
+      const refresh = Promise.withResolvers<unknown>();
+      mocks.refreshAuthorization.mockReturnValue(refresh.promise);
+      mocks.forward.mockResolvedValue(unauthorized);
+      const forwarded = harness.runtime.forward(connector.connectorId, {
+        method: "POST",
+        body: call,
+      });
+      await vi.waitFor(() => expect(mocks.refreshAuthorization).toHaveBeenCalled());
+      await harness.runtime.disconnect(connector.connectorId);
+      refresh.resolve({
+        access_token: "obsolete-access",
+        token_type: "bearer",
+        refresh_token: "obsolete-refresh",
+      });
+      await forwarded;
+      expect(mocks.forward).toHaveBeenCalledTimes(expired ? 0 : 1);
+      expect(harness.runtime.list()).toEqual([]);
+    },
+  );
+
+  it.each([true, false])(
+    "uses the reconnect credential instead of an old refresh (expired: %s)",
+    async (expired) => {
+      const harness = makeRuntime();
+      const connector = await connectSupabase(harness);
+      if (expired) harness.advance(2 * 60 * 60_000);
+      const refresh = Promise.withResolvers<unknown>();
+      mocks.refreshAuthorization.mockReturnValue(refresh.promise);
+      mocks.forward
+        .mockResolvedValueOnce(expired ? ok({}) : unauthorized)
+        .mockResolvedValue(ok({}));
+      const forwarded = harness.runtime.forward(connector.connectorId, {
+        method: "POST",
+        body: call,
+      });
+      await vi.waitFor(() => expect(mocks.refreshAuthorization).toHaveBeenCalled());
+      mocks.probe.mockResolvedValue({
+        kind: "oauth",
+        resourceMetadataUrl: undefined,
+        scope: "read",
+      });
+      mockSignIn({
+        access_token: "reconnect-access",
+        token_type: "bearer",
+        expires_in: 3600,
+        refresh_token: "reconnect-refresh",
+      });
+      const started = await harness.runtime.connect({ presetId: "supabase" });
+      await harness.runtime.completeAuthorization({
+        state: new URL(started.authorizationUrl!).searchParams.get("state")!,
+        code: "good-code",
+        error: undefined,
+        errorDescription: undefined,
+      });
+      refresh.resolve({
+        access_token: "obsolete-access",
+        token_type: "bearer",
+        refresh_token: "obsolete-refresh",
+      });
+      await forwarded;
+      expect(mocks.forward.mock.calls.map(([request]) => request.accessToken)).toEqual(
+        expired ? ["reconnect-access"] : ["access-1", "reconnect-access"],
+      );
+      expect(mocks.refreshAuthorization).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it("marks the connector for reconnection when the grant is gone", async () => {
     const harness = makeRuntime();
     const connector = await connectSupabase(harness);
