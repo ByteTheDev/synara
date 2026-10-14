@@ -367,6 +367,8 @@ describe("RecapStatsQuery", () => {
   it.each([
     "new generation",
     "SessionStart",
+    "repeated startup hooks",
+    "new process without hook",
     "compact hook",
     "clear hook",
     "legacy hook",
@@ -437,6 +439,16 @@ describe("RecapStatsQuery", () => {
                 ? "session-2"
                 : "session-1",
             lifecycleGeneration: generation,
+            ...(["SessionStart", "repeated startup hooks", "new process without hook"].includes(
+              evidence,
+            )
+              ? {
+                  processId:
+                    evidence !== "repeated startup hooks" && (turnId === "t3" || turnId === "t4")
+                      ? "process-2"
+                      : "process-1",
+                }
+              : {}),
             lastRequest: {
               messageId: `msg-${turnId}`,
               inputTokens: request.input,
@@ -483,29 +495,46 @@ describe("RecapStatsQuery", () => {
         // Provider-switch rollback deliberately restores its ownership generation.
         // The native SessionStart observation still identifies the new process.
         const resumedGeneration = evidence === "new generation" ? "gen-2" : "gen-1";
-        if (["SessionStart", "compact hook", "clear hook", "legacy hook"].includes(evidence)) {
+        if (
+          [
+            "SessionStart",
+            "repeated startup hooks",
+            "compact hook",
+            "clear hook",
+            "legacy hook",
+          ].includes(evidence)
+        ) {
           const at = "2026-09-30T07:00:00.000Z";
           const payload = JSON.stringify({
             claudeCache: {
               nativeSessionId: "session-1",
               lifecycleGeneration: resumedGeneration,
               source: "session-start",
-              ...(evidence === "legacy hook"
-                ? {}
-                : {
-                    sessionStartReason:
-                      evidence === "compact hook"
-                        ? "compact"
-                        : evidence === "clear hook"
-                          ? "clear"
-                          : "resume",
-                  }),
+              ...(["SessionStart", "repeated startup hooks"].includes(evidence)
+                ? { processId: evidence === "SessionStart" ? "process-2" : "process-1" }
+                : {}),
               observedAt: at,
             },
           });
           rows.push(["restart", null, "context-window.updated", payload, rows.length, at]);
           // Repeated observations of the same hook are one process, not a restart.
-          rows.push(["restart-repeat", null, "context-window.updated", payload, rows.length, at]);
+          const repeatedPayload =
+            evidence === "repeated startup hooks"
+              ? JSON.stringify({
+                  claudeCache: {
+                    ...JSON.parse(payload).claudeCache,
+                    observedAt: "2026-09-30T07:00:30.000Z",
+                  },
+                })
+              : payload;
+          rows.push([
+            "restart-repeat",
+            null,
+            "context-window.updated",
+            repeatedPayload,
+            rows.length,
+            at,
+          ]);
         }
         // Claude Code restored t1 + t2 into this first result of the new process.
         if (evidence !== "synthetic completion") {
@@ -580,6 +609,7 @@ describe("RecapStatsQuery", () => {
     // legitimate process usage. Do not guess a restart and discard that usage.
     const missingEvidence = [
       "missing restart evidence",
+      "repeated startup hooks",
       "compact hook",
       "clear hook",
       "legacy hook",

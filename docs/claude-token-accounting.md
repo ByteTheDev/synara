@@ -29,13 +29,12 @@ therefore only becomes the baseline: its turn carries no `modelUsage` or
 `totalCostUsd` and counts its main loop. Results written before this rule still
 carry the restored totals. Profile Stats finds them as the first turn of each
 process that resumed an earlier process of the same native session, and counts
-those turns' main loop instead. Process identity combines
-`claudeCache.lifecycleGeneration`, `nativeSessionId`, and the latest persisted
-`session-start` observation's `observedAt` when its `sessionStartReason` is
-`startup` or `resume`: provider-switch rollback reuses the ownership
-generation but still starts a new native process. Repeated emissions of one
-SessionStart observation do not introduce another boundary. Native `compact`
-and `clear` hooks reuse the process and never establish a restart. Once the first
+those turns' main loop instead. New observations carry `claudeCache.processId`,
+created once for an owned SDK query and preserved across its hooks, requests,
+compaction and model changes. A new query always receives a new ID, including
+provider-switch rollback that reuses the ownership generation. Native session
+identity also separates session changes inside a query. Observation timestamps
+only describe freshness, never process identity. Once the first
 result is settled, a later native-session identity change counts fresh usage
 normally rather than withholding another result.
 
@@ -73,11 +72,10 @@ unclassified cache reads. The total remains unchanged.
 
 ## Historical limits
 
-If an old restart reused a generation and retained no explicit startup/resume
-observation, it cannot be distinguished safely from continued work in the same
-process. Legacy SessionStart observations without a reason are also ambiguous:
-the SDK emits that hook for compaction and clear as well as process startup.
-Such historical totals remain unchanged rather than guessing a reset.
+Older observations have no process ID. They fall back to ownership generation
+and native session identity. If an old restart reused both, it cannot be
+separated safely from continued work; such totals remain unchanged rather than
+guessing a reset from hook timestamps or reasons.
 Missing request history can likewise prevent the first resumed turn from being
 identified. The runtime fix protects new results independently of this recovery.
 

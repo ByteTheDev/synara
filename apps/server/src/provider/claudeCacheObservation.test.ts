@@ -43,7 +43,6 @@ describe("Claude native cache observations", () => {
       lastResponseAt: "2026-09-16T09:00:00.000Z",
       state: "likely-expired",
       source: "session-start",
-      sessionStartReason: "resume",
       estimatedCacheWriteUsd: 2.5,
     });
   });
@@ -58,7 +57,6 @@ describe("Claude native cache observations", () => {
           nativeSessionId: "native",
           observedAt,
           source: "session-start",
-          sessionStartReason: "resume",
           state: "unknown",
         },
       ),

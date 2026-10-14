@@ -14229,6 +14229,12 @@ describe("Claude cache preflight", () => {
         });
         const restartedCursor = restarted.resumeCursor as Record<string, unknown>;
         assert.deepInclude(restartedCursor, savedMetadata);
+        const previousProcess = (cursor.claudeCache as { processId?: string }).processId;
+        const restartedProcess = (restartedCursor.claudeCache as { processId?: string }).processId;
+        assert.isString(previousProcess);
+        assert.isString(restartedProcess);
+        assert.notEqual(restartedProcess, previousProcess);
+
         assert.deepInclude(restartedCursor.claudeCache, {
           ...expectedCache,
           lifecycleGeneration: "second-generation",
@@ -14343,6 +14349,47 @@ describe("Claude cache preflight", () => {
       assert.equal(observation?.contextTokens, 800001);
       assert.equal(observation?.state, "likely-expired");
       assert.equal(observation?.ttlSeconds, 3600);
+      const processId = (observation as unknown as Record<string, unknown>).processId;
+      assert.isString(processId);
+      yield* TestClock.adjust("1 second");
+      yield* Effect.promise(() =>
+        hook(
+          {
+            hook_event_name: "SessionStart",
+            session_id: nativeSessionId,
+            source: "resume",
+            context_tokens: 800002,
+            transcript_path: "/tmp/fixture.jsonl",
+            cwd: "/tmp",
+          },
+          undefined,
+          { signal: new AbortController().signal },
+        ),
+      );
+      const repeated = yield* adapter.getClaudeCacheObservation!(THREAD_ID);
+      assert.notEqual(repeated?.observedAt, observation?.observedAt);
+      assert.equal((repeated as unknown as Record<string, unknown>).processId, processId);
+      assert.equal(repeated?.contextTokens, 800002);
+      const requestUsage = yield* adapter.streamEvents.pipe(
+        Stream.filter((event) => event.type === "thread.token-usage.updated"),
+        Stream.take(1),
+        Stream.runCollect,
+        Effect.forkChild,
+      );
+      yield* adapter.sendTurn({ threadId: THREAD_ID, input: "Continue", attachments: [] });
+      emitAssistantUsage(
+        harness.query,
+        nativeSessionId,
+        "process-identity",
+        "reply",
+        { input_tokens: 10 },
+        "process-request",
+      );
+      const [request] = yield* Fiber.join(requestUsage);
+      assert.equal(request?.type, "thread.token-usage.updated");
+      if (request?.type === "thread.token-usage.updated") {
+        assert.equal(request.payload.usage.claudeCache?.processId, processId);
+      }
     }).pipe(
       Effect.provideService(Random.Random, makeDeterministicRandomService()),
       Effect.provide(harness.layer),
@@ -14389,6 +14436,7 @@ describe("Claude cache preflight", () => {
           tokenAccountingVersion: 1,
         },
       });
+      const beforeCompaction = yield* adapter.getClaudeCacheObservation!(THREAD_ID);
       yield* adapter.sendTurn({ threadId: THREAD_ID, input: "/compact", attachments: [] });
       const boundary = yield* adapter.streamEvents.pipe(
         Stream.filter(
@@ -14419,6 +14467,8 @@ describe("Claude cache preflight", () => {
       assert.isUndefined(observation?.contextTokens);
       assert.isUndefined(observation?.lastResponseAt);
       assert.isUndefined(observation?.ttlSeconds);
+      assert.isString(observation?.processId);
+      assert.equal(observation?.processId, beforeCompaction?.processId);
       const settledUsage = yield* adapter.streamEvents.pipe(
         Stream.filter((event) => event.type === "thread.token-usage.updated"),
         Stream.take(1),
@@ -14436,7 +14486,7 @@ describe("Claude cache preflight", () => {
         // Stats must distinguish this same-process hook from a native restart.
         assert.deepInclude(usage.payload.usage.claudeCache, {
           source: "session-start",
-          sessionStartReason: "compact",
+          processId: observation?.processId,
         });
       }
     }).pipe(

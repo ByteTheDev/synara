@@ -16,8 +16,8 @@ export const ClaudeCacheObservation = Schema.Struct({
   partialTtlSeconds: Schema.optional(PositiveInt),
   state: Schema.Literals(["likely-warm", "likely-expired", "unknown"]),
   source: Schema.Literals(["session-start", "request-usage", "local-estimate"]),
-  // Only startup/resume establish a process boundary; compact/clear reuse it.
-  sessionStartReason: Schema.optional(Schema.Literals(["startup", "resume", "clear", "compact"])),
+  // Accounting identity of one owned Claude query; independent of hook delivery time.
+  processId: Schema.optional(TrimmedNonEmptyString),
   estimatedCacheWriteUsd: Schema.optional(Schema.Finite.check(Schema.isGreaterThanOrEqualTo(0))),
   lastRequest: Schema.optional(
     Schema.Struct({

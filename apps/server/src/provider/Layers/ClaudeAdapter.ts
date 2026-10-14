@@ -411,6 +411,7 @@ interface ClaudeSessionContext {
   readonly gatewaySessionLease?: AgentGatewaySessionLease;
   session: ProviderSession;
   readonly lifecycleGeneration?: string;
+  readonly cacheProcessId: string;
   readonly promptQueue: Queue.Queue<PromptQueueItem>;
   readonly query: ClaudeQueryRuntime;
   // Spawn-fixed: the Artifact opt-in is an environment variable of this process.
@@ -3946,6 +3947,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           query: context.query,
           artifactsEnabled: context.artifactsEnabled,
           processOwner: context.processOwner,
+          cacheProcessId: context.cacheProcessId,
           stoppedSignal: context.stoppedSignal,
           pendingCompactionPreparations: new Set(),
           streamFiber: undefined,
@@ -5086,20 +5088,23 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           } else if (context.compactionMessageId !== messageId) {
             if (addedTokens > 0 && !context.subagentRefs) {
               context.hasObservedCacheRequest = true;
-              context.cacheObservation = claudeCacheFromRequest({
-                usage: perCallUsage as Record<string, unknown>,
-                messageId,
-                observedAt: yield* nowIso,
-                ...(context.cacheRequestStartedAt?.messageId === messageId
-                  ? { cacheReferenceAt: context.cacheRequestStartedAt.at }
-                  : {}),
-                ...(context.resumeSessionId ? { nativeSessionId: context.resumeSessionId } : {}),
-                ...(context.lifecycleGeneration
-                  ? { lifecycleGeneration: context.lifecycleGeneration }
-                  : {}),
-                ...(context.currentApiModelId ? { model: context.currentApiModelId } : {}),
-                ...(context.cacheObservation ? { previous: context.cacheObservation } : {}),
-              });
+              context.cacheObservation = {
+                ...claudeCacheFromRequest({
+                  usage: perCallUsage as Record<string, unknown>,
+                  messageId,
+                  observedAt: yield* nowIso,
+                  ...(context.cacheRequestStartedAt?.messageId === messageId
+                    ? { cacheReferenceAt: context.cacheRequestStartedAt.at }
+                    : {}),
+                  ...(context.resumeSessionId ? { nativeSessionId: context.resumeSessionId } : {}),
+                  ...(context.lifecycleGeneration
+                    ? { lifecycleGeneration: context.lifecycleGeneration }
+                    : {}),
+                  ...(context.currentApiModelId ? { model: context.currentApiModelId } : {}),
+                  ...(context.cacheObservation ? { previous: context.cacheObservation } : {}),
+                }),
+                processId: context.cacheProcessId,
+              };
             }
             yield* maybeEmitContextUsageWarning(context, perCallUsage as Record<string, unknown>);
             if (normalizedPerCallUsage) {
@@ -6688,6 +6693,9 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
         }
 
         const startedAt = yield* nowIso;
+        // Ownership generations and native session IDs may be reused. This ID
+        // belongs only to this query and never comes from persisted resume state.
+        const cacheProcessId = crypto.randomUUID();
         const resumeState = readClaudeResumeState(input.resumeCursor);
         const threadId = input.threadId;
         const existingResumeSessionId = resumeState?.resume;
@@ -6727,13 +6735,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           if (sessionId && hookInput.session_id !== sessionId) return {};
           const current = Effect.runSync(Ref.get(contextRef));
           const previous = current ? current.cacheObservation : resumeState?.claudeCache;
-          const observation = claudeCacheFromSessionStart(
+          const nativeObservation = claudeCacheFromSessionStart(
             hookInput as unknown as Record<string, unknown>,
             new Date(cacheClock.currentTimeMillisUnsafe()).toISOString(),
             input.lifecycleGeneration,
             previous,
           );
-          if (!observation) return {};
+          if (!nativeObservation) return {};
+          const observation = { ...nativeObservation, processId: cacheProcessId };
           if (!current) startupCacheObservation = observation;
           else if (
             !current.stopped &&
@@ -7364,6 +7373,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           const initialCacheObservation = cacheObservation
             ? {
                 ...cacheObservation,
+                processId: cacheProcessId,
                 ...(input.lifecycleGeneration
                   ? { lifecycleGeneration: input.lifecycleGeneration }
                   : {}),
@@ -7413,6 +7423,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             accountDiscoveryKey,
             messageStream,
             processOwner,
+            cacheProcessId,
             stoppedSignal: Deferred.makeUnsafe<void>(),
             pendingCompactionPreparations: new Set(),
             streamFiber: undefined,

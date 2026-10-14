@@ -88,9 +88,9 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
       WHERE a.kind = 'turn.completed' AND a.turn_id IS NOT NULL
         ${tokenStatsLineageFilter(sql, sql.literal("a.thread_id"), scope)}
     ),
-    -- Ownership generations can be reused when a failed provider switch rolls
-    -- back. Explicit startup/resume observations distinguish the restarted process
-    -- without changing those generations or scanning the retained runtime journal.
+    -- Query identity is stable across repeated hooks and independent of reused
+    -- ownership generations. Legacy rows fall back to known native ownership;
+    -- observation timestamps never imply a new process.
     claude_request_observations AS (
       SELECT
         a.thread_id,
@@ -99,11 +99,9 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
         a.sequence,
         a.activity_id,
         json_extract(a.payload_json, '$.claudeCache.lifecycleGeneration') AS lifecycle_generation,
-        CASE WHEN json_extract(a.payload_json, '$.claudeCache.source') = 'session-start'
-          AND json_extract(a.payload_json, '$.claudeCache.sessionStartReason') IN ('startup', 'resume')
-          AND json_type(a.payload_json, '$.claudeCache.observedAt') = 'text'
-          THEN json_extract(a.payload_json, '$.claudeCache.observedAt')
-        END AS session_started_at,
+        CASE WHEN json_type(a.payload_json, '$.claudeCache.processId') = 'text'
+          THEN NULLIF(json_extract(a.payload_json, '$.claudeCache.processId'), '')
+        END AS process_id,
         json_extract(a.payload_json, '$.claudeCache.nativeSessionId') AS native_session_id,
         COALESCE(
           json_extract(a.payload_json, '$.claudeCache.lastRequest.messageId'),
@@ -118,10 +116,8 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
     ),
     claude_request_source AS (
       SELECT r.*,
-        lifecycle_generation || ':' || COALESCE(native_session_id, '') || ':' || COALESCE(MAX(session_started_at) OVER (
-          PARTITION BY thread_id, native_session_id, lifecycle_generation
-          ORDER BY created_at, sequence, activity_id ROWS UNBOUNDED PRECEDING
-        ), '') AS generation
+        COALESCE('process:' || process_id, 'legacy:' || lifecycle_generation)
+          || ':' || COALESCE(native_session_id, '') AS generation
       FROM claude_request_observations r
     ),
     -- Later rows repeat a response's request (output updates, the settled
