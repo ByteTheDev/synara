@@ -1,0 +1,63 @@
+name: Native editor and service acceptance
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-service-acceptance.yml]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: d3dfcb27231255ff08d303b6dcffe4e022c5fc40
+          persist-credentials: false
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Verify native workbench interfaces
+        working-directory: .code-oss/source
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npm run typecheck-client
+      - name: Preserve native runtime for focused follow-up checks
+        run: tar -czf code-oss-runtime.tar.gz -C .code-oss runtime
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-service-runtime
+          path: code-oss-runtime.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build integrated Synara application
+        run: bun run build:desktop
+      - name: Prepare actual Linux desktop capture
+        run: sudo apt-get update && sudo apt-get install -y xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1
+      - name: Exercise editor, extension host, language services, debugging and modes
+        timeout-minutes: 8
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Print bounded diagnostic evidence
+        if: always()
+        run: |
+          for file in after-checks.json failure.txt probe-at-failure.json native-probe.json; do
+            if [ -f ".code-oss/screenshots/$file" ]; then
+              echo "=== $file ==="
+              cat ".code-oss/screenshots/$file"
+            fi
+          done
+          if [ -f .code-oss/screenshots/after-electron.log ]; then tail -100 .code-oss/screenshots/after-electron.log; fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-service-acceptance-evidence
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
