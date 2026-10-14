@@ -1,0 +1,79 @@
+name: Native Files preload acceptance
+on:
+  push:
+    branches: [codex/1920-editor-surface-qa]
+    paths: [.github/workflows/code-oss-editor-preload-acceptance.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  desktop:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 7fa9c086ad574ebbff5c4d51791466370e963d0c
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - uses: actions/download-artifact@v8
+        with:
+          name: existing-editor-compiled
+          run-id: 38578035023
+          github-token: ${{ github.token }}
+          path: .code-oss/import
+      - uses: actions/download-artifact@v8
+        with:
+          name: existing-editor-runtime
+          run-id: 38571986911
+          github-token: ${{ github.token }}
+          path: .code-oss/import
+      - name: Reuse checked native and unchanged React resources
+        run: |
+          tar -xzf .code-oss/import/compiled-editor.tar.gz
+          tar -xzf .code-oss/import/existing-editor-runtime.tar.gz -C .code-oss
+      - name: Check only changed native adoption and harness files
+        run: |
+          node_modules/.bin/oxfmt apps/desktop/src/nativeEditorView.ts apps/desktop/src/nativeEditorView.test.ts apps/desktop/code-oss/scripts/smoke.mjs
+          bun run --cwd apps/desktop typecheck
+          bun run --cwd apps/desktop test -- src/nativeEditorView.test.ts src/editorSurface.test.ts
+          bun run --cwd packages/contracts build
+          bun run --cwd apps/desktop build
+          tar -czf .code-oss/repaired-editor.tar.gz apps/desktop/dist-electron apps/server/dist apps/web/dist apps/desktop/code-oss/scripts/smoke.mjs
+          tar -czf .code-oss/repaired-source.tar.gz apps/desktop/src/nativeEditorView.ts apps/desktop/src/nativeEditorView.test.ts apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-preload-repaired-app
+          path: |
+            .code-oss/repaired-editor.tar.gz
+            .code-oss/repaired-source.tar.gz
+          retention-days: 3
+      - name: Display and sandbox
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 >/dev/null
+          SANDBOX=$(realpath apps/desktop/node_modules/electron/dist/chrome-sandbox)
+          sudo chown root:root "$SANDBOX" && sudo chmod 4755 "$SANDBOX"
+      - name: Exercise actual Files editor without bypassing native security
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/evidence
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs --appearance
+      - name: Print targeted failure diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in Path('.code-oss/evidence').glob('*'):
+              if p.suffix in ['.json','.txt']: print('\n'+p.name+'\n'+p.read_text(errors='replace')[-18000:])
+              if p.name=='after-electron.log': print('\nNATIVE ERRORS\n'+'\n'.join(l for l in p.read_text(errors='replace').splitlines() if any(t in l.lower() for t in ['console','preload','exception','unhandled','synara desktop bridge','error:']))[-16000:])
+          PY
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-files-preload-evidence
+          path: .code-oss/evidence
+          retention-days: 7
+          if-no-files-found: warn
