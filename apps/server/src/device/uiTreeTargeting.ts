@@ -239,10 +239,30 @@ function deviceTargetSpec(
 
 /** System keyboard ancestry, rather than app-owned one-character buttons. */
 export function deviceKeyboardTop(root: DeviceUiNode): number | null {
-  const keyboards = flattenUiTree(root, childrenOf).filter(
-    (node) =>
-      /^(?:AX)?Keyboard$/iu.test(node.role) || /^(?:AX)?Keyboard$/iu.test(node.subrole ?? ""),
-  );
+  const nodes = flattenUiTree(root, childrenOf);
+  const keyboards = nodes.filter((node) => {
+    if (
+      node.unframed ||
+      node.frame.width <= 0 ||
+      node.frame.height <= 0 ||
+      !Number.isFinite(node.frame.y) ||
+      node.frame.y < root.frame.y ||
+      node.frame.y >= root.frame.y + root.frame.height
+    )
+      return false;
+    if (/^(?:AX)?Keyboard$/iu.test(node.role) || /^(?:AX)?Keyboard$/iu.test(node.subrole ?? "")) {
+      return true;
+    }
+    // Xcode 27 flattens keyboard keys beside a GenericElement screen overlay.
+    // Recognize its system controls, not app keypads with single-character labels.
+    if (node.role !== "GenericElement" || node.frame.width < root.frame.width * 0.8) return false;
+    const controls = new Set(
+      nodes
+        .filter((key) => key.role === "Button" && key.identifier && isOnScreen(key, node))
+        .map((key) => key.identifier),
+    );
+    return controls.has("space") && controls.has("delete") && controls.has("Return");
+  });
   return keyboards.length === 0 ? null : Math.min(...keyboards.map((node) => node.frame.y));
 }
 
@@ -285,6 +305,11 @@ export function planScrollStep(node: DeviceUiNode, root: DeviceUiNode): DeviceSc
     root.frame.y + root.frame.height - inset,
     (deviceKeyboardTop(root) ?? Infinity) - inset,
   );
+  if (bandBottom <= bandTop) {
+    throw new DeviceUiTargetError(
+      "The software keyboard leaves no safe scrolling area; dismiss it before scrolling.",
+    );
+  }
   const centre = node.frame.y + node.frame.height / 2;
 
   if (centre >= bandTop && centre <= bandBottom) return null;

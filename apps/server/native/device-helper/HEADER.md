@@ -169,7 +169,10 @@ non-US simulator the usage for `-` types `'`. The server therefore sends text
 as keystrokes only for ASCII on a US layout, and otherwise uses
 `set-focused-value`, which sets the focused element's value through the
 accessibility translator: any Unicode, layout-independent, and still delivered
-to the app as a text change.
+to the app as a text change. An empty `value` intentionally clears the focused
+field. Xcode 27 may flatten the software keyboard into sibling keys and a
+`GenericElement` overlay; the server recognizes its system control identifiers
+without treating app-owned PIN pads as keyboards.
 
 ## Testing
 
@@ -183,7 +186,9 @@ a screenshot, and shuts down only a simulator it booted itself.
 The bridge bounds one input RPC to 13 seconds, with at most one further second
 reserved to release keys after partial delivery. Such errors are never safe to
 replay automatically; a wholly refused operation carries explicit zero-delivery
-evidence. XPC interruption clears contact state before reconnection.
+evidence. A deadline refusal preserves the current transport and is returned
+without replay or re-attachment. XPC interruption clears contact state before
+reconnection.
 
 The owner-boundary test uses a stub transport without loading a simulator:
 

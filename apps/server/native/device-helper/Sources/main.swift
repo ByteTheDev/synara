@@ -543,7 +543,11 @@ func handle(method: String, params: Params, session: HelperSession) throws -> An
 
   case "set-focused-value":
     let bridge = try session.requireAccessibility()
-    let value = try params.string("value")
+    // An empty value intentionally clears the focused field. Other string
+    // parameters still reject empty handles, methods and device identifiers.
+    guard let value = params.optionalString("value") else {
+      throw RPCError(.invalidParams, "missing or non-string parameter 'value'")
+    }
     do {
       return try bridge.setFocusedValue(value)
     } catch {

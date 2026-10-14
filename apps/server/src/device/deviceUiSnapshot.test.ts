@@ -125,6 +125,31 @@ describe("uiFingerprint", () => {
 });
 
 describe("software keyboard", () => {
+  it("recognizes the flattened Xcode 27 system keyboard without treating app keys as a keyboard", () => {
+    const keys = ["space", "delete", "Return"].map((identifier, index) =>
+      node({
+        role: "Button",
+        identifier,
+        label: identifier,
+        frame: { x: index * 100, y: 729, width: 90, height: 54 },
+      }),
+    );
+    const text = formatUiSnapshot(
+      screen([
+        node({
+          role: "TextField",
+          focused: true,
+          value: "hello",
+          frame: { x: 40, y: 264, width: 310, height: 34 },
+        }),
+        ...keys,
+        node({ role: "GenericElement", frame: { x: 0, y: 560, width: 402, height: 314 } }),
+      ]),
+    );
+    expect(text).toContain("1 visible element");
+    expect(text).toContain("Software keyboard is up from y=560");
+    expect(text).not.toContain('- Button "space"');
+  });
   it("collapses the keys and what they cover into one line", () => {
     const keys = "qwertyuiop".split("").map((label, index) =>
       node({

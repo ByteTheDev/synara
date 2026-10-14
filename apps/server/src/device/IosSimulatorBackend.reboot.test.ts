@@ -270,17 +270,19 @@ describe("concurrent helper starts", () => {
 });
 
 describe("text delivery ownership", () => {
-  it("does not replay a partial operation whose inner error mentions unsent events", async () => {
+  it.each([
+    "1 HID event(s) were not delivered: input may have been partially delivered; still starting; nothing was sent",
+    "1 HID event(s) were not delivered: nothing was sent: long press cannot finish inside the input deadline",
+  ])("preserves the input transport after a non-retryable refusal: %s", async (failure) => {
     const { backend, helper } = makeBackend();
     let delivered = 0;
     helper.request = async () => {
       delivered++;
-      throw new Error(
-        "1 HID event(s) were not delivered: input may have been partially delivered; still starting; nothing was sent",
-      );
+      throw new Error(failure);
     };
-    await expect(backend.typeText(DEVICE, "hello")).rejects.toThrow(/partially delivered/);
+    await expect(backend.typeText(DEVICE, "hello")).rejects.toThrow(failure);
     expect(delivered).toBe(1);
+    expect(helper.attachCalls.some((call) => call.force)).toBe(false);
   });
   it("stops a long entry before the next chunk after cancellation", async () => {
     const { backend, helper } = makeBackend();

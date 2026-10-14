@@ -817,6 +817,9 @@ export class IosSimulatorBackend implements DeviceBackend {
       return await this.helperRequest(method, buildParams(helper));
     } catch (error) {
       if (!isInputNotDeliveredError(error)) throw error;
+      // A budget refusal does not mean the now-ready transport is stale.
+      // Leave it connected and let the caller retry the gesture deliberately.
+      if (/input deadline/iu.test(errorText(error))) throw error;
       // Replaying keystrokes after a partial delivery types them twice. Only a
       // refusal that sent nothing is safe to repeat for a non-replayable call.
       if (!/(?:^|: )nothing was sent:/iu.test(errorText(error))) {
