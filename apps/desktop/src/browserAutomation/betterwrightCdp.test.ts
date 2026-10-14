@@ -240,7 +240,7 @@ describe("Betterwright target boundary", () => {
     ["user moved focus", "Page.bringToFront"],
     ["host destroyed", "Page.bringToFront"],
     ["dispatch failed", "Page.bringToFront"],
-    ["user focused target", "Input.insertText"],
+    ["human revoked lease", "Input.insertText"],
   ])("restores only command-owned focus (%s, %s)", async (outcome, method) => {
     const f = fixture();
     let destroyed = false;
@@ -253,9 +253,9 @@ describe("Betterwright target boundary", () => {
     });
     const sessionId = (f.messages[0]!.result as { sessionId: string }).sessionId;
     f.debuggerApi.sendCommand.mockImplementationOnce(async () => {
-      // bringToFront moves focus itself; during Input the user may intentionally
-      // click the browser. Only the former owns a focus change to restore.
+      // Real user input revokes the target lease before the command settles.
       focusState.current = f.contents as unknown as WebContents;
+      if (outcome === "human revoked lease") void f.target.dispose(false);
       if (outcome === "user moved focus") focusState.current = null;
       if (outcome === "host destroyed") destroyed = true;
       if (outcome === "dispatch failed") throw new Error("Bring to front failed");
