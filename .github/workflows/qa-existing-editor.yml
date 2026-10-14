@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   native-contract:
     runs-on: ubuntu-24.04
@@ -13,11 +14,32 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-workspace
+      - uses: actions/download-artifact@v4
         with:
-          scope: runtime
-          electron: 'true'
-      - name: Check pinned native view ownership seam
+          name: local-test-tools
+          run-id: 38599398894
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/tools-export
+      - name: Split export and restore pinned tools
+        run: |
+          mkdir "$RUNNER_TEMP/tools-export/parts"
+          split -b 400m "$RUNNER_TEMP/tools-export/synara-deps.tar.gz" "$RUNNER_TEMP/tools-export/parts/deps-"
+          tar -xzf "$RUNNER_TEMP/tools-export/synara-deps.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: local-test-deps-1
+          compression-level: 0
+          path: ${{ runner.temp }}/tools-export/parts/deps-aa
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: local-test-deps-2
+          compression-level: 0
+          path: |
+            ${{ runner.temp }}/tools-export/parts/deps-ab
+            ${{ runner.temp }}/tools-export/test-tools.tar.gz
+          retention-days: 3
+      - name: Check explicit ownership restoration
         run: |
           cat > "$RUNNER_TEMP/view-contract.cjs" <<'JS'
           const { app, BrowserWindow, WebContentsView, View } = require('electron');
@@ -34,10 +56,12 @@ jobs:
             original._setOwnerWindow(null);
             const editor = new WebContentsView({ webContents: original });
             root.addChildView(editor);
+            original._setOwnerWindow(win);
             shell.setBounds({ x: 0, y: 0, width: 1000, height: 700 });
             editor.setBounds({ x: 200, y: 100, width: 400, height: 300 });
             await shell.webContents.loadURL('data:text/html,<body style="background:lightblue">Synara shell</body>');
             await original.loadURL('data:text/html,<body style="background:lightgreen"><textarea>Embedded editor</textarea></body>');
+            console.log('IDENTITY', win.webContents === original, original.id, originalId, BrowserWindow.fromWebContents(original)?.id, win.id);
             if (win.webContents !== original || original.id !== originalId || BrowserWindow.fromWebContents(original) !== win) throw new Error('Workbench identity or ownership changed');
             win.show();
             await new Promise(resolve => setTimeout(resolve, 300));
@@ -69,21 +93,4 @@ jobs:
           path: |
             ${{ runner.temp }}/view-contract.json
             ${{ runner.temp }}/view-contract.png
-          retention-days: 3
-      - name: Export isolated local test tools
-        if: always()
-        run: |
-          mkdir "$RUNNER_TEMP/test-tools"
-          cp "$(command -v node)" "$RUNNER_TEMP/test-tools/node"
-          cp "$(command -v bun)" "$RUNNER_TEMP/test-tools/bun"
-          find . -type d -name node_modules -prune -print0 | tar --null -T - -czf "$RUNNER_TEMP/synara-deps.tar.gz"
-          tar -czf "$RUNNER_TEMP/test-tools.tar.gz" -C "$RUNNER_TEMP/test-tools" .
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: local-test-tools
-          compression-level: 0
-          path: |
-            ${{ runner.temp }}/synara-deps.tar.gz
-            ${{ runner.temp }}/test-tools.tar.gz
           retention-days: 3
