@@ -1,0 +1,58 @@
+name: Notion recovery verification
+on:
+  push:
+    branches: [feat/notion-enterprise-oauth-integration]
+    paths:
+      - 'apps/server/src/notion/**'
+      - 'packages/shared/src/notion*'
+      - 'packages/contracts/src/notion*'
+      - '.github/notion-recovery/**'
+      - '.github/workflows/notion-recovery.yml'
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.13.1
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - name: Prepare exact native export edits and format changed source
+        run: python .github/notion-recovery/prepare.py
+      - name: Validate contract and shared type boundaries
+        id: types
+        continue-on-error: true
+        run: |
+          bun run --cwd packages/contracts typecheck
+          bun run --cwd packages/shared typecheck
+          bun run --cwd apps/server typecheck
+      - name: Test recovered adapter and OAuth transport
+        id: tests
+        continue-on-error: true
+        run: |
+          bun run --cwd packages/shared test src/notion.test.ts
+          bun run --cwd apps/server test src/notion/client.test.ts src/notion/oauthBroker.test.ts
+      - name: Lint recovered source
+        id: lint
+        continue-on-error: true
+        run: bun x oxlint apps/server/src/notion packages/shared/src/notion.ts packages/shared/src/notion.test.ts packages/contracts/src/notion.ts
+      - name: Prepare Git tree without moving any branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/notion-recovery/export-tree.py
+      - name: Record real check outcomes
+        if: always()
+        run: |
+          echo 'types=${{ steps.types.outcome }} tests=${{ steps.tests.outcome }} lint=${{ steps.lint.outcome }}'
+          test '${{ steps.types.outcome }}' = success
+          test '${{ steps.tests.outcome }}' = success
+          test '${{ steps.lint.outcome }}' = success
