@@ -263,7 +263,22 @@ export function deviceKeyboardTop(root: DeviceUiNode): number | null {
     );
     return controls.has("space") && controls.has("delete") && controls.has("Return");
   });
-  return keyboards.length === 0 ? null : Math.min(...keyboards.map((node) => node.frame.y));
+  const explicit = keyboards.filter(
+    (node) =>
+      /^(?:AX)?Keyboard$/iu.test(node.role) || /^(?:AX)?Keyboard$/iu.test(node.subrole ?? ""),
+  );
+  if (explicit.length > 0) return Math.min(...explicit.map((node) => node.frame.y));
+  // A SwiftUI wrapper may also enclose every key. Use the tightest overlay,
+  // rather than moving the keyboard boundary to the enclosing app container.
+  const overlay = keyboards.reduce<DeviceUiNode | null>(
+    (smallest, candidate) =>
+      smallest === null ||
+      candidate.frame.width * candidate.frame.height < smallest.frame.width * smallest.frame.height
+        ? candidate
+        : smallest,
+    null,
+  );
+  return overlay?.frame.y ?? null;
 }
 
 /**

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { DeviceUiNode } from "@synara/contracts";
 
 import { effectiveValue, formatUiSnapshot, uiFingerprint } from "./deviceUiSnapshot.ts";
+import { planScrollStep } from "./uiTreeTargeting.ts";
 
 function node(partial: Partial<DeviceUiNode> & { readonly role: string }): DeviceUiNode {
   return {
@@ -125,7 +126,11 @@ describe("uiFingerprint", () => {
 });
 
 describe("software keyboard", () => {
-  it("recognizes the flattened Xcode 27 system keyboard without treating app keys as a keyboard", () => {
+  it.each([
+    null,
+    { x: 0, y: 0, width: 402, height: 874 },
+    { x: 0, y: 20, width: 402, height: 854 },
+  ])("preserves the keyboard boundary inside a wider app wrapper: %j", (wrapper) => {
     const keys = ["space", "delete", "Return"].map((identifier, index) =>
       node({
         role: "Button",
@@ -134,18 +139,22 @@ describe("software keyboard", () => {
         frame: { x: index * 100, y: 729, width: 90, height: 54 },
       }),
     );
-    const text = formatUiSnapshot(
-      screen([
-        node({
-          role: "TextField",
-          focused: true,
-          value: "hello",
-          frame: { x: 40, y: 264, width: 310, height: 34 },
-        }),
-        ...keys,
-        node({ role: "GenericElement", frame: { x: 0, y: 560, width: 402, height: 314 } }),
-      ]),
+    const field = node({
+      role: "TextField",
+      focused: true,
+      value: "hello",
+      frame: { x: 40, y: 264, width: 310, height: 34 },
+    });
+    const content = [
+      field,
+      ...keys,
+      node({ role: "GenericElement", frame: { x: 0, y: 560, width: 402, height: 314 } }),
+    ];
+    const root = screen(
+      wrapper ? [node({ role: "GenericElement", frame: wrapper, children: content })] : content,
     );
+    const text = formatUiSnapshot(root);
+    expect(planScrollStep(field, root)).toBeNull();
     expect(text).toContain("1 visible element");
     expect(text).toContain("Software keyboard is up from y=560");
     expect(text).not.toContain('- Button "space"');
