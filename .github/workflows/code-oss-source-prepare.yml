@@ -5,6 +5,7 @@ on:
     paths: [.code-oss-work/**, .github/workflows/code-oss-source-prepare.yml]
 permissions:
   contents: read
+  actions: read
 jobs:
   source:
     runs-on: ubuntu-24.04
@@ -37,12 +38,19 @@ jobs:
           const fixes = [
             ['apps/desktop/src/main.ts', '  if (!allowed) {\n    writeDesktopLogHeader(`${reason} stayed because chats are still running`);', '  if (!allowed) {\n    codeOss.restoreAfterFailedShutdown();\n    writeDesktopLogHeader(`${reason} stayed because chats are still running`);'],
             ['apps/web/src/components/DesktopIdeCoordinator.tsx', '  return hasUnseenCompletion(thread) || Boolean(', '  return hasUnseenCompletion(thread) || (thread.session?.status === "error" && (!thread.lastVisitedAt || thread.session.updatedAt > thread.lastVisitedAt)) || Boolean('],
+            ['apps/desktop/src/codeOssHost.ts', 'item.accelerator = this.accelerator ?? undefined', 'item.accelerator = this.accelerator'],
+            ['apps/desktop/src/codeOssHost.ts', 'const [width, height] = this.window.getContentSize();', 'const { width, height } = this.window.getContentBounds();'],
+            ['apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts', 'private body: HTMLElement | undefined;', 'private agentBody: HTMLElement | undefined;'],
           ];
           for (const [path, before, after] of fixes) {
             const text = fs.readFileSync(path, 'utf8');
             if (text.split(before).length !== 2) throw Error('Non-unique follow-up anchor: ' + path);
             fs.writeFileSync(path, text.replace(before, after)); paths.add(path);
           }
+          const pane = 'apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts';
+          fs.writeFileSync(pane, fs.readFileSync(pane, 'utf8').replaceAll('this.body', 'this.agentBody'));
+          fs.copyFileSync('.code-oss-work/smoke.mjs', 'apps/desktop/code-oss/scripts/smoke.mjs');
+          paths.add('apps/desktop/code-oss/scripts/smoke.mjs');
           for (const path of execFileSync('git', ['ls-files'], {encoding:'utf8'}).trim().split('\n')) {
             if (path.startsWith('apps/desktop/code-oss/') || path.startsWith('.github/actions/setup-code-oss/') || [
               'apps/desktop/src/codeOssHost.ts','apps/desktop/src/desktopRenderer.ts','apps/desktop/src/desktopRenderer.test.ts',
@@ -93,7 +101,7 @@ jobs:
           electron: 'false'
       - name: Remove preparation-only files from validation workspace
         run: rm -rf .code-oss-work .github/workflows/code-oss-source-prepare.yml .github/workflows/code-oss-source-snapshot.yml prepared-source.tar.gz prepared-manifest.json
-      - name: Check final presentation and shutdown edits
+      - name: Check affected interfaces and focused behavior
         run: |
           bun run fmt:check
           bun run lint
@@ -102,6 +110,104 @@ jobs:
           bun run --cwd apps/desktop test -- src/desktopRenderer.test.ts src/runningChatsQuitGuard.test.ts
           bun run --cwd packages/contracts test -- src/desktopIde.test.ts
           bun run --cwd scripts test -- lib/code-oss-runtime.test.ts
+  native:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: prepared-synara-source
+      - run: tar -xzf prepared-source.tar.gz
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Check native workbench interface contracts
+        working-directory: .code-oss/source
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npm run typecheck-client
+      - name: Archive verified native resources
+        run: tar -czf code-oss-runtime.tar.gz -C .code-oss runtime
+      - uses: actions/upload-artifact@v7
+        with:
+          name: code-oss-native-linux-x64
+          path: code-oss-runtime.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+  baseline:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: a62d7c733d19f5538ffc0d126d57437b3b578ff1
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: prepared-synara-source
+          path: .code-oss
+      - run: mkdir -p .code-oss/prepared && tar -xzf .code-oss/prepared-source.tar.gz -C .code-oss/prepared
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build unchanged main-branch application
+        run: bun run build:desktop
+      - name: Prepare real Linux desktop capture
+        run: sudo apt-get update && sudo apt-get install -y xvfb scrot libasound2t64 libgtk-3-0t64 libnss3 libgbm1
+      - name: Capture actual baseline
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node .code-oss/prepared/apps/desktop/code-oss/scripts/smoke.mjs --baseline
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: synara-before-native-integration
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
+  smoke:
+    needs: [source, native]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: prepared-synara-source
+      - run: tar -xzf prepared-source.tar.gz
+      - uses: actions/download-artifact@v8
+        with:
+          name: code-oss-native-linux-x64
+          path: .code-oss
+      - run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build integrated application
+        run: bun run build:desktop
+      - name: Prepare real Linux desktop capture
+        run: sudo apt-get update && sudo apt-get install -y xvfb scrot libasound2t64 libgtk-3-0t64 libnss3 libgbm1
+      - name: Exercise real single-app workbench and retained Agent view
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: synara-after-native-integration
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
   blobs:
     needs: source
     runs-on: ubuntu-24.04
