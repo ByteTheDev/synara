@@ -381,6 +381,38 @@ describe("RecapStatsQuery", () => {
               'full-access', 'default', 'local',
               '2026-09-30T05:00:00.000Z', '2026-09-30T09:00:00.000Z', NULL)
         `;
+        // Subagents of thread-claude. Their source turn ids name their own
+        // turns, so only time places them inside a parent result.
+        yield* sql`
+          INSERT INTO projection_threads (
+            thread_id, project_id, title, model_selection_json, runtime_mode,
+            interaction_mode, env_mode, created_at, updated_at, deleted_at,
+            parent_thread_id, creation_source, source_turn_id
+          )
+          VALUES
+            ('child-withheld', 'project-app', 'Subagent',
+              '{"provider":"claudeAgent","model":"claude-opus-5"}', 'full-access', 'default',
+              'local', '2026-09-30T07:01:10.000Z', '2026-09-30T07:01:30.000Z', NULL,
+              'thread-claude', 'provider_native', 'child-withheld-turn'),
+            ('child-settled', 'project-app', 'Subagent',
+              '{"provider":"claudeAgent","model":"claude-opus-5"}', 'full-access', 'default',
+              'local', '2026-09-30T07:30:00.000Z', '2026-09-30T07:40:00.000Z', NULL,
+              'thread-claude', 'provider_native', 'child-settled-turn')
+        `;
+        yield* sql`
+          INSERT INTO projection_thread_activities (
+            activity_id, thread_id, turn_id, tone, kind, summary, payload_json, sequence, created_at
+          )
+          VALUES
+            ('done-child-withheld', 'child-withheld', 'child-withheld-turn', 'info',
+              'turn.completed', 'done',
+              '{"provider":"claudeAgent","tokenAccountingVersion":1,"mainLoopTokens":50}',
+              1, '2026-09-30T07:01:30.000Z'),
+            ('done-child-settled', 'child-settled', 'child-settled-turn', 'info',
+              'turn.completed', 'done',
+              '{"provider":"claudeAgent","tokenAccountingVersion":1,"mainLoopTokens":20}',
+              1, '2026-09-30T07:40:00.000Z')
+        `;
         const rows: Array<[string, string, string, string, number, string]> = [];
         const pushRequest = (
           turnId: string,
@@ -444,6 +476,7 @@ describe("RecapStatsQuery", () => {
           mainLoopTokens: 300,
           modelUsage: { "claude-opus-5": { totalTokens: 600, cacheReadInputTokens: 450 } },
         });
+        // t4's result also settles child-settled's 20 tokens (380 + 20).
         pushRequest("t4", "gen-2", "2026-09-30T08:01:00.000Z", {
           input: 10,
           cacheRead: 290,
@@ -480,13 +513,15 @@ describe("RecapStatsQuery", () => {
       }),
     );
 
-    // Claude: 100 + 200 + 300 (t3's main loop, not its restored 600) + 400.
-    // Cache: 60 + 150 + 240 (t3's request share, 80% of 300) + 300; Codex adds 1000.
-    expect(recap.totals.tokens).toEqual({ user: 2_500, automation: 0, agent: 0 });
+    // Claude: 100 + 200 + 300 (t3's main loop, not its restored 600) + 400, plus
+    // child-withheld's 50, which only t3's withheld result had settled.
+    // child-settled is already inside t4. Cache: 60 + 150 + 240 (t3's request
+    // share, 80% of 300) + 300; the children report none; Codex adds 1000.
+    expect(recap.totals.tokens).toEqual({ user: 2_550, automation: 0, agent: 0 });
     expect(recap.totals.cacheReadTokens).toBe(1_750);
     expect(recap.models).toEqual([
       { provider: "codex", model: "gpt-5-codex", turns: 0, tokens: 1_500 },
-      { provider: "claudeAgent", model: "claude-opus-5", turns: 0, tokens: 1_000 },
+      { provider: "claudeAgent", model: "claude-opus-5", turns: 0, tokens: 1_050 },
     ]);
   });
 

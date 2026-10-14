@@ -45,10 +45,18 @@ stores that value as `totalTokens`, and folds both cache counters into its
 authoritative for compact rows; otherwise it sums the four raw SDK counters.
 This prevents cache and thinking tokens from being added twice.
 
-Profile Stats uses versioned completed model totals, counts mirrored children
-only through the parent, and attributes usage to the completion date. Completed
-turns without any usable positive model row fall back to verified main-loop
-usage, including when a malformed nonempty breakdown is present.
+Profile Stats uses versioned completed model totals and attributes usage to the
+completion date. Completed turns without any usable positive model row fall back
+to verified main-loop usage, including when a malformed nonempty breakdown is
+present.
+
+Subagents count once. A versioned result covers every request its process made
+since the previous result, subagents included, so a provider-native child's
+turn is matched by time to the next parent result of the process it ran in (the
+parent's latest `lifecycleGeneration` started before the child finished). The
+child counts on its own only when that result does not count it: it is withheld,
+its breakdown is unusable, it belongs to a later process, or no parent result
+followed. `source_turn_id` is not used; it can name the child's own turn.
 
 ## Historical limits
 
