@@ -60,9 +60,14 @@ await cp(
   join(source, "src/vs/synara/common/desktopIde.ts"),
 );
 const product = JSON.parse(await readFile(join(source, "product.json"), "utf8"));
+// Keep the upstream defaultChatAgent metadata: this pinned workbench requires
+// its shape in account and extension-management services even with AI disabled.
+// Metadata does not install or license Copilot. Synara disables native AI in its
+// workspace and keeps onboarding, provider authentication and agent turns itself.
+if (!product.defaultChatAgent?.chatExtensionId || !product.defaultChatAgent?.provider?.default)
+  throw new Error("The pinned workbench product contract changed; review upstream metadata.");
 // Synara, not Microsoft's branded distribution. The existing Synara shell owns updates and identity.
 for (const key of [
-  "defaultChatAgent",
   "defaultChatProvider",
   "updateUrl",
   "quality",

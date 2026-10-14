@@ -142,6 +142,21 @@ try {
       "Actual main-branch React application, fresh isolated profile",
     );
   } else {
+    await writeFile(
+      join(output, "windows.json"),
+      JSON.stringify(
+        await application.evaluate(({ BrowserWindow }) =>
+          BrowserWindow.getAllWindows().map((w) => ({
+            id: w.id,
+            visible: w.isVisible(),
+            url: w.webContents.getURL(),
+            title: w.getTitle(),
+          })),
+        ),
+        null,
+        2,
+      ),
+    );
     const state = await until(
       () => agent.evaluate(() => window.desktopBridge.ide.getState()),
       (value) => value.status === "ready",
@@ -164,6 +179,8 @@ try {
       window.__synaraSmokeIdentity = crypto.randomUUID();
     });
     const marker = await agent.evaluate(() => window.__synaraSmokeIdentity);
+    const skipSetup = agent.getByRole("button", { name: "Skip setup", exact: true });
+    if (await skipSetup.isVisible()) await skipSetup.click();
     const inputs = agent.locator('[contenteditable="true"]');
     const hasDraft = (await inputs.count()) > 0;
     if (hasDraft) await inputs.first().fill("Unsaved Synara draft — native mode smoke");
@@ -282,5 +299,5 @@ try {
   await writeFile(join(output, baseline ? "before-electron.log" : "after-electron.log"), log);
   // Only this harness's temporary profile is closed and removed; never production data.
   if (application) await application.evaluate(({ app }) => app.exit(0)).catch(() => {});
-  await rm(home, { recursive: true, force: true });
+  await rm(home, { recursive: true, force: true, maxRetries: 10, retryDelay: 250 });
 }
