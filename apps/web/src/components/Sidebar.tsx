@@ -1743,8 +1743,9 @@ export default function Sidebar() {
     routeThreadId,
     sidebarThreadSummaryById,
   );
-  const activeSidebarThreadId = optimisticActiveThreadId ?? routeActiveSidebarThreadId;
-  const visualActiveSidebarThreadId = activeSidebarThreadId;
+  // Hidden child routes reveal their root row without treating that root as the open chat.
+  const activeSidebarThreadId = optimisticActiveThreadId ?? routeThreadId;
+  const visualActiveSidebarThreadId = optimisticActiveThreadId ?? routeActiveSidebarThreadId;
   const hideAutomationRunThreads = !appSettings.showAutomationRunThreads;
   const selectSidebarTreeThreads = useMemo(
     () => createSidebarDisplayThreadsSelector({ hideAutomationRunThreads }),
@@ -1874,7 +1875,7 @@ export default function Sidebar() {
     if (!optimisticActiveThreadId) {
       return;
     }
-    if (routeActiveSidebarThreadId === optimisticActiveThreadId) {
+    if (routeThreadId === optimisticActiveThreadId) {
       // The route caught up; drop the optimistic override on the next tick. Async
       // setState keeps this out of render, and activeSidebarThreadId already resolves
       // to the same thread via `optimistic ?? route`, so the deferral is invisible.
@@ -1895,7 +1896,7 @@ export default function Sidebar() {
       );
     }, 1_500);
     return () => window.clearTimeout(timeout);
-  }, [optimisticActiveThreadId, routeActiveSidebarThreadId]);
+  }, [optimisticActiveThreadId, routeThreadId]);
 
   const clearThreadNotification = useCallback(
     (threadId: ThreadId) => {
@@ -5225,6 +5226,7 @@ export default function Sidebar() {
         thread={thread}
         project={projectById.get(thread.projectId)}
         isActive={visualActiveSidebarThreadId === thread.id}
+        isOpen={activeSidebarThreadId === thread.id}
         isSettled={false}
         isPinned={pinnedThreadIdSet.has(thread.id)}
         threadJumpLabel={visibleThreadJumpLabelByThreadId.get(thread.id) ?? null}
@@ -5251,7 +5253,7 @@ export default function Sidebar() {
           void handleThreadContextMenu(threadId, position);
         }}
         renderHoverCard={(anchorId) =>
-          renderThreadHoverCardPopup(thread, anchorId, visualActiveSidebarThreadId === thread.id)
+          renderThreadHoverCardPopup(thread, anchorId, activeSidebarThreadId === thread.id)
         }
       />
     );
@@ -5458,7 +5460,7 @@ export default function Sidebar() {
             </div>
           </div>
         </TooltipTrigger>
-        {renderThreadHoverCardPopup(thread, hoverAnchorId, isActive)}
+        {renderThreadHoverCardPopup(thread, hoverAnchorId, activeSidebarThreadId === thread.id)}
       </Tooltip>
     );
   }
@@ -5622,7 +5624,7 @@ export default function Sidebar() {
               })}
             </div>
           </TooltipTrigger>
-          {renderThreadHoverCardPopup(thread, hoverAnchorId, isActive)}
+          {renderThreadHoverCardPopup(thread, hoverAnchorId, activeSidebarThreadId === thread.id)}
         </Tooltip>
       </SidebarMenuSubItem>
     );
@@ -6228,7 +6230,7 @@ export default function Sidebar() {
       event.stopPropagation();
       const nextThreadId = getNextVisibleSidebarThreadId({
         visibleThreadIds: visibleSidebarThreadIds,
-        activeThreadId: activeSidebarThreadId ?? undefined,
+        activeThreadId: visualActiveSidebarThreadId ?? undefined,
         direction: command === "chat.visible.previous" ? "backward" : "forward",
       });
       if (nextThreadId && nextThreadId !== activeSidebarThreadId) {
@@ -6274,6 +6276,7 @@ export default function Sidebar() {
   }, [
     activateThreadFromSidebarIntent,
     activeSidebarThreadId,
+    visualActiveSidebarThreadId,
     activeSpaceId,
     activityViewEnabled,
     handleSelectSpace,
@@ -7273,7 +7276,8 @@ export default function Sidebar() {
                       <SidebarActivityView
                         threads={activityNonGroupSidebarThreads}
                         projectById={projectById}
-                        activeThreadId={visualActiveSidebarThreadId}
+                        activeThreadId={activeSidebarThreadId}
+                        visualActiveThreadId={visualActiveSidebarThreadId}
                         pinnedThreadIdSet={pinnedThreadIdSet}
                         settledOverrideByThreadId={settledOverrideByThreadId}
                         threadsHydrated={threadsHydrated}
@@ -7300,7 +7304,7 @@ export default function Sidebar() {
                           renderThreadHoverCardPopup(
                             thread,
                             anchorId,
-                            visualActiveSidebarThreadId === thread.id,
+                            activeSidebarThreadId === thread.id,
                           )
                         }
                         onCreateChat={handlePrimaryNewThread}
