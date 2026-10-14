@@ -132,5 +132,15 @@
         "after": "'main', 'mainImpl', 'cli', 'bootstrap-fork', 'synara'"
       }
     ]
+  },
+  {
+    "path": "src/vs/workbench/workbench.common.main.ts",
+    "sha256": "09995aa83bf9dff8e196c1332c8d3ca1e8f75f217231f9245506dd48277f8fb4",
+    "edits": [
+      {
+        "before": "import './contrib/welcomeOnboarding/browser/welcomeOnboarding.contribution.js';",
+        "after": "// Synara owns onboarding; the branded Microsoft flow requires a proprietary chat product.\nimport '../synara/electron-browser/onboarding.js';"
+      }
+    ]
   }
 ]
