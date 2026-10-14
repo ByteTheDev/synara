@@ -1,0 +1,41 @@
+name: Native offline debugging resources
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-local-debug.yml]
+permissions:
+  contents: read
+jobs:
+  resources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fddd120ec76ae1169982d5a4c1eb441e12af0d88
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build existing Synara desktop
+        run: bun run build:desktop
+      - name: Export tools and built app without credentials or application data
+        shell: bash
+        run: |
+          mkdir -p .code-oss/local-tools
+          cp "$(command -v node)" .code-oss/local-tools/node
+          cp "$(command -v bun)" .code-oss/local-tools/bun
+          node -e 'require("node:fs").writeFileSync(".code-oss/local-tools/source.json", JSON.stringify({commit:"fddd120ec76ae1169982d5a4c1eb441e12af0d88",platform:process.platform,arch:process.arch}))'
+          tar -czf synara-offline-runtime.tar.gz \
+            node_modules apps/desktop/node_modules apps/web/node_modules \
+            apps/server/node_modules packages/contracts/node_modules packages/shared/node_modules scripts/node_modules \
+            apps/desktop/dist-electron apps/server/dist apps/web/dist packages/contracts/dist \
+            .code-oss/local-tools
+      - uses: actions/upload-artifact@v7
+        with:
+          name: synara-offline-runtime
+          path: synara-offline-runtime.tar.gz
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
