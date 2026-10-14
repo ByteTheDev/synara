@@ -435,7 +435,7 @@ describe("RecapStatsQuery", () => {
         ) => {
           const claudeCache = {
             nativeSessionId:
-              evidence === "new native session" && (turnId === "t3" || turnId === "t4")
+              evidence === "new native session" && (turnId === "turn-three" || turnId === "t4")
                 ? "session-2"
                 : "session-1",
             lifecycleGeneration: generation,
@@ -444,7 +444,8 @@ describe("RecapStatsQuery", () => {
             )
               ? {
                   processId:
-                    evidence !== "repeated startup hooks" && (turnId === "t3" || turnId === "t4")
+                    evidence !== "repeated startup hooks" &&
+                    (turnId === "turn-three" || turnId === "t4")
                       ? "process-2"
                       : "process-1",
                 }
@@ -538,7 +539,7 @@ describe("RecapStatsQuery", () => {
         }
         // Claude Code restored t1 + t2 into this first result of the new process.
         if (evidence !== "synthetic completion") {
-          pushRequest("t3", resumedGeneration, "2026-09-30T07:01:00.000Z", {
+          pushRequest("turn-three", resumedGeneration, "2026-09-30T07:01:00.000Z", {
             input: 10,
             cacheRead: 240,
             cacheCreation: 40, // The remaining 10 tokens are output, never cache reads.
@@ -546,7 +547,7 @@ describe("RecapStatsQuery", () => {
         }
         // A child-only synthetic turn has no new parent request or SDK result.
         // Its child is included by the next actual result, not counted twice.
-        pushCompleted("t3", "2026-09-30T07:02:00.000Z", {
+        pushCompleted("turn-three", "2026-09-30T07:02:00.000Z", {
           mainLoopTokens: evidence === "synthetic completion" ? 0 : 300,
           ...(evidence === "unversioned result" ? { tokenAccountingVersion: undefined } : {}),
           ...(evidence === "synthetic completion" ? { claudeResultObserved: false } : {}),
@@ -601,9 +602,9 @@ describe("RecapStatsQuery", () => {
       }),
     );
 
-    // Claude: 100 + 200 + 300 (t3's main loop, not its restored 600) + 400, plus
-    // child-withheld's 50, which only t3's withheld result had settled.
-    // child-settled is already inside t4. Cache: 60 + 150 + 240 (t3's recorded
+    // Claude: 100 + 200 + 300 (turn-three's main loop, not its restored 600) + 400, plus
+    // child-withheld's 50, which only turn-three's withheld result had settled.
+    // child-settled is already inside t4. Cache: 60 + 150 + 240 (turn-three's recorded
     // requests, excluding output) + 300; the children report none; Codex adds 1000.
     // Without a persisted restart boundary these same values could represent
     // legitimate process usage. Do not guess a restart and discard that usage.
