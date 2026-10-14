@@ -1,0 +1,92 @@
+name: Preserve passing native IDE evidence
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-complete-evidence.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  captures:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-evidence
+          run-id: 38543125228
+          github-token: ${{ github.token }}
+          path: evidence
+      - name: Store verified image and recording blobs only
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const checks=JSON.parse(fs.readFileSync('evidence/after-checks.json','utf8'));
+            const required=['native Explorer opens a real source file','TypeScript extension, definition, completion and diagnostics','native debug adapter and call stack','dirty buffers and Agent drafts survive mode switches and external writes','native terminal, worktree cwd, process continuity and Git'];
+            for (const name of required) if (!checks.some(check=>check.name===name&&check.passed===true)) throw Error('Missing acceptance: '+name);
+            if (fs.existsSync('evidence/failure.txt')) throw Error('Acceptance failure present');
+            const names=['after-agent-mode.png','after-ide-editor.png','after-ide-agent-context.png','after-ide-debugger.png','after-ide-terminal.png','after-ide-git.png','after-return-to-agent.png','agent-ide-switch.gif'];
+            for (const name of names) {
+              const bytes=fs.readFileSync('evidence/'+name);
+              if (bytes.length>3000000) throw Error('Unexpected evidence size');
+              if(name.endsWith('.png')&&!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) throw Error('Invalid PNG');
+              if(name.endsWith('.gif')&&!['GIF87a','GIF89a'].includes(bytes.subarray(0,6).toString())) throw Error('Invalid GIF');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('PASSING_CAPTURE='+JSON.stringify({path:'docs/images/code-oss/'+name,sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),bytes:bytes.length,mode:'100644',type:'blob'}));
+            }
+  docs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 45051447fc1c05fb030c5a83262f2a5318d4963e
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: static
+          electron: 'false'
+      - name: Update acceptance evidence and format only its documentation
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const path='docs/code-oss.md';
+          let text=fs.readFileSync(path,'utf8');
+          const start=text.indexOf('These captures come from the original');
+          const end=text.indexOf('\n\n[Before:',start);
+          if(start<0||end<0)throw Error('Capture section changed');
+          text=text.slice(0,start)+'These captures come from the original and integrated applications, not mockups. [Run 38543125228](https://github.com/Emanuele-web04/synara/actions/runs/38543125228) passed the native build, upstream client typecheck and the real Linux acceptance harness: source editing, TypeScript diagnostics/completion/definition, selected-code draft context, debugging and extension-host continuity, dirty buffers, modal stacking, terminal execution across mode switches, and Git. The same run captured the mode-switch recording. This is isolated Linux acceptance, not signed cross-platform release or authenticated provider acceptance.'+text.slice(end);
+          text+='\n![After: native terminal](images/code-oss/after-ide-terminal.png)\n\n![After: native Source Control](images/code-oss/after-ide-git.png)\n\n![Actual Agent and IDE mode switching](images/code-oss/agent-ide-switch.gif)\n';
+          fs.writeFileSync(path,text);
+          JS
+          node_modules/.bin/oxfmt docs/code-oss.md
+          node_modules/.bin/oxfmt --check docs/code-oss.md
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-complete-docs
+          path: docs/code-oss.md
+          retention-days: 3
+  docblob:
+    needs: docs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-docs
+      - name: Store final documentation as data
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const bytes=fs.readFileSync('code-oss.md');
+            if(bytes.length>20000)throw Error('Unexpected document size');
+            const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+            console.log('PASSING_DOC='+JSON.stringify({path:'docs/code-oss.md',sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),mode:'100644',type:'blob'}));
