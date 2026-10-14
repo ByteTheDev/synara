@@ -1,0 +1,26 @@
+name: Inspect final Synara UI captures
+on:
+  push:
+    branches: [codex/1920-synara-appearance-qa]
+    paths: [.github/workflows/code-oss-appearance-review.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-ui-final-evidence
+          run-id: 38556444190
+          github-token: ${{ github.token }}
+      - name: Encode compact copies of real screenshots without changing the application
+        run: |
+          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null; }
+          for mode in dark light; do
+            ffmpeg -y -loglevel error -i after-synara-ide-$mode.png -vf scale=640:-1 -c:v libwebp -quality 20 compact-$mode.webp
+            echo "IMAGE_$mode=$(base64 -w0 compact-$mode.webp)"
+            sha256sum compact-$mode.webp
+          done
