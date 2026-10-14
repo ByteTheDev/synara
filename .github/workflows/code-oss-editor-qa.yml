@@ -1,0 +1,34 @@
+name: Code OSS editor integration QA
+on:
+  push:
+    branches: [qa/code-oss-editor-20261014]
+permissions:
+  contents: read
+concurrency:
+  group: code-oss-editor-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source-baselines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Archive exact source baselines
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/synara-baselines
+          git fetch --no-tags --depth=1 https://github.com/Emanuele-web04/synara.git a62d7c733d19f5538ffc0d126d57437b3b578ff1
+          git archive a62d7c733d19f5538ffc0d126d57437b3b578ff1 | gzip > /tmp/synara-baselines/main.tar.gz
+          git fetch --no-tags --depth=1 https://github.com/Emanuele-web04/synara.git 85c70ad544f0409dc9051dde38c549530b2605ec
+          git archive 85c70ad544f0409dc9051dde38c549530b2605ec | gzip > /tmp/synara-baselines/pr1920.tar.gz
+          printf '%s\n' 'main a62d7c733d19f5538ffc0d126d57437b3b578ff1' 'pr1920 85c70ad544f0409dc9051dde38c549530b2605ec' > /tmp/synara-baselines/refs.txt
+          sha256sum /tmp/synara-baselines/*.tar.gz > /tmp/synara-baselines/sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-editor-source-baselines
+          path: /tmp/synara-baselines
+          retention-days: 3
+          if-no-files-found: error
