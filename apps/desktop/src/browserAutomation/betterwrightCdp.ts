@@ -287,11 +287,14 @@ export class BetterwrightCdpTarget {
       const releases = betterwrightExpectedInputs(method, params).map((input) =>
         this.expectAgentInput?.(input),
       );
+      // Never take native focus for agent input. CDP delivers input to a native
+      // page's own widget without it, and on macOS/Linux webContents.focus()
+      // also raises Synara's window. Whatever the user was typing elsewhere
+      // then lands in the agent page and reads as a human takeover. Guests
+      // still need DOM focus, scoped below; Page.bringToFront can still move
+      // native focus, so the user's previous owner is restored afterwards.
       const previousFocus = nativeInput ? webContents.getFocusedWebContents() : null;
       try {
-        // Native focus is shared across tabs; DOM focus alone cannot route text
-        // to an offscreen preview. Keep focus and dispatch in the same lease.
-        if (nativeInput && previousFocus !== this.contents) this.contents.focus();
         const send = async () => {
           if (
             method === "Input.dispatchMouseEvent" &&
