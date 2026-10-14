@@ -9,14 +9,14 @@ concurrency:
   cancel-in-progress: true
 jobs:
   view-probe:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 5
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: npm install --prefix /tmp/synara-view-probe electron@43.4.1 --no-audit --no-fund
-      - name: Verify embedded view geometry
+      - name: Verify adopted native WebContents geometry
         shell: bash
         run: |
           set -euo pipefail
@@ -28,24 +28,20 @@ jobs:
           const delay = () => new Promise(resolve => setTimeout(resolve, 200));
           app.commandLine.appendSwitch('no-sandbox');
           app.whenReady().then(async () => {
-            const win = new BrowserWindow({ width:1100,height:780,show:true,webPreferences:{sandbox:true} });
-            console.log('ORIGINAL CHILDREN',win.contentView.children.map(v=>({type:v.constructor.name,contents:v.webContents?.id,bounds:v.getBounds()})));
-            const native = win.contentView.children.find(v => v instanceof WebContentsView && v.webContents === win.webContents);
-            assert.ok(native,'actual BrowserWindow WebContentsView is accessible');
+            const win = new BrowserWindow({width:1100,height:780,show:true,webPreferences:{sandbox:true}});
+            const contents = win.webContents;
             const root = new View();
-            const shell = new WebContentsView({ webPreferences:{sandbox:true} });
-            win.setContentView(root);
-            root.addChildView(shell);
-            root.addChildView(native);
+            const native = new WebContentsView({webContents:contents});
+            const shell = new WebContentsView({webPreferences:{sandbox:true}});
+            win.setContentView(root);root.addChildView(shell);root.addChildView(native);
             shell.setBounds({x:0,y:0,width:1100,height:780});
             await shell.webContents.loadURL('data:text/html,<body>Synara shell</body>');
-            await win.webContents.loadURL('data:text/html,<body>Native editor</body>');
-            native.setBounds({x:300,y:100,width:450,height:350});
-            await delay();
-            const inspect = async () => ({nativeClass:native.constructor.name,children:root.children.map(v=>({type:v.constructor.name,bounds:v.getBounds()})),bounds:native.getBounds(),viewport:await win.webContents.executeJavaScript('({width:innerWidth,height:innerHeight})')});
+            await contents.loadURL('data:text/html,<body>Native editor</body>');
+            native.setBounds({x:300,y:100,width:450,height:350});await delay();
+            const inspect = async () => ({nativeClass:native.constructor.name,contentsUnchanged:win.webContents===contents,owner:BrowserWindow.fromWebContents(contents)?.id,windowId:win.id,bounds:native.getBounds(),viewport:await contents.executeJavaScript('({width:innerWidth,height:innerHeight})')});
             console.log('INITIAL',JSON.stringify(await inspect()));
             assert.deepEqual((await inspect()).viewport,{width:450,height:350});
-            assert.equal(BrowserWindow.fromWebContents(win.webContents),win);
+            assert.equal(win.webContents,contents);assert.equal(BrowserWindow.fromWebContents(contents),win);
             native.setVisible(false);assert.equal(native.getVisible(),false);native.setVisible(true);
             native.setBounds({x:250,y:120,width:560,height:400});await delay();
             console.log('RESIZED',JSON.stringify(await inspect()));
@@ -65,5 +61,72 @@ jobs:
         with:
           name: code-oss-native-viewport-probe
           path: /tmp/synara-qa
+          retention-days: 3
+          if-no-files-found: error
+  synara-dependencies:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: a62d7c733d19f5538ffc0d126d57437b3b578ff1
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          electron: 'true'
+          scope: full
+      - name: Archive installed pinned dependencies and tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/synara-deps/tools/bin
+          cp "$(command -v node)" /tmp/synara-deps/tools/bin/node
+          cp "$(command -v bun)" /tmp/synara-deps/tools/bin/bun
+          find node_modules apps packages scripts -type d -name node_modules -prune -print0 > /tmp/module-paths
+          tar --null -T /tmp/module-paths -czf /tmp/synara-deps/synara-node-modules.tar.gz
+          tar -C /tmp/synara-deps -czf /tmp/synara-deps/tools.tar.gz tools
+          rm -r /tmp/synara-deps/tools
+          sha256sum /tmp/synara-deps/*.tar.gz > /tmp/synara-deps/sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-offline-dependencies
+          path: /tmp/synara-deps
+          compression-level: 0
+          retention-days: 3
+          if-no-files-found: error
+  native-runtime:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 85c70ad544f0409dc9051dde38c549530b2605ec
+          persist-credentials: false
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Archive reusable build dependencies and baseline runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/code-oss-deps
+          tar -C .code-oss -czf /tmp/code-oss-deps/runtime.tar.gz runtime
+          tar -C .code-oss -czf /tmp/code-oss-deps/prepared-source.tar.gz --exclude='source/.git' source
+          sha256sum /tmp/code-oss-deps/*.tar.gz > /tmp/code-oss-deps/sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-offline-runtime
+          path: /tmp/code-oss-deps/runtime.tar.gz
+          compression-level: 0
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: code-oss-offline-build-source
+          path: |
+            /tmp/code-oss-deps/prepared-source.tar.gz
+            /tmp/code-oss-deps/sha256.txt
+          compression-level: 0
           retention-days: 3
           if-no-files-found: error
