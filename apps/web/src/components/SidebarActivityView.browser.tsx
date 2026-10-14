@@ -152,6 +152,32 @@ describe("SidebarActivityView", () => {
     document.body.innerHTML = "";
   });
 
+  it.each([false, true])(
+    "selects a hidden child's root without marking that root read (child open: %s)",
+    async (childOpen) => {
+      const root = makeThread(301, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
+      const mounted = await render(
+        renderActivity({
+          threads: [root],
+          activeThreadId: childOpen ? ThreadId.makeUnsafe("open-subagent") : root.id,
+          visualActiveThreadId: root.id,
+          resolveThreadStatus: () => ({
+            label: "Completed",
+            colorClass: "text-emerald-600",
+            dotClass: "bg-emerald-500",
+            pulse: false,
+          }),
+        }),
+      );
+      const row = mounted.getByTestId(`activity-thread-${root.id}`).element();
+      expect(row.getAttribute("aria-current")).toBe("page");
+      const unreadDot = row.parentElement?.querySelector('[aria-label="Unread completion"]');
+      if (childOpen) expect(unreadDot).not.toBeNull();
+      else expect(unreadDot).toBeNull();
+      await mounted.unmount();
+    },
+  );
+
   it("keeps a snoozed pin out of normal rows and returns it through its own section", async () => {
     const thread = makeThread(40, { snoozedUntil: "2026-08-02T13:00:00.000Z" });
     const onReturnSnoozedThread = vi.fn();
@@ -631,51 +657,44 @@ describe("SidebarActivityView", () => {
     await mounted.unmount();
   });
 
-  it.each([false, true])(
-    "keeps visual root selection separate from open-chat unread state (child open: %s)",
-    async (childOpen) => {
-      const pinnedUnread = makeThread(300, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
-      const openThread = makeThread(301, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
-      const completedStatus: ThreadStatusPill = {
-        label: "Completed",
-        colorClass: "text-emerald-600",
-        dotClass: "bg-emerald-500",
-        pulse: false,
-      };
-      const mounted = await render(
-        renderActivity({
-          threads: [pinnedUnread, openThread],
-          activeThreadId: childOpen ? ThreadId.makeUnsafe("open-subagent") : openThread.id,
-          visualActiveThreadId: openThread.id,
-          pinnedThreadIdSet: new Set([pinnedUnread.id]),
-          resolveThreadStatus: () => completedStatus,
-        }),
-      );
+  it("shows unread pins once in open Pinned and suppresses a stale dot on the open thread", async () => {
+    const pinnedUnread = makeThread(300, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
+    const openThread = makeThread(301, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
+    const completedStatus: ThreadStatusPill = {
+      label: "Completed",
+      colorClass: "text-emerald-600",
+      dotClass: "bg-emerald-500",
+      pulse: false,
+    };
+    const mounted = await render(
+      renderActivity({
+        threads: [pinnedUnread, openThread],
+        activeThreadId: openThread.id,
+        pinnedThreadIdSet: new Set([pinnedUnread.id]),
+        resolveThreadStatus: () => completedStatus,
+      }),
+    );
 
-      await expect
-        .element(page.getByRole("button", { name: "Pinned", exact: true }))
-        .toHaveAttribute("aria-expanded", "true");
-      expect(
-        document.querySelectorAll(`[data-testid="activity-thread-${pinnedUnread.id}"]`),
-      ).toHaveLength(1);
-      expect(
-        page
-          .getByTestId(`activity-thread-${pinnedUnread.id}`)
-          .element()
-          .parentElement?.querySelector('[aria-label="Unread completion"]'),
-      ).not.toBeNull();
-      await expect
-        .element(page.getByTestId(`activity-thread-${openThread.id}`))
-        .toHaveAttribute("aria-current", "page");
-      const rootUnreadDot = page
+    await expect
+      .element(page.getByRole("button", { name: "Pinned", exact: true }))
+      .toHaveAttribute("aria-expanded", "true");
+    expect(
+      document.querySelectorAll(`[data-testid="activity-thread-${pinnedUnread.id}"]`),
+    ).toHaveLength(1);
+    expect(
+      page
+        .getByTestId(`activity-thread-${pinnedUnread.id}`)
+        .element()
+        .parentElement?.querySelector('[aria-label="Unread completion"]'),
+    ).not.toBeNull();
+    expect(
+      page
         .getByTestId(`activity-thread-${openThread.id}`)
         .element()
-        .parentElement?.querySelector('[aria-label="Unread completion"]');
-      if (childOpen) expect(rootUnreadDot).not.toBeNull();
-      else expect(rootUnreadDot).toBeNull();
-      await mounted.unmount();
-    },
-  );
+        .parentElement?.querySelector('[aria-label="Unread completion"]'),
+    ).toBeNull();
+    await mounted.unmount();
+  });
 
   it("reveals a selected Activity row without moving focus or following background updates", async () => {
     const leading = Array.from({ length: 8 }, (_, index) => makeThread(700 + index));
