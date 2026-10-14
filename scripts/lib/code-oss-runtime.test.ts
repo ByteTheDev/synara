@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { validateCodeOssRuntime } from "./code-oss-runtime";
+import { validateCodeOssRuntime, withCodeOssResources } from "./code-oss-runtime";
 
 const expected = {
   commit: "a".repeat(40),
@@ -63,5 +63,31 @@ describe("single-product native resource packaging", () => {
     expect(() => validateCodeOssRuntime(root, expected)).toThrow(
       "Missing native Code-OSS resource",
     );
+  });
+});
+
+describe("native resource staging preserves installer configuration", () => {
+  const native = { from: "/stage/code-oss", to: "code-oss", filter: ["**/*"] };
+  it("adds native resources when no extra resources are configured", () => {
+    expect(withCodeOssResources({ appId: "synara" }, native.from)).toEqual({
+      appId: "synara",
+      extraResources: [native],
+    });
+  });
+  it("preserves a single string or file-set entry", () => {
+    for (const existing of ["assets/**", { from: "assets", to: "assets" }]) {
+      expect(
+        withCodeOssResources({ extraResources: existing }, native.from).extraResources,
+      ).toEqual([existing, native]);
+    }
+  });
+  it("retains existing resource order without mutating the original configuration", () => {
+    const entries = ["assets/**", { from: "helper", to: "helper" }];
+    const original = { appId: "synara", extraResources: entries };
+    const result = withCodeOssResources(original, native.from);
+    expect(result.extraResources).toEqual([...entries, native]);
+    expect(original.extraResources).toBe(entries);
+    expect(entries).toHaveLength(2);
+    expect(result).not.toBe(original);
   });
 });

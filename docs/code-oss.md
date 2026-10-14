@@ -36,7 +36,9 @@ The Linux acceptance harness runs the actual application in a disposable profile
 xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
 ```
 
-[PR #1920](https://github.com/Emanuele-web04/synara/pull/1920) records current checks and release blockers. Signed macOS/Windows builds, updater installation, existing-user migration, dirty-quit cancellation and authenticated live-agent continuity require separate acceptance; a successful source build or isolated Linux test does not establish those results.
+[PR #1920](https://github.com/Emanuele-web04/synara/pull/1920) records current checks and release blockers. Signed macOS/Windows builds, updater installation, existing-user migration and authenticated live-agent continuity require separate acceptance; a successful source build or isolated Linux test does not establish those results.
+
+Native dirty-save cancellation also passed in [run 38545799680](https://github.com/Emanuele-web04/synara/actions/runs/38545799680). After approving Synara's existing quit confirmation, an automated native-dialog responder selected Cancel. The real production lifecycle retained the dirty buffer, unsent Agent draft, extension-host process and usable single window; the fixture file was not saved. Only the dialog response was substituted in this disposable-profile check.
 
 ## Real application captures
 

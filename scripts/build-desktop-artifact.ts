@@ -5,7 +5,7 @@
 // Depends on: apps/desktop package metadata, electron-builder, and GitHub release config.
 
 import codeOssPin from "../apps/desktop/code-oss/upstream.json" with { type: "json" };
-import { validateCodeOssRuntime } from "./lib/code-oss-runtime.ts";
+import { validateCodeOssRuntime, withCodeOssResources } from "./lib/code-oss-runtime.ts";
 
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -1342,13 +1342,7 @@ const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
   });
   const stagedCodeOss = path.join(stageRoot, "code-oss");
   yield* fs.copy(codeOssRuntime, stagedCodeOss);
-  const buildWithCodeOss = {
-    ...resolvedBuildConfig.buildConfig,
-    extraResources: [
-      ...(resolvedBuildConfig.buildConfig.extraResources ?? []),
-      { from: stagedCodeOss, to: "code-oss", filter: ["**/*"] },
-    ],
-  };
+  const buildWithCodeOss = withCodeOssResources(resolvedBuildConfig.buildConfig, stagedCodeOss);
 
   const stagePackageJson: StagePackageJson = {
     ...artifactIdentity.packageMetadata,

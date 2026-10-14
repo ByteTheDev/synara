@@ -46,3 +46,13 @@ export function validateCodeOssRuntime(
       throw new Error(`Missing native Code-OSS resource: ${entry}`);
   }
 }
+
+/** Preserve existing single-item and array resource configurations in the same installer. */
+export function withCodeOssResources(buildConfig: Record<string, unknown>, runtime: string) {
+  const existing = buildConfig.extraResources;
+  const resources = existing == null ? [] : Array.isArray(existing) ? existing : [existing];
+  return {
+    ...buildConfig,
+    extraResources: [...resources, { from: runtime, to: "code-oss", filter: ["**/*"] }],
+  };
+}
