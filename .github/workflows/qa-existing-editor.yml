@@ -36,11 +36,16 @@ jobs:
           p.write_text(json.dumps(patches,indent=2)+'\n')
           PY
       - uses: ./.github/actions/setup-code-oss
+        id: native-build
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: x-access-token:${{ github.token }}
         with:
           flavor: production
           arch: x64
       - name: Typecheck native overlay against pinned services
         id: native-types
+        if: always()
         continue-on-error: true
         working-directory: .code-oss/source
         env:
@@ -49,38 +54,46 @@ jobs:
           node -e 'require("fs").writeFileSync("tsconfig.synara.json", JSON.stringify({extends:"./src/tsconfig.json",include:["src/vs/synara/**/*.ts","src/typings","src/vscode-dts/vscode.d.ts","src/vscode-dts/vscode.proposed.*.d.ts"]}))'
           node node_modules/@typescript/native/bin/tsc --noEmit --project tsconfig.synara.json 2>&1 | tee "$RUNNER_TEMP/native-types.log"
       - name: Export native runtime and local rebuild sources
+        if: always()
         run: |
           mkdir "$RUNNER_TEMP/native-export"
-          tar -czf "$RUNNER_TEMP/native-export/runtime.tar.gz" -C .code-oss runtime
-          split -b 400m "$RUNNER_TEMP/native-export/runtime.tar.gz" "$RUNNER_TEMP/native-export/runtime-"
-          tar --exclude=.git --exclude=out-synara --exclude=.build/electron --exclude=.build/extensions -czf "$RUNNER_TEMP/native-export/source.tar.gz" -C .code-oss/source .
+          if test -f .code-oss/runtime/synara-runtime.json; then
+            tar -czf "$RUNNER_TEMP/native-export/runtime.tar.gz" -C .code-oss runtime
+            split -b 400m "$RUNNER_TEMP/native-export/runtime.tar.gz" "$RUNNER_TEMP/native-export/runtime-"
+          fi
+          tar --exclude=./.git --exclude=./out-synara --exclude=./.build --exclude=./extensions --exclude=./remote --exclude=./test --exclude=./.vscode -czf "$RUNNER_TEMP/native-export/source.tar.gz" -C .code-oss/source .
           split -b 400m "$RUNNER_TEMP/native-export/source.tar.gz" "$RUNNER_TEMP/native-export/source-"
           sha256sum "$RUNNER_TEMP/native-export/"*.tar.gz > "$RUNNER_TEMP/native-export/checksums.txt"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: embedded-native-runtime-1
           compression-level: 0
           path: ${{ runner.temp }}/native-export/runtime-aa
           retention-days: 3
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: embedded-native-runtime-2
           compression-level: 0
           path: ${{ runner.temp }}/native-export/runtime-ab
           retention-days: 3
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: embedded-native-source-1
           compression-level: 0
           path: ${{ runner.temp }}/native-export/source-aa
           retention-days: 3
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: embedded-native-source-2
           compression-level: 0
           path: ${{ runner.temp }}/native-export/source-ab
           retention-days: 3
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: embedded-native-source-3
           compression-level: 0
@@ -94,6 +107,6 @@ jobs:
             ${{ runner.temp }}/native-types.log
             ${{ runner.temp }}/native-export/checksums.txt
           retention-days: 3
-      - name: Require native types
-        if: steps.native-types.outcome == 'failure'
+      - name: Require native build and types
+        if: steps.native-types.outcome == 'failure' || steps.native-build.outcome == 'failure'
         run: exit 1
