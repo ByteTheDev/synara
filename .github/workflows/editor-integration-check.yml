@@ -1,12 +1,10 @@
-# Temporary branch-only provisioning. No releases or repository-ref writes.
+# Temporary branch-only dependency provisioning; removed from the implementation diff.
 name: Editor integration check
 
 on:
   push:
-    branches:
-      - feat/synara-editor-intelligence
-    paths:
-      - .github/workflows/editor-integration-check.yml
+    branches: [feat/synara-editor-intelligence]
+    paths: [.github/workflows/editor-integration-check.yml]
 
 permissions:
   contents: read
@@ -16,12 +14,76 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  debug-runtime:
-    name: Verify upstream standalone debug adapter
+  runtimes:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - name: Download the pinned MIT-licensed upstream release
+      - uses: actions/checkout@v4
+        with:
+          ref: 42fe8a7a66291ce8959bffd20249778752b4601a
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Resolve the implementation lockfile without upgrading existing packages
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const webPath = 'apps/web/package.json';
+          const web = JSON.parse(fs.readFileSync(webPath, 'utf8'));
+          web.dependencies['monaco-editor'] = '0.57.0';
+          fs.writeFileSync(webPath, JSON.stringify(web, null, 2) + '\n');
+          const serverPath = 'apps/server/package.json';
+          const server = JSON.parse(fs.readFileSync(serverPath, 'utf8'));
+          server.dependencies.typescript = server.devDependencies.typescript;
+          delete server.devDependencies.typescript;
+          fs.writeFileSync(serverPath, JSON.stringify(server, null, 2) + '\n');
+          NODE
+          bun install --lockfile-only --ignore-scripts
+          mkdir -p "$RUNNER_TEMP/editor-lock"
+          cp bun.lock "$RUNNER_TEMP/editor-lock/"
+          cp apps/web/package.json "$RUNNER_TEMP/editor-lock/web-package.json"
+          cp apps/server/package.json "$RUNNER_TEMP/editor-lock/server-package.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-editor-lock
+          path: ${{ runner.temp }}/editor-lock
+          retention-days: 1
+          if-no-files-found: error
+      - name: Acquire the pinned standalone editor with its runtime dependencies
+        run: |
+          mkdir -p "$RUNNER_TEMP/editor-runtime"
+          cd "$RUNNER_TEMP/editor-runtime"
+          printf '{"name":"synara-editor-verification","private":true}' > package.json
+          npm install --ignore-scripts --no-audit --no-fund --save-exact monaco-editor@0.57.0
+          npm ls --all --json > dependency-tree.json
+          tar -czf "$RUNNER_TEMP/editor-runtime.tar.gz" node_modules package.json package-lock.json dependency-tree.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-editor-runtime-0.57.0
+          path: ${{ runner.temp }}/editor-runtime.tar.gz
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+      - name: Acquire optional upstream extension-host services separately
+        run: |
+          mkdir -p "$RUNNER_TEMP/extension-runtime"
+          cd "$RUNNER_TEMP/extension-runtime"
+          printf '{"name":"synara-extension-verification","private":true}' > package.json
+          npm install --ignore-scripts --no-audit --no-fund --save-exact @codingame/monaco-vscode-api@37.6.0 @codingame/monaco-vscode-editor-api@37.6.0 @codingame/monaco-vscode-extension-api@37.6.0 @codingame/monaco-vscode-extensions-service-override@37.6.0 @codingame/monaco-vscode-files-service-override@37.6.0 @codingame/monaco-vscode-configuration-service-override@37.6.0 @codingame/monaco-vscode-languages-service-override@37.6.0 @codingame/monaco-vscode-model-service-override@37.6.0
+          npm ls --all --json > dependency-tree.json
+          tar -czf "$RUNNER_TEMP/extension-runtime.tar.gz" node_modules package.json package-lock.json dependency-tree.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: synara-extension-runtime-37.6.0
+          path: ${{ runner.temp }}/extension-runtime.tar.gz
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+      - name: Verify the pinned upstream standalone JavaScript debug adapter
         env:
           DEBUG_VERSION: 1.140.0
           DEBUG_SHA256: 27dab92937ec1ab35821ae955aac867544fe06a1b6307229049f2d789af10968
@@ -32,7 +94,6 @@ jobs:
           echo "$DEBUG_SHA256  js-debug.tar.gz" | sha256sum --check
           printf '%s\n' "$DEBUG_VERSION" > version.txt
           printf '%s\n' "$DEBUG_SHA256" > sha256.txt
-          tar -tzf js-debug.tar.gz | head -30 || test "${PIPESTATUS[0]}" = 141
       - uses: actions/upload-artifact@v4
         with:
           name: synara-js-debug-runtime
