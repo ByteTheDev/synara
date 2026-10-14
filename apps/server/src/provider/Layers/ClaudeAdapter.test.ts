@@ -14296,6 +14296,72 @@ describe("Claude cache preflight", () => {
     },
   );
 
+  it.effect("keeps one query identity across hook-less estimates, requests and compaction", () => {
+    const harness = makeHarness();
+    harness.query.setContextUsageResponse({
+      apiUsage: null,
+      categories: [],
+      totalTokens: 120,
+      maxTokens: 200000,
+      rawMaxTokens: 200000,
+      percentage: 0.06,
+      gridRows: [],
+      model: "claude-sonnet-5",
+      memoryFiles: [],
+      mcpTools: [],
+      agents: [],
+      autoCompactThreshold: 160000,
+      isAutoCompactEnabled: true,
+    });
+    return Effect.gen(function* () {
+      const adapter = yield* ClaudeAdapter;
+      yield* adapter.startSession({
+        threadId: THREAD_ID,
+        runtimeMode: "full-access",
+        lifecycleGeneration: "reused-generation",
+        resumeCursor: { resume: nativeSessionId },
+      });
+      const initial = yield* adapter.getClaudeCacheObservation!(THREAD_ID);
+      assert.equal(initial?.source, "local-estimate");
+      assert.isString(initial?.processId);
+      const requestUsage = yield* adapter.streamEvents.pipe(
+        Stream.filter((event) => event.type === "thread.token-usage.updated"),
+        Stream.take(1),
+        Stream.runCollect,
+        Effect.forkChild,
+      );
+      yield* adapter.sendTurn({ threadId: THREAD_ID, input: "Continue", attachments: [] });
+      emitAssistantUsage(
+        harness.query,
+        nativeSessionId,
+        "fallback-request",
+        "reply",
+        { input_tokens: 10 },
+        "fallback-message",
+      );
+      const [request] = yield* Fiber.join(requestUsage);
+      if (request?.type === "thread.token-usage.updated") {
+        assert.equal(request.payload.usage.claudeCache?.processId, initial?.processId);
+      }
+      const boundary = yield* adapter.streamEvents.pipe(
+        Stream.filter(
+          (event) => event.type === "thread.state.changed" && event.payload.state === "compacted",
+        ),
+        Stream.take(1),
+        Stream.runCollect,
+        Effect.forkChild,
+      );
+      emitCompactionBoundary(harness.query, nativeSessionId, "fallback-compact");
+      yield* Fiber.join(boundary);
+      const afterCompaction = yield* adapter.getClaudeCacheObservation!(THREAD_ID);
+      assert.equal(afterCompaction?.source, "local-estimate");
+      assert.equal(afterCompaction?.processId, initial?.processId);
+    }).pipe(
+      Effect.provideService(Random.Random, makeDeterministicRandomService()),
+      Effect.provide(harness.layer),
+    );
+  });
+
   it.effect("uses durable response evidence after a restart when SessionStart is absent", () => {
     const harness = makeHarness();
     return Effect.gen(function* () {

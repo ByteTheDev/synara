@@ -7626,6 +7626,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             source: "local-estimate" as const,
             ...(context.resumeSessionId ? { nativeSessionId: context.resumeSessionId } : {}),
           }),
+          processId: context.cacheProcessId,
           ...(model ? { model } : {}),
           ...(context.lifecycleGeneration
             ? { lifecycleGeneration: context.lifecycleGeneration }
