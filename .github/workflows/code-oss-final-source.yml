@@ -1,0 +1,88 @@
+name: Native integration source checks
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-final-source.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 7924a6aa4f180c6a0de642b4b893102140088955
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format only changed integration files
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import { execFileSync } from 'node:child_process';
+          const paths = ['apps/desktop/src/menuShortcuts.ts', 'apps/desktop/src/desktopIdeShortcut.test.ts', 'apps/desktop/src/codeOssHost.ts', 'apps/desktop/code-oss/scripts/prepare.mjs', 'apps/desktop/code-oss/scripts/build.mjs', 'apps/desktop/code-oss/scripts/fixtures/probe.cjs', 'apps/desktop/code-oss/scripts/smoke.mjs'];
+          execFileSync('node_modules/.bin/oxfmt', paths, { stdio:'inherit' });
+          const manifest = paths.map(path => ({path, sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')}));
+          fs.writeFileSync('formatted-manifest.json', JSON.stringify(manifest, null, 2));
+          execFileSync('tar', ['-czf', 'formatted-source.tar.gz', 'formatted-manifest.json', ...paths]);
+          JS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-formatted-source
+          path: formatted-source.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+      - name: Verify mode interface and shortcut behavior
+        run: |
+          bun run --cwd apps/desktop typecheck
+          bun run --cwd apps/desktop test -- src/menuShortcuts.test.ts src/desktopIdeShortcut.test.ts src/desktopRenderer.test.ts src/runningChatsQuitGuard.test.ts
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-formatted-source
+      - name: Validate archive as data, never execute source with write access
+        run: |
+          python - <<'PY'
+          import tarfile, pathlib
+          with tarfile.open('formatted-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  p = pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size > 100000:
+                      raise ValueError('Invalid source archive')
+              archive.extractall('source', filter='data')
+          PY
+      - name: Store checked content blobs; connector owns tree and branch publication
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            const crypto = require('node:crypto');
+            const allowed = new Set(['apps/desktop/src/menuShortcuts.ts', 'apps/desktop/src/desktopIdeShortcut.test.ts', 'apps/desktop/src/codeOssHost.ts', 'apps/desktop/code-oss/scripts/prepare.mjs', 'apps/desktop/code-oss/scripts/build.mjs', 'apps/desktop/code-oss/scripts/fixtures/probe.cjs', 'apps/desktop/code-oss/scripts/smoke.mjs']);
+            const manifest = JSON.parse(fs.readFileSync('source/formatted-manifest.json', 'utf8'));
+            if (!Array.isArray(manifest) || manifest.length !== allowed.size) throw Error('Unexpected manifest');
+            const blobs = [];
+            for (const entry of manifest) {
+              if (!allowed.delete(entry.path)) throw Error('Unexpected source path');
+              const bytes = fs.readFileSync('source/' + entry.path);
+              if (crypto.createHash('sha256').update(bytes).digest('hex') !== entry.sha256) throw Error('Invalid content hash');
+              const {data} = await github.rest.git.createBlob({...context.repo, content:bytes.toString('base64'), encoding:'base64'});
+              blobs.push({...entry, sha:data.sha, mode:'100644', type:'blob'});
+            }
+            console.log('FORMATTED_SOURCE_BLOBS=' + JSON.stringify(blobs));
+            fs.writeFileSync('formatted-blobs.json', JSON.stringify(blobs, null, 2));
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-formatted-blobs
+          path: formatted-blobs.json
+          retention-days: 3
