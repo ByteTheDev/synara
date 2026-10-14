@@ -1,0 +1,43 @@
+name: Split existing native debugging resources
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-split-debug.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  split:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-offline-runtime
+          run-id: 38527978667
+          github-token: ${{ github.token }}
+      - name: Split the previously built archive, no rebuild
+        run: |
+          sha256sum synara-offline-runtime.tar.gz
+          split -b 400000000 synara-offline-runtime.tar.gz runtime.part-
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-debug-part-aa
+          path: runtime.part-aa
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-debug-part-ab
+          path: runtime.part-ab
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-debug-part-ac
+          path: runtime.part-ac
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
