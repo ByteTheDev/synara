@@ -15,7 +15,7 @@ export interface SynaraHarnessCapabilities {
   readonly gatewayControlAvailable: boolean;
   readonly automationAuthoring?: "tool-descriptions";
   readonly enableComputerControl?: boolean | undefined;
-  /** The `synara_show_visual` tool is offered (Beta-only feature). */
+  /** The `synara_show_visual` tool is offered by this session. */
   readonly inlineVisuals?: boolean | undefined;
 }
 
