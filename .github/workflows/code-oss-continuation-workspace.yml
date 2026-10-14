@@ -1,0 +1,44 @@
+name: Native continuation workspace
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-continuation-workspace.yml]
+permissions:
+  contents: read
+jobs:
+  workspace:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - name: Export exact published source
+        run: git archive --format=tar.gz --output=continuation-source.tar.gz HEAD
+      - uses: actions/upload-artifact@v7
+        with:
+          name: continuation-source
+          path: continuation-source.tar.gz
+          retention-days: 1
+          compression-level: 0
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Build Synara for isolated desktop development
+        run: bun run build:desktop
+      - name: Export installed toolchain and built resources without credentials or user data
+        shell: bash
+        run: |
+          mkdir -p .code-oss/local-tools
+          cp "$(command -v node)" .code-oss/local-tools/node
+          cp "$(command -v bun)" .code-oss/local-tools/bun
+          tar -czf continuation-tools.tar.gz .code-oss/local-tools node_modules apps/*/node_modules packages/*/node_modules scripts/node_modules apps/desktop/dist-electron apps/server/dist apps/web/dist packages/contracts/dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: continuation-tools
+          path: continuation-tools.tar.gz
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
