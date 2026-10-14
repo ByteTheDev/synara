@@ -405,6 +405,9 @@ type ClaudeTokenUsageState = "current" | "skip-compaction-call" | "awaiting-fres
 
 interface ClaudeSessionContext {
   resultUsageBaseline?: ClaudeResultUsageBaseline;
+  // Claude Code restores a resumed session's saved usage totals into the first
+  // result of a new process. Until a baseline exists, a result is not one turn.
+  resultUsageMayIncludeResumedTotals?: boolean;
   readonly gatewaySessionLease?: AgentGatewaySessionLease;
   session: ProviderSession;
   readonly lifecycleGeneration?: string;
@@ -3437,9 +3440,16 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           });
         }
 
-        const turnResultUsage = result
-          ? claudeTurnResultUsage(result, context.resultUsageBaseline)
-          : undefined;
+        // The first result after a resume may carry the session's restored
+        // totals, so it only becomes the baseline; the turn keeps its main loop.
+        const resultUsageUnattributable =
+          result !== undefined &&
+          context.resultUsageBaseline === undefined &&
+          context.resultUsageMayIncludeResumedTotals === true;
+        const turnResultUsage =
+          result && !resultUsageUnattributable
+            ? claudeTurnResultUsage(result, context.resultUsageBaseline)
+            : undefined;
         if (result) context.resultUsageBaseline = result;
         const liveContextUsage = yield* readClaudeContextUsage(context);
         const resultContextWindow = maxClaudeContextWindowFromModelUsage(result?.modelUsage);
@@ -3533,6 +3543,18 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           context.processedTokenTotal -
             (result ? context.processedTokenResultBaseline : context.processedTokenTurnBaseline),
         );
+        // A completed result settles the main loop exactly; otherwise use the
+        // cache reads of the requests observed since the last settled turn.
+        const resultCacheReadTokens = result?.usage?.cache_read_input_tokens;
+        const mainLoopCacheReadTokens = Math.min(
+          mainLoopTokens,
+          status === "completed" &&
+            accumulatedSnapshot !== undefined &&
+            typeof resultCacheReadTokens === "number" &&
+            Number.isFinite(resultCacheReadTokens)
+            ? Math.max(0, Math.round(resultCacheReadTokens))
+            : context.requestUsage.unsettledCacheReadTokens(),
+        );
         // A synthetic/background UI turn may be auto-closed before the SDK emits
         // a result. Its per-request usage is still final for this logical turn;
         // carry it into the next result baseline and quarantine late snapshots so
@@ -3607,7 +3629,8 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
               ...(turnResultUsage ? { modelUsage: turnResultUsage.modelUsage } : {}),
               tokenAccountingVersion: 1,
               mainLoopTokens,
-              ...(typeof result?.total_cost_usd === "number"
+              mainLoopCacheReadTokens,
+              ...(typeof result?.total_cost_usd === "number" && !resultUsageUnattributable
                 ? { totalCostUsd: turnResultUsage?.totalCostUsd ?? result.total_cost_usd }
                 : {}),
               ...(errorMessage ? { errorMessage } : {}),
@@ -3790,7 +3813,8 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             ...(turnResultUsage ? { modelUsage: turnResultUsage.modelUsage } : {}),
             tokenAccountingVersion: 1,
             mainLoopTokens,
-            ...(typeof result?.total_cost_usd === "number"
+            mainLoopCacheReadTokens,
+            ...(typeof result?.total_cost_usd === "number" && !resultUsageUnattributable
               ? { totalCostUsd: turnResultUsage?.totalCostUsd ?? result.total_cost_usd }
               : {}),
             ...(errorMessage ? { errorMessage } : {}),
@@ -4973,9 +4997,14 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           );
           let addedTokens = 0;
           if (normalizedPerCallUsage) {
+            const cacheReadTokens = (perCallUsage as Record<string, unknown>)
+              .cache_read_input_tokens;
             addedTokens = context.requestUsage.add(
               messageId,
               normalizedPerCallUsage.totalProcessedTokens ?? normalizedPerCallUsage.usedTokens,
+              typeof cacheReadTokens === "number" && Number.isFinite(cacheReadTokens)
+                ? Math.max(0, cacheReadTokens)
+                : 0,
             );
             context.processedTokenTotal += addedTokens;
           }
@@ -6115,6 +6144,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
             invalidateClaudeCache(context);
             // The query survives /clear even when its cumulative counters restart.
             delete context.resultUsageBaseline;
+            context.resultUsageMayIncludeResumedTotals = false;
             context.requestUsage.reset();
             context.compactionMessageId = undefined;
             context.processedTokenTurnBaseline = context.processedTokenTotal;
@@ -7250,6 +7280,7 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
 
           const context: ClaudeSessionContext = {
             ...(initialCacheObservation ? { cacheObservation: initialCacheObservation } : {}),
+            ...(existingResumeSessionId ? { resultUsageMayIncludeResumedTotals: true } : {}),
             ...(gatewaySessionLease ? { gatewaySessionLease } : {}),
             session,
             artifactsEnabled: providerOptions?.enableArtifacts === true,

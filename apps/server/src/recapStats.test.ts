@@ -201,6 +201,7 @@ describe("RecapStatsQuery", () => {
       failedTurns: 1,
       agentWorkMs: 75 * 60_000,
       tokens: { user: 40_000, automation: 7_000, agent: 0 },
+      cacheReadTokens: 0,
     });
     expect(
       recap.slots.map(({ prompts, chats, turns, failedTurns, agentWorkMs, tokens }) => ({
@@ -361,6 +362,132 @@ describe("RecapStatsQuery", () => {
     ]);
     // A turn that failed before reporting usage does not mark its provider as silent.
     expect(recap.unavailableProviders).toEqual([]);
+  });
+
+  it("withholds the usage a resumed Claude process restores and splits out cache reads", async () => {
+    const recap = await runRecapTest(
+      Effect.gen(function* () {
+        const sql = yield* SqlClient.SqlClient;
+        yield* sql`
+          INSERT INTO projection_threads (
+            thread_id, project_id, title, model_selection_json, runtime_mode,
+            interaction_mode, env_mode, created_at, updated_at, deleted_at
+          )
+          VALUES
+            ('thread-claude', 'project-app', 'Claude',
+              '{"provider":"claudeAgent","model":"claude-opus-5"}', 'full-access', 'default',
+              'local', '2026-09-30T05:00:00.000Z', '2026-09-30T09:00:00.000Z', NULL),
+            ('thread-codex', 'project-app', 'Codex', '{"provider":"codex","model":"gpt-5-codex"}',
+              'full-access', 'default', 'local',
+              '2026-09-30T05:00:00.000Z', '2026-09-30T09:00:00.000Z', NULL)
+        `;
+        const rows: Array<[string, string, string, string, number, string]> = [];
+        const pushRequest = (
+          turnId: string,
+          generation: string,
+          at: string,
+          request: { input: number; cacheRead: number; cacheCreation: number },
+        ) => {
+          const claudeCache = {
+            nativeSessionId: "session-1",
+            lifecycleGeneration: generation,
+            lastRequest: {
+              messageId: `msg-${turnId}`,
+              inputTokens: request.input,
+              cacheReadInputTokens: request.cacheRead,
+              cacheCreationInputTokens: request.cacheCreation,
+            },
+          };
+          const payload = JSON.stringify({
+            provider: "claudeAgent",
+            tokenAccountingVersion: 1,
+            claudeCache,
+          });
+          rows.push([`x-${turnId}`, turnId, "context-window.updated", payload, rows.length, at]);
+        };
+        const pushCompleted = (turnId: string, at: string, payload: object) => {
+          rows.push([
+            `done-${turnId}`,
+            turnId,
+            "turn.completed",
+            JSON.stringify({ provider: "claudeAgent", tokenAccountingVersion: 1, ...payload }),
+            rows.length,
+            at,
+          ]);
+        };
+        // Process one serves two turns; process two resumes the same session.
+        pushRequest("t1", "gen-1", "2026-09-30T05:01:00.000Z", {
+          input: 10,
+          cacheRead: 60,
+          cacheCreation: 20,
+        });
+        pushCompleted("t1", "2026-09-30T05:02:00.000Z", {
+          mainLoopTokens: 100,
+          modelUsage: { "claude-opus-5": { totalTokens: 100, cacheReadInputTokens: 60 } },
+        });
+        pushRequest("t2", "gen-1", "2026-09-30T06:01:00.000Z", {
+          input: 10,
+          cacheRead: 150,
+          cacheCreation: 30,
+        });
+        pushCompleted("t2", "2026-09-30T06:02:00.000Z", {
+          mainLoopTokens: 200,
+          modelUsage: { "claude-opus-5": { totalTokens: 200, cacheReadInputTokens: 150 } },
+        });
+        // Claude Code restored t1 + t2 into this first result of the new process.
+        pushRequest("t3", "gen-2", "2026-09-30T07:01:00.000Z", {
+          input: 10,
+          cacheRead: 240,
+          cacheCreation: 50,
+        });
+        pushCompleted("t3", "2026-09-30T07:02:00.000Z", {
+          mainLoopTokens: 300,
+          modelUsage: { "claude-opus-5": { totalTokens: 600, cacheReadInputTokens: 450 } },
+        });
+        pushRequest("t4", "gen-2", "2026-09-30T08:01:00.000Z", {
+          input: 10,
+          cacheRead: 290,
+          cacheCreation: 60,
+        });
+        pushCompleted("t4", "2026-09-30T08:02:00.000Z", {
+          mainLoopTokens: 380,
+          mainLoopCacheReadTokens: 290,
+          modelUsage: { "claude-opus-5": { totalTokens: 400, cacheReadInputTokens: 300 } },
+        });
+        for (const [activityId, turnId, kind, payload, sequence, at] of rows) {
+          yield* sql`
+            INSERT INTO projection_thread_activities (
+              activity_id, thread_id, turn_id, tone, kind, summary, payload_json, sequence,
+              created_at
+            )
+            VALUES (${activityId}, 'thread-claude', ${turnId}, 'info', ${kind}, 'usage',
+              ${payload}, ${sequence}, ${at})
+          `;
+        }
+        yield* sql`
+          INSERT INTO projection_thread_activities (
+            activity_id, thread_id, turn_id, tone, kind, summary, payload_json, sequence, created_at
+          )
+          VALUES
+            ('x-codex-1', 'thread-codex', 'turn-codex', 'info', 'context-window.updated', 'tokens',
+              '{"provider":"codex","totalProcessedTokens":1000,"cumulativeUsage":{"inputTokens":900,"outputTokens":100,"cachedInputTokens":600}}',
+              1, '2026-09-30T06:00:00.000Z'),
+            ('x-codex-2', 'thread-codex', 'turn-codex', 'info', 'context-window.updated', 'tokens',
+              '{"provider":"codex","totalProcessedTokens":1500,"cumulativeUsage":{"inputTokens":1350,"outputTokens":150,"cachedInputTokens":1000}}',
+              2, '2026-09-30T06:05:00.000Z')
+        `;
+        return yield* (yield* RecapStatsQuery).getRecap(RECAP_INPUT);
+      }),
+    );
+
+    // Claude: 100 + 200 + 300 (t3's main loop, not its restored 600) + 400.
+    // Cache: 60 + 150 + 240 (t3's request share, 80% of 300) + 300; Codex adds 1000.
+    expect(recap.totals.tokens).toEqual({ user: 2_500, automation: 0, agent: 0 });
+    expect(recap.totals.cacheReadTokens).toBe(1_750);
+    expect(recap.models).toEqual([
+      { provider: "codex", model: "gpt-5-codex", turns: 0, tokens: 1_500 },
+      { provider: "claudeAgent", model: "claude-opus-5", turns: 0, tokens: 1_000 },
+    ]);
   });
 
   it("refuses the recap when the Inbox is off for this build", async () => {

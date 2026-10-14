@@ -222,4 +222,20 @@ describe("buildInboxTiles", () => {
       buildInboxTiles({ ...input, recap: recap(), previousRecap: undefined, quota: [] }),
     ).toEqual([]);
   });
+
+  it("splits the token tile into new tokens and cache reads when the server reports them", () => {
+    const withCache = {
+      ...input.recap,
+      totals: { ...input.recap.totals, cacheReadTokens: 3_000_000 },
+    };
+    const tokenTile = buildInboxTiles({ ...input, recap: withCache, quota: [] }).find(
+      (tile) => tile.id === "tokens",
+    );
+    expect(tokenTile).toEqual({
+      id: "tokens",
+      lead: "You used",
+      value: "3.8m tokens",
+      detail: "800k new · 3m from cache",
+    });
+  });
 });

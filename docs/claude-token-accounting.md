@@ -18,6 +18,23 @@ corrections; missing or zeroed error results retain the observed estimate.
 | SDK `result.usage`                    | This SDK turn's main loop                                           |
 | SDK `result.modelUsage`               | Cumulative query-pipeline usage, including subagents and compaction |
 | Projected `turn.completed.modelUsage` | Difference from the preceding native result                         |
+| Projected `mainLoopCacheReadTokens`   | Part of `mainLoopTokens` read from the prompt cache                 |
+
+`result.modelUsage` is not reset by a new process. When Claude Code resumes a
+session, it restores the totals it saved for that session, so the first result
+of a resumed process also counts earlier turns. Nothing in Synara knows that
+restored baseline, and Claude Code only restores it when the session was the
+last one saved for its project directory. The first result after a resume
+therefore only becomes the baseline: its turn carries no `modelUsage` or
+`totalCostUsd` and counts its main loop. Results written before this rule still
+carry the restored totals. Profile Stats finds them as the first turn of each
+process (`claudeCache.lifecycleGeneration`) that resumed an earlier process of
+the same native session, and counts those turns' main loop instead.
+
+A result settles `mainLoopCacheReadTokens` exactly. A turn closed without one
+sums the cache reads of its observed requests. Older main-loop rows without the
+field take the cache share of their recorded requests (`claudeCache.lastRequest`);
+model rows use their own `cacheReadInputTokens`.
 
 The SDK's raw per-model shape has no `totalTokens`: its four disjoint counters
 are uncached `inputTokens`, `cacheReadInputTokens`,

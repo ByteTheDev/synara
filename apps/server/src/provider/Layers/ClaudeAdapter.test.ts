@@ -9498,7 +9498,32 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         const events = Array.from(yield* Fiber.join(next));
         const completed = events.find((event) => event.type === "turn.completed");
         assert.equal(completed?.type, "turn.completed");
-        if (completed?.type === "turn.completed") {
+        if (completed?.type === "turn.completed" && boundary === "resumed process") {
+          // Claude Code may restore the session's saved totals into a resumed
+          // process's first result, so it only becomes the baseline.
+          assert.isUndefined(completed.payload.modelUsage);
+          assert.isUndefined(completed.payload.totalCostUsd);
+          const after = yield* collectCompletion();
+          yield* adapter.sendTurn({ threadId: THREAD_ID, input: "after", attachments: [] });
+          emitResult(oldSessionId, "after-accounting-result", 200, 50, 80, 260, 3);
+          const afterCompleted = Array.from(yield* Fiber.join(after)).find(
+            (event) => event.type === "turn.completed",
+          );
+          assert.equal(afterCompleted?.type, "turn.completed");
+          if (afterCompleted?.type === "turn.completed") {
+            assert.equal(afterCompleted.payload.totalCostUsd, 1);
+            assert.deepEqual(afterCompleted.payload.modelUsage?.["claude-sonnet-5"], {
+              inputTokens: 50,
+              outputTokens: 30,
+              cacheReadInputTokens: 30,
+              cacheCreationInputTokens: 60,
+              costUSD: 1,
+              contextWindow: 200000,
+              maxOutputTokens: 64000,
+              webSearchRequests: 0,
+            });
+          }
+        } else if (completed?.type === "turn.completed") {
           assert.equal(completed.payload.totalCostUsd, sameQuery ? 1 : 2);
           assert.deepEqual(completed.payload.modelUsage?.["claude-sonnet-5"], {
             inputTokens: sameQuery ? 50 : 150,
@@ -10294,11 +10319,12 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         "sdk-resultless-accounting",
         "first-block",
         "first",
-        { input_tokens: 100 },
+        { input_tokens: 40, cache_read_input_tokens: 60 },
         "first-call",
       );
       emitSuccessResult(harness.query, "sdk-resultless-accounting", "first-result", {
-        input_tokens: 100,
+        input_tokens: 40,
+        cache_read_input_tokens: 60,
       });
       yield* Deferred.await(firstCompleted);
 
@@ -10309,7 +10335,7 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
         "sdk-resultless-accounting",
         "background-block",
         "background",
-        { input_tokens: 10 },
+        { input_tokens: 2, cache_read_input_tokens: 8 },
         "background-call",
       );
       yield* Deferred.await(syntheticStarted);
@@ -10339,6 +10365,13 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
       assert.equal(
         events.filter((event) => event.type === "turn.completed")[1]?.payload.mainLoopTokens,
         10,
+      );
+      // A result settles its turn's cache reads; a resultless turn sums its requests'.
+      assert.deepEqual(
+        events.flatMap((event) =>
+          event.type === "turn.completed" ? [event.payload.mainLoopCacheReadTokens] : [],
+        ),
+        [60, 8, 0],
       );
       assert.deepEqual(
         events
