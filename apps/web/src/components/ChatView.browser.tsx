@@ -11380,6 +11380,17 @@ describe("ChatView transcript geometry (full app)", () => {
         updatedAt: "2026-03-01T00:00:00.000Z",
         latestUserMessageAt: "2026-03-01T00:00:00.000Z",
       };
+      const childId = ThreadId.makeUnsafe("snapshot-project-hidden-child");
+      const child = {
+        ...newest,
+        id: childId,
+        parentThreadId: newestId,
+        title: "Newest hidden subagent",
+        session: { ...neutral.session!, threadId: childId },
+        createdAt: "2026-04-01T00:00:00.000Z",
+        updatedAt: "2026-04-01T00:00:00.000Z",
+        latestUserMessageAt: "2026-04-01T00:00:00.000Z",
+      };
       localStorage.setItem(
         "synara:app-settings:v1",
         JSON.stringify({
@@ -11389,7 +11400,7 @@ describe("ChatView transcript geometry (full app)", () => {
       );
       const mounted = await mountChatView({
         viewport: DEFAULT_VIEWPORT,
-        snapshot: { ...base, threads: [neutral, reminder, newest] },
+        snapshot: { ...base, threads: [neutral, reminder, newest, child] },
       });
       try {
         if (reminderSeen)
@@ -11414,6 +11425,7 @@ describe("ChatView transcript geometry (full app)", () => {
                 },
               },
               newest,
+              child,
             ],
           });
         }

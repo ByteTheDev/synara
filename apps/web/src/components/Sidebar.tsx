@@ -2319,6 +2319,7 @@ export default function Sidebar() {
           .filter(
             (thread) =>
               thread.projectId === projectId &&
+              !thread.parentThreadId &&
               (thread.archivedAt ?? null) === null &&
               thread.snoozedUntil == null &&
               !isSidechatThread(thread),
@@ -2364,6 +2365,7 @@ export default function Sidebar() {
           .filter(
             (thread) =>
               thread.projectId === projectId &&
+              !thread.parentThreadId &&
               (thread.archivedAt ?? null) === null &&
               thread.snoozedUntil == null,
           ),
