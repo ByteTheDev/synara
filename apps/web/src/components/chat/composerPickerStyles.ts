@@ -126,9 +126,9 @@ export const CHAT_COLUMN_FRAME_CLASS_NAME = `mx-auto w-full min-w-0 ${COMPOSER_M
 export const COMPOSER_COLUMN_FRAME_CLASS_NAME = CHAT_COLUMN_FRAME_CLASS_NAME;
 
 /**
- * Frame for rows stacked above the composer (queued steer/queue rows, live file
- * changes, active task list). Sits at `w-14/15` and is centered (`mx-auto`) so the
- * stack reads as an inset rail above the full-width composer input.
+ * Frame for rows stacked above the composer (queued steer/queue rows; other activity
+ * floats as capsules, see ComposerCapsule). Sits at `w-14/15` and is centered (`mx-auto`)
+ * so the stack reads as an inset rail above the full-width composer input.
  *
  * Prefer ComposerStackedPanel inside ComposerColumnFrame instead of using this
  * token directly so chrome and attached-radius behavior stay centralized.
@@ -140,7 +140,7 @@ export const COMPOSER_STACKED_HEADER_FRAME_CLASS_NAME = "mx-auto -mb-px w-14/15 
  *  material is meant to reveal and blur the content passing behind it — an opaque
  *  backing here would be the only thing its `backdrop-filter` ever sampled.
  *  `relative z-[1]` keeps the full input outline above the inset stacked rail
- *  (`-mb-px`), so the top border is never covered by live-changes / task / queue chrome. */
+ *  (`-mb-px`), so the top border is never covered by the queued follow-up chrome. */
 export const COMPOSER_INPUT_SHELL_CLASS_NAME =
   "group relative z-[1] chat-composer-shell squircle transition-colors duration-200";
 
@@ -298,6 +298,13 @@ export const COMPOSER_EDITOR_PADDING_CLASS_NAME = [
   "pt-[var(--app-density-composer-editor-padding-top,0.75rem)]",
   "pb-[var(--app-density-composer-editor-padding-bottom,0.5rem)]",
 ].join(" ");
+/** Single-row composer surface: + | editor | mic, send on one grid row (the footer's
+ *  clusters join it through `display: contents`). */
+export const COMPOSER_SINGLE_ROW_SURFACE_CLASS_NAME =
+  "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-1 p-1.5";
+/** Editor cell of the single-row composer. Not `relative`, so the command menu anchors to
+ *  the full-width surface instead of this cell. */
+export const COMPOSER_SINGLE_ROW_EDITOR_CLASS_NAME = "col-start-2 row-start-1 min-w-0 px-1.5 py-1";
 /** Bottom bar row — flush to the composer shell edges. */
 export const COMPOSER_FOOTER_ROW_CLASS_NAME = [
   "flex items-center justify-between",

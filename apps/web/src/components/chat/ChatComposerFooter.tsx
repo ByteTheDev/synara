@@ -12,6 +12,9 @@ import { ComposerVoiceButton } from "./ComposerVoiceButton";
 import { ComposerVoiceRecorderBar } from "./ComposerVoiceRecorderBar";
 import { COMPOSER_FOOTER_ROW_CLASS_NAME } from "./composerPickerStyles";
 interface ChatComposerFooterProps {
+  /** `row`: the single-row composer. The footer box becomes `display: contents` so its
+   *  leading and trailing clusters sit beside the editor in the surface's grid. */
+  layout?: "row" | "block";
   isComposerFooterCompact: boolean;
   leadingControls: ReactNode;
   composerPickerControls: ReactNode;
@@ -54,6 +57,7 @@ interface ChatComposerFooterProps {
 }
 
 export function ChatComposerFooter({
+  layout: layoutProp,
   isComposerFooterCompact,
   leadingControls,
   composerPickerControls,
@@ -65,24 +69,32 @@ export function ChatComposerFooter({
   pendingInput,
   submission,
 }: ChatComposerFooterProps) {
+  const row = (layoutProp ?? "block") === "row";
+  const voiceActive = voice.recording || voice.transcribing;
   return (
     <div
       data-chat-composer-footer="true"
       className={cn(
-        "@container",
-        COMPOSER_FOOTER_ROW_CLASS_NAME,
-        isComposerFooterCompact ? "gap-1.5" : "flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0",
+        row
+          ? "contents"
+          : [
+              "@container",
+              COMPOSER_FOOTER_ROW_CLASS_NAME,
+              isComposerFooterCompact ? "gap-1.5" : "flex-wrap gap-1.5 sm:flex-nowrap sm:gap-0",
+            ],
       )}
     >
       <div
         data-chat-composer-leading="true"
         className={cn(
           "flex items-center",
-          voice.recording || voice.transcribing
-            ? "min-w-0 shrink-0 gap-1"
-            : isComposerFooterCompact
-              ? "min-w-0 flex-1 gap-1 overflow-hidden"
-              : "min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible",
+          row
+            ? "col-start-1 row-start-1 shrink-0 gap-0.5"
+            : voiceActive
+              ? "min-w-0 shrink-0 gap-1"
+              : isComposerFooterCompact
+                ? "min-w-0 flex-1 gap-1 overflow-hidden"
+                : "min-w-0 flex-1 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:min-w-max sm:overflow-visible",
         )}
       >
         {leadingControls}
@@ -103,13 +115,13 @@ export function ChatComposerFooter({
                 ) : (
                   <BugIcon className="size-3.5" />
                 )}
-                <span className="sr-only sm:not-sr-only">
+                <span className={row ? "sr-only" : "sr-only sm:not-sr-only"}>
                   {interactionMode === "plan" ? "Plan" : "Debug"}
                 </span>
               </Button>
             ) : null}
 
-            {sidebarAction ? (
+            {sidebarAction && !row ? (
               <Button
                 variant="ghost"
                 className="shrink-0 whitespace-nowrap px-2 text-ui-sm sm:text-ui-sm font-normal sm:px-3"
@@ -131,7 +143,13 @@ export function ChatComposerFooter({
         data-chat-composer-actions="right"
         className={cn(
           "flex items-center gap-2",
-          voice.recording || voice.transcribing ? "min-w-0 flex-1" : "shrink-0",
+          row
+            ? voiceActive
+              ? "col-start-2 col-end-4 row-start-1 min-w-0"
+              : "col-start-3 row-start-1 shrink-0"
+            : voiceActive
+              ? "min-w-0 flex-1"
+              : "shrink-0",
         )}
       >
         {contextMeter}
