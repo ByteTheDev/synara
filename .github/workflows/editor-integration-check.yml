@@ -1,5 +1,5 @@
 # Branch-only execution support for the editor integration work.
-# This does not publish releases, modify repository refs, or use application data.
+# No releases, repository-ref writes, secrets, or application data are used.
 name: Editor integration check
 
 on:
@@ -18,25 +18,41 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checkout:
-    name: Prepare isolated source checkout
+  dependencies:
+    name: Prepare isolated Linux verification environment
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - name: Checkout the exact feature commit
         uses: actions/checkout@v6
         with:
           persist-credentials: false
 
-      - name: Archive tracked source without Git credentials or user state
-        run: |
-          git rev-parse HEAD
-          git archive --format=tar.gz --output="$RUNNER_TEMP/synara-editor-source.tar.gz" HEAD
+      - name: Install the repository-pinned runtime toolchain
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
 
-      - name: Export source for the isolated implementation environment
+      - name: Prepare relocatable verification dependencies
+        shell: bash
+        run: |
+          mkdir -p .integration-toolchain/bin
+          cp "$(command -v bun)" .integration-toolchain/bin/bun
+          cp "$(command -v node)" .integration-toolchain/bin/node
+          bun --version
+          node --version
+          node -e 'const fs = require("node:fs"); const paths = ["node_modules", "scripts/node_modules", ".integration-toolchain"]; for (const parent of ["apps", "packages"]) { for (const name of fs.readdirSync(parent)) { const path = `${parent}/${name}/node_modules`; if (fs.existsSync(path)) paths.push(path); } } fs.writeFileSync(process.env.RUNNER_TEMP + "/dependency-paths.txt", paths.join("\n") + "\n");'
+          tar -czf "$RUNNER_TEMP/synara-editor-dependencies.tar.gz" -T "$RUNNER_TEMP/dependency-paths.txt"
+          ls -lh "$RUNNER_TEMP/synara-editor-dependencies.tar.gz"
+
+      - name: Export isolated verification dependencies
         uses: actions/upload-artifact@v4
         with:
-          name: synara-editor-source-${{ github.sha }}
-          path: ${{ runner.temp }}/synara-editor-source.tar.gz
+          name: synara-editor-dependencies-${{ github.sha }}
+          path: ${{ runner.temp }}/synara-editor-dependencies.tar.gz
           retention-days: 1
+          compression-level: 0
           if-no-files-found: error
+
+      - name: Verify the unchanged shared document session baseline
+        run: bun run test:web:focused src/lib/workspaceEditorSession.test.ts src/lib/workspaceFileEditor.test.ts
