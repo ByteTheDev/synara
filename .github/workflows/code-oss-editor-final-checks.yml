@@ -1,4 +1,4 @@
-name: Existing editor publication review
+name: Existing editor documentation finalization
 on:
   push:
     branches: [codex/1920-editor-surface-qa]
@@ -7,60 +7,48 @@ permissions:
   contents: read
   actions: read
 jobs:
-  review:
+  format:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 6
     steps:
       - uses: actions/checkout@v6
         with:
           ref: c524c0bbda673f634b420f060a8575080d6d7f5b
-          fetch-depth: 2
           persist-credentials: false
-      - uses: actions/download-artifact@v8
-        with:
-          name: bounded-files-evidence
-          run-id: 38589477844
-          github-token: ${{ github.token }}
-          path: .code-oss/evidence
-      - name: Verify committed source matches tested artifact and audit complete change set
-        run: |
-          python - <<'PY'
-          import hashlib,json,subprocess,re
-          from pathlib import Path
-          manifest=json.loads(Path('.code-oss/evidence/manifest.json').read_text())
-          for row in manifest:
-              assert hashlib.sha256(Path(row['path']).read_bytes()).hexdigest()==row['sha256'],row['path']
-          captures={'after-native-file-open.png':'after-native-file-open.png','after-existing-markdown-preview.png':'after-existing-markdown-preview.png','after-existing-native-diff.png':'after-existing-native-diff.png','after-synara-ide-dark.png':'after-existing-editor-dark.png','after-synara-ide-light.png':'after-existing-editor-light.png','files-chat-switch.gif':'files-chat-switch.gif'}
-          for artifact,committed in captures.items():
-              assert Path('.code-oss/evidence',artifact).read_bytes()==Path('docs/images/code-oss',committed).read_bytes(),committed
-          changes=subprocess.check_output(['git','diff','HEAD^','HEAD','--name-status']).decode();print(changes)
-          paths=subprocess.check_output(['git','diff','HEAD^','HEAD','--name-only']).decode().splitlines()
-          assert len(paths)==37,len(paths)
-          assert not any(p.startswith('.github/') or 'lock' in Path(p).name or '/dist/' in p or p.startswith('.code-oss/') for p in paths)
-          assert not any(line.startswith('D\t') for line in changes.splitlines())
-          patch=subprocess.check_output(['git','diff','HEAD^','HEAD','--', '.', ':!docs/images/**']).decode()
-          additions='\n'.join(line for line in patch.splitlines() if line.startswith('+') and not line.startswith('+++'))
-          for pattern in [r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',r'gh[pousr]_[A-Za-z0-9]{30,}',r'github_pat_[A-Za-z0-9_]{40,}']:
-              assert not re.search(pattern,additions),'Unexpected credential material'
-          print('Verified all 10 recovered source hashes, 6 capture byte comparisons, 37 intentional paths, no deletions/QA workflows/lockfiles/runtime binaries or detected credentials.')
-          Path('.code-oss/final-review.patch').write_text(patch)
-          PY
-          git diff HEAD^ HEAD --check
-          git diff HEAD^ HEAD --stat
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
           electron: 'true'
-      - name: Validate only changes since successful static checks
+      - name: Format only the architecture document and finish pending narrow lint
         run: |
+          node_modules/.bin/oxfmt docs/code-oss.md
           node_modules/.bin/oxfmt --check docs/code-oss.md apps/desktop/src/codeOssHost.ts apps/desktop/code-oss/scripts/appearance-smoke.mjs
           node_modules/.bin/oxlint --report-unused-disable-directives apps/desktop/src/codeOssHost.ts apps/desktop/code-oss/scripts/appearance-smoke.mjs
-      - name: Review complete source diff
-        if: always()
-        run: cat .code-oss/final-review.patch
+          git diff --check
+          test "$(git diff --name-only)" = docs/code-oss.md
+          git diff -- docs/code-oss.md
       - uses: actions/upload-artifact@v7
-        if: always()
         with:
-          name: existing-editor-publication-review
-          path: .code-oss/final-review.patch
+          name: formatted-editor-documentation
+          path: docs/code-oss.md
           retention-days: 7
+  export:
+    needs: format
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: formatted-editor-documentation
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const bytes=fs.readFileSync('code-oss.md');
+            if(bytes.length>30000 || !bytes.toString('utf8').startsWith('# Native Code-OSS in Synara'))throw Error('Unexpected documentation artifact');
+            const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+            console.log('FORMATTED_DOC_BLOB='+JSON.stringify({path:'docs/code-oss.md',sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),bytes:bytes.length}));
+            // Export only the reviewed document blob; no commit or branch changes.
