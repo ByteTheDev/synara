@@ -1517,10 +1517,26 @@ export function mergeGroupMemberThreadsIntoProjectBuckets(input: {
   return merged ?? input.sortedSidebarThreadsByProjectId;
 }
 
+// Hidden child routes keep their visible root selected without changing the open chat.
+export function resolveSidebarRootThreadId(
+  threadId: ThreadId | null,
+  summaries: Readonly<Record<string, Pick<SidebarThreadSummary, "parentThreadId">>>,
+): ThreadId | null {
+  const visited = new Set<ThreadId>();
+  let current = threadId;
+  while (current !== null && summaries[current]?.parentThreadId) {
+    if (visited.has(current)) return threadId;
+    visited.add(current);
+    current = summaries[current]!.parentThreadId!;
+  }
+  return current;
+}
+
 // Centralizes the expensive per-project row derivation so Sidebar.tsx can mostly orchestrate UI state.
 export function deriveSidebarProjectData(input: {
   projects: readonly Pick<Project, "id" | "cwd" | "expanded">[];
   sortedSidebarThreadsByProjectId: ReadonlyMap<ProjectId, SidebarThreadSummary[]>;
+  statusThreadsByProjectId?: ReadonlyMap<ProjectId, SidebarThreadSummary[]>;
   pinnedThreadIds: readonly ThreadId[];
   threadListExtraPagesByProjectCwd: ReadonlyMap<string, number>;
   normalizeProjectCwd: (cwd: string) => string;
@@ -1536,8 +1552,12 @@ export function deriveSidebarProjectData(input: {
   for (const project of input.projects) {
     const allProjectThreads = input.sortedSidebarThreadsByProjectId.get(project.id) ?? [];
     const projectThreads = getUnpinnedThreadsForSidebar(allProjectThreads, input.pinnedThreadIds);
+    const statusThreads = input.statusThreadsByProjectId?.get(project.id);
     const projectStatus = resolveProjectStatusIndicator(
-      allProjectThreads.map((thread) =>
+      (statusThreads
+        ? [...allProjectThreads, ...statusThreads.filter((thread) => thread.parentThreadId)]
+        : allProjectThreads
+      ).map((thread) =>
         input.resolveThreadStatus
           ? input.resolveThreadStatus(thread)
           : resolveThreadStatusPill({

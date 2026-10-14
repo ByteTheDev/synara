@@ -39,6 +39,7 @@ import {
   resolveProjectEmptyState,
   resolveSettingsBackTarget,
   resolveProjectStatusIndicator,
+  resolveSidebarRootThreadId,
   resolveSidebarNewThreadEnvMode,
   resolveSidebarProjectRowLabel,
   resolveThreadHoverCardMetadata,
@@ -1607,7 +1608,64 @@ describe("mergeGroupMemberThreadsIntoProjectBuckets", () => {
   });
 });
 
+describe("hidden child navigation", () => {
+  it.each([true, false])("reveals the root while a child is open (expanded: %s)", (expanded) => {
+    const project = { ...makeProject(), expanded };
+    const first = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("first") });
+    const parent = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("parent") });
+    const child = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("child"),
+      parentThreadId: parent.id,
+    });
+    const nested = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("nested"),
+      parentThreadId: child.id,
+    });
+    const active = resolveSidebarRootThreadId(
+      nested.id,
+      Object.fromEntries([parent, child, nested].map((thread) => [thread.id, thread])),
+    );
+    const result = deriveSidebarProjectData({
+      projects: [project],
+      sortedSidebarThreadsByProjectId: groupSidebarThreadsByProjectId([first, parent]),
+      pinnedThreadIds: [],
+      threadListExtraPagesByProjectCwd: new Map(),
+      normalizeProjectCwd: (cwd) => cwd,
+      activeSidebarThreadId: active ?? undefined,
+      previewLimit: 1,
+      previewPageSize: 5,
+    }).get(project.id);
+    expect(result?.activeEntryId).toBe(parent.id);
+    expect(result?.visibleEntries.map((entry) => entry.rowId)).toEqual(
+      expanded ? [first.id, parent.id] : [parent.id],
+    );
+  });
+});
+
 describe("deriveSidebarProjectData", () => {
+  it("retains child approval status without rendering a child row", () => {
+    const project = makeProject();
+    const parent = makeSidebarThreadSummary({ id: ThreadId.makeUnsafe("parent") });
+    const child = makeSidebarThreadSummary({
+      id: ThreadId.makeUnsafe("child"),
+      parentThreadId: parent.id,
+      hasPendingApprovals: true,
+    });
+    const result = deriveSidebarProjectData({
+      projects: [project],
+      sortedSidebarThreadsByProjectId: groupSidebarThreadsByProjectId([parent]),
+      statusThreadsByProjectId: groupSidebarThreadsByProjectId([parent, child]),
+      pinnedThreadIds: [],
+      threadListExtraPagesByProjectCwd: new Map(),
+      normalizeProjectCwd: (cwd) => cwd,
+      activeSidebarThreadId: parent.id,
+      previewLimit: 5,
+      previewPageSize: 5,
+    }).get(project.id);
+    expect(result?.projectStatus?.label).toBe("Pending Approval");
+    expect(result?.visibleEntries.map((entry) => entry.rowId)).toEqual([parent.id]);
+  });
+
   it("keeps pinned threads in the total project thread count", () => {
     const project = makeProject();
     const pinnedThread = makeSidebarThreadSummary({

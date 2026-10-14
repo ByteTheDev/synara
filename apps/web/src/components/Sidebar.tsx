@@ -162,6 +162,7 @@ import {
   threadJumpIndexFromCommand,
 } from "../keybindings";
 import {
+  collectSnoozedThreadIds,
   createAllThreadsSelector,
   createProjectLastActivityAtSelector,
   createSidebarDisplayThreadsSelector,
@@ -409,6 +410,7 @@ import {
   runProjectProvisionWithCancellationRecovery,
   resolveAutomationCountBadge,
   resolvePullRequestReviewBadge,
+  resolveSidebarRootThreadId,
   resolveSidebarThreadListPaging,
   DEBUG_FEATURE_FLAGS_MENU_STORAGE_KEY,
   resolveProjectEmptyState,
@@ -1737,9 +1739,12 @@ export default function Sidebar() {
   // follows the route, not the pointer-down optimistic id. Rebuilding the list
   // between press and release moves the row out from under the pointer, so the
   // click never fires and the thread never opens.
-  const routeActiveSidebarThreadId = routeThreadId;
+  const routeActiveSidebarThreadId = resolveSidebarRootThreadId(
+    routeThreadId,
+    sidebarThreadSummaryById,
+  );
   const activeSidebarThreadId = optimisticActiveThreadId ?? routeActiveSidebarThreadId;
-  const visualActiveSidebarThreadId = optimisticActiveThreadId ?? routeThreadId;
+  const visualActiveSidebarThreadId = activeSidebarThreadId;
   const hideAutomationRunThreads = !appSettings.showAutomationRunThreads;
   const selectSidebarTreeThreads = useMemo(
     () => createSidebarDisplayThreadsSelector({ hideAutomationRunThreads }),
@@ -4602,6 +4607,18 @@ export default function Sidebar() {
       ),
     [chatWorkspaceRoot, groupsWorkspaceRoot, homeDir, sortedProjects, studioWorkspaceRoot],
   );
+  // Hidden subagents still contribute approval/running status to their project and Space.
+  const statusThreadsByProjectId = useMemo(() => {
+    const snoozedIds = collectSnoozedThreadIds(displaySidebarThreads);
+    return groupSidebarThreadsByProjectId(
+      displaySidebarThreads.filter(
+        (thread) =>
+          thread.archivedAt == null &&
+          !snoozedIds.has(thread.id) &&
+          isSidebarThreadVisible(thread, { hideAutomationRunThreads, includeSubagents: true }),
+      ),
+    );
+  }, [displaySidebarThreads, hideAutomationRunThreads]);
   const spaceActivityById = useMemo(() => {
     const priority: Record<SpaceActivityTone, number> = {
       attention: 3,
@@ -4611,7 +4628,7 @@ export default function Sidebar() {
     const activity = new Map<SpaceId | null, SpaceActivityTone>();
     for (const project of allStandardProjectsBase) {
       const status = resolveProjectStatusIndicator(
-        (sidebarThreadsByProjectId.get(project.id) ?? []).map(resolveThreadStatusForSidebar),
+        (statusThreadsByProjectId.get(project.id) ?? []).map(resolveThreadStatusForSidebar),
       );
       if (!status) continue;
       const tone: SpaceActivityTone =
@@ -4630,7 +4647,7 @@ export default function Sidebar() {
       }
     }
     return activity;
-  }, [allStandardProjectsBase, resolveThreadStatusForSidebar, sidebarThreadsByProjectId]);
+  }, [allStandardProjectsBase, resolveThreadStatusForSidebar, statusThreadsByProjectId]);
   const standardProjectsBase = useMemo(
     () => allStandardProjectsBase.filter((project) => (project.spaceId ?? null) === activeSpaceId),
     [activeSpaceId, allStandardProjectsBase],
@@ -4669,6 +4686,7 @@ export default function Sidebar() {
         activeSidebarThreadId: routeActiveSidebarThreadId ?? undefined,
         previewLimit: THREAD_PREVIEW_LIMIT,
         previewPageSize: THREAD_PREVIEW_PAGE_SIZE,
+        statusThreadsByProjectId,
         resolveThreadStatus: resolveThreadStatusForSidebar,
       }),
     [
@@ -4678,6 +4696,7 @@ export default function Sidebar() {
       sortedSidebarThreadsByProjectId,
       standardProjects,
       resolveThreadStatusForSidebar,
+      statusThreadsByProjectId,
     ],
   );
   const handleCreateGroupChat = useCallback(
@@ -4747,6 +4766,7 @@ export default function Sidebar() {
       activeSidebarThreadId: routeActiveSidebarThreadId ?? undefined,
       previewLimit: THREAD_PREVIEW_LIMIT,
       previewPageSize: THREAD_PREVIEW_PAGE_SIZE,
+      statusThreadsByProjectId,
       resolveThreadStatus: resolveThreadStatusForSidebar,
     });
   }, [
@@ -4757,6 +4777,7 @@ export default function Sidebar() {
     groupScopedSortedSidebarThreadsByProjectId,
     groupProjects,
     resolveThreadStatusForSidebar,
+    statusThreadsByProjectId,
   ]);
   const surfaceProjects = isOnGroups ? groupProjects : standardProjects;
   const surfaceProjectSidebarDataById = isOnGroups
@@ -4806,6 +4827,7 @@ export default function Sidebar() {
         activeSidebarThreadId: routeActiveSidebarThreadId ?? undefined,
         previewLimit: THREAD_PREVIEW_LIMIT,
         previewPageSize: THREAD_PREVIEW_PAGE_SIZE,
+        statusThreadsByProjectId,
         resolveThreadStatus: resolveThreadStatusForSidebar,
       }).get(railSpacesProject.id) ?? null
     );
@@ -4814,6 +4836,7 @@ export default function Sidebar() {
     railSpacesProject,
     routeActiveSidebarThreadId,
     resolveThreadStatusForSidebar,
+    statusThreadsByProjectId,
     sortedSidebarThreadsByProjectId,
     threadListExtraPagesByProjectCwd,
   ]);

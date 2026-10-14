@@ -542,6 +542,8 @@ export interface SidebarThreadVisibilityOptions {
   readonly hideAutomationRunThreads?: boolean;
   /** Explicit access for Snoozed sections and user-initiated search. */
   readonly includeSnoozed?: boolean;
+  /** Status aggregation includes hidden children, navigation does not. */
+  readonly includeSubagents?: boolean;
 }
 
 /** A snoozed task also hides its subagent subtree, including pinned children. */
@@ -569,6 +571,7 @@ export function isSidebarThreadVisible(
 ): boolean {
   // Sidechats live in their host's dock (a thread's, or the inbox's for standalone ones).
   if (isSidechatThread(thread)) return false;
+  if (thread.parentThreadId && !options?.includeSubagents) return false;
   if (thread.snoozedUntil != null && !options?.includeSnoozed) return false;
   if (!options?.hideAutomationRunThreads) return true;
   if (thread.isPinned) return true;

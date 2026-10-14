@@ -2653,12 +2653,8 @@ describe("ChatView transcript geometry (full app)", () => {
             const hints = [...sidebar.querySelectorAll<HTMLElement>('[data-slot="kbd"]')].filter(
               (hint) => hint.closest("[data-thread-item]"),
             );
-            expect(hints.length).toBe(activityViewEnabled ? 5 : 7);
-            if (!activityViewEnabled) {
-              expect(sidebar.textContent).toContain("Atlas");
-              // The open subagent reveals its own child as well as its ancestors.
-              expect(sidebar.textContent).toContain("Nova");
-            }
+            expect(hints.length).toBe(5);
+            expect(sidebarSubagentRows()).toHaveLength(0);
             if (customShortcut) expect(hints[0]!.textContent).toContain("Ctrl+Alt+Shift+Meta");
             for (const hint of hints) {
               const row = hint.closest<HTMLElement>("[data-thread-item]")!;

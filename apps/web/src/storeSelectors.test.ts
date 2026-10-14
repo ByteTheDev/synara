@@ -279,6 +279,12 @@ describe("sidebar thread visibility", () => {
     expect(selectDisplay(state).map((thread) => thread.id)).toEqual([threadIdB, threadIdC]);
   });
 
+  it("keeps child chats out of navigation candidates as well as rendered rows", () => {
+    const child = { ...summaryA, parentThreadId: threadIdB } as SidebarThreadSummary;
+    expect(isSidebarThreadVisible(child)).toBe(false);
+    expect(isSidebarThreadVisible(child, { includeSnoozed: true })).toBe(false);
+  });
+
   it("keeps subagent threads out of the sidebar, even pinned or snoozed-included", () => {
     const parentThreadId = "thread-parent" as ThreadId;
     const parent = { ...summaryA, id: parentThreadId } as SidebarThreadSummary;
