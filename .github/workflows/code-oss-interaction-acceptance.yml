@@ -1,0 +1,156 @@
+name: Native editor interaction acceptance
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-interaction-acceptance.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-renderer-source
+          run-id: 38538975984
+          github-token: ${{ github.token }}
+      - run: tar -xzf renderer-source.tar.gz
+      - name: Drive native Explorer and scope palette input after focus changes
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const path='apps/desktop/code-oss/scripts/smoke.mjs';
+          let text=fs.readFileSync(path,'utf8');
+          function replace(before,after) { if(text.split(before).length!==2) throw Error('Changed smoke anchor: '+before); text=text.replace(before,after); }
+          replace('      await workbench.keyboard.press("Control+Shift+P");','      await workbench.keyboard.press("Escape");\n      await workbench.keyboard.press("F1");');
+          replace('    await probeCommand("open", "Open sample file");\n    await workbench.locator(".monaco-editor .view-lines").first().waitFor();',`    // Open through the actual Explorer, not through an injected editor or fixture UI.
+              await workbench.getByText("sample.ts", { exact: true }).first().dblclick();
+              await workbench.locator(".monaco-editor .view-lines").first().waitFor();
+              await until(probe, value => value.editor?.path === join(workspace, "sample.ts"), "native Explorer opens the selected file");
+              await record("native Explorer opens a real source file");`);
+          replace('      { stdio: "ignore" },','      { stdio: "ignore", signal: AbortSignal.timeout(15_000) },');
+          replace('    await new Promise((done) => setTimeout(done, 1200));',`    const recordingResult = new Promise(resolve => {
+                recording.once("error", error => resolve({ error: String(error) }));
+                recording.once("exit", code => resolve({ code }));
+              });
+              await new Promise((done) => setTimeout(done, 1200));`);
+          replace('    await new Promise((done) => recording.once("exit", done));','    const result = await recordingResult;\n    if (result.error || result.code !== 0) throw new Error(`Desktop recording failed: ${JSON.stringify(result)}`);');
+          replace('    await writeFile(join(output, "probe-at-failure.json"), JSON.stringify(await probe(), null, 2));',`    await writeFile(join(output, "probe-at-failure.json"), JSON.stringify(await probe(), null, 2));
+              await writeFile(join(output, "focus-at-failure.json"), JSON.stringify(await application.evaluate(({ webContents }) => webContents.getAllWebContents().map(item => ({ id:item.id, focused:item.isFocused(), type:item.getType(), url:item.getURL() }))), null, 2));`);
+          fs.writeFileSync(path,text);
+          JS
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format and check only modified harness
+        run: |
+          node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/smoke.mjs
+          node --check apps/desktop/code-oss/scripts/smoke.mjs
+          tar -czf interaction-source.tar.gz apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-interaction-source
+          path: interaction-source.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+  native:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-renderer-source
+          run-id: 38538975984
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-interaction-source
+      - run: tar -xzf renderer-source.tar.gz && tar -xzf interaction-source.tar.gz
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-service-runtime
+          run-id: 38530755801
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - run: node apps/desktop/code-oss/scripts/stage-browser-resources.mjs .code-oss/runtime
+      - name: Build integrated desktop
+        run: bun run build:desktop > .code-oss/build.log 2>&1 || { tail -80 .code-oss/build.log; exit 1; }
+      - name: Real Linux desktop capture
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 > .code-oss/display.log 2>&1
+      - name: Exercise native IDE and retained Agent
+        timeout-minutes: 8
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Encode actual mode-switch GIF
+        if: success()
+        run: ffmpeg -y -i .code-oss/screenshots/agent-ide-switch.mp4 -vf 'fps=6,scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse' .code-oss/screenshots/agent-ide-switch.gif
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-interaction-evidence
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
+  report:
+    needs: native
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-interaction-evidence
+      - name: Summarize real acceptance evidence without build-log noise
+        run: |
+          for file in after-checks.json failure.txt focus-at-failure.json probe-at-failure.json native-probe.json failure-page-1.txt; do
+            if [ -f "$file" ]; then echo "=== $file ==="; head -c 13000 "$file"; echo; fi
+          done
+          if [ -f after-electron.log ]; then grep -E 'ERR|Error|failed|not found|Cannot|SyntaxError' after-electron.log | tail -20 || true; fi
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-interaction-source
+      - name: Validate one source member without executing it
+        run: |
+          python - <<'PY'
+          import tarfile
+          with tarfile.open('interaction-source.tar.gz') as archive:
+              members=archive.getmembers()
+              if len(members)!=1 or members[0].name!='apps/desktop/code-oss/scripts/smoke.mjs' or not members[0].isfile() or members[0].size>50000:
+                  raise ValueError('Unexpected source')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store exact source blob only
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const path='apps/desktop/code-oss/scripts/smoke.mjs';
+            const bytes=fs.readFileSync('source/'+path);
+            const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+            console.log('INTERACTION_BLOB='+JSON.stringify({path,sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),mode:'100644',type:'blob'}));
