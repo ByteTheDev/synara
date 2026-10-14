@@ -1,0 +1,88 @@
+name: Inspect Synara native appearance layout
+on:
+  push:
+    branches: [codex/1920-synara-appearance-qa]
+    paths: [.github/workflows/code-oss-appearance-layout.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 9703e5e80bcbe6f302d83e467dfa066154d4e8c8
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-appearance-runtime
+          run-id: 38554432762
+          github-token: ${{ github.token }}
+          path: .code-oss/qa-runtime
+      - uses: actions/download-artifact@v8
+        with:
+          name: synara-appearance-final-controls
+          run-id: 38555271552
+          github-token: ${{ github.token }}
+          path: .code-oss/controls
+      - run: tar -xzf .code-oss/qa-runtime/appearance-runtime.tar.gz && tar -xzf .code-oss/controls/compiled-synara.tar.gz
+      - name: Inspect settled colors and view bounds without changing the product
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('apps/desktop/code-oss/scripts/smoke.mjs')
+          s=p.read_text()
+          a=s.index('    const assets = await workbench.evaluate(')
+          b=s.index('\n  }\n} catch (error)', a)
+          s=s[:a]+'''    const { verifyAppearance } = await import("./appearance-smoke.mjs");
+              await verifyAppearance({ application, agent, workbench, composer, screen, until, record });
+          '''+s[b:]
+          p.write_text(s)
+          p=Path('apps/desktop/code-oss/scripts/appearance-smoke.mjs')
+          s=p.read_text()
+          anchor='    screen(`after-synara-ide-${mode}.png`);'
+          assert s.count(anchor)==1
+          diagnostic='''    await workbench.waitForTimeout(700);
+              console.log("SETTLED_PALETTE", JSON.stringify(appearance));
+              console.log("NATIVE_LAYOUT", JSON.stringify(await workbench.evaluate(() => {
+                const selectors = [".monaco-workbench", ".part.statusbar", ".part.titlebar", "#synara\\\\.mode", "#synara\\\\.attention"];
+                return selectors.map(selector => {
+                  const e = document.querySelector(selector);
+                  if (!e) return { selector, missing:true };
+                  const s=getComputedStyle(e);
+                  return { selector, background:s.backgroundColor, color:s.color, opacity:s.opacity, transition:s.transition, inline:e.getAttribute("style"), rect:e.getBoundingClientRect().toJSON() };
+                });
+              })));
+              console.log("AGENT_LAYOUT", JSON.stringify(await agent.evaluate(() => {
+                const editor=document.querySelector('[contenteditable="true"]');
+                const chain=[];
+                for(let e=editor; e; e=e.parentElement) {
+                  const s=getComputedStyle(e);
+                  chain.push({tag:e.tagName, classes:e.className, rect:e.getBoundingClientRect().toJSON(), height:s.height, minHeight:s.minHeight, display:s.display, flex:s.flex, overflow:s.overflow});
+                }
+                return { width:innerWidth,height:innerHeight,bodyScrollHeight:document.body.scrollHeight,chain };
+              })));
+              screen(`after-synara-ide-${mode}.png`);'''
+          s=s.replace(anchor,diagnostic)
+          p.write_text(s)
+          PY
+      - name: Prepare display
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1 >/dev/null
+      - name: Inspect actual settled appearance
+        timeout-minutes: 3
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs --appearance
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: synara-appearance-layout-evidence
+          path: .code-oss/screenshots
+          retention-days: 3
