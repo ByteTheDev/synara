@@ -1,3 +1,4 @@
+import { desktopPrivilegedSchemes } from "./desktopSchemes";
 import "./httpRuntime";
 import { CodeOssHost } from "./codeOssHost";
 import { desktopRenderer, optionalDesktopRenderer } from "./desktopRenderer";
@@ -1238,29 +1239,9 @@ function armInstallWatchdog(): void {
   }, AUTO_UPDATE_INSTALL_WATCHDOG_MS);
 }
 
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: DESKTOP_SCHEME,
-    privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true,
-      corsEnabled: true,
-      // Let V8 persist compiled bytecode for renderer bundles served over this scheme
-      // (Chromium only code-caches http(s) by default), so cold launches skip
-      // recompiling the multi-MB app bundle.
-      codeCache: true,
-    },
-  },
-  {
-    scheme: LOCAL_HTML_PREVIEW_SCHEME,
-    privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true,
-    },
-  },
-]);
+protocol.registerSchemesAsPrivileged(
+  desktopPrivilegedSchemes(DESKTOP_SCHEME, LOCAL_HTML_PREVIEW_SCHEME, codeOss.enabled),
+);
 
 function resolveAppRoot(): string {
   if (!app.isPackaged) {

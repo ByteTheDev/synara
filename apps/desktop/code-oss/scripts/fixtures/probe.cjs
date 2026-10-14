@@ -14,6 +14,8 @@ exports.activate = (context) => {
     const git = vscode.extensions.getExtension("vscode.git");
     const repositories = git?.isActive ? git.exports.getAPI(1).repositories : [];
     Object.assign(state, extra, {
+      trusted: vscode.workspace.isTrusted,
+      extensionIds: vscode.extensions.all.map((extension) => extension.id),
       editor: editor
         ? {
             path: editor.document.uri.fsPath,
@@ -43,9 +45,13 @@ exports.activate = (context) => {
       vscode.commands.registerCommand(id, async () => {
         try {
           await action();
-          report({ command: id, error: null });
+          report({ command: id, commandSequence: (state.commandSequence ?? 0) + 1, error: null });
         } catch (error) {
-          report({ command: id, error: String(error.stack ?? error) });
+          report({
+            command: id,
+            commandSequence: (state.commandSequence ?? 0) + 1,
+            error: String(error.stack ?? error),
+          });
           throw error;
         }
       }),
@@ -122,6 +128,8 @@ exports.activate = (context) => {
       },
     }),
   );
+  context.subscriptions.push(vscode.workspace.onDidGrantWorkspaceTrust(() => report()));
+  context.subscriptions.push(vscode.extensions.onDidChange(() => report()));
   context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => report()));
   context.subscriptions.push(vscode.debug.onDidStartDebugSession(() => report()));
   context.subscriptions.push(vscode.debug.onDidTerminateDebugSession(() => report()));

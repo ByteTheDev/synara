@@ -215,7 +215,7 @@ try {
       .waitFor({ state: "visible", timeout: 3000 })
       .catch(() => {});
     if (await trust.first().isVisible()) await trust.first().click();
-    const initialProbe = await until(
+    let initialProbe = await until(
       probe,
       (value) => value.activated,
       "native Node extension host activates local compatible extension",
@@ -228,20 +228,94 @@ try {
           .find((item) => item.getURL().startsWith("vscode-file:"))
           ?.focus(),
       );
-      await workbench.keyboard.press("Control+Shift+P");
+      await workbench.keyboard.press("Escape");
+      await workbench.keyboard.press("F1");
       const input = workbench.locator(".quick-input-widget input:visible").first();
       await input.fill(">" + title);
       await workbench.keyboard.press("Enter");
       await input.waitFor({ state: "hidden" });
     }
     async function probeCommand(id, title) {
+      const previous = await probe();
       await command("Synara Smoke: " + title);
-      const result = await until(probe, (value) => value.command === `synaraSmoke.${id}`, title);
+      const result = await until(
+        probe,
+        (value) =>
+          value.command === `synaraSmoke.${id}` &&
+          (value.commandSequence > (previous.commandSequence ?? 0) ||
+            value.extensionHostPid !== previous.extensionHostPid),
+        title,
+      );
       if (result.error) throw new Error(result.error);
       return result;
     }
-    await probeCommand("open", "Open sample file");
+    // Trust only this disposable fixture through the normal native UI.
+    // Production workspace trust and extension restrictions remain enabled.
+    if (!initialProbe.trusted) {
+      await command("Manage Workspace Trust");
+      await workbench.getByRole("button", { name: "Trust", exact: true }).click();
+    }
+    initialProbe = await until(
+      probe,
+      (value) =>
+        value.trusted && value.extensionIds?.includes("vscode.typescript-language-features"),
+      "native workspace trust enables built-in services",
+    );
+    await record("fixture workspace trusted through native UI", {
+      trusted: initialProbe.trusted,
+      extensions: initialProbe.extensionIds.length,
+    });
+    // Trust is a native modal editor; dismiss its backdrop normally before
+    // interacting with Explorer. Do not force-click through trust UI.
+    const trustModal = workbench.locator(".monaco-modal-editor-block");
+    if (await trustModal.isVisible()) {
+      if (process.env.SYNARA_VERIFY_MODAL === "1") {
+        const agentVisible = await application.evaluate(({ BrowserWindow }) =>
+          BrowserWindow.getAllWindows().some((window) =>
+            window.contentView.children.some(
+              (view) => view.webContents?.getURL().startsWith("synara:") && view.getVisible(),
+            ),
+          ),
+        );
+        if (agentVisible) throw new Error("Agent native view covers a workbench modal");
+        await record("native modal editor occludes Agent view without unmounting it");
+      }
+      await trustModal.click({ position: { x: 4, y: 4 } });
+      await trustModal.waitFor({ state: "hidden" });
+    }
+    // Open through the actual Explorer, not through an injected editor or fixture UI.
+    await workbench.getByText("sample.ts", { exact: true }).first().dblclick();
     await workbench.locator(".monaco-editor .view-lines").first().waitFor();
+    await until(
+      probe,
+      (value) => value.editor?.path === join(workspace, "sample.ts"),
+      "native Explorer opens the selected file",
+    );
+    await record("native Explorer opens a real source file");
+    screen("after-native-file-open.png");
+    const assets = await workbench.evaluate(async () => {
+      const root = location.href.slice(0, location.href.indexOf("/out/"));
+      const paths = [
+        "/node_modules.asar/vscode-oniguruma/release/onig.wasm",
+        "/node_modules.asar/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",
+        "/node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm",
+        "/node_modules.asar.unpacked/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",
+      ];
+      const results = [];
+      for (const path of paths) {
+        const response = await fetch(root + path);
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        results.push({
+          path,
+          status: response.status,
+          wasm: bytes[0] === 0 && bytes[1] === 97 && bytes[2] === 115 && bytes[3] === 109,
+        });
+      }
+      return results;
+    });
+    if (assets.some((asset) => asset.status !== 200 || !asset.wasm))
+      throw Error("Native syntax resources did not load");
+    await record("native syntax WebAssembly resources load over privileged protocol", assets);
     const language = await probeCommand("languages", "Check language services");
     if (!language.definitionCount || !language.completionLabels.includes("toUpperCase"))
       throw new Error("TypeScript definition/completion provider failed");
@@ -312,6 +386,17 @@ try {
       throw new Error("External write replaced a dirty editor");
     await record("dirty buffers and Agent drafts survive mode switches and external writes");
     await command("Synara: New Terminal in Active Worktree");
+    // Palette dismissal precedes async terminal creation. Wait for the
+    // product's own focusWhenReady, rather than sending text to the editor.
+    await until(
+      () =>
+        workbench.evaluate(() =>
+          document.activeElement?.classList.contains("xterm-helper-textarea"),
+        ),
+      Boolean,
+      "new native terminal automatically receives keyboard focus",
+    );
+    await record("native worktree terminal automatically receives input focus");
     await workbench.keyboard.type(
       "printf SYNARA_TERMINAL_OK > terminal-smoke.txt; (sleep 2; printf CONTINUED > terminal-after-switch.txt) &",
     );
@@ -348,6 +433,19 @@ try {
       terminals: git.terminals,
       repositories: git.git,
     });
+    await workbench.keyboard.press("Control+Shift+g");
+    await until(
+      () => workbench.locator("body").innerText(),
+      (text) => text.includes("Source Control"),
+      "native Source Control view",
+    );
+    screen("after-ide-git.png");
+    if (
+      /Failed to load resource .*\/node_modules\.asar.*\.wasm|TextMateWorker.*Failed to fetch/.test(
+        log,
+      )
+    )
+      throw new Error("A production syntax worker resource is still missing");
     // Capture an actual short X11 video only after all functional checks pass.
     recording = spawn(
       "ffmpeg",
@@ -371,13 +469,19 @@ try {
         "yuv420p",
         join(output, "agent-ide-switch.mp4"),
       ],
-      { stdio: "ignore" },
+      { stdio: "ignore", signal: AbortSignal.timeout(15_000) },
     );
+    const recordingResult = new Promise((resolve) => {
+      recording.once("error", (error) => resolve({ error: String(error) }));
+      recording.once("exit", (code) => resolve({ code }));
+    });
     await new Promise((done) => setTimeout(done, 1200));
     await agent.evaluate(() => window.desktopBridge.ide.setMode("agent"));
     await new Promise((done) => setTimeout(done, 2000));
     await agent.getByRole("button", { name: "Switch to IDE Mode", exact: true }).first().click();
-    await new Promise((done) => recording.once("exit", done));
+    const result = await recordingResult;
+    if (result.error || result.code !== 0)
+      throw new Error(`Desktop recording failed: ${JSON.stringify(result)}`);
     recording = undefined;
     await writeFile(join(output, "native-probe.json"), JSON.stringify(await probe(), null, 2));
     await writeFile(join(output, "native-dom.txt"), await workbench.locator("body").innerText());
@@ -398,6 +502,21 @@ try {
       ).catch(() => {});
     }
     await writeFile(join(output, "probe-at-failure.json"), JSON.stringify(await probe(), null, 2));
+    await writeFile(
+      join(output, "focus-at-failure.json"),
+      JSON.stringify(
+        await application.evaluate(({ webContents }) =>
+          webContents.getAllWebContents().map((item) => ({
+            id: item.id,
+            focused: item.isFocused(),
+            type: item.getType(),
+            url: item.getURL(),
+          })),
+        ),
+        null,
+        2,
+      ),
+    );
   }
   throw error;
 } finally {

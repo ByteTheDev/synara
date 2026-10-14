@@ -148,7 +148,7 @@ export function DesktopIdeSessionBar() {
   const mode = useDesktopIdeStore((store) => store.state?.mode);
   const error = useDesktopIdeStore((store) => store.error);
   const sessions = useDesktopSessions();
-  const { focusedThreadId } = useFocusedChatContext();
+  const { focusedThreadId, activeThread } = useFocusedChatContext();
   const navigate = useNavigate();
   if (mode !== "ide") return null;
   return (
@@ -170,7 +170,11 @@ export function DesktopIdeSessionBar() {
           className="min-w-0 flex-1"
           aria-label="Active Synara agent session"
         >
-          <SelectValue placeholder="Select an agent session" />
+          <SelectValue placeholder="Select an agent session">
+            {activeThread?.title ||
+              sessions.find((thread) => thread.id === focusedThreadId)?.title ||
+              (focusedThreadId ? "New session" : "Select an agent session")}
+          </SelectValue>
         </SelectTrigger>
         <SelectPopup surface="composer">
           {sessions.map((thread) => (

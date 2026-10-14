@@ -310,6 +310,7 @@ registerAction2(
       });
       terminals.setActiveInstance(terminal);
       await terminals.revealActiveTerminal();
+      await terminal.focusWhenReady();
     }
   },
 );
@@ -402,9 +403,30 @@ class SynaraWorkbench extends Disposable {
     this._register(keybindings.onDidUpdateKeybindings(updateShortcut));
     let quickInputOpen = false;
     let dialogOpen = false;
+    let modalEditorOpen = false;
+    let previousOverlay: boolean | undefined;
     const occlusion = () => {
-      void request("overlay", quickInputOpen || dialogOpen);
+      const open = quickInputOpen || dialogOpen || modalEditorOpen;
+      if (open === previousOverlay) return;
+      previousOverlay = open;
+      void request("overlay", open);
     };
+    // Upstream modal editors (Trust, Settings, Keybindings) are direct
+    // workbench children. Native sibling views must not cover their UI.
+    // Observe only that child list, never the editor text or agent DOM.
+    const workbenchRoot = document.querySelector(".monaco-workbench");
+    if (workbenchRoot) {
+      const updateModal = () => {
+        modalEditorOpen = Array.from(workbenchRoot.children).some((child) =>
+          child.classList.contains("monaco-modal-editor-block"),
+        );
+        occlusion();
+      };
+      const observer = new MutationObserver(updateModal);
+      observer.observe(workbenchRoot, { childList: true });
+      this._register(toDisposable(() => observer.disconnect()));
+      updateModal();
+    }
     this._register(
       quickInput.onShow(() => {
         quickInputOpen = true;

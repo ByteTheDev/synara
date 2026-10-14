@@ -3,7 +3,6 @@ import {
   ipcMain,
   Menu,
   MenuItem,
-  protocol,
   WebContentsView,
   type BrowserWindow,
   type IpcMainInvokeEvent,
@@ -123,39 +122,6 @@ export class CodeOssHost {
       attention: 0,
       message: this.runtime ? null : "This build does not include the native Code-OSS runtime.",
     };
-    if (this.runtime) {
-      protocol.registerSchemesAsPrivileged([
-        {
-          scheme: "vscode-webview",
-          privileges: {
-            standard: true,
-            secure: true,
-            supportFetchAPI: true,
-            corsEnabled: true,
-            allowServiceWorkers: true,
-            codeCache: true,
-          },
-        },
-        {
-          scheme: "vscode-file",
-          privileges: {
-            standard: true,
-            secure: true,
-            supportFetchAPI: true,
-            corsEnabled: true,
-            codeCache: true,
-          },
-        },
-        {
-          scheme: "vscode-remote-resource",
-          privileges: { secure: true, supportFetchAPI: true, corsEnabled: true },
-        },
-        {
-          scheme: "vscode-managed-remote-resource",
-          privileges: { secure: true, supportFetchAPI: true, corsEnabled: true },
-        },
-      ]);
-    }
   }
 
   get enabled(): boolean {

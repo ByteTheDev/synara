@@ -3,6 +3,7 @@ import { readFile, writeFile, cp, mkdir, access } from "node:fs/promises";
 import { resolve, join, relative, sep, dirname } from "node:path";
 import { pathToFileURL } from "node:url";
 import { spawn } from "node:child_process";
+import { stageNativeBrowserResources } from "./stage-browser-resources.mjs";
 
 const source = resolve(process.argv[2] ?? "");
 const output = resolve(process.argv[3] ?? "");
@@ -120,6 +121,7 @@ await writeFile(
     2,
   ) + "\n",
 );
+await stageNativeBrowserResources(output);
 // Publish the manifest LAST: a partial build must never be mistaken for a usable runtime.
 await writeFile(join(output, "synara-runtime.json"), JSON.stringify(manifest, null, 2) + "\n");
 console.log(

@@ -21,6 +21,10 @@ function fixture(overrides: Record<string, unknown> = {}) {
   );
   for (const file of [
     "out/synara.js",
+    "node_modules.asar/vscode-oniguruma/release/onig.wasm",
+    "node_modules.asar/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",
+    "node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm",
+    "node_modules.asar.unpacked/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",
     "out/vs/workbench/workbench.desktop.main.js",
     "out/vs/workbench/workbench.desktop.main.css",
     "out/vs/workbench/api/node/extensionHostProcess.js",
