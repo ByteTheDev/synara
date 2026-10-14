@@ -446,6 +446,10 @@ try {
       )
     )
       throw new Error("A production syntax worker resource is still missing");
+    if (process.argv.includes("--appearance")) {
+      const { verifyAppearance } = await import("./appearance-smoke.mjs");
+      await verifyAppearance({ application, agent, workbench, composer, screen, until, record });
+    }
     // Capture an actual short X11 video only after all functional checks pass.
     recording = spawn(
       "ffmpeg",

@@ -15,6 +15,7 @@ export interface DesktopIdeState {
   readonly generation: number;
   readonly attention: number;
   readonly message: string | null;
+  readonly appearance?: DesktopIdeAppearance;
 }
 export interface DesktopIdeContext {
   readonly threadId: string;
@@ -28,6 +29,7 @@ export interface DesktopIdeBridge {
   setMode(mode: DesktopIdeMode): Promise<DesktopIdeState>;
   setScope(scope: DesktopIdeScope): Promise<void>;
   setAttention(count: number): Promise<void>;
+  setAppearance(appearance: DesktopIdeAppearance): Promise<void>;
   prepareQuit(requestId: string): Promise<boolean>;
   onState(listener: (state: DesktopIdeState) => void): () => void;
   onContext(listener: (context: DesktopIdeContext) => void): () => void;
@@ -66,5 +68,64 @@ export function isDesktopIdeContext(value: unknown): value is DesktopIdeContext 
     typeof context.text === "string" &&
     context.text.length > 0 &&
     context.text.length <= DESKTOP_IDE_MAX_CONTEXT
+  );
+}
+
+/** Only presentation tokens cross this bridge, never arbitrary CSS or settings. */
+export const DESKTOP_IDE_APPEARANCE_COLORS = [
+  "surface",
+  "shell",
+  "raised",
+  "input",
+  "foreground",
+  "muted",
+  "subtle",
+  "border",
+  "focus",
+  "accent",
+  "button",
+  "buttonHover",
+  "onAccent",
+  "selection",
+  "hover",
+  "danger",
+  "warning",
+  "success",
+  "diffAdded",
+  "diffRemoved",
+] as const;
+export interface DesktopIdeAppearance {
+  readonly variant: "light" | "dark";
+  readonly colors: Readonly<Record<(typeof DESKTOP_IDE_APPEARANCE_COLORS)[number], string>>;
+  readonly uiFontFamily: string;
+  readonly uiFontSize: number;
+  readonly radius: number;
+}
+export function isDesktopIdeAppearance(value: unknown): value is DesktopIdeAppearance {
+  if (!value || typeof value !== "object") return false;
+  const appearance = value as Record<string, unknown>;
+  const colors = appearance.colors;
+  return (
+    (appearance.variant === "light" || appearance.variant === "dark") &&
+    typeof appearance.uiFontFamily === "string" &&
+    appearance.uiFontFamily.length > 0 &&
+    appearance.uiFontFamily.length <= 512 &&
+    !/[;{}<>\\\r\n\0]|url\s*\(/iu.test(appearance.uiFontFamily) &&
+    typeof appearance.uiFontSize === "number" &&
+    Number.isFinite(appearance.uiFontSize) &&
+    appearance.uiFontSize >= 9 &&
+    appearance.uiFontSize <= 32 &&
+    typeof appearance.radius === "number" &&
+    Number.isFinite(appearance.radius) &&
+    appearance.radius >= 0 &&
+    appearance.radius <= 24 &&
+    colors !== null &&
+    typeof colors === "object" &&
+    !Array.isArray(colors) &&
+    Object.keys(colors).length === DESKTOP_IDE_APPEARANCE_COLORS.length &&
+    DESKTOP_IDE_APPEARANCE_COLORS.every((key) => {
+      const color = (colors as Record<string, unknown>)[key];
+      return typeof color === "string" && /^#[0-9a-f]{6}(?:[0-9a-f]{2})?$/iu.test(color);
+    })
   );
 }

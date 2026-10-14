@@ -3776,3 +3776,62 @@ diffs-container {
 :root[data-synara-mode="ide"] .synara-agent-caption-controls {
   display: none;
 }
+
+/* Shared Agent / IDE chrome: the native workbench reads these same theme tokens. */
+.synara-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-border-light);
+  border-radius: calc(var(--radius) * 0.8);
+  background: var(--color-background-button-secondary);
+}
+.synara-mode-switch .synara-mode-option {
+  gap: 5px;
+  border-radius: calc(var(--radius) * 0.5);
+  color: var(--color-text-foreground-secondary);
+  font-size: var(--app-font-size-ui-xs);
+  min-height: 24px;
+  height: auto;
+}
+.synara-mode-switch .synara-mode-option[aria-pressed="true"] {
+  color: var(--color-text-foreground);
+  background: var(--color-background-control-opaque);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+.synara-mode-switch .synara-mode-option:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+.synara-mode-attention {
+  min-width: 18px;
+  margin-inline: 2px;
+  padding: 1px 4px;
+  border-radius: 5px;
+  color: var(--color-text-accent);
+  background: var(--color-background-accent);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.synara-ide-session-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--app-surface-divider);
+  background: var(--color-background-surface);
+}
+:root[data-synara-mode="ide"] body {
+  /* The native sibling view already supplies the window backing. Do not stack
+     a second translucent coat or expose a contrasting body around the draft. */
+  background: var(--color-background-surface);
+}
+:root[data-synara-mode="ide"] .synara-route-column {
+  height: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .synara-mode-switch .synara-mode-option {
+    transition: none;
+  }
+}

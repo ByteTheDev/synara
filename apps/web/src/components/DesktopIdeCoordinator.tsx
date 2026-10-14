@@ -4,6 +4,8 @@ import { ThreadId, type DesktopIdeScope } from "@synara/contracts";
 import { useFocusedChatContext } from "../focusedChatContext";
 import { useDesktopIdeStore, toggleDesktopMode } from "../desktopIdeStore";
 import { appendDesktopIdeContext } from "../lib/desktopIdeContext";
+import { observeDesktopIdeAppearance } from "../lib/desktopIdeAppearance";
+import { ChatBubbleIcon, CodeIcon, AddPlusIcon } from "../lib/icons";
 import { useStore } from "../store";
 import { createSidebarThreadSummariesSelector } from "../storeSelectors";
 import { canSessionAnswerPendingRequests } from "../session-logic";
@@ -80,6 +82,11 @@ export function DesktopIdeCoordinator() {
     };
   }, [receive, fail]);
   useEffect(() => {
+    const bridge = window.desktopBridge?.ide;
+    if (status !== "ready" || !bridge?.setAppearance) return;
+    return observeDesktopIdeAppearance((appearance) => bridge.setAppearance(appearance), fail);
+  }, [status, fail]);
+  useEffect(() => {
     if (status !== "ready") return;
     void window.desktopBridge?.ide?.setScope(JSON.parse(scopeKey) as DesktopIdeScope).catch(fail);
   }, [status, scopeKey, fail]);
@@ -110,37 +117,39 @@ export function DesktopModeSwitch({ compact = false }: { compact?: boolean }) {
   const error = useDesktopIdeStore((store) => store.error);
   if (!state || state.status === "unavailable") return null;
   return (
-    <Button
-      size="xs"
-      variant="chrome"
-      className="no-drag shrink-0"
-      disabled={state.status !== "ready"}
-      title={
-        error ??
-        state.message ??
-        "Switch modes without stopping agents or closing editors. Configure the shortcut in IDE Keyboard Shortcuts."
-      }
-      aria-label={`Switch to ${state.mode === "agent" ? "IDE" : "Agent"} Mode`}
-      onClick={() => {
-        void toggleDesktopMode();
-      }}
-    >
-      {compact
-        ? state.mode === "agent"
-          ? "IDE"
-          : "Agent"
-        : state.mode === "agent"
-          ? "Agent / IDE"
-          : "IDE / Agent"}
+    <div className="synara-mode-switch no-drag" role="group" aria-label="Workspace mode">
+      {(["agent", "ide"] as const).map((mode) => {
+        const selected = state.mode === mode;
+        const Icon = mode === "agent" ? ChatBubbleIcon : CodeIcon;
+        const label = mode === "agent" ? "Agent" : "IDE";
+        return (
+          <Button
+            key={mode}
+            size="xs"
+            variant="chrome"
+            className="synara-mode-option"
+            aria-label={`Switch to ${label} Mode`}
+            aria-pressed={selected}
+            disabled={state.status !== "ready"}
+            title={error ?? state.message ?? `${label} Mode — keep sessions and editors running`}
+            onClick={() => {
+              if (!selected) void toggleDesktopMode();
+            }}
+          >
+            <Icon className="size-3.5" aria-hidden="true" />
+            {compact ? <span className="sr-only">{label}</span> : label}
+          </Button>
+        );
+      })}
       {state.attention > 0 ? (
         <span
+          className="synara-mode-attention text-ui-xs"
           aria-label={`${state.attention} sessions need attention`}
-          className="rounded bg-accent px-1 text-ui-xs"
         >
           {state.attention}
         </span>
       ) : null}
-    </Button>
+    </div>
   );
 }
 
@@ -148,43 +157,67 @@ export function DesktopIdeSessionBar() {
   const mode = useDesktopIdeStore((store) => store.state?.mode);
   const error = useDesktopIdeStore((store) => store.error);
   const sessions = useDesktopSessions();
-  const { focusedThreadId, activeThread } = useFocusedChatContext();
+  const { focusedThreadId, activeThread, activeProject } = useFocusedChatContext();
   const navigate = useNavigate();
   if (mode !== "ide") return null;
   return (
-    <div className="no-drag flex shrink-0 flex-wrap items-center gap-1 border-b border-border bg-background p-1 text-ui-xs">
-      <DesktopModeSwitch compact />
-      <Select
-        value={focusedThreadId ?? ""}
-        onValueChange={(value) => {
-          if (typeof value === "string" && value)
+    <div className="synara-ide-session-bar no-drag shrink-0 text-ui-sm">
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <DesktopModeSwitch />
+        <Button
+          size="icon-xs"
+          variant="chrome"
+          aria-label="New Synara session"
+          title="New session"
+          onClick={() => {
             void navigate({
-              to: "/$threadId",
-              params: { threadId: ThreadId.makeUnsafe(value) },
+              to: "/",
               search: (previous) => ({ ...previous, splitViewId: undefined, view: undefined }),
             });
-        }}
-      >
-        <SelectTrigger
-          size="xs"
-          className="min-w-0 flex-1"
-          aria-label="Active Synara agent session"
+          }}
         >
-          <SelectValue placeholder="Select an agent session">
-            {activeThread?.title ||
-              sessions.find((thread) => thread.id === focusedThreadId)?.title ||
-              (focusedThreadId ? "New session" : "Select an agent session")}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectPopup surface="composer">
-          {sessions.map((thread) => (
-            <SelectItem key={thread.id} value={thread.id}>
-              {needsAttention(thread) ? "● " : ""}
-              {thread.title || "Untitled session"}
-            </SelectItem>
-          ))}
-        </SelectPopup>
-      </Select>
+          <AddPlusIcon className="size-4" aria-hidden="true" />
+        </Button>
+      </div>
+      <div className="flex min-w-0 items-center gap-1">
+        <Select
+          value={focusedThreadId ?? ""}
+          onValueChange={(value) => {
+            if (typeof value === "string" && value)
+              void navigate({
+                to: "/$threadId",
+                params: { threadId: ThreadId.makeUnsafe(value) },
+                search: (previous) => ({ ...previous, splitViewId: undefined, view: undefined }),
+              });
+          }}
+        >
+          <SelectTrigger
+            size="sm"
+            variant="ghost"
+            className="min-w-0 flex-1 [&_[data-slot=select-value]]:truncate"
+            aria-label="Active Synara agent session"
+          >
+            <SelectValue placeholder="Select an agent session">
+              {activeThread?.title ||
+                sessions.find((thread) => thread.id === focusedThreadId)?.title ||
+                (focusedThreadId ? "New session" : "Select an agent session")}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectPopup surface="composer">
+            {sessions.map((thread) => (
+              <SelectItem key={thread.id} value={thread.id}>
+                {needsAttention(thread) ? "● " : ""}
+                {thread.title || "Untitled session"}
+              </SelectItem>
+            ))}
+          </SelectPopup>
+        </Select>
+      </div>
+      {activeProject ? (
+        <p className="truncate px-2 text-ui-xs text-muted-foreground" title={activeProject.cwd}>
+          {activeProject.name}
+        </p>
+      ) : null}
       {error ? (
         <p className="w-full text-ui-xs text-destructive" role="alert">
           {error}
