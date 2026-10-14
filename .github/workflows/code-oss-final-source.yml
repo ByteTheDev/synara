@@ -18,16 +18,18 @@ jobs:
         with:
           scope: full
           electron: 'false'
-      - name: Correct the checked optional accelerator contract
+      - name: Correct runtime extension ownership and immutable menu usage
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
           const path = 'apps/desktop/src/codeOssHost.ts';
           let text = fs.readFileSync(path,'utf8');
           for (const [before,after] of [
-            ['  setAgentMenu(menu: Menu | null): void {', '  setAgentMenu(menu: Menu | null): void {\n    const menuAccelerator = resolveDesktopMenuAccelerator(process.platform, this.accelerator ?? undefined);'],
-            ['accelerator: resolveDesktopMenuAccelerator(process.platform, this.accelerator),', '...(menuAccelerator ? { accelerator: menuAccelerator } : {}),'],
-            ['resolveDesktopMenuAccelerator(process.platform, this.accelerator) ?? null', 'resolveDesktopMenuAccelerator(process.platform, this.accelerator ?? undefined) ?? null'],
+            ['import { matchesDesktopAccelerator, resolveDesktopMenuAccelerator } from "./menuShortcuts";', 'import { matchesDesktopAccelerator } from "./menuShortcuts";'],
+            ['              accelerator: resolveDesktopMenuAccelerator(process.platform, this.accelerator),\n', '              // The retained renderer handles the configurable shortcut in both modes.\n'],
+            ['        "extensions-dir": Path.join(this.options.profilePath, "extensions"),', '        "extensions-dir": Path.join(this.options.profilePath, "extensions"),\n        "builtin-extensions-dir": Path.join(this.runtime, "extensions"),'],
+            ['          const item = this.agentMenu?.getMenuItemById("synara-mode-switch");\n          if (item) item.accelerator = resolveDesktopMenuAccelerator(process.platform, this.accelerator) ?? null;\n          if (this.state.mode === "agent") Menu.setApplicationMenu(this.agentMenu);', '          // Electron menu items are immutable here. before-input-event reads\n          // the updated accelerator without rebuilding or double-registering it.'],
+            ['    await mkdir(this.options.profilePath, { recursive: true });', '    await mkdir(this.options.profilePath, { recursive: true });\n    // The embedded startup skips upstream command-line initialization. Create\n    // its absent argv file without changing any existing Synara configuration.\n    const product = JSON.parse(readFileSync(Path.join(this.runtime, "product.json"), "utf8")) as { dataFolderName: string };\n    if (typeof product.dataFolderName !== "string" || Path.basename(product.dataFolderName) !== product.dataFolderName) throw new Error("Invalid native product data folder.");\n    const argvPath = Path.join(app.getPath("home"), product.dataFolderName, "argv.json");\n    await mkdir(Path.dirname(argvPath), { recursive: true });\n    try {\n      await writeFile(argvPath, JSON.stringify({ "enable-crash-reporter": false }), { flag: "wx", mode: 0o600 });\n    } catch (error) {\n      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;\n    }'],
           ]) {
             if (text.split(before).length !== 2) throw Error('Unexpected source anchor: '+before);
             text=text.replace(before,after);
