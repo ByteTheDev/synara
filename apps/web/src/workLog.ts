@@ -37,6 +37,7 @@ import { PROVIDER_DESCRIPTORS } from "@synara/shared/providerMetadata";
 import {
   deriveReadableToolTitle,
   deriveSynaraMcpToolTitle,
+  extractMcpServerName,
   isGenericToolTitle,
   normalizeCompactToolLabel,
   normalizeToolTextForComparison,
@@ -148,6 +149,8 @@ export interface WorkLogEntry {
   tone: "thinking" | "tool" | "info" | "error";
   toolTitle?: string;
   toolName?: string;
+  /** MCP server that served the call; picks the row's icon (connector, brand). */
+  mcpServer?: string;
   toolCallId?: string;
   toolStatus?: SynaraMcpToolStatus;
   liveActivity?: WorkLogLiveActivity;
@@ -1731,6 +1734,7 @@ function toDerivedWorkLogEntry(activity: OrchestrationThreadActivity): DerivedWo
   const changedFiles = extractChangedFiles(payload);
   const title = extractToolTitle(payload);
   const toolName = extractToolName(payload);
+  const mcpServer = extractMcpServerName(toolName, payload);
   const toolCallId = extractToolCallId(payload);
   const toolStatus = deriveToolLifecycleStatus(activity.kind, payload);
   const entry: DerivedWorkLogEntry = {
@@ -1742,6 +1746,7 @@ function toDerivedWorkLogEntry(activity: OrchestrationThreadActivity): DerivedWo
     tone: activity.tone === "approval" ? "info" : activity.tone,
     activityKind: activity.kind,
     ...(toolName ? { toolName } : {}),
+    ...(mcpServer ? { mcpServer } : {}),
     ...(toolCallId ? { toolCallId } : {}),
     ...(toolStatus ? { toolStatus } : {}),
   };
@@ -2473,6 +2478,7 @@ function mergeDerivedWorkLogEntries(
   const synaraThreadCreation = next.synaraThreadCreation ?? previous.synaraThreadCreation;
   const collapseKey = next.collapseKey ?? previous.collapseKey;
   const toolName = next.toolName ?? previous.toolName;
+  const mcpServer = next.mcpServer ?? previous.mcpServer;
   const toolCallId = next.toolCallId ?? previous.toolCallId;
   const preservePreviousTerminalState =
     previous.liveActivity !== undefined &&
@@ -2507,6 +2513,7 @@ function mergeDerivedWorkLogEntries(
     ...(synaraThreadCreation ? { synaraThreadCreation } : {}),
     ...(collapseKey ? { collapseKey } : {}),
     ...(toolName ? { toolName } : {}),
+    ...(mcpServer ? { mcpServer } : {}),
     ...(toolCallId ? { toolCallId } : {}),
     ...(toolStatus ? { toolStatus } : {}),
     ...(liveActivity ? { liveActivity } : {}),

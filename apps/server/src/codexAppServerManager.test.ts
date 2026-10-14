@@ -1286,6 +1286,20 @@ describe("classifyCodexStderrLine", () => {
     expect(classifyCodexStderrLine(line)).toBeNull();
   });
 
+  it("hides OAuth failures of MCP servers from the user's own Codex config", () => {
+    for (const server of ["stripe", "polar"]) {
+      const line = `\u001b[2m2026-10-14T10:40:19.340108Z\u001b[0m \u001b[31mERROR\u001b[0m \u001b[2mcodex_rmcp_client::oauth::refresh_transaction\u001b[0m: error=failed to refresh OAuth tokens for server ${server}: OAuth refresh token was rejected: Server returned error response: invalid_grant`;
+      expect(classifyCodexStderrLine(line)).toBeNull();
+    }
+  });
+
+  it("keeps MCP OAuth failures that concern Synara's own servers", () => {
+    for (const server of ["synara", "supabase_connector"]) {
+      const line = `2026-10-14T10:40:19.340108Z ERROR codex_rmcp_client::oauth::refresh_transaction: error=failed to refresh OAuth tokens for server ${server}: invalid_grant`;
+      expect(classifyCodexStderrLine(line)).toEqual({ message: line });
+    }
+  });
+
   it("keeps unknown structured errors", () => {
     const line = "2026-02-08T04:24:20.085687Z ERROR codex_core::runtime: unrecoverable failure";
     expect(classifyCodexStderrLine(line)).toEqual({

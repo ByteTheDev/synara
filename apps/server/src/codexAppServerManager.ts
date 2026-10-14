@@ -104,6 +104,7 @@ import {
 } from "./provider/supervisedProcessTeardown.ts";
 import { ensureIsolatedScratchWorkspace, resolveScratchWorkspaceCwd } from "./scratchWorkspaces.ts";
 import { createLogger } from "./logger";
+import { MCP_CONNECTOR_SERVER_NAME_SUFFIX } from "@synara/shared/mcpConnectors";
 import { transcribeVoiceWithChatGptSession } from "./voiceTranscription.ts";
 import {
   CodexAppServerTransportError,
@@ -429,6 +430,20 @@ const BENIGN_ERROR_LOG_SNIPPETS = [
   "state db record_discrepancy: find_thread_path_by_id_str_in_subdir, falling_back",
 ];
 const BENIGN_PROCESS_OUTPUT_REGEXES = [/^(?:\^C)?Token usage:/i];
+// Codex's MCP client failing OAuth for a server from the user's own
+// config.toml (e.g. an expired Stripe grant). That is the user's Codex setup,
+// not this chat, so it stays out of the transcript; Synara's own server and
+// connectors never use Codex OAuth.
+const CODEX_MCP_OAUTH_LOG_REGEX = /\bcodex_rmcp_client::oauth\S*:.*?\bfor server ([A-Za-z0-9_.-]+)/;
+const loggedUserMcpOAuthServers = new Set<string>();
+
+function userConfiguredMcpOAuthServer(line: string): string | null {
+  const server = CODEX_MCP_OAUTH_LOG_REGEX.exec(line)?.[1];
+  if (!server) return null;
+  return server === SYNARA_MCP_SERVER_NAME || server.endsWith(MCP_CONNECTOR_SERVER_NAME_SUFFIX)
+    ? null
+    : server;
+}
 const RECOVERABLE_THREAD_RESUME_ERROR_SNIPPETS = [
   "not found",
   "missing thread",
@@ -1069,6 +1084,17 @@ export function classifyCodexStderrLine(rawLine: string): { message: string } | 
 
     const isBenignError = BENIGN_ERROR_LOG_SNIPPETS.some((snippet) => line.includes(snippet));
     if (isBenignError) {
+      return null;
+    }
+
+    const userMcpServer = userConfiguredMcpOAuthServer(line);
+    if (userMcpServer) {
+      if (!loggedUserMcpOAuthServers.has(userMcpServer)) {
+        loggedUserMcpOAuthServers.add(userMcpServer);
+        log.warn("codex MCP OAuth failed for a server in the user's Codex config", {
+          server: userMcpServer,
+        });
+      }
       return null;
     }
   }
