@@ -21,7 +21,6 @@ jobs:
             const fs=require('node:fs'),crypto=require('node:crypto'),zlib=require('node:zlib');
             const {data}=await github.rest.git.getBlob({...context.repo,file_sha:'0c9f8822a79ec668f0940600888d5a1b846f540c'});
             let encoded=data.content.replace(/\s/g,'');
-            // Correct the identified extra transfer character; the complete source digest below is authoritative.
             encoded=encoded.replace('C3Ifjd3bIFO8','C3Ifjd3IFO8');
             const patch=zlib.inflateSync(Buffer.from(encoded,'base64'),{maxOutputLength:100000});
             if(crypto.createHash('sha256').update(patch).digest('hex')!=='bcb05efa3ef23e930d3249956ca5e81ccabd678bd2a0fbda9b2397fc6cb1ef52')throw Error('Patch checksum mismatch');
@@ -30,7 +29,19 @@ jobs:
             const paths=['apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/appearance.ts','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/media/appearance.css','apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/workbench.ts','apps/desktop/code-oss/scripts/appearance-smoke.mjs','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/ipcChannels.ts','apps/desktop/src/preload.ts','apps/web/src/components/DesktopIdeCoordinator.tsx','apps/web/src/index.css','apps/web/src/lib/desktopIdeAppearance.ts','packages/contracts/src/desktopIde.test.ts','packages/contracts/src/desktopIde.ts'];
             fs.writeFileSync('.code-oss/appearance/paths.json',JSON.stringify(paths));
             console.log('PASS exact local patch SHA256 and bounded transfer');
-      - run: git apply --check .code-oss/appearance/source.patch && git apply .code-oss/appearance/source.patch
+      - name: Apply appearance source without regressing the existing acceptance harness
+        run: |
+          git apply --exclude=apps/desktop/code-oss/scripts/smoke.mjs --check .code-oss/appearance/source.patch
+          git apply --exclude=apps/desktop/code-oss/scripts/smoke.mjs .code-oss/appearance/source.patch
+          node - <<'JS'
+          const fs=require('node:fs');
+          const path='apps/desktop/code-oss/scripts/smoke.mjs';
+          let text=fs.readFileSync(path,'utf8');
+          const anchor='    // Capture an actual short X11 video only after all functional checks pass.';
+          if(text.split(anchor).length!==2)throw Error('Smoke capture anchor changed');
+          const hook='    if (process.argv.includes("--appearance")) {\n      const { verifyAppearance } = await import("./appearance-smoke.mjs");\n      await verifyAppearance({ application, agent, workbench, composer, screen, until, record });\n    }\n';
+          fs.writeFileSync(path,text.replace(anchor,hook+anchor));
+          JS
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
@@ -153,7 +164,7 @@ jobs:
             }
   evidence:
     needs: native
-    if: always()
+    if: always() && needs.native.result != 'skipped'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     permissions:
@@ -176,6 +187,8 @@ jobs:
             for(const name of ['after-synara-ide-dark.png','after-synara-ide-light.png','after-agent-mode.png','agent-ide-switch.gif']){
               const bytes=fs.readFileSync(name);
               if(bytes.length>3000000)throw Error('Unexpected image size');
+              if(name.endsWith('.png')&&!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))throw Error('Invalid PNG');
+              if(name.endsWith('.gif')&&!['GIF87a','GIF89a'].includes(bytes.subarray(0,6).toString()))throw Error('Invalid GIF');
               const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
               console.log('APPEARANCE_CAPTURE='+JSON.stringify({path:'docs/images/code-oss/'+name,sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),mode:'100644',type:'blob'}));
             }
