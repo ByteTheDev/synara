@@ -8,48 +8,49 @@ permissions:
 jobs:
   native-contract:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: actions/checkout@v6
-        with:
-          repository: microsoft/vscode
-          ref: 7baac39ec3ca969dab74ac12c097f6a486e46593
-          path: .code-oss/source
-          persist-credentials: false
-      - name: Export pinned API sources
-        run: tar -czf "$RUNNER_TEMP/native-api-source.tar.gz" -C .code-oss/source src extensions/git/src package.json .nvmrc
-      - uses: actions/upload-artifact@v4
-        with:
-          name: native-api-source
-          path: ${{ runner.temp }}/native-api-source.tar.gz
-          retention-days: 3
       - uses: ./.github/actions/setup-workspace
         with:
           scope: runtime
           electron: 'true'
-      - name: Check native WebContentsView adoption
+      - name: Check retained native view layout
         run: |
           cat > "$RUNNER_TEMP/view-contract.cjs" <<'JS'
-          const { app, BrowserWindow, WebContentsView } = require('electron');
+          const { app, BrowserWindow, WebContentsView, View } = require('electron');
           const fs = require('node:fs');
+          const capture = file => process.env.RUNNER_TEMP + '/' + file;
           app.whenReady().then(async () => {
             const win = new BrowserWindow({ width: 1000, height: 700, show: false });
             const original = win.webContents;
+            const editor = win.contentView;
+            console.log('Original view', editor.constructor.name, editor.children.map(v => v.constructor.name));
+            const root = new View();
+            win.setContentView(root);
             const shell = new WebContentsView();
-            win.contentView.addChildView(shell);
-            const editor = new WebContentsView({ webContents: original });
-            win.contentView.addChildView(editor);
+            root.addChildView(shell);
+            root.addChildView(editor);
             shell.setBounds({ x: 0, y: 0, width: 1000, height: 700 });
             editor.setBounds({ x: 200, y: 100, width: 400, height: 300 });
             await shell.webContents.loadURL('data:text/html,<body style="background:lightblue">Synara shell</body>');
             await original.loadURL('data:text/html,<body style="background:lightgreen">Embedded editor</body>');
-            if (win.webContents !== original || editor.webContents !== original) throw new Error('Workbench contents were replaced');
+            if (win.webContents !== original) throw new Error('Workbench contents were replaced');
             win.show();
-            fs.writeFileSync(process.env.RUNNER_TEMP + '/view-contract.json', JSON.stringify({ sameContents: true, root: win.contentView.constructor.name, children: win.contentView.children.map(view => view.constructor.name), bounds: editor.getBounds() }));
-            fs.writeFileSync(process.env.RUNNER_TEMP + '/view-contract.png', (await win.capturePage()).toPNG());
+            await new Promise(resolve => setTimeout(resolve, 300));
+            fs.writeFileSync(capture('view-contract.json'), JSON.stringify({ sameContents: true, root: win.contentView.constructor.name, children: root.children.map(view => view.constructor.name), bounds: editor.getBounds(), editorViewport: await original.executeJavaScript('({width:innerWidth,height:innerHeight})') }));
+            fs.writeFileSync(capture('view-contract.png'), (await win.capturePage()).toPNG());
+            editor.setVisible(false);
+            if (original.isDestroyed()) throw new Error('Hiding destroyed editor');
+            editor.setVisible(true);
+            win.setSize(1200, 800);
+            editor.setBounds({ x: 300, y: 200, width: 500, height: 400 });
+            await new Promise(resolve => setTimeout(resolve, 100));
+            const viewport = await original.executeJavaScript('({width:innerWidth,height:innerHeight})');
+            if (viewport.width !== 500 || viewport.height !== 400) throw new Error('Native viewport did not resize: ' + JSON.stringify(viewport));
+            console.log('RETAINED_NATIVE_VIEW_PASS', viewport);
             shell.webContents.close();
             win.destroy();
             app.quit();
