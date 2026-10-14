@@ -1,0 +1,259 @@
+name: Native renderer and service acceptance
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-renderer-acceptance.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: trusted-acceptance-source
+          run-id: 38534974447
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - name: Restore pending test-only trust and observation corrections
+        run: tar -xzf .code-oss/acceptance-source.tar.gz apps/desktop/code-oss/scripts/smoke.mjs apps/desktop/code-oss/scripts/fixtures/probe.cjs
+      - name: Apply focused renderer and packaging fixes
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const paths = new Set(['apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/code-oss/scripts/fixtures/probe.cjs']);
+          function edit(path, replacements) {
+            let text = fs.readFileSync(path, 'utf8');
+            for (const [before, after] of replacements) {
+              if (text.split(before).length !== 2) throw Error('Nonunique source anchor: ' + path + ' ' + before);
+              text = text.replace(before, after);
+            }
+            fs.writeFileSync(path, text); paths.add(path);
+          }
+          function add(path, text) {
+            if (fs.existsSync(path)) throw Error('Unexpected existing file: ' + path);
+            fs.writeFileSync(path, text); paths.add(path);
+          }
+          add('apps/desktop/src/desktopSchemes.ts', `import type { CustomScheme } from "electron";
+          /** Electron accepts one registration call before ready, shared by both retained views. */
+          export function desktopPrivilegedSchemes(desktopScheme: string, previewScheme: string, nativeIde: boolean): CustomScheme[] {
+            const local: CustomScheme[] = [
+              { scheme: desktopScheme, privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, codeCache: true } },
+              { scheme: previewScheme, privileges: { standard: true, secure: true, supportFetchAPI: true } },
+            ];
+            if (nativeIde) local.push(
+              { scheme: "vscode-webview", privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, allowServiceWorkers: true, codeCache: true } },
+              { scheme: "vscode-file", privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, codeCache: true } },
+              { scheme: "vscode-remote-resource", privileges: { secure: true, supportFetchAPI: true, corsEnabled: true } },
+              { scheme: "vscode-managed-remote-resource", privileges: { secure: true, supportFetchAPI: true, corsEnabled: true } },
+            );
+            return local;
+          }
+          `);
+          add('apps/desktop/src/desktopSchemes.test.ts', `import { describe, expect, it } from "vitest";
+          import { desktopPrivilegedSchemes } from "./desktopSchemes";
+          describe("single-app privileged schemes", () => {
+            it("preserves legacy desktop and local preview capabilities", () => {
+              const schemes = desktopPrivilegedSchemes("synara", "synara-preview", false);
+              expect(schemes.map(item => item.scheme)).toEqual(["synara", "synara-preview"]);
+              expect(schemes[0]?.privileges?.codeCache).toBe(true);
+              expect(schemes.every(item => item.privileges?.supportFetchAPI && item.privileges.secure)).toBe(true);
+            });
+            it("registers native fetch and extension-webview workers alongside Synara without bypassing CSP", () => {
+              const schemes = desktopPrivilegedSchemes("synara-beta", "synara-preview", true);
+              expect(schemes).toHaveLength(6);
+              expect(new Set(schemes.map(item => item.scheme)).size).toBe(schemes.length);
+              expect(schemes.find(item => item.scheme === "vscode-file")?.privileges).toMatchObject({supportFetchAPI: true, standard: true, secure: true});
+              expect(schemes.find(item => item.scheme === "vscode-webview")?.privileges?.allowServiceWorkers).toBe(true);
+              expect(schemes.some(item => item.privileges?.bypassCSP)).toBe(false);
+            });
+          });
+          `);
+          const host = 'apps/desktop/src/codeOssHost.ts';
+          let text = fs.readFileSync(host, 'utf8');
+          const start = text.indexOf('    if (this.runtime) {\n      protocol.registerSchemesAsPrivileged([');
+          const end = text.indexOf('\n  get enabled()', start);
+          if (start < 0 || end < 0 || !text.slice(start,end).endsWith('    }\n  }\n')) throw Error('Native scheme block changed');
+          text = text.slice(0,start) + '  }\n' + text.slice(end);
+          if (text.split('  protocol,\n').length !== 2) throw Error('Native protocol import changed');
+          fs.writeFileSync(host,text.replace('  protocol,\n','')); paths.add(host);
+          const main = 'apps/desktop/src/main.ts';
+          text = fs.readFileSync(main, 'utf8');
+          const registration = text.indexOf('protocol.registerSchemesAsPrivileged([');
+          const registrationEnd = text.indexOf('\n]);',registration);
+          if (registration < 0 || registrationEnd < 0 || text.split('protocol.registerSchemesAsPrivileged(').length !== 2) throw Error('Desktop scheme registration changed');
+          text = text.slice(0,registration) + 'protocol.registerSchemesAsPrivileged(\n  desktopPrivilegedSchemes(DESKTOP_SCHEME, LOCAL_HTML_PREVIEW_SCHEME, codeOss.enabled),\n);' + text.slice(registrationEnd+4);
+          fs.writeFileSync(main,'import { desktopPrivilegedSchemes } from "./desktopSchemes";\n'+text); paths.add(main);
+          add('apps/desktop/code-oss/scripts/stage-browser-resources.mjs', `import { access, cp, mkdir } from "node:fs/promises";
+          import { join, resolve } from "node:path";
+          import { fileURLToPath } from "node:url";
+          /** Preserve upstream production browser paths without duplicating native modules. */
+          export async function stageNativeBrowserResources(runtime) {
+            const packages = ["vscode-oniguruma", "@vscode/tree-sitter-wasm"];
+            for (const name of packages) await access(join(runtime, "node_modules", name, "package.json"));
+            for (const name of packages) {
+              const destination = join(runtime, "node_modules.asar.unpacked", name);
+              await mkdir(join(destination, ".."), { recursive: true });
+              await cp(join(runtime, "node_modules", name), destination, { recursive: true, verbatimSymlinks: true });
+            }
+            await access(join(runtime, "node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm"));
+            await access(join(runtime, "node_modules.asar.unpacked/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm"));
+          }
+          if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+            if (!process.argv[2]) throw new Error("Pass the prepared native runtime directory.");
+            await stageNativeBrowserResources(resolve(process.argv[2]));
+          }
+          `);
+          edit('apps/desktop/code-oss/scripts/build.mjs', [
+            ['import { spawn } from "node:child_process";', 'import { spawn } from "node:child_process";\nimport { stageNativeBrowserResources } from "./stage-browser-resources.mjs";'],
+            ['// Publish the manifest LAST:', 'await stageNativeBrowserResources(output);\n// Publish the manifest LAST:'],
+          ]);
+          for (const path of ['scripts/lib/code-oss-runtime.ts','scripts/lib/code-oss-runtime.test.ts']) {
+            edit(path, [['"out/synara.js",','"out/synara.js",\n    "node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm",\n    "node_modules.asar.unpacked/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm",']]);
+          }
+          edit('apps/desktop/code-oss/scripts/smoke.mjs', [
+            ['await workbench.getByRole("button", { name: /^Trust, Keyboard Shortcut:/ }).click();', 'await workbench.getByRole("button", { name: "Trust", exact: true }).click();'],
+            ['    screen("after-native-file-open.png");', `    screen("after-native-file-open.png");
+              const assets = await workbench.evaluate(async () => {
+                const root = location.href.slice(0, location.href.indexOf("/out/"));
+                const paths = ["/node_modules.asar.unpacked/vscode-oniguruma/release/onig.wasm", "/node_modules.asar.unpacked/@vscode/tree-sitter-wasm/wasm/tree-sitter.wasm"];
+                const results = [];
+                for (const path of paths) {
+                  const response = await fetch(root + path);
+                  const bytes = new Uint8Array(await response.arrayBuffer());
+                  results.push({path, status:response.status, wasm:bytes[0] === 0 && bytes[1] === 97 && bytes[2] === 115 && bytes[3] === 109});
+                }
+                return results;
+              });
+              if (assets.some(asset => asset.status !== 200 || !asset.wasm)) throw Error("Native syntax resources did not load");
+              await record("native syntax WebAssembly resources load over privileged protocol", assets);`],
+          ]);
+          fs.writeFileSync('.code-oss/renderer-paths.json',JSON.stringify([...paths]));
+          JS
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format only changed source and export exact bytes
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const paths=JSON.parse(fs.readFileSync('.code-oss/renderer-paths.json','utf8'));
+          execFileSync('node_modules/.bin/oxfmt',paths,{stdio:'inherit'});
+          fs.writeFileSync('renderer-manifest.json',JSON.stringify(paths.map(path=>({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')})),null,2));
+          execFileSync('tar',['-czf','renderer-source.tar.gz','renderer-manifest.json',...paths]);
+          JS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-renderer-source
+          path: renderer-source.tar.gz
+          retention-days: 3
+          if-no-files-found: error
+      - name: Check renderer types and regression behavior
+        run: |
+          rm renderer-manifest.json renderer-source.tar.gz
+          bun run --cwd apps/desktop typecheck
+          bun run --cwd apps/desktop test -- src/desktopSchemes.test.ts src/desktopRenderer.test.ts
+          bun run --cwd scripts test -- lib/code-oss-runtime.test.ts
+  native:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-renderer-source
+      - run: tar -xzf renderer-source.tar.gz
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-service-runtime
+          run-id: 38530755801
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Stage missing upstream production browser resources
+        run: node apps/desktop/code-oss/scripts/stage-browser-resources.mjs .code-oss/runtime
+      - name: Build actual integrated Synara
+        run: bun run build:desktop
+      - name: Prepare real Linux display and recording
+        run: sudo apt-get update && sudo apt-get install -y xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1
+      - name: Exercise native editor and services
+        timeout-minutes: 8
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Bounded acceptance evidence
+        if: always()
+        run: |
+          for file in after-checks.json failure.txt probe-at-failure.json native-probe.json failure-page-1.txt; do
+            if [ -f ".code-oss/screenshots/$file" ]; then echo "=== $file ==="; head -c 16000 ".code-oss/screenshots/$file"; echo; fi
+          done
+          if [ -f .code-oss/screenshots/after-electron.log ]; then tail -30 .code-oss/screenshots/after-electron.log; fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-renderer-evidence
+          path: .code-oss/screenshots
+          retention-days: 7
+          if-no-files-found: warn
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-renderer-source
+      - name: Read source artifact as data only
+        run: |
+          python - <<'PY'
+          import tarfile,pathlib
+          with tarfile.open('renderer-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  p=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>300000:
+                      raise ValueError('Invalid source member')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store content-addressed blobs only; connector owns tree and ref
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'), crypto=require('node:crypto');
+            const allowed=new Set(['apps/desktop/src/desktopSchemes.ts','apps/desktop/src/desktopSchemes.test.ts','apps/desktop/src/codeOssHost.ts','apps/desktop/src/main.ts','apps/desktop/code-oss/scripts/stage-browser-resources.mjs','apps/desktop/code-oss/scripts/build.mjs','scripts/lib/code-oss-runtime.ts','scripts/lib/code-oss-runtime.test.ts','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/code-oss/scripts/fixtures/probe.cjs']);
+            const manifest=JSON.parse(fs.readFileSync('source/renderer-manifest.json','utf8'));
+            if (!Array.isArray(manifest)||manifest.length!==allowed.size) throw Error('Invalid manifest');
+            const entries=[];
+            for (const item of manifest) {
+              if (!allowed.delete(item.path)) throw Error('Unexpected source path');
+              const bytes=fs.readFileSync('source/'+item.path);
+              if (crypto.createHash('sha256').update(bytes).digest('hex')!==item.sha256) throw Error('Content mismatch');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              entries.push({...item,sha:data.sha,mode:'100644',type:'blob'});
+            }
+            console.log('RENDERER_BLOBS='+JSON.stringify(entries));
+            fs.writeFileSync('renderer-blobs.json',JSON.stringify(entries,null,2));
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-renderer-blobs
+          path: renderer-blobs.json
+          retention-days: 3
