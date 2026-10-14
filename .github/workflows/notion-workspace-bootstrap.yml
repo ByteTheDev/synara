@@ -1,4 +1,4 @@
-name: Notion integration source snapshot
+name: Notion web verification toolchain
 
 on:
   push:
@@ -9,18 +9,34 @@ permissions:
   contents: read
 
 jobs:
-  source:
+  tools:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Export tracked application source only
-        run: git archive --format=tar.gz --output=/tmp/notion-source.tar.gz HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.13.1
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Install only web and contract verification dependencies
+        run: bun install --frozen-lockfile --filter '@synara/web' --filter '@synara/contracts' --filter '@synara/shared' --filter '@synara/monorepo'
+      - name: Export bounded tooling without source or desktop runtimes
+        shell: bash
+        run: |
+          mkdir -p .notion-verification-tools
+          cp "$(command -v bun)" .notion-verification-tools/bun
+          cp "$(command -v node)" .notion-verification-tools/node
+          du -sh node_modules apps/web/node_modules packages/contracts/node_modules packages/shared/node_modules
+          du -sm node_modules/.bun/* | sort -nr | head -25 || true
+          tar -czf /tmp/notion-web-tools.tar.gz .notion-verification-tools node_modules apps/web/node_modules packages/contracts/node_modules packages/shared/node_modules
+          test "$(stat -c%s /tmp/notion-web-tools.tar.gz)" -lt 450000000
       - uses: actions/upload-artifact@v4
         with:
-          name: notion-source-only
-          path: /tmp/notion-source.tar.gz
+          name: notion-web-verification-tools
+          path: /tmp/notion-web-tools.tar.gz
           retention-days: 1
           compression-level: 0
