@@ -5,92 +5,95 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-  actions: read
 jobs:
-  native-contract:
+  native-build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
-        with:
-          name: local-test-tools
-          run-id: 38599398894
-          github-token: ${{ github.token }}
-          path: ${{ runner.temp }}/tools-export
-      - name: Split export and restore pinned tools
+      - name: Apply candidate window-boundary changes
         run: |
-          mkdir "$RUNNER_TEMP/tools-export/parts"
-          split -b 400m "$RUNNER_TEMP/tools-export/synara-deps.tar.gz" "$RUNNER_TEMP/tools-export/parts/deps-"
-          tar -xzf "$RUNNER_TEMP/tools-export/synara-deps.tar.gz"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('apps/desktop/code-oss/overlay/src/vs/synara/electron-main/host.ts')
+          p.write_text(p.read_text().replace('  canQuit(): boolean;', '  canQuit(): boolean;\n  canCreateWindow(): boolean;'))
+          p=Path('apps/desktop/code-oss/scripts/prepare.mjs')
+          p.write_text(p.read_text().replace('protocol: 1,', 'protocol: 2,'))
+          p=Path('apps/desktop/code-oss/overlay/src/vs/synara/electron-browser/onboarding.ts')
+          p.write_text(p.read_text().replace('{ kind: "mode", value: "agent" }', '{ kind: "focus-agent" }'))
+          p=Path('apps/desktop/code-oss/patches.json')
+          patches=json.loads(p.read_text())
+          for patch in patches:
+            if patch['path']=='src/vs/platform/windows/electron-main/windowImpl.ts':
+              patch['edits'].append({'before':'\t\t\tthis._win = new electron.BrowserWindow(options);','after':'\t\t\tif (synaraHost() && !synaraHost()!.canCreateWindow()) { throw new Error("Open files and projects in Synara’s existing editor; separate IDE windows are disabled."); }\n\t\t\tthis._win = new electron.BrowserWindow(options);'})
+            if patch['path']=='src/vs/code/electron-main/app.ts':
+              for edit in patch['edits']:
+                if edit['before']=='contents.setWindowOpenHandler(details => {':
+                  edit['after']="contents.setWindowOpenHandler(details => {\n\t\t\t\tif (synaraHost()) { return { action: 'deny' }; } // No auxiliary IDE windows in the embedded application."
+          p.write_text(json.dumps(patches,indent=2)+'\n')
+          PY
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: production
+          arch: x64
+      - name: Typecheck native overlay against pinned services
+        id: native-types
+        continue-on-error: true
+        working-directory: .code-oss/source
+        env:
+          GOMEMLIMIT: 10GiB
+        run: |
+          node -e 'require("fs").writeFileSync("tsconfig.synara.json", JSON.stringify({extends:"./src/tsconfig.json",include:["src/vs/synara/**/*.ts","src/typings","src/vscode-dts/vscode.d.ts","src/vscode-dts/vscode.proposed.*.d.ts"]}))'
+          node node_modules/@typescript/native/bin/tsc --noEmit --project tsconfig.synara.json 2>&1 | tee "$RUNNER_TEMP/native-types.log"
+      - name: Export native runtime and local rebuild sources
+        run: |
+          mkdir "$RUNNER_TEMP/native-export"
+          tar -czf "$RUNNER_TEMP/native-export/runtime.tar.gz" -C .code-oss runtime
+          split -b 400m "$RUNNER_TEMP/native-export/runtime.tar.gz" "$RUNNER_TEMP/native-export/runtime-"
+          tar --exclude=.git --exclude=out-synara --exclude=.build/electron --exclude=.build/extensions -czf "$RUNNER_TEMP/native-export/source.tar.gz" -C .code-oss/source .
+          split -b 400m "$RUNNER_TEMP/native-export/source.tar.gz" "$RUNNER_TEMP/native-export/source-"
+          sha256sum "$RUNNER_TEMP/native-export/"*.tar.gz > "$RUNNER_TEMP/native-export/checksums.txt"
       - uses: actions/upload-artifact@v4
         with:
-          name: local-test-deps-1
+          name: embedded-native-runtime-1
           compression-level: 0
-          path: ${{ runner.temp }}/tools-export/parts/deps-aa
+          path: ${{ runner.temp }}/native-export/runtime-aa
           retention-days: 3
       - uses: actions/upload-artifact@v4
         with:
-          name: local-test-deps-2
+          name: embedded-native-runtime-2
           compression-level: 0
-          path: |
-            ${{ runner.temp }}/tools-export/parts/deps-ab
-            ${{ runner.temp }}/tools-export/test-tools.tar.gz
+          path: ${{ runner.temp }}/native-export/runtime-ab
           retention-days: 3
-      - name: Check explicit ownership restoration
-        run: |
-          cat > "$RUNNER_TEMP/view-contract.cjs" <<'JS'
-          const { app, BrowserWindow, WebContentsView, View } = require('electron');
-          const fs = require('node:fs');
-          const capture = file => process.env.RUNNER_TEMP + '/' + file;
-          app.whenReady().then(async () => {
-            const win = new BrowserWindow({ width: 1000, height: 700, show: false });
-            const original = win.webContents;
-            const originalId = original.id;
-            const root = new View();
-            win.setContentView(root);
-            const shell = new WebContentsView();
-            root.addChildView(shell);
-            original._setOwnerWindow(null);
-            const editor = new WebContentsView({ webContents: original });
-            root.addChildView(editor);
-            original._setOwnerWindow(win);
-            shell.setBounds({ x: 0, y: 0, width: 1000, height: 700 });
-            editor.setBounds({ x: 200, y: 100, width: 400, height: 300 });
-            await shell.webContents.loadURL('data:text/html,<body style="background:lightblue">Synara shell</body>');
-            await original.loadURL('data:text/html,<body style="background:lightgreen"><textarea>Embedded editor</textarea></body>');
-            console.log('IDENTITY', win.webContents === original, original.id, originalId, BrowserWindow.fromWebContents(original)?.id, win.id);
-            if (win.webContents !== original || original.id !== originalId || BrowserWindow.fromWebContents(original) !== win) throw new Error('Workbench identity or ownership changed');
-            win.show();
-            await new Promise(resolve => setTimeout(resolve, 300));
-            const first = await original.executeJavaScript('({width:innerWidth,height:innerHeight})');
-            console.log('FIRST_VIEWPORT', first);
-            if (first.width !== 400 || first.height !== 300) throw new Error('Initial bounds failed');
-            await original.executeJavaScript('document.querySelector("textarea").value = "UNSAVED_NATIVE_BUFFER"');
-            editor.setVisible(false);
-            if (original.isDestroyed()) throw new Error('Hiding destroyed editor');
-            editor.setVisible(true);
-            win.setSize(1200, 800);
-            editor.setBounds({ x: 300, y: 200, width: 500, height: 400 });
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const viewport = await original.executeJavaScript('({width:innerWidth,height:innerHeight,value:document.querySelector("textarea").value})');
-            if (viewport.width !== 500 || viewport.height !== 400 || viewport.value !== 'UNSAVED_NATIVE_BUFFER') throw new Error('Retained viewport failed: ' + JSON.stringify(viewport));
-            fs.writeFileSync(capture('view-contract.json'), JSON.stringify({ sameContents: true, originalId, ownerId: BrowserWindow.fromWebContents(original).id, root: win.contentView.constructor.name, children: root.children.map(view => view.constructor.name), bounds: editor.getBounds(), viewport }));
-            fs.writeFileSync(capture('view-contract.png'), (await original.capturePage()).toPNG());
-            console.log('RETAINED_NATIVE_VIEW_PASS', viewport);
-            shell.webContents.close();
-            win.destroy();
-            app.quit();
-          }).catch(error => { console.error(error); app.exit(1); });
-          JS
-          xvfb-run -a apps/desktop/node_modules/.bin/electron --no-sandbox "$RUNNER_TEMP/view-contract.cjs"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: embedded-native-source-1
+          compression-level: 0
+          path: ${{ runner.temp }}/native-export/source-aa
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: embedded-native-source-2
+          compression-level: 0
+          path: ${{ runner.temp }}/native-export/source-ab
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: embedded-native-source-3
+          compression-level: 0
+          path: ${{ runner.temp }}/native-export/source-ac
+          retention-days: 3
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-view-contract
+          name: embedded-native-build-checks
           path: |
-            ${{ runner.temp }}/view-contract.json
-            ${{ runner.temp }}/view-contract.png
+            ${{ runner.temp }}/native-types.log
+            ${{ runner.temp }}/native-export/checksums.txt
           retention-days: 3
+      - name: Require native types
+        if: steps.native-types.outcome == 'failure'
+        run: exit 1
