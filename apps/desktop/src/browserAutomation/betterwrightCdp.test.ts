@@ -3,7 +3,6 @@ import type { WebContents } from "electron";
 import { describe, expect, it, vi } from "vitest";
 import { BetterwrightCdpTarget } from "./betterwrightCdp";
 import type { BrowserAutomationVisibleRuntime } from "../browserManager";
-import { BrowserAutomationHostError } from "./hostErrors";
 
 const focusState = vi.hoisted(() => ({ current: null as WebContents | null }));
 vi.mock("electron", () => ({ webContents: { getFocusedWebContents: () => focusState.current } }));
@@ -13,7 +12,6 @@ function fixture(
   backendSessionId?: string,
   cookieImport = false,
   expectInput?: BrowserAutomationVisibleRuntime["expectAgentInput"],
-  controlSignal?: AbortSignal,
 ) {
   focusState.current = null;
   const debuggerApi = Object.assign(new EventEmitter(), {
@@ -46,7 +44,6 @@ function fixture(
     backendSessionId,
     cookieImport,
     expectInput,
-    controlSignal,
   );
   return { contents, target, messages, debuggerApi };
 }
@@ -239,17 +236,13 @@ describe("Betterwright target boundary", () => {
   });
 
   it.each([
-    ["restored", "Page.bringToFront"],
-    ["user moved focus", "Page.bringToFront"],
-    ["host destroyed", "Page.bringToFront"],
-    ["dispatch failed", "Page.bringToFront"],
-    ["human revoked lease", "Input.insertText"],
-    ["lease closed", "Page.bringToFront"],
-    ["timed out", "Page.bringToFront"],
-    ["human revoked lease", "Page.bringToFront"],
-  ])("restores only command-owned focus (%s, %s)", async (outcome, method) => {
-    const controller = new AbortController();
-    const f = fixture([], undefined, false, undefined, controller.signal);
+    "restored",
+    "user moved focus",
+    "host destroyed",
+    "dispatch failed",
+    "human revoked lease",
+  ])("restores only active command-owned input focus (%s)", async (outcome) => {
+    const f = fixture();
     let destroyed = false;
     const host = { isDestroyed: () => destroyed, focus: vi.fn() };
     focusState.current = host as unknown as WebContents;
@@ -260,38 +253,49 @@ describe("Betterwright target boundary", () => {
     });
     const sessionId = (f.messages[0]!.result as { sessionId: string }).sessionId;
     f.debuggerApi.sendCommand.mockImplementationOnce(async () => {
-      // Real user input revokes the target lease before the command settles.
       focusState.current = f.contents as unknown as WebContents;
-      if (outcome === "human revoked lease" || outcome === "timed out") {
-        controller.abort(
-          new BrowserAutomationHostError({
-            code:
-              outcome === "human revoked lease" ? "BrowserInterruptedByHuman" : "BrowserTimeout",
-            retryable: true,
-            phase: "input",
-            effectMayHaveCommitted: true,
-          }),
-        );
-        void f.target.dispose(true);
-      }
-      if (outcome === "lease closed") void f.target.dispose(false);
+      if (outcome === "human revoked lease") void f.target.dispose(true);
       if (outcome === "user moved focus") focusState.current = null;
       if (outcome === "host destroyed") destroyed = true;
-      if (outcome === "dispatch failed") throw new Error("Bring to front failed");
+      if (outcome === "dispatch failed") throw new Error("Input failed");
       return {};
     });
-    await f.target.receive({ id: 2, sessionId, method, params: {} });
+    await f.target.receive({ id: 2, sessionId, method: "Input.insertText", params: { text: "a" } });
     expect(f.contents.focus).not.toHaveBeenCalled();
     expect(host.focus).toHaveBeenCalledTimes(
-      outcome === "restored" ||
-        outcome === "dispatch failed" ||
-        outcome === "lease closed" ||
-        outcome === "timed out"
-        ? 1
-        : 0,
+      outcome === "restored" || outcome === "dispatch failed" ? 1 : 0,
     );
     await f.target.dispose(false);
   });
+  it.each(["browserView", "webview"])(
+    "acknowledges %s bringToFront without activation or late focus restoration",
+    async (surface) => {
+      const f = fixture();
+      f.contents.getType.mockReturnValue(surface);
+      const host = { isDestroyed: () => false, focus: vi.fn() };
+      focusState.current = host as unknown as WebContents;
+      await f.target.receive({
+        id: 1,
+        method: "Target.attachToTarget",
+        params: { targetId: f.target.targetId },
+      });
+      const sessionId = (f.messages[0]!.result as { sessionId: string }).sessionId;
+      f.debuggerApi.sendCommand.mockImplementationOnce(async () => {
+        // A timeout closes the lease first; a later user click cannot replace its abort reason.
+        void f.target.dispose(true);
+        focusState.current = f.contents as unknown as WebContents;
+        return {};
+      });
+      await f.target.receive({ id: 2, sessionId, method: "Page.bringToFront", params: {} });
+      expect(host.focus).not.toHaveBeenCalled();
+      expect(f.contents.focus).not.toHaveBeenCalled();
+      expect(focusState.current).toBe(host);
+      expect(f.messages.at(-1)).toMatchObject({ id: 2, result: {} });
+      expect(f.debuggerApi.sendCommand).not.toHaveBeenCalled();
+      f.debuggerApi.sendCommand.mockResolvedValue({});
+      await f.target.dispose(false);
+    },
+  );
   it("blocks app shortcuts before provenance or dispatch across session aliases", async () => {
     const expected = vi.fn();
     const f = fixture([], undefined, false, expected);

@@ -61,15 +61,13 @@ describe("synaraHostTarget", () => {
     expect(mocks.openConnection).toHaveBeenCalledTimes(2);
   });
 
-  it("passes approved capabilities and the human-control signal through to the transport", async () => {
-    const controller = new AbortController();
+  it("passes the cookie-import capability and approved uploads through to the transport", async () => {
     const expectAgentInput = vi.fn();
     mocks.openConnection.mockResolvedValue(fakeConnection({}));
     const target = synaraHostTarget(contents, {
       cookieImport: true,
       uploadFiles: ["/abs/upload.bin"],
       expectAgentInput: expectAgentInput as never,
-      signal: controller.signal,
     });
     await target.connect({ proxyUrl: "socks5://127.0.0.1:9" });
     expect(mocks.openConnection).toHaveBeenCalledWith(
@@ -78,7 +76,6 @@ describe("synaraHostTarget", () => {
       ["/abs/upload.bin"],
       true,
       expectAgentInput,
-      controller.signal,
     );
   });
 

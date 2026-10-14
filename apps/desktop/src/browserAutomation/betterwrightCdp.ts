@@ -4,7 +4,6 @@ import type { BrowserAutomationVisibleRuntime } from "../browserManager";
 import { betterwrightExpectedInputs } from "./betterwrightInput";
 import { BetterwrightKeyboardPolicy } from "./betterwrightKeyboardPolicy";
 import { withRendererGuestFocus } from "./betterwrightFocus";
-import { BrowserAutomationHostError } from "./hostErrors";
 
 type Params = Record<string, unknown>;
 let nativeInputQueue: Promise<unknown> = Promise.resolve();
@@ -90,7 +89,6 @@ export class BetterwrightCdpTarget {
     private readonly backendSessionId?: string,
     private readonly cookieImport = false,
     private readonly expectAgentInput?: BrowserAutomationVisibleRuntime["expectAgentInput"],
-    private readonly controlSignal?: AbortSignal,
   ) {
     if (contents.isDestroyed()) throw new Error("Browser target is unavailable.");
     if (!contents.debugger.isAttached()) contents.debugger.attach("1.3");
@@ -286,6 +284,9 @@ export class BetterwrightCdpTarget {
     const dispatch = async () => {
       if (this.disposed || this.contents.isDestroyed())
         throw new Error("Browser target lease ended.");
+      // This transport already binds one page. Chromium activation would only
+      // take the user's window focus; reveal/selection belongs to BrowserManager.
+      if (method === "Page.bringToFront" && !this.childSessions.has(sessionId!)) return {};
       const releases = betterwrightExpectedInputs(method, params).map((input) =>
         this.expectAgentInput?.(input),
       );
@@ -293,8 +294,8 @@ export class BetterwrightCdpTarget {
       // page's own widget without it, and on macOS/Linux webContents.focus()
       // also raises Synara's window. Whatever the user was typing elsewhere
       // then lands in the agent page and reads as a human takeover. Guests
-      // still need DOM focus, scoped below; Page.bringToFront can still move
-      // native focus, so the user's previous owner is restored afterwards.
+      // still need DOM focus, scoped below. Restore only focus owned by a
+      // still-active dispatch; teardown must never undo a later human takeover.
       const previousFocus = nativeInput ? webContents.getFocusedWebContents() : null;
       try {
         const send = async () => {
@@ -343,12 +344,7 @@ export class BetterwrightCdpTarget {
       } finally {
         try {
           if (
-            (!this.disposed ||
-              (method === "Page.bringToFront" &&
-                !(
-                  this.controlSignal?.reason instanceof BrowserAutomationHostError &&
-                  this.controlSignal.reason.browserError.code === "BrowserInterruptedByHuman"
-                ))) &&
+            !this.disposed &&
             previousFocus &&
             previousFocus !== this.contents &&
             !previousFocus.isDestroyed() &&
