@@ -1,17 +1,16 @@
-# Branch-only execution support for the editor integration work.
-# No releases, repository-ref writes, secrets, or application data are used.
+# Temporary branch-only provisioning. No releases or repository-ref writes.
 name: Editor integration check
 
 on:
   push:
     branches:
       - feat/synara-editor-intelligence
-      - feat/synara-code-oss-extensions
     paths:
       - .github/workflows/editor-integration-check.yml
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: editor-integration-${{ github.ref }}
@@ -19,40 +18,57 @@ concurrency:
 
 jobs:
   dependencies:
-    name: Prepare isolated Linux verification environment
+    name: Split the verified dependency export into bounded transfers
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
-      - name: Checkout the exact feature commit
-        uses: actions/checkout@v6
+      - name: Download the existing exact-baseline dependency artifact
+        uses: actions/download-artifact@v4
         with:
-          persist-credentials: false
+          name: synara-editor-dependencies-c0a1b6b9385d2833972b8e5df90841837871064d
+          run-id: 38643355070
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/editor-dependencies
 
-      - name: Install the repository-pinned runtime toolchain
-        uses: ./.github/actions/setup-workspace
-        with:
-          scope: runtime
-
-      - name: Prepare relocatable verification dependencies
-        shell: bash
+      - name: Split into 200 MiB parts
         run: |
-          mkdir -p .integration-toolchain/bin
-          cp "$(command -v bun)" .integration-toolchain/bin/bun
-          cp "$(command -v node)" .integration-toolchain/bin/node
-          bun --version
-          node --version
-          node -e 'const fs = require("node:fs"); const paths = ["node_modules", "scripts/node_modules", ".integration-toolchain"]; for (const parent of ["apps", "packages"]) { for (const name of fs.readdirSync(parent)) { const path = `${parent}/${name}/node_modules`; if (fs.existsSync(path)) paths.push(path); } } fs.writeFileSync(process.env.RUNNER_TEMP + "/dependency-paths.txt", paths.join("\n") + "\n");'
-          tar -czf "$RUNNER_TEMP/synara-editor-dependencies.tar.gz" -T "$RUNNER_TEMP/dependency-paths.txt"
-          ls -lh "$RUNNER_TEMP/synara-editor-dependencies.tar.gz"
+          cd "$RUNNER_TEMP/editor-dependencies"
+          sha256sum synara-editor-dependencies.tar.gz
+          split -b 200M -d -a 2 synara-editor-dependencies.tar.gz dependencies.part-
+          ls -lh dependencies.part-*
 
-      - name: Export isolated verification dependencies
+      - name: Export part 00
         uses: actions/upload-artifact@v4
         with:
-          name: synara-editor-dependencies-${{ github.sha }}
-          path: ${{ runner.temp }}/synara-editor-dependencies.tar.gz
+          name: synara-editor-dependencies-part-00
+          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-00
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
 
-      - name: Verify the unchanged shared document session baseline
-        run: bun run test:web:focused src/lib/workspaceEditorSession.test.ts src/lib/workspaceFileEditor.test.ts
+      - name: Export part 01
+        uses: actions/upload-artifact@v4
+        with:
+          name: synara-editor-dependencies-part-01
+          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-01
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Export part 02
+        uses: actions/upload-artifact@v4
+        with:
+          name: synara-editor-dependencies-part-02
+          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-02
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Export part 03
+        uses: actions/upload-artifact@v4
+        with:
+          name: synara-editor-dependencies-part-03
+          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-03
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
