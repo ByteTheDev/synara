@@ -1,4 +1,4 @@
-# Temporary branch-only dependency provisioning. No releases or ref writes.
+# Temporary branch-only provisioning. No releases or repository-ref writes.
 name: Editor integration check
 
 on:
@@ -16,28 +16,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  editor-runtime:
-    name: Resolve and export the pinned editor runtime
+  debug-runtime:
+    name: Verify upstream standalone debug adapter
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.4.2
-      - name: Resolve Monaco without changing unrelated dependencies
+      - name: Download the pinned MIT-licensed upstream release
+        env:
+          DEBUG_VERSION: 1.140.0
+          DEBUG_SHA256: 27dab92937ec1ab35821ae955aac867544fe06a1b6307229049f2d789af10968
         run: |
-          bun add --cwd apps/web --exact monaco-editor@0.55.1 --lockfile-only --ignore-scripts
-          mkdir -p "$RUNNER_TEMP/editor-runtime"
-          npm pack monaco-editor@0.55.1 --pack-destination "$RUNNER_TEMP/editor-runtime"
-          cp bun.lock "$RUNNER_TEMP/editor-runtime/bun.lock"
-          cp apps/web/package.json "$RUNNER_TEMP/editor-runtime/web-package.json"
-          npm view monaco-editor@0.55.1 dist --json > "$RUNNER_TEMP/editor-runtime/monaco-dist.json"
+          mkdir -p "$RUNNER_TEMP/debug-runtime"
+          cd "$RUNNER_TEMP/debug-runtime"
+          curl --fail --location --retry 2 --max-time 90 --output js-debug.tar.gz "https://github.com/microsoft/vscode-js-debug/releases/download/v${DEBUG_VERSION}/js-debug-dap-v${DEBUG_VERSION}.tar.gz"
+          echo "$DEBUG_SHA256  js-debug.tar.gz" | sha256sum --check
+          printf '%s\n' "$DEBUG_VERSION" > version.txt
+          printf '%s\n' "$DEBUG_SHA256" > sha256.txt
+          tar -tzf js-debug.tar.gz | head -30 || test "${PIPESTATUS[0]}" = 141
       - uses: actions/upload-artifact@v4
         with:
-          name: synara-monaco-runtime
-          path: ${{ runner.temp }}/editor-runtime
+          name: synara-js-debug-runtime
+          path: ${{ runner.temp }}/debug-runtime
           retention-days: 1
           if-no-files-found: error
