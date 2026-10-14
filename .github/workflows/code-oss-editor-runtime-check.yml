@@ -29,6 +29,11 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           p=Path('apps/desktop/code-oss/scripts/smoke.mjs');s=p.read_text()
+          anchor='      await agent.getByRole("button", { name: "Editor view", exact: true }).click();'
+          assert s.count(anchor)==1
+          s=s.replace(anchor,'''      const environment = agent.getByRole("button", { name: "Toggle environment panel", exact: true });
+                if ((await environment.getAttribute("aria-pressed")) !== "true") await environment.click();
+          '''+anchor)
           anchor='      await agent.locator("[data-editor-workspace]").waitFor({ state: "visible" });'
           assert s.count(anchor)==1
           s=s.replace(anchor,anchor+'''
@@ -61,17 +66,28 @@ jobs:
           SYNARA_SMOKE_OUTPUT: .code-oss/evidence
           SYNARA_VERIFY_MODAL: '1'
         run: timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs --appearance
-      - name: Focused failure diagnostics
-        if: always()
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          for p in Path('.code-oss/evidence').glob('*'):
-              if p.suffix in ['.txt','.json']:print('\n'+p.name+'\n'+p.read_text(errors='replace')[-18000:])
-          PY
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: bounded-files-evidence
           path: .code-oss/evidence
           retention-days: 7
+  diagnostics:
+    needs: desktop
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: bounded-files-evidence
+      - name: Read focused evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in Path('.').glob('*'):
+              if p.name=='probe-at-failure.json':
+                  import json
+                  d=json.loads(p.read_text());d.pop('extensionIds',None);print(p.name,json.dumps(d));continue
+              if p.suffix in ['.txt','.json']: print('\n'+p.name+'\n'+p.read_text(errors='replace')[-16000:])
+          PY
