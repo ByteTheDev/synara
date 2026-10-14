@@ -1,0 +1,24 @@
+name: Inspect native quit confirmation
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-quit-inspect.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-quit-evidence
+          run-id: 38545052972
+          github-token: ${{ github.token }}
+      - name: Read visible confirmation and native runtime state
+        run: |
+          for file in failure-page-*.txt focus-at-failure.json; do
+            if [ -f "$file" ]; then echo "=== $file ==="; head -c 18000 "$file"; echo; fi
+          done
+          tail -65 after-electron.log
