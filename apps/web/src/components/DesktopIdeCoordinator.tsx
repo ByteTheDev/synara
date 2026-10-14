@@ -172,7 +172,7 @@ export function DesktopIdeSessionBar() {
         >
           <SelectValue placeholder="Select an agent session" />
         </SelectTrigger>
-        <SelectPopup>
+        <SelectPopup surface="composer">
           {sessions.map((thread) => (
             <SelectItem key={thread.id} value={thread.id}>
               {needsAttention(thread) ? "● " : ""}

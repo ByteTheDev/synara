@@ -255,7 +255,12 @@ try {
     for (const [index, page] of application.context().pages().entries()) {
       await writeFile(
         join(output, `failure-page-${index}.txt`),
-        page.url() + "\n" + (await page.locator("body").innerText().catch(() => "unavailable")),
+        page.url() +
+          "\n" +
+          (await page
+            .locator("body")
+            .innerText()
+            .catch(() => "unavailable")),
       ).catch(() => {});
     }
     const contents = await application.evaluate(({ webContents }) =>
