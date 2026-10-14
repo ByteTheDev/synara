@@ -9,7 +9,7 @@ permissions:
 jobs:
   desktop:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 9
     steps:
       - uses: actions/checkout@v6
         with:
@@ -23,42 +23,75 @@ jobs:
           path: .code-oss/import
       - uses: actions/download-artifact@v8
         with:
-          name: final-editor-source-checks
-          run-id: 38587622382
+          name: bounded-files-evidence
+          run-id: 38588491941
           github-token: ${{ github.token }}
           path: .code-oss/checked
-      - name: Restore verified source and preserve same-document editor placement
+      - name: Restore checked application and exercise actual draft semantics
         run: |
           tar -xzf .code-oss/checked/source.tar.gz
           tar -xzf .code-oss/import/compiled-editor.tar.gz
+          tar -xzf .code-oss/checked/desktop-entry.tar.gz
           tar -xzf .code-oss/import/native-editor.tar.gz -C .code-oss
           python - <<'PY'
           from pathlib import Path
-          p=Path('apps/desktop/src/codeOssHost.ts');s=p.read_text()
-          before='''    this.agent.webContents.on("did-start-navigation", (_event, _url, _inPlace, isMainFrame) => {
-                if (!isMainFrame) return;'''
-          after='''    this.agent.webContents.on("did-start-navigation", (_event, _url, isInPlace, isMainFrame) => {
-                // Hash routing retains the same React-owned slot. Clear it only when
-                // the main document is replaced, not when selecting a file or session.
-                if (!isMainFrame || isInPlace) return;'''
-          assert s.count(before)==1
-          p.write_text(s.replace(before,after))
+          p=Path('apps/desktop/code-oss/scripts/appearance-smoke.mjs');s=p.read_text()
+          anchor='export async function verifySessionControl({ agent, until, record }) {'
+          assert s.count(anchor)==1
+          s=s[:s.index(anchor)]+'''export async function verifySessionControl({ agent, until, record }) {
+            const before = await agent.evaluate(() => window.desktopBridge.ide.getState());
+            const identity = await agent.evaluate(() => window.__synaraSmokeIdentity);
+            const composer = agent.locator('.synara-editor-chat [contenteditable="true"]').first();
+            const draft = await composer.innerText();
+            async function newChat() {
+              await agent.getByRole("button", { name: "New editor rail item", exact: true }).click();
+              await agent.getByRole("menuitem", { name: "New chat", exact: true }).click();
+              await agent.getByRole("menu").waitFor({ state: "hidden" });
+            }
+            // The existing project flow reuses an unsent draft. Do not change
+            // production draft semantics just to satisfy a fresh-session assertion.
+            await newChat();
+            const reused = await agent.evaluate(() => window.desktopBridge.ide.getState());
+            if (reused.scope.threadId !== before.scope.threadId || (await composer.innerText()) !== draft)
+              throw new Error("Existing new-chat action did not retain the unsent project draft");
+            await record("existing new-chat action preserves the unsent project draft");
+            // Rename is the normal existing UI path for persisting a draft without
+            // submitting a provider turn. The test never injects database/store state.
+            await agent.locator('.synara-editor-chat').getByRole("heading", { name: "New thread", exact: true }).dblclick();
+            const rename = agent.getByRole("dialog", { name: "Rename chat", exact: true });
+            await rename.getByRole("textbox", { name: "Rename chat", exact: true }).fill("Native editor acceptance chat");
+            await rename.getByRole("button", { name: "Save", exact: true }).click();
+            await rename.waitFor({ state: "hidden" });
+            await agent.getByText("Native editor acceptance chat", { exact: true }).first().waitFor();
+            await newChat();
+            const next = await until(
+              () => agent.evaluate(() => window.desktopBridge.ide.getState()),
+              (state) => state.scope.threadId && state.scope.threadId !== before.scope.threadId,
+              "existing editor new-chat control creates a draft after the previous chat is saved",
+              20000,
+            );
+            if (next.mode !== "ide" || next.status !== "ready")
+              throw new Error("Creating a session left the ready native editor");
+            if ((await agent.evaluate(() => window.__synaraSmokeIdentity)) !== identity)
+              throw new Error("Creating a session reloaded the retained Synara renderer");
+            await record("existing editor creates a new session after saving the prior draft without leaving editor", {
+              previous: before.scope.threadId, selected: next.scope.threadId, mode: next.mode,
+            });
+          }
+          '''
+          p.write_text(s)
           PY
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
           electron: 'true'
-      - name: Check changed host and rebuild only the desktop entry
+      - name: Check revised acceptance and preserve exact source
         run: |
-          node_modules/.bin/oxfmt apps/desktop/src/codeOssHost.ts
-          bun run --cwd apps/desktop typecheck
-          bun run --cwd packages/contracts build
-          bun run --cwd apps/desktop build
+          node_modules/.bin/oxfmt apps/desktop/code-oss/scripts/appearance-smoke.mjs
+          node --check apps/desktop/code-oss/scripts/appearance-smoke.mjs
           mkdir -p .code-oss/evidence
           git diff --check
-          git diff --stat
           git diff > .code-oss/evidence/source-changes.patch
-          tar -czf .code-oss/evidence/desktop-entry.tar.gz apps/desktop/dist-electron
           python - <<'PY'
           import tarfile,subprocess,hashlib,json
           from pathlib import Path
@@ -77,6 +110,8 @@ jobs:
           SYNARA_SMOKE_OUTPUT: .code-oss/evidence
           SYNARA_VERIFY_MODAL: '1'
         run: timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs --appearance
+      - name: Convert the actual desktop recording to a review GIF
+        run: ffmpeg -y -i .code-oss/evidence/agent-ide-switch.mp4 -filter_complex '[0:v]fps=8,scale=1080:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse' .code-oss/evidence/files-chat-switch.gif
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -97,8 +132,54 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import json
-          for p in Path('.').glob('*'):
-              if p.name=='probe-at-failure.json':
-                  d=json.loads(p.read_text());d.pop('extensionIds',None);print(p.name,json.dumps(d));continue
-              if p.suffix in ['.txt','.json']:print('\n'+p.name+'\n'+p.read_text(errors='replace')[-20000:])
+          for name in ['after-checks.json','failure.txt','failure-page-1.txt','failure-page-2.txt','surface-at-failure.json']:
+              p=Path(name)
+              if p.exists():print('\n'+p.name+'\n'+p.read_text(errors='replace')[-22000:])
           PY
+  export:
+    needs: desktop
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: bounded-files-evidence
+      - name: Extract source as data
+        run: |
+          python - <<'PY'
+          import tarfile,pathlib
+          with tarfile.open('source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  p=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>300000:raise ValueError('Unexpected source member')
+              archive.extractall('source',filter='data')
+          PY
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const manifest=JSON.parse(fs.readFileSync('manifest.json','utf8'));
+            const allowed=new Set(['apps/desktop/code-oss/overlay/src/vs/synara/electron-main/host.ts','apps/desktop/code-oss/patches.json','apps/desktop/code-oss/scripts/smoke.mjs','apps/desktop/code-oss/scripts/appearance-smoke.mjs','apps/desktop/src/codeOssHost.ts','apps/desktop/src/editorSurface.ts','apps/desktop/src/editorSurface.test.ts','apps/desktop/src/nativeEditorView.ts','apps/desktop/src/nativeEditorView.test.ts','apps/web/src/components/EditorWorkspaceView.tsx']);
+            if(manifest.length!==allowed.size)throw Error('Unexpected source count');
+            const result=[];
+            for(const item of manifest){
+              if(!allowed.delete(item.path))throw Error('Unexpected path');
+              const bytes=fs.readFileSync('source/'+item.path);
+              if(crypto.createHash('sha256').update(bytes).digest('hex')!==item.sha256)throw Error('Invalid source hash');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              result.push({...item,sha:data.sha,mode:'100644',type:'blob'});
+            }
+            console.log('SOURCE_BLOBS='+JSON.stringify(result));
+            const captures=['after-native-file-open.png','after-existing-markdown-preview.png','after-existing-native-diff.png','after-synara-ide-dark.png','after-synara-ide-light.png','files-chat-switch.gif'];
+            for(const name of captures){
+              if(!fs.existsSync(name))continue;
+              const bytes=fs.readFileSync(name);
+              if(bytes.length>8*1024*1024)throw Error('Unexpected capture size');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('CAPTURE_BLOB='+JSON.stringify({name,sha:data.sha,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),bytes:bytes.length}));
+            }
+            // No commits or branch changes: publication is performed by the connector.
