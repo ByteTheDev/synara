@@ -4,6 +4,9 @@
 // Layer: Release/build script
 // Depends on: apps/desktop package metadata, electron-builder, and GitHub release config.
 
+import codeOssPin from "../apps/desktop/code-oss/upstream.json" with { type: "json" };
+import { validateCodeOssRuntime } from "./lib/code-oss-runtime.ts";
+
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
@@ -1320,6 +1323,33 @@ const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
     options.flavor,
   );
 
+  const codeOssRuntime = path.join(repoRoot, ".code-oss/runtime");
+  // Native services stay outside ASAR, in this SAME install/update artifact.
+  // No Electron executable, extra product or separate release feed is staged.
+  yield* Effect.try({
+    try: () =>
+      validateCodeOssRuntime(codeOssRuntime, {
+        commit: codeOssPin.commit,
+        electron: desktopPackageJson.dependencies.electron,
+        platform: options.platform,
+        arch: options.arch,
+        flavor: options.flavor,
+      }),
+    catch: (cause) =>
+      new BuildScriptError({
+        message: `Prepare the native Code-OSS runtime before packaging: ${String(cause)}`,
+      }),
+  });
+  const stagedCodeOss = path.join(stageRoot, "code-oss");
+  yield* fs.copy(codeOssRuntime, stagedCodeOss);
+  const buildWithCodeOss = {
+    ...resolvedBuildConfig.buildConfig,
+    extraResources: [
+      ...(resolvedBuildConfig.buildConfig.extraResources ?? []),
+      { from: stagedCodeOss, to: "code-oss", filter: ["**/*"] },
+    ],
+  };
+
   const stagePackageJson: StagePackageJson = {
     ...artifactIdentity.packageMetadata,
     version: appVersion,
@@ -1332,7 +1362,7 @@ const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
     description: "Synara desktop build",
     author: "Emanuele Di Pietro",
     main: "apps/desktop/dist-electron/main.js",
-    build: resolvedBuildConfig.buildConfig,
+    build: buildWithCodeOss,
     dependencies: {
       ...resolvedServerDependencies,
       ...resolvedDesktopRuntimeDependencies,

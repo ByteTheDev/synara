@@ -1,3 +1,4 @@
+import { desktopRenderer } from "./desktopRenderer";
 // FILE: browserManager.ts
 // Purpose: Owns the desktop in-app browser runtime and maps thread/tab state onto Electron views.
 // Layer: Desktop runtime manager
@@ -419,6 +420,7 @@ export class DesktopBrowserManager {
   private window: BrowserWindow | null = null;
   private activeThreadId: ThreadId | null = null;
   private activeBounds: BrowserPanelBounds | null = null;
+  private workbenchMode = false;
   private activeBoundsThreadId: ThreadId | null = null;
   private activePageZoomFactor = 1;
   private activePageZoomThreadId: ThreadId | null = null;
@@ -522,6 +524,25 @@ export class DesktopBrowserManager {
     });
   }
 
+  /** Presentation only: never dispose browser runtimes or interrupt automation. */
+  setWorkbenchMode(enabled: boolean): void {
+    if (this.workbenchMode === enabled) return;
+    this.workbenchMode = enabled;
+    if (enabled) {
+      for (const runtime of this.runtimes.values()) {
+        if (runtime.view) this.setRuntimeViewHidden(runtime, true);
+      }
+    } else {
+      const runtime = this.attachedRuntimeKey
+        ? this.runtimes.get(this.attachedRuntimeKey)
+        : undefined;
+      if (runtime && this.activeBounds) {
+        this.attachedBoundsSignature = null;
+        this.attachRuntime(runtime, this.activeBounds);
+      }
+    }
+  }
+
   setWindow(window: BrowserWindow | null): void {
     const previousWindow = this.window;
     if (previousWindow && previousWindow !== window) {
@@ -611,7 +632,9 @@ export class DesktopBrowserManager {
 
   isTrustedRenderer(webContentsId: number): boolean {
     return Boolean(
-      this.window && !this.window.isDestroyed() && this.window.webContents.id === webContentsId,
+      this.window &&
+      !this.window.isDestroyed() &&
+      desktopRenderer(this.window).id === webContentsId,
     );
   }
 
@@ -1467,7 +1490,7 @@ export class DesktopBrowserManager {
       (this.activeThreadId !== input.threadId ||
         this.attachedRuntimeKey !== runtime.key ||
         this.getVisibleBoundsForThread(input.threadId) === null ||
-        runtime.webContents.hostWebContents?.id !== this.window.webContents.id)
+        runtime.webContents.hostWebContents?.id !== desktopRenderer(this.window).id)
     ) {
       throw new Error("The requested browser webview is not currently visible.");
     }
@@ -1873,7 +1896,7 @@ export class DesktopBrowserManager {
     if (
       webContents.getType() !== "webview" ||
       webContents.hostWebContents?.id !== hostWebContentsId ||
-      (this.window !== null && hostWebContentsId !== this.window.webContents.id) ||
+      (this.window !== null && hostWebContentsId !== desktopRenderer(this.window).id) ||
       webContents.session !== electronSession.fromPartition(BROWSER_SESSION_PARTITION)
     ) {
       throw new Error("The browser webview does not belong to this Synara window and partition.");
@@ -2796,7 +2819,7 @@ export class DesktopBrowserManager {
       return;
     }
 
-    if (this.previewThreadIds.has(runtime.threadId) && runtime.view) {
+    if ((this.workbenchMode || this.previewThreadIds.has(runtime.threadId)) && runtime.view) {
       // React paints the thumbnail; the native page remains hidden from hit testing.
       if (this.attachedRuntimeKey !== runtime.key) this.detachAttachedRuntime();
       this.parkHiddenRuntime(runtime, bounds);
@@ -2854,7 +2877,7 @@ export class DesktopBrowserManager {
 
   private bringRuntimeViewToFront(runtime: LiveTabRuntime): void {
     const window = this.window;
-    if (!window || !runtime.view) {
+    if (!window || !runtime.view || this.workbenchMode) {
       return;
     }
 
@@ -2889,6 +2912,7 @@ export class DesktopBrowserManager {
     if (!runtime.view || runtime.webContents.isDestroyed()) {
       return;
     }
+    hidden ||= this.workbenchMode;
     const keepRenderingInBackground = hidden && this.automationRuntimeKeys.has(runtime.key);
     if (keepRenderingInBackground) {
       // An overlay needs the panel's framing; ordinary background automation

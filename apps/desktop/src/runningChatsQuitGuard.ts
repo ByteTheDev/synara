@@ -98,6 +98,8 @@ export function parseQuitConfirmationResponse(
 
 export interface RunningChatsQuitGuard {
   readonly hasAllowedQuit: () => boolean;
+  readonly resetAllowedQuit: () => void;
+  readonly matchesPendingRequest: (requestId: string) => boolean;
   readonly hasPendingAsk: () => boolean;
   readonly cancelPending: () => void;
   /**
@@ -176,6 +178,10 @@ export function makeRunningChatsQuitGuard(
 
   return {
     hasAllowedQuit: () => allowed,
+    resetAllowedQuit: () => {
+      allowed = false;
+    },
+    matchesPendingRequest: (requestId) => pending?.requestId === requestId,
     hasPendingAsk: () => pending !== null,
     cancelPending(): void {
       finish(false);

@@ -46,7 +46,31 @@ env:
   AZURE_TRUSTED_SIGNING_SUBJECT_DN: ${{ secrets.AZURE_TRUSTED_SIGNING_SUBJECT_DN }}
 
 jobs:
+  code_oss:
+    name: Build embedded native workbench
+    runs-on: ${{ inputs.platform == 'mac' && (inputs.arch == 'x64' && 'macos-15-intel' || 'macos-15') || inputs.platform == 'win' && 'windows-2025' || (inputs.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04') }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source_commit }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-code-oss
+        with:
+          flavor: ${{ inputs.desktop_flavor }}
+          arch: ${{ inputs.arch }}
+      - name: Archive native resources with executable modes
+        shell: bash
+        run: tar -czf code-oss-runtime.tar.gz -C .code-oss runtime
+      - uses: actions/upload-artifact@v7
+        with:
+          name: code-oss-runtime-${{ inputs.platform }}-${{ inputs.arch }}
+          path: code-oss-runtime.tar.gz
+          retention-days: 7
+          if-no-files-found: error
+
   build:
+    needs: code_oss
     name: Package and qualify
     runs-on: ${{ inputs.runner }}
     timeout-minutes: 75
@@ -175,6 +199,18 @@ jobs:
         uses: ./.github/actions/restore-portable-build
         with:
           source-commit: ${{ inputs.source_commit }}
+
+      - name: Import native workbench resources
+        if: steps.restore_checkpoint.outcome != 'success'
+        uses: actions/download-artifact@v8
+        with:
+          name: code-oss-runtime-${{ inputs.platform }}-${{ inputs.arch }}
+          path: .code-oss
+
+      - name: Restore native resource permissions
+        if: steps.restore_checkpoint.outcome != 'success'
+        shell: bash
+        run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss
 
       - id: build_artifact
         name: Build desktop artifact

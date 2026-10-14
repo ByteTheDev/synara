@@ -1,3 +1,5 @@
+import { useDesktopIdeStore } from "../desktopIdeStore";
+import { DesktopIdeSessionBar } from "../components/DesktopIdeCoordinator";
 import type { ResolvedKeybindingsConfig } from "@synara/contracts";
 import { CHAT_SURFACE_HEADER_HEIGHT_PX } from "@synara/shared/desktopChrome";
 import { useQuery } from "@tanstack/react-query";
@@ -559,6 +561,7 @@ function ChatRouteGlobalShortcuts() {
 }
 
 function ChatRouteLayout() {
+  const ideMode = useDesktopIdeStore((store) => store.state?.mode === "ide");
   const isEditorView = useLocation({
     select: (location) => (location.search as { view?: unknown }).view === "editor",
   });
@@ -571,7 +574,7 @@ function ChatRouteLayout() {
   const railPanelView = useRailShellStore((store) => store.panelView);
   const selectRailPanelItem = useRailShellStore((store) => store.selectPanelItem);
   const railHidesPanel = !railItemShowsPanel(railActiveItem);
-  const resolvedSidebarOpen = isEditorView || railHidesPanel ? false : sidebarOpen;
+  const resolvedSidebarOpen = ideMode || isEditorView || railHidesPanel ? false : sidebarOpen;
   // Toggling the panel open on a full-width route brings back the current panel item.
   const handleSidebarOpenChange = useCallback(
     (open: boolean) => {
@@ -611,14 +614,20 @@ function ChatRouteLayout() {
   // would have gotten inside <Sidebar> (otherwise dragging to resize stops working).
   // `data-sidebar-side` on the provider selects the seam geometry.
   const mainContentShell = (
-    <div ref={setRouteColumn} className="relative flex h-svh min-h-0 min-w-0 flex-1">
+    <div
+      ref={setRouteColumn}
+      className="synara-route-column relative flex h-svh min-h-0 min-w-0 flex-1"
+    >
       <div aria-hidden className="app-rail-header-divider" />
       {isEditorView ? null : (
         <SidebarInstanceProvider side="left" resizable={THREAD_SIDEBAR_RESIZABLE}>
           <SidebarRail placement="content-seam" />
         </SidebarInstanceProvider>
       )}
-      <Outlet />
+      <DesktopIdeSessionBar />
+      <div className="synara-route-content flex min-h-0 min-w-0 flex-1">
+        <Outlet />
+      </div>
     </div>
   );
 
@@ -646,7 +655,7 @@ function ChatRouteLayout() {
             // so the shell keeps no left column.
             sidebarElement
           ) : (
-            <div className="flex min-h-0 shrink-0 flex-col">
+            <div data-synara-agent-navigation className="flex min-h-0 shrink-0 flex-col">
               <AppShellTopStrip />
               <div className="flex min-h-0 flex-1">
                 <div ref={setRailSlot} className="flex shrink-0" />

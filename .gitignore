@@ -51,3 +51,6 @@ __screenshots__/
 
 # Local implementation plans.
 /plans/
+
+# Pinned native Code-OSS source/build resources, never another application.
+/.code-oss/

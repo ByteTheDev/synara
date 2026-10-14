@@ -1,0 +1,136 @@
+[
+  {
+    "path": "src/vs/code/electron-main/main.ts",
+    "sha256": "0c64ef5df64f73a3610aa5e6e6b9e885c2900af95d9664f7e33b081bcb7a1a9c",
+    "edits": [
+      {
+        "before": "import '../../platform/update/common/update.config.contribution.js';",
+        "after": "import '../../platform/update/common/update.config.contribution.js';\nimport { synaraHost } from '../../synara/electron-main/host.js';"
+      },
+      {
+        "before": "class CodeMain {",
+        "after": "export class CodeMain {"
+      },
+      {
+        "before": "private async startup(): Promise<void> {",
+        "after": "async startup(): Promise<void> {"
+      },
+      {
+        "before": "\t\t\tinstantiationService.invokeFunction(this.quit, error);",
+        "after": "\t\t\tif (synaraHost()) { throw error; }\n\t\t\tinstantiationService.invokeFunction(this.quit, error);"
+      },
+      {
+        "before": "private resolveArgs(): NativeParsedArgs {",
+        "after": "private resolveArgs(): NativeParsedArgs {\n\t\tconst host = synaraHost();\n\t\tif (host) { return host.args; }"
+      },
+      {
+        "before": "const code = new CodeMain();\ncode.main();",
+        "after": "if (!synaraHost()) {\n\tconst code = new CodeMain();\n\tcode.main();\n}"
+      }
+    ]
+  },
+  {
+    "path": "src/vs/platform/windows/electron-main/windowImpl.ts",
+    "sha256": "7fe0bcff61331959add6a9856c42e991cc5795eddf21e57ecbee766162d01327",
+    "edits": [
+      {
+        "before": "import electron, { BrowserWindowConstructorOptions, Display } from 'electron';",
+        "after": "import electron, { BrowserWindowConstructorOptions, Display } from 'electron';\nimport { synaraHost } from '../../../synara/electron-main/host.js';"
+      },
+      {
+        "before": "\t\t\tthis.setWin(this._win, options);",
+        "after": "\t\t\tthis.setWin(this._win, options);\n\t\t\tsynaraHost()?.onWindow(this._win);"
+      },
+      {
+        "before": "\t\twin.webContents.focus();",
+        "after": "\t\tif (!synaraHost()?.focus(win)) { win.webContents.focus(); }"
+      }
+    ]
+  },
+  {
+    "path": "src/vs/platform/lifecycle/electron-main/lifecycleMainService.ts",
+    "sha256": "0f7bda64b39145d7c631f6cbd180b93155c3a49296982f3f76e4532c620bb53b",
+    "edits": [
+      {
+        "before": "import electron from 'electron';",
+        "after": "import electron from 'electron';\nimport { synaraHost } from '../../../synara/electron-main/host.js';"
+      },
+      {
+        "before": "\t\tconst beforeQuitListener = () => {",
+        "after": "\t\tconst beforeQuitListener = () => {\n\t\t\tconst host = synaraHost();\n\t\t\tif (host && !host.canQuit()) { return; }"
+      },
+      {
+        "before": "\t\tconst win = assertReturnsDefined(window.win);\n\t\twindowListeners.add(Event.fromNodeEventEmitter<electron.Event>(win, 'close')(e => {",
+        "after": "\t\tconst win = assertReturnsDefined(window.win);\n\t\tsynaraHost()?.onLifecycle(win, {\n\t\t\tcheck: () => window.isReady ? this.onBeforeUnloadWindowInRenderer(window, UnloadReason.QUIT) : Promise.resolve(true),\n\t\t\tunload: () => this.onWillUnloadWindowInRenderer(window, UnloadReason.QUIT),\n\t\t\treload: () => window.reload()\n\t\t});\n\t\twindowListeners.add(Event.fromNodeEventEmitter<electron.Event>(win, 'close')(e => {\n\t\t\tconst host = synaraHost();\n\t\t\tif (host?.isPrimary(window.id) && !host.canQuit()) { e.preventDefault(); return; }\n\t\t\tif (host?.isPrepared(window.id)) { return; }"
+      }
+    ]
+  },
+  {
+    "path": "src/vs/platform/menubar/electron-main/menubar.ts",
+    "sha256": "556a481c44b160aec7740465a1d8aceb1d2954092b9dd30557cbbf6b2951df8b",
+    "edits": [
+      {
+        "before": "import { app, BrowserWindow, BaseWindow, KeyboardEvent, Menu, MenuItem, MenuItemConstructorOptions, WebContents } from 'electron';",
+        "after": "import { app, BrowserWindow, BaseWindow, KeyboardEvent, Menu, MenuItem, MenuItemConstructorOptions, WebContents } from 'electron';\nimport { synaraHost } from '../../../synara/electron-main/host.js';"
+      },
+      {
+        "before": "\t\tMenu.setApplicationMenu(menu);",
+        "after": "\t\tconst host = synaraHost();\n\t\tif (host) { host.setMenu(menu); } else { Menu.setApplicationMenu(menu); }"
+      }
+    ]
+  },
+  {
+    "path": "src/vs/workbench/workbench.desktop.main.ts",
+    "sha256": "859a4d025fc3779baa35e97bf499e267c2214f8e7193a495b9ad4a5b80911688",
+    "edits": [
+      {
+        "before": "export { main } from './electron-browser/desktop.main.js';",
+        "after": "import '../synara/electron-browser/workbench.js';\n\nexport { main } from './electron-browser/desktop.main.js';"
+      }
+    ]
+  },
+  {
+    "path": "src/vs/code/electron-main/app.ts",
+    "sha256": "8b3e9f1b5efdddca4913a609ffc453acae2cff80d9fea4d471397100ed2f72c3",
+    "edits": [
+      {
+        "before": "import { app, BrowserWindow, desktopCapturer, globalShortcut, powerMonitor, protocol, screen as electronScreen, session, Session, systemPreferences, WebFrameMain } from 'electron';",
+        "after": "import { app, BrowserWindow, desktopCapturer, globalShortcut, powerMonitor, protocol, screen as electronScreen, session, Session, systemPreferences, WebFrameMain } from 'electron';\nimport { synaraHost } from '../../synara/electron-main/host.js';"
+      },
+      {
+        "before": "session.defaultSession.setPermissionRequestHandler((webContents, permission, callback, details) => {",
+        "after": "session.defaultSession.setPermissionRequestHandler((webContents, permission, callback, details) => {\n\t\t\tconst host = synaraHost();\n\t\t\tif (host?.isAgentContents(webContents)) { return host.requestAgentPermission(webContents, permission, callback, details); }"
+      },
+      {
+        "before": "session.defaultSession.setPermissionCheckHandler((webContents, permission, _origin, details) => {",
+        "after": "session.defaultSession.setPermissionCheckHandler((webContents, permission, _origin, details) => {\n\t\t\tconst host = synaraHost();\n\t\t\tif (host?.isAgentContents(webContents)) { return host.checkAgentPermission(webContents, permission, _origin, details); }"
+      },
+      {
+        "before": "const win = frame ? BrowserWindow.getAllWindows().find(w => w.webContents.mainFrame === frame) : undefined;",
+        "after": "const win = frame ? BrowserWindow.getAllWindows().find(w => w.webContents.mainFrame === frame) : undefined;\n\t\t\t\tif (synaraHost() && (!win || !synaraHost()!.ownsNativeContents(win.webContents))) { callback({}); return; }"
+      },
+      {
+        "before": "app.on('activate', async (event, hasVisibleWindows) => {",
+        "after": "app.on('activate', async (event, hasVisibleWindows) => {\n\t\t\tif (synaraHost()) { return; } // Synara owns dock activation and its retained Agent view."
+      },
+      {
+        "before": "contents.on('will-navigate', event => {",
+        "after": "contents.on('will-navigate', event => {\n\t\t\t\tconst host = synaraHost();\n\t\t\t\tif (host && !host.ownsNativeContents(contents) && !this.auxiliaryWindowsMainService?.getWindowByWebContents(contents) && !contents.getURL().startsWith(`${Schemas.vscodeWebview}://`)) { return; }"
+      },
+      {
+        "before": "contents.setWindowOpenHandler(details => {",
+        "after": "contents.setWindowOpenHandler(details => {\n\t\t\t\tconst host = synaraHost();\n\t\t\t\tif (host && !host.ownsNativeContents(contents) && !this.auxiliaryWindowsMainService?.getWindowByWebContents(contents)) { return { action: 'deny' }; }"
+      }
+    ]
+  },
+  {
+    "path": "build/lib/esbuild.ts",
+    "sha256": "589fb68485e6dd03f95ee95bdee00dea9c74ff6ff669df546718e443ebff5eef",
+    "edits": [
+      {
+        "before": "'main', 'mainImpl', 'cli', 'bootstrap-fork'",
+        "after": "'main', 'mainImpl', 'cli', 'bootstrap-fork', 'synara'"
+      }
+    ]
+  }
+]

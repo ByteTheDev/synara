@@ -3754,3 +3754,25 @@ diffs-container {
 [data-dock-maximized="true"] .editor-markdown-preview__body {
   max-width: 1120px;
 }
+
+/* Native IDE docking retains the complete Agent renderer and its mounted state.
+   Only the dock presentation changes; native Code-OSS owns its surrounding IDE. */
+:root[data-synara-mode="ide"] [data-synara-agent-navigation] {
+  display: none;
+}
+:root[data-synara-mode="ide"] .synara-route-column {
+  flex-direction: column;
+}
+:root[data-synara-mode="ide"] .synara-route-content {
+  overflow: hidden;
+}
+:root[data-synara-mode="ide"] .synara-route-content :where(.h-svh, .h-screen) {
+  height: 100%;
+}
+:root[data-synara-mode="ide"] [data-browser-panel="true"] {
+  display: none;
+}
+
+:root[data-synara-mode="ide"] .synara-agent-caption-controls {
+  display: none;
+}

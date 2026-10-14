@@ -129,6 +129,27 @@ function recordBrowserActivity(activity: DesktopDiagnosticActivity): void {
 }
 
 contextBridge.exposeInMainWorld("desktopBridge", {
+  ide: {
+    getState: () => ipcRenderer.invoke(IPC.ide.state),
+    setMode: (mode) => ipcRenderer.invoke(IPC.ide.mode, mode),
+    setScope: (scope) => ipcRenderer.invoke(IPC.ide.scope, scope),
+    setAttention: (count) => ipcRenderer.invoke(IPC.ide.attention, count),
+    prepareQuit: (requestId) => ipcRenderer.invoke(IPC.ide.prepareQuit, requestId),
+    onState: (listener) => {
+      const receive = (_event: Electron.IpcRendererEvent, state: Parameters<typeof listener>[0]) =>
+        listener(state);
+      ipcRenderer.on(IPC.ide.state, receive);
+      return () => ipcRenderer.removeListener(IPC.ide.state, receive);
+    },
+    onContext: (listener) => {
+      const receive = (
+        _event: Electron.IpcRendererEvent,
+        context: Parameters<typeof listener>[0],
+      ) => listener(context);
+      ipcRenderer.on(IPC.ide.context, receive);
+      return () => ipcRenderer.removeListener(IPC.ide.context, receive);
+    },
+  },
   ...(betaDiagnosticsBridge ? { betaDiagnostics: betaDiagnosticsBridge } : {}),
   getWsUrl: getDesktopWsUrl,
   // Absolute path for OS-dropped File objects (folders with spaces/parens, etc.).

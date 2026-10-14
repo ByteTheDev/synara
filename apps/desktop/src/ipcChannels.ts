@@ -3,6 +3,14 @@
 // Layer: Desktop IPC contract
 
 export const DESKTOP_IPC_CHANNELS = {
+  ide: {
+    state: "synara:ide:state",
+    mode: "synara:ide:mode",
+    scope: "synara:ide:scope",
+    attention: "synara:ide:attention",
+    context: "synara:ide:context",
+    prepareQuit: "synara:ide:prepare-quit",
+  },
   pickFolder: "desktop:pick-folder",
   saveFile: "desktop:save-file",
   confirm: "desktop:confirm",

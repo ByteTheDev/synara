@@ -1,3 +1,4 @@
+import { DesktopModeSwitch } from "./DesktopIdeCoordinator";
 // FILE: AppShellTopStrip.tsx
 // Purpose: The rail layout's window-chrome strip over the rail and panel: drag region,
 //          traffic-light gutter, and the leading chrome cluster (sidebar toggle + route
@@ -35,6 +36,7 @@ export function AppShellTopStrip() {
         )}
       >
         {open ? <SidebarLeadingControlsSlot /> : null}
+        <DesktopModeSwitch compact={!open} />
       </div>
     </header>
   );

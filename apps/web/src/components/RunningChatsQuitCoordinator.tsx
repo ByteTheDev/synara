@@ -27,7 +27,7 @@ export function RunningChatsQuitCoordinator() {
   const pendingRequestIdRef = useRef<string | null>(null);
 
   const settle = useCallback(
-    (decision: RunningChatsQuitDecision | null) => {
+    async (decision: RunningChatsQuitDecision | null) => {
       const requestId = pendingRequestIdRef.current;
       if (!requestId) {
         return;
@@ -52,6 +52,29 @@ export function RunningChatsQuitCoordinator() {
         return;
       }
 
+      // A native editor veto must happen BEFORE interrupting any provider. The
+      // main process validates this request ID against its pending quit handshake.
+      const ide = window.desktopBridge?.ide;
+      if (ide) {
+        setQuitting(true);
+        try {
+          if (
+            (await ide.getState()).status !== "unavailable" &&
+            !(await ide.prepareQuit(requestId))
+          ) {
+            reply(false);
+            setQuitting(false);
+            setChats(null);
+            return;
+          }
+        } catch (error) {
+          console.error("Native editor quit preparation failed", error);
+          reply(false);
+          setQuitting(false);
+          setChats(null);
+          return;
+        }
+      }
       const stopped = stopRunningChatsForQuit({
         chats: chatsToStop,
         dispatchInterrupt: (threadId) => {

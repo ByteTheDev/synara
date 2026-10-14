@@ -1,3 +1,4 @@
+import { DesktopIdeCoordinator } from "../components/DesktopIdeCoordinator";
 import { ServerBusyIndicator } from "../components/ServerBusyIndicator";
 import { EditorDirtyRouteGuard } from "../components/EditorDirtyRouteGuard";
 import {
@@ -317,7 +318,9 @@ function RootRouteView() {
   // swallows the click as a window drag (the buttons render but do nothing). Rendering
   // it last in document order guarantees that subtraction wins. (z above dialogs/toasts
   // so it also stays clickable while a modal is open.)
-  const desktopWindowControls = <DesktopWindowControls className="fixed top-0 right-0 z-[250]" />;
+  const desktopWindowControls = (
+    <DesktopWindowControls className="synara-agent-caption-controls fixed top-0 right-0 z-[250]" />
+  );
   const desktopChrome = (
     <>
       <RunningChatsQuitCoordinator />
@@ -377,6 +380,7 @@ function RootRouteView() {
           <GlobalProjectImportDialog />
           <AppSnapCoordinator />
           <DesktopProjectBootstrap />
+          <DesktopIdeCoordinator />
           <Outlet />
         </AnchoredToastProvider>
       </ToastProvider>

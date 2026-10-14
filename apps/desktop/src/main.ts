@@ -1,4 +1,6 @@
 import "./httpRuntime";
+import { CodeOssHost } from "./codeOssHost";
+import { desktopRenderer, optionalDesktopRenderer } from "./desktopRenderer";
 import { showDiagnosticStartupDialog } from "./startupDiagnosticDialog";
 import { BackendIssueDetector } from "./backendIssueDetector";
 import { attachAppSubframeNavigationGuard } from "./subframeNavigationGuard";
@@ -433,6 +435,20 @@ const DESKTOP_BROWSER_HOST_CAPABILITY_FD = 3;
 // for the same lock even when they use the same Electron executable.
 const userDataPath = resolveUserDataPath();
 app.setPath("userData", userDataPath);
+const codeOss = new CodeOssHost({
+  runtimePath:
+    app.isPackaged && !isSourceDesktopBuild
+      ? Path.join(process.resourcesPath, "code-oss")
+      : Path.resolve(
+          process.env.SYNARA_CODE_OSS_RUNTIME_DIR ?? Path.join(ROOT_DIR, ".code-oss/runtime"),
+        ),
+  profilePath: userDataPath,
+  flavor: desktopFlavor,
+  preloadPath: Path.join(__dirname, "preload.js"),
+  canQuit: () => desktopShutdownComplete || isUpdaterQuitAndInstallInFlight,
+  isQuitRequestActive: (requestId) => runningChatsQuitGuard.matchesPendingRequest(requestId),
+  onMode: (mode) => browserManager.setWorkbenchMode(mode === "ide"),
+});
 
 // Beta-only diagnostics: constructed solely when the baked build flavor is
 // "beta", so production binaries never run a collection path. The payload
@@ -632,7 +648,7 @@ const browserManager = new DesktopBrowserManager({
       return true;
     }
 
-    const target = resolveMenuTargetWindow()?.webContents;
+    const target = optionalDesktopRenderer(resolveMenuTargetWindow());
     if (!target) return false;
     return (
       handleDesktopPhysicalZoomShortcut(event, input, target) ||
@@ -645,15 +661,15 @@ let appSnapManager: DesktopAppSnapManager | null = null;
 let configuredUpdaterCacheDirName: string | null = null;
 
 browserManager.subscribe((state) => {
-  sendBrowserState(mainWindow?.webContents, state);
+  sendBrowserState(optionalDesktopRenderer(mainWindow), state);
 });
 
 browserManager.subscribeCopyLink((event) => {
-  sendBrowserCopyLink(mainWindow?.webContents, event);
+  sendBrowserCopyLink(optionalDesktopRenderer(mainWindow), event);
 });
 
 browserManager.subscribeAnnotationEvents((event) => {
-  sendBrowserAnnotationEvent(mainWindow?.webContents, event);
+  sendBrowserAnnotationEvent(optionalDesktopRenderer(mainWindow), event);
 });
 
 function startBrowserPerformanceLogging(): void {
@@ -694,7 +710,7 @@ async function ensureBrowserHostPipeServer(): Promise<void> {
     capability: DESKTOP_BROWSER_HOST_CAPABILITY,
     requestOpenPanel: (threadId) => {
       if (!threadId) return;
-      mainWindow?.webContents.send(IPC.browser.requestOpenPanel, { threadId });
+      optionalDesktopRenderer(mainWindow)?.send(IPC.browser.requestOpenPanel, { threadId });
     },
   });
   await server.start();
@@ -795,7 +811,7 @@ function getDesktopWindowState(window: BrowserWindow): {
 
 function emitDesktopWindowState(window: BrowserWindow | null = mainWindow): void {
   if (!window || window.isDestroyed()) return;
-  window.webContents.send(IPC.windowState, getDesktopWindowState(window));
+  desktopRenderer(window).send(IPC.windowState, getDesktopWindowState(window));
 }
 
 function isSaveFileInput(input: unknown): input is {
@@ -888,7 +904,10 @@ function ensureInitialBackendWindowOpen(baseUrl: string): void {
   openInitialBackendWindow({
     isDevelopment,
     baseUrl,
-    hasExistingWindow: () => (mainWindow ?? BrowserWindow.getAllWindows()[0] ?? null) !== null,
+    hasExistingWindow: () =>
+      codeOss.enabled
+        ? mainWindow !== null
+        : (mainWindow ?? BrowserWindow.getAllWindows()[0] ?? null) !== null,
     createWindow: () => {
       mainWindow = createWindow();
     },
@@ -1105,6 +1124,7 @@ function replayDeferredDesktopQuitAfterUpdaterSettles(): boolean {
 }
 
 function recoverDesktopAfterUpdaterInstallFailure(): void {
+  codeOss.restoreAfterFailedShutdown();
   if (replayDeferredDesktopQuitAfterUpdaterSettles()) return;
 
   // A second updater failure signal can race the replay above (for example,
@@ -1719,15 +1739,15 @@ function dispatchMenuAction(action: string): void {
 
   const send = () => {
     if (targetWindow.isDestroyed()) return;
-    targetWindow.webContents.send(IPC.menuAction, action);
+    desktopRenderer(targetWindow).send(IPC.menuAction, action);
     if (!targetWindow.isVisible()) {
       targetWindow.show();
     }
     targetWindow.focus();
   };
 
-  if (targetWindow.webContents.isLoadingMainFrame()) {
-    targetWindow.webContents.once("did-finish-load", send);
+  if (desktopRenderer(targetWindow).isLoadingMainFrame()) {
+    desktopRenderer(targetWindow).once("did-finish-load", send);
     return;
   }
 
@@ -1744,9 +1764,9 @@ function sendDesktopZoomFactor(webContents: Electron.WebContents): void {
 }
 
 function attachDesktopZoomFactorSync(window: BrowserWindow): void {
-  const notify = () => sendDesktopZoomFactor(window.webContents);
-  window.webContents.on("zoom-changed", notify);
-  window.webContents.on("did-finish-load", notify);
+  const notify = () => sendDesktopZoomFactor(desktopRenderer(window));
+  desktopRenderer(window).on("zoom-changed", notify);
+  desktopRenderer(window).on("did-finish-load", notify);
 }
 
 function adjustWebContentsZoom(webContents: Electron.WebContents, multiplier: number): void {
@@ -1773,9 +1793,9 @@ function handleDesktopPhysicalZoomShortcut(
 }
 
 function attachDesktopPhysicalZoomShortcuts(window: BrowserWindow): void {
-  window.webContents.on("before-input-event", (event, input) => {
-    if (handleDesktopPhysicalZoomShortcut(event, input, window.webContents)) return;
-    handleDesktopZoomShortcut(event, input, window.webContents);
+  desktopRenderer(window).on("before-input-event", (event, input) => {
+    if (handleDesktopPhysicalZoomShortcut(event, input, desktopRenderer(window))) return;
+    handleDesktopZoomShortcut(event, input, desktopRenderer(window));
   });
 }
 
@@ -1804,11 +1824,11 @@ function handleDesktopZoomShortcut(
 }
 
 function resetWindowZoomFromMenu(): void {
-  resolveMenuTargetWindow()?.webContents.setZoomFactor(1);
+  optionalDesktopRenderer(resolveMenuTargetWindow())?.setZoomFactor(1);
 }
 
 function adjustWindowZoomFromMenu(multiplier: number): void {
-  const webContents = resolveMenuTargetWindow()?.webContents;
+  const webContents = optionalDesktopRenderer(resolveMenuTargetWindow());
   if (!webContents) return;
   adjustWebContentsZoom(webContents, multiplier);
 }
@@ -2007,7 +2027,7 @@ function configureApplicationMenu(): void {
     },
   );
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  codeOss.setAgentMenu(Menu.buildFromTemplate(template));
 }
 
 function resolveResourcePath(fileName: string): string | null {
@@ -2103,8 +2123,8 @@ function canSendAppSnapEvent(window: BrowserWindow | null): window is BrowserWin
   return Boolean(
     window &&
     !window.isDestroyed() &&
-    !window.webContents.isDestroyed() &&
-    !window.webContents.isLoadingMainFrame(),
+    !desktopRenderer(window).isDestroyed() &&
+    !desktopRenderer(window).isLoadingMainFrame(),
   );
 }
 
@@ -2113,7 +2133,7 @@ function sendAppSnapEvent(
   send: (webContents: BrowserWindow["webContents"]) => void,
 ): boolean {
   if (!canSendAppSnapEvent(window)) return false;
-  send(window.webContents);
+  send(desktopRenderer(window));
   return true;
 }
 
@@ -2162,8 +2182,8 @@ function initializeDesktopAppSnap(): void {
       // The renderer is still loading: replay the event once the main frame is
       // ready. The renderer dedupes by capture id, and the capture also stays
       // in the pending queue as a fallback for the next mount.
-      if (window && !window.isDestroyed() && !window.webContents.isDestroyed()) {
-        window.webContents.once("did-finish-load", () => {
+      if (window && !window.isDestroyed() && !desktopRenderer(window).isDestroyed()) {
+        desktopRenderer(window).once("did-finish-load", () => {
           sendAppSnapEvent(window, (webContents) => sendAppSnapCaptured(webContents, capture));
         });
       }
@@ -2265,7 +2285,7 @@ function showDesktopNotification(input: {
       return;
     }
     if (threadId.length > 0) {
-      mainWindow.webContents.send(IPC.menuAction, `notification-open-thread:${threadId}`);
+      desktopRenderer(mainWindow).send(IPC.menuAction, `notification-open-thread:${threadId}`);
     }
   });
 
@@ -2928,7 +2948,7 @@ function isExplicitUpdateCheckReason(reason: string): boolean {
 function emitUpdateState(): void {
   for (const window of BrowserWindow.getAllWindows()) {
     if (window.isDestroyed()) continue;
-    window.webContents.send(IPC.updateState, updateState);
+    desktopRenderer(window).send(IPC.updateState, updateState);
   }
 }
 
@@ -3572,6 +3592,7 @@ async function runDownloadedUpdateInstall(
   let markerWritten = false;
   let artifactInvalidated = false;
   try {
+    if (!(await codeOss.permitShutdown())) return { accepted: false, completed: false };
     isQuitting = true;
     clearUpdatePollTimer();
     await stopBackendAndWaitForExit();
@@ -3997,8 +4018,8 @@ async function startCuaHost(): Promise<void> {
     frameTap: new ComputerFrameTap({
       helperPath: resolveAppSnapHelperPath(),
       send: (channel, frame) => {
-        if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.webContents.isDestroyed()) {
-          mainWindow.webContents.send(channel, frame);
+        if (mainWindow && !mainWindow.isDestroyed() && !desktopRenderer(mainWindow).isDestroyed()) {
+          desktopRenderer(mainWindow).send(channel, frame);
         }
       },
       onError: (error) => safeConsoleError("[desktop] computer frame tap failed", error),
@@ -4875,8 +4896,8 @@ function isMainRendererAvailable(): boolean {
   return Boolean(
     mainWindow &&
     !mainWindow.isDestroyed() &&
-    !mainWindow.webContents.isDestroyed() &&
-    !mainWindow.webContents.isCrashed(),
+    !desktopRenderer(mainWindow).isDestroyed() &&
+    !desktopRenderer(mainWindow).isCrashed(),
   );
 }
 
@@ -4916,12 +4937,14 @@ async function confirmRunningChatsThenQuit(reason: string): Promise<void> {
       }
       window.show();
       window.focus();
-      window.webContents.send(IPC.quitConfirmationRequest, request);
+      codeOss.showQuitDialog();
+      desktopRenderer(window).send(IPC.quitConfirmationRequest, request);
     },
     isRendererAvailable: isMainRendererAvailable,
     presentation,
   });
   if (!allowed) {
+    codeOss.restoreAfterFailedShutdown();
     writeDesktopLogHeader(`${reason} stayed because chats are still running`);
     return;
   }
@@ -4976,14 +4999,35 @@ function requestGracefulAppQuit(reason: string): void {
     return;
   }
 
-  void runAfterDesktopShutdown(shutdownDesktopRuntime(reason), () => app.quit()).catch(
-    (error: unknown) => {
-      const message = formatErrorMessage(error);
-      writeDesktopLogHeader(`${reason} shutdown failed message=${message}`);
-      console.warn(`[desktop] Shutdown failed during ${reason}: ${message}`);
-      app.exit(1);
-    },
-  );
+  void (async () => {
+    // A failed/vetoed native save must not reach the emergency exit path below.
+    // No Synara backend teardown has happened at this point.
+    try {
+      if (!(await codeOss.permitShutdown())) {
+        runningChatsQuitGuard.resetAllowedQuit();
+        return;
+      }
+    } catch (error) {
+      codeOss.restoreAfterFailedShutdown();
+      runningChatsQuitGuard.resetAllowedQuit();
+      console.error(
+        "[desktop] Native editor quit preparation failed; keeping Synara running",
+        error,
+      );
+      void dialog.showMessageBox({
+        type: "error",
+        message: "Synara could not safely close the native editors.",
+        detail: "The application is still running. Save your work before trying again.",
+      });
+      return;
+    }
+    await runAfterDesktopShutdown(shutdownDesktopRuntime(reason), () => app.quit());
+  })().catch((error: unknown) => {
+    const message = formatErrorMessage(error);
+    writeDesktopLogHeader(`${reason} shutdown failed message=${message}`);
+    console.warn(`[desktop] Shutdown failed during ${reason}: ${message}`);
+    app.exit(1);
+  });
 }
 
 function registerIpcHandlers(): void {
@@ -4993,7 +5037,7 @@ function registerIpcHandlers(): void {
   ipcMain.on(IPC.betaDiagnostics.enabled, (event: IpcMainEvent) => {
     event.returnValue = Boolean(
       betaDiagnostics &&
-      event.sender === mainWindow?.webContents &&
+      event.sender === optionalDesktopRenderer(mainWindow) &&
       event.senderFrame === event.sender.mainFrame,
     );
   });
@@ -5099,7 +5143,10 @@ function registerIpcHandlers(): void {
   ipcMain.removeHandler(IPC.setWindowMaterial);
   ipcMain.handle(IPC.setWindowMaterial, (event, rawInput: unknown) => {
     const input = parseDesktopWindowMaterial(rawInput);
-    const window = BrowserWindow.fromWebContents(event.sender);
+    const window =
+      event.sender === optionalDesktopRenderer(mainWindow)
+        ? mainWindow
+        : BrowserWindow.fromWebContents(event.sender);
     if (process.platform !== "darwin" || !input || !window) return false;
     return applyWindowMaterial(window, input);
   });
@@ -5249,7 +5296,7 @@ function registerIpcHandlers(): void {
       window.maximize();
     }
     const state = getDesktopWindowState(window);
-    window.webContents.send(IPC.windowState, state);
+    desktopRenderer(window).send(IPC.windowState, state);
     return state;
   });
 
@@ -5510,7 +5557,7 @@ function registerIpcHandlers(): void {
     browserManager,
     browserVault,
     () => {
-      mainWindow?.webContents.send(IPC.browser.vault.changed);
+      optionalDesktopRenderer(mainWindow)?.send(IPC.browser.vault.changed);
     },
     new BrowserCookieImport(
       Path.join(BASE_DIR, "browser-engine"),
@@ -5634,35 +5681,39 @@ function createWindow(): BrowserWindow {
         minimumHeight: 620,
       })
     : { width: 1100, height: 780 };
-  const window = new BrowserWindow({
-    ...restoredBounds,
-    minWidth: 840,
-    minHeight: 620,
-    show: false,
-    autoHideMenuBar: true,
-    ...getIconOption(),
-    title: APP_DISPLAY_NAME,
-    ...getTitleBarOptions(),
-    ...getWindowMaterialOptions(),
-    webPreferences: {
-      preload: Path.join(__dirname, "preload.js"),
-      contextIsolation: true,
-      nodeIntegration: false,
-      sandbox: true,
-      webviewTag: true,
-      // Let Chromium throttle renderer timers/rAF when the window is hidden.
-      backgroundThrottling: true,
-    },
-  });
+  const nativeWindow = codeOss.getWindow();
+  const window =
+    nativeWindow ??
+    new BrowserWindow({
+      ...restoredBounds,
+      minWidth: 840,
+      minHeight: 620,
+      show: false,
+      autoHideMenuBar: true,
+      ...getIconOption(),
+      title: APP_DISPLAY_NAME,
+      ...getTitleBarOptions(),
+      ...getWindowMaterialOptions(),
+      webPreferences: {
+        preload: Path.join(__dirname, "preload.js"),
+        contextIsolation: true,
+        nodeIntegration: false,
+        sandbox: true,
+        webviewTag: true,
+        // Let Chromium throttle renderer timers/rAF when the window is hidden.
+        backgroundThrottling: true,
+      },
+    });
+  if (nativeWindow) window.setBounds(restoredBounds);
   browserManager.setWindow(window);
   attachDesktopZoomFactorSync(window);
   attachRendererCrashRecovery(window);
   attachDesktopPhysicalZoomShortcuts(window);
   if (betaDiagnostics) {
-    attachBetaRendererDiagnostics(window.webContents, betaDiagnostics);
+    attachBetaRendererDiagnostics(desktopRenderer(window), betaDiagnostics);
   }
 
-  window.webContents.on("will-attach-webview", (event, webPreferences, params) => {
+  desktopRenderer(window).on("will-attach-webview", (event, webPreferences, params) => {
     const partition = params.partition;
     if (
       partition === undefined ||
@@ -5677,7 +5728,7 @@ function createWindow(): BrowserWindow {
     }
   });
 
-  window.webContents.on("context-menu", (event, params) => {
+  desktopRenderer(window).on("context-menu", (event, params) => {
     event.preventDefault();
 
     const menuTemplate: MenuItemConstructorOptions[] = [];
@@ -5686,7 +5737,7 @@ function createWindow(): BrowserWindow {
       for (const suggestion of params.dictionarySuggestions.slice(0, 5)) {
         menuTemplate.push({
           label: suggestion,
-          click: () => window.webContents.replaceMisspelling(suggestion),
+          click: () => desktopRenderer(window).replaceMisspelling(suggestion),
         });
       }
       if (params.dictionarySuggestions.length === 0) {
@@ -5698,7 +5749,7 @@ function createWindow(): BrowserWindow {
     if (params.mediaType === "image") {
       menuTemplate.push({
         label: "Copy Image",
-        click: () => window.webContents.copyImageAt(params.x, params.y),
+        click: () => desktopRenderer(window).copyImageAt(params.x, params.y),
       });
       menuTemplate.push({ type: "separator" });
     }
@@ -5713,24 +5764,24 @@ function createWindow(): BrowserWindow {
     Menu.buildFromTemplate(menuTemplate).popup({ window });
   });
 
-  window.webContents.setWindowOpenHandler(({ url }) => {
+  desktopRenderer(window).setWindowOpenHandler(({ url }) => {
     const externalUrl = getSafeExternalUrl(url);
     if (externalUrl) {
       void shell.openExternal(externalUrl);
     }
     return { action: "deny" };
   });
-  attachAppSubframeNavigationGuard(window.webContents);
+  attachAppSubframeNavigationGuard(desktopRenderer(window));
 
   window.on("page-title-updated", (event) => {
     event.preventDefault();
     window.setTitle(APP_DISPLAY_NAME);
   });
-  window.webContents.on("did-finish-load", () => {
+  desktopRenderer(window).on("did-finish-load", () => {
     window.setTitle(APP_DISPLAY_NAME);
     emitUpdateState();
   });
-  window.once("ready-to-show", () => {
+  const showWindow = () => {
     // Preserve the original first-launch behavior, then respect the state saved
     // by subsequent closes. Normal bounds are restored before maximizing so the
     // native restore control returns to the user's last windowed size.
@@ -5742,13 +5793,15 @@ function createWindow(): BrowserWindow {
       void applyPersistedDesktopAppIcon(window);
     }
     emitDesktopWindowState(window);
-  });
+  };
+  if (nativeWindow) desktopRenderer(window).once("did-finish-load", showWindow);
+  else window.once("ready-to-show", showWindow);
 
   window.on("maximize", () => emitDesktopWindowState(window));
   window.on("unmaximize", () => emitDesktopWindowState(window));
   window.on("enter-full-screen", () => emitDesktopWindowState(window));
   window.on("leave-full-screen", () => emitDesktopWindowState(window));
-  if (process.platform === "darwin") {
+  if (process.platform === "darwin" && !nativeWindow) {
     guardDesktopWindowClose(
       window,
       `Close the ${APP_DISPLAY_NAME} window?`,
@@ -5759,7 +5812,27 @@ function createWindow(): BrowserWindow {
         !isUpdaterInstallPreparing,
     );
   }
+  let macClosePending = false;
   window.on("close", (event) => {
+    if (
+      nativeWindow &&
+      process.platform === "darwin" &&
+      !desktopShutdownComplete &&
+      !isUpdaterQuitAndInstallInFlight
+    ) {
+      event.preventDefault();
+      if (!macClosePending) {
+        macClosePending = true;
+        void showDesktopConfirmDialog(`Close the ${APP_DISPLAY_NAME} window?`, window)
+          .then((allowed) => {
+            if (allowed && !window.isDestroyed()) window.hide();
+          })
+          .finally(() => {
+            macClosePending = false;
+          });
+      }
+      return;
+    }
     try {
       writeDesktopWindowState(DESKTOP_WINDOW_STATE_PATH, {
         version: 1,
@@ -5793,10 +5866,10 @@ function createWindow(): BrowserWindow {
   });
 
   if (isDevelopment) {
-    void window.loadURL(process.env.VITE_DEV_SERVER_URL as string);
-    window.webContents.openDevTools({ mode: "detach" });
+    void desktopRenderer(window).loadURL(process.env.VITE_DEV_SERVER_URL as string);
+    desktopRenderer(window).openDevTools({ mode: "detach" });
   } else {
-    void window.loadURL(desktopIdentity.entryUrl);
+    void desktopRenderer(window).loadURL(desktopIdentity.entryUrl);
   }
 
   if (process.platform === "linux" || process.platform === "win32") {
@@ -5833,7 +5906,7 @@ function attachRendererCrashRecovery(window: BrowserWindow): void {
     reloadTimer = null;
   };
 
-  window.webContents.on("render-process-gone", (_event, details) => {
+  desktopRenderer(window).on("render-process-gone", (_event, details) => {
     const description = `reason=${details.reason} exitCode=${details.exitCode}`;
     writeDesktopLogHeader(`renderer process gone ${description}`);
     safeConsoleError(`[desktop] renderer process gone (${description})`);
@@ -5874,7 +5947,7 @@ function attachRendererCrashRecovery(window: BrowserWindow): void {
         reloadTimer = setTimeout(() => {
           reloadTimer = null;
           if (isQuitting || window.isDestroyed()) return;
-          window.webContents.reload();
+          desktopRenderer(window).reload();
         }, response.delayMs);
         return;
       case "prompt":
@@ -5889,14 +5962,14 @@ function attachRendererCrashRecovery(window: BrowserWindow): void {
   // A hung renderer is not a crash — Chromium keeps the process alive — so it never
   // reaches the listener above. Logging both edges makes a freeze that the user
   // reports as "the app died" distinguishable from an actual crash in the same log.
-  window.webContents.on("unresponsive", () => {
+  desktopRenderer(window).on("unresponsive", () => {
     writeDesktopLogHeader("renderer unresponsive");
   });
-  window.webContents.on("responsive", () => {
+  desktopRenderer(window).on("responsive", () => {
     writeDesktopLogHeader("renderer responsive");
   });
 
-  window.webContents.on("did-start-loading", () => {
+  desktopRenderer(window).on("did-start-loading", () => {
     runningChatsQuitGuard.cancelPending();
   });
 
@@ -5948,7 +6021,7 @@ function presentRendererCrashRecovery(
         // A user-driven reload is a fresh start, not a continuation of the streak.
         rendererCrashPolicy.reset();
         if (!window.isDestroyed()) {
-          window.webContents.reload();
+          desktopRenderer(window).reload();
         }
         return;
       }
@@ -5966,7 +6039,7 @@ function presentRendererCrashRecovery(
 
 function configureMediaPermissions(): void {
   const trustedMainRenderer = () => {
-    const renderer = mainWindow?.webContents ?? null;
+    const renderer = optionalDesktopRenderer(mainWindow) ?? null;
     return renderer && !renderer.isDestroyed() ? renderer : null;
   };
   const permissionTargets = [
@@ -5985,7 +6058,12 @@ function configureMediaPermissions(): void {
   for (const { targetSession, trustedRequester } of permissionTargets) {
     if (!targetSession) continue;
 
-    targetSession.setPermissionCheckHandler((webContents, permission, origin, details) => {
+    const check: NonNullable<Parameters<typeof targetSession.setPermissionCheckHandler>[0]> = (
+      webContents,
+      permission,
+      origin,
+      details,
+    ) => {
       if (isClipboardWritePermission(webContents, permission, details, origin)) return true;
       if (
         permission !== "media" ||
@@ -5997,9 +6075,14 @@ function configureMediaPermissions(): void {
       return process.platform === "darwin"
         ? systemPreferences.getMediaAccessStatus("microphone") === "granted"
         : true;
-    });
+    };
 
-    targetSession.setPermissionRequestHandler((webContents, permission, callback, details) => {
+    const request: NonNullable<Parameters<typeof targetSession.setPermissionRequestHandler>[0]> = (
+      webContents,
+      permission,
+      callback,
+      details,
+    ) => {
       if (isClipboardWritePermission(webContents, permission, details)) {
         callback(true);
         return;
@@ -6026,7 +6109,10 @@ function configureMediaPermissions(): void {
       }
 
       callback(true);
-    });
+    };
+    targetSession.setPermissionCheckHandler(check);
+    targetSession.setPermissionRequestHandler(request);
+    if (targetSession === session.defaultSession) codeOss.setAgentPermissions(check, request);
   }
 }
 
@@ -6102,6 +6188,7 @@ async function bootstrap(): Promise<void> {
   }
 
   registerIpcHandlers();
+  await codeOss.start();
   writeDesktopLogHeader("bootstrap ipc handlers registered");
   try {
     await ensureBrowserHostPipeServer();
