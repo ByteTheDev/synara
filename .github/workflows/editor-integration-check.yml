@@ -1,4 +1,4 @@
-# Temporary branch-only provisioning. No releases or repository-ref writes.
+# Temporary branch-only dependency provisioning. No releases or ref writes.
 name: Editor integration check
 
 on:
@@ -10,65 +10,34 @@ on:
 
 permissions:
   contents: read
-  actions: read
 
 concurrency:
   group: editor-integration-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  dependencies:
-    name: Split the verified dependency export into bounded transfers
+  editor-runtime:
+    name: Resolve and export the pinned editor runtime
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Download the existing exact-baseline dependency artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
         with:
-          name: synara-editor-dependencies-c0a1b6b9385d2833972b8e5df90841837871064d
-          run-id: 38643355070
-          github-token: ${{ github.token }}
-          path: ${{ runner.temp }}/editor-dependencies
-
-      - name: Split into 200 MiB parts
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - name: Resolve Monaco without changing unrelated dependencies
         run: |
-          cd "$RUNNER_TEMP/editor-dependencies"
-          sha256sum synara-editor-dependencies.tar.gz
-          split -b 200M -d -a 2 synara-editor-dependencies.tar.gz dependencies.part-
-          ls -lh dependencies.part-*
-
-      - name: Export part 00
-        uses: actions/upload-artifact@v4
+          bun add --cwd apps/web --exact monaco-editor@0.55.1 --lockfile-only --ignore-scripts
+          mkdir -p "$RUNNER_TEMP/editor-runtime"
+          npm pack monaco-editor@0.55.1 --pack-destination "$RUNNER_TEMP/editor-runtime"
+          cp bun.lock "$RUNNER_TEMP/editor-runtime/bun.lock"
+          cp apps/web/package.json "$RUNNER_TEMP/editor-runtime/web-package.json"
+          npm view monaco-editor@0.55.1 dist --json > "$RUNNER_TEMP/editor-runtime/monaco-dist.json"
+      - uses: actions/upload-artifact@v4
         with:
-          name: synara-editor-dependencies-part-00
-          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-00
+          name: synara-monaco-runtime
+          path: ${{ runner.temp }}/editor-runtime
           retention-days: 1
-          compression-level: 0
-          if-no-files-found: error
-
-      - name: Export part 01
-        uses: actions/upload-artifact@v4
-        with:
-          name: synara-editor-dependencies-part-01
-          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-01
-          retention-days: 1
-          compression-level: 0
-          if-no-files-found: error
-
-      - name: Export part 02
-        uses: actions/upload-artifact@v4
-        with:
-          name: synara-editor-dependencies-part-02
-          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-02
-          retention-days: 1
-          compression-level: 0
-          if-no-files-found: error
-
-      - name: Export part 03
-        uses: actions/upload-artifact@v4
-        with:
-          name: synara-editor-dependencies-part-03
-          path: ${{ runner.temp }}/editor-dependencies/dependencies.part-03
-          retention-days: 1
-          compression-level: 0
           if-no-files-found: error
