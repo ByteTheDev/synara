@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useHandleNewChat } from "../hooks/useHandleNewChat";
 import { useNavigate } from "@tanstack/react-router";
 import { ThreadId, type DesktopIdeScope } from "@synara/contracts";
 import { useFocusedChatContext } from "../focusedChatContext";
@@ -159,6 +160,21 @@ export function DesktopIdeSessionBar() {
   const sessions = useDesktopSessions();
   const { focusedThreadId, activeThread, activeProject } = useFocusedChatContext();
   const navigate = useNavigate();
+  const { handleNewChat } = useHandleNewChat();
+  const fail = useDesktopIdeStore((store) => store.fail);
+  const [creating, setCreating] = useState(false);
+  const createSession = async () => {
+    if (creating) return;
+    setCreating(true);
+    try {
+      const result = await handleNewChat({ fresh: true });
+      if (!result.ok) fail(result.error);
+    } catch (error) {
+      fail(error);
+    } finally {
+      setCreating(false);
+    }
+  };
   if (mode !== "ide") return null;
   return (
     <div className="synara-ide-session-bar no-drag shrink-0 text-ui-sm">
@@ -169,11 +185,10 @@ export function DesktopIdeSessionBar() {
           variant="chrome"
           aria-label="New Synara session"
           title="New session"
+          disabled={creating}
+          aria-busy={creating}
           onClick={() => {
-            void navigate({
-              to: "/",
-              search: (previous) => ({ ...previous, splitViewId: undefined, view: undefined }),
-            });
+            void createSession();
           }}
         >
           <AddPlusIcon className="size-4" aria-hidden="true" />

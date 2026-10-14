@@ -12,6 +12,16 @@ Select an existing Synara session in the docked picker. Project and worktree roo
 
 The Command Palette includes Synara commands for attaching selected code, file diagnostics, terminal selection and the current debug stack to the existing conversation draft. They append context, never automatically submit an agent turn. Stale session generations are rejected. Native worktree terminal and Explorer commands use the selected session's root.
 
+## Shared Synara appearance
+
+The native IDE follows the active Synara light/dark theme, imported palette, UI font family, text size and control radius. Changes propagate live from the existing theme settings. Neutral chrome, tabs, lists, menus, inputs, the command palette and status bar use the same semantic surfaces, borders and accents as the Agent renderer.
+
+The Agent / IDE switch is a compact segmented control with explicit selected and keyboard-focus states. The docked Agent header reuses Synara buttons and its session picker, displays readable session/project names, and opens a new session through the existing new-chat flow. The native status bar separates mode identity from agent attention.
+
+Appearance changes are window-local Code-OSS color overlays, not writes to user or workspace settings. Native syntax-token colors, editor/terminal font settings, split geometry and layouts remain under Code-OSS control. Native high-contrast themes opt out of cosmetic colors and CSS. UI fonts must be installed on the operating system; the bridge does not fetch font URLs or grant the workbench access to arbitrary resources. macOS vibrancy and platform window materials still need platform-specific visual qualification.
+
+The bridge accepts only bounded semantic colors, font-family text and numeric sizes. It does not accept arbitrary stylesheets. A frame-batched observer watches only theme-related root attributes, never the conversation subtree, and unchanged palettes are not retransmitted.
+
 ## Build and packaging
 
 Use the repository's existing toolchain and an isolated `microsoft/vscode` source checkout at the exact commit in `apps/desktop/code-oss/upstream.json`. Use the same OS and architecture as the target runtime, and the upstream checkout's Node version for its build.
