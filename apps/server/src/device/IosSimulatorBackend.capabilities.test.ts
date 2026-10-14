@@ -73,13 +73,25 @@ class StubHelper {
   }
   start(): void {}
   invalidateAttachment(): void {}
-  async attach() {
+  /** Forced re-attaches, which rebuild the helper's input client. */
+  static forcedAttaches = 0;
+  async attach(_udid?: string, options: { readonly force?: boolean } = {}) {
+    if (options.force) StubHelper.forcedAttaches += 1;
     return this.attachedDevice;
   }
   normalize(x: number, y: number) {
     return { x, y };
   }
-  async request() {
+  /** Every helper request, so tests can see how work was split across RPCs. */
+  static requests: Array<{ readonly method: string; readonly params: Record<string, unknown> }> =
+    [];
+  /** Errors the next requests throw, in order. */
+  static failures: Error[] = [];
+  async request(method: string, params: Record<string, unknown> = {}) {
+    StubHelper.requests.push({ method, params });
+    const failure = StubHelper.failures.shift();
+    if (failure) throw failure;
+    if (method === "text") return { ok: true, skipped: 0 };
     return { tree: { role: "Application" } };
   }
   async startStream() {}
@@ -185,6 +197,40 @@ describe("availability from the capability probe", () => {
   });
 });
 
+describe("input while dtuhidd starts", () => {
+  it("retries on the same attachment instead of restarting the warm-up", async () => {
+    const { backend } = await makeBackend(ALL_OK);
+    StubHelper.requests = [];
+    StubHelper.forcedAttaches = 0;
+    StubHelper.failures = [
+      new Error(
+        "1 HID event(s) were not delivered to the simulator: the simulator's input service (dtuhidd) is still starting; nothing was sent; re-attach and retry",
+      ),
+    ];
+
+    await backend.tap(DEVICE, 10, 10);
+
+    expect(StubHelper.requests.filter((request) => request.method === "tap")).toHaveLength(2);
+    expect(StubHelper.forcedAttaches).toBe(0);
+  });
+});
+
+describe("text input", () => {
+  it("types long text in chunks that each fit inside one RPC deadline", async () => {
+    const { backend } = await makeBackend(ALL_OK);
+    StubHelper.requests = [];
+
+    await expect(backend.typeText(DEVICE, "a".repeat(300))).resolves.toEqual({ skipped: 0 });
+
+    // ~36 ms a keystroke against a 15 s deadline: a 300-character string sent
+    // whole timed out, and the retry typed it twice.
+    const chunks = StubHelper.requests
+      .filter((request) => request.method === "text")
+      .map((request) => (request.params.text as string).length);
+    expect(chunks).toEqual([120, 120, 60]);
+  });
+});
+
 describe("operations backed by a broken capability", () => {
   let backend: IosSimulatorBackend;
 
@@ -203,7 +249,7 @@ describe("operations backed by a broken capability", () => {
 
   it("leaves input working when only accessibility is broken", async () => {
     await expect(backend.tap(DEVICE, 10, 10)).resolves.toBeUndefined();
-    await expect(backend.typeText(DEVICE, "hello")).resolves.toBeUndefined();
+    await expect(backend.typeText(DEVICE, "hello")).resolves.toEqual({ skipped: 0 });
   });
 });
 

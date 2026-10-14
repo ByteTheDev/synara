@@ -55,14 +55,21 @@ The action rail can also:
 Supported provider sessions can receive app-owned device tools for:
 
 - Listing and booting simulators
-- Installing and launching apps
+- Installing and launching apps, including a clean relaunch and launch environment variables
 - Opening a URL
-- Tapping, swiping, typing, and pressing hardware buttons
-- Taking screenshots
-- Reading the accessibility tree
+- Tapping (by accessibility identifier, label, or point, with long press), swiping (including edge gestures such as back), typing, and pressing hardware buttons
+- Waiting for an element to appear or disappear, or for the screen to settle
+- Taking screenshots, scaled to device points, with an optional full-resolution proof image
+- Reading the screen as a compact list of visible elements
 - Scrolling to named interface elements
+- Reading app logs, `print` output, and crash reports
+- Setting appearance, Dynamic Type size, location, and privacy permissions
 
-Read-only inspection and input actions follow the active provider's tool policy. Input can require approval until allowed by the user, and opening a URL remains approval-gated because it can send information to another origin. Device access does not increase the task's runtime permissions.
+Every input action waits for the screen to stop changing and returns it, along with whether it changed, so the agent sees the effect of each step without a separate read. Text is typed as keystrokes for ASCII on a US keyboard layout; other text, including accented characters and emoji, is set directly on the focused field so it arrives exactly regardless of the simulator's keyboard language. The agent's result reports what the field contains afterwards.
+
+On Xcode 27 and later, input is delivered through the simulator's `dtuhidd` service, which those Xcode versions require.
+
+Input, launches, and device configuration require approval through Synara until allowed for the task, and opening a URL remains approval-gated because it can send information to another origin. Reading the screen, waiting, screenshots, and logs do not. Device access does not increase the task's runtime permissions.
 
 <Callout type="warn" title="The pane is evidence, not a build system">
   Ask the task to build the correct scheme and configuration first. A successful install or launch

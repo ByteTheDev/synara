@@ -551,6 +551,25 @@ export interface DeviceUiNode {
    * it. Tap this instead of the frame centre whenever it is present.
    */
   readonly activationPoint: DeviceUiPoint | null;
+  /**
+   * `accessibilityIdentifier`: the stable, locale-independent handle a test
+   * should target, when the app sets one. Labels change with language and copy.
+   */
+  readonly identifier?: string | null | undefined;
+  /** False for a disabled control; absent is treated as enabled. */
+  readonly enabled?: boolean | undefined;
+  /** Holds keyboard focus: where typed text lands. */
+  readonly focused?: boolean | undefined;
+  /** A selected tab, segment, or row. */
+  readonly selected?: boolean | undefined;
+  /** Placeholder text of an empty field, which iOS also reports as its value. */
+  readonly placeholder?: string | null | undefined;
+  /**
+   * The element reported no usable frame (NaN or infinite, typical of
+   * off-screen SwiftUI content). Its `frame` is zeroed and it is never a tap
+   * target.
+   */
+  readonly unframed?: boolean | undefined;
   readonly children: readonly DeviceUiNode[];
 }
 
@@ -561,6 +580,12 @@ export const DeviceUiNode: Schema.Schema<DeviceUiNode> = Schema.Struct({
   value: Schema.NullOr(Schema.String.check(Schema.isMaxLength(1_024))),
   frame: DeviceUiFrame,
   activationPoint: Schema.NullOr(DeviceUiPoint),
+  identifier: Schema.optional(Schema.NullOr(Schema.String.check(Schema.isMaxLength(512)))),
+  enabled: Schema.optional(Schema.Boolean),
+  focused: Schema.optional(Schema.Boolean),
+  selected: Schema.optional(Schema.Boolean),
+  placeholder: Schema.optional(Schema.NullOr(Schema.String.check(Schema.isMaxLength(1_024)))),
+  unframed: Schema.optional(Schema.Boolean),
   children: Schema.Array(Schema.suspend((): Schema.Schema<DeviceUiNode> => DeviceUiNode)).check(
     Schema.isMaxLength(512),
   ),

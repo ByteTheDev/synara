@@ -139,7 +139,7 @@ describe("reading a tap request", () => {
   });
 
   it("refuses shapes that are neither, and says which to use", () => {
-    expect(() => readTapRequest({})).toThrow(/either label .* or both x and y/);
+    expect(() => readTapRequest({})).toThrow(/an element \(identifier or label.* or both x and y/);
     expect(() => readTapRequest({ x: 10 })).toThrow(/both x and y/);
     // Both forms at once is ambiguous: silently preferring one would make the
     // other's presence a lie about what got tapped.

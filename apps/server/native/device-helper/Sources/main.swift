@@ -51,6 +51,23 @@ func logDiagnostic(_ message: String) {
 }
 
 func writeMessage(_ object: [String: Any]) {
+  // NSJSONSerialization raises an Objective-C exception, not a Swift error, on
+  // NaN or infinity, so `try?` cannot catch it and one bad accessibility frame
+  // used to kill the helper and the stream with it. Validate first and answer
+  // the request with an error instead of dropping it (which hung the caller).
+  guard JSONSerialization.isValidJSONObject(object) else {
+    logDiagnostic("dropping a message that is not valid JSON (NaN or infinity in a number)")
+    if let id = object["id"], object["error"] == nil {
+      writeMessage([
+        "jsonrpc": "2.0", "id": id,
+        "error": [
+          "code": RPCErrorCode.internalError.rawValue,
+          "message": "the helper produced a result that is not valid JSON",
+        ],
+      ])
+    }
+    return
+  }
   guard let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
   else { return }
   stdoutLock.lock()
@@ -216,6 +233,7 @@ final class HelperSession {
         "input": hid != nil,
         "accessibility": accessibility != nil,
       ],
+      "inputTransport": hid?.transportName as Any? ?? NSNull(),
       "degraded": [
         "hid": hidFailure as Any? ?? NSNull(),
       ],
@@ -359,9 +377,10 @@ private func withHIDDelivery(_ hid: SynaraHIDBridge, _ body: () -> Void) throws 
   body()
   let dropped = hid.undeliveredEventCount - before
   if dropped > 0 {
+    let reason = hid.undeliveredReason.map { ": \($0)" } ?? ""
     throw RPCError(
       .inputNotDelivered,
-      "\(dropped) HID event(s) were not delivered to the simulator; re-attach and retry")
+      "\(dropped) HID event(s) were not delivered to the simulator\(reason); re-attach and retry")
   }
 }
 
@@ -428,10 +447,19 @@ func handle(method: String, params: Params, session: HelperSession) throws -> An
     let startY = try params.normalized("startY")
     let endX = try params.normalized("endX")
     let endY = try params.normalized("endY")
+    let edge: SynaraTouchEdge
+    switch params.optionalString("edge") ?? "none" {
+    case "none": edge = .none
+    case "top": edge = .top
+    case "left": edge = .left
+    case "bottom": edge = .bottom
+    case "right": edge = .right
+    default: throw RPCError(.invalidParams, "edge must be none, top, left, bottom or right")
+    }
     try withHIDDelivery(hid) {
       hid.drag(
         startX: startX, startY: startY, endX: endX, endY: endY,
-        durationMs: params.optionalInt("durationMs", default: 250))
+        durationMs: params.optionalInt("durationMs", default: 250), edge: edge)
     }
     return ["ok": true]
 
@@ -507,6 +535,15 @@ func handle(method: String, params: Params, session: HelperSession) throws -> An
     } catch {
       throw RPCError(
         .simulatorFailure, "accessibility tree unavailable: \(error.localizedDescription)")
+    }
+
+  case "set-focused-value":
+    let bridge = try session.requireAccessibility()
+    let value = try params.string("value")
+    do {
+      return try bridge.setFocusedValue(value)
+    } catch {
+      throw RPCError(.simulatorFailure, "cannot set the focused value: \(error.localizedDescription)")
     }
 
   default:

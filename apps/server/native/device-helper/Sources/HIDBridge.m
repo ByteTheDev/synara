@@ -205,6 +205,25 @@ static uint32_t SynaraUsageForCharacter(unichar c, BOOL *outShift) {
 
 static const uint32_t kUsageLeftShift = 225;
 
+// How long one input call waits for `dtuhidd` before reporting that nothing was
+// sent. Inside the server's 15 s RPC deadline; the connection keeps warming in
+// the background, so the next call usually finds it ready.
+static const NSTimeInterval kDTUHIDReadyTimeout = 9.0;
+static const NSTimeInterval kDTUHIDFlushTimeout = 2.0;
+
+// Consumer-page usages for the hardware buttons on the DTUHID transport.
+static uint16_t SynaraConsumerUsageForButton(SynaraHardwareButton button) {
+  switch (button) {
+    case SynaraHardwareButtonHome: return 0x40;        // Menu
+    case SynaraHardwareButtonLock: return 0x30;        // Power
+    case SynaraHardwareButtonSide: return 0x30;        // Power: same physical button
+    case SynaraHardwareButtonSiri: return 0xcf;        // Voice Command
+    case SynaraHardwareButtonVolumeUp: return 0xe9;    // Volume Increment
+    case SynaraHardwareButtonVolumeDown: return 0xea;  // Volume Decrement
+  }
+  return 0x40;
+}
+
 @implementation SynaraHIDBridge {
   id _client;
   dispatch_queue_t _sendQueue;
@@ -213,6 +232,18 @@ static const uint32_t kUsageLeftShift = 225;
   SynaraIndigoMouseFn _mouseFn;
   SynaraIndigoArbitraryFn _arbitraryFn;
   NSInteger _undelivered;
+  NSString *_undeliveredReason;
+  SynaraDTUHIDTransport *_dtuhid;
+}
+
+- (NSString *)transportName {
+  return _dtuhid != nil ? @"dtuhid" : @"indigo";
+}
+
+- (nullable NSString *)undeliveredReason {
+  @synchronized(self) {
+    return _undeliveredReason;
+  }
 }
 
 - (NSInteger)undeliveredEventCount {
@@ -224,12 +255,47 @@ static const uint32_t kUsageLeftShift = 225;
 /// Record an event that never reached the guest. Every early return in the
 /// injection paths below funnels through here, so no failure stays invisible.
 - (void)noteUndelivered {
+  [self noteUndeliveredBecause:nil];
+}
+
+- (void)noteUndeliveredBecause:(nullable NSString *)reason {
   @synchronized(self) {
     _undelivered += 1;
+    _undeliveredReason = [reason copy];
+  }
+}
+
+/// Waits for the DTUHID connection; NO (with the reason recorded) when input
+/// cannot be sent, so the caller stops before emitting half a gesture.
+- (BOOL)dtuhidReady {
+  NSError *error = nil;
+  if ([_dtuhid waitUntilReadyWithTimeout:kDTUHIDReadyTimeout error:&error]) {
+    return YES;
+  }
+  [self noteUndeliveredBecause:error.localizedDescription];
+  return NO;
+}
+
+- (void)dtuhidSent:(BOOL)sent {
+  if (!sent) {
+    [self noteUndeliveredBecause:@"the dtuhidd connection closed while sending"];
+  }
+}
+
+- (void)dtuhidFlush {
+  if (![_dtuhid flushWithTimeout:kDTUHIDFlushTimeout]) {
+    [self noteUndeliveredBecause:@"dtuhidd did not take the events in time"];
   }
 }
 
 - (BOOL)attachToDevice:(id)device error:(NSError **)error {
+  // From Xcode 27 the guest ignores Indigo input while accepting the send, so a
+  // legacy client there only produces taps that are acked and never land.
+  if (SynaraCoreSimulatorUsesDTUHID()) {
+    [_dtuhid invalidate];
+    _dtuhid = [[SynaraDTUHIDTransport alloc] initWithDevice:device];
+    return YES;
+  }
   NSString *developerDir = NSProcessInfo.processInfo.environment[@"SYNARA_DEVELOPER_DIR"];
   if (developerDir.length == 0) {
     developerDir = @"/Applications/Xcode.app/Contents/Developer";
@@ -317,6 +383,12 @@ static const uint32_t kUsageLeftShift = 225;
 }
 
 - (void)sendTouchAtX:(double)x y:(double)y down:(BOOL)down {
+  if (_dtuhid != nil) {
+    if (![self dtuhidReady]) return;
+    [self dtuhidSent:[_dtuhid sendTouchAtX:x y:y down:down edge:SynaraTouchEdgeNone]];
+    if (!down) [self dtuhidFlush];
+    return;
+  }
   if (_mouseFn == NULL) {
     [self noteUndelivered];
     return;
@@ -358,6 +430,7 @@ static const uint32_t kUsageLeftShift = 225;
 }
 
 - (void)tapAtX:(double)x y:(double)y holdMs:(NSInteger)holdMs {
+  if (_dtuhid != nil && ![self dtuhidReady]) return;
   [self sendTouchAtX:x y:y down:YES];
   usleep((useconds_t)(MAX(holdMs, 1) * 1000));
   [self sendTouchAtX:x y:y down:NO];
@@ -367,10 +440,28 @@ static const uint32_t kUsageLeftShift = 225;
                 y:(double)startY
               toX:(double)endX
              endY:(double)endY
-       durationMs:(NSInteger)durationMs {
+       durationMs:(NSInteger)durationMs
+             edge:(SynaraTouchEdge)edge {
   NSInteger duration = MAX(durationMs, 1);
   // ~120Hz of interpolation, bounded so a long drag stays cheap.
   NSInteger steps = MIN(MAX(duration / 8, 2), 240);
+
+  if (_dtuhid != nil) {
+    if (![self dtuhidReady]) return;
+    [self dtuhidSent:[_dtuhid sendTouchAtX:startX y:startY down:YES edge:edge]];
+    useconds_t stepDelay = (useconds_t)((duration * 1000) / steps);
+    for (NSInteger step = 1; step <= steps; step++) {
+      double progress = (double)step / (double)steps;
+      usleep(stepDelay);
+      [self dtuhidSent:[_dtuhid sendTouchAtX:startX + (endX - startX) * progress
+                                           y:startY + (endY - startY) * progress
+                                        down:YES
+                                        edge:edge]];
+    }
+    [self dtuhidSent:[_dtuhid sendTouchAtX:endX y:endY down:NO edge:edge]];
+    [self dtuhidFlush];
+    return;
+  }
 
   [self sendTouchAtX:startX y:startY down:YES];
   useconds_t stepDelay = (useconds_t)((duration * 1000) / steps);
@@ -386,6 +477,12 @@ static const uint32_t kUsageLeftShift = 225;
 }
 
 - (void)sendKeyUsage:(uint32_t)usage down:(BOOL)down {
+  if (_dtuhid != nil) {
+    if (![self dtuhidReady]) return;
+    [self dtuhidSent:[_dtuhid sendKeyUsage:usage down:down]];
+    if (!down) [self dtuhidFlush];
+    return;
+  }
   if (_keyboardFn == NULL) {
     [self noteUndelivered];
     return;
@@ -401,6 +498,8 @@ static const uint32_t kUsageLeftShift = 225;
 }
 
 - (NSInteger)typeText:(NSString *)text {
+  // Fail the whole string up front rather than typing a prefix of it.
+  if (_dtuhid != nil && ![self dtuhidReady]) return 0;
   NSInteger skipped = 0;
   NSUInteger length = text.length;
   for (NSUInteger index = 0; index < length; index++) {
@@ -425,6 +524,12 @@ static const uint32_t kUsageLeftShift = 225;
 }
 
 - (void)sendButton:(SynaraHardwareButton)button down:(BOOL)down {
+  if (_dtuhid != nil) {
+    if (![self dtuhidReady]) return;
+    [self dtuhidSent:[_dtuhid sendConsumerUsage:SynaraConsumerUsageForButton(button) down:down]];
+    if (!down) [self dtuhidFlush];
+    return;
+  }
   int op = down ? kButtonOpDown : kButtonOpUp;
   uint32_t consumerUsage = SynaraConsumerUsage(button);
 

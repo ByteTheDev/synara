@@ -18,7 +18,7 @@
  */
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { constants as fsConstants, existsSync } from "node:fs";
-import { access, mkdtemp, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import * as path from "node:path";
 
@@ -52,11 +52,17 @@ import { runProcess, type ProcessRunResult } from "../processRunner.ts";
 import {
   DeviceBackendError,
   type DeviceBackend,
+  type DeviceConfiguration,
   type DeviceFrameListener,
   type DeviceKeyEvent,
+  type DeviceLaunchOptions,
   type DeviceListOptions,
+  type DeviceLogQuery,
+  type DeviceLogResult,
   type DeviceSwipeGesture,
+  type DeviceTypeTextOutcome,
 } from "./DeviceBackend.ts";
+import { readCrashReports, unifiedLogArguments, tailLines } from "./deviceLogs.ts";
 import { readDeviceTypeCatalogue, type DeviceTypeCatalogue } from "./deviceTypeCatalogue.ts";
 import {
   availabilityFromProbe,
@@ -83,6 +89,14 @@ const RECORDING_KILL_GRACE_MS = 1_000;
 const MAX_RECORDING_STDERR_LENGTH = 64 * 1024;
 /** Screenshots are PNG on stdout-adjacent temp files; cap what we will read. */
 const MAX_SCREENSHOT_BYTES = 32 * 1024 * 1024;
+/**
+ * Characters per `text` RPC. The helper paces keystrokes at roughly 36 ms each
+ * and every RPC shares a 15 s deadline, so a long string sent whole timed out
+ * and the retry typed it a second time.
+ */
+const TEXT_CHUNK_LENGTH = 120;
+/** Where `--stdout`/`--stderr` of apps launched through Synara are captured. */
+const CONSOLE_CAPTURE_ROOT = path.join(tmpdir(), "synara-device-console");
 
 export const DEVICE_HELPER_CACHE_ROOT = path.join(homedir(), ...DEVICE_HELPER_CACHE_SEGMENTS);
 
@@ -314,6 +328,10 @@ export class IosSimulatorBackend implements DeviceBackend {
   /** Keyed on the binary so a rebuilt helper is re-probed rather than assumed. */
   private helperProbe: { binaryPath: string; result: HelperProbeResult } | null = null;
   private readonly recordings = new Map<string, ActiveRecording>();
+  /** Per-device answer to `usesUsKeyboardLayout`; dropped on boot and shutdown. */
+  private readonly keyboardLayouts = new Map<string, Promise<boolean>>();
+  /** `CFBundleExecutable` per udid+bundle, for log predicates and crash reports. */
+  private readonly executables = new Map<string, Promise<string | null>>();
   private readonly recordingStarts = new Map<string, Promise<DeviceStartRecordingResult>>();
   private readonly recordingStops = new Map<string, Promise<DeviceStopRecordingResult>>();
   private readonly reservedRecordingPaths = new Set<string>();
@@ -479,6 +497,7 @@ export class IosSimulatorBackend implements DeviceBackend {
   }
 
   async boot(udid: string): Promise<DeviceDescriptor> {
+    this.keyboardLayouts.delete(udid);
     const result = await this.simctl(["boot", udid], { timeoutMs: BOOT_TIMEOUT_MS });
     // Booting an already-booted device is success, not failure: the pane and an
     // agent can race on the same device and neither should see an error.
@@ -499,6 +518,7 @@ export class IosSimulatorBackend implements DeviceBackend {
     // descriptor bound to this boot. Dropping it here means the next attach
     // rebinds instead of reusing a descriptor whose framebuffer is gone.
     this.helper?.invalidateAttachment(udid);
+    this.keyboardLayouts.delete(udid);
     const result = await this.simctl(["shutdown", udid]);
     if (result.code !== 0 && !/current state: Shutdown/iu.test(result.stderr)) {
       throw this.simctlError("shutdown", result);
@@ -516,8 +536,32 @@ export class IosSimulatorBackend implements DeviceBackend {
     udid: string,
     bundleId: string,
     launchArguments: readonly string[] = [],
+    options: DeviceLaunchOptions = {},
   ): Promise<DeviceLaunchAppResult> {
-    const result = await this.simctl(["launch", udid, bundleId, ...launchArguments]);
+    // stdout/stderr go to files so `readLogs` can return what `print` wrote:
+    // that output never reaches the unified log. Truncated per launch.
+    const console = consoleCapturePaths(udid, bundleId);
+    const capture = await mkdir(path.dirname(console.stdout), { recursive: true }).then(
+      () => [`--stdout=${console.stdout}`, `--stderr=${console.stderr}`],
+      () => [],
+    );
+    const environment = Object.fromEntries(
+      Object.entries(options.environment ?? {}).map(([key, value]) => [
+        `SIMCTL_CHILD_${key}`,
+        value,
+      ]),
+    );
+    const result = await this.simctl(
+      [
+        "launch",
+        ...(options.terminateExisting === true ? ["--terminate-running-process"] : []),
+        ...capture,
+        udid,
+        bundleId,
+        ...launchArguments,
+      ],
+      { env: environment },
+    );
     if (result.code !== 0) throw this.simctlError("launch", result);
     // `simctl launch` prints `<bundleId>: <pid>`.
     const match = /:\s*(\d+)\s*$/u.exec(result.stdout.trim());
@@ -531,7 +575,11 @@ export class IosSimulatorBackend implements DeviceBackend {
 
   async screenshot(
     udid: string,
-    options: { readonly save?: boolean; readonly maxInlineBytes?: number } = {},
+    options: {
+      readonly save?: boolean;
+      readonly maxInlineBytes?: number;
+      readonly resolution?: "pixels" | "points";
+    } = {},
   ): Promise<DeviceScreenshotResult> {
     // Captured to a temp file either way, because `simctl io screenshot` only
     // writes to a path. When the caller wants it kept, it is moved next to the
@@ -539,8 +587,7 @@ export class IosSimulatorBackend implements DeviceBackend {
     const directory = await mkdtemp(path.join(tmpdir(), "synara-device-"));
     const file = path.join(directory, "screenshot.png");
     try {
-      const result = await this.simctl(["io", udid, "screenshot", file]);
-      if (result.code !== 0) throw this.simctlError("screenshot", result);
+      await this.captureScreenshot(udid, file);
       const info = await stat(file);
       if (info.size > MAX_SCREENSHOT_BYTES) {
         throw new DeviceBackendError("Screenshot exceeded the maximum supported size");
@@ -548,11 +595,14 @@ export class IosSimulatorBackend implements DeviceBackend {
       const fullBytes = await readFile(file);
       const savedPath =
         options.save === true ? await this.saveScreenshotFile(udid, fullBytes) : null;
+      const points =
+        options.resolution === "points" ? await this.scaleToPoints(udid, file, directory) : null;
+      const sized = points ?? fullBytes;
       // Inline consumers (agent tool results) ride JSON-RPC frames with byte
       // caps, so oversized shots are resampled rather than rejected.
       const bytes =
-        options.maxInlineBytes === undefined || fullBytes.byteLength <= options.maxInlineBytes
-          ? fullBytes
+        options.maxInlineBytes === undefined || sized.byteLength <= options.maxInlineBytes
+          ? sized
           : await this.resampleScreenshotPng(file, directory, options.maxInlineBytes);
       const dimensions = readPngDimensions(bytes);
       return {
@@ -569,6 +619,58 @@ export class IosSimulatorBackend implements DeviceBackend {
     } finally {
       await rm(directory, { recursive: true, force: true }).catch(() => undefined);
     }
+  }
+
+  /**
+   * Capture through the attached helper when it can, which reads the
+   * framebuffer in-process (~40 ms), and through `simctl io` otherwise (~430 ms,
+   * but public API that survives a broken framebuffer path).
+   */
+  private async captureScreenshot(udid: string, file: string): Promise<void> {
+    if (this.helper?.running && this.helper.attachedDevice?.udid === udid) {
+      const viaHelper = await this.helperRequest(HELPER_METHODS.screenshot, { path: file }).then(
+        () => true,
+        () => false,
+      );
+      if (viaHelper) return;
+    }
+    const result = await this.simctl(["io", udid, "screenshot", file]);
+    if (result.code !== 0) throw this.simctlError("screenshot", result);
+  }
+
+  /**
+   * Resample to the screen's size in points, so a coordinate read off the image
+   * is the device point a tap takes. Also the cheapest image a model can read:
+   * a third of the pixels per side on a 3x screen. Null when the point size is
+   * unknown or `sips` fails, in which case the caller keeps the full image.
+   */
+  private async scaleToPoints(
+    udid: string,
+    sourceFile: string,
+    directory: string,
+  ): Promise<Buffer | null> {
+    const geometry = this.deviceGeometry.get(udid) ?? (await this.catalogueGeometry(udid));
+    if (!geometry) return null;
+    const target = path.join(directory, "screenshot-points.png");
+    const result = await this.run(
+      "/usr/bin/sips",
+      [
+        "-z",
+        String(Math.round(geometry.pointHeight)),
+        String(Math.round(geometry.pointWidth)),
+        sourceFile,
+        "--out",
+        target,
+      ],
+      { timeoutMs: 10_000, allowNonZeroExit: true },
+    ).catch(() => null);
+    if (result === null || result.code !== 0) return null;
+    return await readFile(target).catch(() => null);
+  }
+
+  private async catalogueGeometry(udid: string): Promise<DeviceGeometry | null> {
+    const devices = await this.listDevicesUnchecked().catch(() => []);
+    return devices.find((device) => device.udid === udid)?.geometry ?? null;
   }
 
   /**
@@ -682,21 +784,39 @@ export class IosSimulatorBackend implements DeviceBackend {
     udid: string,
     method: string,
     buildParams: (helper: HelperClient) => Record<string, unknown>,
-  ): Promise<void> {
+    options: { readonly replayable?: boolean } = {},
+  ): Promise<unknown> {
     await this.assertCapability("hid");
     const helper = await this.attachedHelper(udid);
     try {
-      await this.helperRequest(method, buildParams(helper));
-      return;
+      return await this.helperRequest(method, buildParams(helper));
     } catch (error) {
       if (!isInputNotDeliveredError(error)) throw error;
+      // Replaying keystrokes after a partial delivery types them twice. Only a
+      // refusal that sent nothing is safe to repeat for a non-replayable call.
+      if (options.replayable === false && !/nothing was sent/iu.test(errorText(error))) {
+        throw error;
+      }
+      // dtuhidd still coming up after a boot: the attachment is fine and keeps
+      // warming in the background, while a re-attach would restart the wait.
+      if (/still starting/iu.test(errorText(error))) {
+        return await this.helperRequest(method, buildParams(helper));
+      }
     }
     const rebound = await this.attachedHelper(udid, { force: true });
-    await this.helperRequest(method, buildParams(rebound));
+    return await this.helperRequest(method, buildParams(rebound));
   }
 
-  async tap(udid: string, x: number, y: number): Promise<void> {
-    await this.injectInput(udid, HELPER_METHODS.tap, (helper) => helper.normalize(x, y));
+  async tap(
+    udid: string,
+    x: number,
+    y: number,
+    options: { readonly holdMs?: number } = {},
+  ): Promise<void> {
+    await this.injectInput(udid, HELPER_METHODS.tap, (helper) => ({
+      ...helper.normalize(x, y),
+      ...(options.holdMs === undefined ? {} : { holdMs: Math.round(options.holdMs) }),
+    }));
   }
 
   async swipe(udid: string, gesture: DeviceSwipeGesture): Promise<void> {
@@ -709,12 +829,157 @@ export class IosSimulatorBackend implements DeviceBackend {
         endX: end.x,
         endY: end.y,
         durationMs: gesture.durationMs,
+        ...(gesture.edge === undefined ? {} : { edge: gesture.edge }),
       };
     });
   }
 
-  async typeText(udid: string, text: string): Promise<void> {
-    await this.injectInput(udid, HELPER_METHODS.text, () => ({ text }));
+  async typeText(udid: string, text: string): Promise<DeviceTypeTextOutcome> {
+    let skipped = 0;
+    for (let start = 0; start < text.length; start += TEXT_CHUNK_LENGTH) {
+      const chunk = text.slice(start, start + TEXT_CHUNK_LENGTH);
+      const result = await this.injectInput(udid, HELPER_METHODS.text, () => ({ text: chunk }), {
+        replayable: false,
+      });
+      const chunkSkipped = (result as { skipped?: unknown } | null)?.skipped;
+      if (typeof chunkSkipped === "number") skipped += chunkSkipped;
+    }
+    return { skipped };
+  }
+
+  async setFocusedValue(udid: string, value: string): Promise<void> {
+    await this.assertCapability("accessibility");
+    await this.attachedHelper(udid);
+    await this.helperRequest(HELPER_METHODS.setFocusedValue, { value });
+  }
+
+  /**
+   * HID keystrokes go through the guest's hardware keyboard layout: on an
+   * Italian simulator the key that is "-" on a US keyboard types "'". Only a
+   * device whose first keyboard (or, with none set, whose locale) is US English
+   * gets keystrokes; the rest get exact text through accessibility.
+   */
+  async usesUsKeyboardLayout(udid: string): Promise<boolean> {
+    let cached = this.keyboardLayouts.get(udid);
+    if (!cached) {
+      cached = (async () => {
+        const keyboards = await this.simctl([
+          "spawn",
+          udid,
+          "defaults",
+          "read",
+          "-g",
+          "AppleKeyboards",
+        ]);
+        const firstKeyboard = /"?([A-Za-z]{2}[_-][A-Za-z]{2}[^",\s)]*)/u.exec(
+          keyboards.code === 0 ? keyboards.stdout : "",
+        )?.[1];
+        if (firstKeyboard !== undefined) return /^en[_-]US\b/iu.test(firstKeyboard);
+        const locale = await this.simctl(["spawn", udid, "defaults", "read", "-g", "AppleLocale"]);
+        return locale.code === 0 && /^en[_-]US\b/iu.test(locale.stdout.trim());
+      })().catch(() => false);
+      this.keyboardLayouts.set(udid, cached);
+    }
+    return await cached;
+  }
+
+  // ── Environment and diagnostics ────────────────────────────────────
+
+  async configure(udid: string, configuration: DeviceConfiguration): Promise<void> {
+    const args = ((): readonly string[] => {
+      switch (configuration.kind) {
+        case "appearance":
+          return ["ui", udid, "appearance", configuration.appearance];
+        case "content-size":
+          return ["ui", udid, "content_size", configuration.category];
+        case "location":
+          return ["location", udid, "set", `${configuration.latitude},${configuration.longitude}`];
+        case "location-clear":
+          return ["location", udid, "clear"];
+        case "privacy":
+          return [
+            "privacy",
+            udid,
+            configuration.action,
+            configuration.service,
+            ...(configuration.bundleId === undefined ? [] : [configuration.bundleId]),
+          ];
+      }
+    })();
+    const result = await this.simctl(args);
+    if (result.code !== 0) throw this.simctlError(args[0] ?? "configure", result);
+  }
+
+  async readLogs(udid: string, query: DeviceLogQuery): Promise<DeviceLogResult> {
+    const executable = await this.executableFor(udid, query.bundleId);
+    const sinceMs = this.now() - query.sinceSeconds * 1000;
+    const [unified, consoleLines, crashes] = await Promise.all([
+      executable === null
+        ? Promise.resolve<readonly string[]>([])
+        : this.simctl(["spawn", udid, "log", ...unifiedLogArguments(executable, query)], {
+            timeoutMs: 60_000,
+          }).then((result) => {
+            if (result.code !== 0) throw this.simctlError("log show", result);
+            // `log show` prints a column header before the first entry.
+            return result.stdout.split("\n").filter((line) => /^\d{4}-\d{2}-\d{2} /u.test(line));
+          }),
+      this.readConsoleCapture(udid, query.bundleId),
+      executable === null
+        ? Promise.resolve([])
+        : readCrashReports({
+            directory: path.join(homedir(), "Library", "Logs", "DiagnosticReports"),
+            executable,
+            udid,
+            sinceMs,
+          }),
+    ]);
+    const contains = query.contains?.toLowerCase();
+    const filter = (lines: readonly string[]) =>
+      contains === undefined
+        ? lines
+        : lines.filter((line) => line.toLowerCase().includes(contains));
+    const log = tailLines(filter(unified), query.limit);
+    const console = tailLines(filter(consoleLines), query.limit);
+    return {
+      bundleId: query.bundleId,
+      process: executable,
+      log: log.lines,
+      console: console.lines,
+      crashes,
+      omitted: log.omitted + console.omitted,
+    };
+  }
+
+  /** stdout then stderr of the last launch through Synara, when it was captured. */
+  private async readConsoleCapture(udid: string, bundleId: string): Promise<readonly string[]> {
+    const capture = consoleCapturePaths(udid, bundleId);
+    const read = (file: string) =>
+      readFile(file, "utf8").then(
+        (text) => text.split("\n").filter((line) => line.trim().length > 0),
+        () => [] as string[],
+      );
+    const [stdout, stderr] = await Promise.all([read(capture.stdout), read(capture.stderr)]);
+    return [...stdout, ...stderr.map((line) => `[stderr] ${line}`)];
+  }
+
+  private executableFor(udid: string, bundleId: string): Promise<string | null> {
+    const key = `${udid}:${bundleId}`;
+    let cached = this.executables.get(key);
+    if (!cached) {
+      cached = this.simctl(["appinfo", udid, bundleId]).then((result) => {
+        const match = /CFBundleExecutable\s*=\s*"?([^";\n]+)"?;/u.exec(result.stdout);
+        if (result.code !== 0 || !match) {
+          throw new DeviceBackendError(
+            `App ${bundleId} is not installed on this simulator, so it has no logs to read.`,
+          );
+        }
+        return match[1]!.trim();
+      });
+      // A failure is not remembered: the app may be installed a moment later.
+      cached.catch(() => this.executables.delete(key));
+      this.executables.set(key, cached);
+    }
+    return cached;
   }
 
   async keyEvent(udid: string, event: DeviceKeyEvent): Promise<void> {
@@ -997,7 +1262,7 @@ export class IosSimulatorBackend implements DeviceBackend {
 
   private async simctl(
     args: readonly string[],
-    options: { readonly timeoutMs?: number } = {},
+    options: { readonly timeoutMs?: number; readonly env?: NodeJS.ProcessEnv } = {},
   ): Promise<ProcessRunResult> {
     if (this.osPlatform !== "darwin") {
       throw new DeviceBackendError("iOS simulators are only available on macOS");
@@ -1005,12 +1270,16 @@ export class IosSimulatorBackend implements DeviceBackend {
     // Anything but a read can change what `list devices` reports; drop the
     // short-lived listing cache before the command runs so the next listing
     // sees the mutation (boot, shutdown, create, erase, ...).
-    if (args[0] !== "list") this.deviceListCache = null;
+    if (!READ_ONLY_SIMCTL_COMMANDS.has(args[0] ?? "")) this.deviceListCache = null;
+    const toolchain = await this.toolchainEnv();
     return await this.run("xcrun", ["simctl", ...args], {
       timeoutMs: options.timeoutMs ?? SIMCTL_TIMEOUT_MS,
       allowNonZeroExit: true,
       outputMode: "truncate",
-      env: await this.toolchainEnv(),
+      env:
+        options.env === undefined
+          ? toolchain
+          : { ...(toolchain ?? this.processEnv), ...options.env },
     });
   }
 
@@ -1387,6 +1656,24 @@ export class IosSimulatorBackend implements DeviceBackend {
   }
 }
 
+/** simctl commands that cannot change what `list devices` reports. */
+const READ_ONLY_SIMCTL_COMMANDS = new Set([
+  "list",
+  "appinfo",
+  "spawn",
+  "location",
+  "ui",
+  "privacy",
+]);
+
+function consoleCapturePaths(
+  udid: string,
+  bundleId: string,
+): { readonly stdout: string; readonly stderr: string } {
+  const base = path.join(CONSOLE_CAPTURE_ROOT, udid, bundleId.replace(/[^A-Za-z0-9._-]/gu, "_"));
+  return { stdout: `${base}.out.log`, stderr: `${base}.err.log` };
+}
+
 function slugDeviceName(name: string): string {
   return (
     name
@@ -1486,11 +1773,13 @@ export function normalizeUiNode(raw: unknown): DeviceUiNode {
     if (typeof y !== "number" || !Number.isFinite(y)) return null;
     return { x, y };
   };
+  const identifier = readText("identifier");
+  const placeholder = readText("placeholder");
   return {
-    role: typeof node.role === "string" ? node.role : "Unknown",
-    subrole: readText("subrole"),
-    label: readText("label"),
-    value: readText("value"),
+    role: typeof node.role === "string" ? node.role.slice(0, 128) : "Unknown",
+    subrole: clampText(readText("subrole"), 128),
+    label: clampText(readText("label"), UI_TEXT_MAX_LENGTH),
+    value: clampText(readText("value"), UI_TEXT_MAX_LENGTH),
     frame: {
       x: readFrameValue("x"),
       y: readFrameValue("y"),
@@ -1498,8 +1787,22 @@ export function normalizeUiNode(raw: unknown): DeviceUiNode {
       height: Math.max(0, readFrameValue("height")),
     },
     activationPoint: readActivationPoint(),
+    ...(identifier === null ? {} : { identifier: clampText(identifier, 512) }),
+    enabled: node.enabled !== false,
+    ...(node.focused === true ? { focused: true } : {}),
+    ...(node.selected === true ? { selected: true } : {}),
+    ...(placeholder === null ? {} : { placeholder: clampText(placeholder, UI_TEXT_MAX_LENGTH) }),
+    ...(node.unframed === true || typeof node.frame !== "object" ? { unframed: true } : {}),
     children: Array.isArray(node.children) ? node.children.map(normalizeUiNode) : [],
   };
+}
+
+/** The contract's per-string cap; a long text view must not fail the whole read. */
+const UI_TEXT_MAX_LENGTH = 1_024;
+
+function clampText(value: string | null, maxLength: number): string | null {
+  if (value === null || value.length <= maxLength) return value;
+  return `${value.slice(0, maxLength - 1)}…`;
 }
 
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);

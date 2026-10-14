@@ -50,14 +50,27 @@ import {
 import {
   DeviceBackendError,
   type DeviceBackend,
+  type DeviceConfiguration,
   type DeviceKeyEvent,
+  type DeviceLaunchOptions,
+  type DeviceLogQuery,
+  type DeviceLogResult,
   type DeviceSwipeGesture,
+  type DeviceTypeTextOutcome,
 } from "./DeviceBackend.ts";
+import {
+  effectiveValue,
+  findFocusedNode,
+  isSecureField,
+  uiFingerprint,
+} from "./deviceUiSnapshot.ts";
 import { DeviceFrameTransport, type DeviceFrameSink } from "./deviceFrameTransport.ts";
 import {
   DeviceUiTargetError,
   SCROLL_SWIPE_DURATION_MS,
+  describeTarget,
   findTarget,
+  targetPhrase,
   planScrollStep,
   visibleLabels,
   type DeviceUiTarget,
@@ -109,6 +122,67 @@ export function isTransientAttachFailure(error: unknown): boolean {
 
 /** Enough to cross a long Settings list; short enough to fail fast on a typo. */
 export const DEVICE_DEFAULT_MAX_SCROLLS = 8;
+
+/**
+ * Settling after input: the screen counts as settled once its accessibility
+ * fingerprint holds for `quietMs`, and the wait gives up at `timeoutMs`.
+ *
+ * The tree, not pixels: reads cost tens of milliseconds, they ignore a blinking
+ * caret, and they are what the agent acts on next. A spinner or an endless
+ * animation simply reaches the deadline, which is reported rather than hidden.
+ * The first read waits `startDelayMs` so the gesture's own effect has begun.
+ */
+export const DEVICE_SETTLE_DEFAULTS = {
+  quietMs: 300,
+  timeoutMs: 2_500,
+  pollMs: 100,
+  startDelayMs: 120,
+  /**
+   * How long an action's effect may take to start. The home gesture, a push
+   * after a network call, or a sheet can leave the old screen perfectly still
+   * for half a second first, which a bare quiet window reads as "settled,
+   * nothing changed". Waiting for the first change before settling costs
+   * nothing when the change is immediate, and this much when there is none.
+   */
+  changeGraceMs: 1_000,
+} as const;
+
+/** How long a launch may take to bring its app to the front. */
+const APP_CHANGE_TIMEOUT_MS = 4_000;
+
+/** Upper bound for an explicit wait, so a typo cannot hang a turn. */
+export const DEVICE_WAIT_MAX_MS = 30_000;
+
+/** USB HID keyboard usages used for editing chords. */
+const HID_USAGE = { a: 0x04, returnKey: 0x28, deleteKey: 0x2a } as const;
+
+export interface DeviceSettleOutcome {
+  /** False when the screen was still changing at the deadline. */
+  readonly settled: boolean;
+  readonly waitedMs: number;
+  /** The last tree read, or null when accessibility never answered. */
+  readonly root: DeviceUiNode | null;
+}
+
+export interface DeviceObservation extends DeviceSettleOutcome {
+  /** Whether the screen differs from just before the action; null if unknown. */
+  readonly changed: boolean | null;
+}
+
+export type DeviceTextMethod = "auto" | "keys" | "value";
+
+export interface DeviceTextEntryOutcome {
+  /** How the text went in: keystrokes, or the field's value set directly. */
+  readonly method: "keys" | "value";
+  readonly submitted: boolean;
+}
+
+export interface DeviceWaitOutcome {
+  readonly status: "ready" | "timeout" | "ambiguous";
+  readonly waitedMs: number;
+  readonly root: DeviceUiNode | null;
+  readonly match: DeviceUiTargetMatch | null;
+}
 
 export type DeviceEventListener = (event: DeviceEvent) => void;
 
@@ -540,8 +614,13 @@ export class DeviceManager {
 
   // ── Control plane ──────────────────────────────────────────────────
 
-  async tap(udid: string, x: number, y: number): Promise<void> {
-    await this.backend.tap(udid, x, y);
+  async tap(
+    udid: string,
+    x: number,
+    y: number,
+    options: { readonly holdMs?: number } = {},
+  ): Promise<void> {
+    await this.backend.tap(udid, x, y, options);
   }
 
   /**
@@ -554,10 +633,15 @@ export class DeviceManager {
   async tapElement(
     udid: string,
     target: DeviceUiTarget,
-    options: { readonly maxScrolls?: number | undefined } = {},
+    options: { readonly maxScrolls?: number | undefined; readonly holdMs?: number } = {},
   ): Promise<DeviceUiTargetMatch> {
     const match = await this.scrollToElement(udid, target, options);
-    await this.backend.tap(udid, match.point.x, match.point.y);
+    await this.backend.tap(
+      udid,
+      match.point.x,
+      match.point.y,
+      options.holdMs === undefined ? {} : { holdMs: options.holdMs },
+    );
     return match;
   }
 
@@ -592,9 +676,17 @@ export class DeviceManager {
         match === null ? this.pageDownStep(tree.root) : planScrollStep(match.node, tree.root);
       if (step === null) return match as DeviceUiTargetMatch;
 
+      const positionBefore = match === null ? null : match.node.frame.y;
       await this.backend.swipe(udid, step);
       tree = await this.describeUi(udid);
       match = this.locate(tree.root, target);
+
+      // Fixed chrome (a navigation bar's back button, a tab bar) sits outside
+      // the safe band by design and does not scroll. On screen and unmoved by
+      // a swipe means it is meant to be tapped where it is.
+      if (match !== null && match.onScreen && match.node.frame.y === positionBefore) {
+        return match;
+      }
 
       // A list at its end keeps rendering the same thing; swiping again would
       // burn the whole budget to no effect. Compared across the visible labels
@@ -603,8 +695,8 @@ export class DeviceManager {
       if (previousPosition !== null && position === previousPosition) {
         throw new DeviceUiTargetError(
           match === null
-            ? `No element labelled ${JSON.stringify(target.label)} appeared after scrolling to the end of the screen.`
-            : `Scrolling stopped moving ${JSON.stringify(target.label)} after ${scrolls + 1} ` +
+            ? `No element ${targetPhrase(target)} appeared after scrolling to the end of the screen.`
+            : `Scrolling stopped moving ${describeTarget(target)} after ${scrolls + 1} ` +
                 `swipe${scrolls === 0 ? "" : "s"}; the list appears to be at its end and the element is still out of reach.`,
           match === null ? visibleLabels(tree.root) : [],
           match === null,
@@ -615,7 +707,7 @@ export class DeviceManager {
 
     if (match !== null && planScrollStep(match.node, tree.root) === null) return match;
     throw new DeviceUiTargetError(
-      `Could not bring ${JSON.stringify(target.label)} into view within ${maxScrolls} swipes. ` +
+      `Could not bring ${describeTarget(target)} into view within ${maxScrolls} swipes. ` +
         `Raise maxSwipes, or scroll manually with device_swipe if it sits in a nested scroll area.`,
       match === null ? visibleLabels(tree.root) : [],
       match === null,
@@ -657,8 +749,245 @@ export class DeviceManager {
     await this.backend.swipe(udid, gesture);
   }
 
-  async typeText(udid: string, text: string): Promise<void> {
-    await this.backend.typeText(udid, text);
+  async typeText(udid: string, text: string): Promise<DeviceTypeTextOutcome> {
+    return await this.backend.typeText(udid, text);
+  }
+
+  /**
+   * Put text into the focused field the way a test needs it to land: exactly.
+   *
+   * Keystrokes are the realistic path, but the guest maps each key through its
+   * own hardware layout (an Italian simulator turns "-" into "'") and only
+   * ASCII has keys at all. `auto` therefore types keys for ASCII on a US
+   * layout and otherwise sets the field's value through accessibility, which
+   * carries any Unicode. Trailing newlines become a Return press either way.
+   */
+  async enterText(
+    udid: string,
+    text: string,
+    options: {
+      readonly method?: DeviceTextMethod;
+      readonly clear?: boolean;
+      readonly submit?: boolean;
+    } = {},
+  ): Promise<DeviceTextEntryOutcome> {
+    const body = text.replace(/\n+$/u, "");
+    const submit = options.submit === true || body.length !== text.length;
+    const printableAscii = /^[\x20-\x7e\t\n]*$/u.test(body);
+    let method: "keys" | "value";
+    if (options.method === "keys") {
+      if (!printableAscii) {
+        throw new DeviceBackendError(
+          'method "keys" types printable ASCII only; use method "value" (or "auto") for this text.',
+        );
+      }
+      method = "keys";
+    } else if (options.method === "value") {
+      method = "value";
+    } else {
+      method =
+        printableAscii && (await this.backend.usesUsKeyboardLayout(udid).catch(() => false))
+          ? "keys"
+          : "value";
+    }
+
+    if (method === "value" && body.length > 0) {
+      const tree = await this.describeUi(udid);
+      const focused = findFocusedNode(tree.root);
+      if (focused === null) {
+        throw new DeviceUiTargetError(
+          "No element has keyboard focus, so there is nowhere to put the text. Tap the field first, then retry.",
+        );
+      }
+      if (isSecureField(focused) && options.clear !== true) {
+        // A secure field reads back as bullets, so appending would corrupt it.
+        if (!printableAscii) {
+          throw new DeviceBackendError(
+            "Secure fields cannot be appended to through accessibility; pass clear: true to replace the whole value.",
+          );
+        }
+        method = "keys";
+      } else {
+        const current = options.clear === true ? "" : (effectiveValue(focused) ?? "");
+        await this.backend.setFocusedValue(udid, `${current}${body}`);
+      }
+    }
+    if (method === "keys") {
+      if (options.clear === true) await this.clearFocusedField(udid);
+      if (body.length > 0) {
+        const outcome = await this.backend.typeText(udid, body);
+        if (outcome.skipped > 0) {
+          throw new DeviceBackendError(
+            `${outcome.skipped} character(s) have no key and were not typed; retry with method "value".`,
+          );
+        }
+      }
+    } else if (body.length === 0 && options.clear === true) {
+      await this.backend.setFocusedValue(udid, "");
+    }
+    if (submit) await this.pressKey(udid, HID_USAGE.returnKey);
+    return { method, submitted: submit };
+  }
+
+  /** Select all, then delete: the hardware-keyboard way to empty a field. */
+  private async clearFocusedField(udid: string): Promise<void> {
+    await this.pressKey(udid, HID_USAGE.a, ["command"]);
+    await this.pressKey(udid, HID_USAGE.deleteKey);
+  }
+
+  private async pressKey(
+    udid: string,
+    keyCode: number,
+    modifiers: DeviceKeyEvent["modifiers"] = [],
+  ): Promise<void> {
+    await this.backend.keyEvent(udid, { keyCode, modifiers, direction: "down" });
+    await this.backend.keyEvent(udid, { keyCode, modifiers, direction: "up" });
+  }
+
+  // ── Observation ────────────────────────────────────────────────────
+
+  /**
+   * Wait until the screen stops changing, or the deadline passes.
+   *
+   * Reads failing mid-transition (the frontmost app is swapping) count as
+   * change rather than as an error: a launch or a dismissal is exactly when
+   * the tree is briefly unreadable.
+   */
+  async waitForSettle(
+    udid: string,
+    options: { readonly quietMs?: number; readonly timeoutMs?: number } = {},
+  ): Promise<DeviceSettleOutcome> {
+    const quietMs = options.quietMs ?? DEVICE_SETTLE_DEFAULTS.quietMs;
+    const timeoutMs = options.timeoutMs ?? DEVICE_SETTLE_DEFAULTS.timeoutMs;
+    const started = this.now();
+    await this.delay(Math.min(DEVICE_SETTLE_DEFAULTS.startDelayMs, timeoutMs));
+    let root: DeviceUiNode | null = null;
+    let fingerprint: string | null = null;
+    let stableSince = this.now();
+    while (true) {
+      const read = await this.describeUi(udid).catch(() => null);
+      const next = read === null ? null : uiFingerprint(read.root);
+      if (read !== null) root = read.root;
+      if (next === null || next !== fingerprint) {
+        fingerprint = next;
+        stableSince = this.now();
+      } else if (this.now() - stableSince >= quietMs) {
+        return { settled: true, waitedMs: this.now() - started, root };
+      }
+      if (this.now() - started >= timeoutMs) {
+        return { settled: false, waitedMs: this.now() - started, root };
+      }
+      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs);
+    }
+  }
+
+  /**
+   * Run an action and report what it did to the screen: the settled tree and
+   * whether it differs from just before. An unchanged screen after a tap is the
+   * clearest sign the tap missed, and it costs the agent nothing to see it.
+   */
+  async observe(
+    udid: string,
+    action: () => Promise<void>,
+    options: {
+      readonly quietMs?: number;
+      readonly timeoutMs?: number;
+      /**
+       * Wait for an app to come to the front before settling: `"different"`
+       * for one other than the app in front before, `"any"` when relaunching
+       * the app already in front. A launch reports success well before its app
+       * is frontmost, and the old screen or the blank transition holding still
+       * in the meantime would read as settled.
+       */
+      readonly awaitApp?: "different" | "any";
+    } = {},
+  ): Promise<DeviceObservation> {
+    const beforeTree = await this.describeUi(udid).catch(() => null);
+    const before = beforeTree === null ? null : uiFingerprint(beforeTree.root);
+    await action();
+    const acted = this.now();
+    if (options.awaitApp !== undefined) {
+      await this.waitForApp(udid, options.awaitApp === "different" ? beforeTree?.root.label : null);
+    } else if (before !== null) {
+      await this.waitForChange(udid, before);
+    }
+    const settled = await this.waitForSettle(udid, options);
+    const after = settled.root === null ? null : uiFingerprint(settled.root);
+    return {
+      ...settled,
+      // From the end of the action, so a slow-starting transition counts.
+      waitedMs: this.now() - acted,
+      changed: before === null || after === null ? null : before !== after,
+    };
+  }
+
+  /** Poll until the screen differs from `baseline`, for at most the change grace. */
+  private async waitForChange(udid: string, baseline: string): Promise<void> {
+    const started = this.now();
+    while (this.now() - started < DEVICE_SETTLE_DEFAULTS.changeGraceMs) {
+      const tree = await this.describeUi(udid).catch(() => null);
+      if (tree !== null && uiFingerprint(tree.root) !== baseline) return;
+      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs);
+    }
+  }
+
+  /**
+   * Poll until an app is in front (the root carries a name; SpringBoard and
+   * the launch transition do not) and, when `previous` is given, it is not
+   * that one. Bounded by `APP_CHANGE_TIMEOUT_MS`: an app that was already in
+   * front never changes, and the bound lets that fall through to a settle.
+   */
+  private async waitForApp(udid: string, previous: string | null | undefined): Promise<void> {
+    const started = this.now();
+    while (this.now() - started < APP_CHANGE_TIMEOUT_MS) {
+      const label = (await this.describeUi(udid).catch(() => null))?.root.label?.trim();
+      if (label && (previous === null || previous === undefined || label !== previous.trim())) {
+        return;
+      }
+      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs);
+    }
+  }
+
+  /**
+   * Wait for an element to appear (or, with `gone`, to disappear) without
+   * sending any input. Ambiguity proves presence, so it ends a presence wait.
+   */
+  async waitFor(
+    udid: string,
+    target: DeviceUiTarget,
+    options: { readonly gone?: boolean; readonly timeoutMs: number },
+  ): Promise<DeviceWaitOutcome> {
+    const started = this.now();
+    const timeoutMs = Math.min(options.timeoutMs, DEVICE_WAIT_MAX_MS);
+    let root: DeviceUiNode | null = null;
+    while (true) {
+      const read = await this.describeUi(udid).catch(() => null);
+      if (read !== null) {
+        root = read.root;
+        let match: DeviceUiTargetMatch | null = null;
+        let ambiguous = false;
+        try {
+          const found = findTarget(read.root, target);
+          match = found.onScreen ? found : null;
+        } catch (error) {
+          if (!(error instanceof DeviceUiTargetError)) throw error;
+          ambiguous = !error.notFound;
+        }
+        const present = match !== null || ambiguous;
+        if (options.gone === true ? !present : present) {
+          return {
+            status: ambiguous && options.gone !== true ? "ambiguous" : "ready",
+            waitedMs: this.now() - started,
+            root,
+            match,
+          };
+        }
+      }
+      if (this.now() - started >= timeoutMs) {
+        return { status: "timeout", waitedMs: this.now() - started, root, match: null };
+      }
+      await this.delay(200);
+    }
   }
 
   async keyEvent(udid: string, event: DeviceKeyEvent): Promise<void> {
@@ -677,8 +1006,17 @@ export class DeviceManager {
     udid: string,
     bundleId: string,
     launchArguments?: readonly string[],
+    options?: DeviceLaunchOptions,
   ): Promise<DeviceLaunchAppResult> {
-    return await this.backend.launch(udid, bundleId, launchArguments);
+    return await this.backend.launch(udid, bundleId, launchArguments, options);
+  }
+
+  async configure(udid: string, configuration: DeviceConfiguration): Promise<void> {
+    await this.backend.configure(udid, configuration);
+  }
+
+  async readLogs(udid: string, query: DeviceLogQuery): Promise<DeviceLogResult> {
+    return await this.backend.readLogs(udid, query);
   }
 
   async openUrl(udid: string, url: string): Promise<void> {
@@ -687,7 +1025,11 @@ export class DeviceManager {
 
   async screenshot(
     udid: string,
-    options: { readonly save?: boolean; readonly maxInlineBytes?: number } = {},
+    options: {
+      readonly save?: boolean;
+      readonly maxInlineBytes?: number;
+      readonly resolution?: "pixels" | "points";
+    } = {},
   ): Promise<DeviceScreenshotResult> {
     return await this.backend.screenshot(udid, options);
   }
@@ -711,6 +1053,17 @@ export class DeviceManager {
 
   async describeUi(udid: string): Promise<DeviceDescribeUiResult> {
     return await this.backend.describeUi(udid);
+  }
+
+  /** The screen in points: helper geometry when attached, else the tree's root. */
+  async pointSize(
+    udid: string,
+  ): Promise<{ readonly width: number; readonly height: number } | null> {
+    const geometry = this.backend.geometry(udid);
+    if (geometry) return { width: geometry.pointWidth, height: geometry.pointHeight };
+    const tree = await this.describeUi(udid).catch(() => null);
+    if (tree === null || tree.root.frame.width <= 0 || tree.root.frame.height <= 0) return null;
+    return { width: tree.root.frame.width, height: tree.root.frame.height };
   }
 
   // ── Agent integration ──────────────────────────────────────────────
