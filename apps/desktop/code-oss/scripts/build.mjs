@@ -75,8 +75,8 @@ await run(process.execPath, [
   "--nls",
 ]);
 await mkdir(output, { recursive: false });
-await cp(join(source, "out-synara"), join(output, "out"), { recursive: true });
-await cp(join(source, ".build/extensions"), join(output, "extensions"), { recursive: true });
+await cp(join(source, "out-synara"), join(output, "out"), { recursive: true, verbatimSymlinks: true });
+await cp(join(source, ".build/extensions"), join(output, "extensions"), { recursive: true, verbatimSymlinks: true });
 const { getProductionDependencies } = await import(
   pathToFileURL(join(source, "build/lib/dependencies.ts")).href
 );
@@ -89,7 +89,13 @@ for (const dependency of dependencies) {
   }
   if (copied.some((parent) => dependency.startsWith(parent + sep))) continue;
   await mkdir(dirname(join(output, path)), { recursive: true });
-  await cp(dependency, join(output, path), { recursive: true });
+  // Preserve relative runtime links instead of rewriting them to build-machine
+  // absolute paths. npm command shims are build tooling, not native app resources.
+  await cp(dependency, join(output, path), {
+    recursive: true,
+    verbatimSymlinks: true,
+    filter: (entry) => !relative(dependency, entry).split(sep).includes(".bin"),
+  });
   copied.push(dependency);
 }
 for (const name of ["product.json", "LICENSE.txt", "ThirdPartyNotices.txt"]) {

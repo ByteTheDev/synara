@@ -24,6 +24,7 @@ import {
   type DesktopIdeState,
 } from "@synara/contracts";
 import { registerDesktopRenderer } from "./desktopRenderer";
+import { matchesDesktopAccelerator, resolveDesktopMenuAccelerator } from "./menuShortcuts";
 
 import { DESKTOP_IPC_CHANNELS } from "./ipcChannels";
 const IDE_IPC = DESKTOP_IPC_CHANNELS.ide;
@@ -80,6 +81,7 @@ export class CodeOssHost {
   private agentReady = false;
   private overlayOpen = false;
   private focusPending = false;
+  private ideFocusAgent = false;
   private accelerator: string | null = "CommandOrControl+Alt+G";
   private readonly runtime: string | null;
   private readonly manifest: RuntimeManifest | null;
@@ -167,7 +169,7 @@ export class CodeOssHost {
   }
   setAgentMenu(menu: Menu | null): void {
     // The native keybinding service is authoritative, including user changes.
-    // This menu accelerator operates only in Agent Mode, never globally.
+    // The retained Agent renderer also handles it when docked inside IDE Mode.
     if (menu && this.runtime && !menu.getMenuItemById("synara-mode-menu")) {
       menu.append(
         new MenuItem({
@@ -177,7 +179,7 @@ export class CodeOssHost {
             {
               id: "synara-mode-switch",
               label: "Switch Agent / IDE Mode",
-              ...(this.accelerator ? { accelerator: this.accelerator } : {}),
+              accelerator: resolveDesktopMenuAccelerator(process.platform, this.accelerator),
               click: () => {
                 if (this.state.status === "ready")
                   this.setMode(this.state.mode === "agent" ? "ide" : "agent");
@@ -344,6 +346,12 @@ export class CodeOssHost {
     });
     registerDesktopRenderer(window, this.agent.webContents);
     window.contentView.addChildView(this.agent);
+    this.agent.webContents.on("before-input-event", (event, input) => {
+      if (this.state.status !== "ready" || !matchesDesktopAccelerator(this.accelerator, process.platform, input)) return;
+      // Suppress DOM and menu dispatch together so the same chord cannot toggle twice.
+      event.preventDefault();
+      this.setMode(this.state.mode === "agent" ? "ide" : "agent");
+    });
     this.agent.webContents.on("did-finish-load", () => {
       this.agentReady = true;
       this.publish();
@@ -446,7 +454,7 @@ export class CodeOssHost {
             throw new Error("Invalid mode shortcut.");
           this.accelerator = value as string | null;
           const item = this.agentMenu?.getMenuItemById("synara-mode-switch");
-          if (item) item.accelerator = this.accelerator;
+          if (item) item.accelerator = resolveDesktopMenuAccelerator(process.platform, this.accelerator) ?? null;
           if (this.state.mode === "agent") Menu.setApplicationMenu(this.agentMenu);
           return;
         }
@@ -454,7 +462,7 @@ export class CodeOssHost {
           if (typeof value !== "boolean") throw new Error("Invalid native overlay state.");
           this.overlayOpen = value;
           this.layout();
-          if (value) this.window?.webContents.focus();
+          if (value && this.state.mode === "ide") this.window?.webContents.focus();
           return;
         case "focus-agent":
           this.focusPending = true;
@@ -490,18 +498,20 @@ export class CodeOssHost {
     if (this.state.status !== "ready")
       throw new Error(this.state.message ?? "The native workbench is still starting.");
     if (value === this.state.mode) return this.state;
+    if (this.state.mode === "ide") this.ideFocusAgent = this.agent?.webContents.isFocused() ?? false;
+    this.focusPending = false;
     this.state = { ...this.state, mode: value };
     this.options.onMode?.(value);
     Menu.setApplicationMenu(value === "agent" ? this.agentMenu : this.workbenchMenu);
     this.layout();
     this.publish();
-    if (value === "agent") this.agent?.webContents.focus();
+    if (value === "agent" || (this.ideFocusAgent && this.agent?.getVisible())) this.agent?.webContents.focus();
     else this.window?.webContents.focus();
     return this.state;
   }
   private layout(): void {
     if (!this.agent || !this.window || this.window.isDestroyed()) return;
-    if (this.overlayOpen) {
+    if (this.overlayOpen && this.state.mode === "ide") {
       this.agent.setVisible(false);
       return;
     }

@@ -20,6 +20,8 @@ export interface DesktopKeyboardInput {
   meta: boolean;
   shift: boolean;
   alt: boolean;
+  isAutoRepeat?: boolean;
+  isComposing?: boolean;
 }
 
 export type DesktopPhysicalZoomAction = "zoomOut" | null;
@@ -140,6 +142,56 @@ function acceleratorKey(key: string): string | null {
   if (named) return named;
   if (/^[a-z]$/.test(key) || FUNCTION_KEY_PATTERN.test(key)) return key.toUpperCase();
   return LITERAL_ACCELERATOR_KEY_PATTERN.test(key) ? key : null;
+}
+
+/** Match one native accelerator in a retained renderer, without swallowing typing. */
+export function matchesDesktopAccelerator(
+  accelerator: string | null,
+  platform: NodeJS.Platform,
+  input: DesktopKeyboardInput,
+): boolean {
+  if (!accelerator || input.type !== "keyDown" || input.isAutoRepeat || input.isComposing) return false;
+  const parts = accelerator.toLowerCase().split("+");
+  const key = parts.pop();
+  if (!key || /\s/.test(key)) return false;
+  let control = false;
+  let meta = false;
+  let shift = false;
+  let alt = false;
+  for (const modifier of parts) {
+    switch (modifier) {
+      case "cmdorctrl":
+      case "commandorcontrol":
+        if (platform === "darwin") meta = true;
+        else control = true;
+        break;
+      case "ctrl":
+      case "control":
+        control = true;
+        break;
+      case "cmd":
+      case "command":
+      case "super":
+      case "meta":
+        meta = true;
+        break;
+      case "shift":
+        shift = true;
+        break;
+      case "alt":
+      case "option":
+        alt = true;
+        break;
+      default:
+        return false;
+    }
+  }
+  if (!control && !meta && !alt && !FUNCTION_KEY_PATTERN.test(key)) return false;
+  if (input.control !== control || input.meta !== meta || input.shift !== shift || input.alt !== alt) return false;
+  if (acceleratorKey(input.key.toLowerCase())?.toLowerCase() === key) return true;
+  // Option modifies printable characters on macOS. The physical letter is the
+  // native accelerator's key in that case; do not generalize to other layouts.
+  return platform === "darwin" && alt && /^[a-z]$/.test(key) && input.code === `Key${key.toUpperCase()}`;
 }
 
 /**
