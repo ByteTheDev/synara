@@ -24,7 +24,7 @@ import {
   type DesktopIdeState,
 } from "@synara/contracts";
 import { registerDesktopRenderer } from "./desktopRenderer";
-import { matchesDesktopAccelerator, resolveDesktopMenuAccelerator } from "./menuShortcuts";
+import { matchesDesktopAccelerator } from "./menuShortcuts";
 
 import { DESKTOP_IPC_CHANNELS } from "./ipcChannels";
 const IDE_IPC = DESKTOP_IPC_CHANNELS.ide;
@@ -179,7 +179,7 @@ export class CodeOssHost {
             {
               id: "synara-mode-switch",
               label: "Switch Agent / IDE Mode",
-              accelerator: resolveDesktopMenuAccelerator(process.platform, this.accelerator),
+              // The retained renderer handles the configurable shortcut in both modes.
               click: () => {
                 if (this.state.status === "ready")
                   this.setMode(this.state.mode === "agent" ? "ide" : "agent");
@@ -204,6 +204,26 @@ export class CodeOssHost {
     // Code-OSS's editor state lives inside the existing Electron profile. No
     // separate Synara database, auth store, updater, or profile is introduced.
     await mkdir(this.options.profilePath, { recursive: true });
+    // The embedded startup skips upstream command-line initialization. Create
+    // its absent argv file without changing any existing Synara configuration.
+    const product = JSON.parse(readFileSync(Path.join(this.runtime, "product.json"), "utf8")) as {
+      dataFolderName: string;
+    };
+    if (
+      typeof product.dataFolderName !== "string" ||
+      Path.basename(product.dataFolderName) !== product.dataFolderName
+    )
+      throw new Error("Invalid native product data folder.");
+    const argvPath = Path.join(app.getPath("home"), product.dataFolderName, "argv.json");
+    await mkdir(Path.dirname(argvPath), { recursive: true });
+    try {
+      await writeFile(argvPath, JSON.stringify({ "enable-crash-reporter": false }), {
+        flag: "wx",
+        mode: 0o600,
+      });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+    }
     const workspace = Path.join(this.options.profilePath, "synara.code-workspace");
     try {
       await writeFile(
@@ -231,6 +251,7 @@ export class CodeOssHost {
         "user-data-dir": this.options.profilePath,
         "shared-data-dir": Path.join(this.options.profilePath, "SharedData"),
         "extensions-dir": Path.join(this.options.profilePath, "extensions"),
+        "builtin-extensions-dir": Path.join(this.runtime, "extensions"),
         "disable-updates": true,
         "disable-telemetry": true,
         "skip-welcome": true,
@@ -347,7 +368,11 @@ export class CodeOssHost {
     registerDesktopRenderer(window, this.agent.webContents);
     window.contentView.addChildView(this.agent);
     this.agent.webContents.on("before-input-event", (event, input) => {
-      if (this.state.status !== "ready" || !matchesDesktopAccelerator(this.accelerator, process.platform, input)) return;
+      if (
+        this.state.status !== "ready" ||
+        !matchesDesktopAccelerator(this.accelerator, process.platform, input)
+      )
+        return;
       // Suppress DOM and menu dispatch together so the same chord cannot toggle twice.
       event.preventDefault();
       this.setMode(this.state.mode === "agent" ? "ide" : "agent");
@@ -453,9 +478,8 @@ export class CodeOssHost {
           )
             throw new Error("Invalid mode shortcut.");
           this.accelerator = value as string | null;
-          const item = this.agentMenu?.getMenuItemById("synara-mode-switch");
-          if (item) item.accelerator = resolveDesktopMenuAccelerator(process.platform, this.accelerator) ?? null;
-          if (this.state.mode === "agent") Menu.setApplicationMenu(this.agentMenu);
+          // Electron menu items are immutable here. before-input-event reads
+          // the updated accelerator without rebuilding or double-registering it.
           return;
         }
         case "overlay":
@@ -498,14 +522,16 @@ export class CodeOssHost {
     if (this.state.status !== "ready")
       throw new Error(this.state.message ?? "The native workbench is still starting.");
     if (value === this.state.mode) return this.state;
-    if (this.state.mode === "ide") this.ideFocusAgent = this.agent?.webContents.isFocused() ?? false;
+    if (this.state.mode === "ide")
+      this.ideFocusAgent = this.agent?.webContents.isFocused() ?? false;
     this.focusPending = false;
     this.state = { ...this.state, mode: value };
     this.options.onMode?.(value);
     Menu.setApplicationMenu(value === "agent" ? this.agentMenu : this.workbenchMenu);
     this.layout();
     this.publish();
-    if (value === "agent" || (this.ideFocusAgent && this.agent?.getVisible())) this.agent?.webContents.focus();
+    if (value === "agent" || (this.ideFocusAgent && this.agent?.getVisible()))
+      this.agent?.webContents.focus();
     else this.window?.webContents.focus();
     return this.state;
   }

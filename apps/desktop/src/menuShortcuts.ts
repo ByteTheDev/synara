@@ -150,7 +150,8 @@ export function matchesDesktopAccelerator(
   platform: NodeJS.Platform,
   input: DesktopKeyboardInput,
 ): boolean {
-  if (!accelerator || input.type !== "keyDown" || input.isAutoRepeat || input.isComposing) return false;
+  if (!accelerator || input.type !== "keyDown" || input.isAutoRepeat || input.isComposing)
+    return false;
   const parts = accelerator.toLowerCase().split("+");
   const key = parts.pop();
   if (!key || /\s/.test(key)) return false;
@@ -187,11 +188,19 @@ export function matchesDesktopAccelerator(
     }
   }
   if (!control && !meta && !alt && !FUNCTION_KEY_PATTERN.test(key)) return false;
-  if (input.control !== control || input.meta !== meta || input.shift !== shift || input.alt !== alt) return false;
+  if (
+    input.control !== control ||
+    input.meta !== meta ||
+    input.shift !== shift ||
+    input.alt !== alt
+  )
+    return false;
   if (acceleratorKey(input.key.toLowerCase())?.toLowerCase() === key) return true;
   // Option modifies printable characters on macOS. The physical letter is the
   // native accelerator's key in that case; do not generalize to other layouts.
-  return platform === "darwin" && alt && /^[a-z]$/.test(key) && input.code === `Key${key.toUpperCase()}`;
+  return (
+    platform === "darwin" && alt && /^[a-z]$/.test(key) && input.code === `Key${key.toUpperCase()}`
+  );
 }
 
 /**

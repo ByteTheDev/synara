@@ -75,8 +75,14 @@ await run(process.execPath, [
   "--nls",
 ]);
 await mkdir(output, { recursive: false });
-await cp(join(source, "out-synara"), join(output, "out"), { recursive: true, verbatimSymlinks: true });
-await cp(join(source, ".build/extensions"), join(output, "extensions"), { recursive: true, verbatimSymlinks: true });
+await cp(join(source, "out-synara"), join(output, "out"), {
+  recursive: true,
+  verbatimSymlinks: true,
+});
+await cp(join(source, ".build/extensions"), join(output, "extensions"), {
+  recursive: true,
+  verbatimSymlinks: true,
+});
 const { getProductionDependencies } = await import(
   pathToFileURL(join(source, "build/lib/dependencies.ts")).href
 );
