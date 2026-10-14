@@ -1,0 +1,160 @@
+name: Native final packaging and failure attribution
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-packaging-final.yml]
+permissions:
+  contents: read
+jobs:
+  packaging:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 071a1054d514731828b3ffe9017e83f2b6fbe265
+          persist-credentials: false
+      - name: Repair installer resource normalization and record quit acceptance
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const files = ['scripts/build-desktop-artifact.ts', 'scripts/lib/code-oss-runtime.ts', 'scripts/lib/code-oss-runtime.test.ts', 'docs/code-oss.md'];
+          function edit(path, before, after) {
+            const text = fs.readFileSync(path, 'utf8');
+            if (text.split(before).length !== 2) throw Error('Changed source anchor: ' + path);
+            fs.writeFileSync(path, text.replace(before, after));
+          }
+          edit(files[0], 'import { validateCodeOssRuntime } from "./lib/code-oss-runtime.ts";', 'import { validateCodeOssRuntime, withCodeOssResources } from "./lib/code-oss-runtime.ts";');
+          edit(files[0], `  const buildWithCodeOss = {
+              ...resolvedBuildConfig.buildConfig,
+              extraResources: [
+                ...(resolvedBuildConfig.buildConfig.extraResources ?? []),
+                { from: stagedCodeOss, to: "code-oss", filter: ["**/*"] },
+              ],
+            };`.replace(/^ {12}/gm, '  '), '  const buildWithCodeOss = withCodeOssResources(resolvedBuildConfig.buildConfig, stagedCodeOss);');
+          fs.appendFileSync(files[1], `
+          /** Preserve existing single-item and array resource configurations in the same installer. */
+          export function withCodeOssResources(buildConfig: Record<string, unknown>, runtime: string) {
+            const existing = buildConfig.extraResources;
+            const resources = existing == null ? [] : Array.isArray(existing) ? existing : [existing];
+            return {
+              ...buildConfig,
+              extraResources: [...resources, { from: runtime, to: "code-oss", filter: ["**/*"] }],
+            };
+          }
+          `);
+          edit(files[2], 'import { validateCodeOssRuntime } from "./code-oss-runtime";', 'import { validateCodeOssRuntime, withCodeOssResources } from "./code-oss-runtime";');
+          fs.appendFileSync(files[2], `
+          describe("native resource staging preserves installer configuration", () => {
+            const native = { from: "/stage/code-oss", to: "code-oss", filter: ["**/*"] };
+            it("adds native resources when no extra resources are configured", () => {
+              expect(withCodeOssResources({ appId: "synara" }, native.from)).toEqual({ appId: "synara", extraResources: [native] });
+            });
+            it("preserves a single string or file-set entry", () => {
+              for (const existing of ["assets/**", { from: "assets", to: "assets" }]) {
+                expect(withCodeOssResources({ extraResources: existing }, native.from).extraResources).toEqual([existing, native]);
+              }
+            });
+            it("retains existing resource order without mutating the original configuration", () => {
+              const entries = ["assets/**", { from: "helper", to: "helper" }];
+              const original = { appId: "synara", extraResources: entries };
+              const result = withCodeOssResources(original, native.from);
+              expect(result.extraResources).toEqual([...entries, native]);
+              expect(original.extraResources).toBe(entries);
+              expect(entries).toHaveLength(2);
+              expect(result).not.toBe(original);
+            });
+          });
+          `);
+          edit(files[3], 'existing-user migration, dirty-quit cancellation and authenticated live-agent continuity require separate acceptance', 'existing-user migration and authenticated live-agent continuity require separate acceptance');
+          edit(files[3], '## Real application captures', 'Native dirty-save cancellation also passed in [run 38545799680](https://github.com/Emanuele-web04/synara/actions/runs/38545799680). After approving Synara\'s existing quit confirmation, an automated native-dialog responder selected Cancel. The real production lifecycle retained the dirty buffer, unsent Agent draft, extension-host process and usable single window; the fixture file was not saved. Only the dialog response was substituted in this disposable-profile check.\n\n## Real application captures');
+          fs.mkdirSync('.code-oss', { recursive: true });
+          fs.writeFileSync('.code-oss/final-paths.json', JSON.stringify(files));
+          JS
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Format and export only the final repair
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const paths = JSON.parse(fs.readFileSync('.code-oss/final-paths.json','utf8'));
+          execFileSync('node_modules/.bin/oxfmt',paths,{stdio:'inherit'});
+          fs.writeFileSync('packaging-manifest.json',JSON.stringify(paths.map(path=>({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')})),null,2));
+          execFileSync('tar',['-czf','.code-oss/packaging-source.tar.gz','packaging-manifest.json',...paths]);
+          fs.rmSync('packaging-manifest.json');
+          execFileSync('git',['add','--',...paths]);
+          fs.writeFileSync('.code-oss/packaging.diff',execFileSync('git',['diff','--cached','--no-ext-diff']));
+          JS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-packaging-repair
+          path: |
+            .code-oss/packaging-source.tar.gz
+            .code-oss/packaging.diff
+          retention-days: 3
+          if-no-files-found: error
+      - name: Verify final type contract and changed resource behavior
+        run: |
+          bun run typecheck
+          bun run --cwd scripts test -- lib/code-oss-runtime.test.ts
+          bun run fmt:check
+  provider:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [a62d7c733d19f5538ffc0d126d57437b3b578ff1, 071a1054d514731828b3ffe9017e83f2b6fbe265]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.revision }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'false'
+      - name: Run only the provider-reactor case that failed in the integrated suite
+        run: bun run --cwd apps/server test -- src/orchestration/Layers/ProviderCommandReactor.test.ts -t 'replays quarantined thread work beyond a pinned global cursor after live'
+  blobs:
+    needs: packaging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-packaging-repair
+      - name: Validate prepared source as data
+        run: |
+          python - <<'PY'
+          import tarfile,pathlib
+          with tarfile.open('packaging-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  path=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or path.is_absolute() or '..' in path.parts or item.size>150000:
+                      raise ValueError('Unexpected source member')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store verified repair blobs only; connector publishes reviewed diff
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'),crypto=require('node:crypto');
+            const allowed=new Set(['scripts/build-desktop-artifact.ts','scripts/lib/code-oss-runtime.ts','scripts/lib/code-oss-runtime.test.ts','docs/code-oss.md']);
+            const rows=JSON.parse(fs.readFileSync('source/packaging-manifest.json','utf8'));
+            if(!Array.isArray(rows)||rows.length!==allowed.size)throw Error('Unexpected manifest');
+            for(const row of rows) {
+              if(!allowed.delete(row.path))throw Error('Unexpected path');
+              const bytes=fs.readFileSync('source/'+row.path);
+              if(crypto.createHash('sha256').update(bytes).digest('hex')!==row.sha256)throw Error('Content mismatch');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              console.log('FINAL_REPAIR='+JSON.stringify({...row,sha:data.sha,mode:'100644',type:'blob'}));
+            }
+            console.log('FINAL_DIFF\n'+fs.readFileSync('packaging.diff','utf8'));
