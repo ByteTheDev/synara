@@ -1,0 +1,34 @@
+name: Native startup source diagnostics
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-startup-diagnostics.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-service-runtime
+          run-id: 38530755801
+          github-token: ${{ github.token }}
+      - name: Read exact bundled startup sites, without launching or changing source
+        run: |
+          tar -xzf code-oss-runtime.tar.gz runtime/out/synara.js runtime/out/vs/workbench/workbench.desktop.main.js
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const sites = [['runtime/out/vs/workbench/workbench.desktop.main.js', [775534,970929,1066283]], ['runtime/out/synara.js', [122916]]];
+          for (const [file, rows] of sites) {
+            const lines = fs.readFileSync(file, 'utf8').split('\n');
+            for (const row of rows) {
+              let marker = row - 1;
+              while (marker >= 0 && !/^\/\/ (src\/|vs\/|node_modules\/)/.test(lines[marker])) marker--;
+              console.log('\n=== '+file+':'+row+' ===\n'+(marker >= 0 ? lines[marker] : 'No source marker'));
+              for (let n = Math.max(0,row-20); n < Math.min(lines.length,row+15); n++) console.log((n+1)+': '+lines[n]);
+            }
+          }
+          JS
