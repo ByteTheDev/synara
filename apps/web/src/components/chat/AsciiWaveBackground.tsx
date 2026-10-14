@@ -32,6 +32,12 @@ const PATTERN_DURATION_MS = 20_000;
 const PATTERN_CROSSFADE_MS = 4_000;
 // The pattern is sampled every N cells and interpolated between; blotches are far larger.
 const FIELD_STEP = 2;
+// Decoration must never compete with opening a thread: wait for the landing to settle,
+// then for an idle slot, fill the glyph layer a slice per frame, and fade in.
+const START_DELAY_MS = 400;
+const IDLE_TIMEOUT_MS = 1500;
+const GLYPH_FILL_PER_FRAME = 1500;
+const REVEAL_MS = 1200;
 // Clicks on controls and text keep their own meaning and do not ripple.
 const INTERACTIVE_SELECTOR =
   "a,button,input,textarea,select,label,[contenteditable='true'],[role='button'],[role='combobox'],[role='menuitem'],[role='option'],[role='textbox'],[role='dialog'],[role='menu'],[role='listbox']";
@@ -120,6 +126,8 @@ interface Field {
   latticeCols: number;
   patchLattice: Float32Array;
   waveLattice: Float32Array;
+  // Glyphs below this index are drawn into the layer; the rest fill in over later frames.
+  filled: number;
 }
 
 interface Mask {
@@ -134,6 +142,16 @@ function createCanvas(width: number, height: number) {
   canvas.height = Math.max(1, height);
   const ctx = canvas.getContext("2d");
   return ctx ? { canvas, ctx } : null;
+}
+
+// Run work in an idle slot (setTimeout where requestIdleCallback is missing); returns a cancel.
+function scheduleIdle(callback: () => void): () => void {
+  if (typeof requestIdleCallback === "function") {
+    const id = requestIdleCallback(callback, { timeout: IDLE_TIMEOUT_MS });
+    return () => cancelIdleCallback(id);
+  }
+  const id = setTimeout(callback, 0);
+  return () => clearTimeout(id);
 }
 
 function createMask(cols: number, rows: number): Mask | null {
@@ -246,6 +264,7 @@ export function AsciiWaveBackground() {
     let frameId = 0;
     let lastFrameMs = 0;
     const startMs = performance.now();
+    let revealStartMs: number | null = null;
     const seed = Math.random() * 1000;
     const firstPattern = Math.floor(Math.random() * FIELD_PATTERNS.length);
 
@@ -298,8 +317,14 @@ export function AsciiWaveBackground() {
         latticeCols,
         patchLattice: new Float32Array(latticeSize),
         waveLattice: new Float32Array(latticeSize),
+        filled: 0,
       };
-      for (let index = 0; index < glyphs.length; index += 1) drawGlyph(field, index);
+    };
+
+    const fillGlyphs = (target: Field) => {
+      const end = Math.min(target.glyphs.length, target.filled + GLYPH_FILL_PER_FRAME);
+      for (let index = target.filled; index < end; index += 1) drawGlyph(target, index);
+      target.filled = end;
     };
 
     // Glyph layer -> optional recolor -> cut by the per-cell alpha mask -> onto the canvas.
@@ -320,6 +345,9 @@ export function AsciiWaveBackground() {
 
     const draw = (nowMs: number) => {
       if (!field) return;
+      if (field.filled < field.glyphs.length) fillGlyphs(field);
+      if (revealStartMs === null) revealStartMs = nowMs;
+      const reveal = reduceMotion ? 1 : smoothstep(0, REVEAL_MS, nowMs - revealStartMs);
       const { cols, rows, cellW, cellH, glyphs } = field;
       const inkBytes = field.inkMask.image.data;
       const accentBytes = field.accentMask.image.data;
@@ -387,7 +415,7 @@ export function AsciiWaveBackground() {
           const dx = (x - centerX) / (width * 0.3);
           const dy = (y - centerY) / (height * 0.3);
           const centerFade = Math.min(1, 0.45 + 0.55 * Math.sqrt(dx * dx + dy * dy));
-          const inkAlpha = INK_ALPHA_MAX * patch * patch * (0.4 + 0.6 * wave) * centerFade;
+          const inkAlpha = INK_ALPHA_MAX * patch * patch * (0.4 + 0.6 * wave) * centerFade * reveal;
 
           let rippleStrength = 0;
           // Shared per cell: bends every ripple's ring the same organic way.
@@ -436,7 +464,7 @@ export function AsciiWaveBackground() {
           const scrambleRate = IDLE_SCRAMBLE_RATE + RIPPLE_SCRAMBLE_RATE * rippleStrength;
           if (Math.random() < scrambleRate) {
             glyphs[index] = randomGlyph();
-            drawGlyph(field, index);
+            if (index < field.filled) drawGlyph(field, index);
           }
         }
       }
@@ -448,15 +476,18 @@ export function AsciiWaveBackground() {
 
     const tick = (nowMs: number) => {
       frameId = 0;
-      if (document.hidden) return;
+      // Not set up yet: the idle setup calls wake() itself once the field exists.
+      if (document.hidden || !field) return;
       const interval =
         ripplesRef.current.length > 0 ? RIPPLE_FRAME_INTERVAL_MS : IDLE_FRAME_INTERVAL_MS;
       if (nowMs - lastFrameMs >= interval) {
         lastFrameMs = nowMs;
         draw(nowMs);
       }
-      // Reduced motion keeps a still field and only animates while a ripple is alive.
-      if (!reduceMotion || ripplesRef.current.length > 0) {
+      // Reduced motion keeps a still field and only animates while a ripple is alive
+      // (or while the glyph layer is still filling in).
+      const filling = field.filled < field.glyphs.length;
+      if (!reduceMotion || filling || ripplesRef.current.length > 0) {
         frameId = requestAnimationFrame(tick);
       }
     };
@@ -498,10 +529,25 @@ export function AsciiWaveBackground() {
     host.addEventListener("pointerdown", onPointerDown, { passive: true });
     host.addEventListener("pointerup", onPointerUp, { passive: true });
 
+    // Setup (canvas allocation, glyph layer) only ever runs in an idle slot, never in the
+    // mount or resize path, so opening or creating a thread is not delayed by it.
+    let started = false;
+    let cancelIdle: (() => void) | null = null;
+    const rebuildWhenIdle = () => {
+      cancelIdle?.();
+      cancelIdle = scheduleIdle(() => {
+        cancelIdle = null;
+        resize();
+        lastFrameMs = 0;
+        wake();
+      });
+    };
+    const startTimer = setTimeout(() => {
+      started = true;
+      rebuildWhenIdle();
+    }, START_DELAY_MS);
     const resizeObserver = new ResizeObserver(() => {
-      resize();
-      draw(performance.now());
-      wake();
+      if (started) rebuildWhenIdle();
     });
     resizeObserver.observe(container);
     document.addEventListener("visibilitychange", wake);
@@ -509,6 +555,8 @@ export function AsciiWaveBackground() {
     return () => {
       host.removeEventListener("pointerdown", onPointerDown);
       host.removeEventListener("pointerup", onPointerUp);
+      clearTimeout(startTimer);
+      cancelIdle?.();
       resizeObserver.disconnect();
       document.removeEventListener("visibilitychange", wake);
       if (frameId !== 0) cancelAnimationFrame(frameId);
