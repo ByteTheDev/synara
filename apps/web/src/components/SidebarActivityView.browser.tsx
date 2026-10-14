@@ -115,7 +115,9 @@ function ActivityHarness(input: Parameters<typeof renderActivity>[0]) {
       threads={input.threads}
       projectById={new Map(projects.map((project) => [project.id, project]))}
       activeThreadId={input.activeThreadId ?? null}
-      visualActiveThreadId={input.visualActiveThreadId}
+      {...(input.visualActiveThreadId === undefined
+        ? {}
+        : { visualActiveThreadId: input.visualActiveThreadId })}
       pinnedThreadIdSet={input.pinnedThreadIdSet ?? new Set()}
       settledOverrideByThreadId={input.settledOverrideByThreadId ?? new Map()}
       threadsHydrated={input.threadsHydrated ?? true}
