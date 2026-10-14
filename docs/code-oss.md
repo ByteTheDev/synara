@@ -40,7 +40,7 @@ xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke
 
 ## Real application captures
 
-These captures come from the original and integrated applications, not mockups. The integrated captures from [run 38541504429](https://github.com/Emanuele-web04/synara/actions/runs/38541504429) show actual source editing, TypeScript diagnostics, draft context and a paused debugger. That run passed these checks but stopped at the terminal-focus check; the subsequent fixes and results are tracked in the PR.
+These captures come from the original and integrated applications, not mockups. [Run 38543125228](https://github.com/Emanuele-web04/synara/actions/runs/38543125228) passed the native build, upstream client typecheck and the real Linux acceptance harness: source editing, TypeScript diagnostics/completion/definition, selected-code draft context, debugging and extension-host continuity, dirty buffers, modal stacking, terminal execution across mode switches, and Git. The same run captured the mode-switch recording. This is isolated Linux acceptance, not signed cross-platform release or authenticated provider acceptance.
 
 [Before: original Agent Mode](images/code-oss/before-agent-mode.png)
 
@@ -49,3 +49,9 @@ These captures come from the original and integrated applications, not mockups. 
 ![After: native selection in the existing Synara draft](images/code-oss/after-ide-agent-context.png)
 
 ![After: native JavaScript debugger](images/code-oss/after-ide-debugger.png)
+
+![After: native terminal](images/code-oss/after-ide-terminal.png)
+
+![After: native Source Control](images/code-oss/after-ide-git.png)
+
+![Actual Agent and IDE mode switching](images/code-oss/agent-ide-switch.gif)
