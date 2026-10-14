@@ -549,6 +549,11 @@ static uint16_t SynaraConsumerUsageForButton(SynaraHardwareButton button) {
   [self sendMessage:_buttonFn(SynaraButtonSource(button), op, kButtonTargetHardware)];
 }
 
+- (void)invalidate {
+  [_dtuhid invalidate];
+  _dtuhid = nil;
+}
+
 - (void)tapButton:(SynaraHardwareButton)button {
   [self sendButton:button down:YES];
   usleep(90000);

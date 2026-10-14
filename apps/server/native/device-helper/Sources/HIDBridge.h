@@ -92,6 +92,10 @@ BOOL SynaraHardwareButtonFromName(NSString *name, SynaraHardwareButton *outButto
     NS_SWIFT_NAME(sendButton(_:down:));
 - (void)tapButton:(SynaraHardwareButton)button NS_SWIFT_NAME(tapButton(_:));
 
+/// Releases the transport. Called when an attachment is replaced, so the old
+/// one's background connection attempts stop instead of piling up.
+- (void)invalidate;
+
 @end
 
 NS_ASSUME_NONNULL_END

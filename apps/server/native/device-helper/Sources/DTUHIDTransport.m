@@ -89,6 +89,10 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
   BOOL _attempting;
   NSError *_lastError;
   BOOL _contactActive;
+  /// Set by `invalidate`: a replaced transport stops warming up at once.
+  BOOL _invalidated;
+  /// Signalled by `invalidate` to cut a retry backoff short.
+  dispatch_semaphore_t _cancelled;
 }
 
 - (instancetype)initWithDevice:(id)device {
@@ -99,6 +103,7 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
     _connectQueue =
         dispatch_queue_create("dev.synara.device-helper.dtuhid.connect", DISPATCH_QUEUE_SERIAL);
     _attemptGroup = dispatch_group_create();
+    _cancelled = dispatch_semaphore_create(0);
     // Warm up now: the first gesture would otherwise pay the daemon's cold
     // start, which can outlast an RPC deadline right after a boot.
     [self startAttemptIfNeeded];
@@ -110,7 +115,7 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
 
 - (void)startAttemptIfNeeded {
   @synchronized(self) {
-    if ((_ready && _connection != nil) || _attempting) {
+    if ((_ready && _connection != nil) || _attempting || _invalidated) {
       return;
     }
     _attempting = YES;
@@ -119,7 +124,7 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
   dispatch_async(_connectQueue, ^{
     NSError *error = nil;
     xpc_connection_t connection = nil;
-    for (NSInteger attempt = 1; attempt <= kLivenessAttempts; attempt++) {
+    for (NSInteger attempt = 1; attempt <= kLivenessAttempts && !self.isInvalidated; attempt++) {
       connection = [self connectOnceWithError:&error];
       if (connection != nil || error.code == 1) {
         break;  // Connected, or the toolchain lacks the symbols: retrying cannot help.
@@ -127,8 +132,17 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
       fprintf(stderr, "[device-helper] dtuhidd did not answer (attempt %ld of %ld): %s\n",
               (long)attempt, (long)kLivenessAttempts, error.localizedDescription.UTF8String);
       if (attempt < kLivenessAttempts) {
-        [NSThread sleepForTimeInterval:kLivenessBackoff];
+        // Waits out the backoff unless the transport is replaced meanwhile:
+        // a re-attach during a cold boot must not leave old warm-ups running.
+        dispatch_semaphore_wait(
+            self->_cancelled,
+            dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kLivenessBackoff * NSEC_PER_SEC)));
       }
+    }
+    if (connection != nil && self.isInvalidated) {
+      xpc_connection_cancel(connection);
+      connection = nil;
+      error = SynaraDTUHIDError(5, @"the input transport was replaced");
     }
     @synchronized(self) {
       self->_connection = connection;
@@ -264,12 +278,24 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
   }
 }
 
+- (BOOL)isInvalidated {
+  @synchronized(self) {
+    return _invalidated;
+  }
+}
+
 - (void)invalidate {
   xpc_connection_t connection = nil;
+  BOOL wasInvalidated;
   @synchronized(self) {
+    wasInvalidated = _invalidated;
+    _invalidated = YES;
     connection = _connection;
     _connection = nil;
     _ready = NO;
+  }
+  if (!wasInvalidated) {
+    dispatch_semaphore_signal(_cancelled);
   }
   if (connection != nil) {
     xpc_connection_cancel(connection);

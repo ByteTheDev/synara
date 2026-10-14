@@ -59,6 +59,8 @@ NSString *_Nullable SynaraCoreSimulatorVersion(void);
 /// the connection died.
 - (BOOL)flushWithTimeout:(NSTimeInterval)timeout;
 
+/// Closes the connection and stops any warm-up still retrying. Final: a
+/// replaced attachment gets a new transport rather than reviving this one.
 - (void)invalidate;
 
 @end

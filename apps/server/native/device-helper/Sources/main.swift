@@ -208,6 +208,9 @@ final class HelperSession {
 
     self.device = device
     self.displayDescriptor = descriptor
+    // The previous attachment's input transport may still be warming up in the
+    // background (a re-attach during a cold boot); stop it before replacing it.
+    self.hid?.invalidate()
     self.hid = hidReady ? hidBridge : nil
     self.accessibility = axReady ? axBridge : nil
     self.attachedBootSession = device.bootIdentity
