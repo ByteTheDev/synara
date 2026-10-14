@@ -719,7 +719,12 @@ export function SidebarActivityView({
   useEffect(() => {
     // Before hydration every thread is missing; storing that would sort later rows as
     // late arrivals instead of ranking them.
-    if (priority === null || !threadsHydrated) return;
+    if (!threadsHydrated) return;
+    if (priority === null) {
+      // Project grouping ends the held order; returning to Time starts a fresh sort.
+      setStoredPriority(null);
+      return;
+    }
     if (activityPriorityStatesEqual(previousPriority, priority.state)) return;
     setStoredPriority({ key: priorityKey, state: priority.state });
   }, [previousPriority, priority, priorityKey, threadsHydrated]);

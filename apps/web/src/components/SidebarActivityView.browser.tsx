@@ -719,73 +719,90 @@ describe("SidebarActivityView", () => {
     await mounted.unmount();
   });
 
-  it("holds Priority still while chats change and clears read rows on request", async () => {
-    const waiting = makeThread(920, { hasPendingApprovals: true });
-    const unread = makeThread(921, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
-    const running = makeThread(922, { hasLiveTailWork: true });
-    const idle = makeThread(923);
-    const onOpenThread = vi.fn();
-    const mounted = await render(
-      renderActivity({
-        threads: [waiting, unread, running, idle],
-        resolveThreadStatus: realThreadStatus,
-        onOpenThread,
-      }),
-    );
-    await vi.waitFor(() => {
+  it.each(["clear read", "grouping roundtrip"] as const)(
+    "holds Priority still while chats change and resets read rows (%s)",
+    async (reset) => {
+      const waiting = makeThread(920, { hasPendingApprovals: true });
+      const unread = makeThread(921, { lastVisitedAt: "2026-08-02T09:00:00.000Z" });
+      const running = makeThread(922, { hasLiveTailWork: true });
+      const idle = makeThread(923);
+      const onOpenThread = vi.fn();
+      const mounted = await render(
+        renderActivity({
+          threads: [waiting, unread, running, idle],
+          resolveThreadStatus: realThreadStatus,
+          onOpenThread,
+        }),
+      );
+      await vi.waitFor(() => {
+        expect(activityLayout()).toEqual([
+          "# Priority",
+          waiting.id,
+          unread.id,
+          running.id,
+          "# Today",
+          idle.id,
+        ]);
+      });
+      await page.getByRole("button", { name: "Activity options" }).click();
+      await expect
+        .element(page.getByRole("menuitem", { name: "Clear read from Priority" }))
+        .toHaveAttribute("aria-disabled", "true");
+      await userEvent.keyboard("{Escape}");
+
+      // The approval is answered and runs, the unread chat is opened, the running one
+      // finishes unseen, and the idle one asks for input: rows keep their places, the
+      // read row stays listed, and the newcomer joins at the end.
+      const answered = { ...waiting, hasPendingApprovals: false, hasLiveTailWork: true };
+      const opened = { ...unread, lastVisitedAt: "2026-08-02T12:00:00.000Z" };
+      const finished = {
+        ...running,
+        hasLiveTailWork: false,
+        lastVisitedAt: "2026-08-02T09:00:00.000Z",
+      };
+      const asking = { ...idle, hasPendingUserInput: true };
+      await mounted.rerender(
+        renderActivity({
+          threads: [answered, opened, finished, asking],
+          resolveThreadStatus: realThreadStatus,
+          onOpenThread,
+        }),
+      );
+      await vi.waitFor(() => {
+        expect(activityLayout()).toEqual([
+          "# Priority",
+          waiting.id,
+          unread.id,
+          running.id,
+          idle.id,
+        ]);
+      });
+
+      await page.getByRole("button", { name: "Activity options" }).click();
+      if (reset === "clear read") {
+        await page.getByRole("menuitem", { name: "Clear read from Priority" }).click();
+      } else {
+        await page.getByRole("menuitemradio", { name: "Project", exact: true }).click();
+        // Radio choices keep the shared menu open; switch back in that same popup.
+        await expect.element(page.getByText("Priority", { exact: true })).not.toBeInTheDocument();
+        await page.getByRole("menuitemradio", { name: "Time", exact: true }).click();
+        await expect
+          .element(page.getByRole("menuitemradio", { name: "Time", exact: true }))
+          .toHaveAttribute("aria-checked", "true");
+      }
+      // The menu interaction has committed. A fresh sort returns read rows to Today.
       expect(activityLayout()).toEqual([
         "# Priority",
-        waiting.id,
-        unread.id,
-        running.id,
-        "# Today",
-        idle.id,
-      ]);
-    });
-    await page.getByRole("button", { name: "Activity options" }).click();
-    await expect
-      .element(page.getByRole("menuitem", { name: "Clear read from Priority" }))
-      .toHaveAttribute("aria-disabled", "true");
-    await userEvent.keyboard("{Escape}");
-
-    // The approval is answered and runs, the unread chat is opened, the running one
-    // finishes unseen, and the idle one asks for input: rows keep their places, the
-    // read row stays listed, and the newcomer joins at the end.
-    const answered = { ...waiting, hasPendingApprovals: false, hasLiveTailWork: true };
-    const opened = { ...unread, lastVisitedAt: "2026-08-02T12:00:00.000Z" };
-    const finished = {
-      ...running,
-      hasLiveTailWork: false,
-      lastVisitedAt: "2026-08-02T09:00:00.000Z",
-    };
-    const asking = { ...idle, hasPendingUserInput: true };
-    await mounted.rerender(
-      renderActivity({
-        threads: [answered, opened, finished, asking],
-        resolveThreadStatus: realThreadStatus,
-        onOpenThread,
-      }),
-    );
-    await vi.waitFor(() => {
-      expect(activityLayout()).toEqual(["# Priority", waiting.id, unread.id, running.id, idle.id]);
-    });
-
-    await page.getByRole("button", { name: "Activity options" }).click();
-    await page.getByRole("menuitem", { name: "Clear read from Priority" }).click();
-    // A fresh sort: waiting first, then unread, then working; the read chat goes back to Today.
-    await vi.waitFor(() => {
-      expect(activityLayout()).toEqual([
-        "# Priority",
         idle.id,
         running.id,
         waiting.id,
         "# Today",
         unread.id,
       ]);
-    });
-    expect(onOpenThread).not.toHaveBeenCalled();
-    await mounted.unmount();
-  });
+      expect(onOpenThread).not.toHaveBeenCalled();
+      await mounted.unmount();
+    },
+  );
 
   it("reveals a selected Activity row without moving focus or following background updates", async () => {
     const leading = Array.from({ length: 8 }, (_, index) => makeThread(700 + index));
