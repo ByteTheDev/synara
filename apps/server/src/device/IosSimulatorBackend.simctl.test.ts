@@ -47,10 +47,13 @@ describe("launch", () => {
     expect(launched.pid).toBe(4242);
     const launch = calls.find((call) => call.args[0] === "launch")!;
     expect(launch.args[1]).toBe("--terminate-running-process");
-    expect(launch.args.some((arg) => arg.startsWith("--stdout="))).toBe(true);
-    expect(launch.args.some((arg) => arg.startsWith("--stderr="))).toBe(true);
+    // Guest paths: simctl resolves them inside the simulator.
+    expect(launch.args).toContain("--stdout=/tmp/synara-console/com.example.shop.out.log");
+    expect(launch.args).toContain("--stderr=/tmp/synara-console/com.example.shop.err.log");
     expect(launch.args.slice(-3)).toEqual([DEVICE, "com.example.shop", "-flag"]);
     expect(launch.env?.SIMCTL_CHILD_UITESTS).toBe("1");
+    // `print` reaches the captured console without waiting for a full buffer.
+    expect(launch.env?.SIMCTL_CHILD_NSUnbufferedIO).toBe("YES");
     // The toolchain pin survives the extra variables.
     expect(launch.env?.DEVELOPER_DIR).toBe("/Applications/Xcode.app/Contents/Developer");
   });
@@ -126,5 +129,38 @@ describe("keyboard layout", () => {
     await backend.usesUsKeyboardLayout(DEVICE);
 
     expect(calls.filter((call) => call.args.includes("AppleKeyboards"))).toHaveLength(1);
+  });
+});
+
+describe("a command for a shut-down simulator", () => {
+  const shutDown = (): ProcessRunResult => ({
+    stdout: "",
+    stderr:
+      "An error was encountered processing the command (domain=com.apple.CoreSimulator.SimError, code=405):\nUnable to lookup in current state: Shutdown",
+    code: 149,
+    signal: null,
+    timedOut: false,
+  });
+
+  it("says to boot it instead of passing on CoreSimulator's lookup error", async () => {
+    const { backend } = makeBackend(shutDown);
+
+    await expect(backend.install(DEVICE, "/tmp/Missing.app")).rejects.toThrow();
+    await expect(backend.launch(DEVICE, "com.example.shop")).rejects.toThrow(
+      /simulator is not booted\. Boot it with device_boot/,
+    );
+  });
+
+  it("does not report a shut-down device's app as not installed", async () => {
+    const { backend } = makeBackend(shutDown);
+
+    await expect(
+      backend.readLogs(DEVICE, {
+        bundleId: "com.example.shop",
+        sinceSeconds: 60,
+        level: "default",
+        limit: 10,
+      }),
+    ).rejects.toThrow(/not booted/);
   });
 });

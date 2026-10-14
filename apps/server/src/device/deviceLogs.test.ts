@@ -38,7 +38,7 @@ describe("unifiedLogArguments", () => {
 
     expect(args.slice(0, 5)).toEqual(["show", "--last", "120s", "--style", "compact"]);
     expect(args.at(-1)).toBe(
-      'process == "Shop" AND (NOT subsystem BEGINSWITH "com.apple." OR messageType == error OR messageType == fault)',
+      'process == "Shop" AND eventType == logEvent AND (NOT subsystem BEGINSWITH "com.apple." OR messageType == error OR messageType == fault)',
     );
   });
 

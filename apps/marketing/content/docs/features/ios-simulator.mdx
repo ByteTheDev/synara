@@ -26,7 +26,7 @@ An agent launch through Synara's device tools can request that the pane open aut
 
 ## Automatic opening and focus
 
-In Settings, turn off **Automatically open simulator** to use Simulator.app without automatically opening the mirrored pane. You can still open the pane manually. The preference persists across restarts.
+In Settings, turn off **Automatically open simulator** to use Simulator.app (DeviceHub on Xcode 27 and later) without automatically opening the mirrored pane. You can still open the pane manually. The preference persists across restarts.
 
 Background device requests stay with their owning task and do not navigate away from the task you are using. Closing the pane manually is respected. An unconsumed open request can remain pending while automatic opening is disabled and be handled when it is enabled again for the owning task.
 
@@ -67,7 +67,7 @@ Supported provider sessions can receive app-owned device tools for:
 
 Every input action waits for the screen to stop changing and returns it, along with whether it changed, so the agent sees the effect of each step without a separate read. Text is typed as keystrokes for ASCII on a US keyboard layout; other text, including accented characters and emoji, is set directly on the focused field so it arrives exactly regardless of the simulator's keyboard language. The agent's result reports what the field contains afterwards.
 
-On Xcode 27 and later, input is delivered through the simulator's `dtuhidd` service, which those Xcode versions require.
+On Xcode 27 and later, input is delivered through the simulator's `dtuhidd` service, which those Xcode versions require. Those versions also replace Simulator.app with DeviceHub, so commands that launch Simulator.app (`open -a Simulator`, and older `expo run:ios`, `react-native run-ios`, or `flutter run`) fail. Agents are told to boot with the device tools, build with `xcodebuild` for the booted simulator, and then install and launch the app, which needs neither app.
 
 Input, launches, and device configuration require approval through Synara until allowed for the task, and opening a URL remains approval-gated because it can send information to another origin. Reading the screen, waiting, screenshots, and logs do not. Device access does not increase the task's runtime permissions.
 

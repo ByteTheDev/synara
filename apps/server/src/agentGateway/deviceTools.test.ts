@@ -134,6 +134,13 @@ describe("agent gateway device tool handlers", () => {
     expect(description("device_open_url")).toContain("exp://127.0.0.1:8081");
     expect(description("device_open_url")).toContain("start it detached");
     expect(description("device_open_url")).toContain("expo start --ios");
+    // Xcode 27+ replaced Simulator.app with DeviceHub: the shell route fails.
+    expect(description("device_open_url")).toContain("DeviceHub");
+    expect(description("device_install")).toContain(
+      "-destination 'platform=iOS Simulator,id=<udid>'",
+    );
+    expect(description("device_launch")).toContain("expo run:ios");
+    expect(description("device_boot")).toContain("never open Simulator.app or DeviceHub");
     expect(description("device_launch")).toContain("restart: true");
     expect(description("device_tap")).toContain("by identifier");
     expect(description("device_tap")).toContain("activationPoint");

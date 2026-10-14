@@ -97,7 +97,15 @@ const MAX_SCREENSHOT_BYTES = 32 * 1024 * 1024;
  */
 const TEXT_CHUNK_LENGTH = 120;
 /** Where `--stdout`/`--stderr` of apps launched through Synara are captured. */
-const CONSOLE_CAPTURE_ROOT = path.join(tmpdir(), "synara-device-console");
+const CONSOLE_CAPTURE_GUEST_DIR = "/tmp/synara-console";
+/** The default CoreSimulator device set, whose `<udid>/data` is each guest's root. */
+const SIMULATOR_DEVICES_ROOT = path.join(
+  homedir(),
+  "Library",
+  "Developer",
+  "CoreSimulator",
+  "Devices",
+);
 
 export const DEVICE_HELPER_CACHE_ROOT = path.join(homedir(), ...DEVICE_HELPER_CACHE_SEGMENTS);
 
@@ -550,12 +558,14 @@ export class IosSimulatorBackend implements DeviceBackend {
     // stdout/stderr go to files so `readLogs` can return what `print` wrote:
     // that output never reaches the unified log. Truncated per launch.
     const console = consoleCapturePaths(udid, bundleId);
-    const capture = await mkdir(path.dirname(console.stdout), { recursive: true }).then(
-      () => [`--stdout=${console.stdout}`, `--stderr=${console.stderr}`],
+    const capture = await mkdir(path.dirname(console.host.stdout), { recursive: true }).then(
+      () => [`--stdout=${console.guest.stdout}`, `--stderr=${console.guest.stderr}`],
       () => [],
     );
+    // stdout to a file is block-buffered, so `print` output sat in the app until
+    // the buffer filled. Xcode runs apps with NSUnbufferedIO for the same reason.
     const environment = Object.fromEntries(
-      Object.entries(options.environment ?? {}).map(([key, value]) => [
+      Object.entries({ NSUnbufferedIO: "YES", ...options.environment }).map(([key, value]) => [
         `SIMCTL_CHILD_${key}`,
         value,
       ]),
@@ -961,7 +971,7 @@ export class IosSimulatorBackend implements DeviceBackend {
 
   /** stdout then stderr of the last launch through Synara, when it was captured. */
   private async readConsoleCapture(udid: string, bundleId: string): Promise<readonly string[]> {
-    const capture = consoleCapturePaths(udid, bundleId);
+    const capture = consoleCapturePaths(udid, bundleId).host;
     const read = (file: string) =>
       readFile(file, "utf8").then(
         (text) => text.split("\n").filter((line) => line.trim().length > 0),
@@ -977,6 +987,9 @@ export class IosSimulatorBackend implements DeviceBackend {
     if (!cached) {
       cached = this.simctl(["appinfo", udid, bundleId]).then((result) => {
         const match = /CFBundleExecutable\s*=\s*"?([^";\n]+)"?;/u.exec(result.stdout);
+        if (result.code !== 0 && isDeviceNotBootedDetail(result.stderr)) {
+          throw this.simctlError("appinfo", result);
+        }
         if (result.code !== 0 || !match) {
           throw new DeviceBackendError(
             `App ${bundleId} is not installed on this simulator, so it has no logs to read.`,
@@ -1331,6 +1344,14 @@ export class IosSimulatorBackend implements DeviceBackend {
 
   private simctlError(action: string, result: ProcessRunResult): DeviceBackendError {
     const detail = result.stderr.trim() || result.stdout.trim();
+    // CoreSimulator answers a command for a shut-down device with SimError 405
+    // "Unable to lookup in current state: Shutdown", which an agent reads as a
+    // broken app or a missing install rather than the one step it skipped.
+    if (isDeviceNotBootedDetail(detail)) {
+      return new DeviceBackendError(
+        `simctl ${action} failed because the simulator is not booted. Boot it with device_boot, then retry.`,
+      );
+    }
     return new DeviceBackendError(
       `simctl ${action} failed${detail ? `: ${detail}` : ""}`,
       // A timeout may still be progressing on the device; a refusal will not.
@@ -1723,6 +1744,11 @@ export class IosSimulatorBackend implements DeviceBackend {
   }
 }
 
+/** SimError 405: the command needs a booted device and this one is not. */
+function isDeviceNotBootedDetail(detail: string): boolean {
+  return /current state: (?:Shutdown|Shutting Down)|code=405/iu.test(detail);
+}
+
 /** simctl commands that cannot change what `list devices` reports. */
 const READ_ONLY_SIMCTL_COMMANDS = new Set([
   "list",
@@ -1733,12 +1759,27 @@ const READ_ONLY_SIMCTL_COMMANDS = new Set([
   "privacy",
 ]);
 
+/**
+ * Where `simctl launch --stdout/--stderr` write, as the guest names them and
+ * as the host reads them. simctl resolves those paths inside the simulator, so
+ * a host path ends up under the device's data directory rather than where it
+ * says; the capture therefore lives in the guest's `/tmp` and is read back
+ * through `<device>/data`.
+ */
 function consoleCapturePaths(
   udid: string,
   bundleId: string,
-): { readonly stdout: string; readonly stderr: string } {
-  const base = path.join(CONSOLE_CAPTURE_ROOT, udid, bundleId.replace(/[^A-Za-z0-9._-]/gu, "_"));
-  return { stdout: `${base}.out.log`, stderr: `${base}.err.log` };
+): {
+  readonly guest: { readonly stdout: string; readonly stderr: string };
+  readonly host: { readonly stdout: string; readonly stderr: string };
+} {
+  const name = bundleId.replace(/[^A-Za-z0-9._-]/gu, "_");
+  const guest = path.posix.join(CONSOLE_CAPTURE_GUEST_DIR, name);
+  const host = path.join(SIMULATOR_DEVICES_ROOT, udid, "data", guest);
+  return {
+    guest: { stdout: `${guest}.out.log`, stderr: `${guest}.err.log` },
+    host: { stdout: `${host}.out.log`, stderr: `${host}.err.log` },
+  };
 }
 
 function slugDeviceName(name: string): string {

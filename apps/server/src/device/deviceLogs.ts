@@ -41,6 +41,9 @@ export function unifiedLogArguments(executable: string, query: DeviceLogQuery): 
     query.level === "error"
       ? "(messageType == error OR messageType == fault)"
       : '(NOT subsystem BEGINSWITH "com.apple." OR messageType == error OR messageType == fault)';
+  // Log messages only: activity and signpost events are framework tracing
+  // (RunningBoard state changes, UIKit gesture dispatch) that buried the app's
+  // own lines, hundreds per minute.
   return [
     "show",
     "--last",
@@ -49,7 +52,7 @@ export function unifiedLogArguments(executable: string, query: DeviceLogQuery): 
     "compact",
     ...levelFlags,
     "--predicate",
-    `${process} AND ${scope}`,
+    `${process} AND eventType == logEvent AND ${scope}`,
   ];
 }
 

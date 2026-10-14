@@ -149,8 +149,12 @@ export const DEVICE_SETTLE_DEFAULTS = {
   changeGraceMs: 1_000,
 } as const;
 
-/** How long a launch may take to bring its app to the front. */
-const APP_CHANGE_TIMEOUT_MS = 4_000;
+/**
+ * How long a launch may take to bring its app to the front. The first launch
+ * after an install, right after a cold boot, has been seen past four seconds;
+ * the bound only costs time when the app never comes forward at all.
+ */
+const APP_CHANGE_TIMEOUT_MS = 10_000;
 
 /** Upper bound for an explicit wait, so a typo cannot hang a turn. */
 export const DEVICE_WAIT_MAX_MS = 30_000;

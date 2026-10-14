@@ -130,18 +130,18 @@ describe("boot ownership", () => {
   it("keeps both of two boots that run at the same time", async () => {
     const { backend, manager } = makeManager();
     const boot = backend.boot.bind(backend);
-    let releaseA: (() => void) | null = null;
+    const bootA = Promise.withResolvers<void>();
     backend.boot = async (udid) => {
       // Device A stays mid-boot (still listed as shut down) while B boots and
       // reconciles against a listing that does not show A running yet.
-      if (udid === DEVICE_A) await new Promise<void>((resolve) => (releaseA = resolve));
+      if (udid === DEVICE_A) await bootA.promise;
       return await boot(udid);
     };
 
     const bootingA = manager.boot(DEVICE_A);
     await new Promise((resolve) => setTimeout(resolve, 5));
     await manager.boot(DEVICE_B);
-    releaseA?.();
+    bootA.resolve();
     await bootingA;
 
     const owned = (await manager.synaraBootedDevices()).map((device) => device.udid);

@@ -218,7 +218,7 @@ const DEVICE_SCROLL_BUDGET_RANGE = {
 const DEVICE_APPROVAL_AGENT_GUIDANCE =
   "If this reports DeviceApprovalRequired, the action was refused before it ran because the session has no approval gate; explain that the user must perform it from the device pane and do not retry.";
 const DEVICE_BUILD_AGENT_GUIDANCE =
-  "Synara never builds the app; when needed, build it first with xcodebuild or the project's build tool. This tool surfaces the driven device in the pane.";
+  "Synara never builds the app; build it first for the booted device with xcodebuild -scheme <scheme> -destination 'platform=iOS Simulator,id=<udid>' -derivedDataPath <dir> build, whose app is <dir>/Build/Products/<Configuration>-iphonesimulator/<Name>.app. Do not use run commands that launch Simulator.app (expo run:ios, react-native run-ios, flutter run): Xcode 27+ replaced it with DeviceHub, so they fail. This tool surfaces the driven device in the pane.";
 const DEVICE_INPUT_RESULT_AGENT_GUIDANCE =
   "The result carries the settled screen and screenChanged: false means the action missed or changed nothing, and settled: false means the screen was still loading or animating (use device_wait before asserting). Read state from that screen instead of calling device_describe_ui again. If HID events were not delivered, nothing happened and the server already retried once, so surface the failure.";
 
@@ -555,7 +555,7 @@ export function makeAgentGatewayDeviceTools(
       definition: {
         name: "device_boot",
         description: approvalRequiredDeviceDescription(
-          'Boot a simulator only when device_list finds nothing booted or the user named a different device. Synara caps the simulators it boots; kind "boot-limit-reached" lists devices to relay to the user so they can choose one to shut down, and must not be retried.',
+          'Boot a simulator only when device_list finds nothing booted or the user named a different device. It boots headless and appears in the streamed pane, not in a window: never open Simulator.app or DeviceHub to "start" it. Synara caps the simulators it boots; kind "boot-limit-reached" lists devices to relay to the user so they can choose one to shut down, and must not be retried.',
         ),
         inputSchema: {
           type: "object",
@@ -669,7 +669,7 @@ export function makeAgentGatewayDeviceTools(
       definition: {
         name: "device_open_url",
         description: approvalRequiredDeviceDescription(
-          "Open a URL on the device through its deep-link handlers and return the settled screen; this always requires explicit user approval. For Expo Go, boot with device_boot and then use exp://127.0.0.1:8081; if Metro is needed, start it detached in the background so it does not block the turn. Never run expo start --ios, expo run:ios, or npm run ios because they open Simulator.app outside the pane. When the user asks to see the app working, finish with it visible in the streamed pane.",
+          "Open a URL on the device through its deep-link handlers and return the settled screen; this always requires explicit user approval. For Expo Go, boot with device_boot and then use exp://127.0.0.1:8081; if Metro is needed, start it detached in the background so it does not block the turn. Never run expo start --ios, expo run:ios, or npm run ios: they open Simulator.app outside the pane, and on Xcode 27+, where DeviceHub replaced it, they fail outright. For a development build, build the native ios/ project with xcodebuild and use device_install and device_launch. When the user asks to see the app working, finish with it visible in the streamed pane.",
         ),
         inputSchema: {
           type: "object",
