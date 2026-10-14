@@ -213,7 +213,7 @@ describe("input while dtuhidd starts", () => {
     StubHelper.forcedAttaches = 0;
     StubHelper.failures = [
       new Error(
-        "1 HID event(s) were not delivered to the simulator: the simulator's input service (dtuhidd) is still starting; nothing was sent; re-attach and retry",
+        "1 HID event(s) were not delivered to the simulator: nothing was sent: the simulator's input service (dtuhidd) is still starting; inspect before retry",
       ),
     ];
 

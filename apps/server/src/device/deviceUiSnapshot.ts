@@ -17,7 +17,7 @@
 import type { DeviceUiNode } from "@synara/contracts";
 import { flattenUiTree, uiTreeActivationPoint } from "@synara/shared/uiTreeTargeting";
 
-import { isOnScreen, isTargetable } from "./uiTreeTargeting.ts";
+import { deviceKeyboardTop, isOnScreen, isTargetable } from "./uiTreeTargeting.ts";
 
 /** Enough for a dense settings screen; past this the tail is summarized. */
 const DEFAULT_MAX_ELEMENTS = 80;
@@ -60,7 +60,10 @@ function formatNode(node: DeviceUiNode): string {
   if (node.label !== null && node.label.trim().length > 0) {
     parts.push(JSON.stringify(clip(node.label, MAX_LABEL_LENGTH)));
   }
-  if (node.identifier) parts.push(`#${node.identifier}`);
+  if (node.identifier)
+    parts.push(
+      `#${JSON.stringify(node.identifier.length > MAX_LABEL_LENGTH ? `${node.identifier.slice(0, MAX_LABEL_LENGTH)}…` : node.identifier)}`,
+    );
   const value = effectiveValue(node);
   if (value !== null && value.trim().length > 0 && value !== node.label) {
     parts.push(`value=${JSON.stringify(clip(value, MAX_VALUE_LENGTH))}`);
@@ -92,7 +95,7 @@ export function formatUiSnapshot(
   );
   const onScreen = reportable.filter((node) => isOnScreen(node, root));
   const offScreen = reportable.filter((node) => !isOnScreen(node, root));
-  const keyboardTop = softwareKeyboardTop(onScreen);
+  const keyboardTop = deviceKeyboardTop(root);
   const visible =
     keyboardTop === null ? onScreen : onScreen.filter((node) => node.frame.y < keyboardTop);
   const covered = onScreen.length - visible.length;
@@ -135,24 +138,6 @@ export function formatUiSnapshot(
     );
   }
   return lines.join("\n");
-}
-
-/** Single-character key caps needed before a cluster reads as a keyboard. */
-const KEYBOARD_MIN_KEYS = 10;
-/** The suggestion bar sits above the top key row. */
-const KEYBOARD_SUGGESTION_BAR_POINTS = 50;
-
-/**
- * Top of the software keyboard, when one is up: the keyboard's keys arrive as
- * dozens of one-letter buttons, which would bury the app's own controls, and
- * anything of the app's beneath them is covered and cannot be tapped anyway.
- */
-function softwareKeyboardTop(nodes: readonly DeviceUiNode[]): number | null {
-  const keys = nodes.filter(
-    (node) => node.role === "Button" && node.label !== null && [...node.label.trim()].length === 1,
-  );
-  if (keys.length < KEYBOARD_MIN_KEYS) return null;
-  return Math.min(...keys.map((key) => key.frame.y)) - KEYBOARD_SUGGESTION_BAR_POINTS;
 }
 
 /**

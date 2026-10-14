@@ -148,3 +148,20 @@ describe("boot ownership", () => {
     expect(owned.toSorted()).toEqual([DEVICE_A, DEVICE_B]);
   });
 });
+
+describe("helper recovery with a hidden attached pane", () => {
+  it("does not undo the last viewer's stop while its chat stays attached", async () => {
+    const { backend, manager } = makeManager();
+    backend.bootExternally(DEVICE_A);
+    await manager.attach(THREAD_A, DEVICE_A);
+    const unsubscribe = manager.subscribeFrames(DEVICE_A, viewer());
+    await until(() => backend.hasStream(DEVICE_A), "first stream");
+    const before = backend.callsOfKind("attachStream").length;
+    backend.interruptStream(DEVICE_A);
+    unsubscribe();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(backend.callsOfKind("attachStream")).toHaveLength(before);
+    expect(backend.hasStream(DEVICE_A)).toBe(false);
+    await manager.dispose();
+  });
+});

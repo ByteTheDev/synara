@@ -309,7 +309,16 @@ describe("DeviceManager fixed chrome", () => {
         activationPoint: null,
         children: [],
       };
-      return { ...tree, root: { ...tree.root, children: [back, ...tree.root.children] } };
+      return {
+        ...tree,
+        root: {
+          ...tree.root,
+          children: [
+            { ...tree.root, role: "NavigationBar", label: null, children: [back] },
+            ...tree.root.children,
+          ],
+        },
+      };
     };
 
     const match = await manager.tapElement(DEVICE, { identifier: "BackButton" });
@@ -318,5 +327,95 @@ describe("DeviceManager fixed chrome", () => {
     // One probing swipe shows it does not scroll; then it is tapped in place.
     expect(backend.callsOfKind("swipe")).toHaveLength(1);
     expect(backend.calls.at(-1)).toEqual({ kind: "tap", udid: DEVICE, x: 38, y: 84 });
+  });
+});
+
+describe("unsafe observations", () => {
+  it("does not certify an unchanged pre-restart screen", async () => {
+    const { manager } = await makeManager();
+    const outcome = await manager.observe(DEVICE, async () => {}, {
+      awaitApp: "any",
+      timeoutMs: 1000,
+    });
+    expect(outcome.settled).toBe(false);
+  });
+  it("refuses value appends to secure fields instead of changing keyboard method", async () => {
+    const { backend, manager } = await makeManager();
+    backend.usKeyboardLayout = false;
+    const describe = backend.describeUi.bind(backend);
+    backend.describeUi = async (udid) => {
+      const tree = await describe(udid);
+      return {
+        ...tree,
+        root: {
+          ...tree.root,
+          children: [
+            {
+              role: "TextField",
+              subrole: "SecureTextField",
+              label: "Password",
+              value: "••",
+              focused: true,
+              frame: { x: 0, y: 100, width: 200, height: 40 },
+              activationPoint: null,
+              children: [],
+            },
+          ],
+        },
+      };
+    };
+    await expect(manager.enterText(DEVICE, "a-b", { method: "value" })).rejects.toThrow(
+      /clear: true/,
+    );
+    expect(backend.callsOfKind("typeText")).toEqual([]);
+  });
+  it("does not tap a covered field merely because a swipe did not move it", async () => {
+    const { backend, manager } = await makeManager();
+    const describe = backend.describeUi.bind(backend);
+    backend.describeUi = async (udid) => {
+      const tree = await describe(udid);
+      return {
+        ...tree,
+        root: {
+          ...tree.root,
+          children: [
+            {
+              role: "Button",
+              subrole: null,
+              label: "Covered",
+              value: null,
+              frame: { x: 0, y: 840, width: 200, height: 30 },
+              activationPoint: null,
+              children: [],
+            },
+          ],
+        },
+      };
+    };
+    await expect(manager.tapElement(DEVICE, { label: "Covered" })).rejects.toThrow(/out of reach/);
+    expect(backend.callsOfKind("tap")).toEqual([]);
+  });
+});
+
+describe("cancelled observations", () => {
+  it("ends an explicit wait without polling or further input after cancellation", async () => {
+    const { manager } = await makeManager();
+    const controller = new AbortController();
+    const waiting = manager.waitFor(
+      DEVICE,
+      { label: "Never" },
+      { timeoutMs: 30_000, signal: controller.signal },
+    );
+    controller.abort(new Error("stopped"));
+    await expect(waiting).rejects.toThrow("stopped");
+  });
+  it("reports a deep link without a changed screen as unsettled", async () => {
+    const { manager } = await makeManager();
+    const result = await manager.observe(DEVICE, async () => {}, {
+      awaitChange: true,
+      timeoutMs: 1000,
+    });
+    expect(result.settled).toBe(false);
+    expect(result.changed).toBe(false);
   });
 });

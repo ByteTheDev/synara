@@ -60,6 +60,7 @@ import {
   type DeviceListOptions,
   type DeviceLogQuery,
   type DeviceLogResult,
+  type DeviceScreenshotCapture,
   type DeviceSwipeGesture,
   type DeviceTypeTextOutcome,
 } from "./DeviceBackend.ts";
@@ -96,8 +97,6 @@ const MAX_SCREENSHOT_BYTES = 32 * 1024 * 1024;
  * and the retry typed it a second time.
  */
 const TEXT_CHUNK_LENGTH = 120;
-/** Where `--stdout`/`--stderr` of apps launched through Synara are captured. */
-const CONSOLE_CAPTURE_GUEST_DIR = "/tmp/synara-console";
 /** The default CoreSimulator device set, whose `<udid>/data` is each guest's root. */
 const SIMULATOR_DEVICES_ROOT = path.join(
   homedir(),
@@ -555,17 +554,10 @@ export class IosSimulatorBackend implements DeviceBackend {
     launchArguments: readonly string[] = [],
     options: DeviceLaunchOptions = {},
   ): Promise<DeviceLaunchAppResult> {
-    // stdout/stderr go to files so `readLogs` can return what `print` wrote:
-    // that output never reaches the unified log. Truncated per launch.
-    const console = consoleCapturePaths(udid, bundleId);
-    const capture = await mkdir(path.dirname(console.host.stdout), { recursive: true }).then(
-      () => [`--stdout=${console.guest.stdout}`, `--stderr=${console.guest.stderr}`],
-      () => [],
-    );
-    // stdout to a file is block-buffered, so `print` output sat in the app until
-    // the buffer filled. Xcode runs apps with NSUnbufferedIO for the same reason.
+    // Do not redirect stdout/stderr into unbounded files or pipes whose
+    // reader teardown could signal a still-running user app.
     const environment = Object.fromEntries(
-      Object.entries({ NSUnbufferedIO: "YES", ...options.environment }).map(([key, value]) => [
+      Object.entries(options.environment ?? {}).map(([key, value]) => [
         `SIMCTL_CHILD_${key}`,
         value,
       ]),
@@ -574,7 +566,6 @@ export class IosSimulatorBackend implements DeviceBackend {
       [
         "launch",
         ...(options.terminateExisting === true ? ["--terminate-running-process"] : []),
-        ...capture,
         udid,
         bundleId,
         ...launchArguments,
@@ -598,8 +589,9 @@ export class IosSimulatorBackend implements DeviceBackend {
       readonly save?: boolean;
       readonly maxInlineBytes?: number;
       readonly resolution?: "pixels" | "points";
+      readonly proof?: boolean;
     } = {},
-  ): Promise<DeviceScreenshotResult> {
+  ): Promise<DeviceScreenshotCapture> {
     // Captured to a temp file either way, because `simctl io screenshot` only
     // writes to a path. When the caller wants it kept, it is moved next to the
     // recordings afterwards rather than captured somewhere different.
@@ -616,7 +608,21 @@ export class IosSimulatorBackend implements DeviceBackend {
         options.save === true ? await this.saveScreenshotFile(udid, fullBytes) : null;
       const points =
         options.resolution === "points" ? await this.scaleToPoints(udid, file, directory) : null;
+      if (options.resolution === "points" && points === null) {
+        throw new DeviceBackendError(
+          "Could not produce a screenshot in device-point coordinates. Describe the UI for tap points instead.",
+        );
+      }
       const sized = points ?? fullBytes;
+      if (
+        options.resolution === "points" &&
+        options.maxInlineBytes !== undefined &&
+        sized.byteLength > options.maxInlineBytes
+      ) {
+        throw new DeviceBackendError(
+          "Point-resolution screenshot exceeds the inline image limit; use device_describe_ui for coordinates.",
+        );
+      }
       // Inline consumers (agent tool results) ride JSON-RPC frames with byte
       // caps, so oversized shots are resampled rather than rejected.
       const bytes =
@@ -633,6 +639,7 @@ export class IosSimulatorBackend implements DeviceBackend {
         height: dimensions?.height ?? 1,
         sizeBytes: bytes.byteLength,
         bytesBase64: bytes.toString("base64"),
+        ...(options.proof ? { proofBytesBase64: fullBytes.toString("base64") } : {}),
         capturedAt: new Date().toISOString(),
       };
     } finally {
@@ -803,7 +810,6 @@ export class IosSimulatorBackend implements DeviceBackend {
     udid: string,
     method: string,
     buildParams: (helper: HelperClient) => Record<string, unknown>,
-    options: { readonly replayable?: boolean } = {},
   ): Promise<unknown> {
     await this.assertCapability("hid");
     const helper = await this.attachedHelper(udid);
@@ -813,7 +819,7 @@ export class IosSimulatorBackend implements DeviceBackend {
       if (!isInputNotDeliveredError(error)) throw error;
       // Replaying keystrokes after a partial delivery types them twice. Only a
       // refusal that sent nothing is safe to repeat for a non-replayable call.
-      if (options.replayable === false && !/nothing was sent/iu.test(errorText(error))) {
+      if (!/(?:^|: )nothing was sent:/iu.test(errorText(error))) {
         throw error;
       }
       // dtuhidd still coming up after a boot: the attachment is fine and keeps
@@ -853,13 +859,16 @@ export class IosSimulatorBackend implements DeviceBackend {
     });
   }
 
-  async typeText(udid: string, text: string): Promise<DeviceTypeTextOutcome> {
+  async typeText(
+    udid: string,
+    text: string,
+    options: { readonly signal?: AbortSignal } = {},
+  ): Promise<DeviceTypeTextOutcome> {
     let skipped = 0;
     for (let start = 0; start < text.length; start += TEXT_CHUNK_LENGTH) {
+      options.signal?.throwIfAborted();
       const chunk = text.slice(start, start + TEXT_CHUNK_LENGTH);
-      const result = await this.injectInput(udid, HELPER_METHODS.text, () => ({ text: chunk }), {
-        replayable: false,
-      });
+      const result = await this.injectInput(udid, HELPER_METHODS.text, () => ({ text: chunk }));
       const chunkSkipped = (result as { skipped?: unknown } | null)?.skipped;
       if (typeof chunkSkipped === "number") skipped += chunkSkipped;
     }
@@ -942,7 +951,7 @@ export class IosSimulatorBackend implements DeviceBackend {
             // `log show` prints a column header before the first entry.
             return result.stdout.split("\n").filter((line) => /^\d{4}-\d{2}-\d{2} /u.test(line));
           }),
-      this.readConsoleCapture(udid, query.bundleId),
+      Promise.resolve<readonly string[]>([]),
       executable === null
         ? Promise.resolve([])
         : readCrashReports({
@@ -964,21 +973,11 @@ export class IosSimulatorBackend implements DeviceBackend {
       process: executable,
       log: log.lines,
       console: console.lines,
+      consoleUnavailableReason:
+        "Direct stdout/stderr capture is unavailable; use Logger, NSLog or os_log for simulator output.",
       crashes,
       omitted: log.omitted + console.omitted,
     };
-  }
-
-  /** stdout then stderr of the last launch through Synara, when it was captured. */
-  private async readConsoleCapture(udid: string, bundleId: string): Promise<readonly string[]> {
-    const capture = consoleCapturePaths(udid, bundleId).host;
-    const read = (file: string) =>
-      readFile(file, "utf8").then(
-        (text) => text.split("\n").filter((line) => line.trim().length > 0),
-        () => [] as string[],
-      );
-    const [stdout, stderr] = await Promise.all([read(capture.stdout), read(capture.stderr)]);
-    return [...stdout, ...stderr.map((line) => `[stderr] ${line}`)];
   }
 
   private executableFor(udid: string, bundleId: string): Promise<string | null> {
@@ -1581,6 +1580,9 @@ export class IosSimulatorBackend implements DeviceBackend {
   }
 
   private async startHelper(): Promise<HelperClient> {
+    const retired = this.helper;
+    this.helper = null;
+    await retired?.dispose();
     const binaryPath = await this.compileHelperIfNeeded();
     // The helper resolves CoreSimulator out of DEVELOPER_DIR at runtime, so it
     // has to inherit the same toolchain the binary was built against.
@@ -1758,29 +1760,6 @@ const READ_ONLY_SIMCTL_COMMANDS = new Set([
   "ui",
   "privacy",
 ]);
-
-/**
- * Where `simctl launch --stdout/--stderr` write, as the guest names them and
- * as the host reads them. simctl resolves those paths inside the simulator, so
- * a host path ends up under the device's data directory rather than where it
- * says; the capture therefore lives in the guest's `/tmp` and is read back
- * through `<device>/data`.
- */
-function consoleCapturePaths(
-  udid: string,
-  bundleId: string,
-): {
-  readonly guest: { readonly stdout: string; readonly stderr: string };
-  readonly host: { readonly stdout: string; readonly stderr: string };
-} {
-  const name = bundleId.replace(/[^A-Za-z0-9._-]/gu, "_");
-  const guest = path.posix.join(CONSOLE_CAPTURE_GUEST_DIR, name);
-  const host = path.join(SIMULATOR_DEVICES_ROOT, udid, "data", guest);
-  return {
-    guest: { stdout: `${guest}.out.log`, stderr: `${guest}.err.log` },
-    host: { stdout: `${host}.out.log`, stderr: `${host}.err.log` },
-  };
-}
 
 function slugDeviceName(name: string): string {
   return (

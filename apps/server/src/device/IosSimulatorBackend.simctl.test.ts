@@ -36,7 +36,7 @@ function makeBackend(answer: (args: readonly string[]) => ProcessRunResult = () 
 }
 
 describe("launch", () => {
-  it("restarts the app, captures its console, and passes environment through SIMCTL_CHILD_", async () => {
+  it("restarts the app without redirecting its output, and passes environment through SIMCTL_CHILD_", async () => {
     const { backend, calls } = makeBackend(() => result("com.example.shop: 4242"));
 
     const launched = await backend.launch(DEVICE, "com.example.shop", ["-flag"], {
@@ -47,13 +47,11 @@ describe("launch", () => {
     expect(launched.pid).toBe(4242);
     const launch = calls.find((call) => call.args[0] === "launch")!;
     expect(launch.args[1]).toBe("--terminate-running-process");
-    // Guest paths: simctl resolves them inside the simulator.
-    expect(launch.args).toContain("--stdout=/tmp/synara-console/com.example.shop.out.log");
-    expect(launch.args).toContain("--stderr=/tmp/synara-console/com.example.shop.err.log");
+    expect(
+      launch.args.some((arg) => arg.startsWith("--stdout=") || arg.startsWith("--stderr=")),
+    ).toBe(false);
     expect(launch.args.slice(-3)).toEqual([DEVICE, "com.example.shop", "-flag"]);
     expect(launch.env?.SIMCTL_CHILD_UITESTS).toBe("1");
-    // `print` reaches the captured console without waiting for a full buffer.
-    expect(launch.env?.SIMCTL_CHILD_NSUnbufferedIO).toBe("YES");
     // The toolchain pin survives the extra variables.
     expect(launch.env?.DEVELOPER_DIR).toBe("/Applications/Xcode.app/Contents/Developer");
   });

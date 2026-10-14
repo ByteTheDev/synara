@@ -237,6 +237,15 @@ function deviceTargetSpec(
   };
 }
 
+/** System keyboard ancestry, rather than app-owned one-character buttons. */
+export function deviceKeyboardTop(root: DeviceUiNode): number | null {
+  const keyboards = flattenUiTree(root, childrenOf).filter(
+    (node) =>
+      /^(?:AX)?Keyboard$/iu.test(node.role) || /^(?:AX)?Keyboard$/iu.test(node.subrole ?? ""),
+  );
+  return keyboards.length === 0 ? null : Math.min(...keyboards.map((node) => node.frame.y));
+}
+
 /**
  * The band a target must land in to count as usable.
  *
@@ -272,14 +281,17 @@ export interface DeviceScrollStep {
 export function planScrollStep(node: DeviceUiNode, root: DeviceUiNode): DeviceScrollStep | null {
   const inset = root.frame.height * SAFE_BAND_INSET_FRACTION;
   const bandTop = root.frame.y + inset;
-  const bandBottom = root.frame.y + root.frame.height - inset;
+  const bandBottom = Math.min(
+    root.frame.y + root.frame.height - inset,
+    (deviceKeyboardTop(root) ?? Infinity) - inset,
+  );
   const centre = node.frame.y + node.frame.height / 2;
 
   if (centre >= bandTop && centre <= bandBottom) return null;
 
   const increment = root.frame.height * SCROLL_INCREMENT_FRACTION;
   const midX = root.frame.x + root.frame.width / 2;
-  const screenCentre = root.frame.y + root.frame.height / 2;
+  const screenCentre = (bandTop + bandBottom) / 2;
   // Never swipe further than the gap: a target just past the band should not
   // be flung to the other side of the screen and need a correcting swipe back.
   const distance = Math.min(increment, Math.abs(centre - screenCentre));

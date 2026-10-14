@@ -41,7 +41,6 @@ import {
   type DeviceLaunchAppResult,
   type DeviceListResult,
   type DeviceOpenPaneReason,
-  type DeviceScreenshotResult,
   type DeviceStartRecordingResult,
   type DeviceStopRecordingResult,
   type DeviceUiNode,
@@ -57,6 +56,7 @@ import {
   type DeviceLaunchOptions,
   type DeviceLogQuery,
   type DeviceLogResult,
+  type DeviceScreenshotCapture,
   type DeviceSwipeGesture,
   type DeviceTypeTextOutcome,
 } from "./DeviceBackend.ts";
@@ -69,6 +69,7 @@ import {
 import { DeviceFrameTransport, type DeviceFrameSink } from "./deviceFrameTransport.ts";
 import {
   DeviceUiTargetError,
+  deviceKeyboardTop,
   SCROLL_SWIPE_DURATION_MS,
   describeTarget,
   findTarget,
@@ -315,10 +316,21 @@ export class DeviceManager {
   }
 
   /** Waits without holding the process open, and shares the injected scheduler. */
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-      const timer = this.schedule(() => resolve(), ms);
+  private delay(ms: number, signal?: AbortSignal): Promise<void> {
+    signal?.throwIfAborted();
+    return new Promise((resolve, reject) => {
+      const abort = () => {
+        this.cancel(timer);
+        signal?.removeEventListener("abort", abort);
+        reject(signal?.reason);
+      };
+      const timer = this.schedule(() => {
+        signal?.removeEventListener("abort", abort);
+        resolve();
+      }, ms);
       timer.unref?.();
+      signal?.addEventListener("abort", abort, { once: true });
+      if (signal?.aborted) abort();
     });
   }
 
@@ -678,9 +690,15 @@ export class DeviceManager {
   async tapElement(
     udid: string,
     target: DeviceUiTarget,
-    options: { readonly maxScrolls?: number | undefined; readonly holdMs?: number } = {},
+    options: {
+      readonly maxScrolls?: number | undefined;
+      readonly holdMs?: number;
+      readonly signal?: AbortSignal;
+    } = {},
   ): Promise<DeviceUiTargetMatch> {
+    options.signal?.throwIfAborted();
     const match = await this.scrollToElement(udid, target, options);
+    options.signal?.throwIfAborted();
     await this.backend.tap(
       udid,
       match.point.x,
@@ -707,7 +725,7 @@ export class DeviceManager {
   async scrollToElement(
     udid: string,
     target: DeviceUiTarget,
-    options: { readonly maxScrolls?: number | undefined } = {},
+    options: { readonly maxScrolls?: number | undefined; readonly signal?: AbortSignal } = {},
   ): Promise<DeviceUiTargetMatch> {
     const maxScrolls = options.maxScrolls ?? DEVICE_DEFAULT_MAX_SCROLLS;
     let tree = await this.describeUi(udid);
@@ -715,6 +733,7 @@ export class DeviceManager {
     let previousPosition: string | null = null;
 
     for (let scrolls = 0; scrolls < maxScrolls; scrolls += 1) {
+      options.signal?.throwIfAborted();
       // Nothing to aim at yet: page down by a screenful to materialize more of
       // the list. Once the node exists, the planner takes over and aims at it.
       const step =
@@ -727,9 +746,14 @@ export class DeviceManager {
       match = this.locate(tree.root, target);
 
       // Fixed chrome (a navigation bar's back button, a tab bar) sits outside
-      // the safe band by design and does not scroll. On screen and unmoved by
-      // a swipe means it is meant to be tapped where it is.
-      if (match !== null && match.onScreen && match.node.frame.y === positionBefore) {
+      // the safe band by design and does not scroll. Only identified chrome
+      // outside the keyboard overlay may be tapped in place.
+      if (
+        match !== null &&
+        match.onScreen &&
+        match.node.frame.y === positionBefore &&
+        this.isFixedChrome(tree.root, match.node)
+      ) {
         return match;
       }
 
@@ -794,6 +818,16 @@ export class DeviceManager {
     await this.backend.swipe(udid, gesture);
   }
 
+  /** A stationary frame alone can also be an off-screen or keyboard-covered control. */
+  private isFixedChrome(root: DeviceUiNode, target: DeviceUiNode, chrome = false): boolean {
+    const ownsChrome =
+      chrome ||
+      /^(?:AX)?(?:NavigationBar|TabBar)$/iu.test(root.role) ||
+      /^(?:AX)?(?:NavigationBar|TabBar)$/iu.test(root.subrole ?? "");
+    if (root === target) return ownsChrome;
+    return root.children.some((child) => this.isFixedChrome(child, target, ownsChrome));
+  }
+
   async typeText(udid: string, text: string): Promise<DeviceTypeTextOutcome> {
     return await this.backend.typeText(udid, text);
   }
@@ -814,8 +848,10 @@ export class DeviceManager {
       readonly method?: DeviceTextMethod;
       readonly clear?: boolean;
       readonly submit?: boolean;
+      readonly signal?: AbortSignal;
     } = {},
   ): Promise<DeviceTextEntryOutcome> {
+    options.signal?.throwIfAborted();
     const body = text.replace(/\n+$/u, "");
     const submit = options.submit === true || body.length !== text.length;
     const printableAscii = /^[\x20-\x7e\t\n]*$/u.test(body);
@@ -845,22 +881,22 @@ export class DeviceManager {
         );
       }
       if (isSecureField(focused) && options.clear !== true) {
-        // A secure field reads back as bullets, so appending would corrupt it.
-        if (!printableAscii) {
-          throw new DeviceBackendError(
-            "Secure fields cannot be appended to through accessibility; pass clear: true to replace the whole value.",
-          );
-        }
-        method = "keys";
+        throw new DeviceBackendError(
+          "Secure fields cannot be appended to through accessibility; pass clear: true to replace the whole value.",
+        );
       } else {
         const current = options.clear === true ? "" : (effectiveValue(focused) ?? "");
+        options.signal?.throwIfAborted();
         await this.backend.setFocusedValue(udid, `${current}${body}`);
       }
     }
     if (method === "keys") {
+      options.signal?.throwIfAborted();
       if (options.clear === true) await this.clearFocusedField(udid);
       if (body.length > 0) {
-        const outcome = await this.backend.typeText(udid, body);
+        const outcome = await this.backend.typeText(udid, body, {
+          ...(options.signal ? { signal: options.signal } : {}),
+        });
         if (outcome.skipped > 0) {
           throw new DeviceBackendError(
             `${outcome.skipped} character(s) have no key and were not typed; retry with method "value".`,
@@ -870,6 +906,7 @@ export class DeviceManager {
     } else if (body.length === 0 && options.clear === true) {
       await this.backend.setFocusedValue(udid, "");
     }
+    options.signal?.throwIfAborted();
     if (submit) await this.pressKey(udid, HID_USAGE.returnKey);
     return { method, submitted: submit };
   }
@@ -900,16 +937,21 @@ export class DeviceManager {
    */
   async waitForSettle(
     udid: string,
-    options: { readonly quietMs?: number; readonly timeoutMs?: number } = {},
+    options: {
+      readonly quietMs?: number;
+      readonly timeoutMs?: number;
+      readonly signal?: AbortSignal;
+    } = {},
   ): Promise<DeviceSettleOutcome> {
     const quietMs = options.quietMs ?? DEVICE_SETTLE_DEFAULTS.quietMs;
     const timeoutMs = options.timeoutMs ?? DEVICE_SETTLE_DEFAULTS.timeoutMs;
     const started = this.now();
-    await this.delay(Math.min(DEVICE_SETTLE_DEFAULTS.startDelayMs, timeoutMs));
+    await this.delay(Math.min(DEVICE_SETTLE_DEFAULTS.startDelayMs, timeoutMs), options.signal);
     let root: DeviceUiNode | null = null;
     let fingerprint: string | null = null;
     let stableSince = this.now();
     while (true) {
+      options.signal?.throwIfAborted();
       const read = await this.describeUi(udid).catch(() => null);
       const next = read === null ? null : uiFingerprint(read.root);
       if (read !== null) root = read.root;
@@ -922,7 +964,7 @@ export class DeviceManager {
       if (this.now() - started >= timeoutMs) {
         return { settled: false, waitedMs: this.now() - started, root };
       }
-      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs);
+      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs, options.signal);
     }
   }
 
@@ -945,16 +987,47 @@ export class DeviceManager {
        * in the meantime would read as settled.
        */
       readonly awaitApp?: "different" | "any";
+      readonly awaitChange?: boolean;
+      readonly signal?: AbortSignal;
     } = {},
   ): Promise<DeviceObservation> {
     const beforeTree = await this.describeUi(udid).catch(() => null);
     const before = beforeTree === null ? null : uiFingerprint(beforeTree.root);
+    options.signal?.throwIfAborted();
     await action();
+    options.signal?.throwIfAborted();
     const acted = this.now();
     if (options.awaitApp !== undefined) {
-      await this.waitForApp(udid, options.awaitApp === "different" ? beforeTree?.root.label : null);
+      const transitioned = await this.waitForApp(
+        udid,
+        beforeTree?.root.label,
+        before,
+        options.awaitApp,
+        options.signal,
+      );
+      if (!transitioned) {
+        return {
+          settled: false,
+          waitedMs: this.now() - acted,
+          root: (await this.describeUi(udid).catch(() => null))?.root ?? null,
+          changed: null,
+        };
+      }
     } else if (before !== null) {
-      await this.waitForChange(udid, before);
+      const changed = await this.waitForChange(
+        udid,
+        before,
+        options.signal,
+        options.awaitChange ? options.timeoutMs : undefined,
+      );
+      if (options.awaitChange && !changed) {
+        return {
+          settled: false,
+          waitedMs: this.now() - acted,
+          root: (await this.describeUi(udid).catch(() => null))?.root ?? null,
+          changed: false,
+        };
+      }
     }
     const settled = await this.waitForSettle(udid, options);
     const after = settled.root === null ? null : uiFingerprint(settled.root);
@@ -967,13 +1040,20 @@ export class DeviceManager {
   }
 
   /** Poll until the screen differs from `baseline`, for at most the change grace. */
-  private async waitForChange(udid: string, baseline: string): Promise<void> {
+  private async waitForChange(
+    udid: string,
+    baseline: string,
+    signal?: AbortSignal,
+    timeoutMs: number = DEVICE_SETTLE_DEFAULTS.changeGraceMs,
+  ): Promise<boolean> {
     const started = this.now();
-    while (this.now() - started < DEVICE_SETTLE_DEFAULTS.changeGraceMs) {
+    while (this.now() - started < timeoutMs) {
+      signal?.throwIfAborted();
       const tree = await this.describeUi(udid).catch(() => null);
-      if (tree !== null && uiFingerprint(tree.root) !== baseline) return;
-      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs);
+      if (tree !== null && uiFingerprint(tree.root) !== baseline) return true;
+      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs, signal);
     }
+    return false;
   }
 
   /**
@@ -982,15 +1062,25 @@ export class DeviceManager {
    * that one. Bounded by `APP_CHANGE_TIMEOUT_MS`: an app that was already in
    * front never changes, and the bound lets that fall through to a settle.
    */
-  private async waitForApp(udid: string, previous: string | null | undefined): Promise<void> {
+  private async waitForApp(
+    udid: string,
+    previous: string | null | undefined,
+    baseline: string | null,
+    mode: "different" | "any",
+    signal?: AbortSignal,
+  ): Promise<boolean> {
     const started = this.now();
+    let transitioned = baseline === null;
     while (this.now() - started < APP_CHANGE_TIMEOUT_MS) {
-      const label = (await this.describeUi(udid).catch(() => null))?.root.label?.trim();
-      if (label && (previous === null || previous === undefined || label !== previous.trim())) {
-        return;
-      }
-      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs);
+      signal?.throwIfAborted();
+      const tree = await this.describeUi(udid).catch(() => null);
+      const label = tree?.root.label?.trim();
+      if (tree === null || !label || (baseline !== null && uiFingerprint(tree.root) !== baseline))
+        transitioned = true;
+      if (label && (mode === "different" ? label !== previous?.trim() : transitioned)) return true;
+      await this.delay(DEVICE_SETTLE_DEFAULTS.pollMs, signal);
     }
+    return false;
   }
 
   /**
@@ -1000,12 +1090,13 @@ export class DeviceManager {
   async waitFor(
     udid: string,
     target: DeviceUiTarget,
-    options: { readonly gone?: boolean; readonly timeoutMs: number },
+    options: { readonly gone?: boolean; readonly timeoutMs: number; readonly signal?: AbortSignal },
   ): Promise<DeviceWaitOutcome> {
     const started = this.now();
     const timeoutMs = Math.min(options.timeoutMs, DEVICE_WAIT_MAX_MS);
     let root: DeviceUiNode | null = null;
     while (true) {
+      options.signal?.throwIfAborted();
       const read = await this.describeUi(udid).catch(() => null);
       if (read !== null) {
         root = read.root;
@@ -1031,7 +1122,7 @@ export class DeviceManager {
       if (this.now() - started >= timeoutMs) {
         return { status: "timeout", waitedMs: this.now() - started, root, match: null };
       }
-      await this.delay(200);
+      await this.delay(200, options.signal);
     }
   }
 
@@ -1074,8 +1165,9 @@ export class DeviceManager {
       readonly save?: boolean;
       readonly maxInlineBytes?: number;
       readonly resolution?: "pixels" | "points";
+      readonly proof?: boolean;
     } = {},
-  ): Promise<DeviceScreenshotResult> {
+  ): Promise<DeviceScreenshotCapture> {
     return await this.backend.screenshot(udid, options);
   }
 
@@ -1260,7 +1352,7 @@ export class DeviceManager {
       this.activeStreamUdid = null;
       this.transport.resetDevice(udid);
       const needed =
-        this.transport.deviceSubscriberCount(udid) > 0 || this.isAttachedAnywhere(udid);
+        this.desiredStreamUdid === udid && this.transport.deviceSubscriberCount(udid) > 0;
       if (!needed) {
         if (this.desiredStreamUdid === udid) this.desiredStreamUdid = null;
         return;

@@ -76,7 +76,9 @@ class FakeHelper {
     }
     if (this.undeliverableCalls > 0) {
       this.undeliverableCalls -= 1;
-      throw new Error("1 HID event(s) were not delivered to the simulator; re-attach and retry");
+      throw new Error(
+        "1 HID event(s) were not delivered to the simulator: nothing was sent: input unavailable; inspect and retry",
+      );
     }
     return { ok: true };
   }
@@ -264,5 +266,34 @@ describe("concurrent helper starts", () => {
     // A helper the backend no longer references is a live process nothing
     // will ever stop.
     expect(created.filter((helper) => !disposed.has(helper))).toHaveLength(0);
+  });
+});
+
+describe("text delivery ownership", () => {
+  it("does not replay a partial operation whose inner error mentions unsent events", async () => {
+    const { backend, helper } = makeBackend();
+    let delivered = 0;
+    helper.request = async () => {
+      delivered++;
+      throw new Error(
+        "1 HID event(s) were not delivered: input may have been partially delivered; still starting; nothing was sent",
+      );
+    };
+    await expect(backend.typeText(DEVICE, "hello")).rejects.toThrow(/partially delivered/);
+    expect(delivered).toBe(1);
+  });
+  it("stops a long entry before the next chunk after cancellation", async () => {
+    const { backend, helper } = makeBackend();
+    const abort = new AbortController();
+    let chunks = 0;
+    helper.request = async () => {
+      chunks++;
+      abort.abort();
+      return { ok: true };
+    };
+    await expect(
+      backend.typeText(DEVICE, "a".repeat(241), { signal: abort.signal }),
+    ).rejects.toThrow();
+    expect(chunks).toBe(1);
   });
 });

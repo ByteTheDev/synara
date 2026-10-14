@@ -55,6 +55,10 @@ BOOL SynaraHardwareButtonFromName(NSString *name, SynaraHardwareButton *outButto
 /// `dtuhid` or `indigo`: which transport this attachment injects through.
 @property(nonatomic, readonly, copy) NSString *transportName;
 
+/// Starts one bounded RPC input. Delivery errors describe the whole operation,
+/// not just the last failed key, so a partially sent operation is never replayed.
+- (void)beginInput NS_SWIFT_NAME(beginInput());
+
 /// Touch down/up at a normalized display point (0..1, origin top-left).
 - (void)sendTouchAtX:(double)x y:(double)y down:(BOOL)down
     NS_SWIFT_NAME(sendTouch(x:y:down:));

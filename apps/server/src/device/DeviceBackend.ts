@@ -95,6 +95,10 @@ export interface DeviceSwipeGesture {
   readonly edge?: DeviceTouchEdge | undefined;
 }
 
+export type DeviceScreenshotCapture = DeviceScreenshotResult & {
+  readonly proofBytesBase64?: string;
+};
+
 export interface DeviceTypeTextOutcome {
   /** Characters with no key on the keyboard, which were not typed. */
   readonly skipped: number;
@@ -148,6 +152,7 @@ export interface DeviceLogResult {
   readonly log: readonly string[];
   /** stdout/stderr (`print`) of the last launch through Synara, when captured. */
   readonly console: readonly string[];
+  readonly consoleUnavailableReason?: string;
   readonly crashes: readonly DeviceCrashReport[];
   /** Lines dropped by `limit`, across both streams. */
   readonly omitted: number;
@@ -195,7 +200,11 @@ export interface DeviceBackend {
    * resolves keys through its own hardware keyboard layout, so callers that
    * need exact text check `usesUsKeyboardLayout` or use `setFocusedValue`.
    */
-  typeText(udid: string, text: string): Promise<DeviceTypeTextOutcome>;
+  typeText(
+    udid: string,
+    text: string,
+    options?: { readonly signal?: AbortSignal },
+  ): Promise<DeviceTypeTextOutcome>;
   /**
    * Replace the focused element's value through accessibility: any Unicode,
    * independent of keyboard layout, one change event instead of keystrokes.
@@ -217,8 +226,9 @@ export interface DeviceBackend {
       readonly save?: boolean;
       readonly maxInlineBytes?: number;
       readonly resolution?: "pixels" | "points";
+      readonly proof?: boolean;
     },
-  ): Promise<DeviceScreenshotResult>;
+  ): Promise<DeviceScreenshotCapture>;
   startRecording(udid: string): Promise<DeviceStartRecordingResult>;
   stopRecording(udid: string): Promise<DeviceStopRecordingResult>;
   describeUi(udid: string): Promise<DeviceDescribeUiResult>;

@@ -376,6 +376,7 @@ final class HelperSession {
 /// exactly like a working one: taps were acked and nothing moved. Comparing the
 /// undelivered counter around the call turns that into a real error.
 private func withHIDDelivery(_ hid: SynaraHIDBridge, _ body: () -> Void) throws {
+  hid.beginInput()
   let before = hid.undeliveredEventCount
   body()
   let dropped = hid.undeliveredEventCount - before
@@ -383,7 +384,7 @@ private func withHIDDelivery(_ hid: SynaraHIDBridge, _ body: () -> Void) throws 
     let reason = hid.undeliveredReason.map { ": \($0)" } ?? ""
     throw RPCError(
       .inputNotDelivered,
-      "\(dropped) HID event(s) were not delivered to the simulator\(reason); re-attach and retry")
+      "\(dropped) HID event(s) were not delivered to the simulator\(reason); inspect the screen before another input")
   }
 }
 

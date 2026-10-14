@@ -205,7 +205,9 @@ static xpc_object_t SynaraKeyboardPayload(uint64_t usage, uint64_t state) {
     if (event == XPC_ERROR_CONNECTION_INVALID) {
       [weakSelf connectionInvalidated:connection];
     } else if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-      // XPC reconnects on the next send; anything the daemon held is gone.
+      // The daemon lost contact state. Re-probe before sending a fresh gesture.
+      [weakSelf connectionInvalidated:connection];
+      xpc_connection_cancel(connection);
       fprintf(stderr, "[device-helper] dtuhidd connection was interrupted\n");
     }
   });

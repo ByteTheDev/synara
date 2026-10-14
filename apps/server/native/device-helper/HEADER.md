@@ -177,3 +177,19 @@ to the app as a text change.
 boots or reuses a simulator, streams ≥30 frames asserting keyframe and Annex B
 NAL structure, injects a tap, dumps the accessibility tree, verifies PNG magic on
 a screenshot, and shuts down only a simulator it booted itself.
+
+### Offline input-delivery regression
+
+The bridge bounds one input RPC to 13 seconds, with at most one further second
+reserved to release keys after partial delivery. Such errors are never safe to
+replay automatically; a wholly refused operation carries explicit zero-delivery
+evidence. XPC interruption clears contact state before reconnection.
+
+The owner-boundary test uses a stub transport without loading a simulator:
+
+```sh
+xcrun clang -fobjc-arc -fmodules -framework Foundation -framework CoreGraphics \
+  Sources/HIDBridge.m Sources/DTUHIDTransport.m Tests/InputDeliveryTests.m \
+  -o /tmp/synara-device-input-tests
+/tmp/synara-device-input-tests
+```

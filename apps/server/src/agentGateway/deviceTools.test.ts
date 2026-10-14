@@ -604,7 +604,7 @@ describe("agent gateway device tools for end-to-end testing", () => {
       screenChanged: false,
     });
     expect(screenText(result)).toContain('app "Fake App"');
-    expect(screenText(result)).toContain('- Button "Continue" #continue-button @196,725');
+    expect(screenText(result)).toContain('- Button "Continue" #"continue-button" @196,725');
   });
 
   it("skips the observation when asked to", async () => {
@@ -646,7 +646,7 @@ describe("agent gateway device tools for end-to-end testing", () => {
     ).resolves.toMatchObject({ status: "ready" });
     await expect(
       structured("device_wait", { udid: DEVICE, label: "Never there", timeoutMs: 300 }),
-    ).resolves.toMatchObject({ status: "timeout" });
+    ).resolves.toMatchObject({ status: "timeout", settled: false });
   });
 
   it("applies environment settings and validates privacy requests", async () => {
@@ -730,6 +730,7 @@ describe("agent gateway device tools for end-to-end testing", () => {
       coordinates: "device points",
     });
     expect(saved).toHaveLength(1);
+    expect(backend.callsOfKind("screenshot")).toHaveLength(1);
     expect(result.content.some((entry) => entry.type === "image")).toBe(true);
   });
 });

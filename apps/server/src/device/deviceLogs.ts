@@ -1,12 +1,12 @@
 /**
  * Reading an app's logs and crash reports off a simulator.
  *
- * Three sources, because no single one has everything an E2E check needs:
+ * Backend-owned sources for an E2E check:
  *
  * - The unified log (`log show` inside the simulator): os_log, Logger, NSLog,
  *   and the frameworks' own errors about the app (UIKit, networking).
- * - The console capture of the last launch through Synara: `print` writes to
- *   stdout, which never reaches the unified log.
+ * Direct stdout capture is deliberately unavailable: unlimited files or pipes
+ * whose readers disappear could affect the app, and print is not unified logging.
  * - Crash reports, which the host writes to `~/Library/Logs/DiagnosticReports`
  *   as `<executable>-<timestamp>.ips` roughly a minute after the crash.
  *

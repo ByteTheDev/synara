@@ -362,8 +362,12 @@ export class FakeDeviceBackend implements DeviceBackend {
 
   async screenshot(
     udid: string,
-    options: { readonly save?: boolean; readonly resolution?: "pixels" | "points" } = {},
-  ): Promise<DeviceScreenshotResult> {
+    options: {
+      readonly save?: boolean;
+      readonly resolution?: "pixels" | "points";
+      readonly proof?: boolean;
+    } = {},
+  ): Promise<DeviceScreenshotResult & { readonly proofBytesBase64?: string }> {
     this.record({ kind: "screenshot", udid });
     const device = this.requireBooted(udid);
     return {
@@ -377,6 +381,7 @@ export class FakeDeviceBackend implements DeviceBackend {
       height: 1,
       sizeBytes: Buffer.from(PNG_BASE64, "base64").byteLength,
       bytesBase64: PNG_BASE64,
+      ...(options.proof ? { proofBytesBase64: PNG_BASE64 } : {}),
       capturedAt: new Date(this.now()).toISOString(),
     };
   }
