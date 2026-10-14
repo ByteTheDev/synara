@@ -1,0 +1,89 @@
+name: Confirmed native dirty quit acceptance
+on:
+  push:
+    branches: [codex/1919-single-app-code-oss]
+    paths: [.github/workflows/code-oss-quit-confirmed.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  quit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 3cfeaa8c5a18c8c5a967799cd1cb0f6a66a80d01
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: e3e22b6580f574e901aedf975e03c787169999d7
+          path: .code-oss/driver
+          sparse-checkout: .github/workflows
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-complete-runtime
+          run-id: 38543125228
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - uses: actions/download-artifact@v8
+        with:
+          name: compiled-synara-existing
+          run-id: 38541504429
+          github-token: ${{ github.token }}
+      - run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss && tar -xzf compiled-synara.tar.gz
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+          electron: 'true'
+      - name: Reuse the reviewed isolated quit driver and approve existing Synara consent
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {execFileSync} from 'node:child_process';
+          const workflow=fs.readFileSync('.code-oss/driver/.github/workflows/code-oss-quit-acceptance.yml','utf8');
+          const step=workflow.indexOf('      - name: Isolate the native quit scenario without rerunning completed service tests\n');
+          const block=workflow.indexOf('        run: |\n',step);
+          const end=workflow.indexOf('      - name: Real Linux display\n',block);
+          if(step<0||block<0||end<0)throw Error('Reviewed quit driver changed');
+          const script=workflow.slice(block+'        run: |\n'.length,end).replace(/^ {10}/gm,'');
+          execFileSync('bash',['-e','-c',script],{stdio:'inherit'});
+          const path='apps/desktop/code-oss/scripts/smoke.mjs';
+          let text=fs.readFileSync(path,'utf8');
+          const before='const quit = await until(';
+          if(text.split(before).length!==2)throw Error('Quit observation anchor changed');
+          text=text.replace(before,'await agent.getByRole("button", { name: "Quit", exact: true }).click();\n            const quit = await until(');
+          fs.writeFileSync(path,text);
+          JS
+          node --check apps/desktop/code-oss/scripts/smoke.mjs
+      - name: Real Linux display
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb scrot libasound2t64 libgtk-3-0t64 libnss3 libgbm1 > .code-oss/display.log 2>&1
+      - name: Verify actual save veto after the user's quit consent
+        timeout-minutes: 4
+        env:
+          SYNARA_SMOKE_OUTPUT: .code-oss/quit-evidence
+          SYNARA_VERIFY_MODAL: '1'
+        run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: native-confirmed-quit-evidence
+          path: .code-oss/quit-evidence
+          retention-days: 7
+          if-no-files-found: warn
+  report:
+    needs: quit
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-confirmed-quit-evidence
+      - name: Actual quit result and visible confirmation
+        run: |
+          for file in after-checks.json failure.txt quit-dialog.json failure-page-1.txt failure-page-2.txt; do
+            if [ -f "$file" ]; then echo "=== $file ==="; head -c 12000 "$file"; echo; fi
+          done
+          grep -E 'quit|shutdown|ERR|Error:' after-electron.log | tail -20 || true
