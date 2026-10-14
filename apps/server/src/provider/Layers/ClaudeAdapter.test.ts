@@ -14948,118 +14948,145 @@ describe("Claude subagent tracking", () => {
     );
   });
 
-  it.effect("settles a foreground task left open by a turn that hit the usage limit", () => {
-    const harness = makeHarness();
-    const FG = "toolu_limited_agent";
-    const BASH = "toolu_limited_bash";
-    return Effect.gen(function* () {
-      const adapter = yield* ClaudeAdapter;
-      const eventsFiber = yield* adapter.streamEvents.pipe(
-        Stream.takeUntil(
-          (event) =>
-            event.type === "task.completed" && payloadRecord(event).summary === "Late notice.",
-        ),
-        Stream.runCollect,
-        Effect.forkChild,
-      );
-      yield* startTrackingSession(adapter);
+  for (const returnedToForeground of [false, true]) {
+    it.effect(
+      `settles a foreground task left open by a turn that hit the usage limit (returned: ${returnedToForeground})`,
+      () => {
+        const harness = makeHarness();
+        const FG = "toolu_limited_agent";
+        const BASH = "toolu_limited_bash";
+        return Effect.gen(function* () {
+          const adapter = yield* ClaudeAdapter;
+          const eventsFiber = yield* adapter.streamEvents.pipe(
+            Stream.takeUntil(
+              (event) =>
+                event.type === "task.completed" && payloadRecord(event).summary === "Late notice.",
+            ),
+            Stream.runCollect,
+            Effect.forkChild,
+          );
+          yield* startTrackingSession(adapter);
 
-      for (const message of [
-        rootToolUse(0, BASH, "Bash", { command: "make", description: "Build" }),
-        system("task_started", {
-          task_id: "task-limited-bash",
-          tool_use_id: BASH,
-          task_type: "local_bash",
-          is_backgrounded: false,
-          description: "Build",
-        }),
-        rootToolUse(1, FG, "Agent", { description: "Limited job", prompt: "Dig in." }),
-        system("task_started", {
-          task_id: "task-limited",
-          tool_use_id: FG,
-          task_type: "local_agent",
-          subagent_type: "general-purpose",
-          is_backgrounded: false,
-          description: "Limited job",
-        }),
-        subagentAssistant(FG, [{ type: "text", text: "Digging." }]),
-        {
-          type: "assistant",
-          session_id: SESSION,
-          uuid: nextUuid(),
-          parent_tool_use_id: null,
-          error: "rate_limit",
-          message: {
-            id: `msg-${nextUuid()}`,
-            content: [{ type: "text", text: "You've hit your limit." }],
-            usage: { input_tokens: 0, output_tokens: 0 },
-          },
-        } as unknown as SDKMessage,
-        {
-          type: "result",
-          subtype: "success",
-          is_error: true,
-          result: "You've hit your limit.",
-          errors: [],
-          session_id: SESSION,
-          uuid: nextUuid(),
-        } as unknown as SDKMessage,
-        // Zombie tail, then a real notification that arrives after all.
-        system("task_progress", {
-          task_id: "task-limited",
-          tool_use_id: FG,
-          description: "Still digging",
-          usage: { total_tokens: 1, tool_uses: 0, duration_ms: 1 },
-        }),
-        system("task_notification", {
-          task_id: "task-limited",
-          tool_use_id: FG,
-          status: "stopped",
-          output_file: "/tmp/limited.out",
-          summary: "Late notice.",
-        }),
-      ]) {
-        harness.query.emit(message);
-      }
+          for (const message of [
+            rootToolUse(0, BASH, "Bash", { command: "make", description: "Build" }),
+            system("task_started", {
+              task_id: "task-limited-bash",
+              tool_use_id: BASH,
+              task_type: "local_bash",
+              is_backgrounded: false,
+              description: "Build",
+            }),
+            rootToolUse(1, FG, "Agent", { description: "Limited job", prompt: "Dig in." }),
+            system("task_started", {
+              task_id: "task-limited",
+              tool_use_id: FG,
+              task_type: "local_agent",
+              subagent_type: "general-purpose",
+              is_backgrounded: false,
+              description: "Limited job",
+            }),
+            subagentAssistant(FG, [{ type: "text", text: "Digging." }]),
+            ...(returnedToForeground
+              ? [
+                  system("task_updated", {
+                    task_id: "task-limited-bash",
+                    patch: { is_backgrounded: true },
+                  }),
+                  system("task_updated", {
+                    task_id: "task-limited",
+                    patch: { is_backgrounded: true },
+                  }),
+                  system("task_updated", {
+                    task_id: "task-limited-bash",
+                    patch: { is_backgrounded: false },
+                  }),
+                  system("task_updated", {
+                    task_id: "task-limited",
+                    patch: { is_backgrounded: false },
+                  }),
+                ]
+              : []),
+            {
+              type: "assistant",
+              session_id: SESSION,
+              uuid: nextUuid(),
+              parent_tool_use_id: null,
+              error: "rate_limit",
+              message: {
+                id: `msg-${nextUuid()}`,
+                content: [{ type: "text", text: "You've hit your limit." }],
+                usage: { input_tokens: 0, output_tokens: 0 },
+              },
+            } as unknown as SDKMessage,
+            {
+              type: "result",
+              subtype: "success",
+              is_error: true,
+              result: "You've hit your limit.",
+              errors: [],
+              session_id: SESSION,
+              uuid: nextUuid(),
+            } as unknown as SDKMessage,
+            // Zombie tail, then a real notification that arrives after all.
+            system("task_progress", {
+              task_id: "task-limited",
+              tool_use_id: FG,
+              description: "Still digging",
+              usage: { total_tokens: 1, tool_uses: 0, duration_ms: 1 },
+            }),
+            system("task_notification", {
+              task_id: "task-limited",
+              tool_use_id: FG,
+              status: "stopped",
+              output_file: "/tmp/limited.out",
+              summary: "Late notice.",
+            }),
+          ]) {
+            harness.query.emit(message);
+          }
 
-      const events = Array.from(yield* Fiber.join(eventsFiber));
-      const rootTurnId = events.find(
-        (event) => event.type === "turn.started" && isRootEvent(event),
-      )?.turnId;
-      const turnCompletedIndex = events.findIndex(
-        (event) => event.type === "turn.completed" && isRootEvent(event),
-      );
-      assert.equal(payloadRecord(events[turnCompletedIndex]!).state, "failed");
-      const settled = events
-        .slice(0, turnCompletedIndex)
-        .filter((event) => isRootEvent(event) && event.type === "task.completed")
-        .map((event) => ({
-          taskId: taskIdOf(event),
-          status: payloadRecord(event).status,
-          toolUseId: payloadRecord(event).toolUseId,
-          turnId: event.turnId,
-        }));
-      assert.deepEqual(settled, [
-        {
-          taskId: "task-limited-bash",
-          status: "failed",
-          toolUseId: undefined,
-          turnId: rootTurnId,
-        },
-        { taskId: "task-limited", status: "failed", toolUseId: FG, turnId: rootTurnId },
-      ]);
-      // Late progress cannot mark the settled task live again.
-      assert.equal(
-        events
-          .slice(turnCompletedIndex)
-          .some((event) => event.type === "task.progress" && taskIdOf(event) === "task-limited"),
-        false,
-      );
-    }).pipe(
-      Effect.provideService(Random.Random, makeDeterministicRandomService()),
-      Effect.provide(harness.layer),
+          const events = Array.from(yield* Fiber.join(eventsFiber));
+          const rootTurnId = events.find(
+            (event) => event.type === "turn.started" && isRootEvent(event),
+          )?.turnId;
+          const turnCompletedIndex = events.findIndex(
+            (event) => event.type === "turn.completed" && isRootEvent(event),
+          );
+          assert.equal(payloadRecord(events[turnCompletedIndex]!).state, "failed");
+          const settled = events
+            .slice(0, turnCompletedIndex)
+            .filter((event) => isRootEvent(event) && event.type === "task.completed")
+            .map((event) => ({
+              taskId: taskIdOf(event),
+              status: payloadRecord(event).status,
+              toolUseId: payloadRecord(event).toolUseId,
+              turnId: event.turnId,
+            }));
+          assert.deepEqual(settled, [
+            {
+              taskId: "task-limited-bash",
+              status: "failed",
+              toolUseId: undefined,
+              turnId: rootTurnId,
+            },
+            { taskId: "task-limited", status: "failed", toolUseId: FG, turnId: rootTurnId },
+          ]);
+          // Late progress cannot mark the settled task live again.
+          assert.equal(
+            events
+              .slice(turnCompletedIndex)
+              .some(
+                (event) => event.type === "task.progress" && taskIdOf(event) === "task-limited",
+              ),
+            false,
+          );
+        }).pipe(
+          Effect.provideService(Random.Random, makeDeterministicRandomService()),
+          Effect.provide(harness.layer),
+        );
+      },
     );
-  });
+  }
 
   it.effect("leaves background tasks open when the launching turn ends", () => {
     const harness = makeHarness();

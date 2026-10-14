@@ -5416,10 +5416,20 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           }
           const workflowTaskId = context.workflowTaskIdByMemberTaskId.get(message.task_id);
           const run = subagentRunForTask(context, undefined, message.task_id);
-          if (run && isBackgrounded === true) {
-            run.background = true;
+          if (run && isBackgrounded !== undefined && !isTerminalStatus) {
+            run.background = isBackgrounded;
           }
           const owner = resolveTaskEventOwner(context, message.task_id);
+          // A task brought back to the foreground once again ends with its root turn.
+          if (
+            isBackgrounded === false &&
+            !context.terminalTaskIds.has(message.task_id) &&
+            owner.target === context &&
+            context.subagentRoot === undefined &&
+            context.turnState !== undefined
+          ) {
+            context.foregroundTasks.set(message.task_id, owner.run?.toolUseId);
+          }
           const error = nonEmptyTrimmed(patch?.error);
           const raw = {
             source: "claude.sdk.message" as const,
