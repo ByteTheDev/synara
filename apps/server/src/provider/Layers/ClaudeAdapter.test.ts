@@ -9523,6 +9523,21 @@ await agent("Draft the spec", { label: "delta-agent", phase: "Two" });
               webSearchRequests: 0,
             });
           }
+          // A later native identity change starts fresh accounting, not another
+          // restored baseline: the resume flag is a one-result obligation.
+          const changed = yield* collectCompletion();
+          yield* adapter.sendTurn({ threadId: THREAD_ID, input: "new identity", attachments: [] });
+          emitResult(newSessionId, "identity-accounting-result", 10, 20, 30, 40, 1);
+          const changedCompleted = Array.from(yield* Fiber.join(changed)).find(
+            (event) => event.type === "turn.completed",
+          );
+          assert.equal(changedCompleted?.type, "turn.completed");
+          if (changedCompleted?.type === "turn.completed") {
+            assert.equal(changedCompleted.payload.totalCostUsd, 1);
+            assert.deepInclude(changedCompleted.payload.modelUsage?.["claude-sonnet-5"], {
+              inputTokens: 10,
+            });
+          }
         } else if (completed?.type === "turn.completed") {
           assert.equal(completed.payload.totalCostUsd, sameQuery ? 1 : 2);
           assert.deepEqual(completed.payload.modelUsage?.["claude-sonnet-5"], {

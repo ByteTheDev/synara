@@ -88,26 +88,40 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
       WHERE a.kind = 'turn.completed' AND a.turn_id IS NOT NULL
         ${tokenStatsLineageFilter(sql, sql.literal("a.thread_id"), scope)}
     ),
-    -- Main-thread API requests, which name the Claude process
-    -- (lifecycleGeneration) and native session that served them.
-    claude_request_source AS (
+    -- Ownership generations can be reused when a failed provider switch rolls
+    -- back. SessionStart observations distinguish the restarted native process
+    -- without changing those generations or scanning the retained runtime journal.
+    claude_request_observations AS (
       SELECT
         a.thread_id,
         a.turn_id,
         a.created_at,
-        json_extract(a.payload_json, '$.claudeCache.lifecycleGeneration') AS generation,
+        a.sequence,
+        a.activity_id,
+        json_extract(a.payload_json, '$.claudeCache.lifecycleGeneration') AS lifecycle_generation,
+        CASE WHEN json_extract(a.payload_json, '$.claudeCache.source') = 'session-start'
+          AND json_type(a.payload_json, '$.claudeCache.observedAt') = 'text'
+          THEN json_extract(a.payload_json, '$.claudeCache.observedAt')
+        END AS session_started_at,
         json_extract(a.payload_json, '$.claudeCache.nativeSessionId') AS native_session_id,
         COALESCE(
           json_extract(a.payload_json, '$.claudeCache.lastRequest.messageId'),
           a.activity_id
         ) AS message_id,
-        ${request("inputTokens")} + ${request("cacheCreationInputTokens")} AS fresh_prompt_tokens,
         ${request("cacheReadInputTokens")} AS cache_read_tokens
       FROM projection_thread_activities a
       WHERE a.kind = 'context-window.updated'
         ${tokenStatsLineageFilter(sql, sql.literal("a.thread_id"), scope)}
         AND json_valid(a.payload_json)
         AND json_type(a.payload_json, '$.claudeCache') = 'object'
+    ),
+    claude_request_source AS (
+      SELECT r.*,
+        lifecycle_generation || ':' || COALESCE(native_session_id, '') || ':' || COALESCE(MAX(session_started_at) OVER (
+          PARTITION BY thread_id, native_session_id, lifecycle_generation
+          ORDER BY created_at, sequence, activity_id ROWS UNBOUNDED PRECEDING
+        ), '') AS generation
+      FROM claude_request_observations r
     ),
     -- Later rows repeat a response's request (output updates, the settled
     -- result), so each response counts once, in the turn that first showed it.
@@ -117,8 +131,7 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
         turn_id,
         MIN(generation) AS generation,
         MIN(native_session_id) AS native_session_id,
-        SUM(cache_read_tokens) AS cache_read_tokens,
-        SUM(fresh_prompt_tokens + cache_read_tokens) AS prompt_tokens
+        SUM(cache_read_tokens) AS cache_read_tokens
       FROM (
         SELECT r.*,
           ROW_NUMBER() OVER (
@@ -152,7 +165,7 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
       FROM (
         SELECT thread_id, turn_id, generation, native_session_id,
           ROW_NUMBER() OVER (
-            PARTITION BY thread_id, generation ORDER BY completed_at ASC, turn_id ASC
+            PARTITION BY thread_id, native_session_id, generation ORDER BY completed_at ASC, turn_id ASC
           ) AS generation_rank
         FROM claude_generation_turns
       ) g
@@ -175,6 +188,9 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
     -- that span, but the parent does not count it.
     claude_settled_results AS (
       SELECT c.thread_id, c.activity_id, c.sequence, c.created_at, t.generation,
+        ROW_NUMBER() OVER (
+          PARTITION BY c.thread_id ORDER BY c.created_at, c.sequence, c.activity_id
+        ) AS settlement_index,
         CASE WHEN resumed.turn_id IS NULL
           AND json_type(c.payload_json, '$.modelUsage') = 'object'
           AND EXISTS (
@@ -190,43 +206,70 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
       WHERE json_extract(c.payload_json, '$.tokenAccountingVersion') = 1
         AND (json_type(c.payload_json, '$.modelUsage') = 'object' OR resumed.turn_id IS NOT NULL)
     ),
-    -- The parent process a subagent ran in: the latest one started before the
-    -- subagent's turn ended (a subagent never outlives its process).
-    claude_child_turns AS (
-      SELECT activity_id, created_at, parent_thread_id, parent_generation
-      FROM (
-        SELECT child.activity_id, child.created_at, th.parent_thread_id,
-          g.generation AS parent_generation,
-          ROW_NUMBER() OVER (
-            PARTITION BY child.activity_id ORDER BY g.started_at DESC
-          ) AS generation_rank
-        FROM claude_completed_source child
-        JOIN projection_threads th ON th.thread_id = child.thread_id
-        LEFT JOIN claude_generation_starts g
-          ON g.thread_id = th.parent_thread_id AND g.started_at <= child.created_at
-        WHERE th.creation_source = 'provider_native' AND th.parent_thread_id IS NOT NULL
-      )
-      WHERE generation_rank = 1
+    -- Assign the latest process preceding each child on an ordered timeline.
+    -- Joining children to all previous process starts also grows quadratically
+    -- for long histories with frequent restarts.
+    claude_ordered_processes AS (
+      SELECT thread_id, generation, started_at,
+        ROW_NUMBER() OVER (
+          PARTITION BY thread_id ORDER BY started_at, generation, native_session_id
+        ) AS process_index
+      FROM claude_generation_starts
     ),
-    -- A subagent's requests land in its parent process's next settled result.
-    -- That result already counts them unless it was withheld or came from a
-    -- later process, which never saw them.
+    claude_process_timeline AS (
+      SELECT thread_id, started_at AS created_at, NULL AS activity_id,
+        0 AS is_child, process_index
+      FROM claude_ordered_processes
+      UNION ALL
+      SELECT th.parent_thread_id, child.created_at, child.activity_id, 1, NULL
+      FROM claude_completed_source child
+      JOIN projection_threads th ON th.thread_id = child.thread_id
+      WHERE th.creation_source = 'provider_native' AND th.parent_thread_id IS NOT NULL
+    ),
+    claude_process_assignments AS (
+      SELECT *, MAX(process_index) OVER (
+        PARTITION BY thread_id ORDER BY created_at, is_child, activity_id
+        ROWS UNBOUNDED PRECEDING
+      ) AS parent_process
+      FROM claude_process_timeline
+    ),
+    claude_child_turns AS (
+      SELECT child.activity_id, child.created_at, child.thread_id AS parent_thread_id,
+        process.generation AS parent_generation
+      FROM claude_process_assignments child
+      LEFT JOIN claude_ordered_processes process
+        ON process.thread_id = child.thread_id AND process.process_index = child.parent_process
+      WHERE child.is_child = 1
+    ),
+    -- Merge children and results into one ordered timeline instead of joining
+    -- every child to every future result. At equal timestamps a child precedes
+    -- results; sequence and id retain the previous result tie-breaking order.
+    claude_settlement_timeline AS (
+      SELECT parent_thread_id AS thread_id, activity_id, created_at,
+        NULL AS sequence, 0 AS is_result, NULL AS settlement_index, parent_generation
+      FROM claude_child_turns
+      UNION ALL
+      SELECT thread_id, activity_id, created_at, sequence, 1, settlement_index, NULL
+      FROM claude_settled_results
+    ),
+    claude_next_settlements AS (
+      SELECT *, MIN(settlement_index) OVER (
+        PARTITION BY thread_id ORDER BY created_at, is_result, sequence, activity_id
+        ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
+      ) AS next_settlement
+      FROM claude_settlement_timeline
+    ),
+    -- A subagent counts through its next parent result only when that result
+    -- actually retained usage from the process in which the subagent ran.
     claude_children_in_parent AS (
-      SELECT activity_id
-      FROM (
-        SELECT child.activity_id, child.parent_generation, settled.generation, settled.trusted,
-          ROW_NUMBER() OVER (
-            PARTITION BY child.activity_id
-            ORDER BY settled.created_at ASC, settled.sequence ASC, settled.activity_id ASC
-          ) AS settlement_rank
-        FROM claude_child_turns child
-        JOIN claude_settled_results settled
-          ON settled.thread_id = child.parent_thread_id
-         AND settled.created_at >= child.created_at
-      )
-      WHERE settlement_rank = 1
-        AND trusted = 1
-        AND (parent_generation IS NULL OR generation IS NULL OR generation = parent_generation)
+      SELECT child.activity_id
+      FROM claude_next_settlements child
+      JOIN claude_settled_results settled
+        ON settled.thread_id = child.thread_id
+       AND settled.settlement_index = child.next_settlement
+      WHERE child.is_result = 0 AND settled.trusted = 1
+        AND (child.parent_generation IS NULL OR settled.generation IS NULL
+          OR settled.generation = child.parent_generation)
     ),
     claude_completed_ranked AS (
       SELECT a.thread_id, a.turn_id, a.activity_id, a.created_at, a.payload_json,
@@ -274,8 +317,7 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
           AND json_extract(payload_json, '$.mainLoopCacheReadTokens') >= 0
           THEN CAST(json_extract(payload_json, '$.mainLoopCacheReadTokens') AS INTEGER)
         END AS main_cache_read_tokens,
-        requests.cache_read_tokens AS request_cache_read_tokens,
-        requests.prompt_tokens AS request_prompt_tokens
+        requests.cache_read_tokens AS request_cache_read_tokens
       FROM claude_completed_ranked c
       LEFT JOIN profile_stats_claude_legacy_usage legacy
         ON legacy.thread_id = c.thread_id AND legacy.turn_id = c.turn_id
@@ -308,7 +350,8 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
       WHERE tokens > 0
     ),
     -- cache_tokens is the part of tokens read from the prompt cache. A main
-    -- loop without a recorded split takes its observed requests' cache share.
+    -- loop without an exact result split retains only observed cache reads;
+    -- output tokens must never inherit the prompt's cache ratio.
     claude_token_rows AS (
       SELECT thread_id, turn_id, created_at, dispatch_origin, model, tokens, cache_tokens
       FROM claude_model_token_rows
@@ -317,10 +360,8 @@ export function claudeTokenActivityCtes(sql: SqlClient.SqlClient, scope?: TokenS
         CAST(c.main_tokens AS INTEGER) AS tokens,
         CAST(MIN(c.main_tokens, COALESCE(
           c.main_cache_read_tokens,
-          CASE WHEN c.request_prompt_tokens > 0
-            THEN ROUND(1.0 * c.main_tokens * c.request_cache_read_tokens / c.request_prompt_tokens)
-            ELSE 0
-          END
+          c.request_cache_read_tokens,
+          0
         )) AS INTEGER) AS cache_tokens
       FROM claude_completed c
       WHERE c.main_tokens > 0

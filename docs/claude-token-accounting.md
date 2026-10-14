@@ -28,13 +28,20 @@ last one saved for its project directory. The first result after a resume
 therefore only becomes the baseline: its turn carries no `modelUsage` or
 `totalCostUsd` and counts its main loop. Results written before this rule still
 carry the restored totals. Profile Stats finds them as the first turn of each
-process (`claudeCache.lifecycleGeneration`) that resumed an earlier process of
-the same native session, and counts those turns' main loop instead.
+process that resumed an earlier process of the same native session, and counts
+those turns' main loop instead. Process identity combines
+`claudeCache.lifecycleGeneration`, `nativeSessionId`, and the latest persisted
+`session-start` observation's `observedAt`: provider-switch rollback reuses the ownership
+generation but still starts a new native process. Repeated emissions of one
+SessionStart observation do not introduce another boundary. Once the first
+result is settled, a later native-session identity change counts fresh usage
+normally rather than withholding another result.
 
 A result settles `mainLoopCacheReadTokens` exactly. A turn closed without one
 sums the cache reads of its observed requests. Older main-loop rows without the
-field take the cache share of their recorded requests (`claudeCache.lastRequest`);
-model rows use their own `cacheReadInputTokens`.
+field use their recorded requests' cache reads (`claudeCache.lastRequest`),
+capped by the main-loop total. Output tokens never inherit the prompt's cache
+ratio. Model rows use their own `cacheReadInputTokens`.
 
 The SDK's raw per-model shape has no `totalTokens`: its four disjoint counters
 are uncached `inputTokens`, `cacheReadInputTokens`,
@@ -53,12 +60,22 @@ present.
 Subagents count once. A versioned result covers every request its process made
 since the previous result, subagents included, so a provider-native child's
 turn is matched by time to the next parent result of the process it ran in (the
-parent's latest `lifecycleGeneration` started before the child finished). The
+parent's latest observed process started before the child finished). The
 child counts on its own only when that result does not count it: it is withheld,
 its breakdown is unusable, it belongs to a later process, or no parent result
 followed. `source_turn_id` is not used; it can name the child's own turn.
 
+The Inbox labels the remainder after recorded cache reads as “other”, not “new”:
+providers and deleted-thread archives without a cache breakdown can include
+unclassified cache reads. The total remains unchanged.
+
 ## Historical limits
+
+If an old restart reused a generation and retained no new SessionStart
+observation, it cannot be distinguished safely from continued work in the same
+process. Such historical totals remain unchanged rather than guessing a reset.
+Missing request history can likewise prevent the first resumed turn from being
+identified. The runtime fix protects new results independently of this recovery.
 
 `tokenAccountingVersion: 1` identifies corrected accounting and trusted resume
 counters. Unversioned Claude processed totals are hidden; they are not reused

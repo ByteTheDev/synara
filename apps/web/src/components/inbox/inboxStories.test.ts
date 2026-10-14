@@ -223,7 +223,7 @@ describe("buildInboxTiles", () => {
     ).toEqual([]);
   });
 
-  it("splits the token tile into new tokens and cache reads when the server reports them", () => {
+  it("distinguishes recorded cache reads without calling unclassified tokens new", () => {
     const withCache = {
       ...input.recap,
       totals: { ...input.recap.totals, cacheReadTokens: 3_000_000 },
@@ -235,7 +235,7 @@ describe("buildInboxTiles", () => {
       id: "tokens",
       lead: "You used",
       value: "3.8m tokens",
-      detail: "800k new · 3m from cache",
+      detail: "800k other · 3m from cache",
     });
   });
 });

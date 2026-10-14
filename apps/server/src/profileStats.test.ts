@@ -121,10 +121,11 @@ describe("ProfileStatsQuery", () => {
             },
           },
         };
-        // The mirrored child finished inside the span that root's first result settled.
+        // Same-time child completion is covered even when its own sequence is larger
+        // than the parent result: sequence numbers belong to different threads.
         yield* addActivity("1", "root", "first", versioned, "2026-09-10T11:00:00Z");
         yield* addActivity("2", "root", "first", versioned, "2026-09-10T11:00:00Z");
-        yield* addActivity("3", "mirrored-child", "mirrored", versioned, "2026-09-10T10:59:00Z");
+        yield* addActivity("3", "mirrored-child", "mirrored", versioned, "2026-09-10T11:00:00Z");
         yield* addActivity("4", "root", "legacy", { modelUsage: versioned.modelUsage });
         yield* addActivity("5", "root", "unrecoverable", { modelUsage: versioned.modelUsage });
         // An earlier private build emitted a compact shape whose input already

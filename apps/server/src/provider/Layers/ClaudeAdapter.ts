@@ -3504,7 +3504,10 @@ function makeClaudeAdapter(options?: ClaudeAdapterLiveOptions) {
           result && !resultUsageUnattributable
             ? claudeTurnResultUsage(result, context.resultUsageBaseline)
             : undefined;
-        if (result) context.resultUsageBaseline = result;
+        if (result) {
+          context.resultUsageBaseline = result;
+          context.resultUsageMayIncludeResumedTotals = false;
+        }
         const liveContextUsage = yield* readClaudeContextUsage(context);
         const resultContextWindow = maxClaudeContextWindowFromModelUsage(result?.modelUsage);
         const liveRawContextWindow = positiveFiniteNumber(liveContextUsage?.rawMaxTokens);

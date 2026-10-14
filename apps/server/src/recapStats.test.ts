@@ -364,7 +364,12 @@ describe("RecapStatsQuery", () => {
     expect(recap.unavailableProviders).toEqual([]);
   });
 
-  it("withholds the usage a resumed Claude process restores and splits out cache reads", async () => {
+  it.each([
+    "new generation",
+    "SessionStart",
+    "missing restart evidence",
+    "new native session",
+  ] as const)("accounts for restored usage with %s", async (evidence) => {
     const recap = await runRecapTest(
       Effect.gen(function* () {
         const sql = yield* SqlClient.SqlClient;
@@ -392,7 +397,7 @@ describe("RecapStatsQuery", () => {
           VALUES
             ('child-withheld', 'project-app', 'Subagent',
               '{"provider":"claudeAgent","model":"claude-opus-5"}', 'full-access', 'default',
-              'local', '2026-09-30T07:01:10.000Z', '2026-09-30T07:01:30.000Z', NULL,
+              'local', '2026-09-30T06:59:00.000Z', '2026-09-30T07:01:30.000Z', NULL,
               'thread-claude', 'provider_native', 'child-withheld-turn'),
             ('child-settled', 'project-app', 'Subagent',
               '{"provider":"claudeAgent","model":"claude-opus-5"}', 'full-access', 'default',
@@ -407,13 +412,13 @@ describe("RecapStatsQuery", () => {
             ('done-child-withheld', 'child-withheld', 'child-withheld-turn', 'info',
               'turn.completed', 'done',
               '{"provider":"claudeAgent","tokenAccountingVersion":1,"mainLoopTokens":50}',
-              1, '2026-09-30T07:01:30.000Z'),
+              1, ${evidence === "new native session" ? "2026-09-30T07:00:30.000Z" : "2026-09-30T07:01:30.000Z"}),
             ('done-child-settled', 'child-settled', 'child-settled-turn', 'info',
               'turn.completed', 'done',
               '{"provider":"claudeAgent","tokenAccountingVersion":1,"mainLoopTokens":20}',
               1, '2026-09-30T07:40:00.000Z')
         `;
-        const rows: Array<[string, string, string, string, number, string]> = [];
+        const rows: Array<[string, string | null, string, string, number, string]> = [];
         const pushRequest = (
           turnId: string,
           generation: string,
@@ -421,7 +426,10 @@ describe("RecapStatsQuery", () => {
           request: { input: number; cacheRead: number; cacheCreation: number },
         ) => {
           const claudeCache = {
-            nativeSessionId: "session-1",
+            nativeSessionId:
+              evidence === "new native session" && (turnId === "t3" || turnId === "t4")
+                ? "session-2"
+                : "session-1",
             lifecycleGeneration: generation,
             lastRequest: {
               messageId: `msg-${turnId}`,
@@ -466,18 +474,35 @@ describe("RecapStatsQuery", () => {
           mainLoopTokens: 200,
           modelUsage: { "claude-opus-5": { totalTokens: 200, cacheReadInputTokens: 150 } },
         });
+        // Provider-switch rollback deliberately restores its ownership generation.
+        // The native SessionStart observation still identifies the new process.
+        const resumedGeneration = evidence === "new generation" ? "gen-2" : "gen-1";
+        if (evidence === "SessionStart") {
+          const at = "2026-09-30T07:00:00.000Z";
+          const payload = JSON.stringify({
+            claudeCache: {
+              nativeSessionId: "session-1",
+              lifecycleGeneration: resumedGeneration,
+              source: "session-start",
+              observedAt: at,
+            },
+          });
+          rows.push(["restart", null, "context-window.updated", payload, rows.length, at]);
+          // Repeated observations of the same hook are one process, not a restart.
+          rows.push(["restart-repeat", null, "context-window.updated", payload, rows.length, at]);
+        }
         // Claude Code restored t1 + t2 into this first result of the new process.
-        pushRequest("t3", "gen-2", "2026-09-30T07:01:00.000Z", {
+        pushRequest("t3", resumedGeneration, "2026-09-30T07:01:00.000Z", {
           input: 10,
           cacheRead: 240,
-          cacheCreation: 50,
+          cacheCreation: 40, // The remaining 10 tokens are output, never cache reads.
         });
         pushCompleted("t3", "2026-09-30T07:02:00.000Z", {
           mainLoopTokens: 300,
           modelUsage: { "claude-opus-5": { totalTokens: 600, cacheReadInputTokens: 450 } },
         });
         // t4's result also settles child-settled's 20 tokens (380 + 20).
-        pushRequest("t4", "gen-2", "2026-09-30T08:01:00.000Z", {
+        pushRequest("t4", resumedGeneration, "2026-09-30T08:01:00.000Z", {
           input: 10,
           cacheRead: 290,
           cacheCreation: 60,
@@ -515,13 +540,28 @@ describe("RecapStatsQuery", () => {
 
     // Claude: 100 + 200 + 300 (t3's main loop, not its restored 600) + 400, plus
     // child-withheld's 50, which only t3's withheld result had settled.
-    // child-settled is already inside t4. Cache: 60 + 150 + 240 (t3's request
-    // share, 80% of 300) + 300; the children report none; Codex adds 1000.
-    expect(recap.totals.tokens).toEqual({ user: 2_550, automation: 0, agent: 0 });
-    expect(recap.totals.cacheReadTokens).toBe(1_750);
+    // child-settled is already inside t4. Cache: 60 + 150 + 240 (t3's recorded
+    // requests, excluding output) + 300; the children report none; Codex adds 1000.
+    // Without a persisted restart boundary these same values could represent
+    // legitimate process usage. Do not guess a restart and discard that usage.
+    const missingEvidence = evidence === "missing restart evidence";
+    const newNativeSession = evidence === "new native session";
+    // A child completed before the native identity changed is not included
+    // in the new session's first result, even when ownership generation matches.
+    expect(recap.totals.tokens).toEqual({
+      user: newNativeSession ? 2_850 : missingEvidence ? 2_800 : 2_550,
+      automation: 0,
+      agent: 0,
+    });
+    expect(recap.totals.cacheReadTokens).toBe(missingEvidence || newNativeSession ? 1_960 : 1_750);
     expect(recap.models).toEqual([
       { provider: "codex", model: "gpt-5-codex", turns: 0, tokens: 1_500 },
-      { provider: "claudeAgent", model: "claude-opus-5", turns: 0, tokens: 1_050 },
+      {
+        provider: "claudeAgent",
+        model: "claude-opus-5",
+        turns: 0,
+        tokens: newNativeSession ? 1_350 : missingEvidence ? 1_300 : 1_050,
+      },
     ]);
   });
 

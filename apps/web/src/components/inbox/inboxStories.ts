@@ -357,7 +357,7 @@ export function buildInboxTiles(
       value: `${formatCompact(tokens)} tokens`,
       ...(cacheReadTokens > 0
         ? {
-            detail: `${formatCompact(tokens - cacheReadTokens)} new · ${formatCompact(cacheReadTokens)} from cache`,
+            detail: `${formatCompact(tokens - cacheReadTokens)} other · ${formatCompact(cacheReadTokens)} from cache`,
           }
         : {
             detail: change ? `${change.words} than this time yesterday` : "Cache reads included",
