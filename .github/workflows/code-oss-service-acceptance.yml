@@ -5,32 +5,79 @@ on:
     paths: [.github/workflows/code-oss-service-acceptance.yml]
 permissions:
   contents: read
+  actions: read
 jobs:
-  native:
+  source:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: d3dfcb27231255ff08d303b6dcffe4e022c5fc40
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
           persist-credentials: false
-      - uses: ./.github/actions/setup-code-oss
+      - uses: ./.github/actions/setup-workspace
         with:
-          flavor: production
-          arch: x64
-      - name: Verify native workbench interfaces
-        working-directory: .code-oss/source
-        env:
-          NODE_OPTIONS: --max-old-space-size=8192
-        run: npm run typecheck-client
-      - name: Preserve native runtime for focused follow-up checks
-        run: tar -czf code-oss-runtime.tar.gz -C .code-oss runtime
+          scope: full
+          electron: 'false'
+      - name: Correct fixture trust and require fresh command observations
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          function edit(path, replacements) {
+            let text = fs.readFileSync(path, 'utf8');
+            for (const [before, after] of replacements) {
+              if (text.split(before).length !== 2) throw Error('Nonunique anchor: ' + before);
+              text = text.replace(before, after);
+            }
+            fs.writeFileSync(path, text);
+          }
+          const probe = 'apps/desktop/code-oss/scripts/fixtures/probe.cjs';
+          const smoke = 'apps/desktop/code-oss/scripts/smoke.mjs';
+          edit(probe, [
+            ['    Object.assign(state, extra, {', '    Object.assign(state, extra, {\n      trusted: vscode.workspace.isTrusted,\n      extensionIds: vscode.extensions.all.map(extension => extension.id),'],
+            ['          report({ command: id, error: null });', '          report({ command: id, commandSequence: (state.commandSequence ?? 0) + 1, error: null });'],
+            ['          report({ command: id, error: String(error.stack ?? error) });', '          report({ command: id, commandSequence: (state.commandSequence ?? 0) + 1, error: String(error.stack ?? error) });'],
+            ['  context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => report()));', '  context.subscriptions.push(vscode.workspace.onDidGrantWorkspaceTrust(() => report()));\n  context.subscriptions.push(vscode.extensions.onDidChange(() => report()));\n  context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => report()));'],
+          ]);
+          edit(smoke, [
+            ['    const initialProbe = await until(', '    let initialProbe = await until('],
+            ['    async function probeCommand(id, title) {\n      await command("Synara Smoke: " + title);\n      const result = await until(probe, (value) => value.command === `synaraSmoke.${id}`, title);', '    async function probeCommand(id, title) {\n      const previous = await probe();\n      await command("Synara Smoke: " + title);\n      const result = await until(probe, (value) => value.command === `synaraSmoke.${id}` && (value.commandSequence > (previous.commandSequence ?? 0) || value.extensionHostPid !== previous.extensionHostPid), title);'],
+            ['    await probeCommand("open", "Open sample file");\n    await workbench.locator(".monaco-editor .view-lines").first().waitFor();', '    // Trust only this disposable fixture through the normal native UI.\n    // Production workspace trust and extension restrictions remain enabled.\n    if (!initialProbe.trusted) {\n      await command("Manage Workspace Trust");\n      await workbench.getByRole("button", { name: /^Trust, Keyboard Shortcut:/ }).click();\n    }\n    initialProbe = await until(probe, value => value.trusted && value.extensionIds?.includes("vscode.typescript-language-features"), "native workspace trust enables built-in services");\n    await record("fixture workspace trusted through native UI", { trusted: initialProbe.trusted, extensions: initialProbe.extensionIds.length });\n    await probeCommand("open", "Open sample file");\n    await workbench.locator(".monaco-editor .view-lines").first().waitFor();\n    screen("after-native-file-open.png");'],
+          ]);
+          const paths = [probe,smoke];
+          execFileSync('node_modules/.bin/oxfmt', paths, {stdio:'inherit'});
+          for (const path of paths) execFileSync('node',['--check',path],{stdio:'inherit'});
+          fs.writeFileSync('acceptance-manifest.json',JSON.stringify(paths.map(path => ({path,sha256:crypto.createHash('sha256').update(fs.readFileSync(path)).digest('hex')})),null,2));
+          execFileSync('tar',['-czf','acceptance-source.tar.gz','acceptance-manifest.json',...paths]);
+          JS
       - uses: actions/upload-artifact@v7
         with:
-          name: native-service-runtime
-          path: code-oss-runtime.tar.gz
+          name: trusted-acceptance-source
+          path: acceptance-source.tar.gz
           retention-days: 3
           if-no-files-found: error
+  native:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: cf747f77e272d7e6c472dfe58e1a70659b17b23e
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: trusted-acceptance-source
+      - run: tar -xzf acceptance-source.tar.gz
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-service-runtime
+          run-id: 38530755801
+          github-token: ${{ github.token }}
+          path: .code-oss
+      - run: tar -xzf .code-oss/code-oss-runtime.tar.gz -C .code-oss
       - uses: ./.github/actions/setup-workspace
         with:
           scope: full
@@ -39,25 +86,65 @@ jobs:
         run: bun run build:desktop
       - name: Prepare actual Linux desktop capture
         run: sudo apt-get update && sudo apt-get install -y xvfb scrot ffmpeg libasound2t64 libgtk-3-0t64 libnss3 libgbm1
-      - name: Exercise editor, extension host, language services, debugging and modes
+      - name: Exercise editor, language services, debugging and preserved modes
         timeout-minutes: 8
         env:
           SYNARA_SMOKE_OUTPUT: .code-oss/screenshots
         run: xvfb-run -a -s '-screen 0 1440x1000x24' node apps/desktop/code-oss/scripts/smoke.mjs
-      - name: Print bounded diagnostic evidence
+      - name: Print bounded real diagnostic evidence
         if: always()
         run: |
-          for file in after-checks.json failure.txt probe-at-failure.json native-probe.json; do
+          for file in after-checks.json failure.txt probe-at-failure.json native-probe.json failure-page-1.txt; do
             if [ -f ".code-oss/screenshots/$file" ]; then
               echo "=== $file ==="
-              cat ".code-oss/screenshots/$file"
+              head -c 14000 ".code-oss/screenshots/$file"
+              echo
             fi
           done
-          if [ -f .code-oss/screenshots/after-electron.log ]; then tail -100 .code-oss/screenshots/after-electron.log; fi
+          if [ -f .code-oss/screenshots/after-electron.log ]; then tail -45 .code-oss/screenshots/after-electron.log; fi
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: native-service-acceptance-evidence
+          name: native-trusted-acceptance-evidence
           path: .code-oss/screenshots
           retention-days: 7
           if-no-files-found: warn
+  blobs:
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: trusted-acceptance-source
+      - name: Read prepared source as data only
+        run: |
+          python - <<'PY'
+          import tarfile,pathlib
+          with tarfile.open('acceptance-source.tar.gz') as archive:
+              for item in archive.getmembers():
+                  p=pathlib.PurePosixPath(item.name)
+                  if not item.isfile() or p.is_absolute() or '..' in p.parts or item.size>100000:
+                      raise ValueError('Invalid source archive')
+              archive.extractall('source',filter='data')
+          PY
+      - name: Store exact source blobs; connector publishes commit and branch
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('node:fs'), crypto=require('node:crypto');
+            const allowed=new Set(['apps/desktop/code-oss/scripts/fixtures/probe.cjs','apps/desktop/code-oss/scripts/smoke.mjs']);
+            const manifest=JSON.parse(fs.readFileSync('source/acceptance-manifest.json','utf8'));
+            if (!Array.isArray(manifest)||manifest.length!==2) throw Error('Invalid manifest');
+            const entries=[];
+            for (const item of manifest) {
+              if (!allowed.delete(item.path)) throw Error('Unexpected source path');
+              const bytes=fs.readFileSync('source/'+item.path);
+              if (crypto.createHash('sha256').update(bytes).digest('hex')!==item.sha256) throw Error('Content mismatch');
+              const {data}=await github.rest.git.createBlob({...context.repo,content:bytes.toString('base64'),encoding:'base64'});
+              entries.push({...item,sha:data.sha,mode:'100644',type:'blob'});
+            }
+            console.log('ACCEPTANCE_BLOBS='+JSON.stringify(entries));
