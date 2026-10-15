@@ -7,30 +7,6 @@ import {
   resolveComposerEffortLadderIndex,
 } from "./composerTraits";
 
-describe("Claude Haiku 5.5 composer effort", () => {
-  it("feeds the existing stepped slider and commits Claude effort options", () => {
-    const selection = getComposerTraitSelection("claudeAgent", "claude-haiku-5-5", "", undefined);
-    expect(selection.effortLevels.map((level) => level.value)).toEqual([
-      "low",
-      "medium",
-      "high",
-      "xhigh",
-      "max",
-    ]);
-    expect(selection.defaultEffort).toBe("medium");
-    expect(selection.thinkingEnabled).toBeNull();
-    expect(resolveComposerEffortLadderIndex(selection)).toBe(1);
-    expect(
-      planComposerEffortChange({
-        provider: "claudeAgent",
-        selection,
-        prompt: "",
-        value: "max",
-      }),
-    ).toEqual({ kind: "options", patch: { effort: "max" } });
-  });
-});
-
 describe("planComposerEffortCycle", () => {
   it.each([
     ["low", "medium"],
@@ -259,5 +235,37 @@ describe("resolveComposerEffortLadderIndex", () => {
     expect(resolveComposerEffortLadderIndex(selection)).toBe(
       selection.effortLevels.findIndex((level) => level.value === "ultrathink"),
     );
+  });
+});
+
+describe("CLI-discovered Claude effort", () => {
+  it("uses a runtime-only ladder and resets to the CLI default without sending a sentinel", () => {
+    const selection = getComposerTraitSelection(
+      "claudeAgent",
+      "runtime-fixture-model",
+      "",
+      { effort: "max" },
+      {
+        slug: "runtime-fixture-model",
+        name: "Runtime fixture",
+        supportsThinkingToggle: false,
+        supportedReasoningEfforts: [
+          { value: "default", label: "Default (CLI)" },
+          { value: "low" },
+          { value: "max" },
+        ],
+        defaultReasoningEffort: "default",
+      },
+    );
+    expect(selection.effortLevels.map((level) => level.value)).toEqual(["default", "low", "max"]);
+    expect(selection.effort).toBe("max");
+    expect(
+      planComposerEffortChange({
+        provider: "claudeAgent",
+        selection,
+        prompt: "",
+        value: "default",
+      }),
+    ).toEqual({ kind: "options", patch: { effort: undefined } });
   });
 });

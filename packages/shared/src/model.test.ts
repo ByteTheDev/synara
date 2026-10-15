@@ -43,27 +43,6 @@ import {
   resolveGrokEffortFamily,
 } from "./model";
 
-describe("Claude Haiku 5.5 capabilities", () => {
-  it("uses five adaptive API effort levels with medium as the default", () => {
-    const caps = getModelCapabilities("claudeAgent", "claude-haiku-5-5");
-    expect(caps.reasoningEffortLevels.map((level) => level.value)).toEqual([
-      "low",
-      "medium",
-      "high",
-      "xhigh",
-      "max",
-    ]);
-    expect(getDefaultEffort(caps)).toBe("medium");
-    expect(caps.supportsThinkingToggle).toBe(false);
-    expect(caps.supportsFastMode).toBe(false);
-    expect(caps.promptInjectedEffortLevels).toEqual([]);
-    expect(normalizeClaudeModelOptions("claude-haiku-5-5", { effort: "xhigh" })).toEqual({
-      effort: "xhigh",
-    });
-    expect(normalizeClaudeModelOptions("claude-haiku-5-5", { effort: "medium" })).toBeUndefined();
-  });
-});
-
 describe("parseCursorCliReasoningEffort", () => {
   it.each([
     ["gpt-5.5-xhigh", "xhigh"],
@@ -915,6 +894,15 @@ describe("claudeSelectionRequiresRestart", () => {
     ).toBe(false);
   });
 
+  it("restarts for max on a CLI-only model without relying on a catalog release", () => {
+    expect(
+      claudeSelectionRequiresRestart(
+        selection("runtime-fixture-model", { effort: "low" }),
+        selection("runtime-fixture-model", { effort: "max" }),
+      ),
+    ).toBe(true);
+  });
+
   it("does not restart for a model-only change", () => {
     expect(
       claudeSelectionRequiresRestart(
@@ -924,22 +912,22 @@ describe("claudeSelectionRequiresRestart", () => {
     ).toBe(false);
   });
 
-  it("restarts when a model switch makes a persisted max effort effective", () => {
+  it("keeps CLI-owned max spawn-fixed when switching from a legacy catalog model", () => {
     expect(
       claudeSelectionRequiresRestart(
         selection("claude-haiku-4-5", { effort: "max" }),
         selection("claude-sonnet-5", { effort: "max" }),
       ),
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it("restarts when a model switch makes a persisted max effort unsupported", () => {
+  it("leaves max support validation to the CLI when switching to a legacy catalog model", () => {
     expect(
       claudeSelectionRequiresRestart(
         selection("claude-sonnet-5", { effort: "max" }),
         selection("claude-haiku-4-5", { effort: "max" }),
       ),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it("still restarts when spawn-fixed options change together with the model", () => {
@@ -1142,7 +1130,7 @@ describe("getModelCapabilities Claude capability flags", () => {
     expect(caps("claude-opus-5-6")).toBe(caps("claude-opus-5-5"));
     expect(caps("claude-fable-6")).toBe(caps("claude-fable-5-1"));
     expect(caps("claude-sonnet-5-1")).toBe(caps("claude-sonnet-5"));
-    expect(caps("claude-haiku-5")).toBe(caps("claude-haiku-5-5"));
+    expect(caps("claude-haiku-5")).toBe(caps("claude-haiku-4-5"));
     expect(resolveNewestKnownClaudeFamilyModel("claude-opus-6[1m]")).toBe("claude-opus-5-5");
   });
 
