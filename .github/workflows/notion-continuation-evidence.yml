@@ -19,19 +19,39 @@ jobs:
       - uses: ./.github/actions/setup-workspace
         with:
           scope: runtime
-      - name: Export pinned dependencies for isolated implementation
+      - name: Export bounded source and dependency artifacts
         run: |
-          mkdir -p "$RUNNER_TEMP/notion-toolchain/bin"
-          cp "$(command -v bun)" "$RUNNER_TEMP/notion-toolchain/bin/bun"
-          cp "$(command -v node)" "$RUNNER_TEMP/notion-toolchain/bin/node"
-          du -sh node_modules apps/web/node_modules apps/server/node_modules
-          find node_modules -name '*.node' -printf '%s %p\n' | sort -n | tail -5
-          tar -czf "$RUNNER_TEMP/notion-toolchain/dependencies.tar.gz" node_modules apps/web/node_modules apps/server/node_modules apps/desktop/node_modules packages/contracts/node_modules packages/shared/node_modules scripts/node_modules
-          cp bun.lock "$RUNNER_TEMP/notion-toolchain/bun.lock"
-          sha256sum bun.lock > "$RUNNER_TEMP/notion-toolchain/lock-digest.txt"
+          mkdir -p "$RUNNER_TEMP/notion-environment/bin" "$RUNNER_TEMP/notion-dependencies"
+          cp "$(command -v bun)" "$RUNNER_TEMP/notion-environment/bin/bun"
+          cp "$(command -v node)" "$RUNNER_TEMP/notion-environment/bin/node"
+          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/notion-environment/source.tar.gz"
+          git ls-tree -r HEAD > "$RUNNER_TEMP/notion-environment/tree.txt"
+          git rev-parse HEAD > "$RUNNER_TEMP/notion-environment/head.txt"
+          sha256sum bun.lock > "$RUNNER_TEMP/notion-environment/lock-digest.txt"
+          tar -czf "$RUNNER_TEMP/dependencies.tar.gz" node_modules apps/web/node_modules apps/server/node_modules apps/desktop/node_modules packages/contracts/node_modules packages/shared/node_modules scripts/node_modules
+          split -b 300M "$RUNNER_TEMP/dependencies.tar.gz" "$RUNNER_TEMP/notion-dependencies/part-"
+          sha256sum "$RUNNER_TEMP/notion-dependencies/part-"* > "$RUNNER_TEMP/notion-environment/dependency-digests.txt"
       - uses: actions/upload-artifact@v6
         with:
-          name: notion-continuation-toolchain
-          path: ${{ runner.temp }}/notion-toolchain
+          name: notion-continuation-environment
+          path: ${{ runner.temp }}/notion-environment
+          retention-days: 1
+          compression-level: 0
+      - uses: actions/upload-artifact@v6
+        with:
+          name: notion-dependencies-a
+          path: ${{ runner.temp }}/notion-dependencies/part-aa
+          retention-days: 1
+          compression-level: 0
+      - uses: actions/upload-artifact@v6
+        with:
+          name: notion-dependencies-b
+          path: ${{ runner.temp }}/notion-dependencies/part-ab
+          retention-days: 1
+          compression-level: 0
+      - uses: actions/upload-artifact@v6
+        with:
+          name: notion-dependencies-c
+          path: ${{ runner.temp }}/notion-dependencies/part-ac
           retention-days: 1
           compression-level: 0
