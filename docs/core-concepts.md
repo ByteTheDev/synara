@@ -26,6 +26,10 @@ is cancelled, the task and its prompt remain available for retry. Pressing Send 
 message for the same task is still being sent shows a notice and keeps the new text in the
 composer; it is not sent twice.
 
+Empty chats show an animated ASCII background by default. Turn it off in **Settings →
+Appearance → ASCII background**. With reduced motion enabled, the field stays still; deliberate
+clicks can still trigger a ripple. The decoration pauses while its chat is hidden.
+
 ## The main surfaces
 
 - **Sidebar** — projects, spaces, tasks, and activity requiring attention. The rail
@@ -187,9 +191,9 @@ again. An assistant item that ends without any text does not add an empty respon
 Chat code blocks above 250,000 characters display their complete source as plain text,
 using the same highlighting limit as file previews. Find, Copy code, and soft wrap remain available.
 
-### Inline visuals (Beta)
+### Inline visuals
 
-In Synara Beta, an agent can answer with a visual inside its reply: headline numbers, a bar or
+In Synara and Synara Beta, an agent can answer with a visual inside its reply: headline numbers, a bar or
 line chart, a table, a side-by-side comparison, a checklist or step list, a note, a small
 calculator, follow-up choices, or tabs that combine them. Ask for one ("show this as a chart") and
 the agent calls the `synara_show_visual` tool, then places the visual in its answer like a
