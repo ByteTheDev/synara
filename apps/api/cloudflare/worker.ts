@@ -22,6 +22,8 @@ type OptionalSecrets = Partial<
     | "S3_REGION"
     | "APNS_PRIVATE_KEY"
     | "APNS_KEY_ID"
+    | "APNS_PRODUCTION_PRIVATE_KEY"
+    | "APNS_PRODUCTION_KEY_ID"
     | "APNS_TEAM_ID"
     | "APNS_BUNDLE_ID"
     | "APNS_ENVIRONMENT",
@@ -67,6 +69,8 @@ export class AccountApi extends Container<Cloudflare.Env & OptionalSecrets> {
           "S3_REGION",
           "APNS_PRIVATE_KEY",
           "APNS_KEY_ID",
+          "APNS_PRODUCTION_PRIVATE_KEY",
+          "APNS_PRODUCTION_KEY_ID",
           "APNS_TEAM_ID",
           "APNS_BUNDLE_ID",
           "APNS_ENVIRONMENT",

@@ -158,6 +158,12 @@ partial/invalid configuration fails startup. Use `both` to accept development an
 TestFlight registrations together. The client still reports one environment per
 token; the API stores it and selects the corresponding fixed Apple gateway on
 delivery. Single-environment settings continue to reject mismatched registrations.
+An Apple key restricted to Sandbox cannot sign Production requests merely by
+setting `APNS_ENVIRONMENT=both`. Keep that Sandbox key in `APNS_PRIVATE_KEY` /
+`APNS_KEY_ID` and configure a separate `APNS_PRODUCTION_PRIVATE_KEY` /
+`APNS_PRODUCTION_KEY_ID` pair for the same app. The API validates both pairs and
+keeps their JWT caches separate. Existing keys that Apple permits in both
+environments can continue using only the original pair.
 Deploy the compatible API before changing the trial's current Sandbox setting to
 `both`. Sandbox delivery does not qualify TestFlight or App Store delivery.
 
@@ -180,3 +186,15 @@ Qualification must distinguish: database/transport tests, simulator lifecycle
 checks, Apple accepting a real APNs request, and visible background update/end on
 a device or supported simulator. `simctl push`, mocks, a successful build, and
 installed Cloudflare secrets do not prove real Apple delivery.
+
+For the TestFlight qualification, install the existing mobile build, sign in with
+the same Synara account as the desktop host, and pair that installation through
+Connections. Keep the host online and enable Live Activities for Synara in iOS
+Settings. From a scratch chat on the phone, start a turn long enough to observe
+(for example, ask the agent to run only `sleep 45`, wait for it, then reply).
+Wait until the activity appears, then background Synara or lock the phone without
+force-quitting it. Verify its running state changes to Ready without reopening
+the app and the ended activity dismisses after about 60 seconds. Repeat over
+cellular with Wi-Fi disabled. A failure report should include the test time and
+visible state; correlate it with the account-scoped registration/outbox rather
+than asking for a device token or private key.

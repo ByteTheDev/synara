@@ -123,6 +123,8 @@ describe("Cloudflare account API container configuration", () => {
       CLOUDFLARE_TUNNEL_DOMAIN: "example.com",
       REMOTE_TEST_USER_IDS: "user_mini, user_macbook",
       WORKOS_IDENTITY_MAP: '{"clientId":"test","users":{},"organizations":{}}',
+      APNS_PRODUCTION_PRIVATE_KEY: "test-production-private-key",
+      APNS_PRODUCTION_KEY_ID: "PROD123456",
       ...(additional ? { REMOTE_TEST_ADDITIONAL_USER_IDS: additional } : {}),
     });
 
@@ -135,6 +137,8 @@ describe("Cloudflare account API container configuration", () => {
       CLOUDFLARE_TUNNEL_DOMAIN: "example.com",
       REMOTE_TEST_USER_IDS: expected,
       WORKOS_IDENTITY_MAP: '{"clientId":"test","users":{},"organizations":{}}',
+      APNS_PRODUCTION_PRIVATE_KEY: "test-production-private-key",
+      APNS_PRODUCTION_KEY_ID: "PROD123456",
     });
   });
 
@@ -149,5 +153,7 @@ describe("Cloudflare account API container configuration", () => {
     expect(container.envVars).not.toHaveProperty("REMOTE_TEST_USER_IDS");
     expect(container.envVars).not.toHaveProperty("MIGRATION_PROXY_SECRET");
     expect(container.envVars).not.toHaveProperty("ACCOUNT_API");
+    expect(container.envVars).not.toHaveProperty("APNS_PRODUCTION_PRIVATE_KEY");
+    expect(container.envVars).not.toHaveProperty("APNS_PRODUCTION_KEY_ID");
   });
 });

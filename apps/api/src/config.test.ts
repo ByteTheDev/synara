@@ -65,6 +65,28 @@ describe("loadApiConfig", () => {
     expect(() =>
       loadApiConfig({ ...base, ...metadata, APNS_PRIVATE_KEY: pem, APNS_ENVIRONMENT: "test" }),
     ).toThrow(/APNs/);
+    const production = {
+      APNS_PRODUCTION_PRIVATE_KEY: pem.replace(/\n/g, "\\n"),
+      APNS_PRODUCTION_KEY_ID: "PROD123456",
+    };
+    expect(
+      loadApiConfig({
+        ...base,
+        ...metadata,
+        APNS_PRIVATE_KEY: pem,
+        APNS_ENVIRONMENT: "both",
+        ...production,
+      }).apns?.productionCredentials,
+    ).toEqual({ privateKey: pem, keyId: "PROD123456" });
+    for (const invalid of [
+      { APNS_PRODUCTION_PRIVATE_KEY: pem },
+      { APNS_PRODUCTION_KEY_ID: "PROD123456" },
+      { ...production, APNS_PRODUCTION_PRIVATE_KEY: "not a private key" },
+      { ...production, APNS_PRODUCTION_KEY_ID: "invalid" },
+    ])
+      expect(() =>
+        loadApiConfig({ ...base, ...metadata, APNS_PRIVATE_KEY: pem, ...invalid }),
+      ).toThrow(/APNS_|APNs/);
   });
   it("throws listing every missing required var", () => {
     expect(() => loadApiConfig({})).toThrow(ApiConfigError);

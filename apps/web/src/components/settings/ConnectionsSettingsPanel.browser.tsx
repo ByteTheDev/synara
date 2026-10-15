@@ -16,6 +16,8 @@ const fixture = vi.hoisted(() => {
   const state = {
     allowConnections: true as boolean | undefined,
     approved: false,
+    rejected: false,
+    codesCreated: 0,
     codeFailuresRemaining: 0,
     revoked: [] as string[],
     connected: false,
@@ -47,21 +49,22 @@ const fixture = vi.hoisted(() => {
         lastConnectedAt: null,
       },
     ].filter((device) => !state.revoked.includes(device.deviceJkt)),
-    invitations: state.approved
-      ? []
-      : [
-          {
-            inviteId: "pending-fixture",
-            expiresAt: new Date(Date.now() + 600_000).toISOString(),
-            approved: false,
-            revoked: false,
-            pendingDevice: {
-              label: "Emanuele’s MacBook",
-              deviceJkt: "Exact-requesting-device-fingerprint-123456789",
-              publicKey: {},
+    invitations:
+      state.approved || state.rejected
+        ? []
+        : [
+            {
+              inviteId: "pending-fixture",
+              expiresAt: new Date(Date.now() + 600_000).toISOString(),
+              approved: false,
+              revoked: false,
+              pendingDevice: {
+                label: "Emanuele’s MacBook",
+                deviceJkt: "Exact-requesting-device-fingerprint-123456789",
+                publicKey: {},
+              },
             },
-          },
-        ],
+          ],
   });
   return {
     state,
@@ -77,13 +80,17 @@ const fixture = vi.hoisted(() => {
             state.codeFailuresRemaining -= 1;
             throw new Error("Could not create a pairing code.");
           }
+          state.codesCreated += 1;
           return {
             kind: "pairing-code",
-            code: "ABCD-2345",
-            inviteId: "qr-fixture",
+            code: state.codesCreated === 1 ? "ABCD-2345" : "EFGH-6789",
+            inviteId: state.codesCreated === 1 ? "qr-fixture" : `qr-fixture-${state.codesCreated}`,
             rootFingerprint: "a".repeat(64),
             expiresAt: new Date(Date.now() + 600_000).toISOString(),
           };
+        case "cancel-invitation":
+          if (request.inviteId === "pending-fixture") state.rejected = true;
+          return { kind: "done" };
         case "set-allow-connections":
           state.allowConnections = request.enabled as boolean;
           return { kind: "done" };
@@ -224,9 +231,14 @@ async function renderPanel(strictMode = false) {
   return render(strictMode ? <StrictMode>{panel}</StrictMode> : panel);
 }
 
+const CREATE_CALLS = () =>
+  fixture.request.mock.calls.filter(([request]) => request.operation === "create-code");
+
 beforeEach(() => {
   fixture.state.allowConnections = true;
   fixture.state.approved = false;
+  fixture.state.rejected = false;
+  fixture.state.codesCreated = 0;
   fixture.state.codeFailuresRemaining = 0;
   fixture.state.revoked = [];
   fixture.state.connected = false;
@@ -399,22 +411,13 @@ describe("Connections settings", () => {
     await expect.element(page.getByText("Ada's iPad")).not.toBeInTheDocument();
   });
 
-  it("mints one code per opening under StrictMode and approves a pending device", async () => {
+  it("holds the new code until a waiting request is approved, under StrictMode", async () => {
     await renderPanel(true);
     await page.getByRole("button", { name: "Add", exact: true }).click();
-    await expect
-      .element(page.getByRole("img", { name: "Scan to connect to this computer" }))
-      .toBeVisible();
-    await expect.element(page.getByText("ABCD-2345", { exact: true })).toBeVisible();
-    expect(
-      fixture.request.mock.calls.filter(([request]) => request.operation === "create-code"),
-    ).toHaveLength(1);
-    await expect.element(page.getByText(/Expires in \d+:\d\d/)).toBeVisible();
-    // Let the dialog's open transition settle so the screenshot is legible.
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    await page.screenshot({
-      path: "./__screenshots__/connections-add.png",
-    });
+    // Creating a code would withdraw the waiting request, so it comes first.
+    await expect.element(page.getByRole("heading", { name: "Approve this device?" })).toBeVisible();
+    await expect.element(page.getByText("Emanuele’s MacBook", { exact: true })).toBeVisible();
+    expect(CREATE_CALLS()).toHaveLength(0);
     await page.getByRole("button", { name: "Approve", exact: true }).click();
     await vi.waitFor(() =>
       expect(fixture.request).toHaveBeenCalledWith({
@@ -423,25 +426,104 @@ describe("Connections settings", () => {
         deviceJkt: "Exact-requesting-device-fingerprint-123456789",
       }),
     );
-    await page.getByText("Close", { exact: true }).click();
     await expect
-      .element(page.getByRole("heading", { name: "Add a device" }))
+      .element(page.getByRole("img", { name: "Scan to connect to this computer" }))
+      .toBeVisible();
+    await expect.element(page.getByText("ABCD-2345", { exact: true })).toBeVisible();
+    await expect.element(page.getByText(/Expires in \d+:\d\d/)).toBeVisible();
+    expect(CREATE_CALLS()).toHaveLength(1);
+    // Let the dialog's open transition settle so the screenshot is legible.
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await page.screenshot({
+      path: "./__screenshots__/connections-add.png",
+    });
+    await page.getByRole("button", { name: "Close", exact: true }).click();
+    await expect
+      .element(page.getByRole("heading", { name: /Connect a device to this/ }))
       .not.toBeInTheDocument();
     // Closing keeps the code redeemable: it is often closed to type the code on the phone.
     expect(
-      fixture.request.mock.calls.filter(
-        ([request]) =>
-          request.operation === "cancel-invitation" && request.inviteId === "qr-fixture",
-      ),
+      fixture.request.mock.calls.filter(([request]) => request.operation === "cancel-invitation"),
     ).toHaveLength(0);
     await page.getByRole("button", { name: "Add", exact: true }).click();
+    await expect.element(page.getByText("EFGH-6789", { exact: true })).toBeVisible();
+    expect(CREATE_CALLS()).toHaveLength(2);
+  });
+
+  it("reviews a waiting request without creating a code", async () => {
+    await renderPanel(true);
+    await page.getByRole("button", { name: "Review", exact: true }).click();
+    await expect.element(page.getByRole("heading", { name: "Approve this device?" })).toBeVisible();
+    await page.getByRole("button", { name: "Reject", exact: true }).click();
+    await expect.element(page.getByRole("heading", { name: "No requests waiting" })).toBeVisible();
+    expect(fixture.request).toHaveBeenCalledWith({
+      operation: "cancel-invitation",
+      inviteId: "pending-fixture",
+    });
+    expect(CREATE_CALLS()).toHaveLength(0);
+    await page.getByRole("button", { name: "Done", exact: true }).click();
+    await expect
+      .element(page.getByRole("heading", { name: "No requests waiting" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("shows the short code and this computer's fingerprint for another computer", async () => {
+    fixture.state.approved = true;
+    await renderPanel(true);
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+    await expect
+      .element(page.getByRole("heading", { name: /Connect a device to this/ }))
+      .toBeVisible();
+    await page.getByRole("radio", { name: "Computer", exact: true }).click();
     await expect.element(page.getByText("ABCD-2345", { exact: true })).toBeVisible();
-    expect(
-      fixture.request.mock.calls.filter(([request]) => request.operation === "create-code"),
-    ).toHaveLength(2);
+    await expect
+      .element(page.getByRole("img", { name: "Scan to connect to this computer" }))
+      .not.toBeInTheDocument();
+    await expect
+      .element(page.getByText("Settings › Connections › Control other devices"))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("button", { name: "Copy fingerprint", exact: true }))
+      .toBeVisible();
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await page.screenshot({
+      path: "./__screenshots__/connections-add-computer.png",
+    });
+  });
+
+  it("withdraws the code on screen when a new one replaces it", async () => {
+    fixture.state.approved = true;
+    await renderPanel(true);
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+    await expect.element(page.getByText("ABCD-2345", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "New code", exact: true }).click();
+    await expect.element(page.getByText("EFGH-6789", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("ABCD-2345", { exact: true })).not.toBeInTheDocument();
+    const operations = fixture.request.mock.calls.map(([request]) => request.operation);
+    expect(operations.indexOf("cancel-invitation")).toBeLessThan(
+      operations.lastIndexOf("create-code"),
+    );
+    expect(fixture.request).toHaveBeenCalledWith({
+      operation: "cancel-invitation",
+      inviteId: "qr-fixture",
+    });
+  });
+
+  it("does not keep showing a withdrawn code when its replacement fails", async () => {
+    fixture.state.approved = true;
+    await renderPanel(true);
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+    await expect.element(page.getByText("ABCD-2345", { exact: true })).toBeVisible();
+    fixture.state.codeFailuresRemaining = 1;
+    await page.getByRole("button", { name: "New code", exact: true }).click();
+    await expect.element(page.getByRole("alert")).toBeVisible();
+    await expect.element(page.getByText("ABCD-2345", { exact: true })).not.toBeInTheDocument();
+    await page.getByRole("button", { name: "Try again", exact: true }).click();
+    await expect.element(page.getByText("EFGH-6789", { exact: true })).toBeVisible();
   });
 
   it("can retry failed code creation without closing the dialog", async () => {
+    fixture.state.approved = true;
     fixture.state.codeFailuresRemaining = 1;
     await renderPanel(true);
     await page.getByRole("button", { name: "Add", exact: true }).click();
@@ -453,9 +535,8 @@ describe("Connections settings", () => {
       .element(page.getByRole("img", { name: "Scan to connect to this computer" }))
       .toBeVisible();
     await expect.element(page.getByRole("alert")).not.toBeInTheDocument();
-    expect(
-      fixture.request.mock.calls.filter(([request]) => request.operation === "create-code"),
-    ).toHaveLength(2);
+    // The failed attempt and the retry.
+    expect(CREATE_CALLS()).toHaveLength(2);
   });
 
   it("persists keep awake through the desktop bridge", async () => {

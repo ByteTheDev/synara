@@ -15,22 +15,35 @@ export type ApnsResult = "delivered" | "invalid-token" | "retry" | "rejected";
 /** One bounded HTTP/2 request. No credentials or Apple response bodies escape this boundary. */
 export function createApnsSender(config: ApnsConfig) {
   const key = importPKCS8(config.privateKey, "ES256");
-  let cached: { jwt: string; created: number } | undefined;
+  const productionKey = config.productionCredentials
+    ? importPKCS8(config.productionCredentials.privateKey, "ES256")
+    : key;
+  const cached: Partial<Record<ActivityDelivery["environment"], { jwt: string; created: number }>> =
+    {};
   return async (delivery: ActivityDelivery): Promise<ApnsResult> => {
     if (config.environment !== "both" && delivery.environment !== config.environment)
       return "rejected";
     const now = Math.floor(Date.now() / 1000);
-    if (!cached || now - cached.created >= 3000) {
-      cached = {
+    // A cached Sandbox JWT cannot authenticate a Production-only Apple key.
+    let credential = cached[delivery.environment];
+    if (!credential || now - credential.created >= 3000) {
+      credential = {
         jwt: await new SignJWT({})
-          .setProtectedHeader({ alg: "ES256", kid: config.keyId })
+          .setProtectedHeader({
+            alg: "ES256",
+            kid:
+              delivery.environment === "production"
+                ? (config.productionCredentials?.keyId ?? config.keyId)
+                : config.keyId,
+          })
           .setIssuer(config.teamId)
           .setIssuedAt(now)
-          .sign(await key),
+          .sign(await (delivery.environment === "production" ? productionKey : key)),
         created: now,
       };
+      cached[delivery.environment] = credential;
     }
-    const authorization = cached.jwt;
+    const authorization = credential.jwt;
     // Each persisted subscription retains its signing environment; TestFlight
     // must not redirect existing development tokens to the production gateway.
     const origin =

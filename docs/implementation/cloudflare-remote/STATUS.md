@@ -1,5 +1,28 @@
 # Cloudflare Remote — execution state
 
+## Pairing follow-up — 2026-10-15, evening
+
+- A concurrent token refresh could make an older successful `/me` response report
+  signed out even though the account credentials were still valid. Status now
+  accepts a rotated token only for the same verified user, organization and
+  account authority; legacy identity backfills still require the original token.
+  The regression failed before the change and passes now. Logout, user changes
+  and authority changes remain fenced; 110 focused account/pairing tests pass.
+  Workspace formatting, lint and twelve-package typecheck pass (existing lint
+  warnings remain). This fix is not in the installed Remote .2 apps yet.
+- The iPad PR #2 was merged into the existing iOS remote-connections branch,
+  without merging that branch into main. iPad sidebar/rotation and two iPhone
+  workspace UI flows pass. Native sign-in consent now displays Synara; the light
+  icon uses the current vector at the dark icon's scale. No paid WorkOS custom
+  domain or service was enabled.
+- Real-account simulator sign-in and fresh-code enrollment to the installed
+  Mini succeeded. The first remote enrollment exposed a separate mobile bug:
+  successful trust installation did not mark onboarding complete or resume
+  foreground reconnect. The mobile fix is being verified before upload.
+  MacBook account directory/grant and pinned TLS/inner pairing channel passed;
+  actual simulator enrollment to that host remains to be checked. None of this
+  establishes production TestFlight APNs delivery on a physical iPhone.
+
 ## Installed-app qualification follow-up — 2026-10-15
 
 - Synara Remote was installed beside the existing apps on both Macs. Read-only
@@ -25,8 +48,44 @@
   terminates only its own backend, waits for a replacement PID and healthy HTTP
   endpoint, and asserts that the port is unchanged. It failed on the old code for
   the changed endpoint and passed after the repair. No transport unpinning or
-  renderer reload was added. Installed-artifact recovery qualification is pending
-  the updated signed candidate; source smoke is not packaged-app proof.
+  renderer reload was added. The signed, notarized **1.0.6-remote.2** candidate
+  (`a556ebf4238206ccf033158056027d86580fe45b`) passed
+  [all build gates](https://github.com/Emanuele-web04/synara/actions/runs/38783573115)
+  and is installed on both Macs, with the previous app retained for rollback.
+  Both installed apps survived a controlled backend restart in the same window:
+  replacement PID, unchanged port, preserved unsent draft, automatic reconnect
+  and a real Codex reply without renderer reload. All 207 original Mini messages
+  and 1,733 original MacBook messages remain unchanged; the Mini's 213 messages
+  present immediately before this update also compare identically. Subsequent
+  cloud reads show unchanged historical counters and only the new test activity.
+  Account and host/environment identities were preserved across the update.
+  This remains a build-only candidate, without a public release or updater feed.
+- The final local workspace run passed **18,188 tests / 275 skips** across all
+  eleven test tasks. A first parallel run hit one five-second web test timeout;
+  that case passed in isolation and the second full run passed unchanged.
+  Formatting, lint, twelve-package typecheck and Windows runtime checks passed.
+- Apple Developer inspection found the Synara APNs key is topic-specific and
+  **Sandbox only**. The deployed `both` gateway setting does not expand its
+  authorization. The API now accepts an optional, separately validated
+  `APNS_PRODUCTION_PRIVATE_KEY` / `APNS_PRODUCTION_KEY_ID` pair, forwards both
+  Worker secrets, and keeps JWT signing/cache separate by token environment.
+  The real-signature transport regression and configuration/forwarding checks
+  failed before the fix and passed afterward. All **370 API tests** passed on
+  a new disposable PostgreSQL database; lint/typecheck/format also passed.
+  No schema change is required. With explicit operator approval, the separate
+  topic-specific Production key is now created and installed in the two Worker
+  secrets; all 23 previous secret names remain present (25 total). Existing
+  Sandbox credentials are unchanged. The protected local key copy stays outside
+  Git and Downloads; a scan of 9,684 repository files found no matching material.
+  Worker `7793d785-432d-4c88-927b-7d1863a4ce2f` and Container version 21 now run
+  image `sha256:cee7fc90fa39e989303a904b9494a3c59c95bdf86bcdd06412594ac58f7a02a1`.
+  The new instance is running and its protected Live Activity route returns 401
+  without credentials. All 23 database migrations are unchanged.
+  An APNs Production probe using a nonexistent synthetic device token returned
+  `400 BadDeviceToken` with the valid signer and `403 InvalidProviderToken` with
+  an intentionally invalid signature. This verifies the Production credential,
+  not device delivery. Visible background update/end on TestFlight remains the
+  physical-device qualification step; no new mobile build is required.
 
 ## Early access delivery — 2026-10-15
 
@@ -848,3 +907,48 @@ and passes afterwards, including acceptance of the recovered runtime's ready
 event. All 397 provider service/coordinator/adapter/ingestion tests pass, as do
 format, lint (zero errors), twelve-package typecheck and Windows runtime guards.
 The recovery change is not in the installed `.4` package yet.
+
+Remote `.5` (source `27bc3d7431b2b56062c678cac22736b0cb0b2a9a`) subsequently
+passed [the complete signed-candidate workflow](https://github.com/Emanuele-web04/synara/actions/runs/38806243530)
+and is installed on both Macs. Mini retains 46 chats and 215 complete messages;
+MacBook retains 103 chats, 1,745 complete messages and 357 turn rows. Account,
+machine identity and device approvals are unchanged. Both simulator connections
+recovered without pairing again. Opening the existing MacBook x-limiter chat
+from the simulator produced starting, ready and session.started at
+21:28:18.253Z–21:28:19.019Z with the runtime's matching generation, and no
+post-restart stale-generation drops or new runtime warnings in the checked
+window. The Mini smoke runtime also reached ready with session.started. These
+were existing-transcript reads, not new turns or a deliberate live cancellation.
+Rollback `.4` remains available. The temporary transfer exposed only the verified
+public ZIP over the existing private mesh; its listener is now confirmed closed.
+
+### Latest main and pairing-dialog update
+
+The user requested another candidate with main through `1c72bae` (history-read
+performance, refetch-storm reduction and client-side RPC queues), plus the
+updated pairing dialog from `892e3c7`. The merge retains controller-frame routing,
+remote server-generation callbacks, product-event handling and settings-change
+filtering; it adopts main's removal of the server-busy popup and expensive
+keep-awake snapshot seed. Both shared subpath exports remain available.
+
+Focused integration checks pass: 970 server tests, 156 web unit tests and 60
+browser cases, format, lint with zero errors, twelve-package typecheck and Windows
+runtime guards. The separate opt-in history benchmark was not run. The new QR
+uses the same pairing-link payload and keeps dark modules on a light tile. Apple
+CoreImage decoded the actual component's screenshots at 196px and 120px module
+area sizes, matching the complete synthetic payload; the tiles included the
+component's normal quiet-zone padding. Browser coverage includes pending
+approvals and renewal/expired/used-code behavior. The synthetic preview used a
+separate home and ports; its file, browser tabs and both listeners were removed
+or closed after verification. This does not claim a physical camera test.
+
+No wire-schema change requires a native mobile rebuild for these updates.
+TestFlight 131 remains the mobile build; the next desktop candidate must still
+pass signed packaging and installation qualification before replacing `.5`.
+
+The subsequent user UI commit `a26c1e8` is also included: capsule/button
+segmented-control variants and plain Add actions in Connections. The pairing
+illustrations now use the existing UI typography tokens so they follow the font
+setting. The final UI pass passed format, lint, twelve-package typecheck, four
+typography/selector guards and 26 browser cases covering Connections, inline
+visual blocks and the preview toolbar. No test threshold was relaxed.
