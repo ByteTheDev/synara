@@ -1,3 +1,4 @@
+import { CodeEditorPane } from "./codeEditor/CodeEditorPane";
 // FILE: WorkspaceFilePreview.tsx
 // Purpose: Shared single-file preview (code with syntax highlighting, parsed
 //          markdown, images, PDFs) for workspace files plus absolute local
@@ -6,12 +7,6 @@
 // Exports: WorkspaceFilePreview, isMarkdownPreviewablePath
 
 import type { ProjectFileChangeEvent, ProjectReadFileResult } from "@synara/contracts";
-import type { FileContents as PierreFileContents } from "@pierre/diffs";
-import {
-  Editor as PierreEditor,
-  type EditorOptions as PierreEditorOptions,
-} from "@pierre/diffs/edit";
-import { EditProvider, File as PierreFile } from "@pierre/diffs/react";
 import {
   isSupportedLocalImagePath,
   isSupportedLocalPdfPath,
@@ -32,8 +27,6 @@ import {
   use,
   useCallback,
   useEffect,
-  useInsertionEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -48,11 +41,7 @@ import {
   getSelectionWithin,
   type ChatFileReference,
 } from "~/lib/chatReferences";
-import {
-  buildDiffPanelUnsafeCSS,
-  resolveDiffThemeName,
-  type DiffThemeName,
-} from "~/lib/diffRendering";
+import { resolveDiffThemeName, type DiffThemeName } from "~/lib/diffRendering";
 import { extractEditorGutterChanges, type EditorGutterChangeRange } from "~/lib/editorGutterDiff";
 import { formatFileCommentRange, type FileCommentSelection } from "~/lib/fileComments";
 import { showFileReferenceContextMenu } from "~/lib/fileReferenceContextMenu";
@@ -269,179 +258,34 @@ function FileContentsView(props: { path: string; contents: string; themeName: Di
   );
 }
 
-function createPierreEditor(options: PierreEditorOptions<undefined>) {
-  return new PierreEditor(options);
-}
-
-type EditableFileContentsProps = {
+function EditableFileContents(props: {
   path: string;
+  workspaceRoot: string;
   contents: string;
-  cacheKey: string;
+  version: number;
   hidden: boolean;
-  themeName: DiffThemeName;
   theme: "light" | "dark";
   saving: boolean;
   invalid: boolean;
   onContentsChange: (contents: string) => void;
   onSave: () => void;
-};
-
-function PierreEditableFileContents(props: EditableFileContentsProps) {
-  const editorContainerRef = useRef<HTMLDivElement>(null);
-  const editorId = useId();
-  const labelEditor = useCallback(() => {
-    editorContainerRef.current
-      ?.querySelector("diffs-container")
-      ?.shadowRoot?.querySelector<HTMLElement>('[contenteditable="true"]')
-      ?.setAttribute("aria-label", `Edit ${props.path}`);
-  }, [props.path]);
-  const editorObserverRef = useRef<MutationObserver | null>(null);
-  const attachEditor = useCallback(() => {
-    const shadowRoot = editorContainerRef.current?.querySelector("diffs-container")?.shadowRoot;
-    if (!shadowRoot) return;
-    labelEditor();
-    if (editorObserverRef.current === null) {
-      editorObserverRef.current = new MutationObserver(labelEditor);
-    }
-    editorObserverRef.current.observe(shadowRoot, { childList: true, subtree: true });
-  }, [labelEditor]);
-  useEffect(() => {
-    attachEditor();
-    return () => {
-      editorObserverRef.current?.disconnect();
-      editorObserverRef.current = null;
-    };
-  }, [attachEditor]);
-  // Local typing updates this snapshot in the same batch as the parent draft.
-  // Only a different incoming document (reload/watcher) resets Pierre's history.
-  const [document, setDocument] = useState({
-    contents: props.contents,
-    seedContents: props.contents,
-    revision: 0,
-  });
-  if (document.contents !== props.contents) {
-    setDocument({
-      contents: props.contents,
-      seedContents: props.contents,
-      revision: document.revision + 1,
-    });
-  }
-  const onContentsChangeRef = useRef(props.onContentsChange);
-  useInsertionEffect(() => {
-    onContentsChangeRef.current = props.onContentsChange;
-  });
-  const file = useMemo<PierreFileContents>(
-    () => ({
-      name: props.path,
-      contents: document.seedContents,
-      lang: getSyntaxLanguageForPath(props.path),
-      cacheKey: `${props.cacheKey}:${editorId}:${document.revision}`,
-    }),
-    [document.seedContents, document.revision, editorId, props.cacheKey, props.path],
-  );
-  const editorOptions = useMemo<PierreEditorOptions<undefined>>(
-    () => ({
-      onAttach: attachEditor,
-      onChange: (nextFile) => {
-        const contents = nextFile.contents;
-        setDocument((current) => ({ ...current, contents }));
-        onContentsChangeRef.current(contents);
-      },
-    }),
-    [attachEditor],
-  );
-
+  onReferenceInChat?: ((reference: ChatFileReference) => void) | undefined;
+}) {
   return (
     <div
-      ref={editorContainerRef}
-      className="editor-file-editor__pierre"
-      hidden={props.hidden}
+      className={props.hidden ? "hidden" : "flex min-h-0 min-w-0 flex-1 flex-col"}
       aria-busy={props.saving}
-      aria-invalid={props.invalid ? "true" : undefined}
-      onKeyDown={(event) => {
-        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
-          event.preventDefault();
-          props.onSave();
-        }
-      }}
+      aria-invalid={props.invalid || undefined}
     >
-      <EditProvider createEditor={createPierreEditor}>
-        <PierreFile
-          file={file}
-          edit
-          editorOptions={editorOptions}
-          options={{
-            disableFileHeader: true,
-            overflow: "scroll",
-            preferredHighlighter: "shiki-js",
-            theme: props.themeName,
-            unsafeCSS: buildDiffPanelUnsafeCSS(props.theme),
-          }}
-        />
-      </EditProvider>
-    </div>
-  );
-}
-
-// Keep the editing engine stable for the open document: changing it while
-// typing would discard focus, selection and native undo history.
-function EditableFileContents(props: EditableFileContentsProps) {
-  const [plainText] = useState(
-    () =>
-      props.contents.length > MAX_SYNTAX_HIGHLIGHT_INPUT_CHARS ||
-      props.contents.split("\n").length > 1_000,
-  );
-  return plainText ? (
-    <NumberedPlainEditableFileContents {...props} />
-  ) : (
-    <PierreEditableFileContents {...props} />
-  );
-}
-
-function NumberedPlainEditableFileContents(props: EditableFileContentsProps) {
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const gutterRef = useRef<HTMLDivElement>(null);
-  const lineCount = props.contents.split("\n").length;
-  const numbers = useMemo(
-    () =>
-      lineCount <= MAX_PLAIN_NUMBERED_LINES
-        ? Array.from({ length: lineCount }, (_, index) => (
-            <span key={index} className="editor-file-editor__gutter-line">
-              {index + 1}
-            </span>
-          ))
-        : null,
-    [lineCount],
-  );
-  const syncGutter = useCallback(() => {
-    if (editorRef.current && gutterRef.current)
-      gutterRef.current.style.transform = `translateY(${-editorRef.current.scrollTop}px)`;
-  }, []);
-  useEffect(syncGutter, [props.contents, props.hidden, syncGutter]);
-  return (
-    <div className="editor-file-editor-wrap" hidden={props.hidden}>
-      {numbers ? (
-        <div className="editor-file-editor__gutter" aria-hidden="true">
-          <div ref={gutterRef}>{numbers}</div>
-        </div>
-      ) : null}
-      <textarea
-        ref={editorRef}
-        className="editor-file-editor"
-        aria-label={`Edit ${props.path}`}
-        aria-busy={props.saving}
-        aria-invalid={props.invalid ? "true" : undefined}
+      <CodeEditorPane
+        fileName={props.path}
+        workspaceRoot={props.workspaceRoot}
         value={props.contents}
-        spellCheck={false}
-        wrap="off"
-        onScroll={syncGutter}
-        onChange={(event) => props.onContentsChange(event.target.value)}
-        onKeyDown={(event) => {
-          if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
-            event.preventDefault();
-            props.onSave();
-          }
-        }}
+        valueVersion={props.version}
+        resolvedTheme={props.theme}
+        onChange={props.onContentsChange}
+        onSave={props.onSave}
+        onReferenceInChat={props.onReferenceInChat}
       />
     </div>
   );
@@ -1179,11 +1023,12 @@ export function WorkspaceFilePreview(props: WorkspaceFilePreviewProps) {
           {activeEditBuffer && editableDocument ? (
             <EditableFileContents
               key={activeEditBuffer.key}
-              path={filePath}
+              path={editableDocument.relativePath}
+              workspaceRoot={workspaceRoot!}
               contents={activeEditBuffer.contents}
-              cacheKey={activeEditBuffer.key}
+              version={editor.state.version}
+              onReferenceInChat={props.onReferenceInChat}
               hidden={showMarkdownPreview}
-              themeName={diffThemeName}
               theme={resolvedTheme}
               saving={activeEditBuffer.saving}
               invalid={activeEditBuffer.error !== null}
