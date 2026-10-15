@@ -9,6 +9,7 @@ const fixture = vi.hoisted(() => ({
   list: vi.fn(),
   remove: vi.fn(),
   enrollment: vi.fn(),
+  remoteHostId: undefined as string | undefined,
 }));
 vi.mock("~/hooks/useAccount", () => ({ useAccount: () => ({ status: fixture.status }) }));
 vi.mock("~/nativeApi", () => ({
@@ -21,7 +22,10 @@ vi.mock("~/nativeApi", () => ({
   }),
 }));
 vi.mock("~/lib/hosts/api", () => ({ readHostsApi: () => ({ enrollment: fixture.enrollment }) }));
-vi.mock("~/lib/hosts/executionContext", () => ({ readExecutionContext: () => undefined }));
+vi.mock("~/lib/hosts/executionContext", () => ({
+  readExecutionContext: () =>
+    fixture.remoteHostId ? { remoteHostId: fixture.remoteHostId, remote: {} } : undefined,
+}));
 
 import { InboxRecapHistory } from "./InboxRecapHistory";
 
@@ -60,6 +64,7 @@ it("saves only on explicit action, reads account history, and hides it after an 
     organization: { id: "org_a", name: "A" },
     profile: null,
   };
+  fixture.remoteHostId = undefined;
   fixture.status = { state: "signed-in", accountAuthority: "https://accounts.example/api/v1", me };
   fixture.save.mockReset().mockResolvedValue(saved);
   fixture.list.mockReset().mockResolvedValue({ recaps: [saved], nextCursor: null });
@@ -102,6 +107,62 @@ it("saves only on explicit action, reads account history, and hides it after an 
     await view.getByRole("button", { name: /Saved recaps/ }).click();
     await expect.element(view.getByText("No saved recaps yet.")).toBeVisible();
   } finally {
+    await view.unmount();
+    client.clear();
+  }
+});
+
+it("blocks manual saving from a remote frame, leaving private history accessible", async () => {
+  fixture.remoteHostId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  fixture.status = {
+    state: "signed-in",
+    accountAuthority: "https://accounts.example/api/v1",
+    me: {
+      id: "user_a",
+      name: "A",
+      email: "a@example.com",
+      organization: { id: "org_a", name: "A" },
+      profile: null,
+    },
+  };
+  fixture.save.mockReset();
+  fixture.enrollment.mockReset();
+  fixture.list.mockReset().mockResolvedValue({ recaps: [], nextCursor: null });
+  // A recap exists, so remote execution (not missing data) must disable the action.
+  const slot = {
+    from: "2026-09-30T19:00:00.000Z",
+    to: "2026-10-01T19:00:00.000Z",
+    prompts: 2,
+    chats: 1,
+    turns: 2,
+    failedTurns: 0,
+    agentWorkMs: 100,
+    tokens: { user: 20, automation: 10, agent: 5 },
+  };
+  const recap: StatsGetRecapResult = {
+    generatedAt: "2026-10-01T12:00:00.000Z",
+    totals: slot,
+    slots: [slot],
+    projects: [],
+    models: [],
+    unavailableProviders: [],
+  };
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const view = await render(
+    <QueryClientProvider client={client}>
+      <InboxRecapHistory recap={recap} renderRecap={(saved) => <p>{saved.day}</p>} />
+    </QueryClientProvider>,
+  );
+  try {
+    await expect.element(view.getByRole("button", { name: "Save privately" })).toBeDisabled();
+    const syncNote = view.getByText(/Remote recaps sync privately from their source computer/);
+    await expect.element(syncNote).toBeVisible();
+    await view.getByRole("button", { name: /Saved recaps/ }).click();
+    await expect.element(view.getByText("No saved recaps yet.")).toBeVisible();
+    expect(fixture.save).not.toHaveBeenCalled();
+    expect(fixture.enrollment).not.toHaveBeenCalled();
+  } finally {
+    fixture.remoteHostId = undefined;
     await view.unmount();
     client.clear();
   }

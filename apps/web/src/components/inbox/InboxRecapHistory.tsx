@@ -48,6 +48,10 @@ function PrivateRecapHistory({
   expectedOrganizationId,
 }: HistoryProps & { scope: string; expectedUserId: string; expectedOrganizationId: string }) {
   const queryClient = useQueryClient();
+  // Remote frames run in the controller's timezone, not on the source host.
+  // Their recap window cannot be saved under the source host's identity.
+  const executionContext = readExecutionContext();
+  const isRemoteExecution = Boolean(executionContext?.remoteHostId || executionContext?.remote);
   const [open, setOpen] = useState(false);
   const queryKey = ["account", "inboxRecaps", scope] as const;
   const history = useInfiniteQuery({
@@ -66,11 +70,11 @@ function PrivateRecapHistory({
   const save = useMutation({
     mutationFn: async () => {
       if (!recap) throw new Error("Load a recap before saving it.");
+      if (isRemoteExecution)
+        throw new Error("Save this recap on its source computer; remote recaps sync automatically.");
       const api = ensureNativeApi();
-      const context = readExecutionContext();
       const hostsApi = readHostsApi();
-      const sourceHostId =
-        context?.remoteHostId ?? (hostsApi ? (await hostsApi.enrollment()).host?.id : undefined);
+      const sourceHostId = hostsApi ? (await hostsApi.enrollment()).host?.id : undefined;
       if (!sourceHostId)
         throw new Error("Link this computer to your account before saving a recap.");
       const start = new Date(recap.totals.from);
@@ -112,16 +116,25 @@ function PrivateRecapHistory({
         <Button
           variant="outline"
           size="sm"
-          disabled={!recap || save.isPending}
+          disabled={!recap || save.isPending || isRemoteExecution}
           onClick={() => save.mutate()}
         >
           {save.isPending ? "Saving…" : "Save privately"}
         </Button>
       </div>
       <p className="text-ui-sm text-muted-foreground">
-        Your signed-in computer automatically saves recaps, including project names, to your private
-        account. Save privately updates this day now. Saved history stays available when this
-        computer is offline.
+        {isRemoteExecution ? (
+          <>
+            Remote recaps sync privately from their source computer when signed in. To save one
+            immediately, open the Inbox on that computer. Saved history remains available here.
+          </>
+        ) : (
+          <>
+            Your signed-in computer automatically saves recaps, including project names, to your
+            private account. Save privately updates this day now. Saved history stays available when
+            this computer is offline.
+          </>
+        )}
       </p>
       {save.isSuccess ? (
         <p role="status" className="text-ui-sm text-status-success">
