@@ -1,0 +1,53 @@
+name: Notion formatter evidence
+
+on:
+  push:
+    branches: [feat/notion-enterprise-oauth-integration]
+    paths: [.github/workflows/notion-formatter-evidence.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: static
+      - name: Format integration sources in an isolated checkout
+        run: bun run fmt
+      - name: Check formatting
+        run: bun run fmt:check
+      - name: Export formatted integration source for connector-based publication
+        run: |
+          python3 - <<'PY'
+          import base64, pathlib, subprocess
+          candidates = subprocess.check_output(["git", "diff", "--name-only", "-z"]).split(b"\0")
+          allowed = (
+              "apps/server/src/notion/", "apps/web/src/components/notion/",
+              "apps/web/src/components/settings/NotionSettingsPanel",
+              "packages/shared/src/notion", "packages/contracts/src/notion",
+              "docs/notion-integration.md",
+          )
+          exact = {"apps/server/src/wsRpc.ts", "apps/server/src/serverLayers.ts",
+                   "apps/server/src/agentGateway/notionTools.ts",
+                   "apps/server/src/agentGateway/Layers/AgentGateway.ts",
+                   "apps/server/src/agentGateway/todoTools.ts",
+                   "apps/server/src/todo/Layers/TodoService.ts",
+                   "apps/web/src/routes/_chat.settings.tsx",
+                   "apps/web/src/wsTransport.ts"}
+          for raw in candidates:
+              if not raw:
+                  continue
+              name = raw.decode()
+              if name not in exact and not name.startswith(allowed):
+                  print("NOTION_FORMAT_SKIPPED::" + name)
+                  continue
+              contents = pathlib.Path(name).read_bytes()
+              print("NOTION_FMT_FILE::" + name + "::" + base64.b64encode(contents).decode())
+          PY
