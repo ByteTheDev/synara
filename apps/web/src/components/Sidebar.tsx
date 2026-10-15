@@ -5775,13 +5775,16 @@ export default function Sidebar() {
     hoverAnchorId: string,
     isActive: boolean,
   ) {
-    const hoverProject = projectById.get(thread.projectId) ?? null;
+    // Activity lists chats from connected computers too; they carry the host's
+    // project, status and name instead of this computer's.
+    const remote = externalActivityRows.get(thread.id);
+    const hoverProject = activityProjectById.get(thread.projectId) ?? null;
     const hoverMetadata = resolveThreadHoverCardMetadata({
       thread,
       project: hoverProject,
     });
     const hoverStatus = resolveThreadStatusTrailingIndicator({
-      status: resolveThreadStatusForSidebar(thread),
+      status: remote ? remote.status : resolveThreadStatusForSidebar(thread),
       isActive,
     });
     return (
@@ -5799,7 +5802,8 @@ export default function Sidebar() {
           title={thread.title}
           timeLabel={formatRelativeTime(thread.updatedAt ?? thread.createdAt)}
           projectName={hoverMetadata.projectName}
-          projectCwd={hoverMetadata.projectCwd}
+          // A remote path means nothing here: keep the plain folder glyph.
+          projectCwd={remote ? null : hoverMetadata.projectCwd}
           projectAppearance={hoverProject?.appearance ?? null}
           sourceProjectName={hoverMetadata.sourceProjectName}
           branch={hoverMetadata.branch}
@@ -5819,6 +5823,7 @@ export default function Sidebar() {
             }),
           })}
           status={hoverStatus}
+          hostName={remote?.hostName ?? null}
         />
       </TooltipPopup>
     );
@@ -7862,7 +7867,7 @@ export default function Sidebar() {
                           renderThreadHoverCardPopup(
                             thread,
                             anchorId,
-                            activeSidebarThreadId === thread.id,
+                            activityActiveThreadId === thread.id,
                           )
                         }
                         onCreateChat={handlePrimaryNewThread}
