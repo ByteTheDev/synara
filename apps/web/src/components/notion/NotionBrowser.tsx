@@ -24,8 +24,45 @@ function ResourceList({ input, onOpen }: { input: NotionReadInput; onOpen: (id: 
   </div>;
 }
 /** Individual rich-text runs retain their annotations, links, mentions, and original order. */
+/**
+ * Each text run is edited independently so comments, mentions, colors and links
+ * on neighboring runs survive a partial rich-text edit.
+ */
 function TextRuns({ runs, onChange }: { runs: readonly unknown[]; onChange: (runs: unknown[]) => void }) {
-  return <div className="space-y-2">{runs.map((raw, index) => { const run = notionObject(raw); const text = notionObject(run.text); return typeof text.content === "string" && (!run.type || run.type === "text") ? <Textarea key={index} aria-label={`Text run ${index + 1}`} value={text.content} maxLength={2000} rows={2} onChange={event => onChange(runs.map((value, position) => position === index ? { ...run, text: { ...text, content: event.target.value } } : value))} /> : <span key={index} className="inline-block rounded bg-muted px-2 py-1 text-ui-sm">{notionString(run.plain_text) || `Read-only ${notionString(run.type) || "content"}`}</span>; })}{!runs.length ? <Textarea aria-label="New text" rows={2} maxLength={2000} placeholder="Write content" onChange={event => onChange(plainNotionText(event.target.value))} /> : null}</div>;
+  const replace = (index: number, value: NotionObject) =>
+    onChange(runs.map((run, position) => position === index ? value : run));
+  const formats = [
+    { key: "bold", label: "Bold", glyph: "B" },
+    { key: "italic", label: "Italic", glyph: "I" },
+    { key: "underline", label: "Underline", glyph: "U" },
+    { key: "strikethrough", label: "Strikethrough", glyph: "S" },
+    { key: "code", label: "Code", glyph: "</>" },
+  ] as const;
+  return <div className="space-y-3">
+    {runs.map((raw, index) => {
+      const run = notionObject(raw);
+      const text = notionObject(run.text);
+      const annotations = notionObject(run.annotations);
+      if (typeof text.content !== "string" || run.type && run.type !== "text") {
+        return <div key={index} className="rounded-lg bg-muted px-3 py-2 text-ui-sm" aria-label="Unsupported rich-text run; read-only">{notionString(run.plain_text) || "Read-only " + (notionString(run.type) || "content")}</div>;
+      }
+      return <div key={index} className="space-y-2 rounded-lg border border-border p-2">
+        <label className="text-ui-sm text-muted-foreground" htmlFor={"notion-run-" + index}>Text segment {index + 1}</label>
+        <Textarea id={"notion-run-" + index} aria-label={"Text run " + (index + 1)} value={text.content} maxLength={2000} rows={2} onChange={event => replace(index, { ...run, text: { ...text, content: event.target.value } })} />
+        <div role="group" aria-label={"Formatting for segment " + (index + 1)} className="flex flex-wrap gap-1">
+          {formats.map(format => <Button key={format.key} type="button" size="sm" variant={annotations[format.key] === true ? "secondary" : "ghost"} aria-label={format.label} aria-pressed={annotations[format.key] === true} onClick={() => replace(index, { ...run, annotations: { ...annotations, [format.key]: annotations[format.key] !== true } })}>{format.glyph}</Button>)}
+        </div>
+        <label className="grid gap-1 text-ui-sm text-muted-foreground">Link URL
+          <Input value={notionString(notionObject(text.link).url)} aria-label={"Link for segment " + (index + 1)} placeholder="https://…" onChange={event => {
+            const url = event.target.value.trim();
+            if (url && !safeNotionLink(url)) return;
+            replace(index, { ...run, text: { ...text, link: url ? { url } : null } });
+          }} />
+        </label>
+      </div>;
+    })}
+    {!runs.length ? <Textarea aria-label="New text" rows={2} maxLength={2000} placeholder="Write content" onChange={event => onChange(plainNotionText(event.target.value))} /> : null}
+  </div>;
 }
 function Block({ block, connectionId, depth, onOpen, onSaved }: { block: NotionObject; connectionId: string; depth: number; onOpen: (id: string, kind: "page") => void; onSaved: () => void }) {
   const type = notionString(block.type); const original = notionObject(block[type]);
@@ -54,10 +91,24 @@ function Comments({ connectionId, id }: { connectionId: string; id: string }) {
 function Page({ connectionId, id, onOpen }: { connectionId: string; id: string; onOpen: (id: string, kind: "page") => void }) {
   const query = useResource({ connectionId, kind: "page", id }); const [text, setText] = useState(""); const [blockType, setBlockType] = useState("paragraph"); const queryClient = useQueryClient(); const action = useNotionAction();
   useNotionDraft(text.length > 0 || action.pending);
+  const blockCommands = [
+    { command: "/text", label: "Paragraph", type: "paragraph" },
+    { command: "/h1", label: "Heading 1", type: "heading_1" },
+    { command: "/h2", label: "Heading 2", type: "heading_2" },
+    { command: "/h3", label: "Heading 3", type: "heading_3" },
+    { command: "/bullet", label: "Bulleted list", type: "bulleted_list_item" },
+    { command: "/number", label: "Numbered list", type: "numbered_list_item" },
+    { command: "/todo", label: "Checklist", type: "to_do" },
+    { command: "/quote", label: "Quote", type: "quote" },
+    { command: "/code", label: "Code", type: "code" },
+    { command: "/toggle", label: "Toggle", type: "toggle" },
+  ];
+  const slashCommands = /^\/[a-z0-9]*$/i.test(text.trim()) ? blockCommands.filter(value => value.command.startsWith(text.trim().toLowerCase())).slice(0, 6) : [];
+
   return <div className="space-y-4"><NotionError message={query.error?.message ?? action.error} /><NotionReceiptNotice active={action.awaitingConfirmation} /><h2 className="text-2xl font-semibold">{query.data ? notionTitle(query.data) : "Loading page…"}</h2>
     <details className="rounded-lg border border-border p-3"><summary className="text-ui font-medium">Page properties</summary><dl className="mt-3 grid gap-2 text-ui">{Object.entries(notionObject(query.data?.properties)).map(([name, property]) => <div className="grid grid-cols-2 gap-3" key={name}><dt className="text-muted-foreground">{name}</dt><dd className="break-words">{notionPropertyLabel(property) || "—"}</dd></div>)}</dl></details>
     {query.data ? <Children key={id} connectionId={connectionId} id={id} onOpen={onOpen} /> : null}
-    <div className="space-y-2 rounded-lg border border-border p-3"><NotionSelect disabled={action.pending || action.awaitingConfirmation} label="New block type" value={blockType} onChange={setBlockType} options={["paragraph", "heading_1", "heading_2", "heading_3", "bulleted_list_item", "numbered_list_item", "to_do", "quote", "code", "toggle"].map(value => ({ value, label: value.replaceAll("_", " ") }))} /><Textarea disabled={action.pending || action.awaitingConfirmation} aria-label="Append new block" placeholder="Add content without replacing existing blocks" value={text} maxLength={2000} onChange={event => setText(event.target.value)} /><Button disabled={action.pending || !text.trim()} onClick={() => void action.run(async () => { await action.write({ connectionId, kind: "appendBlocks", id, base: {}, changes: { children: [{ object: "block", type: blockType, [blockType]: { rich_text: plainNotionText(text), ...(blockType === "to_do" ? { checked: false } : {}), ...(blockType === "code" ? { language: "plain text" } : {}) } }] } }); setText(""); await queryClient.invalidateQueries({ queryKey: ["notion", "resource"], predicate: query => { const input = query.queryKey[2] as NotionReadInput | undefined; return input?.connectionId === connectionId && input.kind === "children" && input.id === id; } }); })}>Append block</Button><Button type="button" variant="ghost" disabled={action.pending} onClick={() => setText("")}>Discard new block</Button></div>
+    <div className="space-y-2 rounded-lg border border-border p-3"><NotionSelect disabled={action.pending || action.awaitingConfirmation} label="New block type" value={blockType} onChange={setBlockType} options={["paragraph", "heading_1", "heading_2", "heading_3", "bulleted_list_item", "numbered_list_item", "to_do", "quote", "code", "toggle"].map(value => ({ value, label: value.replaceAll("_", " ") }))} /><Textarea disabled={action.pending || action.awaitingConfirmation} aria-label="Append new block" placeholder="Add content without replacing existing blocks" value={text} maxLength={2000} onChange={event => setText(event.target.value)} />{slashCommands.length ? <div role="group" aria-label="Insert block command" className="flex flex-wrap gap-1 rounded-lg border border-border p-2">{slashCommands.map(command => <Button key={command.command} type="button" size="sm" variant="ghost" onClick={() => { setBlockType(command.type); setText(""); }}>{command.label}</Button>)}</div> : null}<Button disabled={action.pending || !text.trim()} onClick={() => void action.run(async () => { await action.write({ connectionId, kind: "appendBlocks", id, base: {}, changes: { children: [{ object: "block", type: blockType, [blockType]: { rich_text: plainNotionText(text), ...(blockType === "to_do" ? { checked: false } : {}), ...(blockType === "code" ? { language: "plain text" } : {}) } }] } }); setText(""); await queryClient.invalidateQueries({ queryKey: ["notion", "resource"], predicate: query => { const input = query.queryKey[2] as NotionReadInput | undefined; return input?.connectionId === connectionId && input.kind === "children" && input.id === id; } }); })}>Append block</Button><Button type="button" variant="ghost" disabled={action.pending} onClick={() => setText("")}>Discard new block</Button></div>
     <Comments connectionId={connectionId} id={id} />
   </div>;
 }
