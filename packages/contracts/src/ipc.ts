@@ -1,3 +1,4 @@
+import type { EditorExtensionsInput, EditorExtensionsResult } from "./editorExtensions";
 import type {
   EditorDebugStartInput,
   EditorDebugActionInput,
@@ -1177,6 +1178,10 @@ export interface NativeApi {
   };
   /** Absent on older servers. Core editing remains available without language services. */
   editor?: {
+    extensions?: (
+      input: EditorExtensionsInput,
+      options?: { signal?: AbortSignal },
+    ) => Promise<EditorExtensionsResult>;
     debugStart?: (
       input: EditorDebugStartInput,
       options?: { signal?: AbortSignal },

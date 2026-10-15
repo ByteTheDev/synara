@@ -1,6 +1,6 @@
 # Native editor intelligence
 
-Synara keeps its Files, Changes, file headers, chat, search, Git, terminal, and document sessions. Editable previews, file editors, docked editors, and editable diffs use one shared text model per native document session. There is no Code-OSS workbench, alternate IDE mode, new explorer, extension host, or second disk writer in this change.
+Synara keeps its Files, Changes, file headers, chat, search, Git, terminal, and document sessions. Editable previews, file editors, docked editors, and editable diffs use the native document session as their shared buffer. Monaco-backed surfaces share one text model for that session. There is no Code-OSS workbench, alternate IDE mode, new explorer, extension host, or second disk writer in this change.
 
 ## Supported operations
 
@@ -18,11 +18,15 @@ Language services receive immutable UTF-16 snapshots and return edits, never sav
 
 The compiler is lazy and isolated in a worker, with at most four client/workspace instances, 512 MB worker heaps, sixteen queued requests per instance, a 15-second deadline, and idle disposal. Input is bounded to 64 documents, two million UTF-16 units per document and eight million in total. Refactor results are bounded to 200 files/eight million units. These are limits, not performance-improvement measurements. Large unsupported snapshots show a recoverable service notice without disabling editing/saving.
 
+Large file previews retain Synara's existing numbered-textarea fallback (more than 1,000 lines or the existing syntax-highlighting character threshold). That engine choice is stable for the open document, including clearing, saving, and toggling Markdown preview. These lightweight previews do not offer IntelliSense; opening the file in the full file/diff editor uses the virtualized intelligent editor instead. There is no competing save path.
+
 ## Debugging
 
 F5 opens a native launch confirmation; F9 or the gutter toggles a breakpoint. The command picker also offers attach to a Node inspector on the **server machine's loopback interface**. Launch first flushes native workspace buffers. The dialog explicitly states that starting a program executes trusted workspace code and downloads the checksum-pinned debugger on first use.
 
 The contextual debug section provides continue/pause/stop, step into/over/out, call stack, scopes/variables, watches, console evaluation and output. It uses Microsoft's real standalone `vscode-js-debug` DAP server, including its child-target handshake. Debug sessions belong to the owner RPC connection and expire after disconnected inactivity. Synara's existing shared process boundary owns spawn/teardown. An attached external process is detached, not killed. Debug console/watch evaluation runs code in the debuggee and must be treated accordingly.
+
+Process teardown captures descendant identities before DAP disconnect and retains them across a failed cleanup retry. Only verified process-tree exit marks a session stopped or allows its slot to be reused. Windows observer startup has a separate bounded cold-start allowance. An adapter crash before identity capture reports unproven cleanup rather than pretending an empty, reparented process tree is safe; automatic recovery from such a crash is not claimed.
 
 The initial configuration supports a workspace JS/TS entry point, literal argument array, pause-on-entry, or a loopback inspector port. It does not read/execute `.vscode/launch.json`, run pre-launch tasks, invent a second terminal backend, or support every debug adapter. TypeScript entry points depend on the selected Node runtime's native TypeScript support; no hidden transpiler is installed. Browser debugging, TSX, remote inspector hosts, interactive terminal stdin, advanced launch recipes and extension-provided debug adapters are not claimed here.
 
