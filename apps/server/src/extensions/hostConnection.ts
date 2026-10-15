@@ -7,24 +7,14 @@ import { createProtocolProcessTeardown } from "../platform/protocolProcessTeardo
 
 const MAX_FRAME = 8 * 1_024 * 1_024;
 const frameSchema = z.object({
-  token: z.string().max(128),
-  kind: z.enum(["request", "response", "event"]),
-  id: z.number().int().nonnegative().optional(),
-  method: z.string().max(128).optional(),
-  event: z.string().max(128).optional(),
-  params: z.unknown().optional(),
-  result: z.unknown().optional(),
-  body: z.unknown().optional(),
-  ok: z.boolean().optional(),
-  error: z.string().max(16_384).optional(),
+  token: z.string().max(128), kind: z.enum(["request", "response", "event"]),
+  id: z.number().int().nonnegative().optional(), method: z.string().max(128).optional(),
+  event: z.string().max(128).optional(), params: z.unknown().optional(), result: z.unknown().optional(),
+  body: z.unknown().optional(), ok: z.boolean().optional(), error: z.string().max(16_384).optional(),
   stack: z.string().max(65_536).optional(),
 });
 type Waiting = { resolve(value: unknown): void; reject(error: Error): void; cleanup(): void };
-export type ExtensionNativeRequest = (
-  method: string,
-  params: unknown,
-  signal: AbortSignal,
-) => Promise<unknown>;
+export type ExtensionNativeRequest = (method: string, params: unknown, signal: AbortSignal) => Promise<unknown>;
 
 /** Private fd 3 isolates protocol messages from extension stdout/stderr. */
 export class ExtensionHostConnection {
@@ -62,15 +52,11 @@ export class ExtensionHostConnection {
         while ((newline = this.input.indexOf("\n")) !== -1) {
           const line = this.input.slice(0, newline);
           this.input = this.input.slice(newline + 1);
-          if (Buffer.byteLength(line) > MAX_FRAME)
-            throw new Error("Extension host exceeded its frame limit.");
+          if (Buffer.byteLength(line) > MAX_FRAME) throw new Error("Extension host exceeded its frame limit.");
           if (line) this.receive(frameSchema.parse(JSON.parse(line)));
         }
-        if (Buffer.byteLength(this.input) > MAX_FRAME)
-          throw new Error("Extension host exceeded its frame limit.");
-      } catch (error) {
-        this.fail(error instanceof Error ? error : new Error("Invalid extension host message."));
-      }
+        if (Buffer.byteLength(this.input) > MAX_FRAME) throw new Error("Extension host exceeded its frame limit.");
+      } catch (error) { this.fail(error instanceof Error ? error : new Error("Invalid extension host message.")); }
     });
     const log = (source: string, chunk: Buffer) => {
       this.outputBytes += chunk.length;
@@ -91,10 +77,7 @@ export class ExtensionHostConnection {
     });
   }
   private rejectPending(error: Error): void {
-    for (const pending of this.waiting.values()) {
-      pending.cleanup();
-      pending.reject(error);
-    }
+    for (const pending of this.waiting.values()) { pending.cleanup(); pending.reject(error); }
     this.waiting.clear();
     for (const controller of this.native.values()) controller.abort(error);
     this.native.clear();
@@ -109,123 +92,58 @@ export class ExtensionHostConnection {
   private send(frame: Record<string, unknown>): void {
     if (this.failure) throw this.failure;
     const contents = JSON.stringify({ ...frame, token: this.token }) + "\n";
-    if (Buffer.byteLength(contents) > MAX_FRAME)
-      throw new Error("Extension host request exceeds its frame limit.");
-    if (
-      !this.process.stdin ||
-      this.process.stdin.destroyed ||
-      this.process.stdin.writableLength > MAX_FRAME
-    ) {
+    if (Buffer.byteLength(contents) > MAX_FRAME) throw new Error("Extension host request exceeds its frame limit.");
+    if (!this.process.stdin || this.process.stdin.destroyed || this.process.stdin.writableLength > MAX_FRAME) {
       throw new Error("Extension host input is unavailable or saturated.");
     }
-    this.process.stdin.write(contents, (error) => {
-      if (error) this.fail(error);
-    });
+    this.process.stdin.write(contents, (error) => { if (error) this.fail(error); });
   }
   private receive(frame: z.infer<typeof frameSchema>): void {
     if (frame.token !== this.token) throw new Error("Extension host authentication failed.");
     if (frame.kind === "response") {
-      if (frame.id === undefined || frame.ok === undefined)
-        throw new Error("Invalid extension host response.");
+      if (frame.id === undefined || frame.ok === undefined) throw new Error("Invalid extension host response.");
       const waiting = this.waiting.get(frame.id);
       if (!waiting) return;
-      this.waiting.delete(frame.id);
-      waiting.cleanup();
+      this.waiting.delete(frame.id); waiting.cleanup();
       if (frame.ok) waiting.resolve(frame.result);
-      else
-        waiting.reject(
-          new Error(frame.error ?? "Extension host rejected the operation.", {
-            cause: frame.stack,
-          }),
-        );
+      else waiting.reject(new Error(frame.error ?? "Extension host rejected the operation.", { cause: frame.stack }));
       return;
     }
     if (frame.kind === "event") {
       if (!frame.event) throw new Error("Invalid extension host event.");
       this.events.push({ event: frame.event, body: frame.body });
       this.eventBytes += JSON.stringify(frame.body ?? null).length;
-      while (this.events.length > 100 || this.eventBytes > 1_000_000)
-        this.eventBytes -= JSON.stringify(this.events.shift()!.body ?? null).length;
-      this.onEvent(frame.event, frame.body);
-      return;
+      while (this.events.length > 100 || this.eventBytes > 1_000_000) this.eventBytes -= JSON.stringify(this.events.shift()!.body ?? null).length;
+      this.onEvent(frame.event, frame.body); return;
     }
-    if (
-      frame.id === undefined ||
-      !frame.method ||
-      this.native.has(frame.id) ||
-      this.native.size >= 128
-    ) {
+    if (frame.id === undefined || !frame.method || this.native.has(frame.id) || this.native.size >= 128) {
       throw new Error("Invalid or excessive extension host native request.");
     }
     const id = frame.id;
     const controller = new AbortController();
     this.native.set(id, controller);
-    const timeout = setTimeout(
-      () => controller.abort(new Error("Native extension request timed out.")),
-      120_000,
-    ).unref();
+    const timeout = setTimeout(() => controller.abort(new Error("Native extension request timed out.")), 120_000).unref();
     // Own the native operation until it settles or the bounded deadline aborts it.
-    void Promise.resolve()
-      .then(() => this.nativeRequest(frame.method!, frame.params, controller.signal))
-      .then(
-        (result) => {
-          if (!this.failure) this.send({ kind: "response", id, ok: true, result });
-        },
-        (error: unknown) => {
-          if (!this.failure)
-            this.send({
-              kind: "response",
-              id,
-              ok: false,
-              error: error instanceof Error ? error.message : "Native extension operation failed.",
-            });
-        },
-      )
-      .catch((error: unknown) =>
-        this.fail(error instanceof Error ? error : new Error(String(error))),
-      )
-      .finally(() => {
-        clearTimeout(timeout);
-        this.native.delete(id);
-      });
+    void Promise.resolve().then(() => this.nativeRequest(frame.method!, frame.params, controller.signal)).then(
+      (result) => { if (!this.failure) this.send({ kind: "response", id, ok: true, result }); },
+      (error: unknown) => { if (!this.failure) this.send({ kind: "response", id, ok: false, error: error instanceof Error ? error.message : "Native extension operation failed." }); },
+    ).catch((error: unknown) => this.fail(error instanceof Error ? error : new Error(String(error))))
+      .finally(() => { clearTimeout(timeout); this.native.delete(id); });
   }
-  request(
-    method: string,
-    params: unknown,
-    signal?: AbortSignal,
-    timeoutMs = 30_000,
-  ): Promise<unknown> {
+  request(method: string, params: unknown, signal?: AbortSignal, timeoutMs = 30_000): Promise<unknown> {
     if (this.failure) return Promise.reject(this.failure);
-    if (this.closing && method !== "shutdown")
-      return Promise.reject(new Error("Extension host is stopping."));
-    if (this.waiting.size >= 64)
-      return Promise.reject(new Error("Extension host request capacity exceeded."));
+    if (this.closing && method !== "shutdown") return Promise.reject(new Error("Extension host is stopping."));
+    if (this.waiting.size >= 64) return Promise.reject(new Error("Extension host request capacity exceeded."));
     if (signal?.aborted) return Promise.reject(signal.reason);
     const id = this.sequence++;
     return new Promise((resolve, reject) => {
-      const abort = () => {
-        this.waiting.delete(id);
-        cleanup();
-        reject(new Error("Extension request was cancelled."));
-      };
-      const timer = setTimeout(() => {
-        this.waiting.delete(id);
-        cleanup();
-        reject(new Error(`Extension host ${method} timed out.`));
-      }, timeoutMs).unref();
-      const cleanup = () => {
-        clearTimeout(timer);
-        signal?.removeEventListener("abort", abort);
-      };
+      const abort = () => { this.waiting.delete(id); cleanup(); reject(new Error("Extension request was cancelled.")); };
+      const timer = setTimeout(() => { this.waiting.delete(id); cleanup(); reject(new Error(`Extension host ${method} timed out.`)); }, timeoutMs).unref();
+      const cleanup = () => { clearTimeout(timer); signal?.removeEventListener("abort", abort); };
       this.waiting.set(id, { resolve, reject, cleanup });
       signal?.addEventListener("abort", abort, { once: true });
-      try {
-        this.send({ kind: "request", id, method, params });
-      } catch (error) {
-        this.waiting.delete(id);
-        cleanup();
-        reject(error);
-      }
+      try { this.send({ kind: "request", id, method, params }); }
+      catch (error) { this.waiting.delete(id); cleanup(); reject(error); }
     });
   }
   async stop(): Promise<void> {

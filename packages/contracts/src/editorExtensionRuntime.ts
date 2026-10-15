@@ -6,9 +6,7 @@ export const EditorExtensionRuntimeInput = Schema.Struct({
   operation: Schema.Literals(["start", "stop", "restart", "request", "poll", "respond", "sync"]),
   cwd: TrimmedNonEmptyString.check(Schema.isMaxLength(4_096)),
   hostId: Schema.optional(TrimmedNonEmptyString.check(Schema.isMaxLength(128))),
-  method: Schema.optional(
-    Schema.Literals(["activate", "language", "command", "state", "debug", "tree", "ui"]),
-  ),
+  method: Schema.optional(Schema.Literals(["activate", "language", "command", "state", "debug", "tree", "ui"])),
   paramsJson: Schema.optional(Schema.String.check(Schema.isMaxLength(4_000_000))),
   documents: Schema.optional(Schema.Array(EditorDocument).check(Schema.isMaxLength(64))),
   after: Schema.optional(NonNegativeInt),
@@ -25,15 +23,7 @@ export const EditorExtensionRuntimeEvent = Schema.Struct({
 export type EditorExtensionRuntimeEvent = typeof EditorExtensionRuntimeEvent.Type;
 export const EditorExtensionRuntimeResult = Schema.Struct({
   hostId: Schema.String,
-  status: Schema.Literals([
-    "stopped",
-    "starting",
-    "running",
-    "stopping",
-    "failed",
-    "unsupported",
-    "not-built",
-  ]),
+  status: Schema.Literals(["stopped", "starting", "running", "stopping", "failed", "unsupported", "not-built"]),
   sequence: NonNegativeInt,
   events: Schema.Array(EditorExtensionRuntimeEvent),
   resultJson: Schema.optional(Schema.String),

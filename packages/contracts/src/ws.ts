@@ -228,7 +228,6 @@ import {
 // ── WebSocket RPC Method Names ───────────────────────────────────────
 
 export const WS_METHODS = {
-  editorExtensionRuntime: "editor.extensionRuntime",
   editorExtensions: "editor.extensions",
   // Project registry methods
   projectsDiscoverScripts: "projects.discoverScripts",

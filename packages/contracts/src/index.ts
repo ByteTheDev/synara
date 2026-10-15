@@ -1,4 +1,3 @@
-export * from "./editorExtensionRuntime";
 export * from "./editorExtensions";
 export * from "./editorDebug";
 export * from "./auth";
