@@ -7,4 +7,7 @@ export interface NotionIntegrationShape {
   readonly events: PubSub.PubSub<TodoStreamEvent>;
   readonly state: () => NotionState;
 }
-export class NotionIntegration extends ServiceMap.Service<NotionIntegration, NotionIntegrationShape>()("synara/notion/Services/NotionIntegration") {}
+export class NotionIntegration extends ServiceMap.Service<
+  NotionIntegration,
+  NotionIntegrationShape
+>()("synara/notion/Services/NotionIntegration") {}

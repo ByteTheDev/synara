@@ -1,4 +1,14 @@
-import { createContext, useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 interface DraftGuard {
   mark: (id: string, dirty: boolean) => void;
@@ -18,8 +28,13 @@ export function NotionDraftBoundary({ children }: { children: ReactNode }) {
     if (!dirty.current.size) setError(null);
   }, []);
   const mayLeave = useCallback(() => {
-    if (!dirty.current.size) { setError(null); return true; }
-    setError("Save or cancel your unsaved edits before navigating, hiding content, or closing this window.");
+    if (!dirty.current.size) {
+      setError(null);
+      return true;
+    }
+    setError(
+      "Save or cancel your unsaved edits before navigating, hiding content, or closing this window.",
+    );
     return false;
   }, []);
   useEffect(() => {

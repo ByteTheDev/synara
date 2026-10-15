@@ -2,10 +2,17 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { notionBlockDraftPatch } from "./notionDrafts";
 
-const text = (content: string) => [{ type: "text", text: { content }, annotations: { bold: true }, plain_text: content }];
+const text = (content: string) => [
+  { type: "text", text: { content }, annotations: { bold: true }, plain_text: content },
+];
 
 test("block patch sends only edited supported fields and preserves rich text", () => {
-  const base = { rich_text: text("Original"), checked: false, color: "red", unknown: { retained: true } };
+  const base = {
+    rich_text: text("Original"),
+    checked: false,
+    color: "red",
+    unknown: { retained: true },
+  };
   const draft = { ...base, rich_text: text("Local change") };
   const patch = notionBlockDraftPatch("to_do", base, draft);
   assert.deepEqual(Object.keys(patch.changes), ["rich_text"]);
@@ -17,7 +24,10 @@ test("block patch sends only edited supported fields and preserves rich text", (
 
 test("checkbox-only change does not overwrite text changed by another user", () => {
   const base = { rich_text: text("Original"), checked: false };
-  assert.deepEqual(notionBlockDraftPatch("to_do", base, { ...base, checked: true }), { base: { checked: false }, changes: { checked: true } });
+  assert.deepEqual(notionBlockDraftPatch("to_do", base, { ...base, checked: true }), {
+    base: { checked: false },
+    changes: { checked: true },
+  });
 });
 
 test("saved block comparison does not depend on later mutations to its input", () => {
@@ -32,11 +42,20 @@ test("saved block comparison does not depend on later mutations to its input", (
 
 test("no-op drafts do not issue writes", () => {
   const base = { rich_text: text("Original"), checked: false };
-  assert.deepEqual(notionBlockDraftPatch("to_do", base, structuredClone(base)), { base: {}, changes: {} });
+  assert.deepEqual(notionBlockDraftPatch("to_do", base, structuredClone(base)), {
+    base: {},
+    changes: {},
+  });
 });
 
 test("unsupported or incomplete blocks cannot be rewritten", () => {
-  assert.throws(() => notionBlockDraftPatch("synced_block", { rich_text: [] }, { rich_text: [] }), /read-only/);
+  assert.throws(
+    () => notionBlockDraftPatch("synced_block", { rich_text: [] }, { rich_text: [] }),
+    /read-only/,
+  );
   assert.throws(() => notionBlockDraftPatch("paragraph", {}, { rich_text: [] }), /incomplete/);
-  assert.throws(() => notionBlockDraftPatch("to_do", { rich_text: [] }, { rich_text: [], checked: true }), /incomplete/);
+  assert.throws(
+    () => notionBlockDraftPatch("to_do", { rich_text: [] }, { rich_text: [], checked: true }),
+    /incomplete/,
+  );
 });

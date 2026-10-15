@@ -17,7 +17,10 @@ export class NotionWriteSession {
     return this.receipt !== null;
   }
 
-  write(api: Pick<NotionApi, "write">, proposal: NotionWriteProposal): Promise<NotionObject | null> {
+  write(
+    api: Pick<NotionApi, "write">,
+    proposal: NotionWriteProposal,
+  ): Promise<NotionObject | null> {
     if (this.receipt) {
       const { requestId: _requestId, createdAt: _createdAt, ...previous } = this.receipt;
       if (notionCanonical(previous) !== notionCanonical(proposal)) {

@@ -33,7 +33,9 @@ export function useNotionAction() {
     try {
       await action();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Notion could not complete this operation.");
+      setError(
+        cause instanceof Error ? cause.message : "Notion could not complete this operation.",
+      );
     } finally {
       busy.current = false;
       setPending(false);
@@ -88,9 +90,18 @@ export function NotionSelect({
 }
 
 export function NotionError({ message }: { message: string | null | undefined }) {
-  return message ? <p role="alert" className="text-ui text-destructive">{message}</p> : null;
+  return message ? (
+    <p role="alert" className="text-ui text-destructive">
+      {message}
+    </p>
+  ) : null;
 }
 
 export function NotionReceiptNotice({ active }: { active: boolean }) {
-  return active ? <p role="status" className="text-ui-sm text-muted-foreground">A previous write is unconfirmed. Retrying here checks the same request; closing or discarding does not undo a remote write. Review the change in Notion settings before submitting it again.</p> : null;
+  return active ? (
+    <p role="status" className="text-ui-sm text-muted-foreground">
+      A previous write is unconfirmed. Retrying here checks the same request; closing or discarding
+      does not undo a remote write. Review the change in Notion settings before submitting it again.
+    </p>
+  ) : null;
 }
