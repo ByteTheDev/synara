@@ -24,21 +24,40 @@ jobs:
         run: |
           set -euo pipefail
           output="$RUNNER_TEMP/editor-offline-repro"
-          mkdir -p "$output/tools"
-          git archive --format=tar HEAD | zstd -T0 -3 -o "$output/source.tar.zst"
-          git rev-parse HEAD > "$output/commit.txt"
+          mkdir -p "$output/core/tools" "$output/part-a" "$output/part-b"
+          git archive --format=tar HEAD | zstd -T0 -3 -o "$output/core/source.tar.zst"
+          git rev-parse HEAD > "$output/core/commit.txt"
           find . -name node_modules -type d -prune -print0 > "$RUNNER_TEMP/editor-module-paths"
           tar --null -T "$RUNNER_TEMP/editor-module-paths" -I 'zstd -T0 -3' -cf "$output/dependencies.tar.zst"
-          cp "$(command -v bun)" "$output/tools/bun"
-          cp "$(command -v node)" "$output/tools/node"
-          tar -C "$output" -I 'zstd -T0 -3' -cf "$output/toolchain.tar.zst" tools
-          rm -rf "$output/tools"
+          cp "$(command -v bun)" "$output/core/tools/bun"
+          cp "$(command -v node)" "$output/core/tools/node"
+          tar -C "$output/core" -I 'zstd -T0 -3' -cf "$output/core/toolchain.tar.zst" tools
+          rm -rf "$output/core/tools"
           cd "$output"
-          sha256sum source.tar.zst dependencies.tar.zst toolchain.tar.zst > SHA256SUMS
+          sha256sum dependencies.tar.zst > core/DEPENDENCIES.sha256
+          split -b 400M -d dependencies.tar.zst dependencies.part-
+          mv dependencies.part-00 part-a/
+          mv dependencies.part-01 part-b/
+          cd core
+          sha256sum source.tar.zst toolchain.tar.zst > SHA256SUMS
       - uses: actions/upload-artifact@v4
         with:
-          name: editor-offline-repro
-          path: ${{ runner.temp }}/editor-offline-repro
+          name: editor-offline-core
+          path: ${{ runner.temp }}/editor-offline-repro/core
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editor-offline-dependencies-a
+          path: ${{ runner.temp }}/editor-offline-repro/part-a
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editor-offline-dependencies-b
+          path: ${{ runner.temp }}/editor-offline-repro/part-b
           retention-days: 1
           compression-level: 0
           if-no-files-found: error
