@@ -292,3 +292,43 @@ it("opens Synara's native command picker without a workbench or second navigatio
   await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
   await view.unmount();
 });
+
+it("keeps the editor mounted while typing a new symbol name", async () => {
+  const view = await mount();
+  const editor = await ready();
+  editor.setPosition({ lineNumber: 1, column: 8 });
+  await userEvent.keyboard("{F2}");
+  const name = page.getByRole("textbox", { name: "New symbol name", exact: true });
+  await expect.element(name).toHaveValue("value");
+  await userEvent.keyboard("{End}{Backspace}{Backspace}");
+  await expect.element(name).toHaveValue("val");
+  await userEvent.keyboard("ueRenamed");
+  await expect.element(name).toHaveValue("valueRenamed");
+  expect(activeEditor()).toBe(editor);
+  await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
+  expect(activeEditor()).toBe(editor);
+  await view.unmount();
+});
+
+it("keeps both diff inputs labelled after layout and theme updates", async () => {
+  const view = await mount(true);
+  await ready();
+  const labels = () => {
+    const diff = monaco.editor.getDiffEditors()[0];
+    return [diff?.getOriginalEditor(), diff?.getModifiedEditor()].map((editor) => ({
+      option: editor?.getOption(monaco.editor.EditorOption.ariaLabel),
+      input: editor?.getDomNode()?.querySelector('[role="textbox"]')?.getAttribute("aria-label"),
+    }));
+  };
+  const expected = [
+    { option: "Original sample.ts", input: "Original sample.ts" },
+    { option: "Edit sample.ts", input: "Edit sample.ts" },
+  ];
+  await expect.poll(labels).toEqual(expected);
+  for (const action of ["Layout", "Theme", "Layout"]) {
+    await page.getByRole("button", { name: action, exact: true }).click();
+    await expect.poll(labels).toEqual(expected);
+  }
+  await view.unmount();
+});

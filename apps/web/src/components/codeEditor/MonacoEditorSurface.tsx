@@ -1,3 +1,5 @@
+import { getEditorExtensionBridge } from "./editorExtensionBridge";
+import { EditorExtensionInteraction } from "./EditorExtensionInteraction";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { EditorLocation, ContextMenuItem } from "@synara/contracts";
@@ -44,10 +46,19 @@ type PickerState = {
   mode: "commands" | "results" | "workspaceSymbols";
   rows: EditorActionRow[];
 };
+const diffLabels = (fileName: string) => ({
+  originalAriaLabel: `Original ${fileName}`,
+  modifiedAriaLabel: `Edit ${fileName}`,
+});
 const emptyPicker: PickerState = { title: "Editor commands", mode: "commands", rows: [] };
 
 export default function MonacoEditorSurface(props: SurfaceProps) {
   const client = useQueryClient();
+  const extensionInteractionOwner = useRef({});
+  const extensionBridge = useMemo(
+    () => (props.workspaceRoot ? getEditorExtensionBridge(client, props.workspaceRoot) : null),
+    [client, props.workspaceRoot],
+  );
   const debugStore = useMemo(
     () => (props.workspaceRoot ? getEditorDebugStore(client, props.workspaceRoot) : null),
     [client, props.workspaceRoot],
@@ -72,6 +83,14 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
   } | null>(null);
   const [renaming, setRenaming] = useState(false);
   const commandRef = useRef<(id: string) => void>(() => undefined);
+  useEffect(() => {
+    if (!controller || !extensionBridge) return;
+    return extensionBridge.retain(
+      controller.entry,
+      !props.readOnly,
+      extensionInteractionOwner.current,
+    );
+  }, [controller, extensionBridge, props.readOnly]);
 
   function report(error: unknown) {
     const entry = controllerRef.current?.entry;
@@ -308,6 +327,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
               : []),
           ]
         : []),
+      ...(extensionBridge && editable ? extensionBridge.actionRows(active.entry, results) : []),
       action("editor.foldAll", "Fold all"),
       action("editor.unfoldAll", "Unfold all"),
       ...(current.current.props.onReferenceInChat
@@ -345,8 +365,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
         renderOverviewRuler: false,
         enableSplitViewResizing: true,
         hideUnchangedRegions: { enabled: false },
-        originalAriaLabel: `Original ${initial.fileName}`,
-        modifiedAriaLabel: `Edit ${initial.fileName}`,
+        ...diffLabels(initial.fileName),
       });
       instance.setModel({ original, modified: entry.model });
       active = { instance, editor: instance.getModifiedEditor(), entry, original };
@@ -402,6 +421,20 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     const subscriptions: monaco.IDisposable[] = [
       entry.model.onDidChangeContent(() => queueMicrotask(history)),
     ];
+    // Monaco clips and scrolls each diff side independently. Give only a
+    // horizontally scrolled gutter the existing dense Synara glass backing.
+    const editors =
+      "getOriginalEditor" in active.instance
+        ? [active.instance.getOriginalEditor(), editor]
+        : [editor];
+    for (const surface of editors) {
+      const syncGutter = () =>
+        surface
+          .getDomNode()
+          ?.toggleAttribute("data-horizontal-scroll", surface.getScrollLeft() > 0);
+      syncGutter();
+      subscriptions.push(surface.onDidScrollChange(syncGutter));
+    }
     for (const [id, label, binding] of [
       ["debugLaunch", "Start or continue debugging", monaco.KeyCode.F5],
       ["debugStop", "Stop debugging", monaco.KeyMod.Shift | monaco.KeyCode.F5],
@@ -543,7 +576,12 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     if (original && original.getValue() !== props.original) original.setValue(props.original ?? "");
     instance.updateOptions({
       readOnly: props.readOnly ?? false,
-      ...(original ? { renderSideBySide: props.renderSideBySide ?? true } : {}),
+      ...(original
+        ? {
+            renderSideBySide: props.renderSideBySide ?? true,
+            ...diffLabels(props.fileName),
+          }
+        : {}),
     });
   }, [
     controller,
@@ -553,6 +591,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     props.originalVersion,
     props.readOnly,
     props.renderSideBySide,
+    props.fileName,
   ]);
 
   useEffect(() => {
@@ -650,7 +689,12 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     const update = () => {
       if (!containerRef.current) return;
       const options = editorAppearance(containerRef.current, props.resolvedTheme);
-      controller.instance.updateOptions(options);
+      // The upstream diff editor resets sub-editor labels on each update.
+      // Carry native names through theme/typography updates as well as creation.
+      controller.instance.updateOptions({
+        ...options,
+        ...(controller.original ? diffLabels(props.fileName) : {}),
+      });
       monaco.editor.setTheme(options.theme!);
     };
     update();
@@ -660,7 +704,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
       attributeFilter: ["class", "style"],
     });
     return () => observer.disconnect();
-  }, [controller, props.resolvedTheme]);
+  }, [controller, props.resolvedTheme, props.fileName]);
 
   useEffect(() => {
     if (!controller || !supportsProjectIntelligence(controller.entry)) return;
@@ -821,6 +865,13 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
           />
         </>
       ) : null}
+      {extensionBridge ? (
+        <EditorExtensionInteraction
+          bridge={extensionBridge}
+          entry={controller?.entry ?? null}
+          owner={extensionInteractionOwner.current}
+        />
+      ) : null}
       <EditorActionPicker
         open={picker !== null}
         title={picker?.title ?? "Editor commands"}
@@ -892,11 +943,10 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
               aria-label="New symbol name"
               value={rename?.value ?? ""}
               disabled={renaming}
-              onChange={(event) =>
-                setRename((value) =>
-                  value ? { ...value, value: event.currentTarget.value, error: null } : value,
-                )
-              }
+              onChange={(event) => {
+                const newName = event.currentTarget.value;
+                setRename((value) => (value ? { ...value, value: newName, error: null } : value));
+              }}
             />
             {rename?.error ? (
               <p role="alert" className="text-ui-sm text-destructive">

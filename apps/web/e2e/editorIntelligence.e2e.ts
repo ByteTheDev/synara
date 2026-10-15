@@ -1,3 +1,4 @@
+import { seedEditorProject } from "./editorAcceptanceFixture";
 import { test, expect, type Page, type TestInfo } from "playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -35,6 +36,7 @@ test.beforeAll(async () => {
     "function increment(value) {\n  return value + 1;\n}\nconst answer = increment(41);\nconsole.log(answer);\nsetInterval(() => {}, 100);\n",
   );
   execFileSync("git", ["init", "-b", "main", workspace]);
+  execFileSync("git", ["-C", workspace, "config", "diff.mnemonicPrefix", "false"]);
   execFileSync("git", ["-C", workspace, "add", "."]);
   execFileSync("git", [
     "-C",
@@ -54,62 +56,20 @@ test.afterAll(async () => {
 });
 
 async function seed(page: Page) {
-  await page.goto("/");
-  // Fail at bootstrap rather than sending a command into a disconnected transport.
-  await expect
-    .poll(
-      () =>
-        page.evaluate(async () => {
-          const modulePath = "/src/nativeApi.ts";
-          const { ensureNativeApi, readNativeApiServerCapability } =
-            await import(/* @vite-ignore */ modulePath);
-          ensureNativeApi();
-          return readNativeApiServerCapability("rpc.typed-errors");
-        }),
-      { timeout: 20_000 },
-    )
-    .toBe(true);
-  await page
-    .evaluate(async (cwd) => {
-      const modulePath = "/src/nativeApi.ts";
-      const { ensureNativeApi } = await import(/* @vite-ignore */ modulePath);
-      const api = ensureNativeApi();
-      const now = new Date().toISOString();
-      const projectId = crypto.randomUUID();
-      const threadId = crypto.randomUUID();
-      await api.orchestration.dispatchCommand({
-        type: "project.create",
-        commandId: crypto.randomUUID(),
-        projectId,
-        title: "Editor acceptance",
-        workspaceRoot: cwd,
-        createdAt: now,
-      });
-      await api.orchestration.dispatchCommand({
-        type: "thread.create",
-        commandId: crypto.randomUUID(),
-        threadId,
-        projectId,
-        title: "Native editor intelligence",
-        modelSelection: { provider: "codex", model: "gpt-5.4" },
-        runtimeMode: "full-access",
-        interactionMode: "default",
-        branch: "main",
-        worktreePath: null,
-        createdAt: now,
-      });
-      // No turn is submitted: model metadata does not start a provider or send project data.
-      return threadId;
-    }, workspace)
-    .then((id) => {
-      threadId = id;
-    });
+  threadId = await seedEditorProject(page, workspace);
+}
+async function editorVisible(page: Page, relativePath: string) {
+  // Monaco's native EditContext input has no width until it receives focus.
+  // Assert the real visible editor, with its accessible input attached inside it.
+  const input = page.getByRole("textbox", { name: `Edit ${relativePath}`, exact: true });
+  await expect(input).toBeAttached();
+  await expect(page.locator(".monaco-editor").filter({ has: input })).toBeVisible();
 }
 async function open(page: Page, relativePath = "main.ts") {
   await page.goto(`/${threadId}?view=editor&editorFilePath=${encodeURIComponent(relativePath)}`);
-  await expect(
-    page.getByRole("textbox", { name: `Edit ${relativePath}`, exact: true }),
-  ).toBeVisible();
+  // File navigation opens Synara's read-only preview; enter editing via its native control.
+  await page.getByRole("button", { name: "Edit file", exact: true }).click();
+  await editorVisible(page, relativePath);
 }
 async function position(page: Page, text: string, delta = 0) {
   await page.evaluate(
@@ -161,7 +121,7 @@ test("native editor intelligence, guarded persistence, navigation, and debugging
 
   await position(page, "greet(person", 1);
   await page.keyboard.press("F12");
-  await expect(page.getByRole("textbox", { name: "Edit greeting.ts", exact: true })).toBeVisible();
+  await editorVisible(page, "greeting.ts");
   await capture(page, info, "after-definition-navigation");
 
   await open(page);
@@ -206,5 +166,35 @@ test("native editor intelligence, guarded persistence, navigation, and debugging
   await panel.getByRole("button", { name: "Stop debugging (Shift+F5)", exact: true }).click();
   await expect(panel).toContainText("ended");
   await capture(page, info, "after-debug-cleanup");
+  expect(errors).toEqual([]);
+});
+
+test("renames an exported symbol after editing the dialog name", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await seed(page);
+  await open(page, "greeting.ts");
+  await position(page, "greet", 1);
+  await page.keyboard.press("F2");
+  const name = page.getByRole("textbox", { name: "New symbol name", exact: true });
+  await expect(name).toHaveValue("greet");
+  await page.keyboard.press("End");
+  await page.keyboard.press("Backspace");
+  await page.keyboard.press("Backspace");
+  await expect(name).toHaveValue("gre");
+  await page.keyboard.insertText("etRenamed");
+  await expect(name).toHaveValue("greetRenamed");
+  await page.getByRole("button", { name: "Rename", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Rename symbol", exact: true })).toHaveCount(0);
+  await editorVisible(page, "greeting.ts");
+  await expect
+    .poll(() => readFile(path.join(workspace, "main.ts"), "utf8"))
+    .toContain('import { greetRenamed } from "./greeting"');
+  await expect
+    .poll(() => readFile(path.join(workspace, "main.ts"), "utf8"))
+    .toContain("greetRenamed(person.name)");
+  await expect
+    .poll(() => readFile(path.join(workspace, "greeting.ts"), "utf8"))
+    .toContain("export function greetRenamed(");
   expect(errors).toEqual([]);
 });
