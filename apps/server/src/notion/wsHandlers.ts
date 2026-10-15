@@ -36,7 +36,7 @@ export function filterClientTodoEvent(event: TodoStreamEvent): TodoStreamEvent |
   }
 }
 /** Native task access is unchanged. Provider data remains private to the connecting owner. */
-export function ownerScopedNotionTodos(todos: TodoServiceShape): TodoServiceShape {
+export function ownerScopedNotionTodos(todos: TodoServiceShape) {
   return {
     ...todos,
     list: () => Effect.gen(function* () { const role = yield* CurrentWsSessionRole; const result = yield* todos.list(); return role === "owner" ? result : { todos: result.todos.filter(todo => !externalId(todo.id)) }; }),

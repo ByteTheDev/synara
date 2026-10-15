@@ -1,3 +1,4 @@
+import { NotionIntegrationLive } from "./notion/Layers/NotionIntegration";
 import { ProjectionThreadMessageRepositoryLive } from "./persistence/Layers/ProjectionThreadMessages";
 import { OrchestrationCommandReceiptRepositoryLive } from "./persistence/Layers/OrchestrationCommandReceipts";
 import { QueuedTurnPromotionRepositoryLive } from "./persistence/Layers/QueuedTurnPromotions";
@@ -212,7 +213,8 @@ export function makeServerRuntimeServicesLayer(
     authControlPlaneLayer,
     serverAuthLayer,
   );
-  const todoServiceLayer = TodoServiceLive.pipe(Layer.provideMerge(TodoRepositoryLive));
+  const notionLayer = NotionIntegrationLive.pipe(Layer.provideMerge(ServerSecretStoreLive));
+  const todoServiceLayer = TodoServiceLive.pipe(Layer.provideMerge(TodoRepositoryLive), Layer.provideMerge(notionLayer));
   const automationSchedulerLayer = AutomationSchedulerLive.pipe(
     Layer.provideMerge(automationServiceLayer),
     Layer.provideMerge(AutomationRepositoryLive),

@@ -36,7 +36,7 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 export interface NotionClientOptions {
-  accessToken: () => string; refresh: () => Promise<void>; fetch?: typeof fetch;
+  accessToken: () => string; refresh: () => Promise<void>; fetch?: typeof fetch | undefined;
   sleep?: (ms: number, signal?: AbortSignal) => Promise<void>; now?: () => number;
 }
 export class NotionClient {

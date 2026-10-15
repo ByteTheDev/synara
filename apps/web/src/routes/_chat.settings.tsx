@@ -1,3 +1,4 @@
+import { NotionSettingsPanel } from "../components/settings/NotionSettingsPanel";
 // FILE: _chat.settings.tsx
 // Purpose: Render the dedicated settings experience with its own section sidebar and grouped panels.
 // Layer: Route screen
@@ -1814,6 +1815,7 @@ function SettingsRouteView() {
                   resetEpoch={resetEpoch}
                 />
                 <McpConnectorsSettingsPanel active={activeSection === "connectors"} />
+                <NotionSettingsPanel active={activeSection === "integrations"} />
                 <ExternalMcpSettingsPanel active={activeSection === "integrations"} />
                 <AdvancedSettingsPanel
                   active={activeSection === "advanced"}
