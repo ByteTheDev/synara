@@ -1354,6 +1354,25 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
           WHERE ${liveThreadScope}
             AND turn_id IS NOT NULL
             AND (${turnFailureActivityPredicate})
+        ),
+        -- Same single extraction as listThreadActivityRowsByThread (#1900).
+        request_resolutions AS MATERIALIZED (
+          SELECT
+            thread_id,
+            kind,
+            sequence,
+            created_at,
+            activity_id,
+            json_extract(payload_json, '$.requestId') AS request_id,
+            lower(COALESCE(json_extract(payload_json, '$.detail'), '')) AS detail
+          FROM projection_thread_activities
+          WHERE ${liveThreadScope}
+            AND kind IN (
+              'approval.resolved',
+              'provider.approval.respond.failed',
+              'user-input.resolved',
+              'provider.user-input.respond.failed'
+            )
         )
         SELECT
           activity_id AS "activityId",
@@ -1410,21 +1429,20 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
             AND json_extract(payload_json, '$.requestId') IS NOT NULL
             AND NOT EXISTS (
               SELECT 1
-              FROM projection_thread_activities AS later
+              FROM request_resolutions AS later
               WHERE later.thread_id = ranked.thread_id
-                AND json_extract(later.payload_json, '$.requestId') =
-                  json_extract(ranked.payload_json, '$.requestId')
+                AND later.request_id = json_extract(ranked.payload_json, '$.requestId')
                 AND (
                   (ranked.kind = 'approval.requested' AND later.kind = 'approval.resolved')
                   OR (
                     ranked.kind = 'approval.requested'
                     AND later.kind = 'provider.approval.respond.failed'
                     AND (
-                      lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                      later.detail LIKE
                         '%stale pending approval request%'
-                      OR lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                      OR later.detail LIKE
                         '%unknown pending approval request%'
-                      OR lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                      OR later.detail LIKE
                         '%unknown pending permission request%'
                     )
                   )
@@ -1433,9 +1451,9 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
                     ranked.kind = 'user-input.requested'
                     AND later.kind = 'provider.user-input.respond.failed'
                     AND (
-                      lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                      later.detail LIKE
                         '%stale pending user-input request%'
-                      OR lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                      OR later.detail LIKE
                         '%unknown pending user-input request%'
                     )
                   )
@@ -2092,6 +2110,41 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
             WHERE task.task_id IS NOT NULL
           )
           WHERE key != 'taskId' AND activity_rank = newest_rank
+        ),
+        -- Only the newest turn task list and background task snapshot survive
+        -- outside the window. Rank them once instead of probing every row.
+        latest_singletons AS MATERIALIZED (
+          SELECT
+            MIN(CASE WHEN activity.kind = 'turn.tasks.updated' THEN ranked.activity_rank END)
+              AS tasks_rank,
+            MIN(CASE
+              WHEN activity.kind = 'runtime.warning'
+                AND json_extract(activity.payload_json, '$.nativeEventType') = 'background_tasks_changed'
+              THEN ranked.activity_rank
+            END) AS background_tasks_rank
+          FROM ranked
+          JOIN projection_thread_activities AS activity USING (thread_id, activity_id)
+          WHERE activity.kind IN ('turn.tasks.updated', 'runtime.warning')
+        ),
+        -- Requests outside the window stay visible until resolved. Extract the
+        -- resolutions once: a per-request scan of the whole thread was
+        -- quadratic and stalled long-lived threads (#1900).
+        request_resolutions AS MATERIALIZED (
+          SELECT
+            kind,
+            sequence,
+            created_at,
+            activity_id,
+            json_extract(payload_json, '$.requestId') AS request_id,
+            lower(COALESCE(json_extract(payload_json, '$.detail'), '')) AS detail
+          FROM projection_thread_activities
+          WHERE thread_id = ${threadId}
+            AND kind IN (
+              'approval.resolved',
+              'provider.approval.respond.failed',
+              'user-input.resolved',
+              'provider.user-input.respond.failed'
+            )
         )
         SELECT
           activity_id AS "activityId",
@@ -2167,39 +2220,29 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
             OR (activity.kind IN ('task.updated', 'task.progress')
               AND json_type(activity.payload_json, '$.taskId') = 'text'
               AND ranked.activity_id IN (SELECT activity_id FROM latest_task_patches))
-            OR (activity.kind = 'turn.tasks.updated' AND NOT EXISTS (
-              SELECT 1 FROM ranked AS later_ranked
-              JOIN projection_thread_activities AS later USING (thread_id, activity_id)
-              WHERE later.thread_id = activity.thread_id AND later.kind = 'turn.tasks.updated'
-                AND later_ranked.activity_rank < ranked.activity_rank
-            ))
-            OR (activity.kind = 'runtime.warning' AND json_extract(activity.payload_json, '$.nativeEventType') = 'background_tasks_changed' AND NOT EXISTS (
-              SELECT 1 FROM ranked AS later_ranked
-              JOIN projection_thread_activities AS later USING (thread_id, activity_id)
-              WHERE later.thread_id = activity.thread_id
-                AND later.kind = 'runtime.warning' AND json_extract(later.payload_json, '$.nativeEventType') = 'background_tasks_changed'
-                AND later_ranked.activity_rank < ranked.activity_rank
-            ))
+            OR (activity.kind = 'turn.tasks.updated'
+              AND ranked.activity_rank = (SELECT tasks_rank FROM latest_singletons))
+            OR (activity.kind = 'runtime.warning'
+              AND json_extract(activity.payload_json, '$.nativeEventType') = 'background_tasks_changed'
+              AND ranked.activity_rank = (SELECT background_tasks_rank FROM latest_singletons))
             OR (
               kind IN ('approval.requested', 'user-input.requested')
               AND json_extract(payload_json, '$.requestId') IS NOT NULL
               AND NOT EXISTS (
                 SELECT 1
-                FROM projection_thread_activities AS later
-                WHERE later.thread_id = ranked.thread_id
-                  AND json_extract(later.payload_json, '$.requestId') =
-                    json_extract(activity.payload_json, '$.requestId')
+                FROM request_resolutions AS later
+                WHERE later.request_id = json_extract(activity.payload_json, '$.requestId')
                   AND (
                     (activity.kind = 'approval.requested' AND later.kind = 'approval.resolved')
                     OR (
                       activity.kind = 'approval.requested'
                       AND later.kind = 'provider.approval.respond.failed'
                       AND (
-                        lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                        later.detail LIKE
                           '%stale pending approval request%'
-                        OR lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                        OR later.detail LIKE
                           '%unknown pending approval request%'
-                        OR lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                        OR later.detail LIKE
                           '%unknown pending permission request%'
                       )
                     )
@@ -2208,9 +2251,9 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
                       activity.kind = 'user-input.requested'
                       AND later.kind = 'provider.user-input.respond.failed'
                       AND (
-                        lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                        later.detail LIKE
                           '%stale pending user-input request%'
-                        OR lower(COALESCE(json_extract(later.payload_json, '$.detail'), '')) LIKE
+                        OR later.detail LIKE
                           '%unknown pending user-input request%'
                       )
                     )

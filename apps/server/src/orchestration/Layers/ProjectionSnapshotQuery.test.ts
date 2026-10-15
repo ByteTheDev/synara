@@ -1209,6 +1209,130 @@ projectionSnapshotLayer("ProjectionSnapshotQuery", (it) => {
     }),
   );
 
+  it.effect(
+    "keeps unresolved requests and the newest task snapshots beyond the window without per-row thread scans",
+    () =>
+      Effect.gen(function* () {
+        const snapshotQuery = yield* ProjectionSnapshotQuery;
+        const sql = yield* SqlClient.SqlClient;
+        const threadId = asThreadId("thread-history-requests");
+        const now = "2026-10-15T10:00:00.000Z";
+        yield* sql`DELETE FROM projection_projects`;
+        yield* sql`DELETE FROM projection_threads`;
+        yield* sql`DELETE FROM projection_thread_activities`;
+        yield* sql`INSERT INTO projection_projects
+          (project_id, title, workspace_root, scripts_json, created_at, updated_at)
+          VALUES ('history-requests-project', 'History', '/tmp/history-requests', '[]', ${now}, ${now})`;
+        yield* sql`INSERT INTO projection_threads
+          (thread_id, project_id, title, model_selection_json, created_at, updated_at)
+          VALUES (${threadId}, 'history-requests-project', 'History', '{"provider":"codex","model":"gpt-5"}', ${now}, ${now})`;
+        // Old rows that every window has already dropped; each one decides on its own
+        // resolution, not on its rank.
+        const oldRows: ReadonlyArray<readonly [string, string, unknown, number]> = [
+          ["open-approval", "approval.requested", { requestId: "open" }, 1],
+          ["resolved-approval", "approval.requested", { requestId: "done" }, 2],
+          ["resolved-approval-row", "approval.resolved", { requestId: "done" }, 3],
+          ["stale-approval", "approval.requested", { requestId: "stale" }, 4],
+          [
+            "stale-approval-failure",
+            "provider.approval.respond.failed",
+            { requestId: "stale", detail: "Stale pending approval request: gone" },
+            5,
+          ],
+          ["failed-approval", "approval.requested", { requestId: "network" }, 6],
+          [
+            "failed-approval-failure",
+            "provider.approval.respond.failed",
+            { requestId: "network", detail: "network error" },
+            7,
+          ],
+          ["numeric-approval", "approval.requested", { requestId: 7 }, 8],
+          ["numeric-approval-row", "approval.resolved", { requestId: 7 }, 9],
+          ["early-resolution", "approval.resolved", { requestId: "again" }, 10],
+          ["reopened-approval", "approval.requested", { requestId: "again" }, 11],
+          ["open-input", "user-input.requested", { requestId: "input-open" }, 12],
+          ["answered-input", "user-input.requested", { requestId: "input-done" }, 13],
+          ["answered-input-row", "user-input.resolved", { requestId: "input-done" }, 14],
+          ["older-task-list", "turn.tasks.updated", { tasks: [1] }, 15],
+          ["newest-task-list", "turn.tasks.updated", { tasks: [2] }, 16],
+          [
+            "older-background",
+            "runtime.warning",
+            { nativeEventType: "background_tasks_changed" },
+            17,
+          ],
+          [
+            "newest-background",
+            "runtime.warning",
+            { nativeEventType: "background_tasks_changed" },
+            18,
+          ],
+        ];
+        for (const [activityId, kind, payload, sequence] of oldRows) {
+          yield* sql`INSERT INTO projection_thread_activities
+            (activity_id, thread_id, tone, kind, summary, payload_json, sequence, created_at)
+            VALUES (${activityId}, ${threadId}, 'approval', ${kind}, 'Old', ${JSON.stringify(payload)}, ${sequence}, ${now})`;
+        }
+        yield* sql`INSERT INTO projection_thread_activities
+          (activity_id, thread_id, tone, kind, summary, payload_json, sequence, created_at)
+          WITH RECURSIVE filler(position) AS (
+            SELECT 1 UNION ALL SELECT position + 1 FROM filler WHERE position < 2000
+          )
+          SELECT 'filler-' || position, ${threadId}, 'tool', 'tool.completed', 'Tool', '{}',
+            1000 + position, ${now}
+          FROM filler`;
+
+        // Each request used to rescan every activity of the thread, which grew
+        // quadratically with history (#1900). Resolutions are now read once.
+        let checkedActivityQueries = 0;
+        const verifyNoThreadRescan: Statement.Transformer = (statement) =>
+          Effect.gen(function* () {
+            const [query, parameters] = statement.compile();
+            if (!query.includes("'approval.requested'")) return statement;
+            checkedActivityQueries += 1;
+            const plan = yield* sql
+              .unsafe<{ detail: string }>(`EXPLAIN QUERY PLAN ${query}`, parameters)
+              .pipe(Effect.provideService(Statement.CurrentTransformer, undefined), Effect.orDie);
+            const rescans = plan.filter(
+              (row) =>
+                row.detail.includes("later_ranked") ||
+                /\blater USING (COVERING )?INDEX idx_projection_thread_activities/.test(row.detail),
+            );
+            assert.deepEqual(rescans, []);
+            return statement;
+          });
+
+        const keptOldIds = (activities: ReadonlyArray<{ readonly id: string }>) =>
+          activities
+            .map((activity) => activity.id)
+            .filter((id) => oldRows.some(([activityId]) => activityId === id));
+        const detail = yield* snapshotQuery
+          .getThreadDetailById(threadId)
+          .pipe(Effect.provideService(Statement.CurrentTransformer, verifyNoThreadRescan));
+        assert.isTrue(Option.isSome(detail));
+        assert.deepEqual(keptOldIds(Option.isSome(detail) ? detail.value.activities : []), [
+          "open-approval",
+          "failed-approval",
+          "reopened-approval",
+          "open-input",
+          "newest-task-list",
+          "newest-background",
+        ]);
+
+        const snapshot = yield* snapshotQuery
+          .getSnapshot()
+          .pipe(Effect.provideService(Statement.CurrentTransformer, verifyNoThreadRescan));
+        const snapshotThread = snapshot.threads.find((thread) => thread.id === threadId);
+        assert.deepEqual(keptOldIds(snapshotThread?.activities ?? []), [
+          "open-approval",
+          "failed-approval",
+          "reopened-approval",
+          "open-input",
+        ]);
+        assert.equal(checkedActivityQueries, 2);
+      }),
+  );
+
   it.effect("aligns the thread detail activity window to a turn boundary", () =>
     Effect.gen(function* () {
       const snapshotQuery = yield* ProjectionSnapshotQuery;
