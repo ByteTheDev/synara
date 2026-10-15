@@ -7,47 +7,54 @@ on:
 permissions:
   contents: read
 jobs:
-  sdk:
+  fixtures:
     if: github.repository == 'Emanuele-web04/synara'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          ref: 0b387ea32a9cf829cac7ae2e2de3a7587d10c294
-      - uses: ./.github/actions/setup-workspace
-        with:
-          electron: 'true'
-      - name: Archive dependencies in bounded parts
+          node-version: '24.21.0'
+      - name: Download real Open VSX packages and record immutable evidence
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/synara-offline"
-          tar -I 'zstd -T0 -3' -cf "$RUNNER_TEMP/synara-offline/modules.tar.zst" node_modules apps/*/node_modules packages/*/node_modules scripts/node_modules
-          cd "$RUNNER_TEMP/synara-offline"
-          sha256sum modules.tar.zst > SHA256SUMS
-          split --bytes=400M --numeric-suffixes=0 --suffix-length=2 modules.tar.zst modules.part-
-          sha256sum modules.part-* >> SHA256SUMS
+          mkdir -p "$RUNNER_TEMP/extension-fixtures"
+          cd "$RUNNER_TEMP/extension-fixtures"
+          node --input-type=module <<'NODE'
+          import {writeFile} from 'node:fs/promises';
+          import {createHash} from 'node:crypto';
+          const evidence=[];
+          for (const [publisher,name] of [['dbaeumer','vscode-eslint'],['redhat','vscode-yaml'],['ms-python','debugpy'],['ms-vscode','js-debug']]) {
+            try {
+              const url=`https://open-vsx.org/api/${publisher}/${name}/latest`;
+              const response=await fetch(url,{signal:AbortSignal.timeout(30000)});
+              if(!response.ok) throw new Error(`Metadata HTTP ${response.status}`);
+              const metadata=await response.json();
+              const download=await fetch(metadata.files.download,{signal:AbortSignal.timeout(90000)});
+              if(!download.ok) throw new Error(`VSIX HTTP ${download.status}`);
+              const bytes=Buffer.from(await download.arrayBuffer());
+              if(bytes.length>150*1024*1024) throw new Error('VSIX fixture too large');
+              const file=`${publisher}.${name}-${metadata.version}.vsix`;
+              await writeFile(file,bytes);
+              await writeFile(`${file}.metadata.json`,JSON.stringify(metadata,null,2));
+              evidence.push({id:`${publisher}.${name}`,version:metadata.version,url:metadata.files.download,file,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
+            } catch(error) { evidence.push({id:`${publisher}.${name}`,error:String(error)}); }
+          }
+          await writeFile('evidence.json',JSON.stringify(evidence,null,2));
+          console.log(JSON.stringify(evidence,null,2));
+          NODE
+          mkdir eslint-workspace && cd eslint-workspace
+          npm init -y >/dev/null
+          npm install --ignore-scripts --no-audit --no-fund eslint@9.39.1
+          cd ..
+          tar -I 'zstd -T0 -3' -cf eslint-workspace.tar.zst eslint-workspace
+          rm -rf eslint-workspace
+          sha256sum *.vsix *.tar.zst > SHA256SUMS
       - uses: actions/upload-artifact@v4
         with:
-          name: synara-offline-modules-part-00
-          path: |
-            ${{ runner.temp }}/synara-offline/modules.part-00
-            ${{ runner.temp }}/synara-offline/SHA256SUMS
+          name: authentic-extension-fixtures
+          path: ${{ runner.temp }}/extension-fixtures
           compression-level: 0
-          retention-days: 2
+          retention-days: 3
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
-        with:
-          name: synara-offline-modules-part-01
-          path: ${{ runner.temp }}/synara-offline/modules.part-01
-          compression-level: 0
-          retention-days: 2
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v4
-        with:
-          name: synara-offline-modules-part-02
-          path: ${{ runner.temp }}/synara-offline/modules.part-02
-          compression-level: 0
-          retention-days: 2
-          if-no-files-found: warn
