@@ -30,6 +30,8 @@ Process teardown captures descendant identities before DAP disconnect and retain
 
 The initial configuration supports a workspace JS/TS entry point, literal argument array, pause-on-entry, or a loopback inspector port. It does not read/execute `.vscode/launch.json`, run pre-launch tasks, invent a second terminal backend, or support every debug adapter. TypeScript entry points depend on the selected Node runtime's native TypeScript support; no hidden transpiler is installed. Browser debugging, TSX, remote inspector hosts, interactive terminal stdin, advanced launch recipes and extension-provided debug adapters are not claimed here.
 
+Packaged desktop builds retain TypeScript’s `lib*.d.ts` standard libraries as runtime compiler input, overriding electron-builder’s default declaration-file exclusion. These files are required for editor intelligence even when dependency diagnostics are omitted.
+
 ## Upstream versions and licenses
 
 - `monaco-editor` **0.57.0**, MIT: the standalone Code-OSS editor engine, not the workbench. The dependency and workers are lazy-loaded by editing surfaces. Existing Pierre read-only diff rendering remains intact.
