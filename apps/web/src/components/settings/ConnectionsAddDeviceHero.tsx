@@ -54,10 +54,10 @@ function PhoneScreen({ computerNoun }: { computerNoun: string }) {
         <span className="mt-3 flex size-8.5 items-center justify-center rounded-[10px] bg-secondary text-foreground">
           <DeviceComputerIcon className="size-4.5" />
         </span>
-        <p className="mt-2.5 text-center text-[11.5px] leading-tight font-semibold text-foreground">
+        <p className="mt-2.5 text-center text-ui-sm leading-tight font-semibold text-foreground">
           Connect to your {computerNoun}?
         </p>
-        <p className="mt-1 text-center text-[9.5px] leading-snug text-muted-foreground">
+        <p className="mt-1 text-center text-ui-timestamp leading-snug text-muted-foreground">
           Synara on this phone will control it.
         </p>
       </div>
@@ -79,7 +79,7 @@ function SettingsWindow({ computerNoun }: { computerNoun: string }) {
         <WindowDot />
       </div>
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-24 flex-col gap-0.5 bg-muted/50 px-1.5 py-1 text-[9px] text-muted-foreground">
+        <div className="flex w-24 flex-col gap-0.5 bg-muted/50 px-1.5 py-1 text-ui-timestamp text-muted-foreground">
           <SidebarItem>General</SidebarItem>
           <SidebarItem>Appearance</SidebarItem>
           <SidebarItem active>Connections</SidebarItem>
@@ -87,8 +87,8 @@ function SettingsWindow({ computerNoun }: { computerNoun: string }) {
           <SidebarItem>Models &amp; writing</SidebarItem>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2 px-3 py-2">
-          <span className="text-[11px] font-semibold text-foreground">Connections</span>
-          <div className="flex gap-0.5 rounded-full bg-secondary p-0.5 text-[8px]">
+          <span className="text-ui-xs font-semibold text-foreground">Connections</span>
+          <div className="flex gap-0.5 rounded-full bg-secondary p-0.5 text-ui-timestamp">
             <span className="flex-1 py-0.75 text-center text-muted-foreground">
               Control this {computerNoun}
             </span>
@@ -97,8 +97,8 @@ function SettingsWindow({ computerNoun }: { computerNoun: string }) {
             </span>
           </div>
           <div className="flex items-center justify-between pt-1">
-            <span className="text-[9px] text-muted-foreground">Computers</span>
-            <span className="rounded-full bg-primary px-2.25 py-0.75 text-[8.5px] font-semibold text-primary-foreground ring-2 ring-sky-500/70 ring-offset-2 ring-offset-popover dark:ring-sky-400/70">
+            <span className="text-ui-timestamp text-muted-foreground">Computers</span>
+            <span className="rounded-full bg-primary px-2.25 py-0.75 text-ui-timestamp font-semibold text-primary-foreground ring-2 ring-sky-500/70 ring-offset-2 ring-offset-popover dark:ring-sky-400/70">
               Add
             </span>
           </div>

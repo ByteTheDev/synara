@@ -26,7 +26,7 @@ import {
   pendingApprovals,
   remoteAccessErrorMessage,
 } from "~/lib/hosts/remoteAccess";
-import { AddPlusIcon, RotateCcwIcon } from "~/lib/icons";
+import { RotateCcwIcon } from "~/lib/icons";
 import { ensureNativeApi, readNativeApi } from "~/nativeApi";
 import { Button } from "../ui/button";
 import { DisclosureChevron } from "../ui/DisclosureChevron";
@@ -133,7 +133,6 @@ export function ConnectionsThisComputer({
               <RotateCcwIcon className="size-3.5" />
             </IconButton>
             <Button size="xs" shape="capsule" onClick={() => setDialog("add")}>
-              <AddPlusIcon className="size-3.5" />
               Add
             </Button>
           </div>
