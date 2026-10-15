@@ -1,60 +1,127 @@
-# Branch-only recovery. Remove from the final application change set.
-name: Extension SDK recovery
+# Temporary branch-only execution bridge. The reviewed application tree omits this workflow.
+name: Extension candidate validation
 on:
   push:
     branches: [feat/synara-code-oss-extensions]
     paths: [.github/workflows/extension-sdk-recovery.yml]
 permissions:
   contents: read
+concurrency:
+  group: extension-candidate-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  fixtures:
+  prepare:
     if: github.repository == 'Emanuele-web04/synara'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    outputs:
+      candidate: ${{ steps.objects.outputs.candidate }}
+      pr1_format_blob: ${{ steps.objects.outputs.pr1_format_blob }}
     steps:
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
         with:
-          node-version: '24.21.0'
-      - name: Download real Open VSX packages and record immutable evidence
-        shell: bash
+          ref: f7ae35c4e89ac5dcc5a8b220ec726cc3a433a579
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Assemble the explicit integration points
+        run: node scripts/assemble-extension-candidate.mjs
+      - name: Resolve only the declared extension dependencies
+        run: bun install --concurrent-scripts=1
+      - name: Format the bounded change set
         run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/extension-fixtures"
-          cd "$RUNNER_TEMP/extension-fixtures"
+          ./node_modules/.bin/oxfmt \
+            apps/server/src/extensions \
+            apps/server/src/wsRpc.ts apps/server/package.json \
+            apps/web/src/components/settings/EditorExtensionsSettingsPanel.tsx \
+            apps/web/src/components/chat/RightDockGlassSurface.browser.tsx \
+            apps/web/src/components/chat/DockExplorerPane.autosave.browser.tsx \
+            apps/web/src/wsNativeApi.ts apps/web/src/settingsNavigation.ts \
+            apps/web/src/routes/_chat.settings.tsx \
+            packages/contracts/src/editorExtensions.ts packages/contracts/src/index.ts \
+            packages/contracts/src/ipc.ts packages/contracts/src/rpc.ts packages/contracts/src/ws.ts
+      - name: Store reviewable candidate objects without publishing any ref
+        id: objects
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PARENT_SHA: ${{ github.sha }}
+        run: |
           node --input-type=module <<'NODE'
-          import {writeFile} from 'node:fs/promises';
-          import {createHash} from 'node:crypto';
-          const evidence=[];
-          for (const [publisher,name] of [['dbaeumer','vscode-eslint'],['redhat','vscode-yaml'],['ms-python','debugpy'],['ms-vscode','js-debug']]) {
-            try {
-              const url=`https://open-vsx.org/api/${publisher}/${name}/latest`;
-              const response=await fetch(url,{signal:AbortSignal.timeout(30000)});
-              if(!response.ok) throw new Error(`Metadata HTTP ${response.status}`);
-              const metadata=await response.json();
-              const download=await fetch(metadata.files.download,{signal:AbortSignal.timeout(90000)});
-              if(!download.ok) throw new Error(`VSIX HTTP ${download.status}`);
-              const bytes=Buffer.from(await download.arrayBuffer());
-              if(bytes.length>150*1024*1024) throw new Error('VSIX fixture too large');
-              const file=`${publisher}.${name}-${metadata.version}.vsix`;
-              await writeFile(file,bytes);
-              await writeFile(`${file}.metadata.json`,JSON.stringify(metadata,null,2));
-              evidence.push({id:`${publisher}.${name}`,version:metadata.version,url:metadata.files.download,file,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
-            } catch(error) { evidence.push({id:`${publisher}.${name}`,error:String(error)}); }
+          import { execFileSync } from 'node:child_process';
+          import { readFile, appendFile } from 'node:fs/promises';
+          const repository = 'Emanuele-web04/synara';
+          const candidate = 'f7ae35c4e89ac5dcc5a8b220ec726cc3a433a579';
+          const pr1 = 'bf6ec2d76c5cfd839810f59f43c6e0e73c64619c';
+          const allowed = new Set([
+            'apps/server/src/wsRpc.ts', 'apps/server/package.json', 'bun.lock',
+            'apps/web/src/components/settings/EditorExtensionsSettingsPanel.tsx',
+            'apps/web/src/components/chat/RightDockGlassSurface.browser.tsx',
+            'apps/web/src/components/chat/DockExplorerPane.autosave.browser.tsx',
+            'apps/web/src/wsNativeApi.ts', 'apps/web/src/settingsNavigation.ts',
+            'apps/web/src/routes/_chat.settings.tsx', 'packages/contracts/src/editorExtensions.ts',
+            'packages/contracts/src/index.ts', 'packages/contracts/src/ipc.ts',
+            'packages/contracts/src/rpc.ts', 'packages/contracts/src/ws.ts',
+          ]);
+          async function api(endpoint, body) {
+            const response = await fetch(`https://api.github.com/repos/${repository}/${endpoint}`, {
+              method: body ? 'POST' : 'GET',
+              headers: { Authorization: `Bearer ${process.env.GH_TOKEN}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+              ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(30000),
+            });
+            if (!response.ok) throw new Error(`${endpoint}: ${response.status} ${await response.text()}`);
+            return response.json();
           }
-          await writeFile('evidence.json',JSON.stringify(evidence,null,2));
-          console.log(JSON.stringify(evidence,null,2));
+          const changes = execFileSync('git', ['diff', '--name-only', '-z', 'HEAD'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+          const elements = [];
+          for (const file of changes) {
+            if (!allowed.has(file) && !file.startsWith('apps/server/src/extensions/')) throw new Error(`Unexpected change: ${file}`);
+            const content = await readFile(file, 'utf8');
+            const blob = await api('git/blobs', { content, encoding: 'utf-8' });
+            elements.push({ path: file, mode: '100644', type: 'blob', sha: blob.sha });
+          }
+          const formatFile = 'apps/web/src/components/chat/RightDockGlassSurface.browser.tsx';
+          const formatBlob = await api('git/blobs', { content: await readFile(formatFile, 'utf8'), encoding: 'utf-8' });
+          elements.push({ path: 'scripts/assemble-extension-candidate.mjs', mode: '100644', type: 'blob', sha: null });
+          const base = await api(`git/commits/${candidate}`);
+          const tree = await api('git/trees', { base_tree: base.tree.sha, tree: elements });
+          const commit = await api('git/commits', {
+            message: 'feat(extensions): add validated VSIX management and native settings',
+            tree: tree.sha, parents: [process.env.PARENT_SHA, pr1],
+            author: { name: 'Commander Chara', email: '249489759+cmdr-chara@users.noreply.github.com' },
+            committer: { name: 'Commander Chara', email: '249489759+cmdr-chara@users.noreply.github.com' },
+          });
+          console.log('CANDIDATE_COMMIT', commit.sha);
+          console.log('CANDIDATE_TREE', tree.sha);
+          console.log('PR1_FORMAT_BLOB', formatBlob.sha);
+          console.log('NORMALIZED_FILES', JSON.stringify(elements));
+          console.log(execFileSync('git', ['diff', '--stat'], { encoding: 'utf8' }));
+          await appendFile(process.env.GITHUB_OUTPUT, `candidate=${commit.sha}\npr1_format_blob=${formatBlob.sha}\n`);
           NODE
-          mkdir eslint-workspace && cd eslint-workspace
-          npm init -y >/dev/null
-          npm install --ignore-scripts --no-audit --no-fund eslint@9.39.1
-          cd ..
-          tar -I 'zstd -T0 -3' -cf eslint-workspace.tar.zst eslint-workspace
-          rm -rf eslint-workspace
-          sha256sum *.vsix *.tar.zst > SHA256SUMS
-      - uses: actions/upload-artifact@v4
+  validate:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
         with:
-          name: authentic-extension-fixtures
-          path: ${{ runner.temp }}/extension-fixtures
-          compression-level: 0
-          retention-days: 3
-          if-no-files-found: error
+          ref: ${{ needs.prepare.outputs.candidate }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Format
+        if: ${{ !cancelled() }}
+        run: bun run fmt:check
+      - name: Lint
+        if: ${{ !cancelled() }}
+        run: bun run lint
+      - name: Typecheck
+        if: ${{ !cancelled() }}
+        run: bun run typecheck
+      - name: Extension package boundaries and extraction
+        if: ${{ !cancelled() }}
+        run: bun run --cwd apps/server test src/extensions/manifest.test.ts src/extensions/vsix.test.ts
+      - name: Windows runtime ownership boundary
+        if: ${{ !cancelled() }}
+        run: bun run windows-runtime:check
