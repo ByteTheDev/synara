@@ -1,5 +1,28 @@
 # Cloudflare Remote — execution state
 
+## Pairing follow-up — 2026-10-15, evening
+
+- A concurrent token refresh could make an older successful `/me` response report
+  signed out even though the account credentials were still valid. Status now
+  accepts a rotated token only for the same verified user, organization and
+  account authority; legacy identity backfills still require the original token.
+  The regression failed before the change and passes now. Logout, user changes
+  and authority changes remain fenced; 110 focused account/pairing tests pass.
+  Workspace formatting, lint and twelve-package typecheck pass (existing lint
+  warnings remain). This fix is not in the installed Remote .2 apps yet.
+- The iPad PR #2 was merged into the existing iOS remote-connections branch,
+  without merging that branch into main. iPad sidebar/rotation and two iPhone
+  workspace UI flows pass. Native sign-in consent now displays Synara; the light
+  icon uses the current vector at the dark icon's scale. No paid WorkOS custom
+  domain or service was enabled.
+- Real-account simulator sign-in and fresh-code enrollment to the installed
+  Mini succeeded. The first remote enrollment exposed a separate mobile bug:
+  successful trust installation did not mark onboarding complete or resume
+  foreground reconnect. The mobile fix is being verified before upload.
+  MacBook account directory/grant and pinned TLS/inner pairing channel passed;
+  actual simulator enrollment to that host remains to be checked. None of this
+  establishes production TestFlight APNs delivery on a physical iPhone.
+
 ## Installed-app qualification follow-up — 2026-10-15
 
 - Synara Remote was installed beside the existing apps on both Macs. Read-only

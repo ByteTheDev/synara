@@ -214,6 +214,80 @@ describe("status", () => {
     expect(await readAccountFile(baseDir)).toMatchObject(linkedHostFields);
   });
 
+  it("keeps a slow status response signed in after another caller rotates the session", async () => {
+    const baseDir = makeBaseDir();
+    await writeAccountCredentials(baseDir, credentials({ userId: "user_1" }));
+    const started = Promise.withResolvers<void>();
+    const pending = Promise.withResolvers<AccountMe>();
+    let oldTokenReads = 0;
+    const session = sessionFor(
+      baseDir,
+      makeClient({
+        me: (token) => {
+          if (token !== "access-1") return Promise.resolve(meResponse());
+          if (++oldTokenReads === 1) {
+            started.resolve();
+            return pending.promise;
+          }
+          return Promise.reject(
+            new AccountApiError({ code: "unauthorized", status: 401, message: "Expired" }),
+          );
+        },
+        refreshAccessToken: () =>
+          Promise.resolve({
+            accessToken: "access-2",
+            refreshToken: "refresh-2",
+            user: { id: "user_1", email: "ada@example.com" },
+          }),
+      }),
+    );
+    const slowStatus = session.status();
+    await started.promise;
+    expect(await session.status()).toMatchObject({ state: "signed-in" });
+    pending.resolve(meResponse());
+    expect(await slowStatus).toMatchObject({ state: "signed-in", me: { id: "user_1" } });
+    expect(await readAccountFile(baseDir)).toMatchObject({
+      accessToken: "access-2",
+      refreshToken: "refresh-2",
+    });
+  });
+
+  it.each(["logout", "different-user", "different-authority"])(
+    "does not restore a stale signed-in status after %s",
+    async (replacement) => {
+      const baseDir = makeBaseDir();
+      await writeAccountCredentials(baseDir, credentials({ userId: "user_1" }));
+      const started = Promise.withResolvers<void>();
+      const pending = Promise.withResolvers<AccountMe>();
+      const session = sessionFor(
+        baseDir,
+        makeClient({
+          me: () => {
+            started.resolve();
+            return pending.promise;
+          },
+        }),
+      );
+      const status = session.status();
+      await started.promise;
+      if (replacement === "logout") fs.unlinkSync(accountCredentialsPath(baseDir));
+      else
+        await writeAccountCredentials(
+          baseDir,
+          credentials({
+            accessToken: "access-2",
+            refreshToken: "refresh-2",
+            userId: replacement === "different-user" ? "user_2" : "user_1",
+            ...(replacement === "different-authority"
+              ? { accountUrl: "https://other.example.com" }
+              : {}),
+          }),
+        );
+      pending.resolve(meResponse());
+      expect(await status).toEqual({ state: "signed-out" });
+    },
+  );
+
   // An unreachable account is not a signed-out one: reporting it that way
   // would make a network blip look like being logged out.
   it("fails rather than reporting signed out when the account is unreachable", async () => {
