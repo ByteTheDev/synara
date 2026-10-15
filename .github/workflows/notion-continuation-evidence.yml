@@ -4,54 +4,35 @@ on:
   push:
     branches: [feat/notion-enterprise-oauth-integration]
     paths: [.github/workflows/notion-continuation-evidence.yml]
+  pull_request:
+    paths: [.github/workflows/notion-continuation-evidence.yml]
 
 permissions:
   contents: read
 
 jobs:
-  toolchain:
+  source:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
           persist-credentials: false
-      - uses: ./.github/actions/setup-workspace
-        with:
-          scope: runtime
-      - name: Export bounded source and dependency artifacts
+      - name: Export source snapshots without modifying repository refs
         run: |
-          mkdir -p "$RUNNER_TEMP/notion-environment/bin" "$RUNNER_TEMP/notion-dependencies"
-          cp "$(command -v bun)" "$RUNNER_TEMP/notion-environment/bin/bun"
-          cp "$(command -v node)" "$RUNNER_TEMP/notion-environment/bin/node"
-          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/notion-environment/source.tar.gz"
-          git ls-tree -r HEAD > "$RUNNER_TEMP/notion-environment/tree.txt"
-          git rev-parse HEAD > "$RUNNER_TEMP/notion-environment/head.txt"
-          sha256sum bun.lock > "$RUNNER_TEMP/notion-environment/lock-digest.txt"
-          tar -czf "$RUNNER_TEMP/dependencies.tar.gz" node_modules apps/web/node_modules apps/server/node_modules apps/desktop/node_modules packages/contracts/node_modules packages/shared/node_modules scripts/node_modules
-          split -b 300M "$RUNNER_TEMP/dependencies.tar.gz" "$RUNNER_TEMP/notion-dependencies/part-"
-          sha256sum "$RUNNER_TEMP/notion-dependencies/part-"* > "$RUNNER_TEMP/notion-environment/dependency-digests.txt"
+          mkdir -p "$RUNNER_TEMP/notion-source"
+          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/notion-source/current.tar.gz"
+          git archive --format=tar.gz d98d89e0c535da1e81be5856529db3425234171b > "$RUNNER_TEMP/notion-source/before.tar.gz"
+          git archive --format=tar.gz 34a6aefbe846a90b0928a87d4f9d5de2083c55f3 > "$RUNNER_TEMP/notion-source/main.tar.gz"
+          git ls-tree -r HEAD > "$RUNNER_TEMP/notion-source/current-tree.txt"
+          git ls-tree -r 34a6aefbe846a90b0928a87d4f9d5de2083c55f3 > "$RUNNER_TEMP/notion-source/main-tree.txt"
+          git rev-parse HEAD > "$RUNNER_TEMP/notion-source/head.txt"
+          sha256sum "$RUNNER_TEMP/notion-source/"*.tar.gz > "$RUNNER_TEMP/notion-source/digests.txt"
       - uses: actions/upload-artifact@v6
         with:
-          name: notion-continuation-environment
-          path: ${{ runner.temp }}/notion-environment
-          retention-days: 1
-          compression-level: 0
-      - uses: actions/upload-artifact@v6
-        with:
-          name: notion-dependencies-a
-          path: ${{ runner.temp }}/notion-dependencies/part-aa
-          retention-days: 1
-          compression-level: 0
-      - uses: actions/upload-artifact@v6
-        with:
-          name: notion-dependencies-b
-          path: ${{ runner.temp }}/notion-dependencies/part-ab
-          retention-days: 1
-          compression-level: 0
-      - uses: actions/upload-artifact@v6
-        with:
-          name: notion-dependencies-c
-          path: ${{ runner.temp }}/notion-dependencies/part-ac
+          name: notion-pinned-source
+          path: ${{ runner.temp }}/notion-source
           retention-days: 1
           compression-level: 0
