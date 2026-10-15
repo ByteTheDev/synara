@@ -1,0 +1,44 @@
+name: Temporary editor offline reproduction
+
+on:
+  push:
+    branches: [feat/synara-editor-intelligence]
+    paths: [.github/workflows/editor-offline-repro.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+      - name: Export tracked source and installed toolchain only
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$RUNNER_TEMP/editor-offline-repro"
+          mkdir -p "$output/tools"
+          git archive --format=tar HEAD | zstd -T0 -3 -o "$output/source.tar.zst"
+          git rev-parse HEAD > "$output/commit.txt"
+          find . -name node_modules -type d -prune -print0 > "$RUNNER_TEMP/editor-module-paths"
+          tar --null -T "$RUNNER_TEMP/editor-module-paths" -I 'zstd -T0 -3' -cf "$output/dependencies.tar.zst"
+          cp "$(command -v bun)" "$output/tools/bun"
+          cp "$(command -v node)" "$output/tools/node"
+          tar -C "$output" -I 'zstd -T0 -3' -cf "$output/toolchain.tar.zst" tools
+          rm -rf "$output/tools"
+          cd "$output"
+          sha256sum source.tar.zst dependencies.tar.zst toolchain.tar.zst > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editor-offline-repro
+          path: ${{ runner.temp }}/editor-offline-repro
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
