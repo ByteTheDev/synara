@@ -57,6 +57,24 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: native-editor-browser-evidence
-          path: apps/web/test-results
+          path: |
+            apps/web/test-results
+            apps/web/src/components/**/__screenshots__
           retention-days: 7
           if-no-files-found: warn
+      - name: Preserve exact source for offline reproduction
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/editor-source"
+          git archive --format=tar HEAD | zstd -T0 -3 -o "$RUNNER_TEMP/editor-source/source.tar.zst"
+          git rev-parse HEAD > "$RUNNER_TEMP/editor-source/commit.txt"
+          cd "$RUNNER_TEMP/editor-source"
+          sha256sum source.tar.zst > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: native-editor-source
+          path: ${{ runner.temp }}/editor-source
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error

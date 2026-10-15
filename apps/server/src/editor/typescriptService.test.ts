@@ -174,6 +174,52 @@ describe("real TypeScript project intelligence", () => {
     ).toBe(true);
   });
 
+  it.each([undefined, false])(
+    "supports loose JavaScript beside a TS-only project (allowJs: %s) without changing TS options",
+    async (allowJs) => {
+      await writeFile(
+        path.join(root, "tsconfig.json"),
+        JSON.stringify({ compilerOptions: { strict: true, allowJs }, include: ["*.ts"] }),
+      );
+      const javascript = 'const text = "hello";\ntext.toUppercase();\n';
+      const typescript = "const value: number = null;\n";
+      await writeFile(path.join(root, "debug.js"), javascript);
+      documents = [
+        { relativePath: "main.ts", contents: typescript, version: 2 },
+        { relativePath: "debug.js", contents: javascript, version: 1 },
+      ];
+      const js = { relativePath: "debug.js", offset: javascript.indexOf("text.to") + 5 };
+      for (let index = 0; index < 2; index++) {
+        expect(
+          request("completion", js).completions?.some((item) => item.label === "toUpperCase"),
+        ).toBe(true);
+        expect(request("diagnostics", js).diagnostics?.some((item) => item.code === 2551)).toBe(
+          true,
+        );
+        expect(
+          request("diagnostics", { offset: 0 }).diagnostics?.some((item) => item.code === 2322),
+        ).toBe(true);
+      }
+      expect(JSON.parse(await readFile(path.join(root, "tsconfig.json"), "utf8"))).toEqual({
+        compilerOptions: { strict: true, ...(allowJs === undefined ? {} : { allowJs }) },
+        include: ["*.ts"],
+      });
+    },
+  );
+
+  it("preserves explicit configured JavaScript checking policy", async () => {
+    await writeFile(
+      path.join(root, "tsconfig.json"),
+      JSON.stringify({ compilerOptions: { allowJs: true, checkJs: false } }),
+    );
+    const code = 'const text = "hello";\ntext.toUppercase();\n';
+    await writeFile(path.join(root, "debug.js"), code);
+    documents = [{ relativePath: "debug.js", contents: code, version: 1 }];
+    expect(request("diagnostics", { relativePath: "debug.js", offset: 0 }).diagnostics).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: 2551 })]),
+    );
+  });
+
   it("rejects traversal and symlink escapes instead of reading outside the workspace", async () => {
     expect(() => request("hover", { relativePath: "../outside.ts" })).toThrow("workspace");
     if (process.platform !== "win32") {
