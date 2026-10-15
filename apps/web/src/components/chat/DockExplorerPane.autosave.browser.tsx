@@ -50,8 +50,8 @@ async function mount() {
     <QueryClientProvider
       client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
     >
-      {/* The real dock receives a bounded flex height from its owning layout. */}
-      <div style={{ width: "100%", height: 560, display: "flex" }}>
+      {/* The fixture must provide the dimensions normally owned by the dock. */}
+      <div style={{ width: 1_000, height: 560, display: "flex" }}>
         <DockExplorerPane
           threadId={ThreadId.makeUnsafe("autosave")}
           workspaceRoot="/repo"
