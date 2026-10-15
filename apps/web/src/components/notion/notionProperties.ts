@@ -184,6 +184,7 @@ export interface NotionMappingEdits {
   completedStatusIds: readonly string[];
   reopenedStatusId: string | null;
   priorityOptions: NotionMapping["priorityOptions"];
+  agentAccess?: "none" | "read";
 }
 
 export function editNotionMapping(existing: NotionMapping | undefined, source: NotionObject, edits: NotionMappingEdits): NotionMapping {
@@ -194,7 +195,7 @@ export function editNotionMapping(existing: NotionMapping | undefined, source: N
     ...existing,
     ...edits,
     dataSourceId: notionResourceId(notionString(source.id)),
-    agentAccess: existing?.agentAccess ?? "none",
+    agentAccess: edits.agentAccess ?? existing?.agentAccess ?? "none",
     enabled: existing?.enabled ?? true,
   };
   validateNotionMapping(mapping, source);

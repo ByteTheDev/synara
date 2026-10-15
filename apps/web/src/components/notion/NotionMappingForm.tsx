@@ -23,6 +23,7 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
   const [done, setDone] = useState<readonly string[]>(existing?.completedStatusIds ?? []);
   const [reopen, setReopen] = useState(existing?.reopenedStatusId ?? "");
   const [priorities, setPriorities] = useState<NotionMapping["priorityOptions"]>(existing?.priorityOptions ?? {});
+  const [agentAccess, setAgentAccess] = useState<"none" | "read">(existing?.agentAccess === "read" ? "read" : "none");
   const action = useNotionAction();
   const properties = notionProperties(source);
   const statusOptions = notionOptions(properties.find((property) => property.id === fields?.status?.id));
@@ -37,7 +38,7 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
         const mapping = editNotionMapping(existing, source, {
           id: mappingId, connectionId, name, fields,
           projectId: projectId.trim() ? projectId.trim() as ProjectId : null,
-          completedStatusIds: done, reopenedStatusId: reopen || null, priorityOptions: priorities,
+          completedStatusIds: done, reopenedStatusId: reopen || null, priorityOptions: priorities, agentAccess,
         });
         await notionApi().saveMapping(mapping);
         await notionApi().sync();
@@ -108,9 +109,10 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
         ) : null}
         <label className="grid gap-1 text-ui">Synara project ID for delegation (optional)<Input value={projectId} onChange={(event) => setProjectId(event.target.value)} placeholder="Keep tasks unassigned" /></label>
       </fieldset>
+      <div className="space-y-2 rounded-lg border border-border p-3"><h4 className="text-ui font-medium">Agent permissions</h4><p className="text-ui-sm text-muted-foreground">Allow Synara agents to search and summarize this mapped data source without exposing credentials. Other Notion pages remain inaccessible. Changes still require manual editing and review.</p><NotionSelect label="Agent access to this source" value={agentAccess} onChange={value => setAgentAccess(value as "none" | "read")} options={[{ value: "none", label: "No agent access" }, { value: "read", label: "Read mapped records" }]} disabled={action.pending} /></div>
       {existing?.sprintPlan ? <p className="text-ui-sm text-muted-foreground">The existing sprint plan is retained when this mapping is saved.</p> : null}
       {existing?.enabled === false ? <p role="status" className="text-ui-sm text-muted-foreground">This source is paused. Saving these settings does not resume synchronization.</p> : null}
-      <p className="text-ui-sm text-muted-foreground">Direct agent access is disabled. Hand off an individual task using Synara's existing Tasks controls; this does not grant access to the workspace.</p>
+      <p className="text-ui-sm text-muted-foreground">Agents can read only explicitly permitted mappings. Direct agent writes remain disabled until a user-review approval flow is integrated. Individual task handoffs never grant workspace-wide permissions.</p>
       <NotionError message={action.error} />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="ghost" onClick={onCancel} disabled={action.pending}>Cancel</Button>

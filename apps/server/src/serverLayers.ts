@@ -247,6 +247,7 @@ export function makeServerRuntimeServicesLayer(
     Layer.provideMerge(agentGatewayCredentialsLayer),
   );
   const agentGatewayLayer = AgentGatewayLive.pipe(
+    Layer.provideMerge(notionLayer),
     Layer.provideMerge(
       Layer.mergeAll(
         ProjectionThreadMessageRepositoryLive,
