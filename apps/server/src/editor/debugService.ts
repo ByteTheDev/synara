@@ -12,7 +12,7 @@ import type {
   EditorDebugSnapshot,
   EditorDebugStartInput,
 } from "@synara/contracts";
-import { teardownChildProcessTree } from "../platform/supervisedProcessTeardown";
+import { createProtocolProcessTeardown } from "../platform/protocolProcessTeardown";
 import {
   DapConnection,
   dapArray,
@@ -38,6 +38,8 @@ type DebugSession = {
   sequence: number;
   touched: number;
   terminated: boolean;
+  cleanupComplete?: boolean;
+  teardown?: () => Promise<void>;
   stopping?: Promise<void>;
 };
 const inside = (root: string, file: string) => {
@@ -67,7 +69,7 @@ export class EditorDebugService {
     this.sweep = setInterval(() => {
       for (const session of this.sessions.values()) {
         if (Date.now() - session.touched <= 120_000) continue;
-        if (session.terminated && !session.stopping) this.sessions.delete(session.id);
+        if (session.cleanupComplete) this.sessions.delete(session.id);
         else
           void this.stop(session).catch((error: unknown) =>
             this.emit(
@@ -134,12 +136,14 @@ export class EditorDebugService {
     if (this.disposed) return Promise.reject(new Error("The debugger service is shutting down."));
     if (
       this.starting.has(owner) ||
-      [...this.sessions.values()].some((session) => session.owner === owner && !session.terminated)
+      [...this.sessions.values()].some(
+        (session) => session.owner === owner && !session.cleanupComplete,
+      )
     )
       return Promise.reject(new Error("Stop the current debug session before starting another."));
     if (
       this.starting.size +
-        [...this.sessions.values()].filter((session) => !session.terminated).length >=
+        [...this.sessions.values()].filter((session) => !session.cleanupComplete).length >=
       4
     )
       return Promise.reject(new Error("The server's debug session limit has been reached."));
@@ -186,9 +190,7 @@ export class EditorDebugService {
     });
     if (signal?.aborted || this.disposed) throw new Error("Debug launch was cancelled.");
     const env = editorChildEnvironment(process.env, Boolean(process.versions.electron));
-    const node = process.versions.bun
-      ? resolveExecutable("node", { cwd, env })
-      : process.execPath;
+    const node = process.versions.bun ? resolveExecutable("node", { cwd, env }) : process.execPath;
     if (!node)
       throw new Error(
         "Node.js is required to run the JavaScript debugger. Install Node and try again.",
@@ -254,10 +256,16 @@ export class EditorDebugService {
       child.stdout?.on("data", () => undefined); // Drain adapter infrastructure logs, not debuggee output.
       child.on("error", (error) => this.emit(session, "root", "error", error.message));
       child.once("exit", (code) => {
-        if (!session.terminated)
-          this.emit(session, "root", "terminated", `Debug adapter exited (${code ?? "signal"}).`);
-        session.terminated = true;
-        for (const connection of session.connections.values()) connection.dap.dispose();
+        if (!session.terminated) {
+          this.emit(session, "root", "error", `Debug adapter exited (${code ?? "signal"}).`);
+          void this.stop(session).catch((error: unknown) =>
+            this.emit(session, "root", "error", String(error)),
+          );
+        }
+        for (const connection of session.connections.values()) {
+          connection.ready = false;
+          connection.dap.dispose();
+        }
       });
       const configuration: DapObject = {
         type: "pwa-node",
@@ -423,7 +431,7 @@ export class EditorDebugService {
     return {
       sessionId: id,
       sequence: session.sequence,
-      terminated: session.terminated,
+      terminated: session.cleanupComplete === true,
       connections: [...session.connections.values()].map(({ id: connectionId, name, ready }) => ({
         id: connectionId,
         name,
@@ -554,29 +562,40 @@ export class EditorDebugService {
     };
   }
   private stop(session: DebugSession): Promise<void> {
+    if (session.cleanupComplete) return Promise.resolve();
     if (session.stopping) return session.stopping;
     session.terminated = true;
-    const pending = (async () => {
+    session.teardown ??= createProtocolProcessTeardown(session.process, async () => {
       const root = session.connections.get("root");
-      // Attach detaches only; it must never terminate someone else's Node process.
-      if (root)
-        await root.dap
-          .request("disconnect", { terminateDebuggee: session.request === "launch" }, 3_000)
-          .catch(() => undefined);
-      for (const connection of session.connections.values()) {
-        connection.ready = false;
-        connection.dap.dispose();
+      try {
+        // Attach detaches only; it must never terminate someone else's Node process.
+        if (root)
+          await root.dap.request(
+            "disconnect",
+            { terminateDebuggee: session.request === "launch" },
+            3_000,
+          );
+      } finally {
+        for (const connection of session.connections.values()) {
+          connection.ready = false;
+          connection.dap.dispose();
+        }
       }
-      await teardownChildProcessTree(session.process);
-      this.emit(
-        session,
-        "root",
-        "terminated",
-        session.request === "attach" ? "Detached from Node." : "Debug session stopped.",
-      );
-    })().finally(() => {
-      delete session.stopping;
     });
+    const pending = session
+      .teardown()
+      .then(() => {
+        session.cleanupComplete = true;
+        this.emit(
+          session,
+          "root",
+          "terminated",
+          session.request === "attach" ? "Detached from Node." : "Debug session stopped.",
+        );
+      })
+      .finally(() => {
+        delete session.stopping;
+      });
     session.stopping = pending;
     return pending;
   }
@@ -588,7 +607,9 @@ export class EditorDebugService {
     const results = await Promise.allSettled(
       [...this.sessions.values()].map((session) => this.stop(session)),
     );
-    this.sessions.clear();
+    for (const session of this.sessions.values()) {
+      if (session.cleanupComplete) this.sessions.delete(session.id);
+    }
     const errors = results.filter(
       (result): result is PromiseRejectedResult => result.status === "rejected",
     );
