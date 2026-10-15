@@ -62,8 +62,7 @@ async function viewerParts() {
       .getEditors()
       .find(
         (editor) =>
-          editor.getModel()?.uri.scheme === "synara-standalone" &&
-          editor.getDomNode()?.isConnected,
+          editor.getModel()?.uri.scheme === "synara-standalone" && editor.getDomNode()?.isConnected,
       );
   // The first test must include cold loading of the lazy editor, unlike the
   // later parameterized cases. Bound the wait without relaxing any CSS check.
