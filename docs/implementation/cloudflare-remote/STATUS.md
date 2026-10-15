@@ -1,5 +1,33 @@
 # Cloudflare Remote — execution state
 
+## Installed-app qualification follow-up — 2026-10-15
+
+- Synara Remote was installed beside the existing apps on both Macs. Read-only
+  snapshots and message-by-message comparisons verified the imported local
+  histories; account credentials and host/device identities were not copied.
+  Both apps completed normal same-account Google sign-in and a real Codex reply.
+  The Mini also passed Stop, follow-up and renderer reload with preserved history.
+- The Mini's manual import initially put its usage checkpoint under `userdata`,
+  causing an unintended historical backfill under the new installation identity.
+  Account reporter state belongs directly under the packaged app's base directory
+  (`usage-sync`), or under `dev` when a dev URL is configured. The duplicate target
+  counters were backed up and zeroed within their verified account/environment
+  scope; source counters and local history were preserved. A private disposable
+  replay reproduced the misplaced-checkpoint backfill and verified no upload
+  across repeated reporter starts with the correctly placed checkpoint. New real
+  activity then uploaded without another historical backfill. This operator
+  repair does not add per-account local conversation ownership; see [account
+  switching semantics](../../../BETA.md#synara-remote-early-access).
+- A controlled backend restart in installed version **1.0.6-remote.1** exposed a
+  separate recovery defect: the replacement backend chose a new port while the
+  renderer retained its pinned endpoint. The desktop now keeps its reserved port
+  throughout the app lifetime. The existing fresh-profile Electron smoke now
+  terminates only its own backend, waits for a replacement PID and healthy HTTP
+  endpoint, and asserts that the port is unchanged. It failed on the old code for
+  the changed endpoint and passed after the repair. No transport unpinning or
+  renderer reload was added. Installed-artifact recovery qualification is pending
+  the updated signed candidate; source smoke is not packaged-app proof.
+
 ## Early access delivery — 2026-10-15
 
 - Qualified desktop source `8505590cfe40c58660171a3a778976ef6cccdd39` is pushed.
