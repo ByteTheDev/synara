@@ -37,6 +37,7 @@ import {
 import { cn } from "~/lib/utils";
 import { ComposerPickerMenuPopup } from "../chat/ComposerPickerMenuPopup";
 import { Button } from "../ui/button";
+import { CopyTextButton } from "../ui/copyTextButton";
 import { Menu, MenuCheckboxItem, MenuItem, MenuSeparator, MenuTrigger } from "../ui/menu";
 import { SettingsListRow } from "./SettingsPanelPrimitives";
 
@@ -49,14 +50,17 @@ export function RemoteDeviceIcon({ label }: { label: string }) {
   return <DeviceComputerIcon className={ICON_CLASS_NAME} aria-hidden />;
 }
 
-/** A root fingerprint in four columns of eight characters, for comparing across screens. */
+/** Grouped identity for comparison; copies the original fingerprint without display spacing. */
 export function RootFingerprint({ value, className }: { value: string; className?: string }) {
   return (
-    <p className={cn("grid grid-cols-4 gap-x-2 gap-y-1 font-mono text-ui-xs", className)}>
-      {fingerprintGroups(value).map((group) => (
-        <span key={group.offset}>{group.text}</span>
-      ))}
-    </p>
+    <div className={cn("flex items-center gap-2", className)}>
+      <p className="grid min-w-0 flex-1 grid-cols-4 gap-x-2 gap-y-1 font-mono text-ui-xs">
+        {fingerprintGroups(value).map((group) => (
+          <span key={group.offset}>{group.text}</span>
+        ))}
+      </p>
+      <CopyTextButton text={value} label="fingerprint" iconOnly />
+    </div>
   );
 }
 

@@ -19,6 +19,7 @@ import {
 } from "~/lib/hosts/remoteAccess";
 import { remotePairingLink } from "~/lib/remotePairingLink";
 import { Button } from "../ui/button";
+import { CopyTextButton } from "../ui/copyTextButton";
 import { DisclosureChevron } from "../ui/DisclosureChevron";
 import { DisclosureRegion } from "../ui/DisclosureRegion";
 import {
@@ -222,12 +223,15 @@ function AddDeviceDialogContent({
                 />
               </div>
             ) : null}
-            <p
-              className="font-mono text-2xl font-medium tracking-[0.2em] text-foreground"
-              aria-label="Pairing code"
-            >
-              {remaining ? invitation.code : "Code expired"}
-            </p>
+            <div className="flex items-center gap-2">
+              <p
+                className="font-mono text-2xl font-medium tracking-[0.2em] text-foreground"
+                aria-label="Pairing code"
+              >
+                {remaining ? invitation.code : "Code expired"}
+              </p>
+              {remaining ? <CopyTextButton text={invitation.code} label="code" /> : null}
+            </div>
             <p className="text-ui-sm text-muted-foreground">
               {remaining ? `Expires in ${remaining}` : "Create a new code to try again."}
             </p>
