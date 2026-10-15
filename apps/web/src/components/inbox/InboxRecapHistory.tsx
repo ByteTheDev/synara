@@ -52,6 +52,9 @@ function PrivateRecapHistory({
   // Their recap window cannot be saved under the source host's identity.
   const executionContext = readExecutionContext();
   const isRemoteExecution = Boolean(executionContext?.remoteHostId || executionContext?.remote);
+  const recapSaveDescription = isRemoteExecution
+    ? "Remote recaps sync privately from their source computer when signed in. To save one immediately, open the Inbox on that computer. Saved history remains available here."
+    : "Your signed-in computer automatically saves recaps, including project names, to your private account. Save privately updates this day now. Saved history stays available when this computer is offline.";
   const [open, setOpen] = useState(false);
   const queryKey = ["account", "inboxRecaps", scope] as const;
   const history = useInfiniteQuery({
@@ -122,20 +125,7 @@ function PrivateRecapHistory({
           {save.isPending ? "Saving…" : "Save privately"}
         </Button>
       </div>
-      <p className="text-ui-sm text-muted-foreground">
-        {isRemoteExecution ? (
-          <>
-            Remote recaps sync privately from their source computer when signed in. To save one
-            immediately, open the Inbox on that computer. Saved history remains available here.
-          </>
-        ) : (
-          <>
-            Your signed-in computer automatically saves recaps, including project names, to your
-            private account. Save privately updates this day now. Saved history stays available when
-            this computer is offline.
-          </>
-        )}
-      </p>
+      <p className="text-ui-sm text-muted-foreground">{recapSaveDescription}</p>
       {save.isSuccess ? (
         <p role="status" className="text-ui-sm text-status-success">
           Recap saved to your account.
