@@ -10,7 +10,6 @@ import { notionBlockDraftPatch } from "./notionDrafts";
 import { NotionDatabaseWorkspace } from "./NotionDatabaseWorkspace";
 import { NotionDraftBoundary, useNotionDraft, useNotionDraftGuard } from "./NotionDraftBoundary";
 import { Checkbox } from "~/components/ui/checkbox";
-import { notionProperties } from "./notionProperties";
 import { NotionError, NotionReceiptNotice, NotionSelect, notionApi, useNotionAction } from "./notionUi";
 
 function useResource(input: NotionReadInput) {

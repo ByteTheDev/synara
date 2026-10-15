@@ -253,7 +253,13 @@ export class NotionRuntime {
       if (input.expectedThreadId !== undefined && input.expectedThreadId !== current.threadId) throw new NotionFailure("This task was delegated elsewhere.", "conflict");
       if (input.projectId !== undefined && input.projectId !== current.projectId) throw new NotionFailure("Change the delegation project in the Notion mapping settings.", "invalid");
       const mapping = this.mappings.get(entry.mappingId)!;
-      const fields = notionTodoPatch(entry.page, mapping, input);
+      const fields = notionTodoPatch(entry.page, mapping, {
+        ...(input.title !== undefined ? { title: input.title } : {}),
+        ...(input.notes !== undefined ? { notes: input.notes } : {}),
+        ...(input.priority !== undefined ? { priority: input.priority } : {}),
+        ...(input.dueDate !== undefined ? { dueDate: input.dueDate } : {}),
+        ...(input.completed !== undefined ? { completed: input.completed } : {}),
+      });
       if (Object.keys(fields).length) await this.writeUnlocked({ requestId: randomUUID(), createdAt: new Date(this.now()).toISOString(), connectionId: mapping.connectionId, kind: "updatePage", id: notionString(entry.page.id), base: notionPropertySnapshot(entry.page.properties, Object.keys(fields)), changes: fields });
       if (input.threadId !== undefined) entry.local = { threadId: input.threadId, delegationBaseTurnId: input.delegationBaseTurnId ?? null, linkedAt: input.threadId ? new Date(this.now()).toISOString() : null };
       entry.updatedAt = this.stamp(entry.updatedAt); await this.persist(); this.publish(entry); return this.project(entry)!;

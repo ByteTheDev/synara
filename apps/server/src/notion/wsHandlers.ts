@@ -36,12 +36,28 @@ export function filterClientTodoEvent(event: TodoStreamEvent): TodoStreamEvent |
   }
 }
 /** Native task access is unchanged. Provider data remains private to the connecting owner. */
-export function ownerScopedNotionTodos(todos: TodoServiceShape) {
+export function ownerScopedNotionTodos(todos: TodoServiceShape): TodoServiceShape {
   return {
     ...todos,
-    list: () => Effect.gen(function* () { const role = yield* CurrentWsSessionRole; const result = yield* todos.list(); return role === "owner" ? result : { todos: result.todos.filter(todo => !externalId(todo.id)) }; }),
-    update: input => externalId(input.id) ? requireWsOwnerSession.pipe(Effect.andThen(todos.update(input))) : todos.update(input),
-    delete: input => externalId(input.id) ? requireWsOwnerSession.pipe(Effect.andThen(todos.delete(input))) : todos.delete(input),
-    streamChanges: Stream.unwrap(Effect.map(CurrentWsSessionRole, role => role === "owner" ? todos.streamChanges : todos.streamChanges.pipe(Stream.map(filterClientTodoEvent), Stream.filter((event): event is TodoStreamEvent => event !== null)))),
+    list: () => Effect.gen(function* () {
+      const role = yield* CurrentWsSessionRole;
+      const result = yield* todos.list();
+      return role === "owner" ? result : { todos: result.todos.filter(todo => !externalId(todo.id)) };
+    }),
+    update: (input) => externalId(input.id)
+      ? requireWsOwnerSession.pipe(Effect.andThen(todos.update(input)))
+      : todos.update(input),
+    delete: (input) => externalId(input.id)
+      ? requireWsOwnerSession.pipe(Effect.andThen(todos.delete(input)))
+      : todos.delete(input),
+    streamChanges: Stream.unwrap(Effect.gen(function* () {
+      const role = yield* CurrentWsSessionRole;
+      return role === "owner"
+        ? todos.streamChanges
+        : todos.streamChanges.pipe(
+            Stream.map(filterClientTodoEvent),
+            Stream.filter((event): event is TodoStreamEvent => event !== null),
+          );
+    })),
   };
 }

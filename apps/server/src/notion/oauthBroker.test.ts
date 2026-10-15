@@ -31,14 +31,14 @@ describe("hosted confidential Notion OAuth broker", () => {
     const response = await broker.handle(new Request(callback, { headers: { Cookie: tx.cookie } })); expect(response.status).toBe(200); expect(await response.text()).not.toContain("access-1");
     expect((await broker.handle(new Request(callback, { headers: { Cookie: tx.cookie } }))).status).toBe(400); expect(fetcher).toHaveBeenCalledTimes(1);
     const wrong = await broker.handle(post(`/transactions/${tx.transactionId}/redeem`, { verifier: "b".repeat(43) })); expect(wrong.status).toBe(403);
-    const grant = await (await broker.handle(post(`/transactions/${tx.transactionId}/redeem`, { verifier }))).json(); expect(grant.accessToken).toBe("access-1"); expect(grant.refreshToken).toBeUndefined(); expect(grant.workspaceId).toBe(workspaceId);
+    const grant = await (await broker.handle(post(`/transactions/${tx.transactionId}/redeem`, { verifier }))).json() as { accessToken: string; refreshToken?: string; workspaceId: string }; expect(grant.accessToken).toBe("access-1"); expect(grant.refreshToken).toBeUndefined(); expect(grant.workspaceId).toBe(workspaceId);
   });
   it("refreshes through the confidential client and recovers a lost refresh reply", async () => {
     const { broker, start, fetcher } = await fixture(); const tx = await start(); await broker.handle(new Request(`${origin}/oauth/notion/callback?state=${tx.state}&code=c`, { headers: { Cookie: tx.cookie } }));
-    const grant = await (await broker.handle(post(`/transactions/${tx.transactionId}/redeem`, { verifier }))).json();
+    const grant = await (await broker.handle(post(`/transactions/${tx.transactionId}/redeem`, { verifier }))).json() as { brokerSession: string };
     const request = () => post("/sessions/refresh", { accessTokenDigest: notionSecretDigest("access-1") }, `Bearer ${grant.brokerSession}`);
-    expect((await (await broker.handle(request())).json()).accessToken).toBe("access-2");
-    expect((await (await broker.handle(request())).json()).accessToken).toBe("access-2"); expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(((await (await broker.handle(request())).json()) as { accessToken: string }).accessToken).toBe("access-2");
+    expect(((await (await broker.handle(request())).json()) as { accessToken: string }).accessToken).toBe("access-2"); expect(fetcher).toHaveBeenCalledTimes(2);
     const revoked = await broker.handle(post("/sessions/revoke", {}, `Bearer ${grant.brokerSession}`)); expect(revoked.status).toBe(200);
     expect(JSON.parse(String(fetcher.mock.calls.at(-1)?.[1]?.body))).toEqual({ token: "access-2" }); expect((await broker.handle(request())).status).toBe(401);
   });

@@ -17,7 +17,7 @@ import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { notionOptions, notionProperties, type NotionPropertyDescriptor } from "./notionProperties";
-import { NotionDraftBoundary, useNotionDraft, useNotionDraftGuard } from "./NotionDraftBoundary";
+import { useNotionDraft, useNotionDraftGuard } from "./NotionDraftBoundary";
 import { NotionError, NotionReceiptNotice, NotionSelect, notionApi, useNotionAction } from "./notionUi";
 
 type RecordView = "table" | "list" | "board" | "calendar" | "timeline" | "sprints";
@@ -30,7 +30,9 @@ function property(page: NotionObject, column: NotionPropertyDescriptor | undefin
 }
 function dateKey(value: unknown): string {
   const text = notionString(value).slice(0, 10);
-  return /^\d{4}-\d{2}-\d{2}$/.test(text) && Number.isFinite(Date.parse(text + "T00:00:00Z")) ? text : "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return "";
+  const parsed = new Date(text + "T00:00:00Z");
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === text ? text : "";
 }
 function startOfWeek(value: Date): Date {
   const day = new Date(value);
@@ -183,7 +185,7 @@ export function NotionDatabaseWorkspace({ connectionId, id, onOpen }: { connecti
   };
   const updatePage = (page: NotionObject, column: NotionPropertyDescriptor) => {
     const active = editing?.pageId === notionString(page.id) && editing.propertyId === column.id;
-    if (!active) return edit(page, column) ?? <span className="text-muted-foreground">{notionPropertyLabel(property(page, column)) || "—"}</span>;
+    if (!active || !editing) return edit(page, column) ?? <span className="text-muted-foreground">{notionPropertyLabel(property(page, column)) || "—"}</span>;
     const options = column.type === "status" || column.type === "select" ? notionOptions(column) : [];
     return <div className="flex min-w-36 items-center gap-1">
       {options.length ? <NotionSelect label={"Edit " + column.label} value={editing.value} onChange={value => setEditing(current => current ? { ...current, value } : current)} options={[...(column.type === "select" ? [{ value: "", label: "None" }] : []), ...options]} disabled={action.pending} />

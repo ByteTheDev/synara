@@ -50,7 +50,7 @@ export class NotionClient {
     try { await previous; signal?.throwIfAborted(); const wait = this.nextRequestAt - this.now(); if (wait > 0) await this.sleep(wait, signal); this.nextRequestAt = this.now() + 350; }
     finally { release(); }
   }
-  async request(path: string, input: { method?: "GET" | "POST" | "PATCH"; body?: NotionObject; readOnly?: boolean; signal?: AbortSignal } = {}): Promise<NotionObject> {
+  async request(path: string, input: { method?: "GET" | "POST" | "PATCH"; body?: NotionObject; readOnly?: boolean; signal?: AbortSignal | undefined } = {}): Promise<NotionObject> {
     const url = new URL(path, API_ORIGIN);
     if (url.origin !== API_ORIGIN || !url.pathname.startsWith("/v1/") || url.username || url.password || url.hash) throw new NotionFailure("Invalid Notion API path.", "invalid");
     const body = input.body === undefined ? undefined : JSON.stringify(input.body);
