@@ -49,10 +49,20 @@
   The real-signature transport regression and configuration/forwarding checks
   failed before the fix and passed afterward. All **370 API tests** passed on
   a new disposable PostgreSQL database; lint/typecheck/format also passed.
-  No schema change is required. Production key creation, secret installation,
-  service rollout and actual TestFlight delivery remain pending; the specific
-  key-creation confirmation is open. Existing Sandbox credentials are unchanged.
-  This source verification is not live Apple delivery proof.
+  No schema change is required. With explicit operator approval, the separate
+  topic-specific Production key is now created and installed in the two Worker
+  secrets; all 23 previous secret names remain present (25 total). Existing
+  Sandbox credentials are unchanged. The protected local key copy stays outside
+  Git and Downloads; a scan of 9,684 repository files found no matching material.
+  Worker `7793d785-432d-4c88-927b-7d1863a4ce2f` and Container version 21 now run
+  image `sha256:cee7fc90fa39e989303a904b9494a3c59c95bdf86bcdd06412594ac58f7a02a1`.
+  The new instance is running and its protected Live Activity route returns 401
+  without credentials. All 23 database migrations are unchanged.
+  An APNs Production probe using a nonexistent synthetic device token returned
+  `400 BadDeviceToken` with the valid signer and `403 InvalidProviderToken` with
+  an intentionally invalid signature. This verifies the Production credential,
+  not device delivery. Visible background update/end on TestFlight remains the
+  physical-device qualification step; no new mobile build is required.
 
 ## Early access delivery — 2026-10-15
 

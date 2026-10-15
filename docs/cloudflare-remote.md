@@ -186,3 +186,15 @@ Qualification must distinguish: database/transport tests, simulator lifecycle
 checks, Apple accepting a real APNs request, and visible background update/end on
 a device or supported simulator. `simctl push`, mocks, a successful build, and
 installed Cloudflare secrets do not prove real Apple delivery.
+
+For the TestFlight qualification, install the existing mobile build, sign in with
+the same Synara account as the desktop host, and pair that installation through
+Connections. Keep the host online and enable Live Activities for Synara in iOS
+Settings. From a scratch chat on the phone, start a turn long enough to observe
+(for example, ask the agent to run only `sleep 45`, wait for it, then reply).
+Wait until the activity appears, then background Synara or lock the phone without
+force-quitting it. Verify its running state changes to Ready without reopening
+the app and the ended activity dismisses after about 60 seconds. Repeat over
+cellular with Wi-Fi disabled. A failure report should include the test time and
+visible state; correlate it with the account-scoped registration/outbox rather
+than asking for a device token or private key.

@@ -93,8 +93,13 @@ still works without these overrides.
 The trial's `APNS_ENVIRONMENT` binding was changed from `sandbox` to `both` on
 2026-10-15 after deploying compatible API code. A subsequent Container image
 rollout (`6ff0b90a…`, Worker `73ec6657…`) completed and the live API returned
-the expected unauthenticated 401. Actual Production/TestFlight APNs delivery
-remains unqualified; deployment and startup are not proof of Apple delivery.
+the expected unauthenticated 401. A separate, topic-specific Production key was
+installed later that day through the two Production override secrets; the Sandbox
+pair was preserved. Worker `7793d785…`, Container version 21, image `cee7fc90…`
+now run the compatible sender. An APNs synthetic-token probe distinguishes the
+valid Production signer (`BadDeviceToken`) from an invalid signature
+(`InvalidProviderToken`). Actual Production/TestFlight device delivery remains
+unqualified; deployment, startup and credential acceptance are not delivery proof.
 Migration 0021 adds private activity subscriptions
 and host snapshots; it was applied and its Drizzle journal verified on 2026-10-09.
 For simultaneous development and TestFlight builds, deploy the compatible API
