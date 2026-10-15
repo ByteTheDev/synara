@@ -84,13 +84,16 @@ For ActivityKit background updates, configure all five optional secrets together
 `APNS_PRIVATE_KEY`, `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_BUNDLE_ID`, and
 `APNS_ENVIRONMENT` (`sandbox`, `production`, or `both`). Partial configuration fails API
 startup. The private key is a P-256 PEM; keep it exclusively in Worker secrets.
-The trial is currently Sandbox. Migration 0021 adds private activity subscriptions
+The trial's `APNS_ENVIRONMENT` binding was changed from `sandbox` to `both` on
+2026-10-15 after deploying compatible API code. The running process has not yet
+been verified after reloading that binding; TestFlight delivery remains unqualified.
+Migration 0021 adds private activity subscriptions
 and host snapshots; it was applied and its Drizzle journal verified on 2026-10-09.
 For simultaneous development and TestFlight builds, deploy the compatible API
 first, then set `APNS_ENVIRONMENT=both` and restart the Container. Each registration
 still declares only `sandbox` or `production`; delivery uses that persisted value
-to choose the matching Apple gateway. The current Sandbox setting rejects
-TestFlight registrations until changed. Secret installation alone does not prove Apple delivery. See the
+to choose the matching Apple gateway. An older running process can retain its
+Sandbox setting until restart. Secret installation alone does not prove Apple delivery. See the
 [ActivityKit operations guide](../../../docs/cloudflare-remote.md#live-activity-push-delivery-development).
 
 ## Verify and deploy

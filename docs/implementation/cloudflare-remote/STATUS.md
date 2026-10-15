@@ -1,5 +1,33 @@
 # Cloudflare Remote — execution state
 
+## Early access delivery — 2026-10-15
+
+- Qualified desktop source `8505590cfe40c58660171a3a778976ef6cccdd39` is pushed.
+  The final workspace run passed 18,396 tests with 43 skips; format, lint (zero
+  errors), twelve-package typecheck and migration lineage checks also passed.
+- Published the API Container image
+  `sha256:b731a83aac3af2abc4215fdf7c1ce6f72c6250521dd7fe2c83b768b4b58f64dc`.
+  Live startup returned the expected unauthenticated 401. Supabase now records
+  23 Drizzle migrations, including additive `0022_account_deletions`; its new
+  table has RLS enabled and no SELECT grant for `anon` or `authenticated`.
+  All 23 Worker secret names were preserved. No real account deletion was run.
+- Installed `APNS_ENVIRONMENT=both` after compatible code deployment. Reload of
+  that binding in the running process and actual TestFlight APNs delivery remain
+  unverified; do not treat the secret update as a delivery result.
+- Universal iOS/iPadOS version 0.1 (130) was exported with Cloud Managed Apple
+  Distribution and uploaded successfully with the ordinary Xcode Apple ID.
+  App Store Connect shows processing. The internal **Synara Early Access** group
+  has manual distribution, no testers and no attached build yet. No App Store
+  Connect API key was created and no tester invitations were sent.
+- Both native branches are pushed and validate all 86 fixtures against this
+  desktop source. The final retained native checks passed 116 cases (one skip)
+  on each simulator; the iPad docked-sidebar flow passed twice. The broader
+  legacy native suite is not green; see the mobile handoff for retained gaps.
+- GitHub Actions refuses jobs before execution because account payments or its
+  spending limit need attention. Local Mini checks do not qualify a signed
+  desktop release. Desktop signing secrets exist in GitHub, but no desktop tag,
+  main merge, signed Beta publication or external TestFlight review is claimed.
+
 Updated 2026-09-29. Original base `42aa8fb4f093f78fe7a1f7be5525f67571086ebf` verified clean; existing isolated worktree `a816/synara`, branch `codex/cloudflare-remote-mvp`. Git emits known AppleDouble index warnings; branch creation succeeded (exit 0) after granting Git metadata access. No pack repair.
 
 ## Completion levels
