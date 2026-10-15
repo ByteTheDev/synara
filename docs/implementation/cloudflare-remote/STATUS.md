@@ -27,6 +27,21 @@
   the changed endpoint and passed after the repair. No transport unpinning or
   renderer reload was added. Installed-artifact recovery qualification is pending
   the updated signed candidate; source smoke is not packaged-app proof.
+- The final local workspace run passed **18,188 tests / 275 skips** across all
+  eleven test tasks. A first parallel run hit one five-second web test timeout;
+  that case passed in isolation and the second full run passed unchanged.
+  Formatting, lint, twelve-package typecheck and Windows runtime checks passed.
+- Apple Developer inspection found the Synara APNs key is topic-specific and
+  **Sandbox only**. The deployed `both` gateway setting does not expand its
+  authorization. The API now accepts an optional, separately validated
+  `APNS_PRODUCTION_PRIVATE_KEY` / `APNS_PRODUCTION_KEY_ID` pair, forwards both
+  Worker secrets, and keeps JWT signing/cache separate by token environment.
+  The real-signature transport regression and configuration/forwarding checks
+  failed before the fix and passed afterward. All **370 API tests** passed on
+  a new disposable PostgreSQL database; lint/typecheck/format also passed.
+  No schema change is required. Production key creation, secret installation,
+  service rollout and actual TestFlight delivery remain pending; this source
+  verification is not live Apple delivery proof.
 
 ## Early access delivery — 2026-10-15
 

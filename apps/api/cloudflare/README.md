@@ -84,6 +84,12 @@ For ActivityKit background updates, configure all five optional secrets together
 `APNS_PRIVATE_KEY`, `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_BUNDLE_ID`, and
 `APNS_ENVIRONMENT` (`sandbox`, `production`, or `both`). Partial configuration fails API
 startup. The private key is a P-256 PEM; keep it exclusively in Worker secrets.
+For environment-restricted keys, retain the Sandbox pair above and add
+`APNS_PRODUCTION_PRIVATE_KEY` plus `APNS_PRODUCTION_KEY_ID`. Both must be set
+together; the Container forwards them to the API, which signs each registered
+environment with its own key. `both` selects gateways; it cannot expand an
+Apple key's permissions. A legacy key authorized by Apple for both environments
+still works without these overrides.
 The trial's `APNS_ENVIRONMENT` binding was changed from `sandbox` to `both` on
 2026-10-15 after deploying compatible API code. A subsequent Container image
 rollout (`6ff0b90a…`, Worker `73ec6657…`) completed and the live API returned

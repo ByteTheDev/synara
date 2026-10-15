@@ -32,7 +32,22 @@ export type ApnsConfig = {
   teamId: string;
   bundleId: string;
   environment: "sandbox" | "production" | "both";
+  /** Environment-restricted Apple keys need a separate Production signer. */
+  productionCredentials?: { privateKey: string; keyId: string };
 };
+
+// Validate each configured signer before startup; never include key material in errors.
+function apnsPrivateKey(value: string, name: string): string {
+  const privateKey = value.replace(/\\n/g, "\n");
+  try {
+    const key = createPrivateKey(privateKey);
+    if (key.asymmetricKeyType !== "ec" || key.asymmetricKeyDetails?.namedCurve !== "prime256v1")
+      throw new Error();
+  } catch {
+    throw new ApiConfigError(`${name} must be a P-256 PEM private key`);
+  }
+  return privateKey;
+}
 
 export function loadApnsConfig(env: Env): ApnsConfig | undefined {
   const names = [
@@ -42,29 +57,36 @@ export function loadApnsConfig(env: Env): ApnsConfig | undefined {
     "APNS_BUNDLE_ID",
     "APNS_ENVIRONMENT",
   ] as const;
-  if (!names.some((name) => env[name] !== undefined)) return undefined;
+  const productionNames = ["APNS_PRODUCTION_PRIVATE_KEY", "APNS_PRODUCTION_KEY_ID"] as const;
+  const hasProductionCredentials = productionNames.some((name) => env[name] !== undefined);
+  if (!names.some((name) => env[name] !== undefined) && !hasProductionCredentials) return undefined;
   requireVars(env, names);
+  if (hasProductionCredentials) requireVars(env, productionNames);
   if (
     !/^[A-Z0-9]{10}$/.test(env.APNS_KEY_ID!) ||
     !/^[A-Z0-9]{10}$/.test(env.APNS_TEAM_ID!) ||
     !/^[A-Za-z0-9.-]{1,200}$/.test(env.APNS_BUNDLE_ID!) ||
-    !["sandbox", "production", "both"].includes(env.APNS_ENVIRONMENT!)
+    !["sandbox", "production", "both"].includes(env.APNS_ENVIRONMENT!) ||
+    (hasProductionCredentials && !/^[A-Z0-9]{10}$/.test(env.APNS_PRODUCTION_KEY_ID!))
   )
     throw new ApiConfigError("Invalid APNs metadata or environment");
-  const privateKey = env.APNS_PRIVATE_KEY!.replace(/\\n/g, "\n");
-  try {
-    const key = createPrivateKey(privateKey);
-    if (key.asymmetricKeyType !== "ec" || key.asymmetricKeyDetails?.namedCurve !== "prime256v1")
-      throw new Error();
-  } catch {
-    throw new ApiConfigError("APNS_PRIVATE_KEY must be a P-256 PEM private key");
-  }
   return {
-    privateKey,
+    privateKey: apnsPrivateKey(env.APNS_PRIVATE_KEY!, "APNS_PRIVATE_KEY"),
     keyId: env.APNS_KEY_ID!,
     teamId: env.APNS_TEAM_ID!,
     bundleId: env.APNS_BUNDLE_ID!,
     environment: env.APNS_ENVIRONMENT as ApnsConfig["environment"],
+    ...(hasProductionCredentials
+      ? {
+          productionCredentials: {
+            privateKey: apnsPrivateKey(
+              env.APNS_PRODUCTION_PRIVATE_KEY!,
+              "APNS_PRODUCTION_PRIVATE_KEY",
+            ),
+            keyId: env.APNS_PRODUCTION_KEY_ID!,
+          },
+        }
+      : {}),
   };
 }
 

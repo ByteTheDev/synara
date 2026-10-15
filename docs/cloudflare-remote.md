@@ -158,6 +158,12 @@ partial/invalid configuration fails startup. Use `both` to accept development an
 TestFlight registrations together. The client still reports one environment per
 token; the API stores it and selects the corresponding fixed Apple gateway on
 delivery. Single-environment settings continue to reject mismatched registrations.
+An Apple key restricted to Sandbox cannot sign Production requests merely by
+setting `APNS_ENVIRONMENT=both`. Keep that Sandbox key in `APNS_PRIVATE_KEY` /
+`APNS_KEY_ID` and configure a separate `APNS_PRODUCTION_PRIVATE_KEY` /
+`APNS_PRODUCTION_KEY_ID` pair for the same app. The API validates both pairs and
+keeps their JWT caches separate. Existing keys that Apple permits in both
+environments can continue using only the original pair.
 Deploy the compatible API before changing the trial's current Sandbox setting to
 `both`. Sandbox delivery does not qualify TestFlight or App Store delivery.
 
