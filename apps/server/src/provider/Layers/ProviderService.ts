@@ -56,6 +56,7 @@ import {
   Duration,
   Effect,
   Exit,
+  Fiber,
   Layer,
   Option,
   PubSub,
@@ -5146,7 +5147,12 @@ const makeProviderService = (options?: ProviderServiceLiveOptions) =>
             { scheduleIdleStopOnSuccess: true },
           );
         }).pipe(Effect.ensuring(Effect.sync(() => prewarmsInFlight.delete(input.threadId))));
-      });
+      }).pipe(
+        // A client can close its view while a native startup Promise continues.
+        // Keep recovery and its generation owned until binding persistence ends.
+        Effect.forkIn(runtimeEventProducerScope),
+        Effect.flatMap(Fiber.join),
+      );
 
     const runStopAll = () =>
       Effect.gen(function* () {

@@ -887,3 +887,23 @@ and Polar credentials themselves were not refreshed or changed.
 These checks did not start new provider turns, use the physical iPhone, test
 cellular delivery or qualify TestFlight production background pushes. Stable and
 Beta homes remain untouched. No paid service or billing setting was enabled.
+
+### Follow-up — Recovery ownership after a client disconnects
+
+A post-install read found a separate MacBook thread stuck on Starting Codex:
+the native resume completed, but the runtime's generation differed from the
+coordinator and its ready events were discarded. The existing logs prove that
+mismatch, not the operation that changed the generation. A model-list refresh
+timeout also predates Remote `.4`; it is not attributed to this update.
+
+A focused regression reproduces a concrete ownership gap: cancelling the
+prewarm request during adapter startup used to cancel recovery and abandon
+its generation. Prewarm now runs in the existing provider-service scope;
+clients may stop waiting while recovery finishes binding persistence. Service
+shutdown still owns the job, deduplication and idle cleanup are retained, and
+the stale-event checks are unchanged. No new orchestration abstraction, timeout
+policy or provider choice is introduced. The regression failed before the fix
+and passes afterwards, including acceptance of the recovered runtime's ready
+event. All 397 provider service/coordinator/adapter/ingestion tests pass, as do
+format, lint (zero errors), twelve-package typecheck and Windows runtime guards.
+The recovery change is not in the installed `.4` package yet.
