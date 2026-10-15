@@ -945,3 +945,10 @@ or closed after verification. This does not claim a physical camera test.
 No wire-schema change requires a native mobile rebuild for these updates.
 TestFlight 131 remains the mobile build; the next desktop candidate must still
 pass signed packaging and installation qualification before replacing `.5`.
+
+The subsequent user UI commit `a26c1e8` is also included: capsule/button
+segmented-control variants and plain Add actions in Connections. The pairing
+illustrations now use the existing UI typography tokens so they follow the font
+setting. The final UI pass passed format, lint, twelve-package typecheck, four
+typography/selector guards and 26 browser cases covering Connections, inline
+visual blocks and the preview toolbar. No test threshold was relaxed.
