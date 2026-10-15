@@ -85,8 +85,10 @@ For ActivityKit background updates, configure all five optional secrets together
 `APNS_ENVIRONMENT` (`sandbox`, `production`, or `both`). Partial configuration fails API
 startup. The private key is a P-256 PEM; keep it exclusively in Worker secrets.
 The trial's `APNS_ENVIRONMENT` binding was changed from `sandbox` to `both` on
-2026-10-15 after deploying compatible API code. The running process has not yet
-been verified after reloading that binding; TestFlight delivery remains unqualified.
+2026-10-15 after deploying compatible API code. A subsequent Container image
+rollout (`6ff0b90a…`, Worker `73ec6657…`) completed and the live API returned
+the expected unauthenticated 401. Actual Production/TestFlight APNs delivery
+remains unqualified; deployment and startup are not proof of Apple delivery.
 Migration 0021 adds private activity subscriptions
 and host snapshots; it was applied and its Drizzle journal verified on 2026-10-09.
 For simultaneous development and TestFlight builds, deploy the compatible API

@@ -11,9 +11,13 @@
   23 Drizzle migrations, including additive `0022_account_deletions`; its new
   table has RLS enabled and no SELECT grant for `anon` or `authenticated`.
   All 23 Worker secret names were preserved. No real account deletion was run.
-- Installed `APNS_ENVIRONMENT=both` after compatible code deployment. Reload of
-  that binding in the running process and actual TestFlight APNs delivery remain
-  unverified; do not treat the secret update as a delivery result.
+- API proof expiry fix `d8c84fa` passed 369 tests against a fresh disposable
+  PostgreSQL database plus format, lint and twelve-package typecheck. Deployed
+  image `sha256:6ff0b90add17f7cae58ce3f25496554f60d45f8f3ca814228d8cb2183258a735`
+  as Worker version `73ec6657-61a8-4680-938c-fc194ee1d4a3`; live startup again
+  returned the expected unauthenticated 401. `APNS_ENVIRONMENT=both` was installed
+  before this rollout. Actual TestFlight APNs delivery remains unverified;
+  deployment and startup are not delivery proof.
 - Universal iOS/iPadOS version 0.1 (130) was exported with Cloud Managed Apple
   Distribution and uploaded successfully with the ordinary Xcode Apple ID.
   App Store Connect shows **Ready to Test**. The internal **Synara Early Access**
@@ -23,10 +27,17 @@
   desktop source. The final retained native checks passed 116 cases (one skip)
   on each simulator; the iPad docked-sidebar flow passed twice. The broader
   legacy native suite is not green; see the mobile handoff for retained gaps.
-- GitHub Actions refuses jobs before execution because account payments or its
-  spending limit need attention. Local Mini checks do not qualify a signed
-  desktop release. Desktop signing secrets exist in GitHub, but no desktop tag,
-  main merge, signed Beta publication or external TestFlight review is claimed.
+- GitHub Actions for the private SynaraIOS repository refuses hosted jobs before
+  execution because of account payment/spending limits; iOS qualification and
+  upload ran on the Mini. This does not block the public desktop repository's
+  standard runners. The obsolete build-only Beta candidate was cancelled after
+  the user requested a distinct app named **Synara Remote**. Its separate flavor,
+  data home and updater lane are implemented through the existing signing
+  workflow. Remote qualification passed 259 affected tests, twelve-package
+  typecheck, lint (zero errors), formatting, Windows boundary and release smoke.
+  Signed packaging/startup and the full exact-candidate CI gates remain pending. No new paid plan or spending limit was enabled.
+  No desktop tag, main merge, signed Remote publication or external TestFlight
+  review is claimed.
 
 Updated 2026-09-29. Original base `42aa8fb4f093f78fe7a1f7be5525f67571086ebf` verified clean; existing isolated worktree `a816/synara`, branch `codex/cloudflare-remote-mvp`. Git emits known AppleDouble index warnings; branch creation succeeded (exit 0) after granting Git metadata access. No pack repair.
 
