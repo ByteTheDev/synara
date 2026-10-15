@@ -70,12 +70,12 @@ async function seed(page: Page) {
       { timeout: 20_000 },
     )
     .toBe(true);
-  // A fresh isolated profile shows the same startup announcements as a new user.
-  // Dismiss them through their real controls so they cannot intercept editor input.
-  const imports = page.getByRole("dialog", { name: "Import projects", exact: true });
-  await expect(imports).toBeVisible();
-  await imports.getByRole("button", { name: "Not now", exact: true }).click();
-  await page.getByRole("button", { name: "Skip tour", exact: true }).click();
+  // The welcome tour suppresses the separate import announcement for new users.
+  // Dismiss the real tour rather than waiting for an intentionally absent dialog.
+  const welcome = page.getByRole("dialog", { name: "Welcome to Synara", exact: true });
+  const skipTour = welcome.getByRole("button", { name: "Skip setup", exact: true });
+  await expect(skipTour).toBeVisible();
+  await skipTour.click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page
     .evaluate(async (cwd) => {
@@ -113,11 +113,16 @@ async function seed(page: Page) {
       threadId = id;
     });
 }
+async function editorVisible(page: Page, relativePath: string) {
+  // Monaco's native EditContext input has no width until it receives focus.
+  // Assert the real visible editor, with its accessible input attached inside it.
+  const input = page.getByRole("textbox", { name: `Edit ${relativePath}`, exact: true });
+  await expect(input).toBeAttached();
+  await expect(page.locator(".monaco-editor").filter({ has: input })).toBeVisible();
+}
 async function open(page: Page, relativePath = "main.ts") {
   await page.goto(`/${threadId}?view=editor&editorFilePath=${encodeURIComponent(relativePath)}`);
-  await expect(
-    page.getByRole("textbox", { name: `Edit ${relativePath}`, exact: true }),
-  ).toBeVisible();
+  await editorVisible(page, relativePath);
 }
 async function position(page: Page, text: string, delta = 0) {
   await page.evaluate(
@@ -169,7 +174,7 @@ test("native editor intelligence, guarded persistence, navigation, and debugging
 
   await position(page, "greet(person", 1);
   await page.keyboard.press("F12");
-  await expect(page.getByRole("textbox", { name: "Edit greeting.ts", exact: true })).toBeVisible();
+  await editorVisible(page, "greeting.ts");
   await capture(page, info, "after-definition-navigation");
 
   await open(page);
