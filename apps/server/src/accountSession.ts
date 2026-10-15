@@ -568,15 +568,16 @@ export function createAccountSession(
     try {
       const me = await withSession(async (token, client) => {
         const verified = await client.me(token);
-        // Upgrade old credential files only against the exact token that
-        // produced /me. A late answer cannot overwrite a replacement account.
+        // A concurrent refresh may rotate the token while /me is in flight.
+        // An already verified identity stays signed in; legacy files may only
+        // acquire an identity from the exact token that produced this response.
         await withLockedAccountFile(credentialDir, async () => {
           const current = await readAccountCredentials(credentialDir);
           if (
             !current ||
-            current.accessToken !== token ||
+            current.accountUrl !== credentials.accountUrl ||
             current.organizationId !== verified.organization.id ||
-            (current.userId && current.userId !== verified.id)
+            (current.userId ? current.userId !== verified.id : current.accessToken !== token)
           )
             throw new SessionExpiredError();
           if (!current.userId)
