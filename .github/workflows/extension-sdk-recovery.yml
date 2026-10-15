@@ -1,4 +1,4 @@
-# Temporary execution bridge. Normalized application commits omit repair scripts.
+# Temporary execution bridge. No branch ref is changed here.
 name: Extension candidate validation
 on:
   push:
@@ -10,7 +10,7 @@ concurrency:
   group: extension-candidate-${{ github.ref }}
   cancel-in-progress: true
 env:
-  CANDIDATE_BASE: 0ce32a07aa245c458eafeb826f21906e3732dac4
+  CANDIDATE_BASE: a59d8454c6a79a6a99c62cd5ecf086f6656734e0
 jobs:
   prepare:
     runs-on: ubuntu-24.04
@@ -25,9 +25,12 @@ jobs:
           ref: ${{ env.CANDIDATE_BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - run: node scripts/repair-extension-host-defaults.mjs
-      - run: ./node_modules/.bin/oxfmt apps/server/src/extensions
-      - name: Store the normalized candidate without publishing a ref
+      - run: node scripts/finalize-extension-runtime-candidate.mjs
+      - run: |
+          ./node_modules/.bin/oxfmt apps/server/src/extensions \
+            apps/web/e2e/editorIntelligence.e2e.ts apps/web/e2e/editorExtensions.e2e.ts \
+            apps/web/e2e/editorAcceptanceFixture.ts apps/web/playwright.extensions.config.ts
+      - name: Store normalized candidate without publishing refs
         id: objects
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,25 +47,40 @@ jobs:
             if(!response.ok)throw new Error(`${endpoint}: ${response.status} ${await response.text()}`);
             return response.json();
           }
-          const files=execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean);
+          const files=new Set([...execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean),'apps/web/e2e/editorAcceptanceFixture.ts']);
+          const allowed=new Set(['apps/web/e2e/editorIntelligence.e2e.ts','apps/web/e2e/editorExtensions.e2e.ts','apps/web/e2e/editorAcceptanceFixture.ts','apps/web/playwright.extensions.config.ts']);
           const tree=[];
           for(const file of files){
-            if(!file.startsWith('apps/server/src/extensions/'))throw new Error(`Unexpected edit ${file}`);
+            if(!file.startsWith('apps/server/src/extensions/')&&!allowed.has(file))throw new Error(`Unexpected edit ${file}`);
             const blob=await api('git/blobs',{content:await readFile(file,'utf8'),encoding:'utf-8'});
             tree.push({path:file,mode:'100644',type:'blob',sha:blob.sha});
           }
-          tree.push({path:'scripts/repair-extension-host-defaults.mjs',mode:'100644',type:'blob',sha:null});
+          for(const file of ['scripts/finalize-extension-runtime-candidate.mjs','scripts/prepare-extension-evidence.mjs'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
           const base=await api(`git/commits/${process.env.CANDIDATE_BASE}`);
           const result=await api('git/trees',{base_tree:base.tree.sha,tree});
           const identity={name:'Commander Chara',email:'249489759+cmdr-chara@users.noreply.github.com'};
-          const commit=await api('git/commits',{message:'fix(extensions): use upstream configuration defaults and validate minimal formatter edits',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
+          const commit=await api('git/commits',{message:'fix(extensions): activate through upstream RPC and verify native formatting journey',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
           console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);
           await appendFile(process.env.GITHUB_OUTPUT,`candidate=${commit.sha}\n`);
           NODE
+  contracts:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.candidate }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Web and server contracts
+        run: |
+          bun run --cwd apps/web typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { tail -80 "$RUNNER_TEMP/types.log"; exit 1; }
+          bun run --cwd apps/server typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { tail -80 "$RUNNER_TEMP/types.log"; exit 1; }
   runtime:
     needs: prepare
     runs-on: ubuntu-22.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     permissions:
       contents: read
       actions: read
@@ -78,7 +96,7 @@ jobs:
           run-id: 38770793874
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/sdk
-      - name: Verify preserved SDK and immutable source
+      - name: Verify upstream build inputs
         run: |
           set -euo pipefail
           cd "$RUNNER_TEMP/sdk"
@@ -89,25 +107,34 @@ jobs:
           curl --fail --silent --show-error --location --max-time 90 'https://codeload.github.com/microsoft/vscode/tar.gz/7debcd0e2acdea1c52de81bf9ee1620444407dda' -o source.tar.gz
           echo '75b125b51f7258dbbd4cafb25ae658ea0edac4f2f5ad2ff9f61aeb8e1f99ee5e  source.tar.gz' | sha256sum -c -
           tar -xzf source.tar.gz
-      - name: Build real Code-OSS host
+      - name: Build actual Code-OSS host
         env:
           SYNARA_CODE_OSS_SOURCE: ${{ runner.temp }}/code-oss/vscode-7debcd0e2acdea1c52de81bf9ee1620444407dda
           SYNARA_CODE_OSS_OUTPUT: ${{ runner.temp }}/code-oss-runtime
           SYNARA_ESBUILD_MODULE: ${{ runner.temp }}/code-oss/builder/node_modules/esbuild/lib/main.js
         run: node scripts/build-code-oss-host.mjs
-      - name: Actual VSIX activation, formatting and cleanup
-        env:
-          SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
-        run: bun run --cwd apps/server test src/extensions/realHost.test.ts
-      - name: Install sandbox dependency without weakening OS policy
-        if: ${{ !cancelled() }}
+      - name: Install production sandbox
         run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
-      - name: Production manager, trust, sandbox, formatter and revocation
-        if: ${{ !cancelled() }}
+      - name: Real formatter and protected production lifecycle
         env:
           SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
           SYNARA_TEST_EXTENSION_SANDBOX: '1'
-        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts
+        run: bun run --cwd apps/server test src/extensions/realHost.test.ts src/extensions/realRuntime.test.ts
+      - name: Install browser runtime
+        if: ${{ !cancelled() }}
+        run: bun run --cwd apps/web test:browser:install
+      - name: Real application installation, consent, formatting, undo and screenshots
+        if: ${{ !cancelled() }}
+        env:
+          SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
+        run: cd apps/web && ./node_modules/.bin/playwright test --config playwright.extensions.config.ts
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: native-extension-application-evidence
+          path: apps/web/test-results
+          if-no-files-found: warn
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
