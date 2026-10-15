@@ -10,6 +10,9 @@ const unavailableMethods = new Set<string>([
   WS_METHODS.projectsStopDevServer,
   WS_METHODS.projectsListDevServers,
   WS_METHODS.shellOpenInEditor,
+  // Connector OAuth returns to the execution computer’s loopback browser.
+  WS_METHODS.serverConnectMcpConnector,
+  WS_METHODS.serverGetMcpConnectorSetup,
 ]);
 
 /** Both the controller UI and the authenticated host enforce this boundary. */

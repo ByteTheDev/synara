@@ -1,6 +1,7 @@
 import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { useLocation } from "@tanstack/react-router";
 import type { useSortable } from "@dnd-kit/sortable";
+import { ThreadId } from "@synara/contracts";
 import type { SidebarThreadSortOrder } from "../../appSettings";
 import { CentralIcon } from "../../lib/central-icons";
 import {
@@ -28,7 +29,7 @@ import {
 } from "../../lib/hosts/workspaceSessions";
 import type { WorkspaceSidebarActions } from "../../lib/hosts/workspaceFrame";
 import { openWorkspacePath } from "./WorkspacePanels";
-import { resolveProjectStatusIndicator } from "../Sidebar.logic";
+import { resolveProjectStatusIndicator, resolveSidebarRootThreadId } from "../Sidebar.logic";
 import { FolderIcon, FolderOpenIcon } from "~/lib/icons";
 import { ProjectEmojiGlyph } from "../ProjectSidebarIcon";
 import { SidebarIconButton } from "../SidebarIconButton";
@@ -165,13 +166,21 @@ function WorkspaceProjectIcon({
   return <Folder className="size-4" style={style} />;
 }
 
-function selectedThreadPath(href: string, environmentId: string, threadId: string): boolean {
+function selectedThreadPath(href: string, session: WorkspaceSession, threadId: string): boolean {
   const [pathname, search = ""] = href.split("?");
   if (pathname !== "/remote") return false;
   const params = new URLSearchParams(search);
+  const path = params.get("path")?.split("?")[0];
+  if (
+    params.get("environment") !== session.host.executionScope.environmentId ||
+    !path?.startsWith("/")
+  )
+    return false;
   return (
-    params.get("environment") === environmentId &&
-    params.get("path")?.split("?")[0] === `/${threadId}`
+    resolveSidebarRootThreadId(
+      ThreadId.makeUnsafe(path.slice(1)),
+      Object.fromEntries((session.summary?.threads ?? []).map((thread) => [thread.id, thread])),
+    ) === threadId
   );
 }
 
@@ -277,21 +286,17 @@ export function WorkspaceThreadActions({
 export function WorkspaceThreadRow({
   entry,
   topLevel: topLevelProp,
-  depth: depthProp,
   threadJumpLabel,
 }: {
   entry: WorkspaceThreadEntry;
   topLevel?: boolean;
-  depth?: number | undefined;
   threadJumpLabel?: string | null;
 }) {
   const topLevel = topLevelProp ?? false;
-  const depth = depthProp ?? 0;
   const href = useLocation({ select: (location) => location.href });
   const { session, thread } = entry;
   if (!session) return null;
-  const environmentId = session.host.executionScope.environmentId;
-  const active = selectedThreadPath(href, environmentId, thread.id);
+  const active = selectedThreadPath(href, session, thread.id);
   const hostName = session.host.hostName;
   const status = thread.status;
   const content = (
@@ -302,8 +307,6 @@ export function WorkspaceThreadRow({
       terminalCount={0}
       isActive={active}
       variant="standard"
-      subagentIndentPx={Math.max(0, Math.min(depth - 1, 3) * 10)}
-      relatedThreads={session.summary?.threads}
       pendingStatusColorClass={status?.label === "Pending Approval" ? status.colorClass : null}
       suffix={
         <>
@@ -404,7 +407,7 @@ export function WorkspaceProjectItem({
     ? null
     : resolveProjectStatusIndicator(entry.threads.map((thread) => thread.status));
   const activeThreadId = entry.threads.find((thread) =>
-    selectedThreadPath(href, environmentId, thread.id),
+    selectedThreadPath(href, session, thread.id),
   )?.id;
   const { visibleEntries, paging, canShowMore } = deriveWorkspaceProjectThreadRows({
     entry,
@@ -518,7 +521,6 @@ export function WorkspaceProjectItem({
               <SidebarMenuSubItem key={row.thread.id}>
                 <WorkspaceThreadRow
                   entry={{ key: `${entry.key}:${row.thread.id}`, thread: row.thread, session }}
-                  depth={row.depth}
                   threadJumpLabel={
                     threadJumpLabels?.get(workspaceThreadKey(environmentId, row.thread.id)) ?? null
                   }

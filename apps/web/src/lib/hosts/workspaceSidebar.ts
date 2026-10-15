@@ -1,6 +1,6 @@
 import type { SidebarProjectSortOrder, SidebarThreadSortOrder } from "../../appSettings";
 import {
-  buildProjectThreadTree,
+  resolveSidebarRootThreadId,
   getProjectSortTimestamp,
   getUnpinnedThreadsForSidebar,
   getVisibleSidebarEntriesForPreview,
@@ -23,8 +23,6 @@ export interface WorkspaceProjectEntry {
 
 export interface WorkspaceThreadEntry {
   readonly key: string;
-  readonly depth?: number;
-  readonly rootKey?: string;
   readonly thread: WorkspaceSummary["threads"][number];
   readonly session: WorkspaceSession | null;
 }
@@ -41,13 +39,14 @@ export function deriveWorkspaceProjectThreadRows(input: {
   extraPages: number;
 }) {
   const threads = getUnpinnedThreadsForSidebar(
-    input.entry.threads,
+    input.entry.threads.filter((thread) => !thread.parentThreadId && !thread.archivedAt),
     input.entry.threads.filter((thread) => thread.isPinned).map((thread) => thread.id),
   );
-  const rows = buildProjectThreadTree({
-    threads: sortThreadsForSidebar(threads, input.sortOrder),
-    forceVisibleThreadId: input.activeThreadId,
-  });
+  const rows = sortThreadsForSidebar(threads, input.sortOrder).map((thread) => ({ thread }));
+  const activeRootId = resolveSidebarRootThreadId(
+    input.activeThreadId ?? null,
+    Object.fromEntries(input.entry.threads.map((thread) => [thread.id, thread])),
+  );
   const paging = resolveSidebarThreadListPaging({
     totalCount: rows.length,
     baseLimit: 5,
@@ -55,8 +54,8 @@ export function deriveWorkspaceProjectThreadRows(input: {
     requestedExtraPages: input.extraPages,
   });
   const { visibleEntries } = getVisibleSidebarEntriesForPreview({
-    entries: rows.map((row) => ({ rowId: row.thread.id, rootRowId: row.rootThreadId, row })),
-    activeEntryId: input.activeThreadId,
+    entries: rows.map((row) => ({ rowId: row.thread.id, row })),
+    activeEntryId: activeRootId ?? undefined,
     previewLimit: paging.previewLimit,
   });
   return {
@@ -160,31 +159,16 @@ export function mergeSidebarChats(input: {
   sortOrder: SidebarThreadSortOrder;
   /** Attention-first and held pointer-order keys, shared with the local sidebar lists. */
   sortOptions?: SidebarThreadSortOptions;
-  selectedByEnvironment?: ReadonlyMap<string, ThreadId>;
 }): WorkspaceThreadEntry[] {
-  const roots: (WorkspaceSummary["threads"][number] & { rows: WorkspaceThreadEntry[] })[] = [];
+  const entries: WorkspaceThreadEntry[] = [];
   const append = (
     environmentId: string,
     threads: readonly WorkspaceSummary["threads"][number][],
     session: WorkspaceSession | null,
   ) => {
-    const rows = buildProjectThreadTree({
-      threads: sortThreadsForSidebar(threads, input.sortOrder, input.sortOptions),
-      forceVisibleThreadId: input.selectedByEnvironment?.get(environmentId),
-    });
-    let family: WorkspaceThreadEntry[] = [];
-    for (const row of rows) {
-      if (row.depth === 0) {
-        family = [];
-        roots.push({ ...row.thread, rows: family });
-      }
-      family.push({
-        key: workspaceThreadKey(environmentId, row.thread.id),
-        rootKey: workspaceThreadKey(environmentId, row.rootThreadId),
-        depth: row.depth,
-        thread: row.thread,
-        session,
-      });
+    for (const thread of threads) {
+      if (thread.parentThreadId) continue;
+      entries.push({ key: workspaceThreadKey(environmentId, thread.id), thread, session });
     }
   };
   append(
@@ -210,10 +194,12 @@ export function mergeSidebarChats(input: {
       session,
     );
   }
-  // Sort roots across computers while keeping revealed subagent families together.
-  return sortThreadsForSidebar(roots, input.sortOrder, input.sortOptions).flatMap(
-    (root) => root.rows,
-  );
+  // Sort qualified rows together without merging equal thread IDs from different computers.
+  return sortThreadsForSidebar(
+    entries.map((entry) => ({ ...entry.thread, entry })),
+    input.sortOrder,
+    input.sortOptions,
+  ).map(({ entry }) => entry);
 }
 
 /** Activity presentation uses scoped keys; mutations still belong to the original runtime. */

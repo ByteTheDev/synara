@@ -4,6 +4,7 @@ import type { Project } from "../../types";
 import type { WorkspaceSummary } from "./workspaceFrame";
 import type { WorkspaceSession } from "./workspaceSessions";
 import {
+  deriveWorkspaceProjectThreadRows,
   mergeSidebarChats,
   mergeSidebarProjects,
   remoteSidebarProjects,
@@ -142,7 +143,7 @@ describe("unified workspace sidebar", () => {
     expect(rows.map((entry) => entry.session?.host.hostId ?? "book")).toEqual(["mini", "book"]);
     expect(new Set(rows.map((entry) => entry.key)).size).toBe(2);
   });
-  it("keeps subagent families together and hides pinned and orphan remote chats", () => {
+  it("hides remote subagents and pinned chats while revealing the selected child’s root", () => {
     const parent = thread("2026-09-29T00:00:00Z");
     const child = {
       ...parent,
@@ -178,18 +179,31 @@ describe("unified workspace sidebar", () => {
       "same-thread",
       "same-thread",
     ]);
-    const rows = mergeSidebarChats({
-      ...input,
-      selectedByEnvironment: new Map([["mini", child.id]]),
+    const roots = Array.from({ length: 6 }, (_, index) => ({
+      ...parent,
+      id: ThreadId.makeUnsafe(`root-${index}`),
+      updatedAt: `2026-09-29T0${index}:00:00Z`,
+    }));
+    const result = deriveWorkspaceProjectThreadRows({
+      entry: {
+        key: "mini-project",
+        project: host.summary!.projects[0]!,
+        threads: [...roots, { ...child, parentThreadId: roots[0]!.id }],
+        session: host,
+      },
+      sortOrder: "updated_at",
+      activeThreadId: child.id,
+      extraPages: 0,
     });
-    expect(
-      rows.map((entry) => [entry.session?.host.hostId ?? "book", entry.thread.id, entry.depth]),
-    ).toEqual([
-      ["book", "same-thread", 0],
-      ["mini", "same-thread", 0],
-      ["mini", "child", 1],
+    expect(result.visibleEntries.map(({ row }) => row.thread.id)).toEqual([
+      "root-5",
+      "root-4",
+      "root-3",
+      "root-2",
+      "root-1",
+      "root-0",
     ]);
-    expect(rows[2]!.rootKey).toBe(rows[1]!.key);
+    expect(result.canShowMore).toBe(false);
   });
   it("qualifies Activity rows and parent references while preserving original routing identity", () => {
     let first = session("mini");

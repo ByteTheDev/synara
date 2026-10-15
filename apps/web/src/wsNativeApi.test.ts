@@ -227,6 +227,14 @@ describe("wsNativeApi", () => {
     });
     await api.account.status();
     await api.server.getEnvironment();
+    await api.server.listMcpConnectors();
+    await api.server.disconnectMcpConnector({ connectorId: "owner-connector" });
+    await expect(api.server.getMcpConnectorSetup()).rejects.toThrow(
+      "unavailable for remote workspaces",
+    );
+    await expect(
+      api.server.connectMcpConnector({ url: "https://connector.example/mcp" }),
+    ).rejects.toThrow("unavailable for remote workspaces");
     expect(transportInstances).toHaveLength(2);
     expect(transportInstances[0]!.requests.map((call) => call[0])).toEqual([
       WS_METHODS.accountStatus,
@@ -234,6 +242,8 @@ describe("wsNativeApi", () => {
     expect(transportInstances[1]!.url).toBe("ws://127.0.0.1:58001/ws/remote/mini-host/ws");
     expect(transportInstances[1]!.requests.map((call) => call[0])).toEqual([
       WS_METHODS.serverGetEnvironment,
+      WS_METHODS.serverListMcpConnectors,
+      WS_METHODS.serverDisconnectMcpConnector,
     ]);
     expect(transportInstances[0]!.subscriptions).toEqual([]);
     expect(transportInstances[1]!.subscriptions).toContain(WS_CHANNELS.serverWelcome);

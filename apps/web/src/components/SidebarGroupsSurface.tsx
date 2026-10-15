@@ -106,7 +106,6 @@ export function SidebarGroupsSurface({
   readonly renderThreadRow: (
     thread: SidebarThreadSummary,
     orderedProjectThreadIds: readonly ThreadId[],
-    depth?: number,
     topLevel?: boolean,
     projectContextLabel?: string,
   ) => ReactNode;
@@ -469,7 +468,6 @@ export function SidebarGroupsSurface({
                           renderThreadRow(
                             entry.thread,
                             projectSidebarData?.orderedProjectThreadIds ?? [],
-                            entry.depth,
                             false,
                             entry.thread.projectId !== project.id
                               ? (projectLabelById.get(entry.thread.projectId) ?? undefined)

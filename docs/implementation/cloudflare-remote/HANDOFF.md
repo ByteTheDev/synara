@@ -1,5 +1,48 @@
 # Remote connections — punto di ripartenza
 
+## Main 1.0.5 / 1.0.6 Beta — 15 ottobre 2026
+
+Integrato main `34a6aef` nel branch pubblico con un merge, senza riscrivere i
+commit già condivisi. Backup precedente:
+`codex/backup-remote-before-main-20261015` (`c7f4aec`).
+
+- Conservati composer/capsule, permessi Claude, deduplicazione utilizzo Claude,
+  conteggio cache, recupero provider e correzioni di focus/streaming di main.
+- Sidebar remota adattata alle sole chat principali; selezionare un subagent
+  evidenzia la chat radice senza segnare come letta una chat diversa. Paging e
+  scorciatoie usano la stessa lista, anche tra computer con ID chat uguali.
+- Activity usa lo stato pubblicato dal computer proprietario anche per Priority.
+- Il conteggio profilo mantiene l'attribuzione per sessione/model/effort del
+  branch e aggiunge i cache-read delta di main, inclusi nel totale.
+- Connector MCP Beta registrati nel server/RPC. Elenco e disconnessione seguono
+  il computer proprietario; configurazione e login OAuth restano locali al
+  computer che riceve il callback loopback. Nessun fallback al controller.
+- Inline visuals seguono la promozione Stable di main. Connessioni remote,
+  profilo cloud e Inbox account mantengono i gate del branch.
+- iPhone/iPad: contratto cache token e data dell'ultimo messaggio umano,
+  descrizioni dei permessi specifiche per provider, sidebar senza subagent e
+  Priority stabile finché si cambia vista/filtro o si svuotano le righe lette.
+  Le correzioni del runtime provider si eseguono sul Mac aggiornato.
+
+Verifiche desktop: suite workspace eseguita per tutti i pacchetti. Il server è
+stato completato con rilanci mirati dopo esaurimento dello spazio temporaneo:
+630 file di test passati, 3 già saltati. Corretto il segnale di avvio del processo
+fittizio nel test Claude (scrittura atomica del PID); le verifiche di terminazione
+restano invariate. I test API che richiedono PostgreSQL (217) restano saltati in
+questa esecuzione; 148 test API passati. I 28 test browser Activity passano.
+Formatting, lint (zero errori), typecheck (12 pacchetti), controllo Windows e
+lineage migrazioni (103 tag pubblicati) passati. Nessuna migrazione rinumerata.
+
+Nel controllo mobile sono emerse tre regex ICU invalide per i conteggi `+/-`
+e alias legacy di provider duplicati nel picker: corretti su iPhone/iPad, senza
+unire istanze/account diversi. Allineate fixture obsolete ai contratti di
+identità e ordinamento già in uso; nessuna rimozione delle protezioni anti-replay.
+
+Nessun deploy, modifica a credenziali, account o database applicativi; nessuna
+installazione sull'iPhone fisico. Provider reali, login, APNs e Windows
+confezionato non sono stati nuovamente provati in questo aggiornamento. Le build
+del simulatore sono artefatti di sviluppo, non release firmate/TestFlight.
+
 ## Rebase main — 12 ottobre 2026
 
 Aggiornato a main `d450964` preservando la struttura dei merge e verificando il

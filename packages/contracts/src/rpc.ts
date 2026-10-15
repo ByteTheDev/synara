@@ -118,6 +118,14 @@ import {
   ExternalMcpRevokeIntegrationInput,
 } from "./externalMcp";
 import {
+  McpConnector,
+  McpConnectorConnectInput,
+  McpConnectorConnectResult,
+  McpConnectorDisconnectInput,
+  McpConnectorDisconnectResult,
+  McpConnectorSetup,
+} from "./mcpConnectors";
+import {
   DEVICE_WS_METHODS,
   DeviceAttachInput,
   DeviceBootInput,
@@ -1456,6 +1464,30 @@ export const WsServerRefreshExternalMcpPairingRpc = Rpc.make(
   },
 );
 
+export const WsServerListMcpConnectorsRpc = Rpc.make(WS_METHODS.serverListMcpConnectors, {
+  payload: Schema.Struct({}),
+  success: Schema.Array(McpConnector),
+  error: WsRpcError,
+});
+
+export const WsServerConnectMcpConnectorRpc = Rpc.make(WS_METHODS.serverConnectMcpConnector, {
+  payload: McpConnectorConnectInput,
+  success: McpConnectorConnectResult,
+  error: WsRpcError,
+});
+
+export const WsServerDisconnectMcpConnectorRpc = Rpc.make(WS_METHODS.serverDisconnectMcpConnector, {
+  payload: McpConnectorDisconnectInput,
+  success: McpConnectorDisconnectResult,
+  error: WsRpcError,
+});
+
+export const WsServerGetMcpConnectorSetupRpc = Rpc.make(WS_METHODS.serverGetMcpConnectorSetup, {
+  payload: Schema.Struct({}),
+  success: McpConnectorSetup,
+  error: WsRpcError,
+});
+
 export const WsServerListWorktreesRpc = Rpc.make(WS_METHODS.serverListWorktrees, {
   payload: Schema.Struct({}),
   success: ServerListWorktreesResult,
@@ -2297,6 +2329,10 @@ export type WsFeatureRpc =
   | typeof WsServerCreateExternalMcpIntegrationRpc
   | typeof WsServerRevokeExternalMcpIntegrationRpc
   | typeof WsServerRefreshExternalMcpPairingRpc
+  | typeof WsServerListMcpConnectorsRpc
+  | typeof WsServerConnectMcpConnectorRpc
+  | typeof WsServerDisconnectMcpConnectorRpc
+  | typeof WsServerGetMcpConnectorSetupRpc
   | typeof WsServerListWorktreesRpc
   | typeof WsServerListLocalServersRpc
   | typeof WsServerStopLocalServerRpc
@@ -2482,6 +2518,10 @@ export const WsFeatureRpcGroup: RpcGroup.RpcGroup<WsFeatureRpc> = RpcGroup.make(
   WsServerCreateExternalMcpIntegrationRpc,
   WsServerRevokeExternalMcpIntegrationRpc,
   WsServerRefreshExternalMcpPairingRpc,
+  WsServerListMcpConnectorsRpc,
+  WsServerConnectMcpConnectorRpc,
+  WsServerDisconnectMcpConnectorRpc,
+  WsServerGetMcpConnectorSetupRpc,
   WsServerListWorktreesRpc,
   WsServerListLocalServersRpc,
   WsServerStopLocalServerRpc,

@@ -42,7 +42,7 @@ import { useSidebarThreadActions } from "../../hooks/useSidebarThreadActions";
 import { useDiffRouteSearch } from "../../hooks/useDiffRouteSearch";
 import {
   createSidebarThreadSummariesSelector,
-  createSidebarTreeThreadsSelector,
+  createSidebarDisplayThreadsSelector,
 } from "../../storeSelectors";
 import { useSplitViewStore, selectSplitView } from "../../splitViewStore";
 import { usePinnedProjectsStore } from "../../pinnedProjectsStore";
@@ -401,7 +401,7 @@ export function WorkspaceFrameNavigation() {
   const sidebarTreeThreads = useStore(
     useMemo(
       () =>
-        createSidebarTreeThreadsSelector({
+        createSidebarDisplayThreadsSelector({
           hideAutomationRunThreads: !settings.showAutomationRunThreads,
         }),
       [settings.showAutomationRunThreads],

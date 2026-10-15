@@ -58,6 +58,7 @@ import { ProjectFaviconResolverLive } from "./project/Layers/ProjectFaviconResol
 import { ExternalMcpRepositoryLive } from "./externalMcp/Layers/ExternalMcpRepository";
 import { ExternalMcpServiceLive } from "./externalMcp/Layers/ExternalMcpService";
 import { ExternalMcpGatewayLive } from "./externalMcp/Layers/ExternalMcpGateway";
+import { McpConnectorsLive } from "./mcpConnectors/Layers/McpConnectors";
 import { ServerEnvironmentLive } from "./environment/Layers/ServerEnvironment";
 import { AutomationRepositoryLive } from "./persistence/Layers/AutomationRepository";
 import { TodoRepositoryLive } from "./persistence/Layers/TodoRepository";
@@ -241,6 +242,12 @@ export function makeServerRuntimeServicesLayer(
     Layer.provideMerge(serverSettingsLayer),
     Layer.provideMerge(providerHealthLayer),
   );
+  // Connectors publish their proxies into the same credential registry the
+  // provider adapters read, so new sessions pick them up.
+  const mcpConnectorsLayer = McpConnectorsLive.pipe(
+    Layer.provideMerge(ServerSecretStoreLive),
+    Layer.provideMerge(agentGatewayCredentialsLayer),
+  );
   const agentGatewayLayer = AgentGatewayLive.pipe(
     Layer.provideMerge(ServerEnvironmentLive),
     Layer.provideMerge(HostConnectionRegistryLive),
@@ -316,6 +323,7 @@ export function makeServerRuntimeServicesLayer(
     ExternalMcpRepositoryLive,
     externalMcpServiceLayer,
     externalMcpGatewayLayer,
+    mcpConnectorsLayer,
     providerHealthLayer,
     ProjectPullRequestPinsLive,
     pullRequestServiceLayer,
