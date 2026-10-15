@@ -10,7 +10,7 @@ jobs:
   sdk:
     if: github.repository == 'Emanuele-web04/synara'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
@@ -18,64 +18,36 @@ jobs:
       - uses: ./.github/actions/setup-workspace
         with:
           electron: 'true'
-      - name: Preserve exact source, dependencies and tools
+      - name: Archive dependencies in bounded parts
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/synara-offline/source" "$RUNNER_TEMP/synara-offline/tools" "$RUNNER_TEMP/synara-offline/modules"
-          git archive --format=tar HEAD | zstd -T0 -3 -o "$RUNNER_TEMP/synara-offline/source/source.tar.zst"
-          git rev-parse HEAD > "$RUNNER_TEMP/synara-offline/source/commit.txt"
-          git rev-parse HEAD^{tree} > "$RUNNER_TEMP/synara-offline/source/tree.txt"
-          tar -I 'zstd -T0 -3' -cf "$RUNNER_TEMP/synara-offline/modules/modules.tar.zst" node_modules apps/*/node_modules packages/*/node_modules scripts/node_modules
-          cp "$(command -v node)" "$RUNNER_TEMP/synara-offline/tools/node"
-          cp "$(command -v bun)" "$RUNNER_TEMP/synara-offline/tools/bun"
+          mkdir -p "$RUNNER_TEMP/synara-offline"
+          tar -I 'zstd -T0 -3' -cf "$RUNNER_TEMP/synara-offline/modules.tar.zst" node_modules apps/*/node_modules packages/*/node_modules scripts/node_modules
           cd "$RUNNER_TEMP/synara-offline"
-          sha256sum source/source.tar.zst modules/modules.tar.zst tools/node tools/bun > SHA256SUMS
-      - name: Resolve headless upstream build dependencies
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/extension-sdk"
-          cd "$RUNNER_TEMP/extension-sdk"
-          curl --fail --silent --show-error --max-time 90 'https://codeload.github.com/microsoft/vscode/tar.gz/7debcd0e2acdea1c52de81bf9ee1620444407dda' -o code-oss.tar.gz
-          echo '75b125b51f7258dbbd4cafb25ae658ea0edac4f2f5ad2ff9f61aeb8e1f99ee5e  code-oss.tar.gz' | sha256sum -c -
-          tar -xzf code-oss.tar.gz
-          cd vscode-7debcd0e2acdea1c52de81bf9ee1620444407dda
-          npm install --omit=dev --ignore-scripts --package-lock=false --no-audit --no-fund
-          cd ..
-          mkdir builder
-          cd builder
-          npm init -y >/dev/null
-          npm install --ignore-scripts --package-lock=false --no-audit --no-fund esbuild@0.25.12 yauzl@3.4.0 semver@7.7.4
-          cd ..
-          tar -I 'zstd -T0 -3' -cf extension-sdk.tar.zst vscode-*/node_modules builder
-          sha256sum extension-sdk.tar.zst > SDK.sha256
+          sha256sum modules.tar.zst > SHA256SUMS
+          split --bytes=400M --numeric-suffixes=0 --suffix-length=2 modules.tar.zst modules.part-
+          sha256sum modules.part-* >> SHA256SUMS
       - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
         with:
-          name: synara-offline-source-tools
+          name: synara-offline-modules-part-00
           path: |
-            ${{ runner.temp }}/synara-offline/source
-            ${{ runner.temp }}/synara-offline/tools
+            ${{ runner.temp }}/synara-offline/modules.part-00
             ${{ runner.temp }}/synara-offline/SHA256SUMS
           compression-level: 0
           retention-days: 2
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
         with:
-          name: synara-offline-modules-linux-x64
-          path: ${{ runner.temp }}/synara-offline/modules
+          name: synara-offline-modules-part-01
+          path: ${{ runner.temp }}/synara-offline/modules.part-01
           compression-level: 0
           retention-days: 2
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
         with:
-          name: code-oss-offline-build-sdk
-          path: |
-            ${{ runner.temp }}/extension-sdk/extension-sdk.tar.zst
-            ${{ runner.temp }}/extension-sdk/SDK.sha256
+          name: synara-offline-modules-part-02
+          path: ${{ runner.temp }}/synara-offline/modules.part-02
           compression-level: 0
           retention-days: 2
-          if-no-files-found: error
+          if-no-files-found: warn
