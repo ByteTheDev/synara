@@ -1,5 +1,5 @@
-# Temporary execution bridge. It does not update branch refs.
-name: Extension candidate validation
+# Last branch-only assembly bridge. The normalized application tree removes this file.
+name: Extension publication validation
 on:
   push:
     branches: [feat/synara-code-oss-extensions]
@@ -10,7 +10,7 @@ concurrency:
   group: extension-candidate-${{ github.ref }}
   cancel-in-progress: true
 env:
-  CANDIDATE_BASE: 7e550f4e9a43afe9751a2ec75ce0ab5da7c31924
+  CANDIDATE_BASE: 66a967048f9f37d2412807e15d191f9ac442f6b1
 jobs:
   prepare:
     runs-on: ubuntu-24.04
@@ -25,15 +25,15 @@ jobs:
           ref: ${{ env.CANDIDATE_BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - run: node scripts/prepare-native-contribution-acceptance.mjs
-      - run: |
-          ./node_modules/.bin/oxfmt apps/server/src/extensions \
-            apps/web/src/components/codeEditor/editorExtensionBridge.ts \
-            apps/web/src/components/codeEditor/extensionContributions.ts \
-            apps/web/src/components/codeEditor/extensionContributions.browser.tsx \
-            apps/web/src/components/codeEditor/EditorExtensionContributions.tsx \
-            apps/web/src/components/codeEditor/EditorExtensionInteraction.tsx apps/web/e2e/editorExtensions.e2e.ts
-      - name: Store normalized candidate objects without publishing refs
+      - run: node scripts/prepare-extension-ui-isolation.mjs
+      - name: Format only the publication change set
+        run: |
+          ./node_modules/.bin/oxfmt apps/server/src/extensions/extensionRuntime.ts apps/server/src/extensions/realRuntime.test.ts \
+            apps/web/e2e/editorExtensions.e2e.ts apps/web/e2e/editorExtensionDebug.e2e.ts \
+            apps/web/e2e/extensionAcceptanceControls.ts apps/web/playwright.extensions.config.ts \
+            scripts/build-code-oss-host.mjs scripts/code-oss-notices.mjs docs/editor/extensions.md \
+            .github/actions/build-code-oss/action.yml .github/workflows/code-oss-extension-acceptance.yml
+      - name: Store clean candidate objects without moving any ref
         id: objects
         env:
           GH_TOKEN: ${{ github.token }}
@@ -50,102 +50,102 @@ jobs:
             if(!response.ok)throw new Error(`${endpoint}: ${response.status} ${await response.text()}`);
             return response.json();
           }
-          const files=execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean);
+          const allowed=new Set(['apps/server/src/extensions/extensionRuntime.ts','apps/server/src/extensions/realRuntime.test.ts',
+            'apps/web/e2e/editorExtensions.e2e.ts','apps/web/e2e/editorExtensionDebug.e2e.ts','apps/web/e2e/extensionAcceptanceControls.ts',
+            'apps/web/playwright.extensions.config.ts','scripts/build-code-oss-host.mjs','scripts/code-oss-notices.mjs',
+            'docs/editor/extensions.md','.github/actions/build-code-oss/action.yml','.github/workflows/code-oss-extension-acceptance.yml']);
+          const files=new Set([...execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean),'apps/web/e2e/extensionAcceptanceControls.ts']);
           const tree=[];
           for(const file of files){
-            if(!file.startsWith('apps/server/src/extensions/')&&!file.startsWith('apps/web/src/components/codeEditor/')&&file!=='apps/web/e2e/editorExtensions.e2e.ts')throw new Error(`Unexpected edit ${file}`);
+            if(!allowed.has(file))throw new Error(`Unexpected edit ${file}`);
             const blob=await api('git/blobs',{content:await readFile(file,'utf8'),encoding:'utf-8'});
             tree.push({path:file,mode:'100644',type:'blob',sha:blob.sha});
           }
-          for(const file of ['scripts/prepare-native-contribution-acceptance.mjs','scripts/complete-extension-contributions.mjs'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
+          for(const file of ['scripts/prepare-extension-publication.mjs','scripts/prepare-extension-ui-isolation.mjs','.github/workflows/extension-sdk-recovery.yml'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
           const base=await api(`git/commits/${process.env.CANDIDATE_BASE}`);
           const result=await api('git/trees',{base_tree:base.tree.sha,tree});
           const identity={name:'Commander Chara',email:'249489759+cmdr-chara@users.noreply.github.com'};
-          const commit=await api('git/commits',{message:'feat(extensions): integrate native views, status, progress and notifications',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
+          const commit=await api('git/commits',{message:'feat(extensions): finalize native extension runtime, compatibility evidence and reproducible build',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
           console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);
+          console.log('NORMALIZED_FILES',JSON.stringify(tree));
           await appendFile(process.env.GITHUB_OUTPUT,`candidate=${commit.sha}\n`);
           NODE
   validation:
     needs: prepare
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ needs.prepare.outputs.candidate }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - name: Required formatting
-        run: bun run fmt:check
-      - name: Required lint
-        if: ${{ !cancelled() }}
-        run: bun run lint > "$RUNNER_TEMP/lint.log" 2>&1 || { tail -100 "$RUNNER_TEMP/lint.log"; exit 1; }
-      - name: Integrated typecheck
+      - name: Required format and lint
+        run: |
+          bun run fmt:check
+          bun run lint > "$RUNNER_TEMP/lint.log" 2>&1 || { tail -80 "$RUNNER_TEMP/lint.log"; exit 1; }
+      - name: Integrated types
         if: ${{ !cancelled() }}
         run: bun run typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { grep -E 'error TS|error:' "$RUNNER_TEMP/types.log"; exit 1; }
-      - name: Package and process boundaries
+      - name: Browser production build
+        if: ${{ !cancelled() }}
+        run: bun run --cwd apps/web build > "$RUNNER_TEMP/web-build.log" 2>&1 || { tail -80 "$RUNNER_TEMP/web-build.log"; exit 1; }
+      - name: Native editor and process ownership regressions
         if: ${{ !cancelled() }}
         run: |
           bun run windows-runtime:check
-          bun run --cwd apps/server test src/extensions/manifest.test.ts src/extensions/vsix.test.ts src/extensions/openVsx.test.ts src/platform/extensionHostSandbox.test.ts
+          bun run --cwd apps/server test src/editor src/platform/extensionHostSandbox.test.ts
       - name: Install browser
         if: ${{ !cancelled() }}
         run: bun run --cwd apps/web test:browser:install
-      - name: Native bridge and contribution regression tests
+      - name: Integrated native editor browser regressions
         if: ${{ !cancelled() }}
-        run: bun run --cwd apps/web test:browser:ci -- --project=components src/components/codeEditor/editorExtensionBridge.browser.tsx src/components/codeEditor/extensionContributions.browser.tsx
-  runtime:
+        run: bun run --cwd apps/web test:browser:ci -- --project=components src/components/codeEditor src/lib/workspaceEditorSession.browser.tsx
+  packages:
     needs: prepare
-    runs-on: ubuntu-22.04
-    timeout-minutes: 12
-    permissions:
-      contents: read
-      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ needs.prepare.outputs.candidate }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - uses: actions/download-artifact@v4
+      - name: VSIX and registry platform boundaries
+        run: bun run --cwd apps/server test src/extensions/manifest.test.ts src/extensions/vsix.test.ts src/extensions/openVsx.test.ts
+  runtime:
+    needs: prepare
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
         with:
-          name: code-oss-offline-build-sdk
-          run-id: 38770793874
-          github-token: ${{ github.token }}
-          path: ${{ runner.temp }}/sdk
-      - name: Verify immutable upstream inputs
-        run: |
-          set -euo pipefail
-          cd "$RUNNER_TEMP/sdk"
-          sha256sum -c SDK.sha256
-          mkdir -p "$RUNNER_TEMP/code-oss"
-          tar -I zstd -xf extension-sdk.tar.zst -C "$RUNNER_TEMP/code-oss"
-          cd "$RUNNER_TEMP/code-oss"
-          curl --fail --silent --show-error --location --max-time 90 'https://codeload.github.com/microsoft/vscode/tar.gz/7debcd0e2acdea1c52de81bf9ee1620444407dda' -o source.tar.gz
-          echo '75b125b51f7258dbbd4cafb25ae658ea0edac4f2f5ad2ff9f61aeb8e1f99ee5e  source.tar.gz' | sha256sum -c -
-          tar -xzf source.tar.gz
-      - name: Build actual Code-OSS host
-        env:
-          SYNARA_CODE_OSS_SOURCE: ${{ runner.temp }}/code-oss/vscode-7debcd0e2acdea1c52de81bf9ee1620444407dda
-          SYNARA_CODE_OSS_OUTPUT: ${{ runner.temp }}/code-oss-runtime
-          SYNARA_ESBUILD_MODULE: ${{ runner.temp }}/code-oss/builder/node_modules/esbuild/lib/main.js
-        run: node scripts/build-code-oss-host.mjs
+          ref: ${{ needs.prepare.outputs.candidate }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Production server build
+        run: bun run --cwd apps/server build
+      - uses: ./.github/actions/build-code-oss
       - name: Install sandbox and debugger
         run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap gdb
-      - name: Formatter, linter, language-server and debugger extensions
+      - name: Actual extensions and OS isolation
         env:
-          SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
+          SYNARA_TEST_CODE_OSS_HOST: ${{ github.workspace }}/apps/server/dist/code-oss/extension-host.mjs
           SYNARA_TEST_EXTENSION_SANDBOX: '1'
-        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts src/extensions/realLanguageServer.test.ts src/extensions/realDebuggerExtension.test.ts src/extensions/realLinterExtension.test.ts
+        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts src/extensions/realLanguageServer.test.ts src/extensions/realDebuggerExtension.test.ts src/extensions/realLinterExtension.test.ts src/platform/extensionHostSandbox.integration.test.ts
       - name: Install browser
         if: ${{ !cancelled() }}
         run: bun run --cwd apps/web test:browser:install
-      - name: Actual Synara application acceptance and screenshots
+      - name: Real formatter and debugger in Synara UI
         if: ${{ !cancelled() }}
         env:
-          SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
+          SYNARA_TEST_CODE_OSS_HOST: ${{ github.workspace }}/apps/server/dist/code-oss/extension-host.mjs
         run: cd apps/web && ./node_modules/.bin/playwright test --config playwright.extensions.config.ts
-      - name: Preserve readable browser failure context
+      - name: Preserve readable failure context
         if: ${{ failure() }}
         run: find apps/web/test-results -name error-context.md -exec cat {} \;
       - uses: actions/upload-artifact@v4
@@ -153,12 +153,12 @@ jobs:
         with:
           name: native-extension-application-evidence
           path: apps/web/test-results
-          if-no-files-found: warn
           retention-days: 14
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: code-oss-candidate-runtime
-          path: ${{ runner.temp }}/code-oss-runtime
-          if-no-files-found: warn
+          name: code-oss-extension-runtime
+          path: apps/server/dist/code-oss
           retention-days: 7
+          if-no-files-found: warn
