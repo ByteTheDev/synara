@@ -44,6 +44,10 @@ type PickerState = {
   mode: "commands" | "results" | "workspaceSymbols";
   rows: EditorActionRow[];
 };
+const diffLabels = (fileName: string) => ({
+  originalAriaLabel: `Original ${fileName}`,
+  modifiedAriaLabel: `Edit ${fileName}`,
+});
 const emptyPicker: PickerState = { title: "Editor commands", mode: "commands", rows: [] };
 
 export default function MonacoEditorSurface(props: SurfaceProps) {
@@ -345,8 +349,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
         renderOverviewRuler: false,
         enableSplitViewResizing: true,
         hideUnchangedRegions: { enabled: false },
-        originalAriaLabel: `Original ${initial.fileName}`,
-        modifiedAriaLabel: `Edit ${initial.fileName}`,
+        ...diffLabels(initial.fileName),
       });
       instance.setModel({ original, modified: entry.model });
       active = { instance, editor: instance.getModifiedEditor(), entry, original };
@@ -402,6 +405,20 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     const subscriptions: monaco.IDisposable[] = [
       entry.model.onDidChangeContent(() => queueMicrotask(history)),
     ];
+    // Monaco clips and scrolls each diff side independently. Give only a
+    // horizontally scrolled gutter the existing dense Synara glass backing.
+    const editors =
+      "getOriginalEditor" in active.instance
+        ? [active.instance.getOriginalEditor(), editor]
+        : [editor];
+    for (const surface of editors) {
+      const syncGutter = () =>
+        surface
+          .getDomNode()
+          ?.toggleAttribute("data-horizontal-scroll", surface.getScrollLeft() > 0);
+      syncGutter();
+      subscriptions.push(surface.onDidScrollChange(syncGutter));
+    }
     for (const [id, label, binding] of [
       ["debugLaunch", "Start or continue debugging", monaco.KeyCode.F5],
       ["debugStop", "Stop debugging", monaco.KeyMod.Shift | monaco.KeyCode.F5],
@@ -543,7 +560,12 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     if (original && original.getValue() !== props.original) original.setValue(props.original ?? "");
     instance.updateOptions({
       readOnly: props.readOnly ?? false,
-      ...(original ? { renderSideBySide: props.renderSideBySide ?? true } : {}),
+      ...(original
+        ? {
+            renderSideBySide: props.renderSideBySide ?? true,
+            ...diffLabels(props.fileName),
+          }
+        : {}),
     });
   }, [
     controller,
@@ -553,6 +575,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     props.originalVersion,
     props.readOnly,
     props.renderSideBySide,
+    props.fileName,
   ]);
 
   useEffect(() => {
@@ -650,7 +673,12 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
     const update = () => {
       if (!containerRef.current) return;
       const options = editorAppearance(containerRef.current, props.resolvedTheme);
-      controller.instance.updateOptions(options);
+      // The upstream diff editor resets sub-editor labels on each update.
+      // Carry native names through theme/typography updates as well as creation.
+      controller.instance.updateOptions({
+        ...options,
+        ...(controller.original ? diffLabels(props.fileName) : {}),
+      });
       monaco.editor.setTheme(options.theme!);
     };
     update();
@@ -660,7 +688,7 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
       attributeFilter: ["class", "style"],
     });
     return () => observer.disconnect();
-  }, [controller, props.resolvedTheme]);
+  }, [controller, props.resolvedTheme, props.fileName]);
 
   useEffect(() => {
     if (!controller || !supportsProjectIntelligence(controller.entry)) return;
