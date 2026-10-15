@@ -8,7 +8,7 @@ import {
 import {
   notionArray, notionCanonical, notionComparableValue, notionObject, notionPatchConflicts,
   notionPropertySnapshot, notionResourceId, notionString, notionTodoPatch,
-  notionWritableValue, projectNotionTask, validateNotionMapping,
+  notionWritableValue, projectNotionTask, validateNotionMapping, validateNotionSprintPlan,
 } from "@synara/shared/notion";
 import { Schema } from "effect";
 import { NotionClient, NotionFailure, readNotionJson } from "./client.ts";
@@ -213,6 +213,10 @@ export class NotionRuntime {
     if (!current && this.mappings.size >= 50) throw new NotionFailure("The Notion mapping limit has been reached.", "invalid");
     if ([...this.mappings.values()].some(value => value.id !== mapping.id && value.connectionId === mapping.connectionId && sameResource(value.dataSourceId, mapping.dataSourceId))) throw new NotionFailure("This data source is already mapped.", "invalid");
     const { data } = await this.read({ connectionId: mapping.connectionId, kind: "dataSource", id: mapping.dataSourceId }); validateNotionMapping(mapping, data);
+    if (mapping.sprintPlan) {
+      const { data: sprintData } = await this.read({ connectionId: mapping.connectionId, kind: "dataSource", id: mapping.sprintPlan.dataSourceId });
+      validateNotionSprintPlan(mapping, data, sprintData);
+    }
     if (mapping.agentAccess === "write") throw new NotionFailure("Agent writes require a user-reviewed approval flow; use manual Notion task editing for now.", "invalid");
     this.mappings.set(mapping.id, mapping); this.watermarks.delete(mapping.id); this.epoch += 1;
     if (!mapping.enabled) this.purge(mapping.connectionId, mapping.dataSourceId);

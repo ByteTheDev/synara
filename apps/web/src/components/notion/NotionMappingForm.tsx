@@ -1,6 +1,7 @@
 import type { NotionField, NotionFieldMap, NotionMapping, NotionObject, ProjectId } from "@synara/contracts";
 import { NOTION_FIELD_TYPES, suggestNotionFields } from "@synara/shared/notion";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
@@ -24,10 +25,27 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
   const [reopen, setReopen] = useState(existing?.reopenedStatusId ?? "");
   const [priorities, setPriorities] = useState<NotionMapping["priorityOptions"]>(existing?.priorityOptions ?? {});
   const [agentAccess, setAgentAccess] = useState<"none" | "read">(existing?.agentAccess === "read" ? "read" : "none");
+  const [sprintPlan, setSprintPlan] = useState<NotionMapping["sprintPlan"]>(existing?.sprintPlan ?? null);
   const action = useNotionAction();
   const properties = notionProperties(source);
   const statusOptions = notionOptions(properties.find((property) => property.id === fields?.status?.id));
   const priorityOptions = notionOptions(properties.find((property) => property.id === fields?.priority?.id));
+  const sprintRelation = properties.find(property => property.id === fields?.sprint?.id && property.type === "relation");
+  const sprintSourceId = typeof sprintRelation?.schema.relation === "object" ? String((sprintRelation.schema.relation as { data_source_id?: unknown }).data_source_id ?? "") : "";
+  const sprintQuery = useQuery({
+    queryKey: ["notion", "sprint-schema", connectionId, sprintSourceId],
+    queryFn: async () => (await notionApi().read({ connectionId, kind: "dataSource", id: sprintSourceId })).data,
+    enabled: Boolean(sprintSourceId && fields?.sprint?.type === "relation"),
+    retry: false,
+  });
+  const sprintProperties = notionProperties(sprintQuery.data ?? {});
+  const sprintStatus = sprintProperties.find(property => property.id === sprintPlan?.status?.id);
+  const sprintOptions = notionOptions(sprintStatus);
+  const setPlanField = (field: "start" | "end" | "status", id: string) => setSprintPlan(current => {
+    if (!current) return current;
+    const property = sprintProperties.find(value => value.id === id);
+    return { ...current, [field]: property ? { id: property.id, type: property.type } : null, ...(field === "status" ? { completedStatusIds: [] } : {}) };
+  });
 
   if (!fields) return <NotionError message="This data source has no title property and cannot be mapped to Tasks." />;
 
@@ -38,7 +56,7 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
         const mapping = editNotionMapping(existing, source, {
           id: mappingId, connectionId, name, fields,
           projectId: projectId.trim() ? projectId.trim() as ProjectId : null,
-          completedStatusIds: done, reopenedStatusId: reopen || null, priorityOptions: priorities, agentAccess,
+          completedStatusIds: done, reopenedStatusId: reopen || null, priorityOptions: priorities, agentAccess, sprintPlan,
         });
         await notionApi().saveMapping(mapping);
         await notionApi().sync();
@@ -69,6 +87,7 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
                     return copy;
                   });
                   if (field === "status") { setDone([]); setReopen(""); }
+                  if (field === "sprint") setSprintPlan(null);
                   if (field === "priority") setPriorities({});
                 }} />
             </div>
@@ -107,11 +126,25 @@ export function NotionMappingForm({ connectionId, source, existing, onSaved, onC
             </div>)}
           </fieldset>
         ) : null}
+        {sprintRelation && sprintSourceId ? <div className="space-y-3 rounded-lg border border-border p-3">
+          <h4 className="text-ui font-medium">Sprint planning</h4>
+          <p className="text-ui-sm text-muted-foreground">Configure fields from the related Notion Sprint database. The backlog and sprint summaries stay in Synara's existing Tasks experience.</p>
+          <NotionError message={sprintQuery.error?.message} />
+          {sprintQuery.data ? <NotionSelect label="Sprint planning" value={sprintPlan ? "on" : "off"} onChange={value => {
+            if (value === "off") { setSprintPlan(null); return; }
+            const title = sprintProperties.find(property => property.type === "title");
+            if (!title) return;
+            setSprintPlan({ dataSourceId: sprintSourceId as NotionMapping["dataSourceId"], title: { id: title.id, type: "title" }, start: null, end: null, status: null, completedStatusIds: [] });
+          }} options={[{ value: "off", label: "Not configured" }, { value: "on", label: "Use related sprint properties" }]} disabled={action.pending} /> : <p className="text-ui-sm text-muted-foreground">Share the related Sprint data source with Synara to configure planning.</p>}
+          {sprintPlan ? <div className="grid gap-3 sm:grid-cols-2">
+            {(["start", "end", "status"] as const).map(field => <label key={field} className="grid gap-1 text-ui-sm"><span className="capitalize">{field} property</span><NotionSelect label={"Sprint " + field} value={sprintPlan[field]?.id ?? ""} onChange={value => setPlanField(field, value)} options={[{ value: "", label: "Not mapped" }, ...sprintProperties.filter(property => field === "status" ? ["status", "select"].includes(property.type) : property.type === "date").map(property => ({ value: property.id, label: property.label }))]} disabled={action.pending} /></label>)}
+            {sprintOptions.length ? <fieldset className="space-y-2 sm:col-span-2"><legend className="text-ui-sm font-medium">Completed sprint statuses</legend><div className="flex flex-wrap gap-3">{sprintOptions.map(option => <label key={option.value} className="flex items-center gap-2 text-ui-sm"><Checkbox checked={sprintPlan.completedStatusIds.includes(option.value)} onCheckedChange={checked => setSprintPlan(current => current ? { ...current, completedStatusIds: checked ? [...new Set([...current.completedStatusIds, option.value])] : current.completedStatusIds.filter(id => id !== option.value) } : null)} />{option.label}</label>)}</div></fieldset> : null}
+          </div> : null}
+        </div> : fields?.sprint ? <p className="text-ui-sm text-muted-foreground">Sprint planning needs a Notion relation with a shared target data source. Other sprint fields remain editable on tasks.</p> : null}
         <label className="grid gap-1 text-ui">Synara project ID for delegation (optional)<Input value={projectId} onChange={(event) => setProjectId(event.target.value)} placeholder="Keep tasks unassigned" /></label>
       </fieldset>
       <div className="space-y-2 rounded-lg border border-border p-3"><h4 className="text-ui font-medium">Agent permissions</h4><p className="text-ui-sm text-muted-foreground">Allow Synara agents to search and summarize this mapped data source without exposing credentials. Other Notion pages remain inaccessible. Changes still require manual editing and review.</p><NotionSelect label="Agent access to this source" value={agentAccess} onChange={value => setAgentAccess(value as "none" | "read")} options={[{ value: "none", label: "No agent access" }, { value: "read", label: "Read mapped records" }]} disabled={action.pending} /></div>
-      {existing?.sprintPlan ? <p className="text-ui-sm text-muted-foreground">The existing sprint plan is retained when this mapping is saved.</p> : null}
-      {existing?.enabled === false ? <p role="status" className="text-ui-sm text-muted-foreground">This source is paused. Saving these settings does not resume synchronization.</p> : null}
+            {existing?.enabled === false ? <p role="status" className="text-ui-sm text-muted-foreground">This source is paused. Saving these settings does not resume synchronization.</p> : null}
       <p className="text-ui-sm text-muted-foreground">Agents can read only explicitly permitted mappings. Direct agent writes remain disabled until a user-review approval flow is integrated. Individual task handoffs never grant workspace-wide permissions.</p>
       <NotionError message={action.error} />
       <div className="flex justify-end gap-2">

@@ -125,6 +125,32 @@ export function notionTodoPatch(page: NotionObject, mapping: NotionMapping, patc
   }
   return properties;
 }
+
+/** A sprint plan must describe the actual relation target and its current API schema. */
+export function validateNotionSprintPlan(mapping: NotionMapping, taskSource: NotionObject, sprintSource: NotionObject): void {
+  const plan = mapping.sprintPlan;
+  if (!plan) return;
+  const relationRef = mapping.fields.sprint;
+  if (relationRef?.type !== "relation") throw new Error("Sprint planning requires a relation-based Sprint field.");
+  const relation = notionObject(notionProperty(taskSource.properties, relationRef).relation);
+  if (notionResourceId(notionString(relation.data_source_id)) !== notionResourceId(plan.dataSourceId) ||
+    notionResourceId(notionString(sprintSource.id)) !== notionResourceId(plan.dataSourceId)) {
+    throw new Error("The Sprint relation no longer targets the configured Notion data source.");
+  }
+  const props = Object.values(notionObject(sprintSource.properties)).map(notionObject);
+  const matches = (field: NotionPropertyRef | null, types: readonly string[]) =>
+    field === null || props.some(value => value.id === field.id && value.type === field.type && types.includes(field.type));
+  if (!matches(plan.title, ["title"]) || !matches(plan.start, ["date"]) ||
+    !matches(plan.end, ["date"]) || !matches(plan.status, ["status", "select"])) {
+    throw new Error("A sprint planning property no longer matches the target data source.");
+  }
+  if (plan.status) {
+    const property = props.find(value => value.id === plan.status?.id);
+    const valid = new Set(notionArray(notionObject(property?.[plan.status.type]).options).map(raw => notionString(notionObject(raw).id)));
+    if (plan.completedStatusIds.some(value => !valid.has(value))) throw new Error("Select real completed-sprint status options.");
+  } else if (plan.completedStatusIds.length) throw new Error("Map a sprint status property before selecting completed options.");
+}
+
 export function notionCanonical(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "null";
   if (Array.isArray(value)) return `[${value.map(notionCanonical).join(",")}]`;

@@ -185,6 +185,7 @@ export interface NotionMappingEdits {
   reopenedStatusId: string | null;
   priorityOptions: NotionMapping["priorityOptions"];
   agentAccess?: "none" | "read";
+  sprintPlan?: NotionMapping["sprintPlan"];
 }
 
 export function editNotionMapping(existing: NotionMapping | undefined, source: NotionObject, edits: NotionMappingEdits): NotionMapping {
@@ -196,6 +197,7 @@ export function editNotionMapping(existing: NotionMapping | undefined, source: N
     ...edits,
     dataSourceId: notionResourceId(notionString(source.id)),
     agentAccess: edits.agentAccess ?? existing?.agentAccess ?? "none",
+    sprintPlan: edits.sprintPlan === undefined ? existing?.sprintPlan : edits.sprintPlan,
     enabled: existing?.enabled ?? true,
   };
   validateNotionMapping(mapping, source);

@@ -210,8 +210,21 @@ export function NotionDatabaseWorkspace({ connectionId, id, onOpen }: { connecti
   const timelineStart = dayString(anchor);
   const sprintPages = notionArray(sprintQuery.data?.results).map(notionObject);
   const sprintId = (page: NotionObject) => notionRelationIds(property(page, sprint).relation)[0] ?? "";
+  const sprintCategory = (page: NotionObject): string => {
+    const plan = mapping?.sprintPlan;
+    if (!plan) return "Sprint";
+    const get = (ref: { id: string } | null | undefined) => Object.values(notionObject(page.properties)).map(notionObject).find(value => value.id === ref?.id);
+    const stateId = notionString(notionObject(get(plan.status)?.[notionString(get(plan.status)?.type)]).id);
+    if (plan.completedStatusIds.includes(stateId)) return "Completed";
+    const from = dateKey(notionObject(get(plan.start)?.date).start);
+    const to = dateKey(notionObject(get(plan.end)?.date).end) || dateKey(notionObject(get(plan.end)?.date).start);
+    const today = new Date().toISOString().slice(0, 10);
+    if (from && from > today) return "Upcoming";
+    if (to && to < today) return "Past due";
+    return from || to ? "Current" : "Unscheduled";
+  };
   const moveSprint = (page: NotionObject, target: string) => void action.run(async () => {
-    if (!sprint || !mapping || property(page, sprint).has_more === true || target && !sprintPages.some(value => notionString(value.id) === target)) throw new Error("Load the complete, authorized sprint options before moving this task.");
+    if (!sprint || !mapping || property(page, sprint).has_more === true || notionRelationIds(property(page, sprint).relation).length > 1 || target && !sprintPages.some(value => notionString(value.id) === target)) throw new Error("Load the complete, authorized sprint options before moving this task.");
     await save(page, sprint, target ? [{ id: target }] : []);
   });
   const groupStatus = (page: NotionObject) => statusId(page, status);
@@ -271,7 +284,7 @@ export function NotionDatabaseWorkspace({ connectionId, id, onOpen }: { connecti
         const complete = tasks.filter(page => isDone(page, mapping));
         const totalPoints = tasks.reduce((sum, page) => sum + points(page, mapping), 0);
         const donePoints = complete.reduce((sum, page) => sum + points(page, mapping), 0);
-        return <section key={group.id} className="space-y-3 rounded-xl border border-border p-3"><div className="flex items-start justify-between gap-2"><h3 className="text-ui font-semibold">{group.title}</h3><span className="text-ui-sm text-muted-foreground">{complete.length}/{tasks.length} done</span></div><p className="text-ui-sm text-muted-foreground">{donePoints} / {totalPoints} points completed</p><div role="progressbar" aria-label={group.title + " completion"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={tasks.length ? Math.round(100 * complete.length / tasks.length) : 0} className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: (tasks.length ? 100 * complete.length / tasks.length : 0) + "%" }} /></div>
+        return <section key={group.id} className="space-y-3 rounded-xl border border-border p-3"><div className="flex items-start justify-between gap-2"><h3 className="text-ui font-semibold">{group.title}{group.page ? <span className="ml-2 text-ui-xs font-normal text-muted-foreground">· {sprintCategory(group.page)}</span> : null}</h3><span className="text-ui-sm text-muted-foreground">{complete.length}/{tasks.length} done</span></div><p className="text-ui-sm text-muted-foreground">{donePoints} / {totalPoints} points completed</p><div role="progressbar" aria-label={group.title + " completion"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={tasks.length ? Math.round(100 * complete.length / tasks.length) : 0} className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: (tasks.length ? 100 * complete.length / tasks.length : 0) + "%" }} /></div>
           {tasks.map(page => <div key={notionString(page.id)} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted/30 p-2">{open(page)}<NotionSelect label={"Move " + notionTitle(page) + " to sprint"} value={sprintId(page)} onChange={next => moveSprint(page, next)} options={[{ value: "", label: "Product backlog" }, ...sprintPages.map(item => ({ value: notionString(item.id), label: notionTitle(item) }))]} disabled={action.pending || property(page, sprint).has_more === true || sprintQuery.data?.has_more === true} /></div>)}
         </section>;
       })}</div>
