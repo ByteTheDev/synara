@@ -3403,6 +3403,20 @@ export function makeAgentGatewayComputerTools(
           ok: false,
           error: runStepError(error),
         });
+        // Failed observation is an unmet barrier too: continue_on_error may
+        // skip ordinary action failures, but cannot establish readiness.
+        if (preparedStep.type === "wait") {
+          if (preparedStep.step.settle === true) {
+            stopped = true;
+            stoppedReason = "surface_not_settled";
+            break;
+          }
+          if (preparedStep.step.label !== undefined || preparedStep.step.ref !== undefined) {
+            stopped = true;
+            stoppedReason = "control_not_ready";
+            break;
+          }
+        }
         if (!preparedStep.continueOnError) {
           stopped = true;
           break;

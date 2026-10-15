@@ -6680,6 +6680,55 @@ describe("conditional readiness barriers", () => {
     expect(backend.callsFor("click")).toHaveLength(0);
   });
 
+  it.each(["control", "settle"] as const)(
+    "stops input after a thrown %s wait even with continue_on_error",
+    async (mode) => {
+      const { call, backend, manager, see } = await setup();
+      try {
+        await see();
+        const error = new ComputerBackendError("Accessibility transport disconnected");
+        const wait =
+          mode === "settle"
+            ? vi.spyOn(manager, "waitForSettle").mockRejectedValueOnce(error)
+            : vi.spyOn(manager, "getState").mockRejectedValueOnce(error);
+        const result = resultJson(
+          await call("computer_run", {
+            include_screenshot: false,
+            steps: [
+              {
+                type: "wait",
+                duration_ms: 0,
+                window_id: "fake-calculator",
+                continue_on_error: true,
+                ...(mode === "settle"
+                  ? { settle: true }
+                  : { label: "Display", value_equals: "ready" }),
+              },
+              { type: "click", window_id: "fake-calculator", label: "Calculate" },
+            ],
+          }),
+        );
+        expect(wait).toHaveBeenCalled();
+        expect(backend.callsFor("click")).toHaveLength(0);
+        expect(result).toMatchObject({
+          stopped: true,
+          stoppedReason: mode === "settle" ? "surface_not_settled" : "control_not_ready",
+          completed: 0,
+          steps: [
+            {
+              step: 0,
+              type: "wait",
+              ok: false,
+              error: { code: "step_failed", message: error.message },
+            },
+          ],
+        });
+      } finally {
+        await manager.dispose();
+      }
+    },
+  );
+
   it("prevalidates the entire batch before dispatching an earlier input", async () => {
     const { call, backend } = await setup();
     const result = await call("computer_run", {

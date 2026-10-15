@@ -31,8 +31,10 @@ Unreadable values are unavailable, not empty. A truncated root or nested branch
 cannot prove disappearance. Closed windows are explicit and are not screenshotted.
 
 An unmet conditional wait stops a batch before subsequent input even with
-`continue_on_error: true`. Layout-settle barriers retain the same rule. Fixed
-delays are still available but are not readiness evidence.
+`continue_on_error: true`. Layout-settle barriers retain the same rule. A failed
+accessibility read or settle observer also stops the batch and preserves the
+error; an exception cannot establish readiness. Fixed delays are still available
+but are not readiness evidence.
 
 Polling backs off from 100 to 200 to 400 to 500 milliseconds, bounded by remaining
 time and the stability deadline. A deterministic two-second test with immediate
