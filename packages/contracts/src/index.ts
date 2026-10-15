@@ -1,3 +1,4 @@
+export * from "./editorExtensions";
 export * from "./editorDebug";
 export * from "./auth";
 export * from "./automation";

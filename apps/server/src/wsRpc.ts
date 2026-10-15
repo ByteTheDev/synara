@@ -1,3 +1,4 @@
+import { ExtensionManager } from "./extensions/extensionManager";
 import { EditorDebugService } from "./editor/debugService";
 import { EditorLanguageService } from "./editor/languageService.ts";
 import { readEventLoopStatus } from "./eventLoopMonitor";
@@ -504,6 +505,8 @@ const makeWsRpcHandlersLayer = () =>
       const projectAgentService = yield* ProjectAgentService;
       const projectAgentRepository = yield* ProjectAgentRepository;
       const config = yield* ServerConfig;
+      const editorExtensions = new ExtensionManager(config.stateDir);
+      yield* Effect.addFinalizer(() => Effect.promise(() => editorExtensions.dispose()));
       const editorLanguages = new EditorLanguageService();
       const editorDebug = new EditorDebugService(config.stateDir);
       yield* Effect.addFinalizer(() => Effect.promise(() => editorDebug.dispose()));
@@ -1819,6 +1822,19 @@ const makeWsRpcHandlersLayer = () =>
                     cause instanceof Error ? cause : new Error("Debug session is unavailable."),
                 }),
                 "Debug session is unavailable",
+              ),
+            ),
+          ),
+        [WS_METHODS.editorExtensions]: (input, { clientId }) =>
+          requireWsOwnerSession.pipe(
+            Effect.andThen(() =>
+              rpcEffect(
+                Effect.tryPromise({
+                  try: (signal) => editorExtensions.request(String(clientId), input, signal),
+                  catch: (cause) =>
+                    cause instanceof Error ? cause : new Error("Extension operation failed."),
+                }),
+                "Extension operation failed",
               ),
             ),
           ),
