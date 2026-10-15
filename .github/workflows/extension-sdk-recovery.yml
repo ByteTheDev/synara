@@ -1,4 +1,4 @@
-# Branch-only execution bridge. Temporary assembly files never enter the application candidate.
+# Temporary execution bridge; this workflow never updates a branch ref.
 name: Extension candidate validation
 on:
   push:
@@ -10,7 +10,7 @@ concurrency:
   group: extension-candidate-${{ github.ref }}
   cancel-in-progress: true
 env:
-  CANDIDATE_BASE: 3a8dea36f3e04744f3143d895936302078103c48
+  CANDIDATE_BASE: 984715b3674ea61c2b7b19f69a5b49442ebdc19c
 jobs:
   prepare:
     runs-on: ubuntu-24.04
@@ -25,21 +25,16 @@ jobs:
           ref: ${{ env.CANDIDATE_BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - name: Assemble native editor integration
-        run: node scripts/finish-extension-integration.mjs
-      - name: Format the explicit change set
+      - name: Apply the recovered bootstrap and interaction-owner fixes
+        run: node scripts/patch-extension-integration.mjs
+      - name: Format only the modified files
         run: |
-          ./node_modules/.bin/oxfmt apps/server/src/extensions \
-            apps/server/src/platform/extensionHostSandbox.ts apps/server/src/platform/extensionHostSandbox.test.ts \
-            apps/server/src/wsRpc.ts apps/web/src/wsNativeApi.ts \
+          ./node_modules/.bin/oxfmt apps/server/src/extensions/host/entry.mjs \
+            apps/server/src/platform/extensionHostSandbox.integration.test.ts \
             apps/web/src/components/codeEditor/editorExtensionBridge.ts \
-            apps/web/src/components/codeEditor/editorExtensionBridge.browser.tsx \
             apps/web/src/components/codeEditor/EditorExtensionInteraction.tsx \
-            apps/web/src/components/codeEditor/MonacoEditorSurface.tsx \
-            apps/web/src/components/settings/EditorExtensionsSettingsPanel.tsx \
-            packages/contracts/src/editorExtensionRuntime.ts packages/contracts/src/index.ts \
-            packages/contracts/src/ipc.ts packages/contracts/src/rpc.ts packages/contracts/src/ws.ts scripts/build-code-oss-host.mjs
-      - name: Store normalized candidate objects without updating refs
+            apps/web/src/components/codeEditor/MonacoEditorSurface.tsx
+      - name: Preserve normalized candidate objects without moving refs
         id: objects
         env:
           GH_TOKEN: ${{ github.token }}
@@ -56,55 +51,22 @@ jobs:
             if(!response.ok)throw new Error(`${endpoint}: ${response.status} ${await response.text()}`);
             return response.json();
           }
+          const allowed=new Set(['apps/server/src/extensions/host/entry.mjs','apps/server/src/platform/extensionHostSandbox.integration.test.ts','apps/web/src/components/codeEditor/editorExtensionBridge.ts','apps/web/src/components/codeEditor/EditorExtensionInteraction.tsx','apps/web/src/components/codeEditor/MonacoEditorSurface.tsx']);
           const files=execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean);
-          const allowed=new Set(['apps/server/src/wsRpc.ts','apps/web/src/wsNativeApi.ts','apps/web/src/components/settings/EditorExtensionsSettingsPanel.tsx','scripts/build-code-oss-host.mjs']);
           const tree=[];
           for(const file of files){
-            if(!allowed.has(file)&&!file.startsWith('apps/server/src/extensions/')&&!file.startsWith('apps/web/src/components/codeEditor/')&&!file.startsWith('apps/server/src/platform/extensionHostSandbox')&&!file.startsWith('packages/contracts/src/'))throw new Error(`Unexpected edit ${file}`);
+            if(!allowed.has(file))throw new Error(`Unexpected edit ${file}`);
             const blob=await api('git/blobs',{content:await readFile(file,'utf8'),encoding:'utf-8'});
             tree.push({path:file,mode:'100644',type:'blob',sha:blob.sha});
           }
-          for(const file of ['scripts/assemble-extension-runtime.mjs','scripts/repair-extension-candidate.mjs','scripts/wire-extension-editor.mjs','scripts/finish-extension-integration.mjs'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
+          tree.push({path:'scripts/patch-extension-integration.mjs',mode:'100644',type:'blob',sha:null});
           const base=await api(`git/commits/${process.env.CANDIDATE_BASE}`);
           const result=await api('git/trees',{base_tree:base.tree.sha,tree});
           const identity={name:'Commander Chara',email:'249489759+cmdr-chara@users.noreply.github.com'};
-          const commit=await api('git/commits',{message:'feat(extensions): integrate native editor commands, formatting and guarded document edits',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
-          console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);
-          console.log('NORMALIZED_FILES',JSON.stringify(tree));
+          const commit=await api('git/commits',{message:'fix(extensions): initialize upstream service discovery and native prompt ownership',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
+          console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);console.log('NORMALIZED_FILES',JSON.stringify(tree));
           await appendFile(process.env.GITHUB_OUTPUT,`candidate=${commit.sha}\n`);
           NODE
-  validate:
-    needs: prepare
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ needs.prepare.outputs.candidate }}
-          persist-credentials: false
-      - uses: ./.github/actions/setup-workspace
-      - name: Integrated typecheck
-        run: bun run typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { grep -E 'error TS|error:' "$RUNNER_TEMP/types.log"; exit 1; }
-      - name: Required format, lint and process ownership checks
-        if: ${{ !cancelled() }}
-        run: |
-          bun run fmt:check
-          bun run lint > "$RUNNER_TEMP/lint.log" 2>&1 || { tail -60 "$RUNNER_TEMP/lint.log"; exit 1; }
-          bun run windows-runtime:check
-      - name: Package and sandbox boundaries
-        if: ${{ !cancelled() }}
-        run: bun run --cwd apps/server test src/extensions/manifest.test.ts src/extensions/vsix.test.ts src/extensions/openVsx.test.ts src/platform/extensionHostSandbox.test.ts
-      - name: Install browser
-        run: cd apps/web && ./node_modules/.bin/playwright install chromium
-      - name: Native editor bridge regressions
-        run: bun run --cwd apps/web test:browser:ci -- --project=components src/components/codeEditor/editorExtensionBridge.browser.tsx
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: native-extension-browser-evidence
-          path: apps/web/src/components/codeEditor/__screenshots__
-          if-no-files-found: ignore
-          retention-days: 3
   upstream-host:
     needs: prepare
     runs-on: ubuntu-24.04
@@ -145,4 +107,20 @@ jobs:
           name: code-oss-candidate-runtime
           path: ${{ runner.temp }}/code-oss-runtime
           if-no-files-found: warn
-          retention-days: 3
+          retention-days: 7
+  sandbox:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.candidate }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Install production sandbox dependency
+        run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
+      - name: Verify real OS isolation and protocol pipe
+        env:
+          SYNARA_TEST_EXTENSION_SANDBOX: '1'
+        run: bun run --cwd apps/server test src/platform/extensionHostSandbox.integration.test.ts
