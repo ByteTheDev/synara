@@ -7,6 +7,7 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Dialog, DialogDescription, DialogHeader, DialogPanel, DialogPopup, DialogTitle } from "~/components/ui/dialog";
 import { notionBlockDraftPatch } from "./notionDrafts";
+import { NotionDatabaseWorkspace } from "./NotionDatabaseWorkspace";
 import { NotionDraftBoundary, useNotionDraft, useNotionDraftGuard } from "./NotionDraftBoundary";
 import { Checkbox } from "~/components/ui/checkbox";
 import { notionProperties } from "./notionProperties";
@@ -61,24 +62,8 @@ function Page({ connectionId, id, onOpen }: { connectionId: string; id: string; 
     <Comments connectionId={connectionId} id={id} />
   </div>;
 }
-function Records({ connectionId, id, onOpen }: { connectionId: string; id: string; onOpen: (id: string, kind: "page") => void }) {
-  const [cursor, setCursor] = useState<string | undefined>(); const [view, setView] = useState("table"); const [filter, setFilter] = useState(""); const [title, setTitle] = useState(""); const action = useNotionAction();
-  useNotionDraft(title.length > 0 || action.pending);
-  const schema = useResource({ connectionId, kind: "dataSource", id }); const query = useResource({ connectionId, kind: "query", id, ...(cursor ? { cursor } : {}) });
-  const records = notionArray(query.data?.results).map(notionObject).filter(page => notionTitle(page).toLowerCase().includes(filter.toLowerCase()));
-  const columns = notionProperties(schema.data ?? {}).map(property => ({ ...property, name: property.label }));
-  const status = columns.find(column => ["status", "select"].includes(notionString(column.type))); const date = columns.find(column => column.type === "date");
-  const getProperty = (page: NotionObject, property: { id?: unknown } | undefined) => Object.values(notionObject(page.properties)).map(notionObject).find(value => value.id === property?.id);
-  const open = (page: NotionObject) => <Button variant="ghost" className="max-w-full justify-start truncate" onClick={() => onOpen(notionString(page.id), "page")}>{notionTitle(page)}</Button>;
-  const dates = records.map(page => ({ page, date: notionString(notionObject(getProperty(page, date)?.date).start).slice(0, 10) })).toSorted((a, b) => a.date.localeCompare(b.date));
-  const groups = view === "board" ? [...new Set(records.map(page => notionPropertyLabel(getProperty(page, status)) || "No status"))] : [...new Set(dates.map(value => value.date || "No date"))];
-  return <div className="space-y-4"><h2 className="text-xl font-semibold">{schema.data ? notionTitle(schema.data) : "Database"}</h2><NotionError message={query.error?.message ?? schema.error?.message ?? action.error} /><NotionReceiptNotice active={action.awaitingConfirmation} />
-    <div className="flex flex-wrap gap-2"><NotionSelect label="Synara record view" value={view} onChange={setView} options={["table", "list", "board", "calendar", "timeline"].map(value => ({ value, label: value[0]!.toUpperCase() + value.slice(1) }))} /><Input aria-label="Filter loaded records" value={filter} placeholder="Filter this page of records" onChange={event => setFilter(event.target.value)} /></div>
-    <p className="text-ui-sm text-muted-foreground">Synara view of the current API page, not a replacement for Notion's saved view configuration. {records.length} visible records{query.data?.has_more ? ", with more available" : ""}.</p>
-    {view === "table" ? <div className="overflow-auto rounded-lg border border-border"><table className="w-full text-left text-ui"><thead><tr><th className="p-2">Record</th>{columns.filter(column => column.type !== "title").slice(0, 8).map(column => <th className="p-2" key={column.name}>{column.name}</th>)}</tr></thead><tbody>{records.map(page => <tr key={notionString(page.id)} className="border-t border-border"><td className="p-2">{open(page)}</td>{columns.filter(column => column.type !== "title").slice(0, 8).map(column => <td className="max-w-72 truncate p-2" key={column.name}>{notionPropertyLabel(getProperty(page, column)) || "—"}</td>)}</tr>)}</tbody></table></div> : view === "list" ? <div className="divide-y divide-border">{records.map(page => <div key={notionString(page.id)}>{open(page)}</div>)}</div> : view === "board" ? <div className="flex gap-3 overflow-auto">{groups.map(group => <section key={group} className="min-w-56 flex-1 rounded-xl border border-border p-3"><h3 className="mb-2 text-ui font-medium">{group}</h3>{records.filter(page => (notionPropertyLabel(getProperty(page, status)) || "No status") === group).map(page => <div key={notionString(page.id)} className="mb-2 rounded-lg bg-muted p-2">{open(page)}</div>)}</section>)}</div> : <div className={view === "calendar" ? "grid gap-3 sm:grid-cols-3 lg:grid-cols-4" : "space-y-3 border-l-2 border-border pl-4"}>{groups.map(group => <section key={group} className="rounded-lg border border-border p-3"><h3 className="text-ui font-medium">{group}</h3>{dates.filter(value => (value.date || "No date") === group).map(value => <div key={notionString(value.page.id)}>{open(value.page)}</div>)}</section>)}</div>}
-    <div className="flex gap-2">{cursor ? <Button variant="outline" onClick={() => setCursor(undefined)}>First page</Button> : null}{query.data?.has_more === true ? <Button variant="outline" onClick={() => setCursor(notionString(query.data?.next_cursor))}>Next page</Button> : null}</div>
-    <form className="flex gap-2" onSubmit={event => { event.preventDefault(); void action.run(async () => { const property = columns.find(column => column.type === "title"); if (!property) throw new Error("This source does not expose a title property."); await action.write({ connectionId, kind: "createPage", id, base: {}, changes: { properties: { [notionString(property.id)]: { title: plainNotionText(title) } } } }); setTitle(""); await query.refetch(); }); }}><Input disabled={action.pending || action.awaitingConfirmation} aria-label="New record title" value={title} maxLength={500} onChange={event => setTitle(event.target.value)} placeholder="New record title" /><Button type="submit" disabled={action.pending || !title.trim()}>Create record</Button><Button type="button" variant="ghost" disabled={action.pending} onClick={() => setTitle("")}>Discard title</Button></form>
-  </div>;
+function Records(props: { connectionId: string; id: string; onOpen: (id: string, kind: "page") => void }) {
+  return <NotionDatabaseWorkspace {...props} />;
 }
 function NotionBrowserContent({ connectionId, pageId, onClose }: { connectionId: string; pageId?: string | undefined; onClose: () => void }) {
   const guard = useNotionDraftGuard();
