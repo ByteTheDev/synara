@@ -1,4 +1,4 @@
-# Temporary execution bridge; no branch refs are moved by this workflow.
+# Temporary execution bridge. It does not update branch refs.
 name: Extension candidate validation
 on:
   push:
@@ -10,7 +10,7 @@ concurrency:
   group: extension-candidate-${{ github.ref }}
   cancel-in-progress: true
 env:
-  CANDIDATE_BASE: 32948b773877e58e16cc105c70d5dfa3bfb1490b
+  CANDIDATE_BASE: 7e550f4e9a43afe9751a2ec75ce0ab5da7c31924
 jobs:
   prepare:
     runs-on: ubuntu-24.04
@@ -25,12 +25,15 @@ jobs:
           ref: ${{ env.CANDIDATE_BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - run: node scripts/connect-extension-debugger.mjs
+      - run: node scripts/prepare-native-contribution-acceptance.mjs
       - run: |
-          ./node_modules/.bin/oxfmt apps/server/src/extensions apps/server/src/platform/extensionHostSandbox.ts \
+          ./node_modules/.bin/oxfmt apps/server/src/extensions \
             apps/web/src/components/codeEditor/editorExtensionBridge.ts \
-            apps/web/src/components/codeEditor/editorDebugStore.ts apps/web/src/components/codeEditor/extensionDebugBackend.ts
-      - name: Preserve normalized candidate objects, not refs
+            apps/web/src/components/codeEditor/extensionContributions.ts \
+            apps/web/src/components/codeEditor/extensionContributions.browser.tsx \
+            apps/web/src/components/codeEditor/EditorExtensionContributions.tsx \
+            apps/web/src/components/codeEditor/EditorExtensionInteraction.tsx apps/web/e2e/editorExtensions.e2e.ts
+      - name: Store normalized candidate objects without publishing refs
         id: objects
         env:
           GH_TOKEN: ${{ github.token }}
@@ -48,35 +51,49 @@ jobs:
             return response.json();
           }
           const files=execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean);
-          const allowed=new Set(['apps/server/src/platform/extensionHostSandbox.ts','apps/web/src/components/codeEditor/editorExtensionBridge.ts','apps/web/src/components/codeEditor/editorDebugStore.ts','apps/web/src/components/codeEditor/extensionDebugBackend.ts']);
           const tree=[];
           for(const file of files){
-            if(!file.startsWith('apps/server/src/extensions/')&&!allowed.has(file))throw new Error(`Unexpected edit ${file}`);
+            if(!file.startsWith('apps/server/src/extensions/')&&!file.startsWith('apps/web/src/components/codeEditor/')&&file!=='apps/web/e2e/editorExtensions.e2e.ts')throw new Error(`Unexpected edit ${file}`);
             const blob=await api('git/blobs',{content:await readFile(file,'utf8'),encoding:'utf-8'});
             tree.push({path:file,mode:'100644',type:'blob',sha:blob.sha});
           }
-          tree.push({path:'scripts/connect-extension-debugger.mjs',mode:'100644',type:'blob',sha:null});
+          for(const file of ['scripts/prepare-native-contribution-acceptance.mjs','scripts/complete-extension-contributions.mjs'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
           const base=await api(`git/commits/${process.env.CANDIDATE_BASE}`);
           const result=await api('git/trees',{base_tree:base.tree.sha,tree});
           const identity={name:'Commander Chara',email:'249489759+cmdr-chara@users.noreply.github.com'};
-          const commit=await api('git/commits',{message:'feat(extensions): integrate contributed debuggers with native Synara state',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
-          console.log(`::notice title=Normalized extension candidate::commit=${commit.sha} tree=${result.sha}`);
+          const commit=await api('git/commits',{message:'feat(extensions): integrate native views, status, progress and notifications',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
+          console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);
           await appendFile(process.env.GITHUB_OUTPUT,`candidate=${commit.sha}\n`);
           NODE
-  contracts:
+  validation:
     needs: prepare
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ needs.prepare.outputs.candidate }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - name: Web and server contracts
+      - name: Required formatting
+        run: bun run fmt:check
+      - name: Required lint
+        if: ${{ !cancelled() }}
+        run: bun run lint > "$RUNNER_TEMP/lint.log" 2>&1 || { tail -100 "$RUNNER_TEMP/lint.log"; exit 1; }
+      - name: Integrated typecheck
+        if: ${{ !cancelled() }}
+        run: bun run typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { grep -E 'error TS|error:' "$RUNNER_TEMP/types.log"; exit 1; }
+      - name: Package and process boundaries
+        if: ${{ !cancelled() }}
         run: |
-          bun run --cwd apps/web typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { tail -60 "$RUNNER_TEMP/types.log"; exit 1; }
-          bun run --cwd apps/server typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { tail -60 "$RUNNER_TEMP/types.log"; exit 1; }
+          bun run windows-runtime:check
+          bun run --cwd apps/server test src/extensions/manifest.test.ts src/extensions/vsix.test.ts src/extensions/openVsx.test.ts src/platform/extensionHostSandbox.test.ts
+      - name: Install browser
+        if: ${{ !cancelled() }}
+        run: bun run --cwd apps/web test:browser:install
+      - name: Native bridge and contribution regression tests
+        if: ${{ !cancelled() }}
+        run: bun run --cwd apps/web test:browser:ci -- --project=components src/components/codeEditor/editorExtensionBridge.browser.tsx src/components/codeEditor/extensionContributions.browser.tsx
   runtime:
     needs: prepare
     runs-on: ubuntu-22.04
@@ -113,21 +130,24 @@ jobs:
           SYNARA_CODE_OSS_OUTPUT: ${{ runner.temp }}/code-oss-runtime
           SYNARA_ESBUILD_MODULE: ${{ runner.temp }}/code-oss/builder/node_modules/esbuild/lib/main.js
         run: node scripts/build-code-oss-host.mjs
-      - name: Install sandbox and native debugger
+      - name: Install sandbox and debugger
         run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap gdb
-      - name: Actual formatter, LSP and debugger VSIX tests
+      - name: Formatter, linter, language-server and debugger extensions
         env:
           SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
           SYNARA_TEST_EXTENSION_SANDBOX: '1'
-        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts src/extensions/realLanguageServer.test.ts src/extensions/realDebuggerExtension.test.ts
+        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts src/extensions/realLanguageServer.test.ts src/extensions/realDebuggerExtension.test.ts src/extensions/realLinterExtension.test.ts
       - name: Install browser
         if: ${{ !cancelled() }}
         run: bun run --cwd apps/web test:browser:install
-      - name: Native application installation and formatting
+      - name: Actual Synara application acceptance and screenshots
         if: ${{ !cancelled() }}
         env:
           SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
         run: cd apps/web && ./node_modules/.bin/playwright test --config playwright.extensions.config.ts
+      - name: Preserve readable browser failure context
+        if: ${{ failure() }}
+        run: find apps/web/test-results -name error-context.md -exec cat {} \;
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
