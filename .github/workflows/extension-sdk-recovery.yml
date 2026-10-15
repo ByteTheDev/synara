@@ -1,0 +1,51 @@
+# Temporary branch-only dependency recovery for the isolated implementation workspace.
+# No source/ref writes, deployment, credentials archive, or user application state.
+name: Extension SDK recovery
+on:
+  push:
+    branches: [feat/synara-code-oss-extensions]
+    paths: [.github/workflows/extension-sdk-recovery.yml]
+permissions:
+  contents: read
+jobs:
+  sdk:
+    if: github.repository == 'Emanuele-web04/synara'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Recover matching upstream SDK and tools
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/extension-sdk/probe" "$RUNNER_TEMP/extension-sdk/tools"
+          cd "$RUNNER_TEMP/extension-sdk/probe"
+          npm init -y >/dev/null
+          npm install --ignore-scripts --package-lock=false --no-audit --no-fund \
+            @codingame/monaco-vscode-api@37.6.0 \
+            monaco-editor@npm:@codingame/monaco-vscode-editor-api@37.6.0 \
+            vscode@npm:@codingame/monaco-vscode-api@37.6.0 \
+            @codingame/monaco-vscode-extensions-service-override@37.6.0 \
+            @codingame/monaco-vscode-model-service-override@37.6.0 \
+            @codingame/monaco-vscode-configuration-service-override@37.6.0 \
+            @codingame/monaco-vscode-languages-service-override@37.6.0 \
+            @codingame/monaco-vscode-files-service-override@37.6.0 \
+            @codingame/monaco-vscode-editor-service-override@37.6.0 \
+            @codingame/monaco-vscode-storage-service-override@37.6.0 \
+            @codingame/monaco-vscode-remote-agent-service-override@37.6.0 \
+            yauzl@3.3.1 @types/yauzl@3.4.0 semver@7.7.4 @types/semver@7.7.1
+          cp "$(command -v bun)" "$RUNNER_TEMP/extension-sdk/tools/bun"
+          cp "$(command -v node)" "$RUNNER_TEMP/extension-sdk/tools/node"
+          cd "$GITHUB_WORKSPACE"
+          find node_modules apps packages scripts -type d -name node_modules -prune -print0 | tar --null -T - -czf "$RUNNER_TEMP/extension-sdk/workspace-dependencies.tar.gz"
+          cd "$RUNNER_TEMP/extension-sdk"
+          tar -czf sdk.tar.gz probe tools
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-sdk-dependencies
+          path: ${{ runner.temp }}/extension-sdk/*.tar.gz
+          compression-level: 0
+          retention-days: 2
+          if-no-files-found: error
