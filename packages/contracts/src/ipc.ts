@@ -18,6 +18,7 @@ import type {
 } from "./projectImport";
 
 import type {
+  AccountDeleteInput,
   AccountAuthenticateOtpInput,
   AccountBeginSsoInput,
   AccountBeginSsoResult,
@@ -1529,6 +1530,7 @@ export interface NativeApi {
     uploadAvatar: (input: AccountUploadAvatarInput) => Promise<AccountMe>;
     /** Removes the uploaded avatar; the source reverts to "sso" server-side. */
     deleteAvatar: () => Promise<AccountMe>;
+    deleteAccount: (input: AccountDeleteInput) => Promise<void>;
     signOut: () => Promise<void>;
     /** Opens an SSO authorize page this server issued in the system browser. */
     openVerificationUrl: (input: AccountOpenVerificationUrlInput) => Promise<void>;

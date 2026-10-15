@@ -151,11 +151,15 @@ generations, and rechecks device/session revocation and membership before sendin
 
 Configure all five server-only secrets together: `APNS_PRIVATE_KEY` (P-256 PKCS#8
 PEM, real newlines or escaped newlines), `APNS_KEY_ID`, `APNS_TEAM_ID`,
-`APNS_BUNDLE_ID`, and `APNS_ENVIRONMENT` (`sandbox` or `production`). The Worker
+`APNS_BUNDLE_ID`, and `APNS_ENVIRONMENT` (`sandbox`, `production`, or `both`). The Worker
 forwards these to the API container. No private Apple key belongs in a client or
 Git. Missing configuration leaves foreground ActivityKit behavior available;
-partial/invalid configuration fails startup. Sandbox credentials cannot qualify
-TestFlight or App Store builds.
+partial/invalid configuration fails startup. Use `both` to accept development and
+TestFlight registrations together. The client still reports one environment per
+token; the API stores it and selects the corresponding fixed Apple gateway on
+delivery. Single-environment settings continue to reject mismatched registrations.
+Deploy the compatible API before changing the trial's current Sandbox setting to
+`both`. Sandbox delivery does not qualify TestFlight or App Store delivery.
 
 Migration `0021_woozy_dreadnoughts.sql` adds default-deny RLS tables for expiring
 activity registrations and host snapshots. The ordinary API startup migration

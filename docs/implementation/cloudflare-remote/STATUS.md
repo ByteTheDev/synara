@@ -595,3 +595,49 @@ recovery. Low-priority intermediate pushes may be coalesced by Apple; acceptance
 does not establish instant visible delivery of every intermediate state.
 The final cumulative-enrollment Worker tests pass 12/12; final `fmt:check`,
 `lint` (zero errors) and `typecheck` (12/12 packages) pass.
+
+## 2026-10-15 — Early-access preparation and test audit
+
+Integrated desktop main `566efb1` through merge `e2c1c19`. The account API and
+clients now contain confirmed self-service erasure: an additive private queue
+(`0022_account_deletions.sql`), immediate access/host fencing, retried provider
+and account-scoped cloud cleanup, and preservation of local computer history.
+Desktop confirmation pins both the user and account authority. A regression
+with the same user/email at another authority first reproduced one unwanted
+request, then passed after rejecting the stale confirmation before network I/O.
+All 70 account-session/RPC cases pass. No real account was deleted.
+
+APNs configuration supports `both` alongside the existing single-environment
+modes. Registrations still store exactly Sandbox or Production and delivery
+selects the fixed matching Apple gateway. SQL-backed restart tests and HTTP/2
+boundary tests pass; they are not live Production delivery proof. Deploy the
+compatible API before changing the current Sandbox setting.
+
+The audit retained security, migration and transport recovery contracts. It
+strengthened two weak API tests (same-user cross-organization uniqueness and
+non-enumerable error redaction) and replaced the migration fixture's pooled
+connection with an awaited dedicated connection before dropping its temporary
+database. This fixes a reproduced unhandled teardown error without ignoring it.
+The final root suite passes all 11 packages: 18,396 tests passed, 43 skipped.
+Format, lint (zero errors; 1,009 existing warnings), typecheck (12 packages) and
+released migration lineage checks pass. Tests used disposable local PostgreSQL.
+
+The phone/universal audit removes 640 net production lines, 42 obsolete native
+cases and two nonfunctional performance cases. Unreachable transport helpers,
+synthetic image ingress, retired loading state and an unused mention parser
+are removed. Live reasoning/punctuation regressions are fixed; the shipping
+file-mention tokenizer is unchanged after checking its rendering consumer.
+The Core suite passes 313 cases; final focused native coverage passes 116 cases
+(one fixture skip); current workspace UI flows and iPad docked-sidebar tests
+have separate simulator evidence. All 86 Swift/desktop fixtures match. The broad
+native suite still requires old Git/skill/composer fixtures to move to modern
+owners; it is not represented as fully green. See the mobile handoff.
+
+Publication boundary: these changes are branch code, not a new cloud deployment
+or distributed app. Migration 0022 is not applied live; Production APNs, Apple
+upstream token revocation, and provider-side personal-organization retention
+remain unqualified. App Store Connect now has the Synara mobile app entry, but
+the local Release archive is development-signed and App Store export requires
+ordinary Apple-ID distribution signing. No App Store Connect API key was
+created. No main merge, Beta tag, TestFlight upload or physical-phone update
+was performed in this pass.

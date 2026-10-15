@@ -4,6 +4,7 @@
 // Layer: Web account feature hook.
 
 import type {
+  AccountDeleteInput,
   AccountAuthenticateOtpInput,
   AccountBeginSsoInput,
   AccountMe,
@@ -203,6 +204,16 @@ export function useAccount() {
     },
   });
 
+  const deleteAccount = useMutation({
+    ...statusFence,
+    mutationFn: (input: AccountDeleteInput) => ensureNativeApi().account.deleteAccount(input),
+    onSuccess: (_result, _input, fence) => {
+      if (!mayWriteStatus(fence)) return;
+      setStatus({ state: "signed-out" });
+      removeAccountScopedQueries(queryClient);
+    },
+  });
+
   const openVerificationUrl = (url: string) => {
     const api = ensureNativeApi();
     return api.account.openVerificationUrl({ url });
@@ -226,6 +237,7 @@ export function useAccount() {
     uploadAvatar,
     deleteAvatar,
     signOut,
+    deleteAccount,
     openVerificationUrl,
   } as const;
 }

@@ -13,6 +13,8 @@ import { eq } from "drizzle-orm";
 import { Schema } from "effect";
 import { Hono } from "hono";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { createAccountDeletionService, type AccountDeletionService } from "../accountDeletion";
+import { accountDeletions, hostSecrets } from "../db/schema";
 import type { WorkosApiConfig } from "../config";
 import { createDb } from "../db";
 import { runMigrations } from "../db/migrate";
@@ -114,6 +116,7 @@ describe.skipIf(!TEST_DATABASE_URL)("createV1Routes", () => {
   }
 
   type BuildAppOptions = {
+    accountDeletion?: AccountDeletionService;
     trustedProxyHops?: number;
     avatarStorage?: AvatarStorage;
     profileProxySecret?: string;
@@ -133,6 +136,7 @@ describe.skipIf(!TEST_DATABASE_URL)("createV1Routes", () => {
   ) {
     const { verifier, grants } = createWorkosIdentityProvider(forConfig);
     return createV1Routes({
+      ...(options.accountDeletion ? { accountDeletion: options.accountDeletion } : {}),
       verifier,
       grants,
       signing: testSigning,
@@ -181,6 +185,184 @@ describe.skipIf(!TEST_DATABASE_URL)("createV1Routes", () => {
   // test that changes someone's memberships would otherwise leak into the next.
   beforeEach(() => {
     clearOrgCache();
+  });
+
+  describe("account erasure", () => {
+    it("requires the authenticated account's explicit email confirmation", async () => {
+      const { app, db } = buildApp();
+      const owner = await signIn();
+      const user = await createWorkosIdentityProvider(config).verifier.getUser(owner.userId);
+      for (const [token, body, status] of [
+        [undefined, { confirmation: "delete", email: user.email }, 401],
+        [owner.token, { confirmation: "delete", email: "another@example.com" }, 400],
+        [owner.token, { email: user.email }, 400],
+      ] as const) {
+        const response = await app.request("/api/v1/me", {
+          method: "DELETE",
+          headers: token ? authHeaders(token) : { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        expect(response.status).toBe(status);
+      }
+      expect(
+        await db.select().from(accountDeletions).where(eq(accountDeletions.userId, owner.userId)),
+      ).toHaveLength(0);
+      expect((await app.request("/api/v1/me", { headers: authHeaders(owner.token) })).status).toBe(
+        200,
+      );
+    });
+
+    it("fences sessions, retries erasure after restart and preserves another account's cloud data", async () => {
+      const owner = await signIn();
+      const neighbor = await signIn();
+      const { verifier } = createWorkosIdentityProvider(config);
+      const user = await verifier.getUser(owner.userId);
+      const avatar = fakeAvatarStorage();
+      const key = `avatars/${owner.userId}/example.jpg`;
+      await avatar.storage.put(key, new Uint8Array([1]), "image/jpeg");
+      const deletion = createAccountDeletionService({
+        db: database.db,
+        verifier,
+        avatarStorage: avatar.storage,
+      });
+      const { app, db } = buildApp({ accountDeletion: deletion });
+      const handles = new Map<string, string>();
+      const hostIds = new Map<string, string>();
+      for (const session of [owner, neighbor]) {
+        const hostId = randomUUID();
+        hostIds.set(session.userId, hostId);
+        await db.insert(hosts).values({
+          id: hostId,
+          ownerUserId: session.userId,
+          ownerOrgId: session.orgId,
+          environmentId: randomUUID(),
+          name: "Synthetic computer",
+          platform: "darwin",
+          kind: "local",
+          keyGeneration: 1,
+          publicKeyJwk: { kty: "OKP", crv: "Ed25519", x: "synthetic" },
+        });
+        await db.insert(hostSecrets).values({
+          hostId,
+          ownerUserId: session.userId,
+          ciphertext: "synthetic-encrypted-config",
+          iv: "synthetic",
+          version: 1,
+        });
+        const handle = `erase-${randomUUID().slice(0, 8)}`;
+        handles.set(session.userId, handle);
+        await db.insert(profiles).values({
+          userId: session.userId,
+          handle,
+          displayName: "Test",
+          avatarColor: "#123456",
+          public: true,
+          ...(session === owner ? { avatarKey: key } : {}),
+        });
+        await db.insert(inboxRecaps).values({
+          userId: session.userId,
+          orgId: session.orgId,
+          sourceHostId: randomUUID(),
+          sourceHostName: "Fixture",
+          day: "2026-10-01",
+          timezone: "UTC",
+        });
+      }
+      const response = await app.request("/api/v1/me", {
+        method: "DELETE",
+        headers: authHeaders(owner.token),
+        // A supplied target must never redirect the authenticated owner's deletion.
+        body: JSON.stringify({
+          confirmation: "delete",
+          email: user.email,
+          userId: neighbor.userId,
+        }),
+      });
+      expect(response.status).toBe(202);
+      const [revokedHost] = await db
+        .select()
+        .from(hosts)
+        .where(eq(hosts.id, hostIds.get(owner.userId)!));
+      expect(revokedHost).toMatchObject({
+        publicKeyJwk: null,
+        discoverable: false,
+        keyGeneration: 2,
+      });
+      const [neighborHost] = await db
+        .select()
+        .from(hosts)
+        .where(eq(hosts.id, hostIds.get(neighbor.userId)!));
+      expect(neighborHost?.publicKeyJwk).not.toBeNull();
+      expect((await app.request("/api/v1/me", { headers: authHeaders(owner.token) })).status).toBe(
+        401,
+      );
+      expect((await app.request(`/api/v1/profiles/${handles.get(owner.userId)}`)).status).toBe(404);
+      expect(
+        (await app.request("/api/v1/me", { headers: authHeaders(neighbor.token) })).status,
+      ).toBe(200);
+      const due = () =>
+        db
+          .update(accountDeletions)
+          .set({ nextAttemptAt: new Date(0) })
+          .where(eq(accountDeletions.userId, owner.userId));
+      vi.spyOn(verifier, "deleteUser").mockRejectedValueOnce(
+        new Error("temporary provider outage"),
+      );
+      await due();
+      await deletion.flush();
+      expect(await verifier.getUser(owner.userId)).toMatchObject({ id: owner.userId });
+      await due();
+      const restarted = createAccountDeletionService({
+        db,
+        verifier,
+        avatarStorage: avatar.storage,
+      });
+      await restarted.flush();
+      expect(
+        await db.select().from(profiles).where(eq(profiles.userId, owner.userId)),
+      ).toHaveLength(0);
+      expect(
+        await db.select().from(inboxRecaps).where(eq(inboxRecaps.userId, owner.userId)),
+      ).toHaveLength(0);
+      expect(avatar.objects.has(key)).toBe(false);
+      expect(
+        await db
+          .select()
+          .from(hosts)
+          .where(eq(hosts.id, hostIds.get(owner.userId)!)),
+      ).toHaveLength(0);
+      expect(
+        await db.select().from(hostSecrets).where(eq(hostSecrets.ownerUserId, owner.userId)),
+      ).toHaveLength(0);
+      expect(
+        await db.select().from(hostSecrets).where(eq(hostSecrets.ownerUserId, neighbor.userId)),
+      ).toHaveLength(1);
+      await expect(verifier.getUser(owner.userId)).rejects.toMatchObject({ status: 404 });
+      expect(
+        await db.select().from(profiles).where(eq(profiles.userId, neighbor.userId)),
+      ).toHaveLength(1);
+      expect(
+        await db.select().from(inboxRecaps).where(eq(inboxRecaps.userId, neighbor.userId)),
+      ).toHaveLength(1);
+      // An old admitted write cannot republish a deleted profile and is swept again.
+      await db.insert(profiles).values({
+        userId: owner.userId,
+        handle: handles.get(owner.userId)!,
+        displayName: "Late write",
+        avatarColor: "#123456",
+        public: true,
+      });
+      expect((await app.request(`/api/v1/profiles/${handles.get(owner.userId)}`)).status).toBe(404);
+      await db
+        .update(accountDeletions)
+        .set({ requestedAt: new Date(Date.now() - 86_400_001), nextAttemptAt: new Date(0) })
+        .where(eq(accountDeletions.userId, owner.userId));
+      await restarted.flush();
+      expect(
+        await db.select().from(profiles).where(eq(profiles.userId, owner.userId)),
+      ).toHaveLength(0);
+      expect(await restarted.isDeleting(owner.userId)).toBe(true);
+    });
   });
 
   describe("private saved Inbox recaps", () => {

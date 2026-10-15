@@ -34,10 +34,12 @@ import {
  *
  * @module accountSession
  */
+import { deleteHostIdentity } from "./hostIdentity";
 import { randomUUID } from "node:crypto";
 import OS from "node:os";
 
 import type {
+  AccountDeleteInput,
   AccountAuthenticateOtpInput,
   AccountDevice,
   AccountHost,
@@ -72,6 +74,7 @@ import {
   ensureLocalAccountHostLinked,
   readAccountCredentials,
   readAccountFile,
+  deleteAccountCredentials,
   runAuthLogout,
   scopeTokenToWorkspace,
   selectOrganization,
@@ -217,6 +220,7 @@ export interface AccountSession {
    * transparent refresh.
    */
   usageSummary(input: AccountUsageSummaryInput): Promise<UsageSummary>;
+  deleteAccount(input: AccountDeleteInput): Promise<void>;
   signOut(): Promise<void>;
   /**
    * Whether `url` is the authorize URL of an SSO attempt this session
@@ -969,6 +973,41 @@ export function createAccountSession(
     async confirmSyncKey(input) {
       requireHostSecretsSync();
       await (await currentHostSecretsCoordinator()).confirmSyncKey(input);
+    },
+
+    // Pin irreversible erasure to the authority and user the caller confirmed.
+    async deleteAccount(input) {
+      const expected = await readAccountCredentials(credentialDir);
+      if (
+        !expected ||
+        expected.userId !== input.userId ||
+        accountApiIssuer(expected.accountUrl) !== input.accountAuthority
+      )
+        throw new WorkspaceAccessChangedError();
+      const client = clientFor(expected.accountUrl);
+      await withFreshAccessToken(
+        { baseDir: credentialDir, client, expectedIdentity: expected },
+        (token) =>
+          client.deleteAccount(token, { confirmation: input.confirmation, email: input.email }),
+      );
+      // Erasure already revoked every cloud host. Only clear this matching local
+      // identity, under the same lock used by login/refresh; never a replacement account.
+      await withLockedAccountFile(credentialDir, async () => {
+        const current = await readAccountFile(credentialDir);
+        if (
+          !current ||
+          current.accountUrl !== expected.accountUrl ||
+          current.userId !== expected.userId
+        )
+          return;
+        await deleteAccountCredentials(credentialDir);
+        const { hostIdentityPath } = await Effect.runPromise(
+          deriveServerPaths(baseDir, options.devUrl).pipe(Effect.provide(EffectPath.layer)),
+        );
+        await deleteHostIdentity(hostIdentityPath);
+        deviceRegistrationAttempt = undefined;
+        hostSecretsCoordinator = undefined;
+      });
     },
 
     async signOut() {

@@ -155,6 +155,13 @@
       "when": 1791569205365,
       "tag": "0021_woozy_dreadnoughts",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792072304575,
+      "tag": "0022_account_deletions",
+      "breakpoints": true
     }
   ]
 }

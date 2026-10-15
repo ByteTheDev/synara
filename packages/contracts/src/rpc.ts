@@ -13,6 +13,7 @@ import * as RpcGroup from "effect/unstable/rpc/RpcGroup";
 
 import {
   AccountHost,
+  AccountDeleteInput,
   AccountAuthenticateOtpInput,
   AccountBeginSsoInput,
   AccountBeginSsoResult,
@@ -1796,6 +1797,12 @@ export const WsAccountDeleteAvatarRpc = Rpc.make(WS_METHODS.accountDeleteAvatar,
   error: WsRpcError,
 });
 
+export const WsAccountDeleteRpc = Rpc.make(WS_METHODS.accountDelete, {
+  payload: AccountDeleteInput,
+  success: Schema.Void,
+  error: WsRpcError,
+});
+
 export const WsAccountSignOutRpc = Rpc.make(WS_METHODS.accountSignOut, {
   payload: Schema.Struct({}),
   success: Schema.Void,
@@ -2378,6 +2385,7 @@ export type WsFeatureRpc =
   | typeof WsAccountUpdateProfileRpc
   | typeof WsAccountUploadAvatarRpc
   | typeof WsAccountDeleteAvatarRpc
+  | typeof WsAccountDeleteRpc
   | typeof WsAccountSignOutRpc
   | typeof WsAccountOpenVerificationUrlRpc
   | typeof WsHostsListRpc
@@ -2567,6 +2575,7 @@ export const WsFeatureRpcGroup: RpcGroup.RpcGroup<WsFeatureRpc> = RpcGroup.make(
   WsAccountUpdateProfileRpc,
   WsAccountUploadAvatarRpc,
   WsAccountDeleteAvatarRpc,
+  WsAccountDeleteRpc,
   WsAccountSignOutRpc,
   WsAccountOpenVerificationUrlRpc,
   WsHostsListRpc,

@@ -3,6 +3,7 @@ import { importPKCS8, SignJWT } from "jose";
 import type { ApnsConfig } from "../config";
 
 export type ActivityDelivery = {
+  environment: "sandbox" | "production";
   token: string;
   activityId: string;
   timestamp: number;
@@ -16,6 +17,8 @@ export function createApnsSender(config: ApnsConfig) {
   const key = importPKCS8(config.privateKey, "ES256");
   let cached: { jwt: string; created: number } | undefined;
   return async (delivery: ActivityDelivery): Promise<ApnsResult> => {
+    if (config.environment !== "both" && delivery.environment !== config.environment)
+      return "rejected";
     const now = Math.floor(Date.now() / 1000);
     if (!cached || now - cached.created >= 3000) {
       cached = {
@@ -28,8 +31,10 @@ export function createApnsSender(config: ApnsConfig) {
       };
     }
     const authorization = cached.jwt;
+    // Each persisted subscription retains its signing environment; TestFlight
+    // must not redirect existing development tokens to the production gateway.
     const origin =
-      config.environment === "sandbox"
+      delivery.environment === "sandbox"
         ? "https://api.sandbox.push.apple.com"
         : "https://api.push.apple.com";
     return new Promise<ApnsResult>((resolve) => {

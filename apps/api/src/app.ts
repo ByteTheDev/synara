@@ -1,4 +1,5 @@
 import { createApnsSender } from "./liveActivities/apns";
+import { createAccountDeletionService } from "./accountDeletion";
 import { createLiveActivityService } from "./liveActivities/service";
 import { createCloudflareClient } from "./remote/cloudflare";
 import { createPairingRendezvous } from "./remote/pairing";
@@ -41,6 +42,14 @@ export async function createApp(
 }> {
   const { db, pool } = createDb(config.databaseUrl);
   const identity = await createIdentityAdapters(config, db);
+  const avatarStorage = config.avatarStorage
+    ? createAvatarStorage(config.avatarStorage)
+    : undefined;
+  const accountDeletion = createAccountDeletionService({
+    db,
+    verifier: identity.verifier,
+    ...(avatarStorage ? { avatarStorage } : {}),
+  });
 
   const tunnels = config.cloudflareTunnel
     ? (dependencies.createTunnels ?? createTunnelCoordinator)(
@@ -89,6 +98,7 @@ export async function createApp(
   app.route(
     "/api/v1",
     createV1Routes({
+      accountDeletion,
       ...(tunnels ? { tunnels } : {}),
       ...(liveActivities ? { liveActivities } : {}),
       ...(config.remoteTestUserIds ? { remoteTestUserIds: config.remoteTestUserIds } : {}),
@@ -102,7 +112,7 @@ export async function createApp(
       accountBaseUrl: config.baseUrl,
       apiIssuer: config.apiPublicUrl,
       db,
-      ...(config.avatarStorage ? { avatarStorage: createAvatarStorage(config.avatarStorage) } : {}),
+      ...(avatarStorage ? { avatarStorage } : {}),
       trustedProxyHops: config.trustedProxyHops,
       ...(config.profileProxySecret ? { profileProxySecret: config.profileProxySecret } : {}),
     }),
@@ -157,6 +167,7 @@ export async function createApp(
     ...(tunnels ? { tunnels } : {}),
     flushLiveActivities: () => liveActivities?.flush() ?? Promise.resolve(),
     cleanup: async () => {
+      await accountDeletion.flush();
       await createPairingRendezvous(db, config.apiPublicUrl).cleanup();
       await tunnels?.cleanup();
     },

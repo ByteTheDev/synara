@@ -7,6 +7,7 @@
 // low-chrome layout with an explicit edit mode for the local name + handle.
 // Layer: web profile feature (settings panel body).
 
+import { DeleteAccountControl } from "../account/DeleteAccountControl";
 import { useState } from "react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import {
@@ -249,6 +250,7 @@ function ProfileContent({
         />
       )}
 
+      <DeleteAccountControl />
       <EditProfileDialog
         open={editOpen}
         onOpenChange={setEditOpen}

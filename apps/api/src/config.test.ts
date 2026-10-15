@@ -57,6 +57,10 @@ describe("loadApiConfig", () => {
         environment: "sandbox",
       });
     }
+    expect(
+      loadApiConfig({ ...base, ...metadata, APNS_PRIVATE_KEY: pem, APNS_ENVIRONMENT: "both" }).apns
+        ?.environment,
+    ).toBe("both");
     expect(() => loadApiConfig({ ...base, ...metadata })).toThrow(/APNS_PRIVATE_KEY/);
     expect(() =>
       loadApiConfig({ ...base, ...metadata, APNS_PRIVATE_KEY: pem, APNS_ENVIRONMENT: "test" }),

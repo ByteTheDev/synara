@@ -22,6 +22,16 @@ import {
 
 export type HostEndpoint = { url: string; transport: "lan" | "tailscale" | "cloudflare" };
 
+// Durable erasure outbox and access tombstone. No email, credentials or chat content.
+export const accountDeletions = pgTable("account_deletions", {
+  userId: text("user_id").primaryKey(),
+  requestedAt: timestamp("requested_at", { withTimezone: true }).notNull().defaultNow(),
+  nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }).notNull().defaultNow(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+  identityDeletedAt: timestamp("identity_deleted_at", { withTimezone: true }),
+  leaseUntil: timestamp("lease_until", { withTimezone: true }),
+}).enableRLS();
+
 // Account-owned history survives host deletion; provenance is a snapshot, not a FK.
 export const inboxRecaps = pgTable(
   "inbox_recaps",

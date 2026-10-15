@@ -469,6 +469,26 @@ Use a disposable test database, separate from personal development and productio
 state. Fixture setup can remove or replace registry rows; API and E2E suites
 sharing that test database must run sequentially.
 
+## Account erasure
+
+`DELETE /api/v1/me` requires the existing authenticated device session and a JSON
+body with `confirmation: "delete"` and the current verified account email. The
+target is always the authenticated owner, never a caller-supplied user ID. A
+successful request returns `202 {"status":"pending"}`; clients then sign out.
+The owner-only desktop RPC also fences the account shown in the confirmation
+against an intervening account switch. Local computer chat history is preserved.
+
+Migration `0022_account_deletions.sql` adds the private durable deletion queue.
+Requests immediately hide the public profile, unlink host identities, expire
+activities and refuse subsequent authenticated access. Maintenance retries
+identity-provider deletion, avatar removal and owner-scoped data cleanup after
+failures or restarts. A second purge after 24 hours catches late writes; a
+completed queue tombstone remains for 30 days. Tunnel allocation metadata is
+anonymized and retained for cleanup rather than losing the identifiers needed
+to remove the remote resources. No existing migration or other owner's data is
+rewritten. Provider account deletion is not proof of upstream Apple OAuth token
+revocation; that requires separate production qualification.
+
 ## Managed remote access
 
 The current app uses [managed Cloudflare tunnels](../../docs/cloudflare-remote.md). No relay secret is required for WorkOS startup or normal remote access. Configure the four Cloudflare variables together and explicit remote test users. Tunnel allocation and code rendezvous migrations are additive; admin tokens remain in the account service. The retired relay-ticket endpoint returns 410 and the internal revocation endpoint returns 401. Ticket issuance and the relay polling feed have been removed; hosts use authenticated authorization snapshots and acknowledge durable device revocations.

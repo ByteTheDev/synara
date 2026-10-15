@@ -183,6 +183,8 @@ export type AccountIdentityVerifier = {
   verifyAccessToken(token: string): Promise<VerifiedAccessToken>;
   getUser(userId: string): Promise<IdentityUser>;
   revokeSession(sessionId: string): Promise<void>;
+  /** Idempotent provider erasure. Optional for self-hosted identity adapters without deletion. */
+  deleteUser?(userId: string): Promise<void>;
   /**
    * Builds the provider's authorization-code + PKCE authorize URL for the
    * desktop SSO path, deep-linked to `provider`. `redirectUri` must be a

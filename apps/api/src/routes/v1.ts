@@ -1,5 +1,7 @@
 import { RegisterLiveActivity, LiveActivityHostSnapshot } from "@synara/contracts";
 import type { LiveActivityService } from "../liveActivities/service";
+import { createAccountDeletionService, type AccountDeletionService } from "../accountDeletion";
+import { DeleteAccountRequest } from "@synara/contracts";
 import {
   SOCIAL_LINK_PLATFORMS,
   normalizeSocialUsername,
@@ -366,6 +368,7 @@ function authTokensBody(auth_: AuthTokens): AuthTokensResponse {
 }
 
 export function createV1Routes(deps: {
+  accountDeletion?: AccountDeletionService;
   liveActivities?: LiveActivityService;
   tunnels?: TunnelCoordinator;
   apiIssuer?: string;
@@ -427,6 +430,9 @@ export function createV1Routes(deps: {
   } = deps;
   const trustedProxyHops = deps.trustedProxyHops ?? DEFAULT_TRUSTED_PROXY_HOPS;
   const profileProxySecret = deps.profileProxySecret;
+  const accountDeletion =
+    deps.accountDeletion ??
+    createAccountDeletionService({ db, verifier, ...(avatarStorage ? { avatarStorage } : {}) });
   const scheduleDeferred =
     deps.scheduleDeferred ??
     ((task: () => Promise<void>, delayMs: number) => {
@@ -570,7 +576,10 @@ export function createV1Routes(deps: {
     }
     // A database outage must fail closed as a server failure, without telling
     // clients to discard a valid sign-in session.
-    return (await devices.isSessionRevoked(verified.userId, verified.sessionId)) ? null : verified;
+    return (await devices.isSessionRevoked(verified.userId, verified.sessionId)) ||
+      (await accountDeletion.isDeleting(verified.userId))
+      ? null
+      : verified;
   }
 
   /**
@@ -795,6 +804,25 @@ export function createV1Routes(deps: {
     if (user instanceof Response) return user;
 
     return c.json(await accountMe(user, session.organization));
+  });
+
+  // The target is derived solely from the verified session. Erasure is
+  // acknowledged only after durable intent; retries survive service restarts.
+  v1.delete("/me", async (c) => {
+    const session = await requireOrgSession(c, { freshMembership: true });
+    if (session instanceof Response) return session;
+    const body = await c.req.json().catch(() => null);
+    if (!Schema.is(DeleteAccountRequest)(body))
+      return errorResponse(c, 400, "validation_failed", "Confirm account deletion with your email");
+    const user = await loadSessionUser(c, session.userId);
+    if (user instanceof Response) return user;
+    if (body.email.trim().toLowerCase() !== user.email.trim().toLowerCase())
+      return errorResponse(c, 400, "validation_failed", "The email does not match this account");
+    if (!accountDeletion.supported)
+      return errorResponse(c, 503, "internal_error", "Account deletion is not configured");
+    await accountDeletion.request(session.userId);
+    c.header("Cache-Control", "private, no-store");
+    return c.json({ status: "pending" }, 202);
   });
 
   // Private account history has no relationship to public profile publication.
@@ -2732,7 +2760,7 @@ export function createV1Routes(deps: {
     // the public URL spells it that way.
     const handle = c.req.param("handle").replace(/^@/, "").toLowerCase();
     const [row] = await db.select().from(profiles).where(eq(profiles.handle, handle)).limit(1);
-    if (!row || !row.public) {
+    if (!row || !row.public || (await accountDeletion.isDeleting(row.userId))) {
       return errorResponse(c, 404, "profile_not_found", "No public profile by that handle");
     }
 

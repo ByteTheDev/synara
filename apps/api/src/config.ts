@@ -31,7 +31,7 @@ export type ApnsConfig = {
   keyId: string;
   teamId: string;
   bundleId: string;
-  environment: "sandbox" | "production";
+  environment: "sandbox" | "production" | "both";
 };
 
 export function loadApnsConfig(env: Env): ApnsConfig | undefined {
@@ -48,7 +48,7 @@ export function loadApnsConfig(env: Env): ApnsConfig | undefined {
     !/^[A-Z0-9]{10}$/.test(env.APNS_KEY_ID!) ||
     !/^[A-Z0-9]{10}$/.test(env.APNS_TEAM_ID!) ||
     !/^[A-Za-z0-9.-]{1,200}$/.test(env.APNS_BUNDLE_ID!) ||
-    !["sandbox", "production"].includes(env.APNS_ENVIRONMENT!)
+    !["sandbox", "production", "both"].includes(env.APNS_ENVIRONMENT!)
   )
     throw new ApiConfigError("Invalid APNs metadata or environment");
   const privateKey = env.APNS_PRIVATE_KEY!.replace(/\\n/g, "\n");

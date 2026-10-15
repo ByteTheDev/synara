@@ -28,6 +28,12 @@ const SAMPLE_INPUTS: Record<string, unknown> = {
   [WS_METHODS.accountDeleteInboxRecap]: { id: "saved" },
   [WS_METHODS.accountUploadAvatar]: { bytes: "aGVsbG8=", contentType: "image/webp" },
   [WS_METHODS.accountDeleteAvatar]: undefined,
+  [WS_METHODS.accountDelete]: {
+    confirmation: "delete",
+    email: "ada@example.com",
+    userId: "user_1",
+    accountAuthority: "https://accounts.example.com/api/v1",
+  },
   [WS_METHODS.accountSignOut]: undefined,
   [WS_METHODS.accountOpenVerificationUrl]: { url: "https://auth.example.com/device?code=x" },
 };
@@ -90,6 +96,7 @@ function spySession(): { session: AccountSession; calls: () => string[] } {
       organization: { id: "org_1", name: "Workspace" },
       profile: null,
     }),
+    deleteAccount: record("deleteAccount", undefined),
     signOut: record("signOut", undefined),
     isVerificationUrlAllowed: record("isVerificationUrlAllowed", true),
   };

@@ -537,6 +537,14 @@ export async function startFakeWorkos(options: StartFakeWorkosOptions = {}): Pro
     return c.json(user);
   });
 
+  app.delete("/user_management/users/:id", (c) => {
+    const id = c.req.param("id");
+    if (!users.delete(id)) return c.json({ message: "User not found" }, 404);
+    for (let index = memberships.length - 1; index >= 0; index--)
+      if (memberships[index]!.userId === id) memberships.splice(index, 1);
+    return c.body(null, 204);
+  });
+
   // Memberships carry `organization_name` inline, as the real listing does —
   // a caller that had to fan out over the Organizations API for names would
   // pass against a double that omitted it and fail against WorkOS.

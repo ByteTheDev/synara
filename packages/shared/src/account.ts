@@ -1,4 +1,6 @@
 import {
+  DeleteAccountResponse,
+  type DeleteAccountRequest,
   RemoteTunnelResponse,
   SaveInboxRecapRequest,
   SavedInboxRecap,
@@ -231,6 +233,7 @@ export interface AccountClient {
    */
   authenticateOtp(request: OtpAuthenticateRequest): Promise<AuthTokensResponse>;
   me(token: string): Promise<AccountMe>;
+  deleteAccount(token: string, input: DeleteAccountRequest): Promise<void>;
   saveInboxRecap(token: string, request: SaveInboxRecapRequest): Promise<SavedInboxRecap>;
   /** Background upsert; respects deleted days instead of restoring them. */
   syncInboxRecap(token: string, request: SaveInboxRecapRequest): Promise<void>;
@@ -612,6 +615,18 @@ export function createAccountClient(options: CreateAccountClientOptions): Accoun
           body: new Uint8Array(bytes).buffer,
         },
         AccountMeSchema,
+      );
+    },
+
+    async deleteAccount(token, input) {
+      await requestJson(
+        "/api/v1/me",
+        {
+          method: "DELETE",
+          headers: authHeaders(token),
+          body: JSON.stringify(input),
+        },
+        DeleteAccountResponse,
       );
     },
 

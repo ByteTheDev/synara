@@ -94,6 +94,12 @@ describe("verifyAccessToken", () => {
     await expect(
       grants.resolveEnvironmentScope(session, user.email, { freshMembership: true }),
     ).resolves.toMatchObject({ kind: "selection_required", why: "not_a_member" });
+    // Account erasure addresses the mapped Production identity, never the old ID.
+    await verifier.deleteUser!("user_existing_migration");
+    await expect(verifier.getUser("user_existing_migration")).rejects.toMatchObject({
+      status: 404,
+    });
+    await expect(verifier.deleteUser!("user_existing_migration")).resolves.toBeUndefined();
   });
   it("returns the user and session ids from a valid token", async () => {
     const auth = createWorkosAuth(workos.config());

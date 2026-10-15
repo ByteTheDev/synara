@@ -8,19 +8,24 @@ const wire = vi.hoisted(() => ({ connect: vi.fn() }));
 vi.mock("node:http2", () => ({ connect: wire.connect }));
 describe("APNs HTTP/2 boundary", () => {
   it.each([
-    [200, "", "delivered"],
-    [410, "Unregistered", "invalid-token"],
-    [400, "BadDeviceToken", "invalid-token"],
-    [429, "TooManyRequests", "retry"],
-    [403, "InvalidProviderToken", "rejected"],
+    [200, "", "delivered", "sandbox"],
+    [200, "", "delivered", "production"],
+    [410, "Unregistered", "invalid-token", "sandbox"],
+    [400, "BadDeviceToken", "invalid-token", "production"],
+    [429, "TooManyRequests", "retry", "sandbox"],
+    [403, "InvalidProviderToken", "rejected", "production"],
   ] as const)(
     "classifies %s without exposing tokens or response data",
-    async (status, reason, expected) => {
+    async (status, reason, expected, environment) => {
       const { privateKey, publicKey } = generateKeyPairSync("ec", { namedCurve: "prime256v1" });
       let headers: Record<string, string> = {};
       let payload = "";
       wire.connect.mockImplementation((origin: string) => {
-        expect(origin).toBe("https://api.sandbox.push.apple.com");
+        expect(origin).toBe(
+          environment === "sandbox"
+            ? "https://api.sandbox.push.apple.com"
+            : "https://api.push.apple.com",
+        );
         const session = new EventEmitter() as EventEmitter & {
           request: (value: Record<string, string>) => unknown;
           destroy: () => void;
@@ -47,10 +52,11 @@ describe("APNs HTTP/2 boundary", () => {
         keyId: "ABCD123456",
         teamId: "TEAM123456",
         bundleId: "com.example.synara",
-        environment: "sandbox",
+        environment: "both",
       });
       expect(
         await send({
+          environment,
           token: "a".repeat(64),
           activityId: "example-activity",
           timestamp: 1790000000,

@@ -147,6 +147,11 @@ export function makeAccountRpcHandlers({ accountSession, openBrowser }: AccountR
         () => Effect.tryPromise(() => accountSession.deleteAvatar()),
         "Failed to remove your avatar",
       ),
+    [WS_METHODS.accountDelete]: (input: Parameters<AccountSession["deleteAccount"]>[0]) =>
+      ownerAccountRpc(
+        () => Effect.tryPromise(() => accountSession.deleteAccount(input)),
+        "Could not confirm account deletion",
+      ),
     [WS_METHODS.accountSignOut]: () =>
       ownerAccountRpc(
         () => Effect.tryPromise(() => accountSession.signOut()),

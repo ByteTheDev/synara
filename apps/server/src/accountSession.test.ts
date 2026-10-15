@@ -11,7 +11,12 @@ import {
   type AccountClient,
 } from "@synara/shared/account";
 
-import { accountCredentialsPath, readAccountFile, writeAccountCredentials } from "./accountAuth.ts";
+import {
+  accountCredentialsPath,
+  readAccountFile,
+  WorkspaceAccessChangedError,
+  writeAccountCredentials,
+} from "./accountAuth.ts";
 import { createAccountSession } from "./accountSession.ts";
 import { generateAndPersistHostIdentity } from "./hostIdentity";
 
@@ -767,6 +772,78 @@ describe("account profile sync policy", () => {
     await expect(session.deleteAvatar()).rejects.toThrow("profile sync is unavailable");
     for (const call of [updateProfile, updateOrganization, uploadAvatar, deleteAvatar])
       expect(call).not.toHaveBeenCalled();
+  });
+});
+
+describe("account erasure", () => {
+  it.each([
+    { userId: "different-user", accountAuthority: `${ACCOUNT_URL}/api/v1` },
+    { userId: "user_1", accountAuthority: "https://previous-account.example.com/api/v1" },
+  ])(
+    "refuses a stale deletion target before contacting the account service: %j",
+    async (target) => {
+      const baseDir = makeBaseDir();
+      await writeAccountCredentials(baseDir, credentials({ userId: "user_1" }));
+      const deleteAccount = vi.fn(async () => {});
+      const session = sessionFor(baseDir, makeClient({ deleteAccount }));
+
+      const error = await session
+        .deleteAccount({ ...target, email: "ada@example.com", confirmation: "delete" })
+        .then(
+          () => undefined,
+          (error: unknown) => error,
+        );
+
+      // Even matching user IDs and emails cannot authorize erasure in another authority.
+      expect(deleteAccount).not.toHaveBeenCalled();
+      expect(error).toBeInstanceOf(WorkspaceAccessChangedError);
+      expect(await readAccountFile(baseDir)).toMatchObject({
+        accountUrl: ACCOUNT_URL,
+        userId: "user_1",
+        accessToken: "access-1",
+      });
+    },
+  );
+
+  it.each([
+    undefined,
+    { userId: "user_2", accountUrl: ACCOUNT_URL },
+    { userId: "user_1", accountUrl: "https://other-account.example.com" },
+  ])("clears only the erased account's credentials (replacement=%j)", async (replacement) => {
+    const baseDir = makeBaseDir();
+    await writeAccountCredentials(baseDir, credentials({ userId: "user_1" }));
+    const localHistory = path.join(baseDir, "local-history.sqlite");
+    fs.writeFileSync(localHistory, "synthetic-local-history");
+    const entered = Promise.withResolvers<void>();
+    const pending = Promise.withResolvers<void>();
+    const deleteAccount = vi.fn(async () => {
+      entered.resolve();
+      await pending.promise;
+    });
+    const session = sessionFor(baseDir, makeClient({ deleteAccount }));
+    const deleting = session.deleteAccount({
+      userId: "user_1",
+      accountAuthority: `${ACCOUNT_URL}/api/v1`,
+      email: "ada@example.com",
+      confirmation: "delete",
+    });
+    await entered.promise;
+    if (replacement)
+      await writeAccountCredentials(
+        baseDir,
+        credentials({ ...replacement, accessToken: "replacement" }),
+      );
+    pending.resolve();
+    await deleting;
+    expect(deleteAccount).toHaveBeenCalledWith("access-1", {
+      confirmation: "delete",
+      email: "ada@example.com",
+    });
+    const remaining = await readAccountFile(baseDir);
+    if (replacement)
+      expect(remaining).toMatchObject({ ...replacement, accessToken: "replacement" });
+    else expect(remaining).toBeUndefined();
+    expect(fs.readFileSync(localHistory, "utf8")).toBe("synthetic-local-history");
   });
 });
 

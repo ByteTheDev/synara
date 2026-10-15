@@ -973,6 +973,7 @@ export function createWsNativeApi(): NativeApi {
       updateProfile: (input) => controller.request(WS_METHODS.accountUpdateProfile, input),
       uploadAvatar: (input) => controller.request(WS_METHODS.accountUploadAvatar, input),
       deleteAvatar: () => controller.request(WS_METHODS.accountDeleteAvatar),
+      deleteAccount: (input) => controller.request(WS_METHODS.accountDelete, input),
       signOut: () => controller.request(WS_METHODS.accountSignOut),
       openVerificationUrl: (input) =>
         controller.request(WS_METHODS.accountOpenVerificationUrl, input),

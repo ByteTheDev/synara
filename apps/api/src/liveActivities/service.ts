@@ -53,7 +53,7 @@ function widgetConversation<
  */
 export function createLiveActivityService(options: {
   pool: pg.Pool;
-  environment: "sandbox" | "production";
+  environment: "sandbox" | "production" | "both";
   send: (delivery: ActivityDelivery) => Promise<ApnsResult>;
   isMember: (userId: string, orgId: string) => Promise<boolean>;
 }) {
@@ -74,7 +74,8 @@ export function createLiveActivityService(options: {
   }
 
   async function register(owner: Owner, request: RegisterLiveActivity) {
-    if (request.environment !== options.environment) fail("Push environment is not configured");
+    if (options.environment !== "both" && request.environment !== options.environment)
+      fail("Push environment is not configured");
     await transaction(async (db) => {
       await db.query("SELECT pg_advisory_xact_lock(hashtext($1))", [
         `live-activity:${owner.userId}`,
@@ -303,6 +304,7 @@ export function createLiveActivityService(options: {
       const timestamp = Math.max(now, Number(activity.last_timestamp) + 1);
       const event = running.length ? "update" : "end";
       const result = await options.send({
+        environment: activity.request.environment,
         token: activity.request.token,
         activityId: id,
         timestamp,

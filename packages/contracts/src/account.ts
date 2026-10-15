@@ -35,6 +35,20 @@ const AccountEmailString = boundedTrimmedNonEmptyString(ACCOUNT_EMAIL_MAX_LENGTH
 const AccountAuthTokenString = boundedTrimmedNonEmptyString(ACCOUNT_AUTH_TOKEN_MAX_LENGTH);
 const AccountAppVersionString = boundedTrimmedNonEmptyString(ACCOUNT_APP_VERSION_MAX_LENGTH);
 
+/** Explicit self-service erasure confirmation; the authenticated user owns the target. */
+export const DeleteAccountRequest = Schema.Struct({
+  confirmation: Schema.Literal("delete"),
+  email: AccountEmailString,
+});
+export type DeleteAccountRequest = typeof DeleteAccountRequest.Type;
+export const DeleteAccountResponse = Schema.Struct({ status: Schema.Literal("pending") });
+export const AccountDeleteInput = Schema.Struct({
+  ...DeleteAccountRequest.fields,
+  userId: Schema.String,
+  accountAuthority: boundedTrimmedNonEmptyString(ACCOUNT_ENDPOINT_URL_MAX_LENGTH),
+});
+export type AccountDeleteInput = typeof AccountDeleteInput.Type;
+
 export const AccountHostTransport = Schema.Literals(["lan", "tailscale", "cloudflare"]);
 export type AccountHostTransport = typeof AccountHostTransport.Type;
 

@@ -22,6 +22,7 @@ import {
 import {
   ACCOUNT_NAME_MAX_LENGTH,
   AccountHost,
+  AccountDeleteInput,
   AccountAuthenticateOtpInput,
   AccountBeginSsoInput,
   AccountCompleteSsoInput,
@@ -425,6 +426,7 @@ export const WS_METHODS = {
   accountUpdateProfile: "account.updateProfile",
   accountUploadAvatar: "account.uploadAvatar",
   accountDeleteAvatar: "account.deleteAvatar",
+  accountDelete: "account.delete",
   accountSignOut: "account.signOut",
   accountOpenVerificationUrl: "account.openVerificationUrl",
 
@@ -742,6 +744,7 @@ const WebSocketRequestBody = Schema.Union([
   tagRequestBody(WS_METHODS.accountUpdateProfile, AccountUpdateProfileInput),
   tagRequestBody(WS_METHODS.accountUploadAvatar, AccountUploadAvatarInput),
   tagRequestBody(WS_METHODS.accountDeleteAvatar, Schema.Struct({})),
+  tagRequestBody(WS_METHODS.accountDelete, AccountDeleteInput),
   tagRequestBody(WS_METHODS.accountSignOut, Schema.Struct({})),
   tagRequestBody(WS_METHODS.accountOpenVerificationUrl, AccountOpenVerificationUrlInput),
 

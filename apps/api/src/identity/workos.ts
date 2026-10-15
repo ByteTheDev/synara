@@ -651,6 +651,18 @@ export function createWorkosIdentityProvider(config: WorkosApiConfig): {
       } satisfies IdentityUser;
     },
 
+    async deleteUser(userId) {
+      // Use the operator-approved identity map, never email matching. DELETE
+      // is idempotent after an uncertain response or a restarted erasure job.
+      const response = await fetchWithDeadline(
+        `${config.workosApiUrl}/user_management/users/${encodeURIComponent(workosUser(userId))}`,
+        "/user_management/users/:id",
+        { method: "DELETE", headers: { authorization: `Bearer ${config.workosApiKey}` } },
+      );
+      if (!response.ok && response.status !== 404)
+        throw new IdentityProviderError(response.status, "Identity deletion is pending");
+    },
+
     async refreshTokens({ refreshToken, organizationId, context }) {
       const response = await fetchWithDeadline(
         `${config.workosApiUrl}/user_management/authenticate`,

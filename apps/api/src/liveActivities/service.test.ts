@@ -18,7 +18,10 @@ describe.skipIf(!databaseUrl)("Live Activity durable delivery", () => {
   afterAll(async () => {
     await pool.end();
   });
-  async function fixture() {
+  async function fixture(
+    environment: "sandbox" | "production" = "sandbox",
+    deployment: "sandbox" | "both" = "sandbox",
+  ) {
     const owner = { userId: randomUUID(), orgId: randomUUID(), sessionId: randomUUID() };
     const deviceId = randomUUID();
     const jkt = randomUUID();
@@ -49,8 +52,8 @@ describe.skipIf(!databaseUrl)("Live Activity durable delivery", () => {
       activityId: randomUUID(),
       deviceJkt: jkt,
       revision: 1,
-      token: "a".repeat(64),
-      environment: "sandbox",
+      token: (environment === "production" ? "c" : "a").repeat(64),
+      environment,
       sources: hosts.map((host) => ({
         hostId: host.id,
         threadId: randomUUID(),
@@ -64,7 +67,7 @@ describe.skipIf(!databaseUrl)("Live Activity durable delivery", () => {
     const service = () =>
       createLiveActivityService({
         pool,
-        environment: "sandbox",
+        environment: deployment,
         isMember: async () => member,
         send: async (delivery) => {
           sent.push(delivery);
@@ -105,6 +108,15 @@ describe.skipIf(!databaseUrl)("Live Activity durable delivery", () => {
       },
     };
   }
+  it("preserves each APNs environment through durable registration and restart", async () => {
+    for (const environment of ["sandbox", "production"] as const) {
+      const f = await fixture(environment, "both");
+      await f.live.register(f.owner, f.request);
+      await f.publish(0, 1, "running");
+      await f.service().flush();
+      expect(f.sent.at(-1)).toMatchObject({ environment, event: "update" });
+    }
+  });
   it("aggregates two computers, rejects old snapshots, and ends only after both turns finish across restart", async () => {
     const f = await fixture();
     await f.live.register(f.owner, f.request);
