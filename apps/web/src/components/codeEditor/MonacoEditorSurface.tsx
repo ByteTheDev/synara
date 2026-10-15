@@ -920,11 +920,10 @@ export default function MonacoEditorSurface(props: SurfaceProps) {
               aria-label="New symbol name"
               value={rename?.value ?? ""}
               disabled={renaming}
-              onChange={(event) =>
-                setRename((value) =>
-                  value ? { ...value, value: event.currentTarget.value, error: null } : value,
-                )
-              }
+              onChange={(event) => {
+                const newName = event.currentTarget.value;
+                setRename((value) => (value ? { ...value, value: newName, error: null } : value));
+              }}
             />
             {rename?.error ? (
               <p role="alert" className="text-ui-sm text-destructive">

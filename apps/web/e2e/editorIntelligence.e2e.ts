@@ -35,6 +35,7 @@ test.beforeAll(async () => {
     "function increment(value) {\n  return value + 1;\n}\nconst answer = increment(41);\nconsole.log(answer);\nsetInterval(() => {}, 100);\n",
   );
   execFileSync("git", ["init", "-b", "main", workspace]);
+  execFileSync("git", ["-C", workspace, "config", "diff.mnemonicPrefix", "false"]);
   execFileSync("git", ["-C", workspace, "add", "."]);
   execFileSync("git", [
     "-C",
@@ -221,5 +222,35 @@ test("native editor intelligence, guarded persistence, navigation, and debugging
   await panel.getByRole("button", { name: "Stop debugging (Shift+F5)", exact: true }).click();
   await expect(panel).toContainText("ended");
   await capture(page, info, "after-debug-cleanup");
+  expect(errors).toEqual([]);
+});
+
+test("renames an exported symbol after editing the dialog name", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await seed(page);
+  await open(page, "greeting.ts");
+  await position(page, "greet", 1);
+  await page.keyboard.press("F2");
+  const name = page.getByRole("textbox", { name: "New symbol name", exact: true });
+  await expect(name).toHaveValue("greet");
+  await page.keyboard.press("End");
+  await page.keyboard.press("Backspace");
+  await page.keyboard.press("Backspace");
+  await expect(name).toHaveValue("gre");
+  await page.keyboard.insertText("etRenamed");
+  await expect(name).toHaveValue("greetRenamed");
+  await page.getByRole("button", { name: "Rename", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Rename symbol", exact: true })).toHaveCount(0);
+  await editorVisible(page, "greeting.ts");
+  await expect
+    .poll(() => readFile(path.join(workspace, "main.ts"), "utf8"))
+    .toContain('import { greetRenamed } from "./greeting"');
+  await expect
+    .poll(() => readFile(path.join(workspace, "main.ts"), "utf8"))
+    .toContain("greetRenamed(person.name)");
+  await expect
+    .poll(() => readFile(path.join(workspace, "greeting.ts"), "utf8"))
+    .toContain("export function greetRenamed(");
   expect(errors).toEqual([]);
 });
