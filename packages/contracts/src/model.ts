@@ -580,6 +580,19 @@ const CLAUDE_EXTENDED_THINKING_CAPABILITIES: ModelCapabilities = {
 // Sonnet 5 adds xhigh for long agentic work, while staying in the Sonnet no-fast-mode lane.
 const CLAUDE_SONNET_5_CAPABILITIES: ModelCapabilities = CLAUDE_NO_FAST_XHIGH_CAPABILITIES;
 
+// Haiku 5.5 adds adaptive effort (unlike Haiku 4.5's on/off thinking).
+// Medium is the model default; Claude Code owns thinking for this model.
+const CLAUDE_HAIKU_5_5_CAPABILITIES: ModelCapabilities = {
+  ...CLAUDE_NO_FAST_XHIGH_CAPABILITIES,
+  reasoningEffortLevels: [
+    claudeApiEffortOption("low", "Low"),
+    claudeApiEffortOption("medium", "Medium", { isDefault: true }),
+    claudeApiEffortOption("high", "High"),
+    claudeApiEffortOption("xhigh", "Extra High"),
+    claudeApiEffortOption("max", "Max"),
+  ],
+};
+
 type ModelDefinition = {
   readonly slug: string;
   readonly name: string;
@@ -716,6 +729,11 @@ export const MODEL_OPTIONS_BY_PROVIDER = {
       slug: "claude-sonnet-4-6",
       name: "Claude Sonnet 4.6",
       capabilities: { ...CLAUDE_EXTENDED_THINKING_CAPABILITIES, supportsFastMode: false },
+    },
+    {
+      slug: "claude-haiku-5-5",
+      name: "Claude Haiku 5.5",
+      capabilities: CLAUDE_HAIKU_5_5_CAPABILITIES,
     },
     {
       slug: "claude-haiku-4-5",

@@ -7,6 +7,30 @@ import {
   resolveComposerEffortLadderIndex,
 } from "./composerTraits";
 
+describe("Claude Haiku 5.5 composer effort", () => {
+  it("feeds the existing stepped slider and commits Claude effort options", () => {
+    const selection = getComposerTraitSelection("claudeAgent", "claude-haiku-5-5", "", undefined);
+    expect(selection.effortLevels.map((level) => level.value)).toEqual([
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max",
+    ]);
+    expect(selection.defaultEffort).toBe("medium");
+    expect(selection.thinkingEnabled).toBeNull();
+    expect(resolveComposerEffortLadderIndex(selection)).toBe(1);
+    expect(
+      planComposerEffortChange({
+        provider: "claudeAgent",
+        selection,
+        prompt: "",
+        value: "max",
+      }),
+    ).toEqual({ kind: "options", patch: { effort: "max" } });
+  });
+});
+
 describe("planComposerEffortCycle", () => {
   it.each([
     ["low", "medium"],
