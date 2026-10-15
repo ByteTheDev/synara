@@ -197,7 +197,7 @@ export function editNotionMapping(existing: NotionMapping | undefined, source: N
     ...edits,
     dataSourceId: notionResourceId(notionString(source.id)),
     agentAccess: edits.agentAccess ?? existing?.agentAccess ?? "none",
-    sprintPlan: edits.sprintPlan === undefined ? existing?.sprintPlan : edits.sprintPlan,
+    ...(edits.sprintPlan === undefined ? {} : { sprintPlan: edits.sprintPlan }),
     enabled: existing?.enabled ?? true,
   };
   validateNotionMapping(mapping, source);

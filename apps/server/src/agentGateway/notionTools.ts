@@ -27,12 +27,13 @@ export function makeAgentGatewayNotionTools(
   integration: Pick<NotionIntegrationShape, "runtime" | "state"> | null | undefined,
 ): ReadonlyArray<ToolEntry> {
   const runtime = integration?.runtime;
-  if (!runtime) return [];
+  if (!runtime || !integration) return [];
+  const getState = integration.state;
 
   function source(rawMappingId: unknown): NotionMapping {
     const mappingId = typeof rawMappingId === "string" ? rawMappingId.trim() : "";
     if (!mappingId) throw new ToolInputError("Choose a Notion source from synara_notion_list_sources.");
-    const state = integration.state();
+    const state = getState();
     const mapping = state.mappings.find(item => item.id === mappingId);
     if (!mapping || !mapping.enabled || mapping.agentAccess === "none" ||
       !state.connections.some(item => item.id === mapping.connectionId && item.status === "connected")) {

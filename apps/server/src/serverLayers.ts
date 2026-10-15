@@ -247,9 +247,9 @@ export function makeServerRuntimeServicesLayer(
     Layer.provideMerge(agentGatewayCredentialsLayer),
   );
   const agentGatewayLayer = AgentGatewayLive.pipe(
-    Layer.provideMerge(notionLayer),
     Layer.provideMerge(
       Layer.mergeAll(
+        notionLayer,
         ProjectionThreadMessageRepositoryLive,
         OrchestrationCommandReceiptRepositoryLive,
         // The same instance the todo.* RPCs use, so a to-do an agent adds reaches open windows.

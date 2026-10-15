@@ -3,6 +3,7 @@ import { Effect, Stream } from "effect";
 import { CurrentWsSessionRole } from "../wsConnectionSessions";
 import { requireWsOwnerSession } from "../wsOwnerAuthorization";
 import type { TodoServiceShape } from "../todo/Services/TodoService";
+import { TodoServiceError } from "../todo/Errors";
 import type { NotionIntegrationShape } from "./Services/NotionIntegration";
 import { NotionFailure } from "./client";
 
@@ -45,10 +46,10 @@ export function ownerScopedNotionTodos(todos: TodoServiceShape): TodoServiceShap
       return role === "owner" ? result : { todos: result.todos.filter(todo => !externalId(todo.id)) };
     }),
     update: (input) => externalId(input.id)
-      ? requireWsOwnerSession.pipe(Effect.andThen(todos.update(input)))
+      ? requireWsOwnerSession.pipe(Effect.mapError(error => new TodoServiceError({ message: error.message })), Effect.andThen(todos.update(input)))
       : todos.update(input),
     delete: (input) => externalId(input.id)
-      ? requireWsOwnerSession.pipe(Effect.andThen(todos.delete(input)))
+      ? requireWsOwnerSession.pipe(Effect.mapError(error => new TodoServiceError({ message: error.message })), Effect.andThen(todos.delete(input)))
       : todos.delete(input),
     streamChanges: Stream.unwrap(Effect.gen(function* () {
       const role = yield* CurrentWsSessionRole;
