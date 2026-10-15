@@ -40,7 +40,8 @@ jobs:
               "packages/shared/src/notion", "packages/contracts/src/notion",
               "docs/notion-integration.md",
           )
-          exact = {"apps/server/src/wsRpc.ts", "apps/server/src/serverLayers.ts",
+          exact = {"apps/server/src/agentGateway/notionTools.test.ts",
+                   "apps/server/src/wsRpc.ts", "apps/server/src/serverLayers.ts",
                    "apps/server/src/agentGateway/notionTools.ts",
                    "apps/server/src/agentGateway/Layers/AgentGateway.ts",
                    "apps/server/src/agentGateway/todoTools.ts",
