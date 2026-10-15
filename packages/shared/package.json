@@ -499,6 +499,10 @@
     "./codexStderr": {
       "types": "./src/codexStderr.ts",
       "import": "./src/codexStderr.ts"
+    },
+    "./wsRequestClass": {
+      "types": "./src/wsRequestClass.ts",
+      "import": "./src/wsRequestClass.ts"
     }
   },
   "scripts": {

@@ -1,7 +1,6 @@
 import { readWorkspaceFrame } from "../lib/hosts/workspaceFrame";
 import { subscribeWorkspaceKeybindings } from "../lib/hosts/workspaceKeybindings";
 import { onControllerStateChange } from "../lib/hosts/connectionClients";
-import { ServerBusyIndicator } from "../components/ServerBusyIndicator";
 import { EditorDirtyRouteGuard } from "../components/EditorDirtyRouteGuard";
 import {
   ORCHESTRATION_STREAM_OVERFLOW_CODE,
@@ -107,7 +106,10 @@ import {
   readLatestWsCompatibilityIssue,
 } from "../wsTransportEvents";
 import { providerQueryKeys } from "../lib/providerReactQuery";
-import { invalidateProjectFileQueriesForCwds, projectQueryKeys } from "../lib/projectReactQuery";
+import {
+  invalidateProjectFileQueriesForCwdsAfterActivity,
+  projectQueryKeys,
+} from "../lib/projectReactQuery";
 import {
   collectActiveTerminalThreadIds,
   removeOrphanedTerminalRuntimes,
@@ -146,7 +148,10 @@ import {
 } from "./-threadTerminalFence";
 import { getThreadFromState, getThreadsFromState } from "../threadDerivation";
 import { coalesceOrchestrationUiEvents } from "../orchestrationEventCoalescing";
-import { isThreadDetailVerifiedInSync } from "../threadDetailCatchupPolicy";
+import {
+  isLiveThreadStreamDelivering,
+  isThreadDetailVerifiedInSync,
+} from "../threadDetailCatchupPolicy";
 import { useAppDensity } from "../hooks/useAppDensity";
 import { useChatWidth } from "../hooks/useChatWidth";
 import { useCommittedPathname } from "../hooks/useCommittedPathname";
@@ -157,7 +162,7 @@ import { usePreloadRouteChunks } from "../hooks/usePreloadRouteChunks";
 import { useSyncDesktopTopBarTrafficLightGutterZoom } from "../hooks/useDesktopTopBarGutter";
 import { useTheme } from "../hooks/useTheme";
 import { useNativeFontSmoothing } from "../hooks/useNativeFontSmoothing";
-import { invalidateGitQueries, invalidateGitQueriesForCwds } from "../lib/gitReactQuery";
+import { invalidateGitQueries, refreshGitQueriesForCwdsAfterActivity } from "../lib/gitReactQuery";
 import { shouldRepairDesktopProjectSnapshot } from "../lib/desktopProjectRecovery";
 import {
   registerEmptyRouteRestoreRefresh,
@@ -329,7 +334,6 @@ function RootRouteView() {
   const desktopChrome = (
     <>
       <RunningChatsQuitCoordinator />
-      <ServerBusyIndicator />
       {desktopWindowControls}
     </>
   );
@@ -1441,6 +1445,9 @@ function EventRouter() {
       lastProjectionReconciledAt: number | null;
     }
     const threadCatchupBackoffById = new Map<ThreadId, ThreadCatchupBackoff>();
+    // When each subscribed thread's own live stream last applied an event; replay
+    // polls wait for a delivering stream to go quiet (threadDetailCatchupPolicy).
+    const lastLiveThreadEventAtById = new Map<ThreadId, number>();
     const resolveThreadCatchupBackoff = (threadId: ThreadId): ThreadCatchupBackoff => {
       const turnId = getThreadFromState(useStore.getState(), threadId)?.latestTurn?.turnId ?? null;
       let entry = threadCatchupBackoffById.get(threadId);
@@ -1522,6 +1529,7 @@ function EventRouter() {
       threadProjectionReconcilePendingById.delete(threadId);
       clearThreadProjectionTerminalFence(threadId);
       threadCatchupBackoffById.delete(threadId);
+      lastLiveThreadEventAtById.delete(threadId);
       nextThreadSubscriptionGeneration += 1;
       threadSubscriptionGenerationById.set(threadId, nextThreadSubscriptionGeneration);
       nextThreadProjectionReconcileAtById.set(
@@ -1571,6 +1579,7 @@ function EventRouter() {
         backoff.nextReplayAt = 0;
         backoff.appliedEventSerial += 1;
       }
+      if (source === "stream") lastLiveThreadEventAtById.set(threadId, Date.now());
       return true;
     };
 
@@ -1629,6 +1638,7 @@ function EventRouter() {
         threadSubscriptionGenerationById.delete(threadId);
         nextThreadProjectionReconcileAtById.delete(threadId);
         threadCatchupBackoffById.delete(threadId);
+        lastLiveThreadEventAtById.delete(threadId);
         subscribedThreadIds.delete(threadId);
       }
       // A retention eviction can refresh a thread whose lease is dropping in the
@@ -1888,6 +1898,7 @@ function EventRouter() {
           threadSubscriptionGenerationById.clear();
           nextThreadProjectionReconcileAtById.clear();
           threadCatchupBackoffById.clear();
+          lastLiveThreadEventAtById.clear();
           const previousThreadIds = [...subscribedThreadIds];
           subscribedThreadIds.clear();
           // Reconnect drops every lease at once, so the reconcile below sees no
@@ -1961,7 +1972,7 @@ function EventRouter() {
         }
         pendingProjectFileInvalidationThreadIds = new Set();
         if (fileChangeCwds.size > 0) {
-          void invalidateProjectFileQueriesForCwds(queryClient, fileChangeCwds);
+          invalidateProjectFileQueriesForCwdsAfterActivity(queryClient, fileChangeCwds);
         } else {
           void queryClient.invalidateQueries({ queryKey: projectQueryKeys.all });
         }
@@ -1995,7 +2006,7 @@ function EventRouter() {
         if (hasUnresolvedThread || scopedCwds.size === 0) {
           void invalidateGitQueries(queryClient);
         } else {
-          void invalidateGitQueriesForCwds(queryClient, scopedCwds);
+          refreshGitQueriesForCwdsAfterActivity(queryClient, scopedCwds);
         }
       }
     };
@@ -2767,9 +2778,15 @@ function EventRouter() {
           } else if (
             // A pending dispatch is the exact lost-event failure this poll
             // repairs, so it always polls at base cadence; otherwise honor the
-            // empty-replay backoff (reset on any applied event or a new turn).
+            // empty-replay backoff (reset on any applied event or a new turn)
+            // and wait for a delivering live stream to go quiet first.
             hasPendingTurnDispatch(threadId) ||
-            now >= resolveThreadCatchupBackoff(threadId).nextReplayAt
+            (now >= resolveThreadCatchupBackoff(threadId).nextReplayAt &&
+              !isLiveThreadStreamDelivering(
+                lastLiveThreadEventAtById.get(threadId) ?? null,
+                now,
+                THREAD_DETAIL_CATCHUP_INTERVAL_MS,
+              ))
           ) {
             // A late replay result must not recreate backoff state for a thread
             // whose lease was dropped (cleanup deleted it) or re-leased (a new
@@ -2854,6 +2871,7 @@ function EventRouter() {
       threadSubscriptionGenerationById.clear();
       nextThreadProjectionReconcileAtById.clear();
       threadCatchupBackoffById.clear();
+      lastLiveThreadEventAtById.clear();
       domainEventFlushThrottler.cancel();
       reconcileThreadSubscriptionsRef.current = null;
       unregisterEmptyRouteRestoreRefresh();

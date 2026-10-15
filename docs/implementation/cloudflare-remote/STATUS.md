@@ -907,3 +907,41 @@ and passes afterwards, including acceptance of the recovered runtime's ready
 event. All 397 provider service/coordinator/adapter/ingestion tests pass, as do
 format, lint (zero errors), twelve-package typecheck and Windows runtime guards.
 The recovery change is not in the installed `.4` package yet.
+
+Remote `.5` (source `27bc3d7431b2b56062c678cac22736b0cb0b2a9a`) subsequently
+passed [the complete signed-candidate workflow](https://github.com/Emanuele-web04/synara/actions/runs/38806243530)
+and is installed on both Macs. Mini retains 46 chats and 215 complete messages;
+MacBook retains 103 chats, 1,745 complete messages and 357 turn rows. Account,
+machine identity and device approvals are unchanged. Both simulator connections
+recovered without pairing again. Opening the existing MacBook x-limiter chat
+from the simulator produced starting, ready and session.started at
+21:28:18.253Z–21:28:19.019Z with the runtime's matching generation, and no
+post-restart stale-generation drops or new runtime warnings in the checked
+window. The Mini smoke runtime also reached ready with session.started. These
+were existing-transcript reads, not new turns or a deliberate live cancellation.
+Rollback `.4` remains available. The temporary transfer exposed only the verified
+public ZIP over the existing private mesh; its listener is now confirmed closed.
+
+### Latest main and pairing-dialog update
+
+The user requested another candidate with main through `1c72bae` (history-read
+performance, refetch-storm reduction and client-side RPC queues), plus the
+updated pairing dialog from `892e3c7`. The merge retains controller-frame routing,
+remote server-generation callbacks, product-event handling and settings-change
+filtering; it adopts main's removal of the server-busy popup and expensive
+keep-awake snapshot seed. Both shared subpath exports remain available.
+
+Focused integration checks pass: 970 server tests, 156 web unit tests and 60
+browser cases, format, lint with zero errors, twelve-package typecheck and Windows
+runtime guards. The separate opt-in history benchmark was not run. The new QR
+uses the same pairing-link payload and keeps dark modules on a light tile. Apple
+CoreImage decoded the actual component's screenshots at 196px and 120px module
+area sizes, matching the complete synthetic payload; the tiles included the
+component's normal quiet-zone padding. Browser coverage includes pending
+approvals and renewal/expired/used-code behavior. The synthetic preview used a
+separate home and ports; its file, browser tabs and both listeners were removed
+or closed after verification. This does not claim a physical camera test.
+
+No wire-schema change requires a native mobile rebuild for these updates.
+TestFlight 131 remains the mobile build; the next desktop candidate must still
+pass signed packaging and installation qualification before replacing `.5`.
