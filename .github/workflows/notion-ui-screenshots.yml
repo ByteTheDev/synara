@@ -1,0 +1,42 @@
+name: Notion UI screenshots (temporary)
+on:
+  push:
+    branches:
+      - feat/notion-enterprise-oauth-integration
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    name: Capture real Synara Notion component screenshots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout both revisions
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Synara dependencies
+        uses: ./.github/actions/setup-workspace
+        with:
+          scope: full
+
+      - name: Install browser
+        run: |
+          cd apps/web
+          ./node_modules/.bin/playwright install chromium
+
+      - name: Render before/after Synara components in Chromium
+        run: node .github/scripts/notion-visual-capture.mjs
+
+      - name: Upload genuine screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: notion-native-ui-before-after
+          path: notion-screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 7
