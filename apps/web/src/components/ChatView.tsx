@@ -6394,7 +6394,7 @@ export default function ChatView({
                               ? "Ask for follow-up changes"
                               : standaloneSidechatContext
                                 ? `Ask about this ${standaloneSidechatItemNoun}`
-                                : "Ask anything, @tag files/folders, or use / to show available commands"
+                                : "Do anything in Synara"
                   }
                   disabled={isComposerEditorDisabled}
                   singleLine={composerSingleRow}
@@ -6934,8 +6934,16 @@ export default function ChatView({
                   </div>
                   <div className="pt-0.5" />
                   {/* Row under the composer: permission, branch controls (git threads), then
-                      model/effort and the context ring. The footer tiers measure this row. */}
-                  <div className={CHAT_COLUMN_GUTTER_CLASS_NAME}>
+                      model/effort and the context ring. The footer tiers measure this row. It
+                      takes the composer's right inset so it stays under the composer while the
+                      Environment card or preview rail is docked. */}
+                  <div
+                    className={cn(
+                      CHAT_COLUMN_GUTTER_CLASS_NAME,
+                      ENVIRONMENT_CONTENT_INSET_MOTION_CLASS,
+                    )}
+                    style={contentInsetRightPx ? { paddingRight: contentInsetRightPx } : undefined}
+                  >
                     <div className={COMPOSER_COLUMN_FRAME_CLASS_NAME}>
                       <div
                         ref={composerStatusRowRef}

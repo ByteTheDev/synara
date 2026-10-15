@@ -10,7 +10,10 @@ import { Menu, MenuItem, MenuTrigger } from "../ui/menu";
 import { ComposerPickerMenuPopup } from "./ComposerPickerMenuPopup";
 import { ComposerVoiceButton } from "./ComposerVoiceButton";
 import { ComposerVoiceRecorderBar } from "./ComposerVoiceRecorderBar";
-import { COMPOSER_FOOTER_ROW_CLASS_NAME } from "./composerPickerStyles";
+import {
+  COMPOSER_ACTION_CIRCLE_CLASS_NAME,
+  COMPOSER_FOOTER_ROW_CLASS_NAME,
+} from "./composerPickerStyles";
 interface ChatComposerFooterProps {
   /** `row`: the single-row composer. The footer box becomes `display: contents` so its
    *  leading and trailing clusters sit beside the editor in the surface's grid. */
@@ -196,6 +199,7 @@ export function ChatComposerFooter({
             !voice.transcribing &&
             !submission.hasPendingUserInputs ? (
               <ComposerVoiceButton
+                appearance="circle"
                 disabled={submission.busy || submission.expired}
                 isRecording={false}
                 isStarting={voice.starting}
@@ -212,7 +216,7 @@ export function ChatComposerFooter({
                 type="button"
                 variant="prominent"
                 size="icon-xs"
-                className="sm:size-[26px]"
+                className={COMPOSER_ACTION_CIRCLE_CLASS_NAME}
                 onClick={submission.onInterrupt}
                 aria-label="Stop generation"
                 title="Stop the current response. On Mac, press Ctrl+C to interrupt."
@@ -291,6 +295,7 @@ export function ChatComposerFooter({
             <>
               {voice.enabled ? (
                 <ComposerVoiceButton
+                  appearance="circle"
                   disabled={submission.connecting || submission.busy || submission.expired}
                   isRecording={voice.recording}
                   isStarting={voice.starting}
@@ -303,7 +308,7 @@ export function ChatComposerFooter({
                 type="submit"
                 variant="prominent"
                 size="icon-xs"
-                className="size-7 rounded-full sm:size-7"
+                className={COMPOSER_ACTION_CIRCLE_CLASS_NAME}
                 disabled={
                   submission.busy ||
                   submission.connecting ||

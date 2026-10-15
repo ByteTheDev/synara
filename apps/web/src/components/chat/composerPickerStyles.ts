@@ -211,11 +211,11 @@ export const COMPOSER_PICKER_SELECT_OPTION_CLASS_NAME = `${COMPOSER_PICKER_MENU_
 /** Same chrome as picker menus, for composer-attached tooltips. */
 export const COMPOSER_PICKER_TOOLTIP_SURFACE_CLASS_NAME = `${COMPOSER_PICKER_MENU_SURFACE_CLASS_NAME} font-normal text-[var(--color-text-foreground)]`;
 
-/** Opaque floating panel for the slash/mention command menu and @local browser.
- *  Picker border/radius/shadow, but a solid fill: the menu floats over the
- *  transcript, so frosted bg-popover/70 would let chat content bleed through. */
-export const COMPOSER_COMMAND_MENU_SURFACE_CLASS_NAME =
-  "relative overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground";
+/** Floating panel for the slash/mention command menu, the + panel and the @local browser.
+ *  Wears the composer's own glass and border (`.chat-composer-menu-surface` shares
+ *  `.chat-composer-surface`'s fill and blur in index.css): the 40px blur turns the transcript
+ *  behind it into a wash, exactly as it does behind the input. */
+export const COMPOSER_COMMAND_MENU_SURFACE_CLASS_NAME = `chat-composer-menu-surface relative overflow-hidden rounded-2xl border ${RAISED_SURFACE_BORDER_CLASS_NAME} text-popover-foreground`;
 
 /** Environment panel card. Opaque for the same reason as the command menu (it overlays the
  *  transcript), except on a whole-window glass shell, where it takes the shared raised
@@ -270,9 +270,6 @@ export const COMPOSER_INLINE_ACTION_PILL_CLASS_NAME =
 export const RUNTIME_FULL_ACCESS_ACCENT_CLASS_NAME =
   "text-[var(--runtime-full-access-accent)] hover:opacity-85";
 
-export const RUNTIME_AUTO_ACCENT_CLASS_NAME = "text-[var(--color-text-accent)] hover:opacity-85";
-export const RUNTIME_AUTO_ICON_ACCENT_CLASS_NAME = "text-[var(--color-text-accent)]";
-
 /** Minimum composer editor height — two lines at the element's line-height.
  *  `leading-relaxed` (1.625) keeps the input in step with the transcript/bubble leading. */
 export const COMPOSER_EDITOR_LINE_HEIGHT_CLASS_NAME = "leading-relaxed";
@@ -298,6 +295,10 @@ export const COMPOSER_EDITOR_PADDING_CLASS_NAME = [
   "pt-[var(--app-density-composer-editor-padding-top,0.75rem)]",
   "pb-[var(--app-density-composer-editor-padding-bottom,0.5rem)]",
 ].join(" ");
+/** One diameter for every circle action in the composer (+, mic, send, stop), so the set
+ *  can never drift apart in size. */
+export const COMPOSER_ACTION_CIRCLE_CLASS_NAME = "size-7 shrink-0 rounded-full sm:size-7";
+
 /** Single-row composer surface: + | editor | mic, send on one grid row (the footer's
  *  clusters join it through `display: contents`). */
 export const COMPOSER_SINGLE_ROW_SURFACE_CLASS_NAME =

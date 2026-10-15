@@ -1855,6 +1855,12 @@ async function waitForURL(
   return pathname;
 }
 
+function queryComposerShell(): HTMLElement {
+  return document.querySelector<HTMLElement>(
+    'form[data-chat-composer-form="true"] .chat-composer-shell',
+  )!;
+}
+
 async function waitForComposerEditor(): Promise<HTMLElement> {
   return waitForElement(
     () => document.querySelector<HTMLElement>('[contenteditable="true"]'),
@@ -5027,12 +5033,13 @@ describe("ChatView transcript geometry (full app)", () => {
           provider: "codex",
           model: "gpt-5.5",
         });
+        // The composer trigger shows the model without its family prefix ("5.5").
         await vi.waitFor(() =>
           expect(
-            [...document.querySelectorAll("button")].some((button) =>
-              (button.textContent ?? "").includes("GPT-5.5"),
-            ),
-          ).toBe(true),
+            document.querySelector<HTMLButtonElement>(
+              'button[aria-label="Change model and reasoning"]',
+            )?.textContent ?? "",
+          ).toContain("5.5"),
         );
         releaseUpload();
         await vi.waitFor(() =>
@@ -8634,10 +8641,7 @@ describe("ChatView transcript geometry (full app)", () => {
     });
     try {
       const editor = await waitForComposerEditor();
-      const shell = () =>
-        document.querySelector<HTMLElement>(
-          'form[data-chat-composer-form="true"] .chat-composer-shell',
-        )!;
+      const shell = queryComposerShell;
       await vi.waitFor(() => expect(shell().dataset.composerLayout).toBe("row"));
       // Permission, model and context sit in the row under the composer, not in the pill.
       const statusRow = document.querySelector<HTMLElement>("[data-chat-composer-status-row]");
@@ -8657,6 +8661,47 @@ describe("ChatView transcript geometry (full app)", () => {
       await userEvent.keyboard("ok");
       await vi.waitFor(() => expect(shell().dataset.composerLayout).toBe("row"));
       expect(document.activeElement).toBe(editor);
+    } finally {
+      await mounted.cleanup();
+    }
+  });
+
+  it("keeps the row under the composer aligned while the Environment card is docked", async () => {
+    const mounted = await mountChatView({
+      viewport: { ...DEFAULT_VIEWPORT, width: 1_400 },
+      snapshot: createSnapshotForTargetUser({
+        targetMessageId: MessageId.makeUnsafe("msg-status-row-inset"),
+        targetText: "Status row inset",
+      }),
+    });
+    try {
+      await waitForComposerEditor();
+      const shell = document.querySelector<HTMLElement>(
+        'form[data-chat-composer-form="true"] .chat-composer-shell',
+      )!;
+      const statusRow = document.querySelector<HTMLElement>("[data-chat-composer-status-row]")!;
+      const expectRowUnderComposer = () => {
+        const shellRect = shell.getBoundingClientRect();
+        const rowRect = statusRow.getBoundingClientRect();
+        expect(Math.abs(rowRect.left - shellRect.left)).toBeLessThanOrEqual(1);
+        expect(Math.abs(rowRect.right - shellRect.right)).toBeLessThanOrEqual(1);
+      };
+      expectRowUnderComposer();
+      const shellRightBefore = shell.getBoundingClientRect().right;
+
+      // Toggling docks or undocks the card (its open state may carry over from earlier
+      // tests); either way one of the two states carries the inset, and the row must
+      // match the composer in both.
+      await page.getByRole("button", { name: "Toggle environment panel", exact: true }).click();
+      await vi.waitFor(
+        () => {
+          expect(Math.abs(shell.getBoundingClientRect().right - shellRightBefore)).toBeGreaterThan(
+            20,
+          );
+          expectRowUnderComposer();
+        },
+        { timeout: 4_000, interval: 16 },
+      );
     } finally {
       await mounted.cleanup();
     }
