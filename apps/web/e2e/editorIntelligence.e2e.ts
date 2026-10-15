@@ -61,14 +61,22 @@ async function seed(page: Page) {
       () =>
         page.evaluate(async () => {
           const modulePath = "/src/nativeApi.ts";
-          const { ensureNativeApi, readNativeApiServerCapability } =
-            await import(/* @vite-ignore */ modulePath);
+          const { ensureNativeApi, readNativeApiServerCapability } = await import(
+            /* @vite-ignore */ modulePath
+          );
           ensureNativeApi();
           return readNativeApiServerCapability("rpc.typed-errors");
         }),
       { timeout: 20_000 },
     )
     .toBe(true);
+  // A fresh isolated profile shows the same startup announcements as a new user.
+  // Dismiss them through their real controls so they cannot intercept editor input.
+  const imports = page.getByRole("dialog", { name: "Import projects", exact: true });
+  await expect(imports).toBeVisible();
+  await imports.getByRole("button", { name: "Not now", exact: true }).click();
+  await page.getByRole("button", { name: "Skip tour", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await page
     .evaluate(async (cwd) => {
       const modulePath = "/src/nativeApi.ts";
