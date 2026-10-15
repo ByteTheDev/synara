@@ -150,7 +150,7 @@ export const COMPOSER_INPUT_SHELL_CLASS_NAME =
  *  `--surface-border-strength` knob, so these surfaces can never drift apart. */
 export const RAISED_SURFACE_BORDER_CLASS_NAME = "border-[color:var(--surface-border)]";
 
-/** Shared border for panels stacked above the composer; dark mode matches the live changes strip. */
+/** Shared border for panels stacked above the composer (the queued follow-up rail). */
 export const COMPOSER_STACKED_SURFACE_BORDER_CLASS_NAME =
   "border-[color:var(--composer-stacked-border)]";
 
