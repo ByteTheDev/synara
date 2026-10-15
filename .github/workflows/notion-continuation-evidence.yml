@@ -9,21 +9,29 @@ permissions:
   contents: read
 
 jobs:
-  source:
+  toolchain:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Export immutable source for isolated implementation
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+      - name: Export pinned dependencies for isolated implementation
         run: |
-          mkdir -p "$RUNNER_TEMP/notion-source"
-          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/notion-source/source.tar.gz"
-          git ls-tree -r HEAD > "$RUNNER_TEMP/notion-source/tree.txt"
-          git rev-parse HEAD > "$RUNNER_TEMP/notion-source/head.txt"
+          mkdir -p "$RUNNER_TEMP/notion-toolchain/bin"
+          cp "$(command -v bun)" "$RUNNER_TEMP/notion-toolchain/bin/bun"
+          cp "$(command -v node)" "$RUNNER_TEMP/notion-toolchain/bin/node"
+          du -sh node_modules apps/web/node_modules apps/server/node_modules
+          find node_modules -name '*.node' -printf '%s %p\n' | sort -n | tail -5
+          tar -czf "$RUNNER_TEMP/notion-toolchain/dependencies.tar.gz" node_modules apps/web/node_modules apps/server/node_modules apps/desktop/node_modules packages/contracts/node_modules packages/shared/node_modules scripts/node_modules
+          cp bun.lock "$RUNNER_TEMP/notion-toolchain/bun.lock"
+          sha256sum bun.lock > "$RUNNER_TEMP/notion-toolchain/lock-digest.txt"
       - uses: actions/upload-artifact@v6
         with:
-          name: notion-continuation-source
-          path: ${{ runner.temp }}/notion-source
+          name: notion-continuation-toolchain
+          path: ${{ runner.temp }}/notion-toolchain
           retention-days: 1
+          compression-level: 0
