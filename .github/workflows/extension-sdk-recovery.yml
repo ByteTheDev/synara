@@ -17,6 +17,12 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
+      - uses: actions/checkout@v6
+        with:
+          repository: microsoft/vscode
+          ref: 7debcd0e2acdea1c52de81bf9ee1620444407dda
+          path: upstream-code-oss
+          persist-credentials: false
       - name: Recover matching upstream SDK and tools
         shell: bash
         run: |
@@ -35,17 +41,44 @@ jobs:
             @codingame/monaco-vscode-editor-service-override@37.6.0 \
             @codingame/monaco-vscode-storage-service-override@37.6.0 \
             @codingame/monaco-vscode-remote-agent-service-override@37.6.0 \
-            yauzl@3.3.1 @types/yauzl@3.4.0 semver@7.7.4 @types/semver@7.7.1
+            yauzl@3.3.1 @types/yauzl@3.4.0 semver@7.7.4 @types/semver@7.7.1 esbuild@0.25.12
           cp "$(command -v bun)" "$RUNNER_TEMP/extension-sdk/tools/bun"
           cp "$(command -v node)" "$RUNNER_TEMP/extension-sdk/tools/node"
           cd "$GITHUB_WORKSPACE"
           find node_modules apps packages scripts -type d -name node_modules -prune -print0 | tar --null -T - -czf "$RUNNER_TEMP/extension-sdk/workspace-dependencies.tar.gz"
+          tar -czf "$RUNNER_TEMP/extension-sdk/upstream.tar.gz" --exclude=.git upstream-code-oss
           cd "$RUNNER_TEMP/extension-sdk"
           tar -czf sdk.tar.gz probe tools
+          split -b 250M -d workspace-dependencies.tar.gz workspace.part-
       - uses: actions/upload-artifact@v4
         with:
-          name: extension-sdk-dependencies
-          path: ${{ runner.temp }}/extension-sdk/*.tar.gz
+          name: extension-sdk
+          path: |
+            ${{ runner.temp }}/extension-sdk/sdk.tar.gz
+            ${{ runner.temp }}/extension-sdk/upstream.tar.gz
           compression-level: 0
           retention-days: 2
-          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-workspace-00
+          path: ${{ runner.temp }}/extension-sdk/workspace.part-00
+          compression-level: 0
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-workspace-01
+          path: ${{ runner.temp }}/extension-sdk/workspace.part-01
+          compression-level: 0
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-workspace-02
+          path: ${{ runner.temp }}/extension-sdk/workspace.part-02
+          compression-level: 0
+          retention-days: 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-workspace-03
+          path: ${{ runner.temp }}/extension-sdk/workspace.part-03
+          compression-level: 0
+          retention-days: 2
