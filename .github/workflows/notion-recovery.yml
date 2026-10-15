@@ -4,6 +4,8 @@ on:
     branches: [feat/notion-enterprise-oauth-integration]
     paths:
       - 'apps/server/src/notion/**'
+      - 'apps/web/src/components/notion/**'
+      - 'apps/web/src/components/settings/NotionSettingsPanel.tsx'
       - 'packages/shared/src/notion*'
       - 'packages/contracts/src/notion*'
       - '.github/notion-recovery/**'
@@ -26,31 +28,38 @@ jobs:
         with:
           bun-version: 1.4.2
       - run: bun install --frozen-lockfile
-      - name: Prepare exact native export edits and format changed source
+      - name: Prepare native integration edits and format changed source
         run: python .github/notion-recovery/prepare.py
-      - name: Validate contract and shared type boundaries
+      - name: Typecheck integrated server and UI
         id: types
         continue-on-error: true
         run: |
-          bun run --cwd packages/contracts typecheck
-          bun run --cwd packages/shared typecheck
-          bun run --cwd apps/server typecheck
-      - name: Test recovered adapter and OAuth transport
+          set +e
+          failed=0
+          for package in packages/contracts packages/shared apps/server apps/web; do
+            bun run --cwd "$package" typecheck > "/tmp/$(basename "$package")-types.log" 2>&1
+            status=$?
+            echo "$package typecheck exit=$status"
+            grep -E 'error TS|error:|^Error:' "/tmp/$(basename "$package")-types.log" || true
+            if test "$status" -ne 0; then failed=1; fi
+          done
+          exit "$failed"
+      - name: Run focused integration and regression tests
         id: tests
         continue-on-error: true
         run: |
           bun run --cwd packages/shared test src/notion.test.ts
-          bun run --cwd apps/server test src/notion/client.test.ts src/notion/oauthBroker.test.ts
-      - name: Lint recovered source
+          bun run --cwd apps/server test src/notion src/todo src/agentGateway/todoTools.test.ts
+      - name: Lint changed product paths
         id: lint
         continue-on-error: true
-        run: bun x oxlint apps/server/src/notion packages/shared/src/notion.ts packages/shared/src/notion.test.ts packages/contracts/src/notion.ts
-      - name: Prepare Git tree without moving any branch
+        run: bun x oxlint apps/server/src/notion apps/server/src/todo/Layers/TodoService.ts apps/server/src/agentGateway/todoTools.ts apps/web/src/components/notion apps/web/src/components/settings/NotionSettingsPanel.tsx packages/shared/src/notion.ts packages/shared/src/notion.test.ts packages/contracts/src/notion.ts packages/contracts/src/notionRpc.ts
+      - name: Export prepared Git tree without changing any branch
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: python .github/notion-recovery/export-tree.py
-      - name: Record real check outcomes
+      - name: Report actual outcomes
         if: always()
         run: |
           echo 'types=${{ steps.types.outcome }} tests=${{ steps.tests.outcome }} lint=${{ steps.lint.outcome }}'
