@@ -73,8 +73,7 @@ function PrivateRecapHistory({
   const save = useMutation({
     mutationFn: async () => {
       if (!recap) throw new Error("Load a recap before saving it.");
-      if (isRemoteExecution)
-        throw new Error("Save this recap on its source computer; remote recaps sync automatically.");
+      if (isRemoteExecution) throw new Error("Save recaps on their source computer.");
       const api = ensureNativeApi();
       const hostsApi = readHostsApi();
       const sourceHostId = hostsApi ? (await hostsApi.enrollment()).host?.id : undefined;
