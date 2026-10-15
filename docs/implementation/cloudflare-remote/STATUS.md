@@ -719,3 +719,112 @@ the local Release archive is development-signed and App Store export requires
 ordinary Apple-ID distribution signing. No App Store Connect API key was
 created. No main merge, Beta tag, TestFlight upload or physical-phone update
 was performed in this pass.
+
+## 2026-10-15 evening — Pairing recovery and universal TestFlight 131
+
+An installed Remote `.2` session could show signed out while its persisted
+credential still authenticated successfully. A delayed account-status request
+was rejected when a concurrent refresh rotated the access token. The fix accepts
+the refreshed credential only when the already-known user, organization and
+account authority still match; logout and identity changes remain fenced.
+The regression failed before the fix; 110 focused account/auth/device/pairing
+tests, format, lint (zero errors) and twelve-package typecheck pass.
+
+Remote `1.0.6-remote.3`, source `56c90173152bf15fa22a1282f1166d7f4b65054a`,
+passed [the complete release-candidate workflow](https://github.com/Emanuele-web04/synara/actions/runs/38794054496),
+including signing, notarization and packaged startup. This is a build-only run;
+no public release, tag or update feed was published. Standard public-repository
+runners were used; no billing or spending setting changed.
+
+The iPad branch was merged into the mobile feature branch through mobile PR #2;
+mobile PR #1 remains separate from main. The native authentication consent names
+Synara, and the light icon is rendered from the current vector at the scale of
+the existing dark/custom icons. WorkOS keeps its existing domain and email
+sender; no paid branding service was activated.
+
+A real-account iPhone simulator completed fresh short-code enrollment to both
+Macs after comparing their host identity pins. Both connections coexist: eleven
+projects, 36 visible Mini chats and 24 visible MacBook chats. Existing transcripts
+open from both computers. This also exposed a first-pair completion defect:
+remote trust installation now finishes onboarding and enables foreground
+reconnect, matching the local-pair completion path. Installing simulator build
+131 over the existing app and relaunching preserved the account and both hosts.
+The original phone screenshot failure was not reproduced with fresh invites;
+a camera QR scan and cellular network were not tested.
+
+Universal TestFlight `0.1 (131)` finished processing and is attached to the
+existing internal Synara Early Access group. App and widget retain their bundle
+IDs, include device families 1 and 2, have valid distribution signatures and
+disable debugging; the app carries production APNs entitlement. Eight QR
+classification tests, two iPhone navigation UI cases and one iPad docked-sidebar
+selection/collapse/rotation case pass. The UI cases use fixtures; real remote
+enrollment and transcript reads were checked separately on the simulator.
+External Beta Review and physical TestFlight background push delivery remain
+unverified. No physical iPhone was used in this pass.
+
+Remote `.3` is installed and open on both Macs after local provenance,
+package hash, Developer ID, Gatekeeper and stapled-ticket verification. MacBook:
+102 threads and 1,737 messages have identical full-table fingerprints before and
+after installation. Mini: all 46 thread identities and all 215 complete message
+rows are preserved, with unchanged project/thread/message counts. Account scope,
+environment ID and host/device/TLS identity files are unchanged. Both hosts
+restored their existing account and simulator trust without another login or
+pairing. On the final simulator build, switching between the two computers and
+opening each existing smoke transcript passed. These were reads, not fresh
+provider turns. Remote `.2` and private database backups remain available for
+rollback; Stable/Beta installations and their data homes were not changed.
+
+### Follow-up — Codex runtime warnings and copy controls
+
+The MacBook's new Codex conversation completed its turns but displayed 59
+`process/stderr` events as generic runtime warnings. The actual payloads were
+single-line JSON diagnostics: WARN-level skill/credential/memory/analytics
+notices and ERROR-level OAuth failures for MCP servers from the user's external
+Codex configuration. The existing classifier understood text logs only.
+
+Classification now shares one pure implementation between server ingestion and
+historical web replay, recognizes both text and complete JSON log envelopes
+(including `fields.error` without `fields.message`), and retains unknown errors,
+Synara-owned connector failures and explicit retry feedback. Ignored external
+MCP OAuth failures keep their existing bounded host-log notice. Historical
+records are filtered when rendered, not deleted or rewritten. A remaining real
+runtime notice uses its readable message instead of the generic row title.
+The regressions failed before the repair; final focused server coverage passes
+285 tests with two fixture skips, and the web/clipboard/row/font checks pass
+205 tests. The initial sandbox run could not prove synthetic-process teardown;
+repeating with OS process inspection available passed all three server files.
+
+The requested UI change reuses CopyTextButton: a compact icon copies the exact
+root fingerprint in both comparison dialogs, and Copy code copies the live
+short pairing code. The shared button gains an icon-only variant with the same
+accessible label and copied-state feedback; its existing callers are unchanged.
+The expired code has no copy action. No new package dependency or account/trust
+change is introduced. The twelve existing browser Connections cases also pass.
+Manual copy/paste checks with the actual shared controls preserve both the raw
+64-character fingerprint and the short code exactly, with copied-state feedback.
+The installed Mini app also exposes Copy code and shows Copied code after a
+real click. TestFlight 131 is not replaced by this desktop change.
+
+Remote `1.0.6-remote.4`, source `922f21bdc385b404639b8e0a4e685f5fa9340197`,
+passed [the complete candidate workflow](https://github.com/Emanuele-web04/synara/actions/runs/38800710107)
+and is installed and open on both Macs. This remains a build-only artifact:
+no public tag, release or update-feed publication. Local artifact hashes,
+provenance, Developer ID, Gatekeeper and stapled-ticket checks passed before
+installation. Private database backups and the previous app bundles remain
+available for rollback.
+
+Mini: all 46 chats and 215 complete message rows are preserved. MacBook: all
+103 chats and 1,745 message rows are preserved, with identical messages. Both
+accounts, machine identities and existing pairing approvals are unchanged; the
+simulator reconnected to both computers after restart without another login or
+pairing. Existing smoke messages from both computers load on the simulator. The actual
+MacBook conversation now renders without generic runtime-warning rows while
+retaining its real failed-tool activity. All 101 historical warning records,
+including the 59 investigated events, remain in the database. Replaying those
+59 original payloads through the exact classifier returned 53 ignored diagnostics,
+six external MCP OAuth notices and no conversation notices. The external Stripe
+and Polar credentials themselves were not refreshed or changed.
+
+These checks did not start new provider turns, use the physical iPhone, test
+cellular delivery or qualify TestFlight production background pushes. Stable and
+Beta homes remain untouched. No paid service or billing setting was enabled.
