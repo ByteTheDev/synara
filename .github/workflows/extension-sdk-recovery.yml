@@ -15,22 +15,35 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Recover exact headless Node host dependencies
+      - name: Recover matching syntax and language workers
         shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/node-host/probe"
-          cd "$RUNNER_TEMP/node-host/probe"
+          mkdir -p "$RUNNER_TEMP/browser-sdk/probe"
+          cd "$RUNNER_TEMP/browser-sdk/probe"
           npm init -y >/dev/null
           npm install --ignore-scripts --package-lock=false --no-audit --no-fund \
-            @vscode/proxy-agent@0.45.0 @vscode/ripgrep-universal@1.18.0 \
-            vscode-regexpp@3.1.0 minimist@1.2.8 http-proxy-agent@7.0.2 \
-            https-proxy-agent@7.0.6 undici@7.28.0
-          cd "$RUNNER_TEMP/node-host"
-          tar -czf node-host-dependencies.tar.gz probe
+            @codingame/monaco-vscode-api@37.6.0 \
+            monaco-editor@npm:@codingame/monaco-vscode-editor-api@37.6.0 \
+            vscode@npm:@codingame/monaco-vscode-extension-api@37.6.0 \
+            @codingame/monaco-vscode-extensions-service-override@37.6.0 \
+            @codingame/monaco-vscode-model-service-override@37.6.0 \
+            @codingame/monaco-vscode-configuration-service-override@37.6.0 \
+            @codingame/monaco-vscode-languages-service-override@37.6.0 \
+            @codingame/monaco-vscode-files-service-override@37.6.0 \
+            @codingame/monaco-vscode-editor-service-override@37.6.0 \
+            @codingame/monaco-vscode-storage-service-override@37.6.0 \
+            @codingame/monaco-vscode-textmate-service-override@37.6.0 \
+            @codingame/monaco-vscode-theme-service-override@37.6.0 \
+            @codingame/monaco-vscode-all-language-default-extensions@37.6.0 \
+            @codingame/monaco-vscode-json-language-features-default-extension@37.6.0 \
+            @codingame/monaco-vscode-css-language-features-default-extension@37.6.0 \
+            @codingame/monaco-vscode-html-language-features-default-extension@37.6.0
+          cd "$RUNNER_TEMP/browser-sdk"
+          tar -czf browser-sdk.tar.gz probe
       - uses: actions/upload-artifact@v4
         with:
-          name: extension-node-host-dependencies
-          path: ${{ runner.temp }}/node-host/node-host-dependencies.tar.gz
+          name: extension-browser-sdk
+          path: ${{ runner.temp }}/browser-sdk/browser-sdk.tar.gz
           compression-level: 0
           retention-days: 2
           if-no-files-found: error
