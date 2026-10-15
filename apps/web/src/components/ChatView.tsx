@@ -6948,18 +6948,18 @@ export default function ChatView({
                       <div
                         ref={composerStatusRowRef}
                         data-chat-composer-status-row=""
-                        className="@container flex min-h-9 w-full min-w-0 items-center gap-1 pb-1.5 pt-1"
+                        className="@container flex min-h-9 w-full min-w-0 flex-wrap items-center gap-1 pb-1.5 pt-1"
                       >
                         <RuntimeUsageControls {...runtimeUsageControlsProps} className="shrink-0" />
                         {showTrailingBranchToolbar ? (
                           <BranchToolbar
                             {...branchToolbarProps}
-                            className="min-w-0 flex-1 px-1 py-0"
+                            className="min-w-0 flex-[1_0_9rem] px-1 py-0"
                           />
                         ) : (
                           <div className="min-w-0 flex-1" />
                         )}
-                        <div className="flex shrink-0 items-center gap-2 pr-1">
+                        <div className="ml-auto flex shrink-0 items-center gap-2 pr-1">
                           {composerPickerControls}
                           {composerContextMeter}
                         </div>

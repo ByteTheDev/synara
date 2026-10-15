@@ -76,7 +76,7 @@ export function ChatComposerFooter({
   const voiceActive = voice.recording || voice.transcribing;
   return (
     <div
-      data-chat-composer-footer="true"
+      data-chat-composer-footer={row ? undefined : "true"}
       className={cn(
         row
           ? "contents"
@@ -124,10 +124,13 @@ export function ChatComposerFooter({
               </Button>
             ) : null}
 
-            {sidebarAction && !row ? (
+            {sidebarAction ? (
               <Button
                 variant="ghost"
-                className="shrink-0 whitespace-nowrap px-2 text-ui-sm sm:text-ui-sm font-normal sm:px-3"
+                className={cn(
+                  "shrink-0 whitespace-nowrap text-ui-sm sm:text-ui-sm font-normal",
+                  row ? COMPOSER_ACTION_CIRCLE_CLASS_NAME : "px-2 sm:px-3",
+                )}
                 size="sm"
                 type="button"
                 onClick={sidebarAction.onClick}
@@ -135,7 +138,9 @@ export function ChatComposerFooter({
                 aria-label={sidebarAction.title}
               >
                 <LayoutSidebarIcon className="size-3.5" />
-                <span className="sr-only sm:not-sr-only">{sidebarAction.label}</span>
+                <span className={row ? "sr-only" : "sr-only sm:not-sr-only"}>
+                  {sidebarAction.label}
+                </span>
               </Button>
             ) : null}
           </>
@@ -144,6 +149,7 @@ export function ChatComposerFooter({
 
       <div
         data-chat-composer-actions="right"
+        data-chat-composer-footer={row ? "true" : undefined}
         className={cn(
           "flex items-center gap-2",
           row

@@ -54,8 +54,12 @@ export function useComposerSingleRow(input: {
       // Fractional widths: rounded clientWidth would leave a sub-pixel band where the row
       // wraps while the block measures the same line as fitting.
       const surfaceWidth = surface.getBoundingClientRect().width;
+      const editorWidth = editor.getBoundingClientRect().width;
+      // Dictation and hidden panes have no measurable editor slot. Preserve the last
+      // visible layout until ResizeObserver sees the editor again.
+      if (surfaceWidth <= 0 || editorWidth <= 0) return;
       if (singleRow) {
-        rowChromeWidthRef.current = surfaceWidth - editor.getBoundingClientRect().width;
+        rowChromeWidthRef.current = surfaceWidth - editorWidth;
       }
       const rowChromeWidth =
         rowChromeWidthRef.current ?? surfaceWidth * UNMEASURED_ROW_CHROME_SHARE;

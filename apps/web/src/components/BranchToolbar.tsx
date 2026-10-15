@@ -490,7 +490,7 @@ export default function BranchToolbar({
         className,
       )}
     >
-      <div className={isPanel ? "flex flex-col gap-0.5" : "flex items-center gap-2"}>
+      <div className={isPanel ? "flex flex-col gap-0.5" : "flex w-full min-w-0 items-center gap-2"}>
         {!showEnvironmentPicker ? null : showEnvPicker ? (
           <ComposerEnvironmentPicker
             environmentPresentation={environmentPresentation}

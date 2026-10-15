@@ -2209,6 +2209,7 @@ async function mountChatView(options: {
   configureFixture?: (fixture: TestFixture) => void;
   initialEntry?: string;
   onRender?: ProfilerOnRenderCallback;
+  strictMode?: boolean;
 }): Promise<MountedChatView> {
   fixture = buildFixture(options.snapshot);
   options.configureFixture?.(fixture);
@@ -2232,9 +2233,12 @@ async function mountChatView(options: {
   ) : (
     <RouterProvider router={router} />
   );
-  const screen = await render(content, {
-    container: host,
-  });
+  const screen = await render(
+    options.strictMode ? <React.StrictMode>{content}</React.StrictMode> : content,
+    {
+      container: host,
+    },
+  );
 
   try {
     await waitForMountedChatReady({
@@ -8661,6 +8665,62 @@ describe("ChatView transcript geometry (full app)", () => {
       await userEvent.keyboard("ok");
       await vi.waitFor(() => expect(shell().dataset.composerLayout).toBe("row"));
       expect(document.activeElement).toBe(editor);
+    } finally {
+      await mounted.cleanup();
+    }
+  });
+
+  it("keeps long branch controls separate from the model in a narrow editor chat", async () => {
+    const longBranch =
+      "feature/verify-the-composer-in-a-very-narrow-editor-sidebar-with-a-long-branch-name";
+    const snapshot = createSnapshotForTargetUser({
+      targetMessageId: MessageId.makeUnsafe("msg-narrow-composer-branch"),
+      targetText: "Narrow editor composer",
+    });
+    const mounted = await mountChatView({
+      viewport: { ...DEFAULT_VIEWPORT, width: 1280, height: 720 },
+      strictMode: true,
+      snapshot: {
+        ...snapshot,
+        threads: snapshot.threads.map((thread) => ({
+          ...thread,
+          modelSelection: {
+            provider: "claudeAgent",
+            model: "claude-sonnet-4-6",
+            options: { effort: "high" },
+          },
+          session: { ...thread.session!, providerName: "claudeAgent" },
+        })),
+      },
+      initialEntry: `/${THREAD_ID}?view=editor`,
+      configureFixture: (state) => {
+        state.gitBranchByCwd["/repo/project"] = longBranch;
+      },
+    });
+    try {
+      await waitForComposerEditor();
+      const row = document.querySelector<HTMLElement>("[data-chat-composer-status-row]")!;
+      const branch = row.querySelector<HTMLElement>('[data-slot="combobox-trigger"]')!;
+      const model = page
+        .getByRole("button", { name: "Change model and reasoning", exact: true })
+        .element();
+      await vi.waitFor(() => expect(branch.textContent).toContain(longBranch));
+      const branchRect = branch.getBoundingClientRect();
+      const modelRect = model.getBoundingClientRect();
+      const rowRect = row.getBoundingClientRect();
+      expect(branchRect.width).toBeGreaterThan(48);
+      expect(branch.scrollWidth).toBeLessThanOrEqual(branch.clientWidth + 1);
+      expect(branchRect.left).toBeGreaterThanOrEqual(rowRect.left);
+      expect(branchRect.right).toBeLessThanOrEqual(rowRect.right);
+      expect(modelRect.right).toBeLessThanOrEqual(rowRect.right);
+      expect(branchRect.right <= modelRect.left || branchRect.bottom <= modelRect.top).toBe(true);
+      await userEvent.fill(page.getByTestId("composer-editor"), "Bozza breve");
+      await page.getByRole("button", { name: "Composer extras", exact: true }).click();
+      await expect
+        .element(page.getByRole("option", { name: "Files and folders", exact: true }))
+        .toBeVisible();
+      await page.getByRole("option", { name: "Plan mode Turn plan mode on", exact: true }).click();
+      await expect.element(page.getByRole("button", { name: "Plan", exact: true })).toBeVisible();
     } finally {
       await mounted.cleanup();
     }
