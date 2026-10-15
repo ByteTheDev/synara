@@ -57,7 +57,7 @@ function assertBoundedLifetime(
   // tolerance already allows (~3x the intended window in the worst case).
   // Skew tolerance belongs on the not-yet-valid side; an expired short-lived
   // proof is simply expired.
-  if (expiresAt < nowSeconds) {
+  if (expiresAt <= nowSeconds) {
     throw new Error("JWT has expired");
   }
 }

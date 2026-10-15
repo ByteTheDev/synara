@@ -1,3 +1,4 @@
+// Verifies API key rotation and bounded proof validation at the signed-token boundary.
 import { randomUUID } from "node:crypto";
 import { decodeProtectedHeader, exportJWK, generateKeyPair, SignJWT } from "jose";
 import { describe, expect, it } from "vitest";
@@ -231,7 +232,8 @@ describe("API signing", () => {
     const keys = await generateKeyPair("EdDSA", { extractable: true });
     const jwk = await exportJWK(keys.publicKey);
     const publicKeyJwk = { kty: "OKP", crv: "Ed25519", x: jwk.x as string } as const;
-    const now = Math.floor(Date.now() / 1000);
+    // Freeze the verifier's existing clock input across asynchronous signing.
+    const now = 1_792_000_000;
     const sign = (iat: number, exp: number) =>
       new SignJWT({ keyGeneration: 1 })
         .setProtectedHeader({ alg: "EdDSA", typ: HOST_PROOF_JWT_TYP })
@@ -242,6 +244,7 @@ describe("API signing", () => {
         .setExpirationTime(exp)
         .sign(keys.privateKey);
     const options = {
+      now,
       typ: HOST_PROOF_JWT_TYP,
       audience: "https://api.example",
       issuer: "synara-host:env-1",
@@ -253,6 +256,9 @@ describe("API signing", () => {
     await expect(
       verifyJwtWithEmbeddedJwk(await sign(now, now + 60), options),
     ).resolves.toBeDefined();
+    await expect(verifyJwtWithEmbeddedJwk(await sign(now - 60, now), options)).rejects.toThrow(
+      /expired/,
+    );
     // Expired 30s ago: inside jose's tolerance, outside ours.
     await expect(
       verifyJwtWithEmbeddedJwk(await sign(now - 90, now - 30), options),
