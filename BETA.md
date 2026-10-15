@@ -22,6 +22,12 @@ Try Beta installation/removal action runs from Remote. Signing in to the same
 account preserves access to account-owned cloud data and paired computers;
 local conversations remain owned by their original app home.
 
+Signing out preserves that local database. Signing in as another account on the
+same installation does not create a separate local history: the account profile
+and saved Inbox stay account-scoped, but usage sync backfills the installation's
+history for the newly signed-in account. Per-account local conversation ownership
+is not implemented; do not use account switching as local history isolation.
+
 ## The short version
 
 - **One branch.** Every PR merges into `main` as usual. There is no Beta branch.

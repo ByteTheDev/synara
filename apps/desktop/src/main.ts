@@ -4573,7 +4573,9 @@ async function restartBackendAfterCrash(
   // when the renderer window survived the crash.
   backendInitialWindowOpenInFlight = null;
   try {
-    await reserveBackendEndpoint("backend restart");
+    // Existing renderer transports pin this endpoint. Keep it across restarts
+    // so they reconnect without reloading the window or losing drafts.
+    if (backendPort === 0) await reserveBackendEndpoint("backend restart");
   } catch (error) {
     scheduleBackendRestart(
       `failed to reserve restart port after ${reason}: ${formatErrorMessage(error)}`,

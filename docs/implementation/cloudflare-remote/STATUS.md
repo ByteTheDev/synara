@@ -1,5 +1,33 @@
 # Cloudflare Remote — execution state
 
+## Installed-app qualification follow-up — 2026-10-15
+
+- Synara Remote was installed beside the existing apps on both Macs. Read-only
+  snapshots and message-by-message comparisons verified the imported local
+  histories; account credentials and host/device identities were not copied.
+  Both apps completed normal same-account Google sign-in and a real Codex reply.
+  The Mini also passed Stop, follow-up and renderer reload with preserved history.
+- The Mini's manual import initially put its usage checkpoint under `userdata`,
+  causing an unintended historical backfill under the new installation identity.
+  Account reporter state belongs directly under the packaged app's base directory
+  (`usage-sync`), or under `dev` when a dev URL is configured. The duplicate target
+  counters were backed up and zeroed within their verified account/environment
+  scope; source counters and local history were preserved. A private disposable
+  replay reproduced the misplaced-checkpoint backfill and verified no upload
+  across repeated reporter starts with the correctly placed checkpoint. New real
+  activity then uploaded without another historical backfill. This operator
+  repair does not add per-account local conversation ownership; see [account
+  switching semantics](../../../BETA.md#synara-remote-early-access).
+- A controlled backend restart in installed version **1.0.6-remote.1** exposed a
+  separate recovery defect: the replacement backend chose a new port while the
+  renderer retained its pinned endpoint. The desktop now keeps its reserved port
+  throughout the app lifetime. The existing fresh-profile Electron smoke now
+  terminates only its own backend, waits for a replacement PID and healthy HTTP
+  endpoint, and asserts that the port is unchanged. It failed on the old code for
+  the changed endpoint and passed after the repair. No transport unpinning or
+  renderer reload was added. Installed-artifact recovery qualification is pending
+  the updated signed candidate; source smoke is not packaged-app proof.
+
 ## Early access delivery — 2026-10-15
 
 - Qualified desktop source `8505590cfe40c58660171a3a778976ef6cccdd39` is pushed.
@@ -21,8 +49,9 @@
 - Universal iOS/iPadOS version 0.1 (130) was exported with Cloud Managed Apple
   Distribution and uploaded successfully with the ordinary Xcode Apple ID.
   App Store Connect shows **Ready to Test**. The internal **Synara Early Access**
-  group has manual distribution, no testers and version 0.1 (130) attached. No App Store
-  Connect API key was created and no tester invitations were sent.
+  group has manual distribution, version 0.1 (130) attached and one explicitly
+  authorized internal tester. App Store Connect confirms that tester is **Invited**.
+  No App Store Connect API key was created. External Beta review remains pending.
 - Both native branches are pushed and validate all 86 fixtures against this
   desktop source. The final retained native checks passed 116 cases (one skip)
   on each simulator; the iPad docked-sidebar flow passed twice. The broader
@@ -35,7 +64,17 @@
   data home and updater lane are implemented through the existing signing
   workflow. Remote qualification passed 259 affected tests, twelve-package
   typecheck, lint (zero errors), formatting, Windows boundary and release smoke.
-  Signed packaging/startup and the full exact-candidate CI gates remain pending. No new paid plan or spending limit was enabled.
+  The exact candidate `fa1c5e6db6904ee3c694fd9a495d4292f1571a8f`, version
+  **1.0.6-remote.1**, passed [all CI gates](https://github.com/Emanuele-web04/synara/actions/runs/38767031101):
+  18,168 tests passed and 295 were skipped by their existing CI routing; the
+  database-backed API cases passed separately in the 369-test Mini run above.
+  Developer ID signing, Apple notarization of the app/DMG, artifact provenance
+  and packaged Mac ARM64 startup smoke all passed. The qualified installer and
+  updater ZIP were downloaded on the Mini: source/lockfile provenance, all file
+  hashes, Remote bundle/display identity, DMG signature, stapled Apple ticket
+  and Gatekeeper acceptance passed locally. They are available in the [30-day workflow artifact](https://github.com/Emanuele-web04/synara/actions/runs/38767031101/artifacts/11990746436).
+  This is a build-only candidate: no public release/update feed has been published.
+  No new paid plan or spending limit was enabled.
   No desktop tag, main merge, signed Remote publication or external TestFlight
   review is claimed.
 
