@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { NotionMapping, NotionObject } from "@synara/contracts";
-import { notionComparableValue, notionPatchConflicts, notionPropertySnapshot, notionResourceId, notionTodoPatch, plainNotionText, projectNotionTask, validateNotionMapping } from "./notion";
+import { notionComparableValue, notionPatchConflicts, notionPropertySnapshot, notionResourceId, notionTodoPatch, plainNotionText, projectNotionTask, validateNotionMapping, validateNotionSprintPlan } from "./notion";
 const source = "11111111-1111-4111-8111-111111111111";
 const pageId = "22222222-2222-4222-8222-222222222222";
 const mapping: NotionMapping = { id: "tasks", connectionId: "workspace:bot", dataSourceId: source, name: "Engineering", projectId: null, fields: { title: { id: "title", type: "title" }, status: { id: "s", type: "status" }, description: { id: "d", type: "rich_text" } }, completedStatusIds: ["done"], reopenedStatusId: "todo", priorityOptions: {}, agentAccess: "none", enabled: true };
@@ -15,4 +15,43 @@ describe("Notion lossless task adapter", () => {
   it("chunks UTF-16 bounded rich text without breaking emoji", () => { const input = "😀".repeat(2001); const chunks = plainNotionText(input); expect(chunks.map(value => (value.text as { content: string }).content).join("")).toBe(input); for (const chunk of chunks) expect((chunk.text as { content: string }).content.length).toBeLessThanOrEqual(2000); });
   it("rejects mappings whose property type changed", () => { expect(() => validateNotionMapping(mapping, { properties: { Title: { id: "title", type: "rich_text" } } })).toThrow("title"); });
   it("keeps status IDs in comparison snapshots and rejects malformed resource IDs", () => { expect(notionPropertySnapshot(page.properties, ["s"])).toEqual({ s: { status: { id: "todo" } } }); expect(() => notionResourceId("../../oauth/token")).toThrow(); });
+});
+
+describe("Notion sprint-plan schema validation", () => {
+  const sprintSourceId = "33333333-3333-4333-8333-333333333333";
+  const sprintMapping: NotionMapping = {
+    ...mapping,
+    fields: { ...mapping.fields, sprint: { id: "rel", type: "relation" } },
+    sprintPlan: {
+      dataSourceId: sprintSourceId,
+      title: { id: "name", type: "title" },
+      start: { id: "from", type: "date" },
+      end: { id: "to", type: "date" },
+      status: { id: "state", type: "status" },
+      completedStatusIds: ["finished"],
+    },
+  };
+  const sourceData = { id: source, properties: {
+    Sprint: { id: "rel", type: "relation", relation: { data_source_id: sprintSourceId } },
+  } };
+  const sprintData = { id: sprintSourceId, properties: {
+    Name: { id: "name", type: "title" },
+    From: { id: "from", type: "date" },
+    To: { id: "to", type: "date" },
+    State: { id: "state", type: "status", status: { options: [{ id: "finished" }, { id: "active" }] } },
+  } };
+  it("accepts property IDs from the actual relation target", () => {
+    expect(() => validateNotionSprintPlan(sprintMapping, sourceData, sprintData)).not.toThrow();
+  });
+  it("does not accept unshared or substituted sprint sources", () => {
+    expect(() => validateNotionSprintPlan(sprintMapping, { ...sourceData, properties: {
+      Sprint: { id: "rel", type: "relation", relation: { data_source_id: pageId } },
+    } }, sprintData)).toThrow("relation");
+  });
+  it("rejects removed completed-status options and type changes", () => {
+    const changed = { ...sprintData, properties: { ...sprintData.properties, State: {
+      id: "state", type: "status", status: { options: [{ id: "active" }] },
+    } } };
+    expect(() => validateNotionSprintPlan(sprintMapping, sourceData, changed)).toThrow("completed");
+  });
 });
