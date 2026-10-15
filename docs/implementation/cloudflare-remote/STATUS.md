@@ -16,8 +16,8 @@
   unverified; do not treat the secret update as a delivery result.
 - Universal iOS/iPadOS version 0.1 (130) was exported with Cloud Managed Apple
   Distribution and uploaded successfully with the ordinary Xcode Apple ID.
-  App Store Connect shows processing. The internal **Synara Early Access** group
-  has manual distribution, no testers and no attached build yet. No App Store
+  App Store Connect shows **Ready to Test**. The internal **Synara Early Access**
+  group has manual distribution, no testers and version 0.1 (130) attached. No App Store
   Connect API key was created and no tester invitations were sent.
 - Both native branches are pushed and validate all 86 fixtures against this
   desktop source. The final retained native checks passed 116 cases (one skip)
