@@ -1,4 +1,4 @@
-# Temporary branch-only execution bridge. It never moves repository refs.
+# Temporary execution bridge; no branch refs are moved by this workflow.
 name: Extension candidate validation
 on:
   push:
@@ -10,7 +10,7 @@ concurrency:
   group: extension-candidate-${{ github.ref }}
   cancel-in-progress: true
 env:
-  CANDIDATE_BASE: dabca1cf7ec691a9ea9cdba321bf2d8315fe315a
+  CANDIDATE_BASE: 32948b773877e58e16cc105c70d5dfa3bfb1490b
 jobs:
   prepare:
     runs-on: ubuntu-24.04
@@ -25,11 +25,12 @@ jobs:
           ref: ${{ env.CANDIDATE_BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - run: node scripts/prepare-extension-provider-acceptance.mjs
+      - run: node scripts/connect-extension-debugger.mjs
       - run: |
-          ./node_modules/.bin/oxfmt apps/server/src/extensions \
-            apps/web/src/components/codeEditor/extensionLanguageProviders.ts apps/web/e2e/editorExtensions.e2e.ts
-      - name: Store normalized candidate without publishing refs
+          ./node_modules/.bin/oxfmt apps/server/src/extensions apps/server/src/platform/extensionHostSandbox.ts \
+            apps/web/src/components/codeEditor/editorExtensionBridge.ts \
+            apps/web/src/components/codeEditor/editorDebugStore.ts apps/web/src/components/codeEditor/extensionDebugBackend.ts
+      - name: Preserve normalized candidate objects, not refs
         id: objects
         env:
           GH_TOKEN: ${{ github.token }}
@@ -47,18 +48,19 @@ jobs:
             return response.json();
           }
           const files=execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean);
+          const allowed=new Set(['apps/server/src/platform/extensionHostSandbox.ts','apps/web/src/components/codeEditor/editorExtensionBridge.ts','apps/web/src/components/codeEditor/editorDebugStore.ts','apps/web/src/components/codeEditor/extensionDebugBackend.ts']);
           const tree=[];
           for(const file of files){
-            if(!file.startsWith('apps/server/src/extensions/')&&!['apps/web/src/components/codeEditor/extensionLanguageProviders.ts','apps/web/e2e/editorExtensions.e2e.ts'].includes(file))throw new Error(`Unexpected edit ${file}`);
+            if(!file.startsWith('apps/server/src/extensions/')&&!allowed.has(file))throw new Error(`Unexpected edit ${file}`);
             const blob=await api('git/blobs',{content:await readFile(file,'utf8'),encoding:'utf-8'});
             tree.push({path:file,mode:'100644',type:'blob',sha:blob.sha});
           }
-          for(const file of ['scripts/prepare-extension-provider-acceptance.mjs','scripts/connect-extension-edit-providers.mjs'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
+          tree.push({path:'scripts/connect-extension-debugger.mjs',mode:'100644',type:'blob',sha:null});
           const base=await api(`git/commits/${process.env.CANDIDATE_BASE}`);
           const result=await api('git/trees',{base_tree:base.tree.sha,tree});
           const identity={name:'Commander Chara',email:'249489759+cmdr-chara@users.noreply.github.com'};
-          const commit=await api('git/commits',{message:'feat(extensions): integrate guarded rename and code-action providers',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
-          console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);
+          const commit=await api('git/commits',{message:'feat(extensions): integrate contributed debuggers with native Synara state',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
+          console.log(`::notice title=Normalized extension candidate::commit=${commit.sha} tree=${result.sha}`);
           await appendFile(process.env.GITHUB_OUTPUT,`candidate=${commit.sha}\n`);
           NODE
   contracts:
@@ -71,7 +73,7 @@ jobs:
           ref: ${{ needs.prepare.outputs.candidate }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - name: Type contracts
+      - name: Web and server contracts
         run: |
           bun run --cwd apps/web typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { tail -60 "$RUNNER_TEMP/types.log"; exit 1; }
           bun run --cwd apps/server typecheck > "$RUNNER_TEMP/types.log" 2>&1 || { tail -60 "$RUNNER_TEMP/types.log"; exit 1; }
@@ -94,7 +96,7 @@ jobs:
           run-id: 38770793874
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/sdk
-      - name: Verify upstream inputs
+      - name: Verify immutable upstream inputs
         run: |
           set -euo pipefail
           cd "$RUNNER_TEMP/sdk"
@@ -105,23 +107,23 @@ jobs:
           curl --fail --silent --show-error --location --max-time 90 'https://codeload.github.com/microsoft/vscode/tar.gz/7debcd0e2acdea1c52de81bf9ee1620444407dda' -o source.tar.gz
           echo '75b125b51f7258dbbd4cafb25ae658ea0edac4f2f5ad2ff9f61aeb8e1f99ee5e  source.tar.gz' | sha256sum -c -
           tar -xzf source.tar.gz
-      - name: Build Code-OSS host
+      - name: Build actual Code-OSS host
         env:
           SYNARA_CODE_OSS_SOURCE: ${{ runner.temp }}/code-oss/vscode-7debcd0e2acdea1c52de81bf9ee1620444407dda
           SYNARA_CODE_OSS_OUTPUT: ${{ runner.temp }}/code-oss-runtime
           SYNARA_ESBUILD_MODULE: ${{ runner.temp }}/code-oss/builder/node_modules/esbuild/lib/main.js
         run: node scripts/build-code-oss-host.mjs
-      - name: Install sandbox
-        run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
-      - name: Real formatter and language-server extensions
+      - name: Install sandbox and native debugger
+        run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap gdb
+      - name: Actual formatter, LSP and debugger VSIX tests
         env:
           SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
           SYNARA_TEST_EXTENSION_SANDBOX: '1'
-        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts src/extensions/realLanguageServer.test.ts
+        run: bun run --cwd apps/server test src/extensions/realRuntime.test.ts src/extensions/realLanguageServer.test.ts src/extensions/realDebuggerExtension.test.ts
       - name: Install browser
         if: ${{ !cancelled() }}
         run: bun run --cwd apps/web test:browser:install
-      - name: Real native settings and editor acceptance
+      - name: Native application installation and formatting
         if: ${{ !cancelled() }}
         env:
           SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
