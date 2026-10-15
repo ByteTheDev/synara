@@ -16,7 +16,7 @@ import { HostsUnsupportedError } from "~/lib/hosts/queries";
 import type { HostReachability } from "~/lib/hosts/reachability";
 import { callRemoteAccess } from "~/lib/hosts/remoteAccess";
 import { prepareWorkspaceSessionRemoval } from "~/lib/hosts/workspaceSessions";
-import { AddPlusIcon, RotateCcwIcon } from "~/lib/icons";
+import { RotateCcwIcon } from "~/lib/icons";
 import { ensureNativeApi, readNativeApi } from "~/nativeApi";
 import { HostConnectionControl } from "../hosts/HostConnectionControl";
 import { Button } from "../ui/button";
@@ -149,7 +149,6 @@ export function ConnectionsOtherComputers() {
               <RotateCcwIcon className="size-3.5" />
             </IconButton>
             <Button size="xs" shape="capsule" onClick={() => setAddOpen(true)}>
-              <AddPlusIcon className="size-3.5" />
               Add
             </Button>
           </div>
