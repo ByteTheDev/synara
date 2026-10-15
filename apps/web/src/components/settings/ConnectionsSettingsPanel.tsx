@@ -60,7 +60,7 @@ export function ConnectionsSettingsPanel({ active }: { active: boolean }) {
     <div className="space-y-6">
       <SegmentedPicker<ConnectionsTab>
         ariaLabel="Connections"
-        className="px-0"
+        variant="buttons"
         value={tab}
         onValueChange={setTab}
         options={[

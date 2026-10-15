@@ -312,7 +312,6 @@ function AddDeviceDialogContent({
           <>
             <SegmentedPicker<DeviceTab>
               ariaLabel="Device to connect"
-              className="px-0"
               value={tab}
               onValueChange={setTab}
               options={DEVICE_TABS}
