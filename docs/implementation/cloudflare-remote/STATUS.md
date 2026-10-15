@@ -832,3 +832,31 @@ pairing. On the final simulator build, switching between the two computers and
 opening each existing smoke transcript passed. These were reads, not fresh
 provider turns. Remote `.2` and private database backups remain available for
 rollback; Stable/Beta installations and their data homes were not changed.
+
+### Follow-up — Codex runtime warnings and copy controls
+
+The MacBook's new Codex conversation completed its turns but displayed 59
+`process/stderr` events as generic runtime warnings. The actual payloads were
+single-line JSON diagnostics: WARN-level skill/credential/memory/analytics
+notices and ERROR-level OAuth failures for MCP servers from the user's external
+Codex configuration. The existing classifier understood text logs only.
+
+Classification now shares one pure implementation between server ingestion and
+historical web replay, recognizes both text and complete JSON log envelopes
+(including `fields.error` without `fields.message`), and retains unknown errors,
+Synara-owned connector failures and explicit retry feedback. Ignored external
+MCP OAuth failures keep their existing bounded host-log notice. Historical
+records are filtered when rendered, not deleted or rewritten. A remaining real
+runtime notice uses its readable message instead of the generic row title.
+The regressions failed before the repair; final focused server coverage passes
+285 tests with two fixture skips, and the web/clipboard/row/font checks pass
+205 tests. The initial sandbox run could not prove synthetic-process teardown;
+repeating with OS process inspection available passed all three server files.
+
+The requested UI change reuses CopyTextButton: a compact icon copies the exact
+root fingerprint in both comparison dialogs, and Copy code copies the live
+short pairing code. The shared button gains an icon-only variant with the same
+accessible label and copied-state feedback; its existing callers are unchanged.
+The expired code has no copy action. No new package dependency or account/trust
+change is introduced. These are source changes until the next signed Remote
+candidate is built and installed; TestFlight 131 is not replaced by this change.
