@@ -1,4 +1,4 @@
-# Temporary execution bridge; this workflow never updates a branch ref.
+# Temporary execution bridge. No branch ref is changed by this workflow.
 name: Extension candidate validation
 on:
   push:
@@ -10,7 +10,7 @@ concurrency:
   group: extension-candidate-${{ github.ref }}
   cancel-in-progress: true
 env:
-  CANDIDATE_BASE: 984715b3674ea61c2b7b19f69a5b49442ebdc19c
+  CANDIDATE_BASE: 59c5906cac35ae2117f2a57460b0ffec0887b563
 jobs:
   prepare:
     runs-on: ubuntu-24.04
@@ -25,16 +25,14 @@ jobs:
           ref: ${{ env.CANDIDATE_BASE }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - name: Apply the recovered bootstrap and interaction-owner fixes
-        run: node scripts/patch-extension-integration.mjs
-      - name: Format only the modified files
+      - name: Integrate native providers and broker boundaries
+        run: node scripts/connect-native-extension-providers.mjs
+      - name: Format the bounded candidate
         run: |
-          ./node_modules/.bin/oxfmt apps/server/src/extensions/host/entry.mjs \
-            apps/server/src/platform/extensionHostSandbox.integration.test.ts \
-            apps/web/src/components/codeEditor/editorExtensionBridge.ts \
-            apps/web/src/components/codeEditor/EditorExtensionInteraction.tsx \
-            apps/web/src/components/codeEditor/MonacoEditorSurface.tsx
-      - name: Preserve normalized candidate objects without moving refs
+          ./node_modules/.bin/oxfmt apps/server/src/extensions \
+            apps/web/src/components/codeEditor/extensionLanguageProviders.ts \
+            apps/web/src/components/codeEditor/editorExtensionBridge.ts
+      - name: Store normalized candidate without publishing any ref
         id: objects
         env:
           GH_TOKEN: ${{ github.token }}
@@ -51,56 +49,87 @@ jobs:
             if(!response.ok)throw new Error(`${endpoint}: ${response.status} ${await response.text()}`);
             return response.json();
           }
-          const allowed=new Set(['apps/server/src/extensions/host/entry.mjs','apps/server/src/platform/extensionHostSandbox.integration.test.ts','apps/web/src/components/codeEditor/editorExtensionBridge.ts','apps/web/src/components/codeEditor/EditorExtensionInteraction.tsx','apps/web/src/components/codeEditor/MonacoEditorSurface.tsx']);
           const files=execFileSync('git',['diff','--name-only','-z','HEAD'],{encoding:'utf8'}).split('\0').filter(Boolean);
           const tree=[];
           for(const file of files){
-            if(!allowed.has(file))throw new Error(`Unexpected edit ${file}`);
+            if(!file.startsWith('apps/server/src/extensions/')&&!['apps/web/src/components/codeEditor/extensionLanguageProviders.ts','apps/web/src/components/codeEditor/editorExtensionBridge.ts'].includes(file))throw new Error(`Unexpected edit ${file}`);
             const blob=await api('git/blobs',{content:await readFile(file,'utf8'),encoding:'utf-8'});
             tree.push({path:file,mode:'100644',type:'blob',sha:blob.sha});
           }
-          tree.push({path:'scripts/patch-extension-integration.mjs',mode:'100644',type:'blob',sha:null});
+          for(const file of ['scripts/connect-native-extension-providers.mjs','scripts/extend-native-language-bridge.mjs'])tree.push({path:file,mode:'100644',type:'blob',sha:null});
           const base=await api(`git/commits/${process.env.CANDIDATE_BASE}`);
           const result=await api('git/trees',{base_tree:base.tree.sha,tree});
           const identity={name:'Commander Chara',email:'249489759+cmdr-chara@users.noreply.github.com'};
-          const commit=await api('git/commits',{message:'fix(extensions): initialize upstream service discovery and native prompt ownership',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
+          const commit=await api('git/commits',{message:'feat(extensions): connect native language providers and sandboxed filesystem operations',tree:result.sha,parents:[process.env.PARENT_SHA,process.env.CANDIDATE_BASE],author:identity,committer:identity});
           console.log('CANDIDATE_COMMIT',commit.sha);console.log('CANDIDATE_TREE',result.sha);console.log('NORMALIZED_FILES',JSON.stringify(tree));
           await appendFile(process.env.GITHUB_OUTPUT,`candidate=${commit.sha}\n`);
           NODE
-  upstream-host:
+  validate:
     needs: prepare
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ needs.prepare.outputs.candidate }}
           persist-credentials: false
       - uses: ./.github/actions/setup-workspace
-      - name: Prepare verified upstream source
+      - name: Web and server type contracts
+        run: |
+          bun run --cwd apps/web typecheck > "$RUNNER_TEMP/web-types.log" 2>&1 || { tail -80 "$RUNNER_TEMP/web-types.log"; exit 1; }
+          bun run --cwd apps/server typecheck > "$RUNNER_TEMP/server-types.log" 2>&1 || { tail -80 "$RUNNER_TEMP/server-types.log"; exit 1; }
+      - name: Existing extension and native editor boundaries
+        if: ${{ !cancelled() }}
+        run: bun run --cwd apps/server test src/extensions/manifest.test.ts src/extensions/vsix.test.ts src/extensions/openVsx.test.ts
+  upstream-host:
+    needs: prepare
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.prepare.outputs.candidate }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup-workspace
+      - name: Recover the SDK produced by the reviewed pinned-source job
+        uses: actions/download-artifact@v4
+        with:
+          name: code-oss-offline-build-sdk
+          run-id: 38770793874
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/sdk
+      - name: Verify upstream source and recovered dependency archive
         run: |
           set -euo pipefail
+          cd "$RUNNER_TEMP/sdk"
+          sha256sum -c SDK.sha256
           mkdir -p "$RUNNER_TEMP/code-oss"
+          tar -I zstd -xf extension-sdk.tar.zst -C "$RUNNER_TEMP/code-oss"
           cd "$RUNNER_TEMP/code-oss"
           curl --fail --silent --show-error --location --max-time 90 'https://codeload.github.com/microsoft/vscode/tar.gz/7debcd0e2acdea1c52de81bf9ee1620444407dda' -o source.tar.gz
           echo '75b125b51f7258dbbd4cafb25ae658ea0edac4f2f5ad2ff9f61aeb8e1f99ee5e  source.tar.gz' | sha256sum -c -
           tar -xzf source.tar.gz
-          cd vscode-7debcd0e2acdea1c52de81bf9ee1620444407dda
-          npm ci --omit=dev --ignore-scripts --no-audit --no-fund > "$RUNNER_TEMP/upstream-install.log" 2>&1 || { tail -40 "$RUNNER_TEMP/upstream-install.log"; exit 1; }
-          mkdir -p "$RUNNER_TEMP/code-oss-builder"
-          cd "$RUNNER_TEMP/code-oss-builder"
-          npm init -y >/dev/null
-          npm install --ignore-scripts --package-lock=false --no-audit --no-fund esbuild@0.25.12
       - name: Build pinned headless host
         env:
           SYNARA_CODE_OSS_SOURCE: ${{ runner.temp }}/code-oss/vscode-7debcd0e2acdea1c52de81bf9ee1620444407dda
           SYNARA_CODE_OSS_OUTPUT: ${{ runner.temp }}/code-oss-runtime
-          SYNARA_ESBUILD_MODULE: ${{ runner.temp }}/code-oss-builder/node_modules/esbuild/lib/main.js
+          SYNARA_ESBUILD_MODULE: ${{ runner.temp }}/code-oss/builder/node_modules/esbuild/lib/main.js
         run: node scripts/build-code-oss-host.mjs
       - name: Actual Prettier activation and formatting
         env:
           SYNARA_TEST_CODE_OSS_HOST: ${{ runner.temp }}/code-oss-runtime/extension-host.mjs
         run: bun run --cwd apps/server test src/extensions/realHost.test.ts
+      - name: Install OS sandbox without changing its policy
+        if: ${{ !cancelled() }}
+        run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
+      - name: Real filesystem and process isolation
+        if: ${{ !cancelled() }}
+        env:
+          SYNARA_TEST_EXTENSION_SANDBOX: '1'
+        run: bun run --cwd apps/server test src/platform/extensionHostSandbox.integration.test.ts
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -108,19 +137,3 @@ jobs:
           path: ${{ runner.temp }}/code-oss-runtime
           if-no-files-found: warn
           retention-days: 7
-  sandbox:
-    needs: prepare
-    runs-on: ubuntu-24.04
-    timeout-minutes: 6
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ needs.prepare.outputs.candidate }}
-          persist-credentials: false
-      - uses: ./.github/actions/setup-workspace
-      - name: Install production sandbox dependency
-        run: sudo apt-get update -qq && sudo apt-get install -y bubblewrap
-      - name: Verify real OS isolation and protocol pipe
-        env:
-          SYNARA_TEST_EXTENSION_SANDBOX: '1'
-        run: bun run --cwd apps/server test src/platform/extensionHostSandbox.integration.test.ts
