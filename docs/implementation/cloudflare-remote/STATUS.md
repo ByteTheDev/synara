@@ -858,5 +858,32 @@ root fingerprint in both comparison dialogs, and Copy code copies the live
 short pairing code. The shared button gains an icon-only variant with the same
 accessible label and copied-state feedback; its existing callers are unchanged.
 The expired code has no copy action. No new package dependency or account/trust
-change is introduced. These are source changes until the next signed Remote
-candidate is built and installed; TestFlight 131 is not replaced by this change.
+change is introduced. The twelve existing browser Connections cases also pass.
+Manual copy/paste checks with the actual shared controls preserve both the raw
+64-character fingerprint and the short code exactly, with copied-state feedback.
+The installed Mini app also exposes Copy code and shows Copied code after a
+real click. TestFlight 131 is not replaced by this desktop change.
+
+Remote `1.0.6-remote.4`, source `922f21bdc385b404639b8e0a4e685f5fa9340197`,
+passed [the complete candidate workflow](https://github.com/Emanuele-web04/synara/actions/runs/38800710107)
+and is installed and open on both Macs. This remains a build-only artifact:
+no public tag, release or update-feed publication. Local artifact hashes,
+provenance, Developer ID, Gatekeeper and stapled-ticket checks passed before
+installation. Private database backups and the previous app bundles remain
+available for rollback.
+
+Mini: all 46 chats and 215 complete message rows are preserved. MacBook: all
+103 chats and 1,745 message rows are preserved, with identical messages. Both
+accounts, machine identities and existing pairing approvals are unchanged; the
+simulator reconnected to both computers after restart without another login or
+pairing. Existing smoke messages from both computers load on the simulator. The actual
+MacBook conversation now renders without generic runtime-warning rows while
+retaining its real failed-tool activity. All 101 historical warning records,
+including the 59 investigated events, remain in the database. Replaying those
+59 original payloads through the exact classifier returned 53 ignored diagnostics,
+six external MCP OAuth notices and no conversation notices. The external Stripe
+and Polar credentials themselves were not refreshed or changed.
+
+These checks did not start new provider turns, use the physical iPhone, test
+cellular delivery or qualify TestFlight production background pushes. Stable and
+Beta homes remain untouched. No paid service or billing setting was enabled.
