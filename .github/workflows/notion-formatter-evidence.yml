@@ -23,10 +23,13 @@ jobs:
         with:
           scope: static
       - name: Format integration sources in an isolated checkout
-        run: bun run fmt
+        run: |
+          bun run fmt
+          bun run fmt
       - name: Check formatting
         run: bun run fmt:check
       - name: Export formatted integration source for connector-based publication
+        if: always()
         run: |
           python3 - <<'PY'
           import base64, pathlib, subprocess
