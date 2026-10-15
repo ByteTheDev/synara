@@ -1,4 +1,4 @@
-# Temporary branch-only recovery; removed from the final extension implementation tree.
+# Temporary branch-only dependency evidence; removed from the application PR tree.
 name: Extension SDK recovery
 on:
   push:
@@ -10,40 +10,35 @@ jobs:
   sdk:
     if: github.repository == 'Emanuele-web04/synara'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Recover matching syntax and language workers
+      - name: Download immutable upstream source and registry fixture
         shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/browser-sdk/probe"
-          cd "$RUNNER_TEMP/browser-sdk/probe"
-          npm init -y >/dev/null
-          npm install --ignore-scripts --package-lock=false --no-audit --no-fund \
-            @codingame/monaco-vscode-api@37.6.0 \
-            monaco-editor@npm:@codingame/monaco-vscode-editor-api@37.6.0 \
-            vscode@npm:@codingame/monaco-vscode-extension-api@37.6.0 \
-            @codingame/monaco-vscode-extensions-service-override@37.6.0 \
-            @codingame/monaco-vscode-model-service-override@37.6.0 \
-            @codingame/monaco-vscode-configuration-service-override@37.6.0 \
-            @codingame/monaco-vscode-languages-service-override@37.6.0 \
-            @codingame/monaco-vscode-files-service-override@37.6.0 \
-            @codingame/monaco-vscode-editor-service-override@37.6.0 \
-            @codingame/monaco-vscode-storage-service-override@37.6.0 \
-            @codingame/monaco-vscode-textmate-service-override@37.6.0 \
-            @codingame/monaco-vscode-theme-service-override@37.6.0 \
-            @codingame/monaco-vscode-all-language-default-extensions@37.6.0 \
-            @codingame/monaco-vscode-json-language-features-default-extension@37.6.0 \
-            @codingame/monaco-vscode-css-language-features-default-extension@37.6.0 \
-            @codingame/monaco-vscode-html-language-features-default-extension@37.6.0
-          cd "$RUNNER_TEMP/browser-sdk"
-          tar -czf browser-sdk.tar.gz probe
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/extension-pins"
+          cd "$RUNNER_TEMP/extension-pins"
+          curl --fail --silent --show-error --max-time 90 \
+            'https://codeload.github.com/microsoft/vscode/tar.gz/7debcd0e2acdea1c52de81bf9ee1620444407dda' \
+            -o code-oss.tar.gz
+          sha256sum code-oss.tar.gz | tee SOURCE.sha256
+          curl --fail --silent --show-error --max-time 30 \
+            'https://open-vsx.org/api/esbenp/prettier-vscode/latest' -o prettier-metadata.json
+          node -e 'const m=require("./prettier-metadata.json"); console.log(JSON.stringify({namespace:m.namespace,name:m.name,version:m.version,engines:m.engines,files:m.files},null,2)); if (!m.files?.download?.startsWith("https://open-vsx.org/")) process.exit(1); require("fs").writeFileSync("fixture-url.txt",m.files.download)'
+          curl --fail --silent --show-error --location --max-time 60 \
+            --proto '=https' --proto-redir '=https' --dump-header download-headers.txt \
+            "$(cat fixture-url.txt)" -o prettier.vsix
+          sha256sum prettier.vsix | tee FIXTURE.sha256
+          npm view yauzl version --json > yauzl-version.json
+          npm view @vscode/proxy-agent version --json > proxy-agent-version.json
       - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          name: extension-browser-sdk
-          path: ${{ runner.temp }}/browser-sdk/browser-sdk.tar.gz
+          name: extension-source-and-registry-pins
+          path: ${{ runner.temp }}/extension-pins
           compression-level: 0
           retention-days: 2
           if-no-files-found: error
