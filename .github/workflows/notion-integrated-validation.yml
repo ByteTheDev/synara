@@ -16,6 +16,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  source:
+    if: github.event.pull_request.number == 1937 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Export source snapshots without credentials or repository writes
+        env:
+          FEATURE_HEAD: ${{ github.event.pull_request.head.sha }}
+          MAIN_HEAD: 566efb1b132b97a1d76e86229be8a177abb9e435
+        run: |
+          mkdir -p "$RUNNER_TEMP/notion-source"
+          BASE=$(git merge-base "$FEATURE_HEAD" "$MAIN_HEAD")
+          printf 'FEATURE_HEAD=%s\nMAIN_HEAD=%s\nBASE=%s\n' "$FEATURE_HEAD" "$MAIN_HEAD" "$BASE" > "$RUNNER_TEMP/notion-source/refs.txt"
+          git archive --format=tar "$FEATURE_HEAD" | gzip > "$RUNNER_TEMP/notion-source/head.tar.gz"
+          git archive --format=tar "$MAIN_HEAD" | gzip > "$RUNNER_TEMP/notion-source/main.tar.gz"
+          git archive --format=tar "$BASE" | gzip > "$RUNNER_TEMP/notion-source/base.tar.gz"
+          git archive --format=tar d98d89e0c535da1e81be5856529db3425234171b apps/web/src/components/notion apps/web/src/components/settings/NotionSettingsPanel.tsx | gzip > "$RUNNER_TEMP/notion-source/before.tar.gz"
+          git ls-tree -r "$FEATURE_HEAD" > "$RUNNER_TEMP/notion-source/head-tree.txt"
+          git ls-tree -r "$MAIN_HEAD" > "$RUNNER_TEMP/notion-source/main-tree.txt"
+          git cat-file commit "$FEATURE_HEAD" > "$RUNNER_TEMP/notion-source/head-commit.txt"
+          sha256sum "$RUNNER_TEMP/notion-source/"*.tar.gz > "$RUNNER_TEMP/notion-source/digests.txt"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: notion-source-snapshots
+          path: ${{ runner.temp }}/notion-source
+          retention-days: 2
+          compression-level: 0
   candidate:
     if: github.event.pull_request.number == 1937 && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
