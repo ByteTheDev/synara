@@ -34,6 +34,18 @@ export function createTypeScriptService(workspaceRoot: string) {
   let files: string[] = [];
   let options: ts.CompilerOptions = {};
   let configStamp = "";
+  let inferredJavaScript = false;
+  const inferredOptions: ts.CompilerOptions = {
+    allowJs: true,
+    checkJs: true,
+    target: ts.ScriptTarget.ESNext,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    jsx: ts.JsxEmit.ReactJSX,
+    allowImportingTsExtensions: true,
+    noEmit: true,
+    plugins: [],
+  };
 
   const allowed = (file: string) => {
     const absolute = path.resolve(file);
@@ -87,7 +99,8 @@ export function createTypeScriptService(workspaceRoot: string) {
       directory = path.dirname(directory);
     }
     const baseDirectory = configFile ? path.dirname(configFile) : root;
-    const stamp = `${configFile ?? "inferred"}:${configFile ? ts.sys.getModifiedTime?.(configFile)?.getTime() : 0}`;
+    const javascript = /\.[cm]?jsx?$/i.test(requestedFile);
+    const stamp = `${configFile ?? "inferred"}:${configFile ? ts.sys.getModifiedTime?.(configFile)?.getTime() : 0}:${javascript}`;
     // Refresh inherited configs/file lists periodically without scanning a project on every keystroke.
     if (stamp === configStamp && Date.now() - lastConfigRefresh < 2_000) return;
     const config = configFile ? ts.readConfigFile(configFile, readFile) : undefined;
@@ -115,8 +128,14 @@ export function createTypeScriptService(workspaceRoot: string) {
       throw new Error(
         "This project exceeds the language service's 10,000-file limit. Open a narrower workspace.",
       );
-    files = parsed.fileNames.filter(allowed);
-    options = { ...parsed.options, noEmit: true, plugins: [] };
+    // TS-only configurations reject JavaScript even when it is an open root.
+    // Use an inferred project for those requests without enabling JS or changing
+    // strictness in the configured TS project. Switching back restores its options.
+    inferredJavaScript = javascript && !parsed.options.allowJs;
+    files = inferredJavaScript ? [] : parsed.fileNames.filter(allowed);
+    options = inferredJavaScript
+      ? inferredOptions
+      : { ...parsed.options, noEmit: true, plugins: [] };
     projectDirectory = baseDirectory;
     if (configStamp !== stamp) service.cleanupSemanticCache();
     configStamp = stamp;
@@ -128,7 +147,9 @@ export function createTypeScriptService(workspaceRoot: string) {
     getScriptFileNames: () => [
       ...new Set([
         ...files,
-        ...[...documents.keys()].filter((file) => /\.[cm]?[jt]sx?$/i.test(file)),
+        ...[...documents.keys()].filter((file) =>
+          (inferredJavaScript ? /\.[cm]?jsx?$/i : /\.[cm]?[jt]sx?$/i).test(file),
+        ),
       ]),
     ],
     getScriptVersion: (file) =>

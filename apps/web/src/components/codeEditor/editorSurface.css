@@ -4,6 +4,20 @@
 .synara-code-editor .monaco-editor .margin {
   background: var(--app-code-viewer-surface, var(--background));
 }
+.synara-code-editor .monaco-editor .glyph-margin {
+  background: transparent;
+}
+.synara-code-editor .monaco-editor[data-horizontal-scroll] .margin {
+  background: var(--app-code-viewer-sticky-surface, var(--background));
+}
+.synara-code-editor .monaco-diff-editor .line-insert,
+.synara-code-editor .monaco-diff-editor .line-insert-margin {
+  background: var(--app-code-viewer-addition-row, var(--vscode-diffEditor-insertedLineBackground));
+}
+.synara-code-editor .monaco-diff-editor .line-delete,
+.synara-code-editor .monaco-diff-editor .line-delete-margin {
+  background: var(--app-code-viewer-deletion-row, var(--vscode-diffEditor-removedLineBackground));
+}
 .synara-code-editor .monaco-editor .suggest-widget,
 .synara-code-editor .monaco-editor .monaco-hover,
 .synara-code-editor .monaco-editor .parameter-hints-widget,
