@@ -122,6 +122,8 @@ async function editorVisible(page: Page, relativePath: string) {
 }
 async function open(page: Page, relativePath = "main.ts") {
   await page.goto(`/${threadId}?view=editor&editorFilePath=${encodeURIComponent(relativePath)}`);
+  // File navigation opens Synara's read-only preview; enter editing via its native control.
+  await page.getByRole("button", { name: "Edit file", exact: true }).click();
   await editorVisible(page, relativePath);
 }
 async function position(page: Page, text: string, delta = 0) {

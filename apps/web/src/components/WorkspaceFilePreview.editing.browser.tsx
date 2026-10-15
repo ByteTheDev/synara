@@ -251,7 +251,9 @@ it("keeps the buffer dirty and shows guarded write failures", async () => {
     await replaceEditorContents(editor, "manual edit\n");
     pressKeyboardSave(editor.getDomNode()!);
 
-    await expect.element(page.getByRole("alert")).toHaveTextContent(conflictMessage);
+    const conflict = page.getByText(conflictMessage, { exact: true });
+    await expect.element(conflict).toBeVisible();
+    expect(conflict.element().closest('[role="alert"]')).not.toBeNull();
     await expect.element(page.getByRole("status", { name: "Unsaved changes" })).toBeVisible();
     await expect.poll(contentsOf(editor)).toContain("manual edit");
     expect(writeFile).toHaveBeenCalledTimes(1);
@@ -716,11 +718,14 @@ it("renders numbered source lines without including the gutter in saved text", a
   try {
     await render(
       <QueryClientProvider client={makeQueryClient()}>
-        <WorkspaceFilePreview workspaceRoot={WORKSPACE_ROOT} filePath={FILE_PATH} editable />
+        <div style={{ width: 800, height: 400, display: "flex", flexDirection: "column" }}>
+          <WorkspaceFilePreview workspaceRoot={WORKSPACE_ROOT} filePath={FILE_PATH} editable />
+        </div>
       </QueryClientProvider>,
     );
     const editor = await previewEditor();
-    await expect.poll(() => editor.getDomNode()!.getBoundingClientRect().height).toBeGreaterThan(0);
+    await expect.poll(contentsOf(editor)).toBe(contents);
+    await expect.poll(() => editor.getLayoutInfo().height).toBeGreaterThan(200);
     const root = editor.getDomNode()!;
     await vi.waitFor(() =>
       expect(
@@ -773,18 +778,20 @@ it("keeps the editor gutter aligned through horizontal and vertical scrolling", 
   try {
     await render(
       <QueryClientProvider client={makeQueryClient()}>
-        <div style={{ width: 400, height: 320 }}>
+        <div style={{ width: 400, height: 320, display: "flex", flexDirection: "column" }}>
           <WorkspaceFilePreview workspaceRoot={WORKSPACE_ROOT} filePath={FILE_PATH} editable />
         </div>
       </QueryClientProvider>,
     );
     const editor = await previewEditor();
-    await expect.poll(() => editor.getDomNode()!.getBoundingClientRect().height).toBeGreaterThan(0);
+    await expect.poll(contentsOf(editor)).toBe(contents);
+    await expect.poll(() => editor.getLayoutInfo().height).toBeGreaterThan(200);
     const root = editor.getDomNode()!;
+    // Wait for a real laid-out viewport before revealing the last model line.
+    editor.revealLineInCenter(100, monaco.editor.ScrollType.Immediate);
     editor.setScrollPosition(
       {
         scrollLeft: editor.getScrollWidth(),
-        scrollTop: editor.getScrollHeight(),
       },
       monaco.editor.ScrollType.Immediate,
     );
