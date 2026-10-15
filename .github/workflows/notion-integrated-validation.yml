@@ -1,0 +1,99 @@
+name: Notion integrated validation
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/notion-integrated-validation.yml
+      - .github/scripts/notion-*-continuation.py
+      - .github/scripts/notion-candidate-*.py
+      - .github/scripts/notion-capture-*.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notion-integrated-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  candidate:
+    if: github.event.pull_request.number == 1937 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Preserve before files and integrate pinned main locally
+        run: |
+          git archive d98d89e0c535da1e81be5856529db3425234171b apps/web/src/components/notion apps/web/src/components/settings/NotionSettingsPanel.tsx | tar -x -C "$RUNNER_TEMP"
+          git -c user.name='Synara validation' -c user.email='249489759+cmdr-chara@users.noreply.github.com' merge --no-commit --no-ff 34a6aefbe846a90b0928a87d4f9d5de2083c55f3
+      - uses: ./.github/actions/setup-workspace
+        with:
+          scope: runtime
+      - name: Apply scoped feature continuation
+        run: |
+          python3 .github/scripts/notion-agent-continuation.py
+          python3 .github/scripts/notion-ui-continuation.py
+          python3 .github/scripts/notion-planning-continuation.py
+          if test -f .github/scripts/notion-document-continuation.py; then python3 .github/scripts/notion-document-continuation.py; fi
+          if test -f .github/scripts/notion-candidate-fixes.py; then python3 .github/scripts/notion-candidate-fixes.py; fi
+      - name: Format the integrated candidate
+        run: |
+          bun run fmt
+          bun run fmt
+      - name: Formatting check
+        id: format
+        run: bun run fmt:check
+      - name: Lint
+        id: lint
+        if: success() || failure()
+        run: bun run lint
+      - name: Typecheck
+        id: types
+        if: success() || failure()
+        run: bun run typecheck
+      - name: Affected server and authorization tests
+        id: server_tests
+        if: success() || failure()
+        run: bun run --cwd apps/server test src/notion src/agentGateway/notionTools.test.ts src/agentGateway/notionApproval.test.ts src/agentGateway/todoTools.test.ts
+      - name: Affected shared tests
+        id: shared_tests
+        if: success() || failure()
+        run: bun run --cwd packages/shared test src/notion.test.ts
+      - name: Affected web tests
+        id: web_tests
+        if: success() || failure()
+        run: bun run --cwd apps/web test src/components/notion
+      - name: Install Chromium
+        if: success() && hashFiles('.github/scripts/notion-capture-native.mjs') != ''
+        run: ./apps/web/node_modules/.bin/playwright install --with-deps chromium
+      - name: Real component browser evidence
+        if: success() && hashFiles('.github/scripts/notion-capture-native.mjs') != ''
+        run: node .github/scripts/notion-capture-native.mjs
+      - name: Review complete candidate diff
+        if: success() || failure()
+        run: |
+          git diff --check
+          git diff --stat HEAD
+          git status --short
+      - name: Export bounded candidate manifest without changing any branch
+        if: always() && hashFiles('.github/scripts/notion-candidate-export.py') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha }}
+          VALIDATION_RESULTS: ${{ toJSON(steps) }}
+        run: python3 .github/scripts/notion-candidate-export.py
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: notion-integrated-evidence
+          path: |
+            ${{ runner.temp }}/notion-candidate
+            notion-screenshots
+          if-no-files-found: ignore
+          retention-days: 7
