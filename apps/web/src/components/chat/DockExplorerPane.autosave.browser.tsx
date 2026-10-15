@@ -50,11 +50,14 @@ async function mount() {
     <QueryClientProvider
       client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
     >
-      <DockExplorerPane
-        threadId={ThreadId.makeUnsafe("autosave")}
-        workspaceRoot="/repo"
-        isVisible
-      />
+      {/* The real dock receives a bounded flex height from its owning layout. */}
+      <div style={{ width: "100%", height: 560, display: "flex" }}>
+        <DockExplorerPane
+          threadId={ThreadId.makeUnsafe("autosave")}
+          workspaceRoot="/repo"
+          isVisible
+        />
+      </div>
     </QueryClientProvider>,
   );
   await page.getByTitle("a.ts", { exact: true }).click();
@@ -109,8 +112,15 @@ it("waits for the last edits before switching files", async () => {
       return uri?.scheme === "synara-workspace" && uri.path === "/a.ts";
     });
   await expect.poll(() => reopened()?.getValue()).toBe("newest edit");
+  // Monaco renders ordinary spaces as NBSPs; the model assertion above must
+  // remain exact so a real change to the saved text cannot pass unnoticed.
   await expect
-    .poll(() => reopened()?.getDomNode()?.querySelector(".view-lines")?.textContent)
+    .poll(() =>
+      reopened()
+        ?.getDomNode()
+        ?.querySelector(".view-lines")
+        ?.textContent?.replaceAll("\u00a0", " "),
+    )
     .toContain("newest edit");
 });
 

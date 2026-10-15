@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRef } from "react";
 import { page } from "vitest/browser";
 import { afterEach, expect, it } from "vitest";
-import { render } from "vitest-browser-react";
+import { cleanup, render } from "vitest-browser-react";
 
 import { CodeDiffEditorPane } from "../codeEditor/CodeDiffEditorPane";
 import { CodeEditorPane } from "../codeEditor/CodeEditorPane";
@@ -17,7 +17,8 @@ const root = document.documentElement;
 
 const originalRootStyle = root.getAttribute("style");
 const originalRootClassName = root.className;
-afterEach(() => {
+afterEach(async () => {
+  await cleanup();
   root.removeAttribute("data-window-translucency");
   root.className = originalRootClassName;
   if (originalRootStyle === null) root.removeAttribute("style");
@@ -59,8 +60,14 @@ async function viewerParts() {
   const find = () =>
     monaco.editor
       .getEditors()
-      .find((editor) => editor.getModel()?.uri.scheme === "synara-standalone");
-  await expect.poll(find).toBeDefined();
+      .find(
+        (editor) =>
+          editor.getModel()?.uri.scheme === "synara-standalone" &&
+          editor.getDomNode()?.isConnected,
+      );
+  // The first test must include cold loading of the lazy editor, unlike the
+  // later parameterized cases. Bound the wait without relaxing any CSS check.
+  await expect.poll(find, { timeout: 10_000 }).toBeDefined();
   const editor = find()!;
   const host = editor.getDomNode()!;
   const query = (selector: string) => {

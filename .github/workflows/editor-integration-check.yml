@@ -7,6 +7,7 @@ on:
       - "apps/web/src/components/codeEditor/**"
       - "apps/web/src/components/*Workspace*"
       - "apps/web/src/components/chat/WorkspaceFile*"
+      - "apps/web/src/components/chat/DockExplorerPane*"
       - "apps/web/src/lib/workspaceEditorSession*"
       - "apps/web/e2e/editorIntelligence.e2e.ts"
       - "apps/web/playwright.editor.config.ts"
@@ -49,7 +50,7 @@ jobs:
       - name: Shared sessions and file safety
         run: bun run --cwd apps/web test src/lib/workspaceEditorSession.test.ts src/lib/workspaceFileEditor.test.ts
       - name: Real editor component regression tests
-        run: bun run --cwd apps/web test:browser src/components/codeEditor/CodeEditorPane.browser.tsx src/components/codeEditor/editorModels.browser.tsx src/components/chat/RightDockGlassSurface.browser.tsx src/components/WorkspaceFilePreview.editing.browser.tsx
+        run: bun run --cwd apps/web test:browser src/components/codeEditor/CodeEditorPane.browser.tsx src/components/codeEditor/editorModels.browser.tsx src/components/chat/RightDockGlassSurface.browser.tsx src/components/chat/DockExplorerPane.autosave.browser.tsx src/components/WorkspaceFilePreview.editing.browser.tsx
       - name: Real application journey and screenshots
         if: ${{ !cancelled() }}
         run: bun run --cwd apps/web test:editor:e2e
