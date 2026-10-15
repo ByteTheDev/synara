@@ -1,12 +1,11 @@
-name: Notion integrated validation
+name: Notion verified source handoff
 
 on:
   pull_request:
     paths:
       - .github/workflows/notion-integrated-validation.yml
-      - .github/scripts/notion-*-continuation.py
-      - .github/scripts/notion-candidate-*.py
-      - .github/scripts/notion-capture-*.mjs
+      - .github/scripts/notion-candidate-fixes.py
+      - .github/scripts/notion-verified-recovery.json.gz
 
 permissions:
   contents: read
@@ -16,116 +15,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  source:
-    if: github.event.pull_request.number == 1937 && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Export source snapshots without credentials or repository writes
-        env:
-          FEATURE_HEAD: ${{ github.event.pull_request.head.sha }}
-          MAIN_HEAD: 566efb1b132b97a1d76e86229be8a177abb9e435
-        run: |
-          mkdir -p "$RUNNER_TEMP/notion-source"
-          BASE=$(git merge-base "$FEATURE_HEAD" "$MAIN_HEAD")
-          printf 'FEATURE_HEAD=%s\nMAIN_HEAD=%s\nBASE=%s\n' "$FEATURE_HEAD" "$MAIN_HEAD" "$BASE" > "$RUNNER_TEMP/notion-source/refs.txt"
-          git archive --format=tar "$FEATURE_HEAD" | gzip > "$RUNNER_TEMP/notion-source/head.tar.gz"
-          git archive --format=tar "$MAIN_HEAD" | gzip > "$RUNNER_TEMP/notion-source/main.tar.gz"
-          git archive --format=tar "$BASE" | gzip > "$RUNNER_TEMP/notion-source/base.tar.gz"
-          git archive --format=tar d98d89e0c535da1e81be5856529db3425234171b apps/web/src/components/notion apps/web/src/components/settings/NotionSettingsPanel.tsx | gzip > "$RUNNER_TEMP/notion-source/before.tar.gz"
-          git ls-tree -r "$FEATURE_HEAD" > "$RUNNER_TEMP/notion-source/head-tree.txt"
-          git ls-tree -r "$MAIN_HEAD" > "$RUNNER_TEMP/notion-source/main-tree.txt"
-          git cat-file commit "$FEATURE_HEAD" > "$RUNNER_TEMP/notion-source/head-commit.txt"
-          sha256sum "$RUNNER_TEMP/notion-source/"*.tar.gz > "$RUNNER_TEMP/notion-source/digests.txt"
-      - uses: actions/upload-artifact@v6
-        with:
-          name: notion-source-snapshots
-          path: ${{ runner.temp }}/notion-source
-          retention-days: 2
-          compression-level: 0
   candidate:
-    if: github.event.pull_request.number == 1937 && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.number == 1937 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feat/notion-enterprise-oauth-integration'
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
+          fetch-depth: 2
           persist-credentials: false
-      - name: Preserve before files and integrate pinned main locally
-        run: |
-          git archive d98d89e0c535da1e81be5856529db3425234171b apps/web/src/components/notion apps/web/src/components/settings/NotionSettingsPanel.tsx | tar -x -C "$RUNNER_TEMP"
-          git -c user.name='Synara validation' -c user.email='249489759+cmdr-chara@users.noreply.github.com' merge --no-commit --no-ff 34a6aefbe846a90b0928a87d4f9d5de2083c55f3
       - uses: ./.github/actions/setup-workspace
         with:
-          scope: runtime
-      - name: Apply scoped feature continuation
-        run: |
-          python3 .github/scripts/notion-agent-continuation.py
-          python3 .github/scripts/notion-ui-continuation.py
-          python3 .github/scripts/notion-planning-continuation.py
-          if test -f .github/scripts/notion-document-continuation.py; then python3 .github/scripts/notion-document-continuation.py; fi
-          if test -f .github/scripts/notion-candidate-fixes.py; then python3 .github/scripts/notion-candidate-fixes.py; fi
-      - name: Format the integrated candidate
-        run: |
-          bun run fmt
-          bun run fmt
-      - name: Formatting check
-        id: format
-        run: bun run fmt:check
-      - name: Lint
-        id: lint
-        if: success() || failure()
-        run: bun run lint
-      - name: Typecheck
+          scope: full
+      - name: Recover hash-pinned source
+        id: prepare
+        run: python3 .github/scripts/notion-candidate-fixes.py prepare
+      - name: Formatting and lint
+        id: style
+        run: bun run fmt:check && bun run lint
+      - name: Full workspace typecheck
         id: types
-        if: success() || failure()
+        if: success() || failure() && steps.prepare.outcome == 'success'
         run: bun run typecheck
-      - name: Affected server and authorization tests
-        id: server_tests
-        if: success() || failure()
-        run: bun run --cwd apps/server test src/notion src/agentGateway/notionTools.test.ts src/agentGateway/notionApproval.test.ts src/agentGateway/todoTools.test.ts
-      - name: Affected shared tests
-        id: shared_tests
-        if: success() || failure()
-        run: bun run --cwd packages/shared test src/notion.test.ts
-      - name: Affected web tests
-        id: web_tests
-        if: success() || failure()
-        run: bun run --cwd apps/web test src/components/notion
-      - name: Install Chromium
-        if: success() && hashFiles('.github/scripts/notion-capture-native.mjs') != ''
-        run: ./apps/web/node_modules/.bin/playwright install --with-deps chromium
-      - name: Real component browser evidence
-        if: success() && hashFiles('.github/scripts/notion-capture-native.mjs') != ''
-        run: node .github/scripts/notion-capture-native.mjs
-      - name: Review complete candidate diff
-        if: success() || failure()
+      - name: Focused integration tests
+        id: tests
+        if: success() || failure() && steps.prepare.outcome == 'success'
         run: |
-          git diff --check
-          git diff --stat HEAD
-          git status --short
-      - name: Export bounded candidate manifest without changing any branch
-        if: always() && hashFiles('.github/scripts/notion-candidate-export.py') != ''
+          bun run --cwd apps/server test src/notion src/agentGateway/notionTools.test.ts src/agentGateway/notionApproval.test.ts src/agentGateway/todoTools.test.ts
+          bun run --cwd apps/web test src/components/notion
+          bun run --cwd packages/shared test src/notion.test.ts
+      - name: Install Chromium
+        if: success() || failure() && steps.prepare.outcome == 'success'
+        run: ./apps/web/node_modules/.bin/playwright install --with-deps chromium
+      - name: Real native component browser evidence
+        id: browser
+        if: success() || failure() && steps.prepare.outcome == 'success'
+        env:
+          NOTION_BEFORE_REF: ac2d3c1d34fb48f53fe710b2f3556783fa4193f9
+          NOTION_EVIDENCE_DIR: ${{ runner.temp }}/notion-verified/screenshots
+        run: node "$RUNNER_TEMP/notion-verified/capture.mjs"
+      - name: Export exact content-addressed blobs without moving any ref
+        if: always() && steps.prepare.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
-          CANDIDATE_HEAD: ${{ github.event.pull_request.head.sha }}
           VALIDATION_RESULTS: ${{ toJSON(steps) }}
-        run: python3 .github/scripts/notion-candidate-export.py
+        run: python3 .github/scripts/notion-candidate-fixes.py export
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: notion-integrated-evidence
-          path: |
-            ${{ runner.temp }}/notion-candidate
-            notion-screenshots
-          if-no-files-found: ignore
-          retention-days: 7
+          name: notion-verified-source-and-screenshots
+          path: ${{ runner.temp }}/notion-verified
+          if-no-files-found: error
+          retention-days: 14
