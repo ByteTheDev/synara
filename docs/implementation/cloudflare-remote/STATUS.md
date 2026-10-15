@@ -21,8 +21,9 @@
 - Universal iOS/iPadOS version 0.1 (130) was exported with Cloud Managed Apple
   Distribution and uploaded successfully with the ordinary Xcode Apple ID.
   App Store Connect shows **Ready to Test**. The internal **Synara Early Access**
-  group has manual distribution, no testers and version 0.1 (130) attached. No App Store
-  Connect API key was created and no tester invitations were sent.
+  group has manual distribution, version 0.1 (130) attached and one explicitly
+  authorized internal tester. App Store Connect confirms that tester is **Invited**.
+  No App Store Connect API key was created. External Beta review remains pending.
 - Both native branches are pushed and validate all 86 fixtures against this
   desktop source. The final retained native checks passed 116 cases (one skip)
   on each simulator; the iPad docked-sidebar flow passed twice. The broader
@@ -35,7 +36,17 @@
   data home and updater lane are implemented through the existing signing
   workflow. Remote qualification passed 259 affected tests, twelve-package
   typecheck, lint (zero errors), formatting, Windows boundary and release smoke.
-  Signed packaging/startup and the full exact-candidate CI gates remain pending. No new paid plan or spending limit was enabled.
+  The exact candidate `fa1c5e6db6904ee3c694fd9a495d4292f1571a8f`, version
+  **1.0.6-remote.1**, passed [all CI gates](https://github.com/Emanuele-web04/synara/actions/runs/38767031101):
+  18,168 tests passed and 295 were skipped by their existing CI routing; the
+  database-backed API cases passed separately in the 369-test Mini run above.
+  Developer ID signing, Apple notarization of the app/DMG, artifact provenance
+  and packaged Mac ARM64 startup smoke all passed. The qualified installer and
+  updater ZIP were downloaded on the Mini: source/lockfile provenance, all file
+  hashes, Remote bundle/display identity, DMG signature, stapled Apple ticket
+  and Gatekeeper acceptance passed locally. They are available in the [30-day workflow artifact](https://github.com/Emanuele-web04/synara/actions/runs/38767031101/artifacts/11990746436).
+  This is a build-only candidate: no public release/update feed has been published.
+  No new paid plan or spending limit was enabled.
   No desktop tag, main merge, signed Remote publication or external TestFlight
   review is claimed.
 
