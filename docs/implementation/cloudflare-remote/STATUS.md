@@ -25,8 +25,18 @@
   terminates only its own backend, waits for a replacement PID and healthy HTTP
   endpoint, and asserts that the port is unchanged. It failed on the old code for
   the changed endpoint and passed after the repair. No transport unpinning or
-  renderer reload was added. Installed-artifact recovery qualification is pending
-  the updated signed candidate; source smoke is not packaged-app proof.
+  renderer reload was added. The signed, notarized **1.0.6-remote.2** candidate
+  (`a556ebf4238206ccf033158056027d86580fe45b`) passed
+  [all build gates](https://github.com/Emanuele-web04/synara/actions/runs/38783573115)
+  and is installed on both Macs, with the previous app retained for rollback.
+  Both installed apps survived a controlled backend restart in the same window:
+  replacement PID, unchanged port, preserved unsent draft, automatic reconnect
+  and a real Codex reply without renderer reload. All 207 original Mini messages
+  and 1,733 original MacBook messages remain unchanged; the Mini's 213 messages
+  present immediately before this update also compare identically. Subsequent
+  cloud reads show unchanged historical counters and only the new test activity.
+  Account and host/environment identities were preserved across the update.
+  This remains a build-only candidate, without a public release or updater feed.
 - The final local workspace run passed **18,188 tests / 275 skips** across all
   eleven test tasks. A first parallel run hit one five-second web test timeout;
   that case passed in isolation and the second full run passed unchanged.
@@ -40,8 +50,9 @@
   failed before the fix and passed afterward. All **370 API tests** passed on
   a new disposable PostgreSQL database; lint/typecheck/format also passed.
   No schema change is required. Production key creation, secret installation,
-  service rollout and actual TestFlight delivery remain pending; this source
-  verification is not live Apple delivery proof.
+  service rollout and actual TestFlight delivery remain pending; the specific
+  key-creation confirmation is open. Existing Sandbox credentials are unchanged.
+  This source verification is not live Apple delivery proof.
 
 ## Early access delivery — 2026-10-15
 
