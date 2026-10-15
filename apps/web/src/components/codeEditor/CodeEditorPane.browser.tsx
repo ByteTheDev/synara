@@ -292,3 +292,25 @@ it("opens Synara's native command picker without a workbench or second navigatio
   await expect.element(page.getByRole("dialog")).not.toBeInTheDocument();
   await view.unmount();
 });
+
+it("keeps both diff inputs labelled after layout and theme updates", async () => {
+  const view = await mount(true);
+  await ready();
+  const labels = () => {
+    const diff = monaco.editor.getDiffEditors()[0];
+    return [diff?.getOriginalEditor(), diff?.getModifiedEditor()].map((editor) => ({
+      option: editor?.getOption(monaco.editor.EditorOption.ariaLabel),
+      input: editor?.getDomNode()?.querySelector('[role="textbox"]')?.getAttribute("aria-label"),
+    }));
+  };
+  const expected = [
+    { option: "Original sample.ts", input: "Original sample.ts" },
+    { option: "Edit sample.ts", input: "Edit sample.ts" },
+  ];
+  await expect.poll(labels).toEqual(expected);
+  for (const action of ["Layout", "Theme", "Layout"]) {
+    await page.getByRole("button", { name: action, exact: true }).click();
+    await expect.poll(labels).toEqual(expected);
+  }
+  await view.unmount();
+});
