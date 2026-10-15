@@ -1,0 +1,29 @@
+name: Notion continuation evidence
+
+on:
+  push:
+    branches: [feat/notion-enterprise-oauth-integration]
+    paths: [.github/workflows/notion-continuation-evidence.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Export immutable source for isolated implementation
+        run: |
+          mkdir -p "$RUNNER_TEMP/notion-source"
+          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/notion-source/source.tar.gz"
+          git ls-tree -r HEAD > "$RUNNER_TEMP/notion-source/tree.txt"
+          git rev-parse HEAD > "$RUNNER_TEMP/notion-source/head.txt"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: notion-continuation-source
+          path: ${{ runner.temp }}/notion-source
+          retention-days: 1
