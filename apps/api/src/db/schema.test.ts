@@ -228,10 +228,13 @@ describe.skipIf(!url)("schema", () => {
     const admin = new pg.Pool({ connectionString: url! });
     const targetUrl = new URL(url!);
     targetUrl.pathname = `/${databaseName}`;
-    let target: pg.Pool | undefined;
+    let target: pg.Client | undefined;
     try {
       await admin.query(`CREATE DATABASE "${databaseName}"`);
-      target = new pg.Pool({ connectionString: targetUrl.toString() });
+      // One connection owns this migration fixture; end() awaits its socket
+      // before DROP, unlike a pool whose idle removals can still be closing.
+      target = new pg.Client({ connectionString: targetUrl.toString() });
+      await target.connect();
       const migrations = fileURLToPath(new URL("../../drizzle/", import.meta.url));
       const files = [
         "0000_account_backend_init.sql",
@@ -304,7 +307,7 @@ describe.skipIf(!url)("schema", () => {
       ).toBe(false);
     } finally {
       await target?.end();
-      await admin.query(`DROP DATABASE IF EXISTS "${databaseName}" WITH (FORCE)`);
+      await admin.query(`DROP DATABASE IF EXISTS "${databaseName}"`);
       await admin.end();
     }
   });
