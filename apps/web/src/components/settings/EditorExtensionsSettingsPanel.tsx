@@ -33,7 +33,7 @@ async function request(
 ): Promise<EditorExtensionsResult> {
   const extensions = ensureNativeApi().editor?.extensions;
   if (!extensions) throw new Error("This server does not provide editor extension management.");
-  return extensions(input, signal ? { signal } : undefined);
+  return extensions(input, { signal });
 }
 function consentClosure(
   root: EditorExtensionSummary,

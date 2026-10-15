@@ -440,8 +440,6 @@ export class ExtensionManager {
           break;
         case "remove": {
           const entry = this.entry(input.id);
-          if (!input.version || entry.version !== input.version)
-            throw new Error("The installed extension version changed. Review removal again.");
           for (const candidate of this.state.entries) {
             if (candidate.id === entry.id) continue;
             const manifest = await this.manifest(candidate);

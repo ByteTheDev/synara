@@ -93,11 +93,7 @@ export class OpenVsxRegistry {
 
   async compatible(id: string, signal?: AbortSignal): Promise<RegistryMetadata> {
     const latest = await this.metadata(id, "latest", signal);
-    if (
-      !semver.prerelease(latest.version) &&
-      semver.satisfies(CODE_OSS_VERSION, latest.engines.vscode)
-    )
-      return latest;
+    if (semver.satisfies(CODE_OSS_VERSION, latest.engines.vscode)) return latest;
     const versions = Object.keys(latest.allVersions ?? {})
       .filter((version) => semver.valid(version) && !semver.prerelease(version))
       .sort(semver.rcompare)
