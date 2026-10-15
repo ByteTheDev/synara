@@ -785,9 +785,25 @@ it("keeps the editor gutter aligned through horizontal and vertical scrolling", 
     );
     const editor = await previewEditor();
     await expect.poll(contentsOf(editor)).toBe(contents);
-    await expect.poll(() => editor.getLayoutInfo().height).toBeGreaterThan(200);
     const root = editor.getDomNode()!;
-    // Wait for a real laid-out viewport before revealing the last model line.
+    // This fixture has no language API. Its deferred notice shrinks the editor;
+    // revealing before that resize leaves the last line below the new viewport.
+    await expect
+      .element(
+        page.getByText(
+          "This server does not provide editor intelligence. Editing and saving are still available.",
+          { exact: true },
+        ),
+      )
+      .toBeVisible();
+    await expect
+      .poll(() =>
+        Math.abs(
+          editor.getLayoutInfo().height -
+            Math.floor(root.parentElement!.getBoundingClientRect().height),
+        ),
+      )
+      .toBeLessThan(1);
     editor.revealLineInCenter(100, monaco.editor.ScrollType.Immediate);
     editor.setScrollPosition(
       {
