@@ -52,6 +52,7 @@ export function configureMacLauncher(electronPath, environment = process.env) {
   const configuration = Object.fromEntries(
     [
       "SYNARA_HOME",
+      "SYNARA_REMOTE_HOME",
       "SYNARA_DESKTOP_FLAVOR",
       "SYNARA_SOURCE_DESKTOP_BUILD_MARKER",
       "VITE_DEV_SERVER_URL",

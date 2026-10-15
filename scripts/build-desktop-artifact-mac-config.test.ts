@@ -23,6 +23,12 @@ import {
 } from "./lib/desktop-platform-build-config.ts";
 
 describe("createDesktopPlatformBuildConfig", () => {
+  it("refuses Remote Windows packaging before it can reuse Stable's installer GUID", () => {
+    assert.throws(
+      () => createDesktopPlatformBuildConfig({ platform: "win", target: "nsis", flavor: "remote" }),
+      /macOS ARM64 only/,
+    );
+  });
   it("names every packaged Icon Composer asset for CFBundleIconName", () => {
     for (const flavor of SYNARA_PACKAGED_DESKTOP_FLAVORS) {
       assert.equal(

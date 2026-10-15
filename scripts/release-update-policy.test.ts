@@ -42,7 +42,7 @@ describe("release update policy", () => {
     });
   });
 
-  it("routes only the beta prerelease identifier onto the beta channel and flavor", () => {
+  it("routes isolated prerelease identifiers onto their own channel and flavor", () => {
     expect(resolveReleaseUpdatePolicy("0.6.0", cleanConfig)).toMatchObject({
       channel: "synara",
       desktopFlavor: "production",
@@ -51,6 +51,13 @@ describe("release update policy", () => {
       channel: "beta",
       desktopFlavor: "beta",
       isPrerelease: true,
+    });
+    expect(resolveReleaseUpdatePolicy("1.0.6-remote.1", cleanConfig)).toMatchObject({
+      channel: "remote",
+      desktopFlavor: "remote",
+      isPrerelease: true,
+      makeLatest: false,
+      mirrorToStableChannel: false,
     });
     expect(resolveReleaseUpdatePolicy("0.6.0-alpha.1", cleanConfig)).toMatchObject({
       channel: "synara",
@@ -62,6 +69,33 @@ describe("release update policy", () => {
       desktopFlavor: "production",
       isPrerelease: true,
     });
+  });
+
+  it("publishes only the Remote macOS feed and refuses mixed platform manifests", () => {
+    const root = mkdtempSync(join(tmpdir(), "synara-remote-release-policy-"));
+    try {
+      writeFileSync(resolve(root, "latest-mac.yml"), "version: 1.0.6-remote.1\n");
+      writeFileSync(resolve(root, "latest.yml"), "unexpected Windows feed");
+      expect(() => prepareReleaseUpdateManifests(root, cleanConfig, "remote")).toThrow(
+        "macOS ARM64 assets only",
+      );
+      rmSync(resolve(root, "latest.yml"));
+      expect(prepareReleaseUpdateManifests(root, cleanConfig, "remote")).toEqual([
+        "remote-mac.yml",
+      ]);
+      expect(readFileSync(resolve(root, "remote-mac.yml"), "utf8")).toBe(
+        "version: 1.0.6-remote.1\n",
+      );
+      for (const name of [
+        ...defaultManifestNames,
+        ...channelManifestNames("synara"),
+        ...channelManifestNames("beta"),
+      ]) {
+        expect(existsSync(resolve(root, name))).toBe(false);
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it("copies manifests under the resolved beta channel name", () => {

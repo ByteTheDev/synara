@@ -329,6 +329,11 @@ export const resolveBuildOptions = Effect.fn("resolveBuildOptions")(function* (
     catch: (cause) => new BuildScriptError({ message: String(cause), cause }),
   });
   const arch = mergeOptions(input.arch, env.arch, getDefaultArch(platform));
+  if (flavor === "remote" && arch !== "arm64") {
+    return yield* new BuildScriptError({
+      message: "Synara Remote artifacts are currently supported on macOS ARM64 only.",
+    });
+  }
   const version = mergeOptions(input.buildVersion, env.version, undefined);
   const sourceCommit = mergeOptions(input.sourceCommit, env.sourceCommit, undefined);
   const sourceTag = mergeOptions(input.sourceTag, env.sourceTag, undefined);
@@ -1533,7 +1538,7 @@ const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
 
 const buildDesktopArtifactCli = Command.make("build-desktop-artifact", {
   flavor: Flag.choice("flavor", BuildFlavor.literals).pipe(
-    Flag.withDescription("Packaged identity: production (default), canary, cua, or beta."),
+    Flag.withDescription("Packaged identity: production (default), canary, cua, beta, or remote."),
     Flag.optional,
   ),
   platform: Flag.choice("platform", BuildPlatform.literals).pipe(

@@ -53,6 +53,28 @@ describe("desktop artifact identity", () => {
     },
   );
 
+  it("carries Remote identity from the Mac package metadata into runtime", () => {
+    const result = createDesktopArtifactIdentity({ platform: "mac", flavor: "remote" });
+    const runtimeFlavor = resolveSynaraDesktopRuntimeFlavor({
+      isPackaged: true,
+      isDevelopment: false,
+      packagedFlavor: result.packageMetadata.synaraDesktopFlavor,
+      requestedFlavor: "production",
+    });
+    expect(synaraDesktopIdentity(runtimeFlavor)).toEqual(result.identity);
+    expect(result.buildConfig).toMatchObject({
+      appId: "com.emanueledipietro.synara.remote",
+      productName: "Synara Remote",
+      artifactName: "Synara-Remote-${version}-${arch}.${ext}",
+      protocols: [{ name: "Synara Remote", schemes: ["synara-remote"] }],
+    });
+    expect(result.releaseDirectoryName).toBe("release-remote");
+    expect(result.identity.usesScriptedUpdates).toBe(false);
+    expect(() => createDesktopArtifactIdentity({ platform: "win", flavor: "remote" })).toThrow(
+      "macOS ARM64 only",
+    );
+  });
+
   it.each(["canary", "cua"] as const)(
     "refuses %s on Windows until it has an isolated installer registration",
     (flavor) => {

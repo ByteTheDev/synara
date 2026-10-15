@@ -1,6 +1,32 @@
 import { describe, expect, it } from "vitest";
 import { resolveReleaseBuildScope } from "./release-build-scope.ts";
 describe("release validation scope", () => {
+  it("limits Remote to the complete Mac ARM64 gate without weakening Stable or Beta", () => {
+    for (const platform of ["all", "mac-arm64"]) {
+      const scope = resolveReleaseBuildScope(platform, "artifact", true, "", "remote");
+      expect(scope.matrix.include.map((entry) => entry.id)).toEqual(["mac-arm64"]);
+      expect(scope.cua_matrix.include.map((entry) => entry.id)).toEqual(["mac-arm64"]);
+      expect(scope).toMatchObject({
+        build_server: false,
+        quality_gates: true,
+        build_icon: true,
+        build_js: true,
+        build_native: true,
+        package_artifacts: true,
+      });
+    }
+    for (const platform of ["mac-x64", "linux-x64", "win-x64"])
+      expect(() => resolveReleaseBuildScope(platform, "artifact", false, "", "remote")).toThrow(
+        "mac-arm64 only",
+      );
+    expect(() => resolveReleaseBuildScope("mac-arm64", "native", true, "", "remote")).toThrow(
+      "Publication requires",
+    );
+    for (const flavor of ["production", "beta"] as const)
+      expect(() => resolveReleaseBuildScope("mac-arm64", "artifact", true, "", flavor)).toThrow(
+        "Publication requires",
+      );
+  });
   it("requires the complete four-platform artifact gate for publication", () => {
     expect(resolveReleaseBuildScope("all", "artifact", true).matrix.include).toHaveLength(4);
     for (const stage of ["native", "icon", "js"])

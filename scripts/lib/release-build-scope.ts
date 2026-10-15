@@ -1,3 +1,5 @@
+// FILE: release-build-scope.ts
+// Purpose: Selects qualified release platforms without weakening publication gates.
 const platforms = [
   {
     id: "mac-arm64",
@@ -40,12 +42,19 @@ export function resolveReleaseBuildScope(
   stage = "artifact",
   publish = false,
   cuaBenchmarkBaseline = "",
+  flavor: "production" | "beta" | "remote" = "production",
 ) {
   if (!["artifact", "native", "icon", "js", "preflight"].includes(stage))
     throw new Error(`Unknown build stage: ${stage}`);
-  const selected = platforms.filter((entry) => platform === "all" || platform === entry.id);
+  if (flavor === "remote" && platform !== "all" && platform !== "mac-arm64")
+    throw new Error("Synara Remote currently supports mac-arm64 only.");
+  const selected = platforms.filter(
+    (entry) =>
+      (platform === "all" || platform === entry.id) &&
+      (flavor !== "remote" || entry.id === "mac-arm64"),
+  );
   if (selected.length === 0) throw new Error(`Unknown build platform: ${platform}`);
-  if (publish && (platform !== "all" || stage !== "artifact"))
+  if (publish && ((flavor !== "remote" && platform !== "all") || stage !== "artifact"))
     throw new Error("Publication requires all platforms and the complete artifact stage.");
   if (stage === "icon" && selected.every((entry) => entry.platform !== "mac"))
     throw new Error("Icon validation requires a macOS platform or all.");
@@ -78,6 +87,6 @@ export function resolveReleaseBuildScope(
     // builds, packaging or publication.
     quality_gates: stage === "artifact" || stage === "preflight",
     package_artifacts: stage === "artifact",
-    build_server: stage === "artifact" && platform === "all",
+    build_server: stage === "artifact" && platform === "all" && flavor !== "remote",
   };
 }

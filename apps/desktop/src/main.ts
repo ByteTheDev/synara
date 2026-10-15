@@ -409,12 +409,14 @@ const desktopFlavor = resolveSynaraDesktopRuntimeFlavor({
   allowDevelopmentOverride: isSourceDesktopBuild,
 });
 const desktopIdentity = synaraDesktopIdentity(desktopFlavor);
-// Beta never honors SYNARA_HOME: a globally exported stable home would make
-// beta open (and migrate) stable's database.
+// Beta and Remote ignore SYNARA_HOME so a globally exported Stable home
+// cannot make a parallel app open (and migrate) Stable's database.
 const BASE_DIR =
-  (desktopFlavor === "beta"
-    ? process.env.SYNARA_BETA_HOME?.trim()
-    : process.env.SYNARA_HOME?.trim()) ||
+  (desktopFlavor === "remote"
+    ? process.env.SYNARA_REMOTE_HOME?.trim()
+    : desktopFlavor === "beta"
+      ? process.env.SYNARA_BETA_HOME?.trim()
+      : process.env.SYNARA_HOME?.trim()) ||
   Path.join(OS.homedir(), desktopIdentity.defaultHomeDirectoryName);
 const STATE_DIR = Path.join(BASE_DIR, "userdata");
 const DESKTOP_WINDOW_STATE_PATH = Path.join(STATE_DIR, "desktop-window-state.json");
@@ -553,7 +555,7 @@ const POSIX_BACKEND_TERMINATE_DELAY_MS = 15_000;
 const POSIX_BACKEND_FORCE_KILL_DELAY_MS = 18_000;
 const POSIX_BACKEND_SHUTDOWN_TIMEOUT_MS = 20_000;
 const BACKEND_MAX_OLD_SPACE_ENV_KEYS = ["SYNARA_BACKEND_MAX_OLD_SPACE_MB"] as const;
-const DESKTOP_UPDATE_ALLOW_PRERELEASE = desktopFlavor === "beta";
+const DESKTOP_UPDATE_ALLOW_PRERELEASE = desktopFlavor === "beta" || desktopFlavor === "remote";
 const BROWSER_PERF_SAMPLE_INTERVAL_MS = 5_000;
 const DESKTOP_MENU_ZOOM_FACTOR_STEP = 1.1;
 // User keybindings mirrored onto View menu items. Every window reports the same
@@ -5430,14 +5432,7 @@ function registerIpcHandlers(): void {
     platform: process.platform,
     homeDir: OS.homedir(),
     betaHomeDir: resolveBetaHomeDir(),
-    flavor:
-      desktopFlavor === "beta"
-        ? "beta"
-        : desktopFlavor === "canary"
-          ? "canary"
-          : desktopFlavor === "cua"
-            ? "cua"
-            : "production",
+    flavor: desktopFlavor === "development" ? "production" : desktopFlavor,
     feedUrlOverride: process.env.SYNARA_BETA_FEED_URL,
     installDirOverride: process.env.SYNARA_BETA_INSTALL_DIR,
     expectedTeamId: ownAppTeamId(),

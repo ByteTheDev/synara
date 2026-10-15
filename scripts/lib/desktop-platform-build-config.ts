@@ -102,6 +102,10 @@ export function validateDesktopNativeBuildHost(input: DesktopNativeBuildHostInpu
 export function createDesktopPlatformBuildConfig(
   input: CreateDesktopPlatformBuildConfigInput,
 ): DesktopPlatformBuildConfig {
+  // Remote has no Windows installer registration or Linux release qualification.
+  if (input.flavor === "remote" && input.platform !== "mac") {
+    throw new Error("Synara Remote artifacts are currently supported on macOS ARM64 only.");
+  }
   const report =
     process.platform === "linux"
       ? (process.report.getReport() as { header?: { glibcVersionRuntime?: string } })

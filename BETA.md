@@ -4,6 +4,24 @@ Synara Beta is a packaged prerelease flavor of the desktop app. It is a separate
 application that installs and updates side-by-side with stable Synara, and it never
 shares stable's data directory or update feed.
 
+## Synara Remote early access
+
+**Synara Remote** is a separate tester app, not a rename of Synara Beta.
+Its `remote` flavor uses `com.emanueledipietro.synara.remote`, the
+`synara-remote://app` renderer, `~/.synara-remote` data and the `synara-remote`
+Electron profile. An explicit `SYNARA_REMOTE_HOME` may override its home;
+inherited `SYNARA_HOME` and `SYNARA_BETA_HOME` cannot redirect it.
+
+`vX.Y.Z-remote.N` selects the `remote` updater lane. Remote accepts only Remote
+updates, never replaces Stable/Beta, never becomes GitHub Latest and does not
+publish the CLI. Initial distribution targets macOS Apple Silicon only. It uses
+the existing Synara artwork; Beta's blue artwork remains specific to Beta.
+Remote enables the existing non-Stable feature gates but does not enable Beta
+diagnostics. It starts with its own local data: no Stable/Beta import or
+Try Beta installation/removal action runs from Remote. Signing in to the same
+account preserves access to account-owned cloud data and paired computers;
+local conversations remain owned by their original app home.
+
 ## The short version
 
 - **One branch.** Every PR merges into `main` as usual. There is no Beta branch.
@@ -107,7 +125,8 @@ published by the same release workflow as stable, and it updates through
 
 Beta releases ride the same `release.yml` workflow. The lane is selected entirely by
 the tag shape: a version whose first prerelease identifier is `beta` resolves to the
-beta channel and the beta desktop flavor; every other suffix keeps today's behavior.
+beta channel and the beta desktop flavor. The `remote` identifier selects
+Synara Remote as described above; other suffixes keep today's behavior.
 
 1. Select the target `main` commit and inspect its CI results. Finalize the release
    notes and documentation, then prepare the Beta version on top of that commit

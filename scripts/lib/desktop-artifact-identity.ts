@@ -1,3 +1,5 @@
+// FILE: desktop-artifact-identity.ts
+// Purpose: Keeps packaged metadata, native identity and artifact names aligned.
 import {
   synaraDesktopIdentity,
   type SynaraPackagedDesktopFlavor,
@@ -7,6 +9,9 @@ export function createDesktopArtifactIdentity(input: {
   readonly platform: "mac" | "linux" | "win";
   readonly flavor: SynaraPackagedDesktopFlavor;
 }) {
+  if (input.flavor === "remote" && input.platform !== "mac") {
+    throw new Error("Synara Remote artifacts are currently supported on macOS ARM64 only.");
+  }
   // Stable's NSIS GUID deliberately survives public bundle ID changes. An
   // experimental installer must not register itself as that same product; beta
   // ships its own WINDOWS_BETA_INSTALLER_GUID, so it is exempt.

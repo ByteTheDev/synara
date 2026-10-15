@@ -8,6 +8,7 @@ import {
   SYNARA_CUA_BUNDLE_ID,
   SYNARA_DEVELOPMENT_BUNDLE_ID,
   SYNARA_PRODUCTION_BUNDLE_ID,
+  SYNARA_REMOTE_BUNDLE_ID,
   type SynaraDesktopFlavor,
 } from "./desktopIdentity";
 
@@ -62,7 +63,7 @@ export const BETA_ONLY_FEATURES: readonly BetaOnlyFeature[] = [
 
 /**
  * Whether a Beta-only feature is on for this host. Only the Stable
- * (production) desktop build turns them off: Beta, Cua, Canary, development
+ * (production) desktop build turns them off: Beta, Remote, Cua, Canary, development
  * and non-desktop hosts (flavor "unknown") keep them.
  */
 export function isBetaFeatureEnabled(
@@ -85,6 +86,8 @@ export function desktopFlavorFromBundleId(
       return "canary";
     case SYNARA_CUA_BUNDLE_ID:
       return "cua";
+    case SYNARA_REMOTE_BUNDLE_ID:
+      return "remote";
     case SYNARA_BETA_BUNDLE_ID:
       return "beta";
     default:
@@ -103,6 +106,8 @@ export function desktopFlavorFromProtocol(
   isDevBuild: boolean,
 ): SynaraDesktopFlavor | "unknown" {
   switch (protocol) {
+    case "synara-remote:":
+      return "remote";
     case "synara-beta:":
       return "beta";
     case "synara-canary:":
