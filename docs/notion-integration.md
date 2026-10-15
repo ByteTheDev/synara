@@ -30,7 +30,7 @@ The system browser performs the official authorization-code flow. A short-lived 
 
 The broker performs code exchange, token refresh, and revocation. Interrupted code or refresh exchanges are not blindly replayed. Reconnect is required when a refresh outcome is uncertain. All Notion RPCs are restricted to the authenticated Synara owner. Non-owner task snapshots and streams exclude Notion rows.
 
-Existing unscoped agent Todo tools cannot list or update Notion records. Direct provider tools remain disabled in this checkpoint. A user can explicitly delegate an individual task with Synara's existing controls, sharing that task's context rather than workspace credentials.
+Existing unscoped agent Todo tools cannot list or update Notion records. Direct provider tools require an owner-enabled mapping and respect its Synara project. Reads and writes are distinct grants. Every agent mutation uses the existing per-call approval queue, with original and proposed values shown in the approval card; session-wide approval is refused. Mapping, project, relation-target and resource ancestry checks are repeated after asynchronous operations, approval, rate-limit waits and token refresh. A connection alone grants no agent access. Agent receipts are never automatically retried without a fresh approval.
 
 ## Mapping and synchronization
 
@@ -46,31 +46,27 @@ Disconnect immediately removes locally served data and then requests remote revo
 
 ## Compatibility matrix
 
-| Area | Current status |
-| --- | --- |
-| Official public OAuth, confidential exchange, refresh and revoke | Implemented, fixture-tested. No live authorized workspace test |
-| Native Settings connection and property-ID mapping | Implemented, integrated validation pending |
-| Existing Synara Tasks projection and manual delegation | Implemented, integrated validation pending |
-| Task title, notes, checkbox/status completion, plain dates | Implemented when explicitly mapped and safely writable |
-| Priority option configuration | Backend supports mappings. Complete UI option configuration remains |
-| Assignees, relations, dependencies, story points | Projected metadata, not a complete editing workflow |
-| Sprint planning, backlog moves, epics and roadmaps | Not complete. Mapped relation metadata is not a full Agile workflow |
-| Database table, list and grouped board | Implemented native read views and record creation. Board drag/drop and saved-view editing remain |
-| Calendar and timeline | Date-grid and date-list previews only, not complete calendar/timeline views |
-| Page hierarchy and supported blocks | Native browser and selective text/checklist editing. Unsupported blocks preserved read-only |
-| Wiki editor, slash commands and rich property editing | Partial. A full document-editing experience remains |
-| Title search | Available in contextual native browser. Global search-palette integration and local full-text index remain |
-| Comments | First-page reading and creation. Full discussion pagination and replies remain |
-| Sync and conflict journal | Implemented, targeted runtime tests included. Live multi-client validation remains |
-| Webhooks | Not implemented. Desktop-compatible polling used instead |
-| Scoped direct agent read/write tools and approvals | Disabled pending complete authorization and approval integration |
-| macOS, Windows, Linux | Platform-neutral code paths. No native three-platform OAuth/package verification |
-| Before/after screenshots | Pending actual browser capture. No mockup is used as implementation evidence |
+| Area                               | Implemented behavior and remaining limits                                                                                                                                                                                                                                                                             |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OAuth and credentials              | Confidential broker, refresh, revocation and private storage; fixture-tested, not live-workspace verified.                                                                                                                                                                                                            |
+| Settings and existing Tasks        | Native connection controls, property-ID mappings, stable Tasks projection and manual delegation. No parallel task system.                                                                                                                                                                                             |
+| Task and record properties         | Native editing of writable mapped fields, rich text, assignees and complete relations. Original values remain the conflict baseline. Formula/rollup and incomplete fields stay read-only.                                                                                                                             |
+| Sprint planning                    | Paginated relation-backed sprint discovery, product/sprint backlogs, current/upcoming/completed phases, workload and point summaries, moves and sprint creation. Totals explicitly describe loaded-page/filter limits; elapsed dates do not mark a sprint complete.                                                   |
+| Epics, milestones and dependencies | Editable mapped relations and dependency/blocker summaries. A dedicated full project-roadmap workflow is still incomplete.                                                                                                                                                                                            |
+| Database views                     | Table, list, grouped board, month/week calendar and horizontal timeline. Table filtering/sorting reaches the data-source API; board and sprint moves have selection alternatives to drag/drop. Calendar and timeline open native property editors. Date-only moves preserve ranges; timed values use the full editor. |
+| Wiki and documents                 | Nested block navigation, rich-text run formatting, preserved mentions, supported block/table editing, slash insertion, insert-after, references and HTTPS media links. Unsupported blocks remain read-only. Arbitrary existing-block reordering and native file uploads are not complete.                             |
+| Search                             | Contextual page-title and database-record discovery. Global search-palette integration and generalized full-text indexing remain unimplemented.                                                                                                                                                                       |
+| Comments                           | Paginated page discussion reads, creation and supported discussion replies.                                                                                                                                                                                                                                           |
+| Agent tools                        | Owner/project-scoped discovery, queries, record/nested-block reads and separately approved mutations. No credentials in tool results, destructive archive/delete tools or automatic status completion.                                                                                                                |
+| Sync and conflict journal          | Polling, bounded pagination, stable identities, durable receipts and explicit conflict handling. No transactional compare-and-swap guarantee; live cross-client tests remain.                                                                                                                                         |
+| Webhooks                           | Not implemented. Desktop-compatible polling remains the synchronization path.                                                                                                                                                                                                                                         |
+| Platforms                          | Platform-neutral implementation. Native macOS/Windows/Linux OAuth and packaged application verification remain.                                                                                                                                                                                                       |
+| UI evidence                        | Real Chromium screenshots of these React components using deterministic fixture data; not live Notion or complete-app end-to-end proof.                                                                                                                                                                               |
 
 API version: `2026-03-11`. Current Notion APIs expose data sources and saved views. These native views do not pretend to reproduce Notion's saved view configuration. Search is title-oriented, not generalized full-text search. SAML, SCIM, global user administration, and Enterprise Admin APIs are outside scope.
 
 ## Validation evidence
 
-The first executed core verification passed 22 fixture tests: 9 property-adapter tests, 8 API transport tests, and 5 OAuth broker tests. Contract and shared typechecks passed. Server typechecking identified optional-property and fixture-response typing issues, which the subsequent integration changes address. Validation must be reported against the final prepared source tree and must not be confused with live Notion authentication.
+The October 15 recovery reconstructed the published `ac2d3c1` source tree exactly before applying the existing continuation. Targeted server/shared/web fixtures and scoped TypeScript checks validate the recovered implementation, including denied/revoked approvals, moved records, dispatch-time authorization, mention preservation, and date-range handling. Detailed executed commands, counts and screenshots belong to PR #1937's evidence record.
 
-The local execution container failed while unpacking tooling. Code is preserved through the GitHub connector, with remote Actions used for focused verification. Temporary bootstrap and recovery workflows are removed from the final product tree. The PR remains draft until its outstanding acceptance items are addressed.
+A bounded full server typecheck did not finish in the local environment; scoped Notion server and web typechecks passed. Do not treat that as a passing full-workspace typecheck or infer live OAuth success. The PR remains draft until the remaining acceptance items and deployment verification are addressed. Temporary recovery tooling is not part of the final product tree.
