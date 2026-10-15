@@ -1,4 +1,3 @@
-import { CodeEditorPane } from "./codeEditor/CodeEditorPane";
 // FILE: WorkspaceFilePreview.tsx
 // Purpose: Shared single-file preview (code with syntax highlighting, parsed
 //          markdown, images, PDFs) for workspace files plus absolute local
@@ -80,6 +79,7 @@ import { useCodeSelectionAction } from "./chat/useCodeSelectionAction";
 import { LocalImagePreview } from "./LocalImagePreview";
 import { PdfFilePreview } from "./PdfFilePreview";
 import { Skeleton } from "./ui/skeleton";
+import { CodeEditorPane, useCodeEditorSaveKeyDownHandler } from "./codeEditor/CodeEditorPane";
 
 const MARKDOWN_PREVIEW_EXTENSIONS = new Set([".markdown", ".md", ".mdx"]);
 
@@ -258,7 +258,7 @@ function FileContentsView(props: { path: string; contents: string; themeName: Di
   );
 }
 
-function EditableFileContents(props: {
+type EditableFileContentsProps = {
   path: string;
   workspaceRoot: string;
   contents: string;
@@ -270,22 +270,82 @@ function EditableFileContents(props: {
   onContentsChange: (contents: string) => void;
   onSave: () => void;
   onReferenceInChat?: ((reference: ChatFileReference) => void) | undefined;
-}) {
+};
+
+function EditableFileContents(props: EditableFileContentsProps) {
+  // Preserve the established large-file budget and keep the selected engine
+  // mounted when edits shrink the document or Markdown switches to Preview.
+  const [plainText] = useState(
+    () =>
+      props.contents.length > MAX_SYNTAX_HIGHLIGHT_INPUT_CHARS ||
+      props.contents.split("\n").length > 1_000,
+  );
   return (
     <div
+      data-editable-file-contents
       className={props.hidden ? "hidden" : "flex min-h-0 min-w-0 flex-1 flex-col"}
       aria-busy={props.saving}
       aria-invalid={props.invalid || undefined}
     >
-      <CodeEditorPane
-        fileName={props.path}
-        workspaceRoot={props.workspaceRoot}
+      {plainText ? (
+        <NumberedPlainEditableFileContents {...props} />
+      ) : (
+        <CodeEditorPane
+          fileName={props.path}
+          workspaceRoot={props.workspaceRoot}
+          value={props.contents}
+          valueVersion={props.version}
+          resolvedTheme={props.theme}
+          onChange={props.onContentsChange}
+          onSave={props.onSave}
+          onReferenceInChat={props.onReferenceInChat}
+        />
+      )}
+    </div>
+  );
+}
+
+// The lightweight preview edits the same native session as the other surfaces.
+// It deliberately does not initialize a second text model or language service.
+function NumberedPlainEditableFileContents(props: EditableFileContentsProps) {
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const gutterRef = useRef<HTMLDivElement>(null);
+  const saveKeyDown = useCodeEditorSaveKeyDownHandler(props.onSave);
+  const lineCount = props.contents.split("\n").length;
+  const numbers = useMemo(
+    () =>
+      lineCount <= MAX_PLAIN_NUMBERED_LINES
+        ? Array.from({ length: lineCount }, (_, index) => (
+            <span key={index} className="editor-file-editor__gutter-line">
+              {index + 1}
+            </span>
+          ))
+        : null,
+    [lineCount],
+  );
+  const syncGutter = useCallback(() => {
+    if (editorRef.current && gutterRef.current)
+      gutterRef.current.style.transform = `translateY(${-editorRef.current.scrollTop}px)`;
+  }, []);
+  useEffect(syncGutter, [props.contents, props.hidden, syncGutter]);
+  return (
+    <div className="editor-file-editor-wrap" onKeyDownCapture={saveKeyDown}>
+      {numbers ? (
+        <div className="editor-file-editor__gutter" aria-hidden="true">
+          <div ref={gutterRef}>{numbers}</div>
+        </div>
+      ) : null}
+      <textarea
+        ref={editorRef}
+        className="editor-file-editor"
+        aria-label={`Edit ${props.path}`}
+        aria-busy={props.saving}
+        aria-invalid={props.invalid || undefined}
         value={props.contents}
-        valueVersion={props.version}
-        resolvedTheme={props.theme}
-        onChange={props.onContentsChange}
-        onSave={props.onSave}
-        onReferenceInChat={props.onReferenceInChat}
+        spellCheck={false}
+        wrap="off"
+        onScroll={syncGutter}
+        onChange={(event) => props.onContentsChange(event.currentTarget.value)}
       />
     </div>
   );
