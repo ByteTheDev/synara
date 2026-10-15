@@ -86,6 +86,7 @@ import {
   type ProjectionThreadCheckpointContext,
   type ProjectionSnapshotQueryShape,
   type OrchestrationThreadMentionContext,
+  type OrchestrationThreadWithoutActivities,
 } from "../Services/ProjectionSnapshotQuery.ts";
 
 const decodeReadModel = Schema.decodeUnknownEffect(OrchestrationReadModel);
@@ -3643,6 +3644,9 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
       readonly tracePrefix: string;
       // Client transcripts only: server commands keep the stored message rows.
       readonly linkTurnRequests?: boolean;
+      // Server reads that never look at the timeline skip its query, the most
+      // expensive part of a detail read on long threads. Defaults to true.
+      readonly includeActivities?: boolean;
     } = {
       messageLimit: MAX_THREAD_MESSAGES,
       tracePrefix: "ProjectionSnapshotQuery.getThreadDetailById",
@@ -3693,14 +3697,16 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
             ),
           ),
         ),
-        listThreadActivityRowsByThread({ threadId }).pipe(
-          Effect.mapError(
-            toPersistenceSqlOrDecodeError(
-              `${options.tracePrefix}:listActivities:query`,
-              `${options.tracePrefix}:listActivities:decodeRows`,
+        options.includeActivities === false
+          ? Effect.succeed([])
+          : listThreadActivityRowsByThread({ threadId }).pipe(
+              Effect.mapError(
+                toPersistenceSqlOrDecodeError(
+                  `${options.tracePrefix}:listActivities:query`,
+                  `${options.tracePrefix}:listActivities:decodeRows`,
+                ),
+              ),
             ),
-          ),
-        ),
         listPendingInteractionRowsByThread({ threadId }).pipe(
           Effect.mapError(
             toPersistenceSqlOrDecodeError(
@@ -3774,14 +3780,18 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
       return Option.some(thread);
     });
 
-  const loadThreadDetail = (
+  // Read the raw detail in one transaction, then validate it after the
+  // transaction commits: the decode of a full transcript is CPU-bound and must
+  // not hold the shared SQL connection (same split as getThreadDetailSnapshotById).
+  const readThreadDetail = (
     threadId: ThreadId,
-    options: { readonly messageLimit: number | null; readonly tracePrefix: string } = {
-      messageLimit: MAX_THREAD_MESSAGES,
-      tracePrefix: "ProjectionSnapshotQuery.getThreadDetailById",
+    options: {
+      readonly messageLimit: number | null;
+      readonly tracePrefix: string;
+      readonly includeActivities?: boolean;
     },
   ) =>
-    loadThreadDetailRaw(threadId, options).pipe(
+    sql.withTransaction(loadThreadDetailRaw(threadId, options)).pipe(
       Effect.flatMap(
         Option.match({
           onNone: () => Effect.succeed(Option.none<OrchestrationThread>()),
@@ -3792,6 +3802,12 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
             ),
         }),
       ),
+      Effect.mapError((error) => {
+        if (isPersistenceError(error)) {
+          return error;
+        }
+        return toPersistenceSqlError(`${options.tracePrefix}:query`)(error);
+      }),
     );
 
   const getThreadMentionContextById: ProjectionSnapshotQueryShape["getThreadMentionContextById"] = (
@@ -3863,34 +3879,32 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
   };
 
   const getThreadDetailById: ProjectionSnapshotQueryShape["getThreadDetailById"] = (threadId) =>
-    sql.withTransaction(loadThreadDetail(threadId)).pipe(
-      Effect.mapError((error) => {
-        if (isPersistenceError(error)) {
-          return error;
-        }
-        return toPersistenceSqlError("ProjectionSnapshotQuery.getThreadDetailById:query")(error);
-      }),
-    );
+    readThreadDetail(threadId, {
+      messageLimit: MAX_THREAD_MESSAGES,
+      tracePrefix: "ProjectionSnapshotQuery.getThreadDetailById",
+    });
+
+  const getThreadDetailWithoutActivitiesById: ProjectionSnapshotQueryShape["getThreadDetailWithoutActivitiesById"] =
+    (threadId) =>
+      readThreadDetail(threadId, {
+        messageLimit: MAX_THREAD_MESSAGES,
+        tracePrefix: "ProjectionSnapshotQuery.getThreadDetailWithoutActivitiesById",
+        includeActivities: false,
+      }).pipe(
+        Effect.map(
+          Option.map(
+            ({ activities: _activities, ...thread }): OrchestrationThreadWithoutActivities =>
+              thread,
+          ),
+        ),
+      );
 
   const getThreadDetailForExportById: ProjectionSnapshotQueryShape["getThreadDetailForExportById"] =
     (threadId) =>
-      sql
-        .withTransaction(
-          loadThreadDetail(threadId, {
-            messageLimit: null,
-            tracePrefix: "ProjectionSnapshotQuery.getThreadDetailForExportById",
-          }),
-        )
-        .pipe(
-          Effect.mapError((error) => {
-            if (isPersistenceError(error)) {
-              return error;
-            }
-            return toPersistenceSqlError(
-              "ProjectionSnapshotQuery.getThreadDetailForExportById:query",
-            )(error);
-          }),
-        );
+      readThreadDetail(threadId, {
+        messageLimit: null,
+        tracePrefix: "ProjectionSnapshotQuery.getThreadDetailForExportById",
+      });
 
   // Capture the projection cursor and thread detail in one transaction so the
   // snapshot fence cannot advance past the detail payload the client receives.
@@ -3986,6 +4000,7 @@ const makeProjectionSnapshotQuery = Effect.gen(function* () {
     threadIdExistsIncludingDeleted,
     findSyntheticSubagentParentThread,
     getThreadDetailById,
+    getThreadDetailWithoutActivitiesById,
     getThreadMentionContextById,
     getThreadDetailForExportById,
     getThreadDetailSnapshotById,
