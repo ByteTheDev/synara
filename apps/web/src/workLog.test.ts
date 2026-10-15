@@ -14,6 +14,12 @@ import { makeActivity } from "./storeTestFixtures";
 import { isComputerToolName } from "./lib/computerToolPresentation";
 import { isPlainRuntimeNoticeWorkEntry } from "./components/chat/agentActivity.logic";
 
+const diagnostic = (
+  level: string,
+  fields: Record<string, unknown>,
+  target = "codex_skills::interface",
+) => JSON.stringify({ timestamp: "2026-10-15T20:05:38.509122Z", level, fields, target });
+
 describe("deriveSubagentTaskEnds", () => {
   it("preserves settled invocations while a resumed task waits for its own completion", () => {
     const firstEnd = makeActivity({
@@ -1797,6 +1803,51 @@ describe("deriveWorkLogEntries", () => {
 
     const entries = deriveWorkLogEntries(activities, undefined);
     expect(entries.map((entry) => entry.id)).toEqual(["tool-complete"]);
+  });
+
+  it("omits persisted Codex diagnostic noise while retaining errors and retry notices", () => {
+    const warning = (id: string, message: string, extra: Record<string, unknown> = {}) =>
+      makeActivity({
+        id,
+        kind: "runtime.warning",
+        summary: "Runtime warning",
+        tone: "info",
+        payload: { message, ...extra },
+      });
+    const noise = diagnostic("WARN", { message: "ignoring interface.icon_small" });
+    const entries = deriveWorkLogEntries(
+      [
+        warning("old-skill-warning", noise),
+        warning(
+          "old-oauth-warning",
+          diagnostic(
+            "ERROR",
+            { error: "failed to refresh OAuth tokens for server stripe: invalid_grant" },
+            "codex_rmcp_client::oauth::refresh_transaction",
+          ),
+        ),
+        warning(
+          "real-error",
+          diagnostic(
+            "ERROR",
+            { message: "Permission denied opening the working directory" },
+            "codex_core::runtime",
+          ),
+        ),
+        warning("retry", noise, { willRetry: true }),
+        warning("json-not-log", '{"level":"WARN","message":"Check the project configuration"}'),
+      ],
+      undefined,
+    );
+    expect(entries.map((entry) => entry.id).toSorted()).toEqual([
+      "json-not-log",
+      "real-error",
+      "retry",
+    ]);
+    expect(entries.find((entry) => entry.id === "real-error")).toMatchObject({
+      label: "Permission denied opening the working directory",
+      detail: "Permission denied opening the working directory",
+    });
   });
 
   it("shows runtime warning messages and collapses repeated identical warning rows", () => {
