@@ -495,6 +495,7 @@ function SettingsRouteView() {
     ...(settings.showAutomationRunThreads !== defaults.showAutomationRunThreads
       ? ["Automation runs"]
       : []),
+    ...(settings.showAsciiBackground !== defaults.showAsciiBackground ? ["ASCII background"] : []),
     ...(settings.uiDensity !== defaults.uiDensity ? ["UI density"] : []),
     ...(settings.chatWidth !== defaults.chatWidth ? ["Chat width"] : []),
     ...(settings.desktopAppIcon !== defaultDesktopAppIcon ? ["App icon"] : []),
@@ -1112,6 +1113,17 @@ function SettingsRouteView() {
           ) : null}
         </SettingsSection>
       ) : null}
+
+      <SettingsSection title="Chat background">
+        {renderBooleanSettingRow({
+          settingKey: "showAsciiBackground",
+          title: "ASCII background",
+          description:
+            "Show the animated ASCII field on empty chats. Reduced motion keeps the field still.",
+          resetLabel: "ASCII background",
+          ariaLabel: "ASCII background",
+        })}
+      </SettingsSection>
 
       <SettingsSection title="Typography and spacing">
         <SettingsRow
@@ -1815,8 +1827,8 @@ function SettingsRouteView() {
                   resetEpoch={resetEpoch}
                 />
                 <McpConnectorsSettingsPanel active={activeSection === "connectors"} />
-                <NotionSettingsPanel active={activeSection === "integrations"} />
                 <ExternalMcpSettingsPanel active={activeSection === "integrations"} />
+                <NotionSettingsPanel active={activeSection === "integrations"} />
                 <AdvancedSettingsPanel
                   active={activeSection === "advanced"}
                   onOpenReleaseHistory={() => setReleaseHistoryOpen(true)}
