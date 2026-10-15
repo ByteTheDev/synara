@@ -62,19 +62,32 @@ describe("Cloudflare boundary", () => {
     await expect(client.deleteDns("host.example.test", "id")).rejects.toThrow("409");
   });
   it("does not retain secrets from quota errors or rejected fetches", async () => {
-    const client = createCloudflareClient(
-      config,
-      async () => new Response("admin-secret connector-secret", { status: 429 }),
-    );
-    await expect(client.token("id")).rejects.toThrow("429");
-    try {
-      await client.token("id");
-    } catch (error) {
-      expect(JSON.stringify(error)).not.toContain("secret");
+    const cases = [
+      {
+        status: 429,
+        fetcher: async () => new Response("admin-secret connector-secret", { status: 429 }),
+      },
+      {
+        status: 504,
+        fetcher: async (): Promise<Response> => {
+          throw new Error("admin-secret", { cause: new Error("connector-secret") });
+        },
+      },
+    ];
+    for (const { status, fetcher } of cases) {
+      const client = createCloudflareClient(config, fetcher);
+      const failure: unknown = await client.token("id").catch((error: unknown) => error);
+      expect(failure).toBeInstanceOf(Error);
+      expect(failure).toMatchObject({
+        status,
+        message: `Cloudflare tunnel operation failed (${status})`,
+      });
+      // Error.message, stack and cause are non-enumerable: JSON alone cannot prove redaction.
+      expect(failure).not.toHaveProperty("cause");
+      for (const secret of ["admin-secret", "connector-secret"]) {
+        expect(failure).toHaveProperty("stack", expect.not.stringContaining(secret));
+        expect(JSON.stringify(failure)).not.toContain(secret);
+      }
     }
-    const failed = createCloudflareClient(config, async () => {
-      throw new Error("admin-secret");
-    });
-    await expect(failed.token("id")).rejects.toThrow("504");
   });
 });

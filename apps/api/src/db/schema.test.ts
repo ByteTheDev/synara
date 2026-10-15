@@ -159,8 +159,11 @@ describe.skipIf(!url)("schema", () => {
     const { db, pool } = createDb(url!);
     try {
       const environmentId = `env_${crypto.randomUUID()}`;
-      await db.insert(hosts).values(hostRow({ environmentId }));
-      await expect(db.insert(hosts).values(hostRow({ environmentId }))).resolves.toBeDefined();
+      const ownerUserId = `user_${crypto.randomUUID()}`;
+      await db.insert(hosts).values(hostRow({ environmentId, ownerUserId }));
+      await expect(
+        db.insert(hosts).values(hostRow({ environmentId, ownerUserId })),
+      ).resolves.toBeDefined();
     } finally {
       await pool.end();
     }
