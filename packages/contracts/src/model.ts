@@ -1020,19 +1020,10 @@ export const MODEL_OPTIONS_BY_PROVIDER = {
     {
       slug: "claude-haiku-5-5",
       name: "Claude Haiku 5.5",
-      capabilities: {
-        reasoningEffortLevels: [
-          claudeApiEffortOption("low", "Low"),
-          claudeApiEffortOption("medium", "Medium", { isDefault: true }),
-          claudeApiEffortOption("high", "High"),
-        ],
-        supportsFastMode: false,
-        supportsThinkingToggle: false,
-        promptInjectedEffortLevels: [],
-        contextWindowOptions: [],
-        autoCompactWindowOptions: CLAUDE_AUTO_COMPACT_WINDOWS,
-        contextWindowTokens: 1_000_000,
-      },
+      capabilities: cursorCapabilities({
+        efforts: ["low", "medium", "high"],
+        defaultEffort: "medium",
+      }),
     },
     {
       slug: "claude-haiku-4-5",
